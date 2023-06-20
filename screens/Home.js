@@ -1,13 +1,13 @@
 import { View, Text } from "react-native";
 
-const SignUpScreen = ({ navigation })=> {
+const HomeScreen = ({ navigation })=> {
     return (
         <View>
             <Text>
-            SignUpScreen screen
+            HomeScreen screen
             </Text>
         </View>
     );
 }
 
-module.exports = SignUpScreen;
+module.exports = HomeScreen;

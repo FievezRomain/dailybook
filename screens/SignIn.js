@@ -10,4 +10,4 @@ const SignInScreen = ({ navigation })=> {
     );
 }
 
-export default SignInScreen;
+module.exports = SignInScreen;

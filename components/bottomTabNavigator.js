@@ -1,5 +1,5 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { Animated, Dimensions, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Image, Platform, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import plus from '../assets/plus.png'
@@ -9,7 +9,7 @@ import { useRef } from 'react';
 const Tab = createBottomTabNavigator();
 
 
-export default function bottomTabNavigotor() {
+const BottomTabNavigator = () => {
     const tabOffsetValue = useRef(new Animated.Value(0)).current;
     return (
       <NavigationContainer>
@@ -160,7 +160,7 @@ export default function bottomTabNavigotor() {
           height: 2,
           backgroundColor: 'brown',
           position: 'absolute',
-          bottom: 35,
+          bottom: 5,
           // Horizontal Padding = 20...
           left: 10,
           borderRadius: 20,
@@ -173,6 +173,8 @@ export default function bottomTabNavigotor() {
       </NavigationContainer>
     );
 }
+
+
 function getWidth() {
     let width = Dimensions.get("window").width
   
@@ -183,7 +185,7 @@ function getWidth() {
     return width / 5
 }
   
-function ActionScreen() {
+const ActionScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
         <Text>Action!</Text>
@@ -191,7 +193,7 @@ function ActionScreen() {
     );
 }
   
-function PetsScreen() {
+const PetsScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
         <Text>Pets!</Text>
@@ -199,7 +201,7 @@ function PetsScreen() {
     );
 }
   
-function HomeScreen() {
+const HomeScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
         <Text>Home!</Text>
@@ -207,7 +209,7 @@ function HomeScreen() {
     );
 }
   
-function CalendarScreen() {
+const CalendarScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
         <Text>Calendar!</Text>
@@ -215,7 +217,7 @@ function CalendarScreen() {
     );
 }
   
-function StatsScreen() {
+const StatsScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
         <Text>Statistic!</Text>
@@ -231,4 +233,5 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
 });
-  
+
+export default BottomTabNavigator;

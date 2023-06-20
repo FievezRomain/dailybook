@@ -1,6 +1,8 @@
-import { SignInScreen } from './SignIn';
-import { SignUpScreen } from './SignUp';
-import { WelcomeScreen } from './WelcomeScreen';
+import SignInScreen from './SignIn';
+import SignUpScreen from './SignUp';
+import WelcomeScreen from './Welcome';
+import HomeScreen from './Home';
+import LoadingScreen from './Loading';
 //import { ForgotPasswordScreen } from './ForgotPasswordScreen';
 
-export { SignInScreen, SignUpScreen, WelcomeScreen };
+module.exports = { SignInScreen, SignUpScreen, WelcomeScreen, HomeScreen, LoadingScreen };
