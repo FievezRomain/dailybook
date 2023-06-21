@@ -27,11 +27,11 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Loading" component={LoadingScreen}/>
-        <Stack.Screen name="Welcome" component={WelcomeScreen}/>
-        <Stack.Screen name="Home" component={HomeScreen}/>
-        <Stack.Screen name="Login" component={SignInScreen}/>
-        <Stack.Screen name="Register" component={SignUpScreen}/>
+        <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Login" component={SignInScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Register" component={SignUpScreen} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,13 +1,15 @@
 import { View, Text } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import AuthService from "../services/AuthService";
+import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
 
 const LoadingScreen = ({ navigation })=> {
     const authService = new AuthService;
+    const { setUser } = useContext(AuthenticatedUserContext);
 
     useEffect(() => {
     
-        authService.getUser().then((myUser) => {
+        authService.getUserLogged().then((myUser) => {
           if(myUser) {
             setUser(myUser)
             navigation.navigate("Welcome");

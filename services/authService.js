@@ -76,9 +76,12 @@ export default class AuthService {
   async getUserLogged() {
     await this.updateAxiosAuthorization();
     return axios
-    .get(`${getBaseUrl()}current_user`)
+    .get(`${getBaseUrl()}isLogged`)
     .then(({data}) => {
       return data
+    })
+    .catch(() =>{
+      console.log("Error during request");
     });
   }
 

@@ -1,13 +1,13 @@
-const myIp = 'locahost';
+const myIp = '192.168.1.26:';
 
-const devUrl = "http://"+myIp+"3000";
+const devUrl = "http://"+myIp+"8080";
 const prodUrl = "https://mydailybook.fr";
 
 const currentUrl = devUrl;
 
 export function getBaseUrl(){
     return(
-        `${currentUrl}/api/v1/`
+        `${currentUrl}/`
     );
 }
 
