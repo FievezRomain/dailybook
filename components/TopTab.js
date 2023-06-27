@@ -1,9 +1,11 @@
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
-import { useState } from "react";
+import {  SettingsScreen } from "../screens";
+import { useNavigation } from "@react-navigation/native";
 
 const TopTab = ({message1, message2}) => {
+    const navigation = useNavigation();
     const styles = StyleSheet.create({
         topTabContainer:{
             paddingTop: Constants.statusBarHeight + 10,
@@ -47,7 +49,7 @@ const TopTab = ({message1, message2}) => {
                 <TouchableOpacity>
                     <Image style={styles.image} source={require("../assets/notifications.png")}/>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
                     <Image style={styles.image} source={require("../assets/settings.png")}/>
                 </TouchableOpacity>
             </View>

@@ -7,6 +7,7 @@ import PetsScreen from './Pets';
 import ActionScreen from './Action';
 import CalendarScreen from './Calendar';
 import StatsScreen from './Stats';
+import SettingsScreen from "./Settings";
 //import { ForgotPasswordScreen } from './ForgotPasswordScreen';
 
-module.exports = { SignInScreen, SignUpScreen, WelcomeScreen, HomeScreen, LoadingScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen };
+module.exports = { SignInScreen, SignUpScreen, WelcomeScreen, HomeScreen, LoadingScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen };
