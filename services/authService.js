@@ -10,12 +10,13 @@ export default class AuthService {
     .post(`${getBaseUrl()}login`, data)
     .then((response) => {
       const data = response.data;
-      console.log(data);
-      if (!data?.tokenCode) {
-        this.storeAuthInformation(data.token);
-        this.updateAxiosAuthorization();
-      }
+      this.storeAuthInformation(data.accessToken);
+      this.updateAxiosAuthorization();
+      
       return data
+    })
+    .catch((error) =>{
+      console.log(error);
     })
   }
 
@@ -25,9 +26,12 @@ export default class AuthService {
     .post(`${getBaseUrl()}auth/${token}/confirm_login`, body)
     .then((response) => {
       const data = response.data;
-      this.storeAuthInformation(data.token);
+      this.storeAuthInformation(data.accessToken);
       this.updateAxiosAuthorization();
       return data
+    })
+    .catch((error) =>{
+      console.error(error);
     });
   }
 
@@ -54,9 +58,12 @@ export default class AuthService {
   async updateAxiosAuthorization() {
     let token = await this.getAuthToken();
     if (token) {
-        axios.defaults.headers.common = { Authorization: `bearer ${token}` };
+        //Bonne solution pour connexion
+        axios.defaults.headers.common = { 'x-access-token': `${token}` };
+        //Avec bearer en plus le temps de faire l'enregistrement
+        //axios.defaults.headers.common = { 'x-access-token': `bearer ${token}` };
     }else {
-      delete axios.defaults.headers.common["Authorization"];
+      delete axios.defaults.headers.common["x-access-token"];
     }
   }
 
@@ -80,8 +87,10 @@ export default class AuthService {
     .then(({data}) => {
       return data
     })
-    .catch(() =>{
-      console.log("Error during request");
+    .catch(function (error) {
+      if(!error.response.status == 403){
+        console.log(error.response);
+      }
     });
   }
 

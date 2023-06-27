@@ -12,7 +12,7 @@ const LoadingScreen = ({ navigation })=> {
         authService.getUserLogged().then((myUser) => {
           if(myUser) {
             setUser(myUser)
-            navigation.navigate("Welcome");
+            navigation.navigate("App");
           }else {
             navigation.navigate("Home");
           }

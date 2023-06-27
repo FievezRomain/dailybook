@@ -12,7 +12,7 @@ const Tab = createBottomTabNavigator();
 const BottomTabNavigator = () => {
     const tabOffsetValue = useRef(new Animated.Value(0)).current;
     return (
-      <NavigationContainer>
+      <>
         <Tab.Navigator screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             if (route.name === 'Home'){
@@ -170,7 +170,7 @@ const BottomTabNavigator = () => {
         }}>
   
         </Animated.View>
-      </NavigationContainer>
+      </>
     );
 }
 

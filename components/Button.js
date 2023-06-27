@@ -2,10 +2,9 @@ import { Text, View, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 
-const Button = ({ children, type, onPress, square=false }) => {
+const Button = ({ children, type, onPress }) => {
     let backgroundColor = "white";
     let color = "black";
-    let borderRadius = square ? 4 : 50;
   
     if (type === "primary") {
       backgroundColor = Variables.green_primary;
@@ -21,16 +20,17 @@ const Button = ({ children, type, onPress, square=false }) => {
     const styles = StyleSheet.create({
       button: {
         backgroundColor: backgroundColor,
-        paddingLeft: 90,
-        paddingRight: 90,
+        paddingLeft: 40,
+        paddingRight: 40,
         paddingBottom: 15,
         paddingTop: 15,
-        borderRadius: borderRadius
+        borderRadius: 20,
       },
       buttonText: {
         color: color,
         textAlign: "center",
-        fontSize: 16
+        fontSize: 16,
+        textTransform: "uppercase"
       },
     });
   

@@ -1,9 +1,9 @@
 import React, { useState, createContext } from 'react';
 
-export const AuthenticatedUserContext = createContext({});
+export const AuthenticatedUserContext = createContext();
 
-export const AuthenticatedUserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+export default function AuthenticatedUserProvider ({ children }) {
+  const [user, setUser] = useState({email: "romain"});
 
   return (
     <AuthenticatedUserContext.Provider value={{ user, setUser }}>

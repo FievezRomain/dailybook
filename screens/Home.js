@@ -11,7 +11,7 @@ const HomeScreen = ({ navigation })=> {
           style={styles.image}
         >
             <View style={styles.partieInf}>
-                <View style={styles.test}>
+                <View>
                     <TouchableOpacity onPress={()=>navigation.navigate("Login")} style={styles.button}>
                         <Text style={styles.text}>Vivre l'aventure</Text>
                     </TouchableOpacity>
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         right: 0,
         left: 0,
-        bottom: 15
+        bottom: 80
       },
       home: {
         flex: 1,

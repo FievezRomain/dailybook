@@ -1,19 +1,20 @@
-import * as React from 'react';
 import { createStackNavigator } from '@react-navigation/native';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { HomeScreen, SignInScreen, SignUpScreen, LoadingScreen } from "../screens";
+import AppStack from './AppStack';
 
-import { SignInScreen, SignUpScreen } from '../screens';
+const Stack = createNativeStackNavigator();
 
-const Stack = createStackNavigator();
-
-export const AuthStack = () => {
-  
+const AuthStack = () => {
   return (
-    <Stack.Navigator
-      initialRouteName='SignIn'
-      screenOptions={{ headerShown: false }}
-    >
-      <Stack.Screen name='SignIn' component={SignInScreen} />
-      <Stack.Screen name='SignUp' component={SignUpScreen} />
-    </Stack.Navigator>
+    <Stack.Navigator>
+        <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="App" component={AppStack} options={{ headerShown: false }}/>
+        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Login" component={SignInScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Register" component={SignUpScreen} options={{ headerShown: false }}/>
+      </Stack.Navigator>
   );
 };
+
+export default AuthStack;
