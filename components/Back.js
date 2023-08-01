@@ -1,12 +1,13 @@
 import { StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import Constants from 'expo-constants';
 
 const Back = () => {
     const styles = StyleSheet.create({
         backButton:{
             height: 25,
             width: 25,
-            marginTop: 30,
+            marginTop: Constants.statusBarHeight + 10,
             marginLeft: 20
         }
     });

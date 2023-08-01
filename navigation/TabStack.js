@@ -1,22 +1,21 @@
-import { Animated, Dimensions, Image, Platform, StyleSheet, Text, View } from 'react-native';
-import React, { useContext, useState } from 'react';
+import { Animated, Dimensions, Image, Platform, StyleSheet, Text, View, Pressable } from 'react-native';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import plus from '../assets/plus.png'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useRef } from 'react';
-import TopTab from '../components/TopTab';
 import { WelcomeScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen } from "../screens";
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
+import { AnimatePresence, MotiView } from 'moti';
+import Variables from '../components/styles/Variables';
 
 const Tab = createBottomTabNavigator();
 
 const TabStack = () => {
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
-  const { user } = useContext(AuthenticatedUserContext);
-  const [messages, setMessages] = useState({message1 :"Bienvenue,", message2: user.prenom})
+  const [expanded, setExpanded] = useState(false);
+  const [beforeScreen, setBeforeScreen] = useState("Welcome");
   return (
     <>
-      <TopTab message1={messages.message1} message2={messages.message2}/>
       <Tab.Navigator screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             if (route.name === 'Welcome'){
@@ -44,21 +43,32 @@ const TabStack = () => {
                 ></FontAwesome5>
               </View>
             } else if(route.name === 'ActionButton'){
-              return <View style={{
-                width: 55,
-                height: 55,
-                backgroundColor: 'white',
-                borderRadius: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginBottom: Platform.OS == "android" ? 50 : 30
-              }}>
+              return <><MotiView
+                style={{
+                  width: 55,
+                  height: 55,
+                  backgroundColor: 'white',
+                  borderRadius: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  marginBottom: Platform.OS == "android" ? 50 : 30
+                }}
+                animate={{
+                  scale: expanded ? 1.2 : 1,
+                  rotate: expanded ? '135deg' : '0deg',
+                }}
+                transition={{
+                  duration: 200,
+                  type: 'timing',
+                }}>
                 <Image source={plus} style={{
                   width: 35,
                   height: 35,
-                  tintColor: '#956540',
+                  tintColor: expanded ? Variables.bouton_secondary : Variables.bouton,
+                  zIndex: 1
                 }}></Image>
-              </View>
+              </MotiView>
+                </>
             } else if (route.name === 'Calendar'){
               return <View style={{
                 // centring Tab Button...
@@ -109,8 +119,9 @@ const TabStack = () => {
   
           <Tab.Screen name={"Welcome"} component={WelcomeScreen} listeners={({ navigation, route }) => ({
             // Onpress Update....
-            tabPress: e => {
-              setMessages({message1: "Bienvenue,", message2: user.prenom});
+            focus: e => {
+              setExpanded(false);
+              setBeforeScreen(route.name);
               Animated.spring(tabOffsetValue, {
                 toValue: 0,
                 useNativeDriver: true
@@ -120,8 +131,9 @@ const TabStack = () => {
   
           <Tab.Screen name={"Statistic"} component={StatsScreen} listeners={({ navigation, route }) => ({
             // Onpress Update....
-            tabPress: e => {
-              setMessages({message1: "Mes", message2: "statistiques"});
+            focus: e => {
+              setExpanded(false);
+              setBeforeScreen(route.name);
               Animated.spring(tabOffsetValue, {
                 toValue: getWidth(),
                 useNativeDriver: true
@@ -132,7 +144,10 @@ const TabStack = () => {
           <Tab.Screen name={"ActionButton"} component={ActionScreen} listeners={({ navigation, route }) => ({
             // Onpress Update....
             tabPress: e => {
-              setMessages({message1: "Les", message2: "actions"});
+              if (expanded){
+                navigation.navigate(beforeScreen);
+              }
+              setExpanded(!expanded);
               Animated.spring(tabOffsetValue, {
                 toValue: -100,
                 useNativeDriver: true
@@ -142,8 +157,9 @@ const TabStack = () => {
   
           <Tab.Screen name={"Calendar"} component={CalendarScreen} listeners={({ navigation, route }) => ({
             // Onpress Update....
-            tabPress: e => {
-              setMessages({message1: "Mon", message2: "calendrier"});
+            focus: e => {
+              setExpanded(false);
+              setBeforeScreen(route.name);
               Animated.spring(tabOffsetValue, {
                 toValue: getWidth() * 3,
                 useNativeDriver: true
@@ -153,23 +169,39 @@ const TabStack = () => {
   
           <Tab.Screen name={"Pets"} component={PetsScreen} listeners={({ navigation, route }) => ({
             // Onpress Update....
-            tabPress: e => {
-              setMessages({message1: "Mes", message2: "animaux"});
+            focus: e => {
+              setExpanded(false);
+              setBeforeScreen(route.name);
               Animated.spring(tabOffsetValue, {
                 toValue: getWidth() * 4,
                 useNativeDriver: true
               }).start();
             }
           })}/>
+
+        {/* <Tab.Screen name={"Settings"} component={SettingsScreen} 
+            options={{
+                tabBarItemStyle:{display: "none"}
+            }}
+            listeners={({ navigation, route }) =>({
+                tabPress: e => {
+                    setMessages({message1: "Mes", message2: "animaux"});
+                    Animated.spring(tabOffsetValue, {
+                        toValue: -100,
+                        useNativeDriver: true
+                    }).start();
+                }
+            })}
+        /> */}
   
         </Tab.Navigator>
   
         <Animated.View style={{
           width: getWidth() - 15,
-          height: 2,
+          //height: 2,
           backgroundColor: 'brown',
           position: 'absolute',
-          bottom: 5,
+          // bottom: (667 / (Dimensions.get("window").height / 10)) *5,
           // Horizontal Padding = 20...
           left: 10,
           borderRadius: 20,

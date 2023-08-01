@@ -81,6 +81,7 @@ export default class AuthService {
   }
 
   async getUserLogged() {
+    await this.updateAxiosInterceptors();
     await this.updateAxiosAuthorization();
     return axios
     .get(`${getBaseUrl()}isLogged`)
@@ -88,9 +89,7 @@ export default class AuthService {
       return data
     })
     .catch(function (error) {
-      if(!error.response.status == 403){
         console.log(error.response);
-      }
     });
   }
 

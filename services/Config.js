@@ -1,4 +1,4 @@
-const myIp = '192.168.1.26:';
+const myIp = '192.168.1.125:';
 
 const devUrl = "http://"+myIp+"8080";
 const prodUrl = "https://mydailybook.fr";

@@ -152,6 +152,7 @@ const BottomTabNavigator = () => {
               }).start();
             }
           })}/>
+
   
         </Tab.Navigator>
   

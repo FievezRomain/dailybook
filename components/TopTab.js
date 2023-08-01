@@ -1,7 +1,6 @@
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
-import {  SettingsScreen } from "../screens";
 import { useNavigation } from "@react-navigation/native";
 
 const TopTab = ({message1, message2}) => {
@@ -14,7 +13,7 @@ const TopTab = ({message1, message2}) => {
             alignItems: "center",
             paddingLeft: 30,
             paddingRight: 30,
-            backgroundColor: Variables.fond
+            backgroundColor: "transparent"
         },
         textContainer:{
             flex: 1,
@@ -24,6 +23,7 @@ const TopTab = ({message1, message2}) => {
             gap: 20,
             direction: "ltr",
             justifyContent: "flex-end",
+            alignItems: "center",
             flexDirection: "row"
         },
         image:{
@@ -33,7 +33,15 @@ const TopTab = ({message1, message2}) => {
         name:{
             fontWeight: "bold",
             fontSize: 18
-        }
+        },
+        avatar: {
+            width: 40,
+            height: 40,
+            borderRadius: 50,
+            borderWidth: 0.7,
+            borderColor: "white",
+            backgroundColor: "white"
+        },
     });
 
     return(
@@ -44,13 +52,10 @@ const TopTab = ({message1, message2}) => {
             </View>
             <View style={styles.imageContainer}>
                 <TouchableOpacity>
-                    <Image style={styles.image} source={require("../assets/heart.png")}/>
-                </TouchableOpacity>
-                <TouchableOpacity>
                     <Image style={styles.image} source={require("../assets/notifications.png")}/>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
-                    <Image style={styles.image} source={require("../assets/settings.png")}/>
+                    <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")}/>
                 </TouchableOpacity>
             </View>
         </View>
