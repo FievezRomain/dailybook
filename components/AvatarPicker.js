@@ -14,8 +14,8 @@ const AvatarPicker = ({ setImage, setValue }) => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
-      //setValue("image", result.assets[0]);
-      setValue("image", result.assets[0].base64);
+      setValue("image", result.assets[0].uri);
+      //setValue("image", result.assets[0].base64);
     }
   };
 

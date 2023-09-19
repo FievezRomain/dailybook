@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity 
 import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import AnimalsPicker from "../components/AnimalsPicker";
 import AvatarPicker from "../components/AvatarPicker";
 import { useForm } from "react-hook-form";
@@ -10,23 +10,28 @@ import Button from "../components/Button";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AnimalsService from "../services/AnimalsService";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import ModalVerif from "../components/ModalVerif";
 
 const PetsScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
   const [messages, setMessages] = useState({message1: "Mes", message2: "animaux"});
   const animalsService = new AnimalsService;
   const [animaux, setAnimaux] = useState([]);
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState([]);
   const [addingForm, setAddingForm] = useState(false);
   const [image, setImage] = useState(null);
   const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
   const [date, setDate] = useState(new Date(new Date().getTime()));
   const [loadingEvent, setLoadingPets] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       setMessages({message1: "Mes", message2: "animaux"});
+      
       getAnimals();
+      
       
     });
     return unsubscribe;
@@ -69,26 +74,132 @@ const PetsScreen = ({ navigation }) => {
     });
   }; */
   const getAnimals = async () => {
-    //A TERMINER
-    setLoadingPets(true);
-    var result = await animalsService.getAnimals(user.id);
-    setLoadingPets(false);
-    if(result.rowCount != 0){
-      setAnimaux(result.rows)
-      console.log(animaux)
+    // Si aucun animal est déjà présent dans la liste, alors
+    if(animaux.length == 0){
+      setLoadingPets(true);
+      // On récupère les animaux de l'utilisateur courant
+      var result = await animalsService.getAnimals(user.id);
+      setLoadingPets(false);
+      // Si l'utilisateur a des animaux, alors
+      if(result.rowCount !== 0){
+        // On valorise l'animal selectionné par défaut au premier de la liste
+        setSelected([result.rows[0]]);
+        if(result.rows[0].id !== null ? setValue("id", result.rows[0].id) : null);
+        if(result.rows[0].nom !== null ? setValue("nom", result.rows[0].nom) : null);
+        if(result.rows[0].espace !== null ? setValue("espece", result.rows[0].espece) : null);
+        if(result.rows[0].datenaissance !== null ? setValue("datenaissance", result.rows[0].datenaissance) : null);
+        if(result.rows[0].race !== null ? setValue("race", result.rows[0].race) : null );
+        if(result.rows[0].taille !== null ? setValue("taille", String(result.rows[0].taille)) : null);
+        if(result.rows[0].poids !== null ? setValue("poids", String(result.rows[0].poids)) : null);
+        if(result.rows[0].sexe !== null ? setValue("sexe", result.rows[0].sexe) : null);
+        if(result.rows[0].couleur !== null ? setValue("couleur", result.rows[0].couleur) : null);
+        if(result.rows[0].nomPere !== null ? setValue("nomPere", result.rows[0].nomPere) : null);
+        if(result.rows[0].nomMere !== null ? setValue("nomMere", result.rows[0].nomMere) : null);
+        if(result.rows[0].datenaissance !== null ? setDate(new Date(result.rows[0].datenaissance)) : setDate(new Date(new Date().getTime())));
+
+        // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
+        setAnimaux(result.rows);
+      }
     }
   };
 
   const submitPets = async(data) =>{
+    // Récupération de l'identifiant de l'utilisateur (propriétaire)
     data["idProprietaire"] =  user.id;
     setLoadingPets(true);
-    animalsService.create(data)
-    .then((res) =>{
+
+    const formData = data;
+    if (data.image != undefined){
+      formData = new FormData();
+      if(image != null){
+        filename = data.image.split("/");
+        filename = filename[filename.length-1].split(".")[0] + user.id;
+        formData.append("picture", {
+          name: filename,
+          type: "image/jpeg",
+          uri: data.image
+        });
+      } else{
+        formData.append("files", "empty");
+      }
+      data = { ...data, image: data.image };
+      formData.append("recipe", JSON.stringify(data));
+    }
+    
+
+    // Si un animal est selectionné, cela veut dire qu'on doit le modifier, sinon le créer
+    if(selected.length > 0){
+      // Modification de l'animal dans le back (BDD)
+      animalsService.modify(formData)
+      .then((response) =>{
+        setLoadingPets(false);
+        // Une fois la modification terminée, on valorise le hook avec la liste à jour des animaux
+        animauxTemp = animaux;
+        animauxFiltered = animaux.filter((a) => a.id === response.id);
+        animauxTemp[animaux.indexOf(animauxFiltered)] = response;
+        setAnimaux(animauxTemp);
+          Toast.show({
+              type: "success",
+              position: "top",
+              text1: "Modification réussie"
+          }); 
+          
+      })
+      .catch((err) =>{
+          console.log(err);
+          setLoadingPets(false);
+          Toast.show({
+              type: "error",
+              position: "top",
+              text1: err.message
+          });
+      });
+    } else{
+      // Création de l'animal dans le back (BDD)
+      animalsService.create(formData)
+      .then((response) =>{
+        setLoadingPets(false);
+        // Une fois la création terminée, on valorise le hook avec la liste à jour des animaux
+        setAnimaux([...animaux, response]);
+          Toast.show({
+              type: "success",
+              position: "top",
+              text1: "Création d'un nouvel animal réussie"
+          }); 
+          
+      })
+      .catch((err) =>{
+          console.log(err);
+          setLoadingPets(false);
+          Toast.show({
+              type: "error",
+              position: "top",
+              text1: err.message
+          });
+      });
+    }
+    
+  };
+
+  const deletePet = async() =>{
+    let data = {};
+    // Récupération de l'identifiant de l'utilisateur (propriétaire)
+    data["idProprietaire"] =  user.id;
+    setLoadingPets(true);
+
+    // Récupération de l'identifiant de l'animal
+    data["id"] = selected[0].id;
+
+    animalsService.delete(data)
+    .then((response) =>{
       setLoadingPets(false);
+      // Une fois la suppression terminée, on valorise le hook avec l'animal en moins
+      setAnimaux(animaux.filter((a) => a.id !== data["id"]));
+      setSelected([]);
         Toast.show({
             type: "success",
             position: "top",
-            text1: "Création d'un nouvel animal réussie"
+            text1: "Suppression réussie"
         }); 
         
     })
@@ -101,10 +212,10 @@ const PetsScreen = ({ navigation }) => {
             text1: err.message
         });
     });
-  };
+  }
 
   const onChangeDate = (event, selectedDate) => {
-    setValue("date", selectedDate.getDate() + "/" + parseInt(selectedDate.getMonth()+1) + "/" + selectedDate.getFullYear());
+    setValue("datenaissance", selectedDate.getDate() + "/" + parseInt(selectedDate.getMonth()+1) + "/" + selectedDate.getFullYear());
     setDate(selectedDate);
   };
 
@@ -118,14 +229,24 @@ const PetsScreen = ({ navigation }) => {
           />
       </View>
       )}
+      <ModalVerif
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        event={deletePet}
+        message={"Êtes-vous sûr de vouloir supprimer cet animal ?"}
+      />
       <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
-      <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center", marginTop: 20}}>
+      <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
         <AnimalsPicker
           setAnimaux={setAnimaux}
           animaux={animaux}
+          setSelected={setSelected}
+          selected={selected}
+          setValue={setValue}
           mode="single"
           buttonAdd={true}
+          setDate={setDate}
           setAddingForm={setAddingForm}
         />
       </View>
@@ -140,7 +261,6 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : Vasco"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("nom", text)}
-                value={selected && getValues("nom")}
                 defaultValue={getValues("nom")}
                 {...register("nom", { required: true })}
               />
@@ -153,7 +273,6 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : Cheval"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("espece", text)}
-                value={selected && getValues("espece")}
                 defaultValue={getValues("espece")}
                 {...register("espece", { required: true })}
               />
@@ -192,7 +311,6 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : Fjord"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("race", text)}
-                value={selected && getValues("race")}
                 defaultValue={getValues("race")}
               />
             </View>
@@ -201,9 +319,9 @@ const PetsScreen = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Exemple : 50"
+                keyboardType="numeric"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("taille", text)}
-                value={selected && getValues("taille")}
                 defaultValue={getValues("taille")}
               />
             </View>
@@ -212,9 +330,9 @@ const PetsScreen = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 placeholder="Exemple : 30"
+                keyboardType="numeric"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("poids", text)}
-                value={selected && getValues("poids")}
                 defaultValue={getValues("poids")}
               />
             </View>
@@ -225,7 +343,6 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : Mâle"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("sexe", text)}
-                value={selected && getValues("sexe")}
                 defaultValue={getValues("sexe")}
               />
             </View>
@@ -236,7 +353,6 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : Rouge tricolor"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("couleur", text)}
-                value={selected && getValues("couleur")}
                 defaultValue={getValues("couleur")}
               />
             </View>
@@ -247,7 +363,6 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : Sirius"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("nomPere", text)}
-                value={selected && getValues("nomPere")}
                 defaultValue={getValues("nomPere")}
               />
             </View>
@@ -258,16 +373,22 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : Hermès"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("nomMere", text)}
-                value={selected && getValues("nomMere")}
                 defaultValue={getValues("nomMere")}
               />
             </View>
             <View style={styles.registerButton}>
               <Button type="primary" onPress={handleSubmit(submitPets)}>
-                {selected && <Text style={styles.textButton}>Modifier</Text>}
-                {!selected && <Text style={styles.textButton}>Créer</Text>}
+                {selected.length > 0 && <Text style={styles.textButton}>Modifier</Text>}
+                {selected.length == 0 && <Text style={styles.textButton}>Créer</Text>}
               </Button>
             </View>
+              {selected.length > 0 && 
+                <View style={styles.registerButton}>
+                  <Button type="primary" onPress={() => setModalVisible(!modalVisible)}>
+                    <Text style={styles.textButton}>Supprimer</Text>
+                  </Button>
+                </View>
+              }
           </View>
         </ScrollView>
       </View>

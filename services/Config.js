@@ -1,7 +1,8 @@
-const myIp = '192.168.1.125:';
+const myIp = '192.168.1.26:';
 
 const devUrl = "http://"+myIp+"8080";
 const prodUrl = "https://mydailybook.fr";
+const imageUrl = "ressources/images/";
 
 const currentUrl = devUrl;
 
@@ -28,4 +29,10 @@ export function getFilePath(path) {
   return (
     `${currentUrl}/${path}`
   );
+}
+
+export function getImagePath() {
+	return (
+		`${currentUrl}/${imageUrl}`
+	  );
 }

@@ -3,21 +3,75 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 export default class AnimalsService {
-    /* async create(body) {
-        await this.updateAxiosAuthorization();
+    async createWithPicture(body){
         return axios.post(`${getBaseUrl()}createEquide`, body, {
             headers: {'Content-Type': 'multipart/form-data'},
             transformRequest: (data) => {return data;}
         })
-        .then((res) => res.data)
+        .then((response) => {
+            return response.data;
+        })
+        .catch();
+    }
+    
+    async createWithoutPicture(body){
+        return axios.post(`${getBaseUrl()}createEquide`, body)
+        .then((response) => {
+            return response.data;
+        })
+        .catch();
+    }
+    async create(body) {
+        await this.updateAxiosAuthorization();
+        if (body.image === undefined){
+            return this.createWithoutPicture(body);
+        } else{
+            return this.createWithPicture(body);
+        }
+    }
+
+    /* async create(body) {
+        await this.updateAxiosAuthorization();
+        return axios.post(`${getBaseUrl()}createEquide`, body)
+        .then((response) => {
+            return response.data;
+        })
         .catch();
     } */
 
-    async create(body) {
+    async modifyWithoutPicture(body){
+        return axios.put(`${getBaseUrl()}modifyEquide`, body)
+        .then((response) => {
+            return response.data;
+        })
+        .catch();
+    }
+
+    async modifyWithPicture(body){
+        return axios.put(`${getBaseUrl()}modifyEquide`, body, {
+            headers: {'Content-Type': 'multipart/form-data'},
+            transformRequest: (data) => {return data;}
+        })
+        .then((response) => {
+            return response.data;
+        })
+        .catch();
+    }
+
+    async modify(body) {
         await this.updateAxiosAuthorization();
-        return axios.post(`${getBaseUrl()}createEquide`, body)
-        .then(({res}) => {
-            return res;
+        if (body.image === undefined){
+            return this.modifyWithoutPicture(body);
+        } else{
+            return this.modifyWithPicture(body);
+        }
+    }
+
+    async delete(body) {
+        await this.updateAxiosAuthorization();
+        return axios.delete(`${getBaseUrl()}deleteEquide`, {data: body})
+        .then((response) => {
+            return response.data;
         })
         .catch();
     }
@@ -27,7 +81,6 @@ export default class AnimalsService {
         return axios
         .get(`${getBaseUrl()}equideByUser?idProprietaire=${id}`)
         .then(({data}) => {
-            console.log(data)
             return data
         })
         .catch();
