@@ -4,8 +4,7 @@ import Variables from "./styles/Variables";
 import { useNavigation } from "@react-navigation/native";
 import AnimalsPicker from "./AnimalsPicker";
 
-const TestModal = ({ modalVisible, setModalVisible, setAnimaux, animaux }) => {
-    const navigation = useNavigation();
+const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected }) => {
 
   return (
     <>
@@ -24,6 +23,8 @@ const TestModal = ({ modalVisible, setModalVisible, setAnimaux, animaux }) => {
                 setAnimaux={setAnimaux}
                 animaux={animaux}
                 mode="multiple"
+                selected={selected}
+                setSelected={setSelected}
             />
             <View style={styles.buttonContainer}>
                 <Button
@@ -31,14 +32,7 @@ const TestModal = ({ modalVisible, setModalVisible, setAnimaux, animaux }) => {
                     setModalVisible(!modalVisible)
                 }}
                 >
-                Valider
-                </Button>
-                <Button
-                onPress={() => {
-                    setModalVisible(!modalVisible)
-                }}
-                >
-                Annuler
+                OK
                 </Button>
             </View>
           </View>
@@ -53,7 +47,7 @@ const styles = StyleSheet.create({
     backgroundColor: Variables.fond,
     height: "30%",
     justifyContent: "center",
-    flexDirection: "row wrap"
+    //flexDirection: "row wrap"
   },
   background: {
     justifyContent: "flex-end",
@@ -110,4 +104,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default TestModal;
+export default ModalAnimals;

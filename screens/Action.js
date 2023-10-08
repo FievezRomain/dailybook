@@ -5,21 +5,36 @@ import { useForm } from "react-hook-form";
 import Button from "../components/Button";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import TestModal from "../components/Modal";
+import ModalAnimals from "../components/ModalAnimals";
 import AnimalsService from "../services/AnimalsService";
 import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
 import TopTab from '../components/TopTab';
+import { Picker } from '@react-native-picker/picker';
+import ModalDropdwn from "../components/ModalDropdown";
+import moment from "moment";
 
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "événement"})
   const animalsService = new AnimalsService;
   const { user } = useContext(AuthenticatedUserContext);
   const [modalVisible, setModalVisible] = useState(false);
-  const [animaux, setAnimaux] = useState([{nom:"Selectionner un animal"}]);
+  const [modalDropdownVisible, setModalDropdownVisible] = useState(false);
+  const [animaux, setAnimaux] = useState([]);
+  const [selected, setSelected] = useState([]);
   const [loadingEvent, setLoadingEvent] = useState(false);
   const [eventType, setEventType] = useState(false);
-  const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
-  const [date, setDate] = useState(new Date(new Date().getTime()));
+  const list = [
+    {title: "Balade", id: "balade"},
+    {title: "Entrainement", id: "entrainement"},
+    {title: "Concours", id: "concours"},
+    {title: "Rendez-vous", id: "rdv"},
+    {title: "Soins", id: "soins"},
+    {title: "Autre", id: "autre"},
+  ];
+  const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
+  const watchAll = watch();
+  //setValue("date", String(jour + "/" + mois + "/" + annee));
+  //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -30,12 +45,18 @@ const ActionScreen = ({ navigation }) => {
   }, [navigation]);
 
   const getAnimals = async () => {
-    //A TERMINER
-    var animaux = await animalsService.getAnimals(user.id)
-    if(animaux.rowCount != 0){
-      setAnimaux(animaux);
+    // Si aucun animal est déjà présent dans la liste, alors
+    if(animaux.length == 0){
+      setLoadingEvent(true);
+      // On récupère les animaux de l'utilisateur courant
+      var result = await animalsService.getAnimals(user.id);
+      setLoadingEvent(false);
+      // Si l'utilisateur a des animaux, alors
+      if(result.rowCount !== 0){
+        // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
+        setAnimaux(result.rows);
+      }
     }
-    //setAnimaux([{nom:"Selectionner un animal"}]);
   };
 
   const submitRegister = async(data) =>{
@@ -51,10 +72,75 @@ const ActionScreen = ({ navigation }) => {
     setEventType(val);
   }
 
-  const onChangeDate = (event, selectedDate) => {
-    setValue("date", selectedDate.getDate() + "/" + parseInt(selectedDate.getMonth()+1) + "/" + selectedDate.getFullYear());
-    setDate(selectedDate);
+  const onChangeDate = (fieldname, selectedDate) => {
+    nbOccur = (String(selectedDate).match(/\//g) || []).length;
+    oldNbOccur = (String(getValues(fieldname)).match(/\//g) || []).length;
+    if(String(selectedDate).length === 2){
+        if(nbOccur === 0 && oldNbOccur === 0){
+            selectedDate = selectedDate + "/";
+            setValue(fieldname, selectedDate);
+            //setState(selectedDate);
+        }
+    } else if(String(selectedDate).length === 5){
+        if(nbOccur === 1 && oldNbOccur === 1){
+            selectedDate = selectedDate + "/";
+            setValue(fieldname, selectedDate);
+            //setState(selectedDate);
+        }
+    } else if(String(selectedDate).length === 9){
+        firstDatePart = String(selectedDate).split("/")[0];
+        if(String(firstDatePart).length === 1){
+            selectedDate = "0" + selectedDate;
+            setValue(fieldname, selectedDate);
+            //setState(selectedDate);
+        }
+    }
+    setValue(fieldname, selectedDate);
+    //setState(selectedDate);
   };
+
+  const getActualDate = () =>{
+    today = new Date();
+    jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
+    mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
+    annee = today.getFullYear();
+    if(watch("date") == undefined){
+      //setValue("date", String(jour + "/" + mois + "/" + annee));
+    }
+    return String(jour + "/" + mois + "/" + annee);
+    //setValue(fieldname, String(jour + "/" + mois + "/" + annee));
+  }
+
+  const onChangeTime = (fieldname, text) =>{
+    today = new Date();
+    jour = today.getHours();
+  }
+
+  const getActualTime = ()=>{
+    today = new Date();
+    hour = today.getHours();
+    minutes = today.getMinutes()
+    return String(hour + ":" + minutes);
+  }
+
+  const convertDateToText = (fieldname) =>{
+    date = watch(fieldname);
+    if(date == undefined){
+      return "";
+    }
+    if(date.length != 10){
+      return "";
+    }
+    options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateFormat = "DD/MM/YYYY";
+    dateValid = moment(date, dateFormat, true).isValid();
+    if (dateValid == false){
+      return "Date invalide";
+    }
+    let [day, month, year] = date.split('/')
+    dateObject  = new Date(year, month-1, day);
+    return String(dateObject.toLocaleDateString("fr-FR", options));
+  }
 
   return (
     <>
@@ -67,11 +153,20 @@ const ActionScreen = ({ navigation }) => {
       </View>
       )}
       <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
-      <TestModal
+      <ModalAnimals
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}
         setAnimaux={setAnimaux}
         animaux={animaux}
+        selected={selected}
+        setSelected={setSelected}
+      />
+      <ModalDropdwn
+        list={list}
+        modalVisible={modalDropdownVisible}
+        setModalVisible={setModalDropdownVisible}
+        setState={setEventType}
+        state={eventType}
       />
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
@@ -79,8 +174,18 @@ const ActionScreen = ({ navigation }) => {
           <ScrollView style={{width:"100%"}}>
             <View style={styles.formContainer}>
               <View style={styles.inputContainer}>
-                <Text style={styles.textInput}>Date :</Text>
-                <DateTimePicker
+                <Text style={styles.textInput}>Date : {convertDateToText("date")} <Text style={{color: "red"}}>*</Text></Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Exemple : 01/01/1900"
+                  keyboardType="numeric"
+                  maxLength={10}
+                  placeholderTextColor={Variables.texte}
+                  onChangeText={(text) => onChangeDate("date", text)}
+                  value={watch("date")}
+                  defaultValue={getActualDate()}
+                />
+                {/* <DateTimePicker
                     testID="dateTimePicker"
                     value={date}
                     mode="date"
@@ -88,10 +193,49 @@ const ActionScreen = ({ navigation }) => {
                     onChange={onChangeDate}
                     accentColor={Variables.bouton}
                     style={styles.datePicker}
-                />
+                    display="default"
+                /> */}
               </View>
+            
               <View style={styles.inputContainer}>
-                <Text style={styles.textInput}>Nom de l'événement :</Text>
+                <Text style={styles.textInput}>Animal : <Text style={{color: "red"}}>*</Text></Text>
+                <TouchableOpacity 
+                  style={styles.textInput} 
+                  onPress={()=>{setModalVisible(true)}} 
+                >
+                  <View style={styles.containerAnimaux}>
+                    {selected.length == 0 &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Selectionner un animal</Text></View>
+                    }
+                    {selected.map((animal, index) => {
+                      return (
+                        <View key={animal.id} style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{animal.nom}</Text></View>
+                      );
+                    })}
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Événement : <Text style={{color: "red"}}>*</Text></Text>
+                <TouchableOpacity 
+                  style={styles.textInput} 
+                  onPress={()=>{setModalDropdownVisible(true)}} 
+                >
+                  <View style={styles.containerAnimaux}>
+                    {eventType == false &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Selectionner un type</Text></View>
+                    }
+                    {
+                      eventType != false &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{eventType.title}</Text></View>
+                    }
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Nom de l'événement : <Text style={{color: "red"}}>*</Text></Text>
                 {errors.nom && <Text style={styles.errorInput}>Nom obligatoire</Text>}
                 <TextInput
                   style={styles.input}
@@ -104,47 +248,190 @@ const ActionScreen = ({ navigation }) => {
               </View>
               <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Lieu de l'événement :</Text>
-                {errors.lieu && <Text style={styles.errorInput}>Lieu obligatoire</Text>}
                 <TextInput
                   style={styles.input}
                   placeholder="Exemple : Ecurie Avinesy"
                   placeholderTextColor={Variables.texte}
                   onChangeText={(text) => setValue("lieu", text)}
                   defaultValue={getValues("lieu")}
-                  {...register("lieu", { required: true })}
                 />
               </View>
-            
-              <View style={styles.inputContainer}>
-                <Text style={styles.textInput}>Les animaux :</Text>
-                <TouchableOpacity 
-                  style={styles.textInput} 
-                  onPress={()=>{setModalVisible(true)}} 
-                >
-                  <View style={styles.containerAnimaux}>
-                    {animaux.map((animal, index) => {
-                      return (
-                        <Text style={styles.badgeAnimal}>{animal.nom}</Text>
-                      );
-                    })}
+
+              {eventType.id === "balade" && (
+                  <>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.textInput}>Date de début : {convertDateToText("datedebutbalade")}</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Exemple : 01/01/1900"
+                        keyboardType="numeric"
+                        maxLength={10}
+                        placeholderTextColor={Variables.texte}
+                        onChangeText={(text) => onChangeDate("datedebutbalade", setDate, text)}
+                        value={watch("datedebutbalade")}
+                        defaultValue={getActualDate()}
+                      />
+                    </View>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.textInput}>Heure de début :</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Exemple : 12:45"
+                        keyboardType="numeric"
+                        maxLength={5}
+                        placeholderTextColor={Variables.texte}
+                        onChangeText={(text) => onChangeTime("heuredebutbalade", setDate, text)}
+                        value={watch("heuredebutbalade")}
+                        defaultValue={getActualTime()}
+                      />
+                    </View>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.textInput}>Date de fin : {convertDateToText("datefinbalade")} </Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Exemple : 01/01/1900"
+                        keyboardType="numeric"
+                        maxLength={10}
+                        placeholderTextColor={Variables.texte}
+                        onChangeText={(text) => onChangeDate("datefinbalade", setDate, text)}
+                        value={watch("datefinbalade")}
+                        defaultValue={getActualDate()}
+                      />
+                    </View>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.textInput}>Heure de fin :</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Exemple : 12:45"
+                        keyboardType="numeric"
+                        maxLength={5}
+                        placeholderTextColor={Variables.texte}
+                        onChangeText={(text) => onChangeTime("heurefinbalade", setDate, text)}
+                        value={watch("heurefinbalade")}
+                        defaultValue={getActualTime()}
+                      />
+                    </View>
+                  </>
+              )}
+
+              {eventType.id === "entrainement" && (
+                  <>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.textInput}>Discipline : <Text style={{color: "red"}}>*</Text></Text>
+                      {errors.discipline && <Text style={styles.errorInput}>Discipline obligatoire</Text>}
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Exemple : CSO"
+                        placeholderTextColor={Variables.texte}
+                        onChangeText={(text) => setValue("discipline", text)}
+                        defaultValue={getValues("discipline")}
+                        {...register("discipline", { required: true })}
+                      />
+                    </View>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.textInput}>Note de ressenti :</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Exemple : 1 = Mauvais, 5 = Parfait"
+                        keyboardType="numeric"
+                        placeholderTextColor={Variables.texte}
+                        onChangeText={(text) => setValue("note", text)}
+                        defaultValue={getValues("note")}
+                      />
+                    </View>
+                  </>
+              )}
+
+              {eventType.id === "concours" && (
+                <>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Discipline : <Text style={{color: "red"}}>*</Text></Text>
+                    {errors.discipline && <Text style={styles.errorInput}>Discipline obligatoire</Text>}
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Exemple : CSO"
+                      placeholderTextColor={Variables.texte}
+                      onChangeText={(text) => setValue("discipline", text)}
+                      defaultValue={getValues("discipline")}
+                      {...register("discipline", { required: true })}
+                    />
                   </View>
-                </TouchableOpacity>
-              </View>
-
-              {eventType === "Balade" && (
-                  <Text>Balade weeeeeeesh</Text>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Epreuve :</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Exemple : galop 1"
+                      placeholderTextColor={Variables.texte}
+                      onChangeText={(text) => setValue("epreuve", text)}
+                      defaultValue={getValues("epreuve")}
+                    />
+                  </View>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Dossart :</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Exemple : 1"
+                      keyboardType="numeric"
+                      placeholderTextColor={Variables.texte}
+                      onChangeText={(text) => setValue("dossart", text)}
+                      defaultValue={getValues("dossart")}
+                    />
+                  </View>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Placement :</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Exemple : 1"
+                      keyboardType="numeric"
+                      placeholderTextColor={Variables.texte}
+                      onChangeText={(text) => setValue("placement", text)}
+                      defaultValue={getValues("placement")}
+                    />
+                  </View>
+                </>
               )}
 
-              {eventType === "Entrainement" && (
-                  <Text>Entrainement weeeeeeesh</Text>
+              {eventType.id === "rdv" && (
+                <>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Spécialiste :</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Exemple : Vétérinaire"
+                      placeholderTextColor={Variables.texte}
+                      onChangeText={(text) => setValue("specialiste", text)}
+                      defaultValue={getValues("specialiste")}
+                    />
+                  </View>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Dépense :</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Exemple : 0 (un doux rêve)"
+                      keyboardType="numeric"
+                      placeholderTextColor={Variables.texte}
+                      onChangeText={(text) => setValue("depense", text)}
+                      defaultValue={getValues("depense")}
+                    />
+                  </View>
+                </>
               )}
 
-              {eventType === "Concours" && (
-                  <Text>Concours weeeeeeesh</Text>
-              )}
-
-              {eventType === "rdv" && (
-                  <Text>rdv weeeeeeesh</Text>
+              {eventType.id === "soins" && (
+                <>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Traitement : <Text style={{color: "red"}}>*</Text></Text>
+                    {errors.discipline && <Text style={styles.errorInput}>Traitement obligatoire </Text>}
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Exemple : Cure de CMV"
+                      placeholderTextColor={Variables.texte}
+                      onChangeText={(text) => setValue("traitement", text)}
+                      defaultValue={getValues("traitement")}
+                      {...register("traitement", { required: true })}
+                    />
+                  </View>
+                </>
               )}
 
               <View style={styles.inputContainer}>
@@ -261,9 +548,9 @@ loadingEvent: {
     marginBottom: 15,
     borderRadius: 5,
     paddingLeft: 15,
+    paddingRight: 15,
     backgroundColor: Variables.fond_secondary,
     color: "black",
-    alignSelf: "center",
   },
   datePicker:{
     marginBottom: 15,
@@ -301,9 +588,11 @@ loadingEvent: {
   },
   badgeAnimal: {
     padding: 8,
+  },
+  containerBadgeAnimal: {
+    borderRadius: 5,
     backgroundColor: Variables.fond_secondary,
-    borderRadius: 20,
-    margin: 5
+    margin: 5,
   }
 });
 

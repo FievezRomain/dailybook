@@ -11,6 +11,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import AnimalsService from "../services/AnimalsService";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalVerif from "../components/ModalVerif";
+import DateField from "../components/DateField";
 
 const PetsScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
@@ -21,7 +22,11 @@ const PetsScreen = ({ navigation }) => {
   const [addingForm, setAddingForm] = useState(false);
   const [image, setImage] = useState(null);
   const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
-  const [date, setDate] = useState(new Date(new Date().getTime()));
+  today = new Date();
+  jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
+  mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
+  annee = today.getFullYear();
+  const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
   const [loadingEvent, setLoadingPets] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   
@@ -37,42 +42,7 @@ const PetsScreen = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
 
-  /* const submitPets = async(data) =>{
-    const formData = new FormData();
-    if(image != null){
-      formData.append("picture", {
-        name: "test",
-        type: "image/jpeg",
-        uri: data.image.uri
-      });
-      console.log(data.image.uri);
-    } else{
-      formData.append("files", "empty");
-    }
-    data = { ...data, image: data.image };
-    formData.append("recipe", JSON.stringify(data));
-    
-    setLoadingPets(true);
-    animalsService.create(formData)
-    .then((res) =>{
-      setLoadingPets(false);
-        Toast.show({
-            type: "success",
-            position: "top",
-            text1: "Création d'un nouvel animal réussie"
-        }); 
-        
-    })
-    .catch((err) =>{
-        console.log(err);
-        setLoadingPets(false);
-        Toast.show({
-            type: "error",
-            position: "top",
-            text1: err.message
-        });
-    });
-  }; */
+
   const getAnimals = async () => {
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
@@ -95,7 +65,7 @@ const PetsScreen = ({ navigation }) => {
         if(result.rows[0].couleur !== null ? setValue("couleur", result.rows[0].couleur) : null);
         if(result.rows[0].nomPere !== null ? setValue("nomPere", result.rows[0].nomPere) : null);
         if(result.rows[0].nomMere !== null ? setValue("nomMere", result.rows[0].nomMere) : null);
-        if(result.rows[0].datenaissance !== null ? setDate(new Date(result.rows[0].datenaissance)) : setDate(new Date(new Date().getTime())));
+        if(result.rows[0].datenaissance !== null ? setDate(result.rows[0].datenaissance) : setDate(null));
 
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
         setAnimaux(result.rows);
@@ -134,10 +104,13 @@ const PetsScreen = ({ navigation }) => {
       .then((response) =>{
         setLoadingPets(false);
         // Une fois la modification terminée, on valorise le hook avec la liste à jour des animaux
-        animauxTemp = animaux;
-        animauxFiltered = animaux.filter((a) => a.id === response.id);
-        animauxTemp[animaux.indexOf(animauxFiltered)] = response;
-        setAnimaux(animauxTemp);
+        //animauxTemp = animaux;
+        //animauxFiltered = animaux.filter((a) => a.id === response.id);
+        //animauxTemp[animaux.indexOf(animauxFiltered)] = response;
+        indice = animaux.findIndex((a) => a.id == response.id);
+        animaux[indice] = response;
+        setAnimaux(animaux);
+        setSelected([animaux[indice]]);
           Toast.show({
               type: "success",
               position: "top",
@@ -214,8 +187,30 @@ const PetsScreen = ({ navigation }) => {
     });
   }
 
-  const onChangeDate = (event, selectedDate) => {
-    setValue("datenaissance", selectedDate.getDate() + "/" + parseInt(selectedDate.getMonth()+1) + "/" + selectedDate.getFullYear());
+  const onChangeDate = (selectedDate) => {
+    nbOccur = (String(selectedDate).match(/\//g) || []).length;
+    oldNbOccur = (String(date).match(/\//g) || []).length;
+    if(String(selectedDate).length === 2){
+        if(nbOccur === 0 && oldNbOccur === 0){
+            selectedDate = selectedDate + "/";
+            setValue("datenaissance", selectedDate);
+            setDate(selectedDate);
+        }
+    } else if(String(selectedDate).length === 5){
+        if(nbOccur === 1 && oldNbOccur === 1){
+            selectedDate = selectedDate + "/";
+            setValue("datenaissance", selectedDate);
+            setDate(selectedDate);
+        }
+    } else if(String(selectedDate).length === 9){
+        firstDatePart = String(selectedDate).split("/")[0];
+        if(String(firstDatePart).length === 1){
+            selectedDate = "0" + selectedDate;
+            setValue("datenaissance", selectedDate);
+            setDate(selectedDate);
+        }
+    }
+    setValue("datenaissance", selectedDate);
     setDate(selectedDate);
   };
 
@@ -246,8 +241,8 @@ const PetsScreen = ({ navigation }) => {
           setValue={setValue}
           mode="single"
           buttonAdd={true}
-          setDate={setDate}
           setAddingForm={setAddingForm}
+          setDate={setDate}
         />
       </View>
       <View style={styles.form}>
@@ -279,7 +274,25 @@ const PetsScreen = ({ navigation }) => {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textInput}>Date :</Text>
-              <DateTimePicker
+              <TextInput
+                  style={styles.input}
+                  placeholder="Exemple : 01/01/1900"
+                  keyboardType="numeric"
+                  maxLength={10}
+                  placeholderTextColor={Variables.texte}
+                  onChangeText={(text) => onChangeDate(text)}
+                  value={date}
+              />
+              {/* <DateField
+                defaultValue={getValues}
+                style={styles.input}
+                setValue={setValue}
+                valueName={"datenaissance"}
+                getValues={getValues}
+                date={date}
+                setDate={setDate}
+              /> */}
+              {/* <DateTimePicker
                   testID="dateTimePicker"
                   value={date}
                   mode="date"
@@ -287,7 +300,7 @@ const PetsScreen = ({ navigation }) => {
                   onChange={onChangeDate}
                   accentColor={Variables.bouton}
                   style={styles.datePicker}
-              />
+              /> */}
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textInput}>Image :</Text>
