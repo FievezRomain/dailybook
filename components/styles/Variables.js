@@ -1,13 +1,11 @@
 const variables = {
-    // primary
-    fond: "#c9b69f",
-    texte: "#313a45",
-    bouton: "#956540",
-
-    // secondary
-    fond_secondary: "#d3ccc9",
-    texte_secondary: "#1f110f",
-    bouton_secondary: "#694233",
+    blanc: "#ffffff",
+    alezan: "#694233",
+    rouan: "#d3ccc9",
+    souris: "#313a45",
+    aubere: "#c9b69f",
+    isabelle: "#956540",
+    bai: "#1f110f"
   };
   
   export default variables;

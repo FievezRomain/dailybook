@@ -9,9 +9,9 @@ import ModalAnimals from "../components/ModalAnimals";
 import AnimalsService from "../services/AnimalsService";
 import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
 import TopTab from '../components/TopTab';
-import { Picker } from '@react-native-picker/picker';
 import ModalDropdwn from "../components/ModalDropdown";
 import moment from "moment";
+import ModalNotifications from "../components/ModalNotifications";
 
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "événement"})
@@ -19,6 +19,7 @@ const ActionScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDropdownVisible, setModalDropdownVisible] = useState(false);
+  const [modalNotifications, setModalNotifications] = useState(false);
   const [animaux, setAnimaux] = useState([]);
   const [selected, setSelected] = useState([]);
   const [loadingEvent, setLoadingEvent] = useState(false);
@@ -32,7 +33,8 @@ const ActionScreen = ({ navigation }) => {
     {title: "Autre", id: "autre"},
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
-  const watchAll = watch();
+  const [notifications, setNotifications] = useState([]);
+  //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
   //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
 
@@ -119,8 +121,11 @@ const ActionScreen = ({ navigation }) => {
   const getActualTime = ()=>{
     today = new Date();
     hour = today.getHours();
-    minutes = today.getMinutes()
-    return String(hour + ":" + minutes);
+    minutes = today.getMinutes();
+    if ( String(minutes).length == 1 ){
+      minutes = "0" + String(minutes);
+    }
+    return String(hour + "h" + minutes);
   }
 
   const convertDateToText = (fieldname) =>{
@@ -167,6 +172,13 @@ const ActionScreen = ({ navigation }) => {
         setModalVisible={setModalDropdownVisible}
         setState={setEventType}
         state={eventType}
+      />
+      <ModalNotifications
+        modalVisible={modalNotifications}
+        setModalVisible={setModalNotifications}
+        notifications={notifications}
+        setNotifications={setNotifications}
+        eventType={eventType}
       />
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
@@ -259,7 +271,7 @@ const ActionScreen = ({ navigation }) => {
 
               {eventType.id === "balade" && (
                   <>
-                    <View style={styles.inputContainer}>
+                    {/* <View style={styles.inputContainer}>
                       <Text style={styles.textInput}>Date de début : {convertDateToText("datedebutbalade")}</Text>
                       <TextInput
                         style={styles.input}
@@ -271,12 +283,12 @@ const ActionScreen = ({ navigation }) => {
                         value={watch("datedebutbalade")}
                         defaultValue={getActualDate()}
                       />
-                    </View>
+                    </View> */}
                     <View style={styles.inputContainer}>
                       <Text style={styles.textInput}>Heure de début :</Text>
                       <TextInput
                         style={styles.input}
-                        placeholder="Exemple : 12:45"
+                        placeholder="Exemple : 12h45"
                         keyboardType="numeric"
                         maxLength={5}
                         placeholderTextColor={Variables.texte}
@@ -302,7 +314,7 @@ const ActionScreen = ({ navigation }) => {
                       <Text style={styles.textInput}>Heure de fin :</Text>
                       <TextInput
                         style={styles.input}
-                        placeholder="Exemple : 12:45"
+                        placeholder="Exemple : 12h45"
                         keyboardType="numeric"
                         maxLength={5}
                         placeholderTextColor={Variables.texte}
@@ -431,8 +443,39 @@ const ActionScreen = ({ navigation }) => {
                       {...register("traitement", { required: true })}
                     />
                   </View>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Date de fin : {convertDateToText("datefinbalade")} </Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Exemple : 01/01/1900"
+                      keyboardType="numeric"
+                      maxLength={10}
+                      placeholderTextColor={Variables.texte}
+                      onChangeText={(text) => onChangeDate("datefinbalade", setDate, text)}
+                      value={watch("datefinbalade")}
+                      defaultValue={getActualDate()}
+                    />
+                  </View>
                 </>
               )}
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Notifications :</Text>
+                <TouchableOpacity 
+                  style={styles.textInput}
+                  onPress={()=>{setModalNotifications(true)}} 
+                >
+                  <View style={styles.containerAnimaux}>
+                    {notifications.length == 0 &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Par défaut, vous recevrez une notification par jour à 8h durant l'événement.</Text></View>
+                    }
+                    {
+                      notifications.length != 0 &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Notifications personnalisées</Text></View>
+                    }
+                  </View>
+                </TouchableOpacity>
+              </View>
 
               <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Commentaire :</Text>
