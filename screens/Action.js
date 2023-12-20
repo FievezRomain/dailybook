@@ -7,6 +7,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ModalAnimals from "../components/ModalAnimals";
 import AnimalsService from "../services/AnimalsService";
+import EventService from "../services/EventService";
 import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
 import TopTab from '../components/TopTab';
 import ModalDropdwn from "../components/ModalDropdown";
@@ -16,14 +17,19 @@ import ModalNotifications from "../components/ModalNotifications";
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "événement"})
   const animalsService = new AnimalsService;
+  const eventService = new EventService;
   const { user } = useContext(AuthenticatedUserContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDropdownVisible, setModalDropdownVisible] = useState(false);
+  const [modalDropdownNotifVisible, setModalDropdownNotifVisible] = useState(false);
   const [modalNotifications, setModalNotifications] = useState(false);
+  const [modalOptionNotifications, setModalOptionNotifications] = useState(false);
   const [animaux, setAnimaux] = useState([]);
   const [selected, setSelected] = useState([]);
   const [loadingEvent, setLoadingEvent] = useState(false);
   const [eventType, setEventType] = useState(false);
+  const [notifType, setNotifType] = useState(false);
+  const [optionNotifType, setOptionNotifType] = useState(false);
   const list = [
     {title: "Balade", id: "balade"},
     {title: "Entrainement", id: "entrainement"},
@@ -31,6 +37,15 @@ const ActionScreen = ({ navigation }) => {
     {title: "Rendez-vous", id: "rdv"},
     {title: "Soins", id: "soins"},
     {title: "Autre", id: "autre"},
+  ];
+  const listNotif = [
+    {title: "Aucune notification", id: "None"},
+    {title: "Notification le jour J", id: "JourJ"},
+    {title: "Notification la veille", id: "Veille"},
+  ];
+  const listOptionsNotif = [
+    {title: "Aucune option supplémentaire", id: "None"},
+    {title: "Me rappeler l'événement dans 1 an", id: "Annee"},
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
@@ -42,11 +57,13 @@ const ActionScreen = ({ navigation }) => {
     const unsubscribe = navigation.addListener("focus", () => {
         setMessages({message1: "Ajouter un", message2: "événement"});
         getAnimals();
+        getActualDate();
     });
     return unsubscribe;
   }, [navigation]);
 
   const getAnimals = async () => {
+  
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       setLoadingEvent(true);
@@ -59,14 +76,84 @@ const ActionScreen = ({ navigation }) => {
         setAnimaux(result.rows);
       }
     }
+  
   };
 
   const submitRegister = async(data) =>{
-    Toast.show({
-      type: "success",
-      position: "top",
-      text1: getValues("date")
-    });
+    var complete = true;
+
+    // Vérification complétion du formulaire
+    if(data.date === undefined){
+      complete = false;
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Veuillez saisir une date pour l'événement"
+      });
+    }
+    if(animaux.length === 0){
+      complete = false;
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Veuillez saisir un animal"
+      });
+    } else{
+      setValue("animaux", selected.map(function(item) { return item["id"] }));
+    }
+    if(data.nom === undefined){
+      complete = false;
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Veuillez saisir un nom d'événement"
+      });
+    }
+    if(eventType === false){
+      complete = false;
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Veuillez saisir un type d'événement"
+      });
+    } else{
+      if(eventType.id === "entrainement"){
+        if(data.discipline === undefined){
+          complete = false;
+          Toast.show({
+            type: "error",
+            position: "top",
+            text1: "Veuillez saisir une discipline"
+          });
+        }
+      }
+      if(eventType.id === "concours"){
+        if(data.discipline === undefined){
+          complete = false;
+          Toast.show({
+            type: "error",
+            position: "top",
+            text1: "Veuillez saisir une discipline"
+          });
+        }
+      }
+      if(eventType.id === "soins"){
+        if(data.traitement === undefined){
+          complete = false;
+          Toast.show({
+            type: "error",
+            position: "top",
+            text1: "Veuillez saisir un traitement"
+          });
+        }
+      }
+    }
+
+    // Si formulaire complet, on enregistre
+    if(complete === true){
+      eventService.create(data);
+    }
+
   };
 
   const handleChange = (val) =>{
@@ -107,7 +194,7 @@ const ActionScreen = ({ navigation }) => {
     mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
     annee = today.getFullYear();
     if(watch("date") == undefined){
-      //setValue("date", String(jour + "/" + mois + "/" + annee));
+      setValue("date", String(jour + "/" + mois + "/" + annee));
     }
     return String(jour + "/" + mois + "/" + annee);
     //setValue(fieldname, String(jour + "/" + mois + "/" + annee));
@@ -165,6 +252,8 @@ const ActionScreen = ({ navigation }) => {
         animaux={animaux}
         selected={selected}
         setSelected={setSelected}
+        setValue={setValue}
+        valueName={"animaux"}
       />
       <ModalDropdwn
         list={list}
@@ -172,6 +261,26 @@ const ActionScreen = ({ navigation }) => {
         setModalVisible={setModalDropdownVisible}
         setState={setEventType}
         state={eventType}
+        setValue={setValue}
+        valueName={"eventType"}
+      />
+      <ModalDropdwn
+        list={listNotif}
+        modalVisible={modalDropdownNotifVisible}
+        setModalVisible={setModalDropdownNotifVisible}
+        setState={setNotifType}
+        state={notifType}
+        setValue={setValue}
+        valueName={"notif"}
+      />
+      <ModalDropdwn
+        list={listOptionsNotif}
+        modalVisible={modalOptionNotifications}
+        setModalVisible={setModalOptionNotifications}
+        setState={setOptionNotifType}
+        state={optionNotifType}
+        setValue={setValue}
+        valueName={"optionNotif"}
       />
       <ModalNotifications
         modalVisible={modalNotifications}
@@ -195,7 +304,7 @@ const ActionScreen = ({ navigation }) => {
                   placeholderTextColor={Variables.texte}
                   onChangeText={(text) => onChangeDate("date", text)}
                   value={watch("date")}
-                  defaultValue={getActualDate()}
+                  defaultValue={watch("date")}
                 />
                 {/* <DateTimePicker
                     testID="dateTimePicker"
@@ -212,12 +321,16 @@ const ActionScreen = ({ navigation }) => {
               <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Animal : <Text style={{color: "red"}}>*</Text></Text>
                 <TouchableOpacity 
-                  style={styles.textInput} 
+                  style={styles.textInput}
+                  disabled={animaux.length > 0 ? false : true}
                   onPress={()=>{setModalVisible(true)}} 
                 >
                   <View style={styles.containerAnimaux}>
-                    {selected.length == 0 &&
-                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Selectionner un animal</Text></View>
+                    {animaux.length === 0 &&
+                      <View><Text style={[styles.badgeAnimal, styles.errorInput]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
+                    }
+                    {selected.length == 0 && animaux.length > 0 &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Sélectionner un animal</Text></View>
                     }
                     {selected.map((animal, index) => {
                       return (
@@ -236,7 +349,7 @@ const ActionScreen = ({ navigation }) => {
                 >
                   <View style={styles.containerAnimaux}>
                     {eventType == false &&
-                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Selectionner un type</Text></View>
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Sélectionner un type</Text></View>
                     }
                     {
                       eventType != false &&
@@ -251,7 +364,7 @@ const ActionScreen = ({ navigation }) => {
                 {errors.nom && <Text style={styles.errorInput}>Nom obligatoire</Text>}
                 <TextInput
                   style={styles.input}
-                  placeholder="Exemple : RDV vétérinaire"
+                  placeholder="Exemple : Rendez-vous vétérinaire"
                   placeholderTextColor={Variables.texte}
                   onChangeText={(text) => setValue("nom", text)}
                   defaultValue={getValues("nom")}
@@ -262,7 +375,7 @@ const ActionScreen = ({ navigation }) => {
                 <Text style={styles.textInput}>Lieu de l'événement :</Text>
                 <TextInput
                   style={styles.input}
-                  placeholder="Exemple : Ecurie Avinesy"
+                  placeholder="Exemple : Écurie de la Pomme"
                   placeholderTextColor={Variables.texte}
                   onChangeText={(text) => setValue("lieu", text)}
                   defaultValue={getValues("lieu")}
@@ -462,16 +575,48 @@ const ActionScreen = ({ navigation }) => {
               <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Notifications :</Text>
                 <TouchableOpacity 
+                  style={styles.textInput} 
+                  onPress={()=>{setModalDropdownNotifVisible(true)}} 
+                >
+                  <View style={styles.containerAnimaux}>
+                    {notifType == false &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Par défaut, vous ne recevrez pas de notification</Text></View>
+                    }
+                    {
+                      notifType != false &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{notifType.title}</Text></View>
+                    }
+                  </View>
+                </TouchableOpacity>
+                {/* <TouchableOpacity 
                   style={styles.textInput}
                   onPress={()=>{setModalNotifications(true)}} 
                 >
                   <View style={styles.containerAnimaux}>
                     {notifications.length == 0 &&
-                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Par défaut, vous recevrez une notification par jour à 8h durant l'événement.</Text></View>
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Par défaut, vous ne recevrez pas de notification.</Text></View>
                     }
                     {
                       notifications.length != 0 &&
                       <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Notifications personnalisées</Text></View>
+                    }
+                  </View>
+                </TouchableOpacity> */}
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Option notifications :</Text>
+                <TouchableOpacity 
+                  style={styles.textInput} 
+                  onPress={()=>{setModalOptionNotifications(true)}} 
+                >
+                  <View style={styles.containerAnimaux}>
+                    {optionNotifType == false &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Aucune option</Text></View>
+                    }
+                    {
+                      optionNotifType != false &&
+                      <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{optionNotifType.title}</Text></View>
                     }
                   </View>
                 </TouchableOpacity>
@@ -493,7 +638,7 @@ const ActionScreen = ({ navigation }) => {
               
 
               <View style={styles.registerButton}>
-                <Button type="primary" onPress={handleSubmit(submitRegister)}>
+                <Button type="primary" disabled={false} size={"m"} onPress={handleSubmit(submitRegister)}>
                   <Text style={styles.textButton}>Enregistrer</Text>
                 </Button>
               </View>
@@ -514,7 +659,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor:  Variables.fond
+    backgroundColor:  Variables.isabelle
   },
   inputContainer:{
     alignItems: "center",
@@ -530,11 +675,11 @@ const styles = StyleSheet.create({
   registerButton: {
     marginBottom: 20,
     marginTop: 10,
-    backgroundColor: Variables.bouton,
+    backgroundColor: Variables.isabelle,
     borderRadius: 10
   },
   title: {
-    color: Variables.texte,
+    color: Variables.bai,
     fontSize: 30,
     letterSpacing: 2,
     marginBottom:20,
@@ -581,7 +726,7 @@ loadingEvent: {
     marginBottom: 15,
     borderRadius: 5,
     paddingLeft: 15,
-    backgroundColor: Variables.fond_secondary,
+    backgroundColor: Variables.rouan,
     color: "black",
     alignSelf: "baseline"
   },
@@ -592,7 +737,7 @@ loadingEvent: {
     borderRadius: 5,
     paddingLeft: 15,
     paddingRight: 15,
-    backgroundColor: Variables.fond_secondary,
+    backgroundColor: Variables.rouan,
     color: "black",
   },
   datePicker:{
@@ -633,8 +778,8 @@ loadingEvent: {
     padding: 8,
   },
   containerBadgeAnimal: {
-    borderRadius: 5,
-    backgroundColor: Variables.fond_secondary,
+    borderRadius: 10,
+    backgroundColor: Variables.rouan,
     margin: 5,
   }
 });

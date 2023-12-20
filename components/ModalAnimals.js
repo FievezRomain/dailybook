@@ -4,7 +4,7 @@ import Variables from "./styles/Variables";
 import { useNavigation } from "@react-navigation/native";
 import AnimalsPicker from "./AnimalsPicker";
 
-const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected }) => {
+const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected, setValue, valueName }) => {
 
   return (
     <>
@@ -25,9 +25,14 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
                 mode="multiple"
                 selected={selected}
                 setSelected={setSelected}
+                setValue={setValue}
+                valueName={valueName}
             />
             <View style={styles.buttonContainer}>
                 <Button
+                disabled={false}
+                size={"l"}
+                type={"primary"}
                 onPress={() => {
                     setModalVisible(!modalVisible)
                 }}
@@ -44,7 +49,7 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Variables.fond,
+    backgroundColor: Variables.rouan,
     height: "30%",
     justifyContent: "center",
     //flexDirection: "row wrap"
@@ -79,8 +84,8 @@ const styles = StyleSheet.create({
         borderColor: 'white',
     },
     selectedAvatar:{
-        backgroundColor: Variables.bouton,
-        borderColor: Variables.bouton,
+        backgroundColor: Variables.bai,
+        borderColor: Variables.bai,
     },
     containerAnimaux:{
         display: "flex",
@@ -100,7 +105,7 @@ const styles = StyleSheet.create({
         color: "white"
     },
     selectedText:{
-        color: Variables.bouton
+        color: Variables.bai
     },
 });
 

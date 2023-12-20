@@ -2,7 +2,7 @@ import { Text, View, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 
-const Button = ({ children, type, size, optionalStyle, onPress }) => {
+const Button = ({ children, type, size, optionalStyle, disabled, onPress }) => {
     let backgroundColor = Variables.isabelle;
     let color = Variables.blanc;
     let paddingLeft = 5;
@@ -20,6 +20,11 @@ const Button = ({ children, type, size, optionalStyle, onPress }) => {
     } else if (type === "tertiary") {
       backgroundColor = Variables.alezan
       color = Variables.blanc;
+    }
+
+    if(disabled === true){
+      backgroundColor = Variables.rouan
+      color = Variables.isabelle
     }
 
     if(size === "m"){
@@ -61,7 +66,7 @@ const Button = ({ children, type, size, optionalStyle, onPress }) => {
     });
   
     return (
-      <TouchableOpacity onPress={onPress} style={styles.button}>
+      <TouchableOpacity disabled={disabled} onPress={onPress} style={styles.button}>
         <Text style={styles.buttonText}>{children}</Text>
       </TouchableOpacity>
     );

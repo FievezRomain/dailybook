@@ -64,7 +64,7 @@ const TabStack = () => {
                 <Image source={plus} style={{
                   width: 35,
                   height: 35,
-                  tintColor: expanded ? Variables.bouton_secondary : Variables.bouton,
+                  tintColor: expanded ? Variables.alezan : Variables.isabelle,
                   zIndex: 1
                 }}></Image>
               </MotiView>
@@ -199,7 +199,7 @@ const TabStack = () => {
         <Animated.View style={{
           width: getWidth() - 15,
           //height: 2,
-          backgroundColor: 'brown',
+          backgroundColor: Variables.isabelle,
           position: 'absolute',
           // bottom: (667 / (Dimensions.get("window").height / 10)) *5,
           // Horizontal Padding = 20...

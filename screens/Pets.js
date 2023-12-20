@@ -273,7 +273,7 @@ const PetsScreen = ({ navigation }) => {
               />
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Date :</Text>
+              <Text style={styles.textInput}>Date de naissance :</Text>
               <TextInput
                   style={styles.input}
                   placeholder="Exemple : 01/01/1900"
@@ -331,7 +331,7 @@ const PetsScreen = ({ navigation }) => {
               <Text style={styles.textInput}>Taille (cm) :</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Exemple : 50"
+                placeholder="Exemple : 140"
                 keyboardType="numeric"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("taille", text)}
@@ -342,7 +342,7 @@ const PetsScreen = ({ navigation }) => {
               <Text style={styles.textInput}>Poids (kg) :</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Exemple : 30"
+                placeholder="Exemple : 300"
                 keyboardType="numeric"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("poids", text)}
@@ -363,7 +363,7 @@ const PetsScreen = ({ navigation }) => {
               <Text style={styles.textInput}>Couleur :</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Exemple : Rouge tricolor"
+                placeholder="Exemple : Noir"
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("couleur", text)}
                 defaultValue={getValues("couleur")}

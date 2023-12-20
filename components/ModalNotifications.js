@@ -75,11 +75,16 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
         setDatePickerVisibility(true);
     }
 
+    const handleReinitialiserNotifs = () =>{
+        setNotifications([]);
+    }
+
     return (
         <>
             <DateTimePicker
                 isVisible={isDatePickerVisible}
                 mode="time"
+                themeVariant="light"
                 onCancel={handleCancelPicker}
                 onConfirm={handleConfirmPicker}
                 date={currentTime}
@@ -133,8 +138,9 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                             <Button
                                 type={"tertiary"}
                                 size={"m"}
+                                disabled={notifications.length > 0 ? false : true}
                                 onPress={() => {
-                                    setModalVisible(!modalVisible)
+                                    handleReinitialiserNotifs()
                                 }}
                             >
                                 Réinitialiser

@@ -3,7 +3,7 @@ import { getImagePath } from '../services/Config';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import plus from '../assets/plus.png'
 
-const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined }) => {
+const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined }) => {
 
     const changeSelectedAnimals = (animal) => {
         const found = animaux.find(e => e.id === animal.id);
@@ -26,11 +26,14 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
             if(mode === "multiple"){
                 const foundSelected = selected.find(e => e.id === animal.id);
                 if (foundSelected){
+                    setValue(valueName, selected.filter(e => e.id !== animal.id).map(e => e.id));
                     setSelected(selected.filter((a) => a.id !== animal.id));
                 } else{
                     if(selected.length === 0){
+                        setValue(valueName, animaux.filter(e => e.id === animal.id).map(e => e.id));
                         setSelected(animaux.filter((a) => a.id === animal.id));
                     } else{
+                        setValue(valueName, selected.concat(animaux.filter(e => e.id === animal.id)).map(e => e.id));
                         setSelected(selected.concat(animaux.filter((a) => a.id === animal.id)));
                     }
                 }
@@ -115,12 +118,12 @@ const styles = StyleSheet.create({
         fontSize: 30
     },
     defaultAvatar:{
-        backgroundColor: Variables.bouton,
-        borderColor: Variables.bouton,
+        backgroundColor: Variables.alezan,
+        borderColor: Variables.alezan,
     },
     selectedAvatar:{
-        backgroundColor: Variables.texte,
-        borderColor: Variables.texte,
+        backgroundColor: Variables.bai,
+        borderColor: Variables.bai,
     },
     containerAnimaux:{
         display: "flex",
@@ -137,10 +140,10 @@ const styles = StyleSheet.create({
         marginRight: 20
     },
     defaultText:{
-        color: Variables.bouton
+        color: Variables.alezan
     },
     selectedText:{
-        color: Variables.texte
+        color: Variables.bai
     },
 });
 
