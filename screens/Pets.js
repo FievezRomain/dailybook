@@ -78,7 +78,7 @@ const PetsScreen = ({ navigation }) => {
     data["idProprietaire"] =  user.id;
     setLoadingPets(true);
 
-    const formData = data;
+    let formData = data;
     if (data.image != undefined){
       formData = new FormData();
       if(image != null){

@@ -557,15 +557,15 @@ const ActionScreen = ({ navigation }) => {
                     />
                   </View>
                   <View style={styles.inputContainer}>
-                    <Text style={styles.textInput}>Date de fin : {convertDateToText("datefinbalade")} </Text>
+                    <Text style={styles.textInput}>Date de fin : {convertDateToText("datefinsoins")} </Text>
                     <TextInput
                       style={styles.input}
                       placeholder="Exemple : 01/01/1900"
                       keyboardType="numeric"
                       maxLength={10}
                       placeholderTextColor={Variables.texte}
-                      onChangeText={(text) => onChangeDate("datefinbalade", setDate, text)}
-                      value={watch("datefinbalade")}
+                      onChangeText={(text) => onChangeDate("datefinsoins", setDate, text)}
+                      value={watch("datefinsoins")}
                       defaultValue={getActualDate()}
                     />
                   </View>

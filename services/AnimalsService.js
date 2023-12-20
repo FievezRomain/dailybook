@@ -23,7 +23,7 @@ export default class AnimalsService {
     }
     async create(body) {
         await this.updateAxiosAuthorization();
-        if (body.image === undefined){
+        if (body._parts === undefined){
             return this.createWithoutPicture(body);
         } else{
             return this.createWithPicture(body);
@@ -60,7 +60,7 @@ export default class AnimalsService {
 
     async modify(body) {
         await this.updateAxiosAuthorization();
-        if (body.image === undefined){
+        if (body._parts === undefined){
             return this.modifyWithoutPicture(body);
         } else{
             return this.modifyWithPicture(body);
