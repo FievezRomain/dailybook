@@ -2,12 +2,13 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from "reac
 import { useForm } from "react-hook-form";
 import wallpaper_login from "../assets/wallpaper_login.png";
 import variables from "../components/styles/Variables";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import AuthService from "../services/AuthService";
 import Toast from "react-native-toast-message";
 import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from "../components/Button";
+import * as Notifications from 'expo-notifications';
 
 const SignInScreen = ({ navigation })=> {
     const [loadingLogin, setLoadingLogin] = useState(false);
@@ -15,8 +16,17 @@ const SignInScreen = ({ navigation })=> {
     const authService = new AuthService;
     const { setUser } = useContext(AuthenticatedUserContext);
 
+    useEffect(() => {
+        const { status } = Notifications.requestPermissionsAsync();
+        if (status !== "granted"){
+            return;
+        }
+    }, [navigation]);
+
     const submitLogin = async(data) =>{
         setLoadingLogin(true);
+        const { data: token } = await Notifications.getExpoPushTokenAsync();
+        data = { ...data, expotoken: token };
         authService.loginUser(data)
         .then((user) =>{
             if(user.accessToken){
