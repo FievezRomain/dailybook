@@ -2,7 +2,7 @@ import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
-export default class AnimalsService {
+export default class EventService {
 
     async create(body) {
         await this.updateAxiosAuthorization();
@@ -19,6 +19,16 @@ export default class AnimalsService {
         return axios.delete(`${getBaseUrl()}deleteEvent`, {data: body})
         .then((response) => {
             return response.data;
+        })
+        .catch();
+    }
+
+    async getEvents(id){
+        await this.updateAxiosAuthorization();
+        return axios
+        .get(`${getBaseUrl()}eventsByUser?idProprietaire=${id}`)
+        .then(({data}) => {
+            return data
         })
         .catch();
     }
