@@ -13,6 +13,7 @@ import TopTab from '../components/TopTab';
 import ModalDropdwn from "../components/ModalDropdown";
 import moment from "moment";
 import ModalNotifications from "../components/ModalNotifications";
+import DatePickerModal from "../components/ModalDatePicker";
 
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "événement"})
@@ -49,6 +50,7 @@ const ActionScreen = ({ navigation }) => {
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
+  const INITIAL_DATE = new Date().toISOString().split('T')[0];
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
   //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
@@ -81,10 +83,12 @@ const ActionScreen = ({ navigation }) => {
 
   const submitRegister = async(data) =>{
     var complete = true;
+    setLoadingEvent(true);
 
     // Vérification complétion du formulaire
     if(data.date === undefined){
       complete = false;
+      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -93,6 +97,7 @@ const ActionScreen = ({ navigation }) => {
     }
     if(animaux.length === 0){
       complete = false;
+      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -103,6 +108,7 @@ const ActionScreen = ({ navigation }) => {
     }
     if(data.nom === undefined){
       complete = false;
+      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -111,6 +117,7 @@ const ActionScreen = ({ navigation }) => {
     }
     if(eventType === false){
       complete = false;
+      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -120,6 +127,7 @@ const ActionScreen = ({ navigation }) => {
       if(eventType.id === "entrainement"){
         if(data.discipline === undefined){
           complete = false;
+          setLoadingEvent(false);
           Toast.show({
             type: "error",
             position: "top",
@@ -130,6 +138,7 @@ const ActionScreen = ({ navigation }) => {
       if(eventType.id === "concours"){
         if(data.discipline === undefined){
           complete = false;
+          setLoadingEvent(false);
           Toast.show({
             type: "error",
             position: "top",
@@ -140,6 +149,7 @@ const ActionScreen = ({ navigation }) => {
       if(eventType.id === "soins"){
         if(data.traitement === undefined){
           complete = false;
+          setLoadingEvent(false);
           Toast.show({
             type: "error",
             position: "top",
@@ -151,53 +161,51 @@ const ActionScreen = ({ navigation }) => {
 
     // Si formulaire complet, on enregistre
     if(complete === true){
-      eventService.create(data);
+      eventService.create(data)
+        .then((reponse) =>{
+          setLoadingEvent(false);
+
+          Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Création d'un événement réussi"
+          });
+
+          resetValues();
+        })
+        .catch((err) =>{
+          setLoadingEvent(false);
+          Toast.show({
+              type: "error",
+              position: "top",
+              text1: err.message
+          });
+        });
     }
 
   };
 
-  const handleChange = (val) =>{
-    setValue("type", val)
-    setEventType(val);
+  const resetValues = () =>{
+    setValue("nom", "");
+    setValue("lieu", "");
+    setValue("discipline", "");
+    setValue("note", "");
+    setValue("epreuve", "");
+    setValue("dossart", "");
+    setValue("placement", "");
+    setValue("specialiste", "");
+    setValue("depense", "");
+    setValue("traitement", "");
+    setValue("datefinsoins", "");
+    setValue("commentaire", "");
   }
 
-  const onChangeDate = (fieldname, selectedDate) => {
-    nbOccur = (String(selectedDate).match(/\//g) || []).length;
-    oldNbOccur = (String(getValues(fieldname)).match(/\//g) || []).length;
-    if(String(selectedDate).length === 2){
-        if(nbOccur === 0 && oldNbOccur === 0){
-            selectedDate = selectedDate + "/";
-            setValue(fieldname, selectedDate);
-            //setState(selectedDate);
-        }
-    } else if(String(selectedDate).length === 5){
-        if(nbOccur === 1 && oldNbOccur === 1){
-            selectedDate = selectedDate + "/";
-            setValue(fieldname, selectedDate);
-            //setState(selectedDate);
-        }
-    } else if(String(selectedDate).length === 9){
-        firstDatePart = String(selectedDate).split("/")[0];
-        if(String(firstDatePart).length === 1){
-            selectedDate = "0" + selectedDate;
-            setValue(fieldname, selectedDate);
-            //setState(selectedDate);
-        }
-    }
-    setValue(fieldname, selectedDate);
-    //setState(selectedDate);
+  const onChangeDate = (propertyName, selectedDate) => {
+    setValue(propertyName, selectedDate);
   };
 
   const getActualDate = () =>{
-    today = new Date();
-    jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
-    mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
-    annee = today.getFullYear();
-    if(watch("date") == undefined){
-      setValue("date", String(jour + "/" + mois + "/" + annee));
-    }
-    return String(jour + "/" + mois + "/" + annee);
-    //setValue(fieldname, String(jour + "/" + mois + "/" + annee));
+    setValue("date", INITIAL_DATE);
   }
 
   const onChangeTime = (fieldname, text) =>{
@@ -220,17 +228,8 @@ const ActionScreen = ({ navigation }) => {
     if(date == undefined){
       return "";
     }
-    if(date.length != 10){
-      return "";
-    }
     options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    dateFormat = "DD/MM/YYYY";
-    dateValid = moment(date, dateFormat, true).isValid();
-    if (dateValid == false){
-      return "Date invalide";
-    }
-    let [day, month, year] = date.split('/')
-    dateObject  = new Date(year, month-1, day);
+    dateObject  = new Date(date);
     return String(dateObject.toLocaleDateString("fr-FR", options));
   }
 
@@ -294,17 +293,11 @@ const ActionScreen = ({ navigation }) => {
         <View style={styles.form}>
           <ScrollView style={{width:"100%"}}>
             <View style={styles.formContainer}>
-              <View style={styles.inputContainer}>
+              <View style={styles.containerDate}>
                 <Text style={styles.textInput}>Date : {convertDateToText("date")} <Text style={{color: "red"}}>*</Text></Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Exemple : 01/01/1900"
-                  keyboardType="numeric"
-                  maxLength={10}
-                  placeholderTextColor={Variables.texte}
-                  onChangeText={(text) => onChangeDate("date", text)}
-                  value={watch("date")}
-                  defaultValue={watch("date")}
+                <DatePickerModal
+                  onDayChange={onChangeDate}
+                  propertyName={"date"}
                 />
                 {/* <DateTimePicker
                     testID="dateTimePicker"
@@ -410,17 +403,11 @@ const ActionScreen = ({ navigation }) => {
                         defaultValue={getActualTime()}
                       />
                     </View>
-                    <View style={styles.inputContainer}>
+                    <View style={styles.containerDate}>
                       <Text style={styles.textInput}>Date de fin : {convertDateToText("datefinbalade")} </Text>
-                      <TextInput
-                        style={styles.input}
-                        placeholder="Exemple : 01/01/1900"
-                        keyboardType="numeric"
-                        maxLength={10}
-                        placeholderTextColor={Variables.texte}
-                        onChangeText={(text) => onChangeDate("datefinbalade", setDate, text)}
-                        value={watch("datefinbalade")}
-                        defaultValue={getActualDate()}
+                      <DatePickerModal
+                        onDayChange={onChangeDate}
+                        propertyName={"datefinbalade"}
                       />
                     </View>
                     <View style={styles.inputContainer}>
@@ -556,21 +543,29 @@ const ActionScreen = ({ navigation }) => {
                       {...register("traitement", { required: true })}
                     />
                   </View>
-                  <View style={styles.inputContainer}>
+                  <View style={styles.containerDate}>
                     <Text style={styles.textInput}>Date de fin : {convertDateToText("datefinsoins")} </Text>
-                    <TextInput
-                      style={styles.input}
-                      placeholder="Exemple : 01/01/1900"
-                      keyboardType="numeric"
-                      maxLength={10}
-                      placeholderTextColor={Variables.texte}
-                      onChangeText={(text) => onChangeDate("datefinsoins", setDate, text)}
-                      value={watch("datefinsoins")}
-                      defaultValue={getActualDate()}
+                    <DatePickerModal
+                        onDayChange={onChangeDate}
+                        propertyName={"datefinsoins"}
                     />
                   </View>
                 </>
               )}
+
+              <View style={styles.inputContainer}>
+                <Text style={styles.textInput}>Commentaire :</Text>
+                <TextInput
+                  style={styles.inputTextArea}
+                  multiline={true}
+                  numberOfLines={4}
+                  maxLength={2000}
+                  placeholder="Exemple : Rappel des vaccins"
+                  placeholderTextColor={Variables.texte}
+                  onChangeText={(text) => setValue("commentaire", text)}
+                  defaultValue={getValues("commentaire")}
+                />
+              </View>
 
               <View style={styles.inputContainer}>
                 <Text style={styles.textInput}>Notifications :</Text>
@@ -622,19 +617,7 @@ const ActionScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.inputContainer}>
-                <Text style={styles.textInput}>Commentaire :</Text>
-                <TextInput
-                  style={styles.inputTextArea}
-                  multiline={true}
-                  numberOfLines={4}
-                  maxLength={2000}
-                  placeholder="Exemple : Rappel des vaccins"
-                  placeholderTextColor={Variables.texte}
-                  onChangeText={(text) => setValue("commentaire", text)}
-                  defaultValue={getValues("commentaire")}
-                />
-              </View>
+              
               
 
               <View style={styles.registerButton}>
@@ -781,6 +764,11 @@ loadingEvent: {
     borderRadius: 10,
     backgroundColor: Variables.rouan,
     margin: 5,
+  },
+  containerDate:{
+    flexDirection: "column",
+    alignSelf: "flex-start",
+    width: "100%"
   }
 });
 
