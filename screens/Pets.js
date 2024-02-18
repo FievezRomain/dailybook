@@ -10,7 +10,7 @@ import Button from "../components/Button";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AnimalsService from "../services/AnimalsService";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import ModalVerif from "../components/ModalVerif";
+import ModalVerif from "../components/Modals/ModalVerif";
 import DateField from "../components/DateField";
 
 const PetsScreen = ({ navigation }) => {

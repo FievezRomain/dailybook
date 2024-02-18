@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Calendar } from 'react-native-calendars';
-import DateUtils from "../utils/DateUtils";
-import variables from "../components/styles/Variables";
-import Button from "../components/Button";
+import DateUtils from "../../utils/DateUtils";
+import variables from "../styles/Variables";
+import Button from "../Button";
 
-const CalendarPicker = ({onDayChange, propertyName}) => {
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) => {
+  const [selectedDate, setSelectedDate] = useState(defaultDate == undefined ? new Date().toISOString().split('T')[0] : defaultDate);
   const [modalVisible, setModalVisible] = useState(false);
   const dateUtils = new DateUtils();
 
@@ -38,24 +38,26 @@ const CalendarPicker = ({onDayChange, propertyName}) => {
       >
         <TouchableWithoutFeedback onPress={closeModal}>
           <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <Calendar
-                onDayPress={handleDayPress}
-                markedDates={selectedDate ? { [selectedDate]: { selected: true } } : {}}
-                theme={{
-                  arrowColor: variables.isabelle,
-                  todayTextColor: variables.aubere,
-                  selectedDayTextColor: "white",
-                  selectedDayBackgroundColor: variables.alezan
-                }}
-                enableSwipeMonths={false} // Active le swipe de mois
-              />
-              <View style={styles.closeButtonContainer}>
-                <Button onPress={closeModal}>
-                  <Text>Fermer</Text>
-                </Button>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.modalContent}>
+                <Calendar
+                  onDayPress={handleDayPress}
+                  markedDates={selectedDate ? { [selectedDate]: { selected: true } } : {}}
+                  theme={{
+                    arrowColor: variables.isabelle,
+                    todayTextColor: variables.aubere,
+                    selectedDayTextColor: "white",
+                    selectedDayBackgroundColor: variables.alezan
+                  }}
+                  enableSwipeMonths={false} // Active le swipe de mois
+                />
+                <View style={styles.closeButtonContainer}>
+                  <Button onPress={closeModal}>
+                    <Text>Fermer</Text>
+                  </Button>
+                </View>
               </View>
-            </View>
+            </TouchableWithoutFeedback>
           </View>
         </TouchableWithoutFeedback>
       </Modal>

@@ -4,7 +4,7 @@ import Back from "../components/Back";
 import ButtonLong from "../components/ButtonLong";
 import Variables from "../components/styles/Variables";
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
-import LogoutModal from "../components/ModalLogout";
+import LogoutModal from "../components/Modals/ModalLogout";
 
 const SettingsScreen = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);

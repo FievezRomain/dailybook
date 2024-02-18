@@ -4,16 +4,15 @@ import Variables from "../components/styles/Variables";
 import { useForm } from "react-hook-form";
 import Button from "../components/Button";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import ModalAnimals from "../components/ModalAnimals";
+import ModalAnimals from "../components/Modals/ModalAnimals";
 import AnimalsService from "../services/AnimalsService";
 import EventService from "../services/EventService";
 import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
 import TopTab from '../components/TopTab';
-import ModalDropdwn from "../components/ModalDropdown";
+import ModalDropdwn from "../components/Modals/ModalDropdown";
 import moment from "moment";
-import ModalNotifications from "../components/ModalNotifications";
-import DatePickerModal from "../components/ModalDatePicker";
+import ModalNotifications from "../components/Modals/ModalNotifications";
+import DatePickerModal from "../components/Modals/ModalDatePicker";
 
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "événement"})

@@ -1,6 +1,6 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
-import Button from "./Button";
-import Variables from "./styles/Variables";
+import Button from "../Button";
+import Variables from "../styles/Variables";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import React, { useState } from 'react';
@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
       //flexDirection: "row wrap"
     },
     background: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
       justifyContent: "flex-end",
       height: "100%",
     },

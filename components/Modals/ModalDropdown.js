@@ -1,6 +1,6 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
-import Button from "./Button";
-import Variables from "./styles/Variables";
+import Button from "../Button";
+import Variables from "../styles/Variables";
 
 const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, setValue, valueName}) => {
 
@@ -77,14 +77,15 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Variables.rouan,
-    borderTopStartRadius: 30,
-    borderTopEndRadius: 30,
+    backgroundColor: Variables.blanc,
+    borderTopStartRadius: 10,
+    borderTopEndRadius: 10,
     height: "30%",
     justifyContent: "center",
     //flexDirection: "row wrap"
   },
   background: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: "flex-end",
     height: "100%",
   },

@@ -1,8 +1,8 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
-import Button from "./Button";
-import Variables from "./styles/Variables";
+import Button from "../Button";
+import Variables from "../styles/Variables";
 import { useNavigation } from "@react-navigation/native";
-import AnimalsPicker from "./AnimalsPicker";
+import AnimalsPicker from "../AnimalsPicker";
 
 const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected, setValue, valueName }) => {
 
@@ -49,12 +49,15 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Variables.rouan,
+    backgroundColor: Variables.blanc,
+    borderTopStartRadius: 10,
+    borderTopEndRadius: 10,
     height: "30%",
     justifyContent: "center",
     //flexDirection: "row wrap"
   },
   background: {
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: "flex-end",
     height: "100%",
   },

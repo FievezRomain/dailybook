@@ -1,6 +1,6 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity } from "react-native";
-import Button from "./Button";
-import Variables from "./styles/Variables";
+import Button from "../Button";
+import Variables from "../styles/Variables";
 
 const ModalVerif = ({ modalVisible, setModalVisible, message, event }) => {
  
