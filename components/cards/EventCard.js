@@ -7,8 +7,12 @@ import AutreCard from './eventCards/AutreCard';
 import EntrainementCard from './eventCards/EntrainementCard';
 import ConcoursCard from './eventCards/ConcoursCard';
 import RdvCard from './eventCards/RdvCard';
+import ModalModificationEvents from "../Modals/ModalModificationEvents";
+import React, { useState } from 'react';
 
-const EventCard = ({eventInfos, updateFunction=undefined,  deleteFunction}) => {
+const EventCard = ({eventInfos, updateFunction,  deleteFunction, navigation}) => {
+    const [modalModificationVisible, setModalModificationVisible] = useState(false);
+
     const styles = StyleSheet.create({
         actionEventContainer:{
             width: "20%",
@@ -45,13 +49,20 @@ const EventCard = ({eventInfos, updateFunction=undefined,  deleteFunction}) => {
     
     return(
         <>
+            <ModalModificationEvents 
+                event={eventInfos}
+                isVisible={modalModificationVisible}
+                setVisible={setModalModificationVisible}
+                onModify={updateFunction}
+                navigation={navigation}
+            />
             {eventInfos.eventtype == "balade" &&
                 <View style={[styles.eventContainer, styles.balade]}>
                     <BaladeCard
                         eventInfos={eventInfos}
                     />
                     <View style={styles.actionEventContainer}>
-                        <TouchableOpacity onPress={updateFunction}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15, color: variables.blanc}}/></TouchableOpacity>
+                        <TouchableOpacity onPress={() => {setModalModificationVisible(true)}}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15, color: variables.blanc}}/></TouchableOpacity>
                         <TouchableOpacity onPress={deleteFunction}><FontAwesome5 name="trash-alt" size={18} style={{color: variables.blanc}}/></TouchableOpacity>
                     </View>
                 </View>
@@ -62,7 +73,7 @@ const EventCard = ({eventInfos, updateFunction=undefined,  deleteFunction}) => {
                         eventInfos={eventInfos}
                     />
                     <View style={styles.actionEventContainer}>
-                        <TouchableOpacity onPress={updateFunction}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15, color: variables.blanc}}/></TouchableOpacity>
+                        <TouchableOpacity onPress={() => {setModalModificationVisible(true)}}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15, color: variables.blanc}}/></TouchableOpacity>
                         <TouchableOpacity onPress={deleteFunction}><FontAwesome5 name="trash-alt" size={18} style={{color: variables.blanc}}/></TouchableOpacity>
                     </View>
                 </View>
@@ -73,7 +84,7 @@ const EventCard = ({eventInfos, updateFunction=undefined,  deleteFunction}) => {
                         eventInfos={eventInfos}
                     />
                     <View style={styles.actionEventContainer}>
-                        <TouchableOpacity onPress={updateFunction}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15, color: variables.blanc}}/></TouchableOpacity>
+                        <TouchableOpacity onPress={() => {setModalModificationVisible(true)}}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15, color: variables.blanc}}/></TouchableOpacity>
                         <TouchableOpacity onPress={deleteFunction}><FontAwesome5 name="trash-alt" size={18} style={{color: variables.blanc}}/></TouchableOpacity>
                     </View>
                 </View>
@@ -84,7 +95,7 @@ const EventCard = ({eventInfos, updateFunction=undefined,  deleteFunction}) => {
                         eventInfos={eventInfos}
                     />
                     <View style={styles.actionEventContainer}>
-                        <TouchableOpacity onPress={updateFunction}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15}}/></TouchableOpacity>
+                        <TouchableOpacity onPress={() => {setModalModificationVisible(true)}}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15}}/></TouchableOpacity>
                         <TouchableOpacity onPress={deleteFunction}><FontAwesome5 name="trash-alt" size={18}/></TouchableOpacity>
                     </View>
                 </View>
@@ -95,7 +106,7 @@ const EventCard = ({eventInfos, updateFunction=undefined,  deleteFunction}) => {
                         eventInfos={eventInfos}
                     />
                     <View style={styles.actionEventContainer}>
-                        <TouchableOpacity onPress={updateFunction}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15}}/></TouchableOpacity>
+                        <TouchableOpacity onPress={() => {setModalModificationVisible(true)}}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15}}/></TouchableOpacity>
                         <TouchableOpacity onPress={deleteFunction}><FontAwesome5 name="trash-alt" size={18}/></TouchableOpacity>
                     </View>
                 </View>
@@ -106,7 +117,7 @@ const EventCard = ({eventInfos, updateFunction=undefined,  deleteFunction}) => {
                         eventInfos={eventInfos}
                     />
                     <View style={styles.actionEventContainer}>
-                        <TouchableOpacity onPress={updateFunction}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15, color: variables.blanc}}/></TouchableOpacity>
+                        <TouchableOpacity onPress={() => {setModalModificationVisible(true)}}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15, color: variables.blanc}}/></TouchableOpacity>
                         <TouchableOpacity onPress={deleteFunction}><FontAwesome5 name="trash-alt" size={18} style={{color: variables.blanc}}/></TouchableOpacity>
                     </View>
                 </View>
