@@ -76,7 +76,7 @@ const CalendarScreen = ({ navigation }) => {
     };
   
     eventArray.forEach((item) => {
-      const dateString = dateUtils.dateFormatter(item.dateevent, "dd/MM/yyyy", "/");
+      const dateString = item.dateevent;
       const existingObj = newMarked[dateString];
   
       if (existingObj) {
@@ -131,7 +131,7 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const changeEventsCurrentDateSelected = (date) => {
-    const arrayFiltered = eventArray.filter(item => dateUtils.dateFormatter(item.dateevent, "dd/MM/yyyy", "/") === date);
+    const arrayFiltered = eventArray.filter(item => item.dateevent === date);
     setEventArrayCurrentDateSelected(arrayFiltered);
   }
 
@@ -142,8 +142,7 @@ const CalendarScreen = ({ navigation }) => {
     if (!dateValid) {
       return "Date invalide";
     }
-    const [year, month, day] = date.split('-');
-    const dateObject = new Date(year, month - 1, day);
+    const dateObject = new Date(date);
     let dateText = String(dateObject.toLocaleDateString("fr-FR", options));
     dateText = dateText.charAt(0).toUpperCase() + dateText.slice(1);
     return dateText;
@@ -212,6 +211,7 @@ const CalendarScreen = ({ navigation }) => {
               <EventCard
                 eventInfos={eventItem}
                 key={eventItem.id}
+                navigation={navigation}
               />
             ))}
           </View>
@@ -244,6 +244,7 @@ const styles = StyleSheet.create({
   selectedDateContainer: {
     padding: 2,
     width: "100%",
+    marginBottom: 10,
   },
   selectedDateText: {
     textAlign: "center",
