@@ -13,6 +13,15 @@ export default class EventService {
         .catch(); 
     } 
 
+    async update(body) {
+        await this.updateAxiosAuthorization();
+        return axios.put(`${getBaseUrl()}modifyEvent`, body)
+        .then((response) => {
+            return response.data;
+        })
+        .catch(); 
+    } 
+
 
     async delete(body) {
         await this.updateAxiosAuthorization();

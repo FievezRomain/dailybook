@@ -10,6 +10,7 @@ import moment from "moment";
 import EventCard from "../components/cards/EventCard";
 import EventService from "../services/EventService";
 import DateUtils from "../utils/DateUtils";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const CalendarScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
@@ -46,7 +47,7 @@ const CalendarScreen = ({ navigation }) => {
   }, [navigation]);
 
   useEffect(() => {
-    setupMarkedDates();
+    setupMarkedDates(true);
     changeEventsCurrentDateSelected(selectedDate);
   }, [eventArray]);
 
@@ -66,8 +67,9 @@ const CalendarScreen = ({ navigation }) => {
     }
   }
 
-  const setupMarkedDates = () => {
-    const newMarked = { ...marked };
+  const setupMarkedDates = (isInit) => {
+    //const newMarked = { ...marked };
+    const newMarked = { };
   
     const getDate = (count) => {
       const date = new Date(INITIAL_DATE);
@@ -93,17 +95,19 @@ const CalendarScreen = ({ navigation }) => {
         };
       }
     });
-  
-    // Setup default selected date
-    const defaultDateString = getDate(0);
-    if (!newMarked[defaultDateString]) {
-      newMarked[defaultDateString] = {
-        selected: true,
-        disableTouchEvent: false,
-        selectedColor: variables.alezan,
-        selectedTextColor: variables.blanc,
-        dots: []
-      };
+    
+    if(isInit){
+      // Setup default selected date
+      const defaultDateString = getDate(0);
+      if (!newMarked[defaultDateString]) {
+        newMarked[defaultDateString] = {
+          selected: true,
+          disableTouchEvent: false,
+          selectedColor: variables.alezan,
+          selectedTextColor: variables.blanc,
+          dots: []
+        };
+      }
     }
   
     setMarked(newMarked);
@@ -149,13 +153,13 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const onDayPress = (day) => {
-    setSelectedDate(day.dateString);
+    setSelectedDate(day);
 
     Object.entries(marked).forEach(([key, value]) => value.selected = false);
-    const existingObj = marked[day.dateString];
+    const existingObj = marked[day];
     if(existingObj){
       existingObj.selected = true;
-      marked[day.dateString] = existingObj;
+      marked[day] = existingObj;
     } else{
       var obj = {
         selected : true,
@@ -164,12 +168,65 @@ const CalendarScreen = ({ navigation }) => {
         selectedTextColor: variables.blanc,
         dots: []
       }
-      marked[day.dateString] = obj;
+      marked[day] = obj;
     }
     setMarked(marked);
 
-    changeEventsCurrentDateSelected(day.dateString);
+    changeEventsCurrentDateSelected(day);
   };
+
+  const onModifyEvent = (idEventModified, response) => {
+    var arrayTempArray = eventArray;
+    var index = arrayTempArray.findIndex(objet => objet.id === idEventModified);
+
+    if(index !== -1){
+      arrayTempArray[index] = response[0];
+    }
+
+    setEventArray(arrayTempArray);
+
+    setupMarkedDates(false);
+
+    onDayPress(response[0].dateevent);
+    
+  }
+
+  const onDeleteEvent = (infosEvent) => {
+    setLoadingEvent(true);
+    eventService.delete(infosEvent)
+        .then((reponse) =>{
+          setLoadingEvent(false);
+
+          Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Suppression d'un événement réussi"
+          });
+
+          var arrayTempArray = eventArray;
+          var index = arrayTempArray.findIndex(objet => objet.id === infosEvent.id);
+
+          if(index !== -1){
+            arrayTempArray.splice(index, 1);
+          }
+
+          setEventArray(arrayTempArray);
+          console.log(arrayTempArray);
+
+          setupMarkedDates(false);
+
+          onDayPress(infosEvent.dateevent);
+
+        })
+        .catch((err) =>{
+          setLoadingEvent(false);
+          Toast.show({
+              type: "error",
+              position: "top",
+              text1: err.message
+          });
+        });
+  }
 
   return (
     <>
@@ -193,7 +250,7 @@ const CalendarScreen = ({ navigation }) => {
             selectedDayBackgroundColor: variables.alezan
           }}
           enableSwipeMonths={true}
-          onDayPress={onDayPress}
+          onDayPress={(day) => onDayPress(day.dateString)}
           markingType={'multi-dot'}
           markedDates={marked}
         />
@@ -211,7 +268,8 @@ const CalendarScreen = ({ navigation }) => {
               <EventCard
                 eventInfos={eventItem}
                 key={eventItem.id}
-                navigation={navigation}
+                deleteFunction={onDeleteEvent}
+                updateFunction={onModifyEvent}
               />
             ))}
           </View>
