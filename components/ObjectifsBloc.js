@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { FontAwesome5, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
 import variables from "./styles/Variables";
 import { TouchableOpacity } from "react-native";
+import CompletionBar from './CompletionBar';
 
 const ObjectifsBloc = () =>{
     const [itemStatistique, setItemStatistique] = useState("depense");
@@ -18,31 +19,22 @@ const ObjectifsBloc = () =>{
                     <SimpleLineIcons name="target" size={24} color={variables.alezan} />
                     <Text style={styles.title}>Objectifs</Text>
                 </View>
-                <View style={styles.statistiqueIndicatorContainer}>
-                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
-                        <FontAwesome5 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
-                        <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("entrainement")}}>
-                        <Entypo name="traffic-cone" size={20} style={itemStatistique == "entrainement" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}}>
-                        <FontAwesome name="trophy" size={20} style={itemStatistique == "concours" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
-                        <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("soins")}}>
-                        <FontAwesome5 name="hand-holding-medical" size={20} style={itemStatistique == "soins" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("rdv")}}>
-                        <FontAwesome name="stethoscope" size={20} style={itemStatistique == "rdv" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.statistiquesContainer}>
-                    <Text>Découvrez vos statistiques avec la version premuim</Text>
+                <View>
+                    <View style={styles.objectifContainer}>
+                        <View style={styles.headerObjectif}>
+                            <Text>Objectif 1</Text>
+                            <TouchableOpacity>
+                                <Entypo name='dots-three-horizontal' size={20} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.completionBarContainer}>
+                            <CompletionBar
+                                percentage={20}
+                            />
+                        </View>
+                        
+                    </View>
+                    
                 </View>
                 
             </View>
@@ -51,6 +43,16 @@ const ObjectifsBloc = () =>{
 }
 
 const styles = StyleSheet.create({
+    headerObjectif:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+    },
+    completionBarContainer:{
+        marginTop: 10,
+        marginBottom: 10
+    },
     statistiquesContainer:{
         justifyContent: "center",
     },
