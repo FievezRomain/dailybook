@@ -211,7 +211,6 @@ const CalendarScreen = ({ navigation }) => {
           }
 
           setEventArray(arrayTempArray);
-          console.log(arrayTempArray);
 
           setupMarkedDates(false);
 

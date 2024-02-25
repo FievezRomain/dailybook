@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Image, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TextInput, Image, ScrollView, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import Variables from "../components/styles/Variables";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,8 @@ import ModalDropdwn from "../components/Modals/ModalDropdown";
 import moment from "moment";
 import ModalNotifications from "../components/Modals/ModalNotifications";
 import DatePickerModal from "../components/Modals/ModalDatePicker";
+import RatingInput from "../components/RatingInput";
+import FrequencyInput from "../components/FrequencyInput";
 
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "événement"})
@@ -34,7 +36,7 @@ const ActionScreen = ({ navigation }) => {
     {title: "Balade", id: "balade"},
     {title: "Entrainement", id: "entrainement"},
     {title: "Concours", id: "concours"},
-    {title: "Rendez-vous", id: "rdv"},
+    {title: "Rendez-vous médical", id: "rdv"},
     {title: "Soins", id: "soins"},
     {title: "Autre", id: "autre"},
   ];
@@ -197,10 +199,23 @@ const ActionScreen = ({ navigation }) => {
     setValue("traitement", "");
     setValue("datefinsoins", "");
     setValue("commentaire", "");
+    setValue("note", "");
+    setValue("frequenceValue", "");
+    setValue("depense", "");
+    setValue("frequenceType", "");
   }
 
   const onChangeDate = (propertyName, selectedDate) => {
     setValue(propertyName, selectedDate);
+  };
+
+  const handleRatingChange = (value) => {
+    setValue("note", value);
+  };
+
+  const handleFrequencyChange = (newValue, newType) => {
+    setValue("frequenceValue", newValue);
+    setValue("frequenceType", newType);
   };
 
   const getActualDate = () =>{
@@ -290,6 +305,7 @@ const ActionScreen = ({ navigation }) => {
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <View style={styles.form}>
+        <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="padding">
           <ScrollView style={{width:"100%"}}>
             <View style={styles.formContainer}>
               <View style={styles.containerDate}>
@@ -440,14 +456,21 @@ const ActionScreen = ({ navigation }) => {
                       />
                     </View>
                     <View style={styles.inputContainer}>
-                      <Text style={styles.textInput}>Note de ressenti :</Text>
+                      <Text style={styles.textInput}>Ressenti :</Text>
+                      <RatingInput 
+                        onRatingChange={handleRatingChange}
+                        defaultRating={getValues("note")}
+                      />
+                    </View>
+                    <View style={styles.inputContainer}>
+                      <Text style={styles.textInput}>Dépense :</Text>
                       <TextInput
                         style={styles.input}
-                        placeholder="Exemple : 1 = Mauvais, 5 = Parfait"
+                        placeholder="Exemple : 1"
                         keyboardType="numeric"
                         placeholderTextColor={Variables.texte}
-                        onChangeText={(text) => setValue("note", text)}
-                        defaultValue={getValues("note")}
+                        onChangeText={(text) => setValue("depense", text)}
+                        defaultValue={getValues("depense")}
                       />
                     </View>
                   </>
@@ -497,6 +520,24 @@ const ActionScreen = ({ navigation }) => {
                       placeholderTextColor={Variables.texte}
                       onChangeText={(text) => setValue("placement", text)}
                       defaultValue={getValues("placement")}
+                    />
+                  </View>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Ressenti :</Text>
+                    <RatingInput 
+                      onRatingChange={handleRatingChange} 
+                      defaultRating={getValues("note")}
+                    />
+                  </View>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Dépense :</Text>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Exemple : 1"
+                      keyboardType="numeric"
+                      placeholderTextColor={Variables.texte}
+                      onChangeText={(text) => setValue("depense", text)}
+                      defaultValue={getValues("depense")}
                     />
                   </View>
                 </>
@@ -549,6 +590,26 @@ const ActionScreen = ({ navigation }) => {
                         propertyName={"datefinsoins"}
                     />
                   </View>
+                  <View style={styles.inputContainer}>
+                    <Text style={styles.textInput}>Fréquence :</Text>
+                    <FrequencyInput
+                      label="Fréquence du traitement :"
+                      onChange={handleFrequencyChange}
+                      defaultFrequencyType={getValues("frequencyType")}
+                      defaultInputValue={getValues("frequencyValue")}
+                    />
+                  </View>
+                  <View style={styles.inputContainer}>
+                      <Text style={styles.textInput}>Dépense :</Text>
+                      <TextInput
+                        style={styles.input}
+                        placeholder="Exemple : 1"
+                        keyboardType="numeric"
+                        placeholderTextColor={Variables.texte}
+                        onChangeText={(text) => setValue("depense", text)}
+                        defaultValue={getValues("depense")}
+                      />
+                    </View>
                 </>
               )}
 
@@ -626,6 +687,7 @@ const ActionScreen = ({ navigation }) => {
               </View>
             </View>
           </ScrollView>
+          </KeyboardAvoidingView>
         </View>
         <View style={[styles.triangle,styles.arrowUp]}/>
       </View>
@@ -760,7 +822,7 @@ loadingEvent: {
     padding: 8,
   },
   containerBadgeAnimal: {
-    borderRadius: 10,
+    borderRadius: 5,
     backgroundColor: Variables.rouan,
     margin: 5,
   },
@@ -768,7 +830,10 @@ loadingEvent: {
     flexDirection: "column",
     alignSelf: "flex-start",
     width: "100%"
-  }
+  },
+  keyboardAvoidingContainer: {
+    flex: 1,
+  },
 });
 
 module.exports = ActionScreen;
