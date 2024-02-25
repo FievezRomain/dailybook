@@ -7,7 +7,7 @@ import AutreCard from './eventCards/AutreCard';
 import EntrainementCard from './eventCards/EntrainementCard';
 import ConcoursCard from './eventCards/ConcoursCard';
 import RdvCard from './eventCards/RdvCard';
-import ModalModificationEvents from "../Modals/ModalModificationEvents";
+import ModalEvents from "../Modals/ModalEvents";
 import React, { useState } from 'react';
 
 const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
@@ -49,10 +49,11 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
     
     return(
         <>
-            <ModalModificationEvents 
+            <ModalEvents 
                 event={eventInfos}
                 isVisible={modalModificationVisible}
                 setVisible={setModalModificationVisible}
+                actionType={"modify"}
                 onModify={updateFunction}
             />
             {eventInfos.eventtype == "balade" &&

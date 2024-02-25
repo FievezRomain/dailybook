@@ -4,15 +4,18 @@ import Variables from "../styles/Variables";
 import { useForm } from "react-hook-form";
 import Button from "../Button";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import ModalAnimals from "../Modals/ModalAnimals";
+import ModalAnimals from "./ModalAnimals";
 import AnimalsService from "../../services/AnimalsService";
 import EventService from "../../services/EventService";
 import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
-import ModalDropdwn from "../Modals/ModalDropdown";
-import ModalNotifications from "../Modals/ModalNotifications";
-import DatePickerModal from "../Modals/ModalDatePicker";
+import ModalDropdwn from "./ModalDropdown";
+import ModalNotifications from "./ModalNotifications";
+import DatePickerModal from "./ModalDatePicker";
+import RatingInput from "../RatingInput";
+import FrequencyInput from "../FrequencyInput";
+import ToogleSwitch from "../ToggleSwitch";
 
-const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
+const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
 
   const animalsService = new AnimalsService;
   const eventService = new EventService;
@@ -55,6 +58,7 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
   useEffect(() => {
     if(isVisible){
       getAnimals();
+      initValuesEvent();
     }
   }, [isVisible]);
 
@@ -100,9 +104,20 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
     setValue("datefinsoins", event.datefinsoins);
     setValue("commentaire", event.commentaire);
     setValue("animaux", event.animaux);
-    setSelected(animaux.filter((item) => event.animaux.includes(item.id)));
+    if(event.animaux != undefined){
+      var animauxSelected = animaux.filter((item) => event.animaux.includes(item.id));
+      if(animauxSelected != undefined){
+        setSelected(animaux.filter((item) => event.animaux.includes(item.id)));
+      }
+    }
     setValue("eventType", event.eventtype);
-    setEventType(list.filter((item) =>item.id === event.eventtype)[0]);
+    var eventTypeSelected = list.filter((item) =>item.id === event.eventtype)[0];
+    if(eventTypeSelected != undefined){
+      setEventType(list.filter((item) =>item.id === event.eventtype)[0]);
+    }
+    setValue("frequenceValue", event.frequencevalue);
+    setValue("depense", event.depense);
+    setValue("frequenceType", event.frequencetype);
     setValue("notif", "");
     setValue("optionNotif", "");
   }
@@ -186,7 +201,8 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
     }
     // Si formulaire complet, on enregistre
     if(complete === true){
-      eventService.update(data)
+      if(actionType === "modify"){
+        eventService.update(data)
         .then((reponse) =>{
           setLoadingEvent(false);
 
@@ -206,6 +222,28 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
               text1: err.message
           });
         });
+      } else {
+        eventService.create(data)
+        .then((reponse) =>{
+          setLoadingEvent(false);
+
+          Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Création d'un événement réussi"
+          });
+          resetValues();
+        })
+        .catch((err) =>{
+          setLoadingEvent(false);
+          Toast.show({
+              type: "error",
+              position: "top",
+              text1: err.message
+          });
+        });
+      }
+      
     }
   };
 
@@ -230,8 +268,12 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
     setValue("commentaire", "");
     setValue("animaux", []);
     setValue("eventType", "");
+    setEventType(false);
     setValue("notif", "");
     setValue("optionNotif", "");
+    setValue("frequenceValue", "");
+    setValue("depense", "");
+    setValue("frequenceType", "");
   }
 
   const onChangeDate = (propertyName, selectedDate) => {
@@ -242,6 +284,15 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
     today = new Date();
     jour = today.getHours();
   }
+
+  const handleRatingChange = (value) => {
+    setValue("note", value);
+  };
+
+  const handleFrequencyChange = (newValue, newType) => {
+    setValue("frequenceValue", newValue);
+    setValue("frequenceType", newType);
+  };
 
   const getActualTime = ()=>{
     today = new Date();
@@ -264,6 +315,7 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
   }
 
   const closeModal = () => {
+    resetValues();
     setVisible(false);
   };
 
@@ -334,9 +386,19 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
               <TouchableOpacity onPress={closeModal}>
                 <Text style={{color: Variables.aubere}}>Annuler</Text>
               </TouchableOpacity>
-              <Text style={{fontWeight: "bold"}}>Modifier un événement</Text>
+              { actionType === "modify" && 
+                <Text style={{fontWeight: "bold"}}>Modifier un événement</Text>
+              }
+              { actionType === "create" && 
+                <Text style={{fontWeight: "bold"}}>Créer un événement</Text>
+              }
               <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                <Text style={{color: Variables.alezan}}>Modifier</Text>
+                { actionType === "modify" && 
+                  <Text style={{color: Variables.alezan}}>Modifier</Text>
+                }
+                { actionType === "create" && 
+                  <Text style={{color: Variables.alezan}}>Créer</Text>
+                }
               </TouchableOpacity>
             </View>
             <View style={styles.bottomBar} />
@@ -348,7 +410,7 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
                         <DatePickerModal
                           onDayChange={onChangeDate}
                           propertyName={"date"}
-                          defaultDate={event.dateevent}
+                          defaultDate={getValues("date")}
                         />
                       </View>
                     
@@ -431,6 +493,17 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
                                 defaultValue={getActualTime()}
                               />
                             </View>
+                            <View style={styles.inputContainer}>
+                              <Text style={styles.textInput}>Dépense :</Text>
+                              <TextInput
+                                style={styles.input}
+                                placeholder="Exemple : 1"
+                                keyboardType="numeric"
+                                placeholderTextColor={Variables.texte}
+                                onChangeText={(text) => setValue("depense", text)}
+                                defaultValue={getValues("depense")}
+                              />
+                            </View>
                             <View style={styles.containerDate}>
                               <Text style={styles.textInput}>Date de fin : {convertDateToText("datefinbalade")} </Text>
                               <DatePickerModal
@@ -477,6 +550,24 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
                                 placeholderTextColor={Variables.texte}
                                 onChangeText={(text) => setValue("note", text)}
                                 defaultValue={getValues("note")}
+                              />
+                            </View>
+                            <View style={styles.inputContainer}>
+                              <Text style={styles.textInput}>Ressenti :</Text>
+                              <RatingInput 
+                                onRatingChange={handleRatingChange}
+                                defaultRating={getValues("note")}
+                              />
+                            </View>
+                            <View style={styles.inputContainer}>
+                              <Text style={styles.textInput}>Dépense :</Text>
+                              <TextInput
+                                style={styles.input}
+                                placeholder="Exemple : 1"
+                                keyboardType="numeric"
+                                placeholderTextColor={Variables.texte}
+                                onChangeText={(text) => setValue("depense", text)}
+                                defaultValue={getValues("depense")}
                               />
                             </View>
                           </>
@@ -528,6 +619,24 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
                               defaultValue={getValues("placement")}
                             />
                           </View>
+                          <View style={styles.inputContainer}>
+                            <Text style={styles.textInput}>Ressenti :</Text>
+                            <RatingInput 
+                              onRatingChange={handleRatingChange} 
+                              defaultRating={getValues("note")}
+                            />
+                          </View>
+                          <View style={styles.inputContainer}>
+                            <Text style={styles.textInput}>Dépense :</Text>
+                            <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : 1"
+                              keyboardType="numeric"
+                              placeholderTextColor={Variables.texte}
+                              onChangeText={(text) => setValue("depense", text)}
+                              defaultValue={getValues("depense")}
+                            />
+                          </View>
                         </>
                       )}
 
@@ -541,6 +650,17 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
                               placeholderTextColor={Variables.texte}
                               onChangeText={(text) => setValue("specialiste", text)}
                               defaultValue={getValues("specialiste")}
+                            />
+                          </View>
+                          <View style={styles.inputContainer}>
+                            <Text style={styles.textInput}>Dépense :</Text>
+                            <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : 0 (un doux rêve)"
+                              keyboardType="numeric"
+                              placeholderTextColor={Variables.texte}
+                              onChangeText={(text) => setValue("depense", text)}
+                              defaultValue={getValues("depense")}
                             />
                           </View>
                           <View style={styles.inputContainer}>
@@ -578,8 +698,36 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
                                 propertyName={"datefinsoins"}
                             />
                           </View>
+                          <View style={styles.inputContainer}>
+                            <Text style={styles.textInput}>Fréquence :</Text>
+                            <FrequencyInput
+                              label="Fréquence du traitement :"
+                              onChange={handleFrequencyChange}
+                              defaultFrequencyType={getValues("frequencyType")}
+                              defaultInputValue={getValues("frequencyValue")}
+                            />
+                          </View>
+                          <View style={styles.inputContainer}>
+                              <Text style={styles.textInput}>Dépense :</Text>
+                              <TextInput
+                                style={styles.input}
+                                placeholder="Exemple : 1"
+                                keyboardType="numeric"
+                                placeholderTextColor={Variables.texte}
+                                onChangeText={(text) => setValue("depense", text)}
+                                defaultValue={getValues("depense")}
+                              />
+                          </View>
                         </>
                       )}
+
+                      <View style={styles.inputToggleContainer}>
+                        <Text style={styles.textInput}>Afficher sur le calendrier :</Text>
+                        <ToogleSwitch
+                          isActive={watch("isOnCalendar")}
+                          onToggle={(value) => setValue("isOnCalendar", value)}
+                        />
+                      </View>
 
                       <View style={styles.inputContainer}>
                         <Text style={styles.textInput}>Commentaire :</Text>
@@ -641,6 +789,12 @@ const ModalModificationEvents = ({isVisible, setVisible, event, onModify}) => {
 };
 
 const styles = StyleSheet.create({
+  inputToggleContainer:{
+    display: "flex", 
+    flexDirection: "row", 
+    width: "100%",
+    marginBottom: 10
+  },
   modalContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     height: "100%",
@@ -790,4 +944,4 @@ loadingEvent: {
   },
 });
 
-export default ModalModificationEvents;
+export default ModalEvents;
