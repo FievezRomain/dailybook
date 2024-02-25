@@ -6,7 +6,7 @@ import LoadingScreen from './Loading';
 import PetsScreen from './Pets';
 import ActionScreen from './Action';
 import CalendarScreen from './Calendar';
-import StatsScreen from './Stats';
+import StatsScreen from './StatsAndObjectifs';
 import SettingsScreen from "./Settings";
 //import { ForgotPasswordScreen } from './ForgotPasswordScreen';
 
