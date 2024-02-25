@@ -7,11 +7,12 @@ import AnimalsPicker from "../components/AnimalsPicker";
 import AnimalsService from "../services/AnimalsService";
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import StatistiquesBloc from "../components/StatistiquesBloc";
+import ObjectifsBloc from "../components/ObjectifsBloc";
 
 const StatsScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
   const [messages, setMessages] = useState({message1: "Mes", message2: "statistiques"})
-  const [temporality, setTemporality] = useState("day");
+  const [temporality, setTemporality] = useState("week");
   const [animaux, setAnimaux] = useState([]);
   const [selectedAnimal, setSelectedAnimal] = useState([]);
   const [loadingEvent, setLoadingEvent] = useState(false);
@@ -70,9 +71,6 @@ const StatsScreen = ({ navigation }) => {
       <View style={styles.contentContainer}>
         
         <View style={styles.temporalityIndicator}>
-          <TouchableOpacity style={[styles.buttonTouchableOpacity, temporality == "day" ? styles.fondSelectedTouchableOpacity : styles.fondDefaultTouchableOpacity]} onPress={() => onTemporalityChange("day")}>
-            <Text style={styles.textDefaultTouchableOpacity}>Jour</Text>
-          </TouchableOpacity>
           <TouchableOpacity style={[styles.buttonTouchableOpacity, temporality == "week" ? styles.fondSelectedTouchableOpacity : styles.fondDefaultTouchableOpacity]} onPress={() => onTemporalityChange("week")}>
             <Text style={styles.textDefaultTouchableOpacity}>Semaine</Text>
           </TouchableOpacity>
@@ -84,6 +82,7 @@ const StatsScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.bloc}>
+          <ObjectifsBloc/>
           <StatistiquesBloc/>
         </View>
       </View>
