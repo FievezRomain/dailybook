@@ -5,12 +5,14 @@ import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider
 import TopTab from '../components/TopTab';
 import { FontAwesome5, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import ModalEvents from "../components/Modals/ModalEvents";
+import ModalObjectif from "../components/Modals/ModalObjectif";
 
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "élément"})
   const { user } = useContext(AuthenticatedUserContext);
   const [loadingEvent, setLoadingEvent] = useState(false);
   const [isEventModalVisible, setEventModalVisible] = useState(false);
+  const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
   const [event, setEvent] = useState({});
   const list = [
     {title: "Balade", id: "balade"},
@@ -42,6 +44,11 @@ const ActionScreen = ({ navigation }) => {
         isVisible={isEventModalVisible}
         setVisible={setEventModalVisible}
         event={event}
+      />
+      <ModalObjectif
+        actionType={"create"}
+        isVisible={isObjectifModalVisible}
+        setVisible={setObjectifModalVisible}
       />
       <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
@@ -76,7 +83,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <Entypo name="traffic-cone" size={20} style={styles.iconButton}/>
-                    <Text>Entrainement</Text>
+                    <Text>Entraînement</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -138,7 +145,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setObjectifModalVisible(true)}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <SimpleLineIcons name="target" size={20} style={styles.iconButton}/>

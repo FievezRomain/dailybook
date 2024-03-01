@@ -33,7 +33,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [optionNotifType, setOptionNotifType] = useState(false);
   const list = [
     {title: "Balade", id: "balade"},
-    {title: "Entrainement", id: "entrainement"},
+    {title: "Entraînement", id: "entrainement"},
     {title: "Concours", id: "concours"},
     {title: "Rendez-vous", id: "rdv"},
     {title: "Soins", id: "soins"},
@@ -136,7 +136,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         text1: "Veuillez saisir une date pour l'événement"
       });
     }
-    if(animaux.length === 0){
+    if(selected.length === 0){
       complete = false;
       setLoadingEvent(false);
       Toast.show({
@@ -539,17 +539,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                                 onChangeText={(text) => setValue("discipline", text)}
                                 defaultValue={getValues("discipline")}
                                 {...register("discipline", { required: true })}
-                              />
-                            </View>
-                            <View style={styles.inputContainer}>
-                              <Text style={styles.textInput}>Note de ressenti :</Text>
-                              <TextInput
-                                style={styles.input}
-                                placeholder="Exemple : 1 = Mauvais, 5 = Parfait"
-                                keyboardType="numeric"
-                                placeholderTextColor={Variables.texte}
-                                onChangeText={(text) => setValue("note", text)}
-                                defaultValue={getValues("note")}
                               />
                             </View>
                             <View style={styles.inputContainer}>
