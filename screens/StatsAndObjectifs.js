@@ -15,7 +15,7 @@ const StatsScreen = ({ navigation }) => {
   const [temporality, setTemporality] = useState("week");
   const [animaux, setAnimaux] = useState([]);
   const [selectedAnimal, setSelectedAnimal] = useState([]);
-  const [loadingEvent, setLoadingEvent] = useState(false);
+  const [loadingObjectif, setLoadingObjectif] = useState(false);
   const animalsService = new AnimalsService;
 
   useEffect(() => {
@@ -29,10 +29,10 @@ const StatsScreen = ({ navigation }) => {
   const getAnimals = async () => {
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
-      setLoadingEvent(true);
+      setLoadingObjectif(true);
       // On récupère les animaux de l'utilisateur courant
       var result = await animalsService.getAnimals(user.id);
-      setLoadingEvent(false);
+      setLoadingObjectif(false);
       // Si l'utilisateur a des animaux, alors
       if(result.rowCount !== 0){
         // On valorise l'animal selectionné par défaut au premier de la liste
@@ -50,7 +50,7 @@ const StatsScreen = ({ navigation }) => {
 
   return (
     <>
-      {loadingEvent && (
+      {loadingObjectif && (
         <View style={styles.loadingEvent}>
           <Image
             style={styles.loaderEvent}
@@ -58,7 +58,7 @@ const StatsScreen = ({ navigation }) => {
           />
         </View>
       )}
-      <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
+      <Image style={styles.image}/>
       <TopTab message1={messages.message1} message2={messages.message2} />
       <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20, marginBottom: 10}}>
           <AnimalsPicker
@@ -82,7 +82,13 @@ const StatsScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View style={styles.bloc}>
-          <ObjectifsBloc/>
+          <ObjectifsBloc
+            animaux={animaux}
+            selectedAnimal={selectedAnimal}
+            setLoading={setLoadingObjectif}
+            temporality={temporality}
+            navigation={navigation}
+          />
           <StatistiquesBloc/>
         </View>
       </View>
@@ -101,7 +107,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   fondDefaultTouchableOpacity:{
-    backgroundColor: Variables.aubere,
+    backgroundColor: Variables.isabelle,
   },
   fondSelectedTouchableOpacity:{
     backgroundColor: Variables.alezan
@@ -135,7 +141,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor: Variables.fond,
+    backgroundColor: Variables.aubere
   },
   loaderEvent: {
     width: 200,

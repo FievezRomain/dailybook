@@ -1,39 +1,125 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { FontAwesome5, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
+import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import variables from "./styles/Variables";
 import { TouchableOpacity } from "react-native";
 import CompletionBar from './CompletionBar';
+import ObjectifService from '../services/ObjectifService';
+import ModalSubMenuActions from './Modals/ModalSubMenuActions';
+import ModalObjectif from './Modals/ModalObjectif';
 
-const ObjectifsBloc = () =>{
-    const [itemStatistique, setItemStatistique] = useState("depense");
+const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navigation }) =>{
+    const { user } = useContext(AuthenticatedUserContext);
+    const [objectifsArray, setObjectifsArray] = useState([]);
+    const [objectifsArrayDisplay, setObjectifsArrayDisplay] = useState([]);
+    const [currentObjectif, setCurrentObjectif] = useState({});
+    const objectifService = new ObjectifService;
+    const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
+    const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
 
-    const onItemStatistiqueChange = (value) => {
-        setItemStatistique(value);
+    useEffect(() => {
+        if(animaux.length !== 0){
+            getObjectifs();
+        }
+    }, [animaux, navigation]);
+
+    useEffect(() => {
+        if(objectifsArray.length !== 0){
+            changeObjectifsDisplay();
+        }
+    }, [objectifsArray, temporality, selectedAnimal]);
+
+    const getObjectifs = async () => {
+        setLoading(true);
+
+        var result = await objectifService.getObjectifs(user.id);
+
+        setLoading(false);
+
+        if(result.length != 0){
+            setObjectifsArray(result);
+        }
+    }
+
+    const changeObjectifsDisplay = () => {
+        var filteredObjectifs = []
+        var existingObj = objectifsArray[selectedAnimal[0].id];
+
+        if(existingObj){
+            var objectifsAnimal = objectifsArray[selectedAnimal[0].id];
+
+            filteredObjectifs = objectifsAnimal.filter((item) => item.temporalityobjectif == temporality);
+        }
+
+        setObjectifsArrayDisplay(filteredObjectifs);
+    }
+
+    const calculPercentCompletude = (objectif) => {
+        var sousEtapesFinished = objectif.sousEtapes.filter((item) => item.state == true);
+
+        return Math.floor((sousEtapesFinished.length * 100) / objectif.sousEtapes.length);
+    }
+
+    const handleModify = () => {
+        setModalObjectifVisible(true);
+    }
+
+    const onModify = () => {
+        console.log("modifié !");
+    }
+    const handleDelete = () => {
+        console.log("supprimer");
+        console.log(currentObjectif);
+    }
+    const onPressOptions = (objectif) => {
+        let clesFiltrees = Object.keys(objectifsArray).filter((cle) => {
+            return objectifsArray[cle].some((element) => element.id === objectif.id);
+        });
+        objectif.animaux = clesFiltrees;
+        setCurrentObjectif(objectif);
+        setModalSubMenuObjectifVisible(true)
     }
 
     return (
         <>
+            <ModalSubMenuActions
+                modalVisible={modalSubMenuObjectifVisible}
+                setModalVisible={setModalSubMenuObjectifVisible}
+                handleModify={handleModify}
+                handleDelete={handleDelete}
+            />
+            <ModalObjectif
+                actionType={"modify"}
+                isVisible={modalObjectifVisible}
+                setVisible={setModalObjectifVisible}
+                objectif={currentObjectif}
+                onModify={onModify}
+            />
             <View style={styles.composantContainer}>
                 <View style={styles.headerContainer}>
                     <SimpleLineIcons name="target" size={24} color={variables.alezan} />
                     <Text style={styles.title}>Objectifs</Text>
                 </View>
                 <View>
-                    <View style={styles.objectifContainer}>
-                        <View style={styles.headerObjectif}>
-                            <Text>Objectif 1</Text>
-                            <TouchableOpacity>
-                                <Entypo name='dots-three-horizontal' size={20} />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.completionBarContainer}>
-                            <CompletionBar
-                                percentage={20}
-                            />
-                        </View>
-                        
-                    </View>
+                    {objectifsArrayDisplay.map((objectif, index) => {
+                        return(
+                            <View style={styles.objectifContainer} key={objectif.id}>
+                                <View style={styles.headerObjectif}>
+                                    <Text>{objectif.title}</Text>
+                                    <TouchableOpacity onPress={() => onPressOptions(objectif)}>
+                                        <Entypo name='dots-three-horizontal' size={20} />
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.completionBarContainer}>
+                                    <CompletionBar
+                                        percentage={calculPercentCompletude(objectif)}
+                                    />
+                                </View>
+                                
+                            </View>
+                        );
+                    })}
                     
                 </View>
                 

@@ -63,14 +63,14 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setValue("title", objectif.title);
         setValue("animaux", objectif.animaux);
         if(objectif.animaux != undefined){
-            var animauxSelected = animaux.filter((item) => objectif.animaux.includes(item.id));
+            var animauxSelected = animaux.filter((item) => objectif.animaux.includes(String(item.id)));
             if(animauxSelected != undefined){
-              setSelected(animaux.filter((item) => objectif.animaux.includes(item.id)));
+              setSelected(animaux.filter((item) => objectif.animaux.includes(String(item.id))));
             }
         }
         setValue("temporalityobjectif", objectif.temporalityobjectif);
         if(objectif.temporalityobjectif != undefined){
-            setTemporalityObjectif(objectif.temporalityobjectif);
+            setTemporalityObjectif(list.filter((item) => item.id == objectif.temporalityobjectif)[0]);
         }
         setValue("sousetapes", objectif.sousetapes);
         if(objectif.sousetapes != undefined){
