@@ -32,10 +32,10 @@ export default class ObjectifService {
         .catch();
     }
 
-    async getEvents(id){
+    async getObjectifs(id){
         await this.updateAxiosAuthorization();
         return axios
-        .get(`${getBaseUrl()}eventsByUser?idProprietaire=${id}`)
+        .get(`${getBaseUrl()}objectifsByUser?idProprietaire=${id}`)
         .then(({data}) => {
             return data
         })
