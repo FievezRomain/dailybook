@@ -17,7 +17,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     return (
       <>
-        <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
+        <Image style={styles.image} />
         <TopTab message1={messages.message1} message2={messages.message2}/>
         <View>
           <Image style={styles.imagePrez} source={require("../assets/welcome_prez.png")} />
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor:  Variables.fond
+    backgroundColor:  Variables.aubere
   },
 })
 

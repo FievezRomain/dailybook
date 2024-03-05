@@ -230,7 +230,7 @@ const PetsScreen = ({ navigation }) => {
         event={deletePet}
         message={"Êtes-vous sûr de vouloir supprimer cet animal ?"}
       />
-      <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
+      <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
         <AnimalsPicker
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor:  Variables.fond
+    backgroundColor:  Variables.aubere
   },
   form: {
     display: "flex",

@@ -237,7 +237,7 @@ const CalendarScreen = ({ navigation }) => {
           />
         </View>
       )}
-      <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
+      <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2} />
       <View style={styles.calendarContainer}>
         <Calendar
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor: Variables.fond
+    backgroundColor: Variables.aubere
   },
 });
 

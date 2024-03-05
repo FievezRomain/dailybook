@@ -50,7 +50,7 @@ const ActionScreen = ({ navigation }) => {
         isVisible={isObjectifModalVisible}
         setVisible={setObjectifModalVisible}
       />
-      <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
+      <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <View style={styles.form}>
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor:  Variables.isabelle
+    backgroundColor:  Variables.aubere
   },
   formContainer:{
     paddingLeft: 30,
