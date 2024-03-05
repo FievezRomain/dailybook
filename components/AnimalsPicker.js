@@ -10,18 +10,21 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
         if(found){
             if(mode === "single"){
                 setSelected(animaux.filter((a) => a.id === animal.id));
-                if(animal.id !== null ? setValue("id", animal.id) : null);
-                if(animal.nom !== null ? setValue("nom", animal.nom) : null);
-                if(animal.espace !== null ? setValue("espece", animal.espece) : null);
-                if(animal.datenaissance !== null ? setValue("datenaissance", animal.datenaissance) : null);
-                if(animal.race !== null ? setValue("race", animal.race) : null );
-                if(animal.taille !== null ? setValue("taille", String(animal.taille)) : null);
-                if(animal.poids !== null ? setValue("poids", String(animal.poids)) : null);
-                if(animal.sexe !== null ? setValue("sexe", animal.sexe) : null);
-                if(animal.couleur !== null ? setValue("couleur", animal.couleur) : null);
-                if(animal.nomPere !== null ? setValue("nomPere", animal.nomPere) : null);
-                if(animal.nomMere !== null ? setValue("nomMere", animal.nomMere) : null);
-                if(animal.datenaissance != null ? setDate(animal.datenaissance) : setDate(null));
+                if(setValue !== undefined){
+                    if(animal.id !== null ? setValue("id", animal.id) : null);
+                    if(animal.nom !== null ? setValue("nom", animal.nom) : null);
+                    if(animal.espace !== null ? setValue("espece", animal.espece) : null);
+                    if(animal.datenaissance !== null ? setValue("datenaissance", animal.datenaissance) : null);
+                    if(animal.race !== null ? setValue("race", animal.race) : null );
+                    if(animal.taille !== null ? setValue("taille", String(animal.taille)) : null);
+                    if(animal.poids !== null ? setValue("poids", String(animal.poids)) : null);
+                    if(animal.sexe !== null ? setValue("sexe", animal.sexe) : null);
+                    if(animal.couleur !== null ? setValue("couleur", animal.couleur) : null);
+                    if(animal.nomPere !== null ? setValue("nomPere", animal.nomPere) : null);
+                    if(animal.nomMere !== null ? setValue("nomMere", animal.nomMere) : null);
+                    if(animal.datenaissance != null ? setDate(animal.datenaissance) : setDate(null));
+                }
+                
             }
             if(mode === "multiple"){
                 const foundSelected = selected.find(e => e.id === animal.id);
