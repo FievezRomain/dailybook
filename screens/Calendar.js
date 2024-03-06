@@ -128,7 +128,7 @@ const CalendarScreen = ({ navigation }) => {
       case "soins":
         return { color: variables.isabelle };
       case "autre":
-        return { color: variables.rouan };
+        return { color: variables.blanc };
       default:
         return { color: variables.defaultDotColor };
     }
@@ -242,11 +242,17 @@ const CalendarScreen = ({ navigation }) => {
       <View style={styles.calendarContainer}>
         <Calendar
           style={styles.calendar}
+          firstDay={1}
           theme={{
             arrowColor: variables.isabelle,
             todayTextColor: variables.aubere,
             selectedDayTextColor: "white",
-            selectedDayBackgroundColor: variables.alezan
+            selectedDayBackgroundColor: variables.alezan,
+            calendarBackground: variables.rouan,
+            dayTextColor: variables.bai,
+            textDayHeaderTextColor: variables.alezan,
+            textSectionTitleColor: variables.alezan
+            
           }}
           enableSwipeMonths={true}
           onDayPress={(day) => onDayPress(day.dateString)}
@@ -308,21 +314,22 @@ const styles = StyleSheet.create({
     color: variables.alezan
   },
   infosContainer: {
-    backgroundColor: variables.blanc,
+    backgroundColor: variables.rouan,
     marginTop: 10,
     display: "flex",
     flexDirection: "column",
     alignSelf: "center",
     borderRadius: 5,
     padding: 10,
-    width: "80%",
+    width: "90%",
     height: "30%"
   },
   calendarContainer: {
     marginTop: 20,
-    width: "80%",
+    width: "90%",
     display: "flex",
-    alignSelf: "center"
+    alignSelf: "center",
+    borderRadius: 5,
   },
   calendar: {
     borderRadius: 5,
@@ -333,7 +340,7 @@ const styles = StyleSheet.create({
     marginTop: 10
   },
   screenContainer: {
-    backgroundColor: Variables.fond,
+    backgroundColor: Variables.rouan,
   },
   contentContainer: {
     display: "flex",
@@ -349,7 +356,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor: Variables.aubere
+    backgroundColor: Variables.blanc
   },
 });
 

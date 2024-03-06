@@ -17,7 +17,7 @@ const AutreCard = ({eventInfos}) => {
             alignItems: "flex-end",
         },
         eventContainer:{
-            backgroundColor: variables.rouan,
+            backgroundColor: variables.blanc,
             borderRadius: 5,
             width: "100%",
             display: "flex",

@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
     },
     itemIconDefault:{
-        color: variables.rouan,
+        color: variables.pinterest,
     },
     itemIconSelected:{
         color: variables.alezan,

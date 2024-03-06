@@ -2,6 +2,7 @@ import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesome5, FontAwesome, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
 
 const TopTab = ({message1, message2}) => {
     const navigation = useNavigation();
@@ -52,7 +53,7 @@ const TopTab = ({message1, message2}) => {
             </View>
             <View style={styles.imageContainer}>
                 <TouchableOpacity>
-                    <Image style={styles.image} source={require("../assets/notifications.png")}/>
+                    <MaterialIcons name="notifications-none" size={25} color={Variables.alezan} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
                     <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")}/>

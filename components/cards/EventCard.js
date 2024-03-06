@@ -31,7 +31,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
             backgroundColor: variables.alezan,
         },
         autre:{
-            backgroundColor: variables.rouan,
+            backgroundColor: variables.blanc,
         },
         rdv:{
             backgroundColor: variables.souris,

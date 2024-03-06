@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor:  Variables.aubere
+    backgroundColor:  Variables.blanc
   },
 })
 

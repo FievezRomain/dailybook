@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     marginBottom: 30,
     height: "100%",
-    width: "85%",
+    width: "90%",
     borderRadius: 10,
   },
   temporalityIndicator:{
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   bloc:{
     flex: 1,
-    backgroundColor: Variables.blanc,
+    backgroundColor: Variables.rouan,
     borderRadius: 10,
   },
   image: {
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor: Variables.aubere
+    backgroundColor: Variables.blanc
   },
   loaderEvent: {
     width: 200,

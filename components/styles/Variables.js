@@ -5,7 +5,8 @@ const variables = {
     souris: "#313a45",
     aubere: "#c9b69f",
     isabelle: "#956540",
-    bai: "#1f110f"
+    bai: "#1f110f",
+    pinterest: "#F4EDEB"
   };
   
   export default variables;

@@ -457,13 +457,13 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor:  Variables.aubere
+    backgroundColor:  Variables.blanc
   },
   form: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 1)",
+    backgroundColor: Variables.rouan,
     justifyContent: "center",
     width: "90%",
     height: "65%",

@@ -7,6 +7,7 @@ import { useRef } from 'react';
 import { WelcomeScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen } from "../screens";
 import { AnimatePresence, MotiView } from 'moti';
 import Variables from '../components/styles/Variables';
+import variables from '../components/styles/Variables';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,7 +17,7 @@ const TabStack = () => {
   const [beforeScreen, setBeforeScreen] = useState("Welcome");
   return (
     <>
-      <Tab.Navigator screenOptions={({ route }) => ({
+      <Tab.Navigator sceneContainerStyle={{borderBottomWidth: 0.5, borderBlockColor: variables.alezan}} screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             if (route.name === 'Welcome'){
               return <View style={{

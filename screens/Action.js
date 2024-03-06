@@ -227,19 +227,19 @@ const ActionScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   textDesactivated:{
-    color: Variables.rouan,
+    color: Variables.isabelle,
   },
   iconAction:{
-    color: Variables.rouan,
+    color: Variables.alezan,
   },
   iconButton:{
     marginRight: 20,
-    color: Variables.isabelle,
+    color: Variables.alezan,
   },
   bottomBar: {
     width: '100%',
-    height: 0.7, // ou la hauteur que vous souhaitez pour votre barre
-    backgroundColor: Variables.rouan,
+    height: 0.7,
+    backgroundColor: Variables.alezan,
     marginBottom: 10,
   },
   informationsButtonContainer:{
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor:  Variables.aubere
+    backgroundColor:  Variables.blanc
   },
   formContainer:{
     paddingLeft: 30,
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
   },
   form: {
     alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 1)",
+    backgroundColor: Variables.rouan,
     justifyContent: "center",
     width: "90%",
     marginLeft: "auto",
@@ -309,7 +309,7 @@ loadingEvent: {
     borderRightWidth: 30,
     borderBottomWidth: 0,
     borderLeftWidth: 30,
-    borderTopColor: "rgba(255, 255, 255, 1)",
+    borderTopColor: Variables.rouan,
     borderRightColor: 'transparent',
     borderBottomColor: "transparent",
     borderLeftColor: 'transparent',
