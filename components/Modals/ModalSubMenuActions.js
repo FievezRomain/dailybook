@@ -3,7 +3,7 @@ import Button from "../Button";
 import Variables from "../styles/Variables";
 import { FontAwesome5, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 
-const ModalSubMenuActions = ({ modalVisible, setModalVisible, handleModify, handleDelete }) => {
+const ModalSubMenuActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleManageTasks }) => {
 
     const onAction = (event) =>{
         setModalVisible(false);
@@ -26,6 +26,15 @@ const ModalSubMenuActions = ({ modalVisible, setModalVisible, handleModify, hand
                 <View style={styles.card}>
                     <Text>Gérer les informations</Text>
                     <View style={styles.actionButtonContainer}>
+                        <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleManageTasks)}>
+                            <View style={styles.informationsActionButton}>
+                                <FontAwesome5 name="tasks" size={20}/>
+                                <Text style={styles.textActionButton}>
+                                    Avancement des sous-étapes
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                        <View style={styles.bottomBar} />
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
@@ -66,7 +75,7 @@ const styles = StyleSheet.create({
         backgroundColor: Variables.souris,
     },
     actionButtonContainer:{
-        height: "50%",
+        height: "60%",
         width: "90%",
         borderRadius: 5,
         backgroundColor: Variables.rouan,

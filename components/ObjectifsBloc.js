@@ -9,6 +9,7 @@ import ObjectifService from '../services/ObjectifService';
 import ModalSubMenuActions from './Modals/ModalSubMenuActions';
 import ModalObjectif from './Modals/ModalObjectif';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
 
 const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navigation }) =>{
     const { user } = useContext(AuthenticatedUserContext);
@@ -18,6 +19,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
     const objectifService = new ObjectifService;
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
     const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
+    const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
 
     useEffect(() => {
         if(animaux.length !== 0){
@@ -120,6 +122,11 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
                 });
             });
     }
+
+    const handleManageTasks = () => {
+        setModalManageTasksVisible(true);
+    }
+
     const onPressOptions = (objectif) => {
         let clesFiltrees = Object.keys(objectifsArray).filter((cle) => {
             return objectifsArray[cle].some((element) => element.id === objectif.id);
@@ -136,6 +143,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
                 setModalVisible={setModalSubMenuObjectifVisible}
                 handleModify={handleModify}
                 handleDelete={handleDelete}
+                handleManageTasks={handleManageTasks}
             />
             <ModalObjectif
                 actionType={"modify"}
@@ -143,6 +151,11 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
                 setVisible={setModalObjectifVisible}
                 objectif={currentObjectif}
                 onModify={onModify}
+            />
+            <ModalObjectifSubTasks
+                isVisible={modalManageTasksVisible}
+                setVisible={setModalManageTasksVisible}
+                objectif={currentObjectif}
             />
             <View style={styles.composantContainer}>
                 <View style={styles.headerContainer}>

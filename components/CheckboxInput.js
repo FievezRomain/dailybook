@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons'; // Assurez-vous d'avoir installé et importé les icônes appropriées
+import { MaterialIcons } from '@expo/vector-icons';
+import variables from './styles/Variables';
 
-const CheckboxInput = ({ isChecked, onChange }) => {
+const CheckboxInput = ({ isChecked, onChange, objet }) => {
   const [checked, setChecked] = useState(isChecked);
 
   const toggleCheckbox = () => {
     const newValue = !checked;
     setChecked(newValue);
     if (onChange) {
-      onChange(newValue);
+      onChange(newValue, objet);
     }
   };
 
@@ -18,7 +19,7 @@ const CheckboxInput = ({ isChecked, onChange }) => {
       <MaterialIcons
         name={checked ? 'check-box' : 'check-box-outline-blank'}
         size={24}
-        color={checked ? '#0066FF' : 'grey'}
+        color={checked ? variables.alezan : 'grey'}
       />
     </TouchableOpacity>
   );
