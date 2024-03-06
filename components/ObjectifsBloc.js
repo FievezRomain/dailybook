@@ -8,6 +8,7 @@ import CompletionBar from './CompletionBar';
 import ObjectifService from '../services/ObjectifService';
 import ModalSubMenuActions from './Modals/ModalSubMenuActions';
 import ModalObjectif from './Modals/ModalObjectif';
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navigation }) =>{
     const { user } = useContext(AuthenticatedUserContext);
@@ -87,8 +88,37 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
         changeObjectifsDisplay();
     }
     const handleDelete = () => {
-        console.log("supprimer");
-        console.log(currentObjectif);
+        setLoading(true);
+        let data = {};
+        // Récupération de l'identifiant de l'utilisateur (propriétaire)
+        data["id"] = currentObjectif.id;
+        objectifService.delete(data)
+            .then((reponse) =>{
+                setLoading(false);
+
+                var arrayTemp = objectifsArray;
+                var arrayObjectifAnimal = arrayTemp[selectedAnimal[0].id];
+                var filteredArray = arrayObjectifAnimal.filter((item) => item.id != currentObjectif.id);
+                arrayTemp[selectedAnimal[0].id] = filteredArray;
+
+                setObjectifsArray(arrayTemp);
+                changeObjectifsDisplay();
+
+                Toast.show({
+                    type: "success",
+                    position: "top",
+                    text1: "Suppression d'un objectif réussi"
+                });
+
+            })
+            .catch((err) =>{
+                setLoading(false);
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: err.message
+                });
+            });
     }
     const onPressOptions = (objectif) => {
         let clesFiltrees = Object.keys(objectifsArray).filter((cle) => {

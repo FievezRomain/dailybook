@@ -25,7 +25,7 @@ export default class ObjectifService {
 
     async delete(body) {
         await this.updateAxiosAuthorization();
-        return axios.delete(`${getBaseUrl()}deleteEvent`, {data: body})
+        return axios.delete(`${getBaseUrl()}deleteObjectif`, {data: body})
         .then((response) => {
             return response.data;
         })

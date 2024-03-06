@@ -8,6 +8,7 @@ import AnimalsService from "../services/AnimalsService";
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const StatsScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
