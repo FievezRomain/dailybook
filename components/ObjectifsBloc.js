@@ -65,8 +65,26 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
         setModalObjectifVisible(true);
     }
 
-    const onModify = () => {
-        console.log("modifié !");
+    const onModify = (objectif) => {
+        var tempArray = objectifsArray;
+
+        objectif.animaux.forEach(idAnimal => {
+            var existingObj = tempArray[idAnimal];
+
+            if(existingObj){
+                var existingAnimal = tempArray[idAnimal];
+                var filteredArray = existingAnimal.filter((item) => item.id != objectif.id);
+
+                filteredArray.push({'id': objectif.id, 'sousEtapes': objectif.sousEtapes, 'temporalityobjectif': objectif.temporalityobjectif, 'title': objectif.title});
+                tempArray[idAnimal] = filteredArray;
+            }
+            else{
+                tempArray[idAnimal] = {'id': objectif.id, 'sousEtapes': objectif.sousEtapes, 'temporalityobjectif': objectif.temporalityobjectif, 'title': objectif.title};
+            }
+        });
+
+        setObjectifsArray(tempArray);
+        changeObjectifsDisplay();
     }
     const handleDelete = () => {
         console.log("supprimer");

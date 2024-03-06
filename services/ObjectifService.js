@@ -15,7 +15,7 @@ export default class ObjectifService {
 
     async update(body) {
         await this.updateAxiosAuthorization();
-        return axios.put(`${getBaseUrl()}modifyEvent`, body)
+        return axios.put(`${getBaseUrl()}updateObjectif`, body)
         .then((response) => {
             return response.data;
         })

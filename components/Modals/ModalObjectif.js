@@ -72,9 +72,9 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         if(objectif.temporalityobjectif != undefined){
             setTemporalityObjectif(list.filter((item) => item.id == objectif.temporalityobjectif)[0]);
         }
-        setValue("sousetapes", objectif.sousetapes);
-        if(objectif.sousetapes != undefined){
-            setInputs(objectif.sousetapes);
+        setValue("sousetapes", objectif.sousEtapes);
+        if(objectif.sousEtapes != undefined){
+            setInputs(objectif.sousEtapes);
         }
     }
 
@@ -118,7 +118,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                 text1: "Veuillez saisir une temporalité"
             });
         }
-        const isNotEmpty = inputs.some(str => str.trim().length > 0);
+        const isNotEmpty = inputs.some(str => str.etape.trim().length > 0);
         if(!isNotEmpty){
             complete = false;
             setLoadingEvent(false);
@@ -132,7 +132,26 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         // Si formulaire complet, on enregistre
         if(complete === true){
             if(actionType === "modify"){
-                console.log("lancer la modification");
+                objectifService.update(data)
+                    .then((reponse) =>{
+                        setLoadingEvent(false);
+
+                        Toast.show({
+                            type: "success",
+                            position: "top",
+                            text1: "Modification d'un objectif réussi"
+                        });
+                        onModify(reponse);
+                        closeModal();
+                    })
+                    .catch((err) =>{
+                        setLoadingEvent(false);
+                        Toast.show({
+                            type: "error",
+                            position: "top",
+                            text1: err.message
+                        });
+                    });
             }
             else{
                 objectifService.create(data)
@@ -161,7 +180,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
     // Fonction pour mettre à jour le state avec une nouvelle valeur ajoutée
     const handleInputChange = (text, index) => {
         const newInputs = [...inputs];
-        newInputs[index] = text;
+        newInputs[index] = {'id': undefined, 'etape': text, 'state': false};
         setInputs(newInputs);
         setValue("sousetapes", newInputs);
     };
@@ -303,7 +322,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                             <View style={styles.sousEtapesContainer} key={index}>
                                                 <TextInput
                                                     style={styles.inputSousEtape}
-                                                    value={value}
+                                                    value={value.etape}
                                                     onChangeText={(text) => handleInputChange(text, index)}
                                                     placeholder="Entrez une valeur"
                                                 />
