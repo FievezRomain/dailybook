@@ -156,6 +156,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
                 isVisible={modalManageTasksVisible}
                 setVisible={setModalManageTasksVisible}
                 objectif={currentObjectif}
+                handleTasksStateChange={onModify}
             />
             <View style={styles.composantContainer}>
                 <View style={styles.headerContainer}>

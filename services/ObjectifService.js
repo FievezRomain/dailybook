@@ -22,6 +22,15 @@ export default class ObjectifService {
         .catch(); 
     } 
 
+    async updateTasks(body) {
+        await this.updateAxiosAuthorization();
+        return axios.put(`${getBaseUrl()}modifySubTasks`, body)
+        .then((response) => {
+            return response.data;
+        })
+        .catch(); 
+    } 
+
 
     async delete(body) {
         await this.updateAxiosAuthorization();

@@ -5,33 +5,72 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
 import CheckboxInput from "../CheckboxInput";
 import CompletionBar from "../CompletionBar";
+import _ from 'lodash';
+import ObjectifService from "../../services/ObjectifService";
 
-const ModalObjectifSubTasks = ({isVisible, setVisible, objectif={}}) => {
+const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, objectif={}}) => {
     const [loadingEvent, setLoadingEvent] = useState(false);
+    const objectifService = new ObjectifService();
     const [percentageObjectif, setPercentageObjectif] = useState(0);
+    const [temporaryObjectif, setTemporaryObjectif] = useState(_.cloneDeep(objectif));
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
+    useEffect(() => {
+        // Réinitialise la copie temporaire lorsque l'objetif change
+        setTemporaryObjectif(_.cloneDeep(objectif));
+    }, [objectif]);
+
+    useEffect(() => {
+        if(objectif.sousEtapes !== undefined){
+            // Réinitialise la copie temporaire lorsque l'objetif change
+            calculPercentCompletude();
+        }
+    }, [temporaryObjectif]);
+
     const closeModal = () => {
+        setTemporaryObjectif(_.cloneDeep(objectif));
         setVisible(false);
     };
 
-    const submitRegister = () => {
-        console.log("register");
+    const submitRegister = async (data) => {
+        setLoadingEvent(true);
+
+        objectifService.updateTasks(data)
+            .then((reponse) =>{
+                setLoadingEvent(false);
+
+                Toast.show({
+                    type: "success",
+                    position: "top",
+                    text1: "Modification des sous-étapes réussi"
+                });
+                handleTasksStateChange(temporaryObjectif);
+                closeModal();
+            })
+            .catch((err) =>{
+                setLoadingEvent(false);
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: err.message
+                });
+            });
     }
 
     const calculPercentCompletude = () => {
-        var sousEtapesFinished = objectif.sousEtapes.filter((item) => item.state == true);
+        var sousEtapesFinished = temporaryObjectif.sousEtapes.filter((item) => item.state == true);
 
-        setPercentageObjectif(Math.floor((sousEtapesFinished.length * 100) / objectif.sousEtapes.length));
+        setPercentageObjectif(Math.floor((sousEtapesFinished.length * 100) / temporaryObjectif.sousEtapes.length));
     }
 
     const handleChangeState = (newState, objet) => {
-        objectif.sousEtapes.forEach(element => {
+        temporaryObjectif.sousEtapes.forEach(element => {
             if (element.id === objet.id) {
                 element.state = newState;
             }
         });
         calculPercentCompletude();
+        setValue('sousetapes', temporaryObjectif.sousEtapes);
     }
 
     return(
@@ -77,7 +116,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, objectif={}}) => {
                                     />
                                 </View>
                                 <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
-                                    {objectif.sousEtapes && objectif.sousEtapes.map((item, index) => {
+                                    {temporaryObjectif.sousEtapes && temporaryObjectif.sousEtapes.map((item, index) => {
                                         return(
                                             <View key={item.id} style={styles.checkBoxContainer}>
                                                 <CheckboxInput 
