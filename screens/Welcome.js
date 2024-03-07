@@ -3,6 +3,8 @@ import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import React, { useState, useContext, useEffect } from 'react';
+import EventsBloc from "../components/EventsBloc";
+import ObjectifsBloc from "../components/ObjectifsBloc";
 
 const WelcomeScreen = ({ navigation })=> {
     const { user } = useContext(AuthenticatedUserContext);
@@ -20,7 +22,7 @@ const WelcomeScreen = ({ navigation })=> {
         <Image style={styles.image} />
         <TopTab message1={messages.message1} message2={messages.message2}/>
         <View>
-          <Image style={styles.imagePrez} source={require("../assets/welcome_prez.png")} />
+          <EventsBloc />
         </View>
       </>
       );
