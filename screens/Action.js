@@ -6,6 +6,9 @@ import TopTab from '../components/TopTab';
 import { FontAwesome5, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import ModalEvents from "../components/Modals/ModalEvents";
 import ModalObjectif from "../components/Modals/ModalObjectif";
+import ModalWish from "../components/Modals/ModalWish";
+import ModalContact from "../components/Modals/ModalContact";
+import ModalNote from "../components/Modals/ModalNote";
 
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "élément"})
@@ -13,6 +16,9 @@ const ActionScreen = ({ navigation }) => {
   const [loadingEvent, setLoadingEvent] = useState(false);
   const [isEventModalVisible, setEventModalVisible] = useState(false);
   const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
+  const [isWishModalVisible, setWishModalVisible] = useState(false);
+  const [isContactModalVisible, setContactModalVisible] = useState(false);
+  const [isNoteModalVisible, setNoteModalVisible] = useState(false);
   const [event, setEvent] = useState({});
   const list = [
     {title: "Balade", id: "balade"},
@@ -49,6 +55,21 @@ const ActionScreen = ({ navigation }) => {
         actionType={"create"}
         isVisible={isObjectifModalVisible}
         setVisible={setObjectifModalVisible}
+      />
+      <ModalWish
+        actionType={"create"}
+        isVisible={isWishModalVisible}
+        setVisible={setWishModalVisible}
+      />
+      <ModalContact
+        actionType={"create"}
+        isVisible={isContactModalVisible}
+        setVisible={setContactModalVisible}
+      />
+      <ModalNote
+        actionType={"create"}
+        isVisible={isNoteModalVisible}
+        setVisible={setNoteModalVisible}
       />
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
@@ -156,7 +177,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setWishModalVisible(true)}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="heart" size={20} style={styles.iconButton}/>
@@ -167,7 +188,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setContactModalVisible(true)}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <AntDesign name="contacts" size={20} style={styles.iconButton}/>
@@ -178,7 +199,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setNoteModalVisible(true)}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <SimpleLineIcons name="note" size={20} style={styles.iconButton}/>
