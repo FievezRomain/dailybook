@@ -67,6 +67,30 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                             <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
                                 <View style={styles.formContainer}>
 
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Titre : <Text style={{color: "red"}}>*</Text></Text>
+                                        {errors.title && <Text style={styles.errorInput}>Titre obligatoire</Text>}
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : Note1"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("titre", text)}
+                                            defaultValue={getValues("titre")}
+                                            {...register("titre", { required: true })}
+                                        />
+                                    </View>
+
+                                    <View style={styles.inputContainer}>
+                                        <TextInput
+                                            style={styles.inputTextArea}
+                                            multiline={true}
+                                            placeholder="Exemple : Hello world"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("note", text)}
+                                            defaultValue={getValues("note")}
+                                        />
+                                    </View>
+
                                 </View>
                             </ScrollView>
                         </KeyboardAvoidingView>
@@ -130,6 +154,16 @@ const styles = StyleSheet.create({
         paddingRight: 30,
         paddingTop: 10,
         paddingBottom: 10,
+    },
+    inputTextArea: {
+        height: 100,
+        width: "100%",
+        marginBottom: 15,
+        borderRadius: 5,
+        paddingLeft: 15,
+        paddingRight: 15,
+        backgroundColor: Variables.rouan,
+        color: "black",
     },
 })
 

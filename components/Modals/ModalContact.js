@@ -67,6 +67,41 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                             <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
                                 <View style={styles.formContainer}>
 
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Nom : <Text style={{color: "red"}}>*</Text></Text>
+                                        {errors.title && <Text style={styles.errorInput}>Nom obligatoire</Text>}
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : Vétérinaire"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("nom", text)}
+                                            defaultValue={getValues("nom")}
+                                            {...register("nom", { required: true })}
+                                        />
+                                    </View>
+
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Numéro de téléphone : </Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : 0606060606"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("numero", text)}
+                                            defaultValue={getValues("numero")}
+                                        />
+                                    </View>
+
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Email : </Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : test@gmail.com"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("email", text)}
+                                            defaultValue={getValues("email")}
+                                        />
+                                    </View>
+
                                 </View>
                             </ScrollView>
                         </KeyboardAvoidingView>

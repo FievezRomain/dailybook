@@ -3,10 +3,14 @@ import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
+import AvatarPicker from "../AvatarPicker";
+import { Entypo } from '@expo/vector-icons';
+import variables from "../styles/Variables";
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
+    const [image, setImage] = useState(null);
 
     const closeModal = () => {
         resetValues();
@@ -63,10 +67,71 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
-                        <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="padding">
-                            <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
+                        <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="height">
+                            <ScrollView style={{ width: "100%", maxHeight: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
                                 <View style={styles.formContainer}>
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Nom : <Text style={{color: "red"}}>*</Text></Text>
+                                        {errors.title && <Text style={styles.errorInput}>Nom obligatoire</Text>}
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : Selle western"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("nom", text)}
+                                            defaultValue={getValues("nom")}
+                                            {...register("nom", { required: true })}
+                                        />
+                                    </View>
 
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>URL : </Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : https://vascoandco.fr"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("url", text)}
+                                            defaultValue={getValues("url")}
+                                        />
+                                    </View>
+
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Image :</Text>
+                                        <AvatarPicker
+                                            setImage={setImage}
+                                            setValue={setValue}
+                                        />
+                                        {image &&
+                                            <View style={styles.imageContainer}>
+                                                <Image source={{uri: image}} style={styles.avatar}/>
+                                                <TouchableOpacity onPress={() => setImage(null)}>
+                                                    <Entypo name="circle-with-cross" size={25} color={variables.alezan}/>
+                                                </TouchableOpacity>
+                                            </View>
+                                        }
+                                    </View>
+
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Prix : </Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            keyboardType="numeric"
+                                            placeholder="Exemple : 20"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("prix", text)}
+                                            defaultValue={getValues("prix")}
+                                        />
+                                    </View>
+
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Destinataire : </Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Par défaut, pour vous"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("destinataire", text)}
+                                            defaultValue={getValues("destinataire")}
+                                        />
+                                    </View>
                                 </View>
                             </ScrollView>
                         </KeyboardAvoidingView>
@@ -129,7 +194,42 @@ const styles = StyleSheet.create({
         paddingLeft: 30,
         paddingRight: 30,
         paddingTop: 10,
-        paddingBottom: 10,
+        marginBottom: 10,
+    },
+    inputContainer:{
+        alignItems: "center",
+        width: "100%"
+    },
+    textInput:{
+        alignSelf: "flex-start",
+        marginBottom: 5
+    },
+    errorInput: {
+        color: "red"
+    },
+    input: {
+        height: 40,
+        width: "100%",
+        marginBottom: 15,
+        borderRadius: 5,
+        paddingLeft: 15,
+        backgroundColor: Variables.rouan,
+        color: "black",
+        alignSelf: "baseline"
+    },
+    imageContainer:{
+        flexDirection: "row",
+        alignSelf: "flex-start",
+        marginTop: 5,
+        marginBottom: 5
+    },
+    avatar: {
+        width: 200,
+        height: 200,
+        borderWidth: 0.5,
+        borderRadius: 5,
+        zIndex: 1,
+        borderColor: variables.alezan,
     },
 })
 
