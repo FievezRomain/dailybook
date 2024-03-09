@@ -9,7 +9,6 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
     const closeModal = () => {
-        resetValues();
         setVisible(false);
     };
 
@@ -19,6 +18,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
 
     const submitRegister = async(data) =>{
         console.log("créer");
+        resetValues();
     }
 
     return(
@@ -72,11 +72,22 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         {errors.title && <Text style={styles.errorInput}>Nom obligatoire</Text>}
                                         <TextInput
                                             style={styles.input}
-                                            placeholder="Exemple : Vétérinaire"
+                                            placeholder="Exemple : John Doe"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("nom", text)}
                                             defaultValue={getValues("nom")}
                                             {...register("nom", { required: true })}
+                                        />
+                                    </View>
+
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Profession : </Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : Vétérinaire"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("profession", text)}
+                                            defaultValue={getValues("profession")}
                                         />
                                     </View>
 
@@ -165,6 +176,24 @@ const styles = StyleSheet.create({
         paddingRight: 30,
         paddingTop: 10,
         paddingBottom: 10,
+    },
+    inputContainer:{
+        alignItems: "center",
+        width: "100%"
+    },
+    textInput:{
+        alignSelf: "flex-start",
+        marginBottom: 5
+    },
+    input: {
+        height: 40,
+        width: "100%",
+        marginBottom: 15,
+        borderRadius: 5,
+        paddingLeft: 15,
+        backgroundColor: Variables.rouan,
+        color: "black",
+        alignSelf: "baseline"
     },
 })
 

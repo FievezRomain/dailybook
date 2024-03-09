@@ -3,13 +3,13 @@ import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
+import { FontAwesome } from '@expo/vector-icons';
 
 const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefined}) => {
     const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
     const closeModal = () => {
-        resetValues();
         setVisible(false);
     };
 
@@ -19,6 +19,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
 
     const submitRegister = async(data) =>{
         console.log("créer");
+        resetValues();
     }
 
     return(
@@ -91,6 +92,8 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                                         />
                                     </View>
 
+                                    <FontAwesome name="pencil-square-o" size={80} style={{alignSelf: "flex-end"}} color={Variables.alezan}/>
+
                                 </View>
                             </ScrollView>
                         </KeyboardAvoidingView>
@@ -156,14 +159,31 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     inputTextArea: {
-        height: 100,
+        height: 400,
+        width: "100%",
+        marginBottom: 15,
+        borderRadius: 5,
+        padding: 15,
+        backgroundColor: Variables.rouan,
+        color: "black",
+    },
+    inputContainer:{
+        alignItems: "center",
+        width: "100%"
+    },
+    textInput:{
+        alignSelf: "flex-start",
+        marginBottom: 5
+    },
+    input: {
+        height: 40,
         width: "100%",
         marginBottom: 15,
         borderRadius: 5,
         paddingLeft: 15,
-        paddingRight: 15,
         backgroundColor: Variables.rouan,
         color: "black",
+        alignSelf: "baseline"
     },
 })
 
