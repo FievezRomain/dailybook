@@ -3,9 +3,13 @@ import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
-import { FontAwesome } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
+import NoteService from "../../services/NoteService";
+import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
 
 const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefined}) => {
+    const { user } = useContext(AuthenticatedUserContext);
+    const noteService = new NoteService();
     const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
@@ -14,12 +18,54 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
     };
 
     const resetValues = () =>{
-        console.log("vider les variables ici");
+        setValue("titre", undefined);
+        setValue("note", undefined);
     };
 
     const submitRegister = async(data) =>{
-        console.log("créer");
-        resetValues();
+        setLoadingEvent(true);
+        data["idproprietaire"] = user.id;
+        
+        if(actionType === "modify"){
+            noteService.update(data)
+                .then((reponse) =>{
+                    setLoadingEvent(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Modification d'un contact réussi"
+                    });
+                    onModify(reponse);
+                    resetValues();
+                    closeModal();
+                })
+                .catch((err) =>{
+                    setLoadingEvent(false);
+                    Toast.show({
+                        type: "error",
+                        position: "top",
+                        text1: err.message
+                    });
+                });
+        }
+        else{
+            noteService.create(data)
+                .then((reponse) =>{
+                    setLoadingEvent(false);
+                    resetValues();
+                    closeModal();
+                    onModify(reponse);
+                })
+                .catch((err) =>{
+                    setLoadingEvent(false);
+                    Toast.show({
+                        type: "error",
+                        position: "top",
+                        text1: err.message
+                    });
+                });
+        }
     }
 
     return(
@@ -82,6 +128,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                                     </View>
 
                                     <View style={styles.inputContainer}>
+                                        {errors.title && <Text style={styles.errorInput}>Note obligatoire</Text>}
                                         <TextInput
                                             style={styles.inputTextArea}
                                             multiline={true}
@@ -89,11 +136,14 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("note", text)}
                                             defaultValue={getValues("note")}
+                                            {...register("note", { required: true })}
                                         />
                                     </View>
-
-                                    <FontAwesome name="pencil-square-o" size={80} style={{alignSelf: "flex-end"}} color={Variables.alezan}/>
-
+                                    <View style={{alignSelf: "flex-end"}}>
+                                        <View style={{backgroundColor: Variables.alezan, padding: 20, borderRadius: 60, justifyContent: "center", height: 110, width: 110}}>
+                                            <SimpleLineIcons name="note"size={60} style={{alignSelf: "flex-end"}} color={Variables.blanc}/>
+                                        </View>
+                                    </View>
                                 </View>
                             </ScrollView>
                         </KeyboardAvoidingView>
@@ -184,6 +234,15 @@ const styles = StyleSheet.create({
         backgroundColor: Variables.rouan,
         color: "black",
         alignSelf: "baseline"
+    },
+    iconContainer:{
+        backgroundColor: Variables.alezan,
+        padding: 20,
+        borderRadius: 60,
+        height: 120,
+        width: 120,
+        justifyContent: "center",
+        alignItems: "center"
     },
 })
 

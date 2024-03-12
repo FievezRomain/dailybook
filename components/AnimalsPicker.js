@@ -2,6 +2,7 @@ import Variables from "./styles/Variables";
 import { getImagePath } from '../services/Config';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import plus from '../assets/plus.png'
+import variables from "./styles/Variables";
 
 const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined }) => {
 
@@ -111,7 +112,6 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 50,
-        borderWidth: 2,
         zIndex: 1,
         justifyContent: "center"
     },
@@ -121,12 +121,14 @@ const styles = StyleSheet.create({
         fontSize: 30
     },
     defaultAvatar:{
-        backgroundColor: Variables.alezan,
-        borderColor: Variables.alezan,
+        backgroundColor: Variables.isabelle,
+        borderColor: Variables.isabelle,
+        borderWidth: 0.5,
     },
     selectedAvatar:{
         backgroundColor: Variables.bai,
         borderColor: Variables.bai,
+        borderWidth: 3,
     },
     containerAnimaux:{
         display: "flex",
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
         marginRight: 20
     },
     defaultText:{
-        color: Variables.alezan
+        color: Variables.isabelle
     },
     selectedText:{
         color: Variables.bai

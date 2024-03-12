@@ -6,7 +6,7 @@ export default class NoteService {
 
     async create(body) {
         await this.updateAxiosAuthorization();
-        return axios.post(`${getBaseUrl()}createObjectif`, body)
+        return axios.post(`${getBaseUrl()}createNote`, body)
         .then((response) => {
             return response.data;
         })

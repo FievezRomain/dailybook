@@ -3,8 +3,13 @@ import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
+import { AntDesign } from '@expo/vector-icons';
+import ContactService from "../../services/ContactService";
+import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
 
 const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=undefined}) => {
+    const { user } = useContext(AuthenticatedUserContext);
+    const contactService = new ContactService();
     const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
@@ -13,12 +18,58 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
     };
 
     const resetValues = () =>{
-        console.log("vider les variables ici");
+        setValue("id", undefined);
+        setValue("nom", undefined);
+        setValue("profession", undefined);
+        setValue("telephone", undefined);
+        setValue("email", undefined);
+        setValue("idproprietaire", undefined);
     };
 
     const submitRegister = async(data) =>{
-        console.log("créer");
-        resetValues();
+        setLoadingEvent(true);
+        data["idproprietaire"] = user.id;
+        
+        if(actionType === "modify"){
+            contactService.update(data)
+                .then((reponse) =>{
+                    setLoadingEvent(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Modification d'un contact réussi"
+                    });
+                    onModify(reponse);
+                    resetValues();
+                    closeModal();
+                })
+                .catch((err) =>{
+                    setLoadingEvent(false);
+                    Toast.show({
+                        type: "error",
+                        position: "top",
+                        text1: err.message
+                    });
+                });
+        }
+        else{
+            contactService.create(data)
+                .then((reponse) =>{
+                    setLoadingEvent(false);
+                    resetValues();
+                    closeModal();
+                    onModify(reponse);
+                })
+                .catch((err) =>{
+                    setLoadingEvent(false);
+                    Toast.show({
+                        type: "error",
+                        position: "top",
+                        text1: err.message
+                    });
+                });
+        }
     }
 
     return(
@@ -97,8 +148,8 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                             style={styles.input}
                                             placeholder="Exemple : 0606060606"
                                             placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("numero", text)}
-                                            defaultValue={getValues("numero")}
+                                            onChangeText={(text) => setValue("telephone", text)}
+                                            defaultValue={getValues("telephone")}
                                         />
                                     </View>
 
@@ -112,7 +163,11 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                             defaultValue={getValues("email")}
                                         />
                                     </View>
-
+                                     <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                                        <View style={styles.iconContainer}>
+                                            <AntDesign name="contacts" size={70} color={Variables.blanc} style={{marginRight: 5}}/>
+                                        </View>
+                                     </View>
                                 </View>
                             </ScrollView>
                         </KeyboardAvoidingView>
@@ -194,6 +249,15 @@ const styles = StyleSheet.create({
         backgroundColor: Variables.rouan,
         color: "black",
         alignSelf: "baseline"
+    },
+    iconContainer:{
+        backgroundColor: Variables.alezan,
+        padding: 20,
+        borderRadius: 60,
+        height: 120,
+        width: 120,
+        justifyContent: "center",
+        alignItems: "center"
     },
 })
 

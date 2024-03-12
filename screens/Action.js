@@ -9,6 +9,7 @@ import ModalObjectif from "../components/Modals/ModalObjectif";
 import ModalWish from "../components/Modals/ModalWish";
 import ModalContact from "../components/Modals/ModalContact";
 import ModalNote from "../components/Modals/ModalNote";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "élément"})
@@ -33,6 +34,30 @@ const ActionScreen = ({ navigation }) => {
     var eventTemp = {'eventtype': typeEvent};
     setEvent(eventTemp);
     setEventModalVisible(true);
+  }
+
+  const handleCreateContact = (contact) =>{
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Création d'un contact réussi"
+    });
+  }
+
+  const handleCreateNote = (contact) =>{
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Création d'une note réussi"
+    });
+  }
+
+  const handleCreateWish = (wish) =>{
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Création d'un souhait réussi"
+    });
   }
 
   return (
@@ -60,16 +85,19 @@ const ActionScreen = ({ navigation }) => {
         actionType={"create"}
         isVisible={isWishModalVisible}
         setVisible={setWishModalVisible}
+        onModify={handleCreateWish}
       />
       <ModalContact
         actionType={"create"}
         isVisible={isContactModalVisible}
         setVisible={setContactModalVisible}
+        onModify={handleCreateContact}
       />
       <ModalNote
         actionType={"create"}
         isVisible={isNoteModalVisible}
         setVisible={setNoteModalVisible}
+        onModify={handleCreateNote}
       />
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2}/>

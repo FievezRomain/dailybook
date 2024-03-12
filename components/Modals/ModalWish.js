@@ -6,23 +6,92 @@ import { useForm } from "react-hook-form";
 import AvatarPicker from "../AvatarPicker";
 import { Entypo } from '@expo/vector-icons';
 import variables from "../styles/Variables";
+import { FontAwesome } from '@expo/vector-icons';
+import WishService from "../../services/WishService";
+import { AuthenticatedUserContext } from '../../providers/AuthenticatedUserProvider';
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
+    const { user } = useContext(AuthenticatedUserContext);
+    const wishService = new WishService();
     const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
 
     const closeModal = () => {
-        resetValues();
         setVisible(false);
     };
 
     const resetValues = () =>{
-        console.log("vider les variables ici");
+        setImage(null);
+        setValue("nom", undefined);
+        setValue("url", undefined);
+        setValue("prix", undefined);
+        setValue("destinataire", undefined);
+        setValue("image", undefined);
     };
 
     const submitRegister = async(data) =>{
-        console.log("créer");
+        setLoadingEvent(true);
+        data["idproprietaire"] =  user.id;
+
+        let formData = data;
+        if (data.image != undefined){
+            formData = new FormData();
+            if(image != null){
+                filename = data.image.split("/");
+                filename = filename[filename.length-1].split(".")[0] + user.id;
+                formData.append("picture", {
+                name: filename,
+                type: "image/jpeg",
+                uri: data.image
+                });
+            } else{
+                formData.append("files", "empty");
+            }
+            data = { ...data, image: data.image };
+            formData.append("recipe", JSON.stringify(data));
+        }
+
+        if(actionType === "modify"){
+            wishService.update(formData)
+                .then((reponse) =>{
+                    setLoadingEvent(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Modification d'un souhait réussi"
+                    });
+                    onModify(reponse);
+                    resetValues();
+                    closeModal();
+                })
+                .catch((err) =>{
+                    setLoadingEvent(false);
+                    Toast.show({
+                        type: "error",
+                        position: "top",
+                        text1: err.message
+                    });
+                });
+        }
+        else{
+            wishService.create(formData)
+                .then((reponse) =>{
+                    setLoadingEvent(false);
+                    resetValues();
+                    closeModal();
+                    onModify(reponse);
+                })
+                .catch((err) =>{
+                    setLoadingEvent(false);
+                    Toast.show({
+                        type: "error",
+                        position: "top",
+                        text1: err.message
+                    });
+                });
+        }
     }
 
     return(
@@ -132,6 +201,11 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                             defaultValue={getValues("destinataire")}
                                         />
                                     </View>
+                                    <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                                        <View style={styles.iconContainer}>
+                                            <FontAwesome name="heart" size={60} color={Variables.blanc} style={{marginTop: 5}}/>
+                                        </View>
+                                    </View>
                                 </View>
                             </ScrollView>
                         </KeyboardAvoidingView>
@@ -195,6 +269,7 @@ const styles = StyleSheet.create({
         paddingRight: 30,
         paddingTop: 10,
         marginBottom: 10,
+        height: "100%"
     },
     inputContainer:{
         alignItems: "center",
@@ -230,6 +305,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         zIndex: 1,
         borderColor: variables.alezan,
+    },
+    iconContainer:{
+        backgroundColor: Variables.alezan,
+        padding: 10,
+        borderRadius: 60,
+        height: 110,
+        width: 110,
+        justifyContent: "center",
+        alignItems: "center",
     },
 })
 

@@ -6,7 +6,7 @@ export default class WishService {
 
     async create(body) {
         await this.updateAxiosAuthorization();
-        return axios.post(`${getBaseUrl()}createObjectif`, body)
+        return axios.post(`${getBaseUrl()}createWish`, body)
         .then((response) => {
             return response.data;
         })

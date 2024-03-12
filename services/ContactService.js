@@ -6,7 +6,7 @@ export default class ContactService {
 
     async create(body) {
         await this.updateAxiosAuthorization();
-        return axios.post(`${getBaseUrl()}createObjectif`, body)
+        return axios.post(`${getBaseUrl()}createContact`, body)
         .then((response) => {
             return response.data;
         })
