@@ -232,7 +232,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
             position: "top",
             text1: "Création d'un événement réussi"
           });
-          resetValues();
+          closeModal();
         })
         .catch((err) =>{
           setLoadingEvent(false);
