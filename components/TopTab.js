@@ -2,7 +2,7 @@ import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome5, FontAwesome, MaterialIcons, Entypo, Feather } from '@expo/vector-icons';
+import { FontAwesome5, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
 
 const TopTab = ({message1, message2}) => {
     const navigation = useNavigation();
@@ -14,7 +14,8 @@ const TopTab = ({message1, message2}) => {
             alignItems: "center",
             paddingLeft: 30,
             paddingRight: 30,
-            backgroundColor: "transparent"
+            paddingBottom: 10,
+            backgroundColor: Variables.isabelle,
         },
         textContainer:{
             flex: 1,
@@ -43,17 +44,20 @@ const TopTab = ({message1, message2}) => {
             borderColor: "white",
             backgroundColor: "white"
         },
+        text:{
+            color: Variables.blanc,
+        }
     });
 
     return(
         <View style={styles.topTabContainer}>
             <View style={styles.textContainer}>
-                <Text>{message1}</Text>
-                <Text style={styles.name}>{message2}</Text>
+                <Text style={styles.text}>{message1}</Text>
+                <Text style={[styles.name, styles.text]}>{message2}</Text>
             </View>
             <View style={styles.imageContainer}>
                 <TouchableOpacity>
-                    <MaterialIcons name="notifications-none" size={25} color={Variables.alezan} />
+                    <Ionicons name="notifications" size={25} color={Variables.blanc} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
                     <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")}/>

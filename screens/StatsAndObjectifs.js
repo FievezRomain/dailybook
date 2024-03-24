@@ -132,8 +132,12 @@ const styles = StyleSheet.create({
   },
   bloc:{
     flex: 1,
-    backgroundColor: Variables.rouan,
+    backgroundColor: Variables.blanc,
     borderRadius: 10,
+    shadowColor: "black",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: {width:0, height:2}
   },
   image: {
     flex: 1,
@@ -142,7 +146,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor: Variables.blanc
+    backgroundColor: Variables.default
   },
   loaderEvent: {
     width: 200,

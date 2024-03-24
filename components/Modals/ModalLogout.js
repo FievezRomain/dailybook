@@ -36,6 +36,7 @@ const LogoutModal = ({ modalVisible, setModalVisible }) => {
                     setModalVisible(!modalVisible)
                     disconnect()
                 }}
+                size={"m"}
                 >
                 Oui
                 </Button>
@@ -43,6 +44,7 @@ const LogoutModal = ({ modalVisible, setModalVisible }) => {
                 onPress={() => {
                     setModalVisible(!modalVisible)
                 }}
+                size={"m"}
                 >
                 Non
                 </Button>
@@ -56,15 +58,17 @@ const LogoutModal = ({ modalVisible, setModalVisible }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Variables.texte,
+    backgroundColor: Variables.blanc,
     padding: 30,
     height: "20%",
-    justifyContent: "center",
-    flexDirection: "row wrap"
+    flexDirection: "row wrap",
+    borderTopStartRadius: 10,
+    borderTopEndRadius: 10,
   },
   background: {
     justifyContent: "flex-end",
     height: "100%",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   emptyBackground: {
     height: "80%",
@@ -77,7 +81,8 @@ const styles = StyleSheet.create({
   },
   message:{
     alignSelf: "center",
-    color: "white"
+    color: "black",
+    marginBottom: 20,
   }
 });
 

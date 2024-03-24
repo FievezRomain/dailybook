@@ -19,11 +19,15 @@ const WelcomeScreen = ({ navigation })=> {
 
     return (
       <>
-        <Image style={styles.image} />
-        <TopTab message1={messages.message1} message2={messages.message2}/>
-        <View>
-          <EventsBloc />
-        </View>
+      <TopTab message1={messages.message1} message2={messages.message2}/>
+      <View style={{height: "100%", backgroundColor: Variables.isabelle}}>
+          <View style={styles.image}>
+            <View>
+              <EventsBloc />
+            </View>
+          </View>
+      </View>
+        
       </>
       );
 }
@@ -33,9 +37,6 @@ const styles = StyleSheet.create({
     height: "90%",
     width: "100%",
   },
-  screenContainer:{
-    backgroundColor: Variables.fond,
-  },
   contentContainer:{
     display: "flex",
     height: "90%",
@@ -44,13 +45,8 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   image: {
-    flex: 1,
     height: "100%",
-    width: "100%",
-    resizeMode: "cover",
-    position: "absolute",
-    justifyContent: "center",
-    backgroundColor:  Variables.blanc
+    backgroundColor: Variables.default,
   },
 })
 

@@ -17,7 +17,7 @@ const TabStack = () => {
   const [beforeScreen, setBeforeScreen] = useState("Welcome");
   return (
     <>
-      <Tab.Navigator sceneContainerStyle={{borderBottomWidth: 0.5, borderBlockColor: variables.alezan}} screenOptions={({ route }) => ({
+      <Tab.Navigator screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             if (route.name === 'Welcome'){
               return <View style={{
@@ -28,7 +28,7 @@ const TabStack = () => {
                 <FontAwesome5
                   name="home"
                   size={20}
-                  color={focused ? '#956540' : 'gray'}
+                  color={focused ? variables.isabelle : 'gray'}
                 ></FontAwesome5>
               </View>
             } else if(route.name === 'Statistic'){
@@ -40,19 +40,23 @@ const TabStack = () => {
                 <FontAwesome5
                   name="signal"
                   size={20}
-                  color={focused ? '#956540' : 'gray'}
+                  color={focused ? variables.isabelle : 'gray'}
                 ></FontAwesome5>
               </View>
             } else if(route.name === 'ActionButton'){
               return <><MotiView
                 style={{
-                  width: 55,
-                  height: 55,
+                  width: 45,
+                  height: 45,
                   backgroundColor: 'white',
                   borderRadius: 30,
                   justifyContent: 'center',
                   alignItems: 'center',
-                  marginBottom: Platform.OS == "android" ? 50 : 30
+                  marginBottom: Platform.OS == "android" ? 50 : 30,
+                  shadowColor: "black",
+                  shadowOpacity: 0.3,
+                  shadowRadius: 10,
+                  shadowOffset:{width:0, height: -1}
                 }}
                 animate={{
                   scale: expanded ? 1.2 : 1,
@@ -63,8 +67,8 @@ const TabStack = () => {
                   type: 'timing',
                 }}>
                 <Image source={plus} style={{
-                  width: 35,
-                  height: 35,
+                  width: 45,
+                  height: 45,
                   tintColor: expanded ? Variables.alezan : Variables.isabelle,
                   zIndex: 1
                 }}></Image>
@@ -79,7 +83,7 @@ const TabStack = () => {
                 <FontAwesome5
                   name="calendar-alt"
                   size={20}
-                  color={focused ? '#956540' : 'gray'}
+                  color={focused ? variables.isabelle : 'gray'}
                 ></FontAwesome5>
               </View>
             } else if (route.name === 'Pets'){
@@ -91,30 +95,23 @@ const TabStack = () => {
                 <FontAwesome5
                   name="paw"
                   size={20}
-                  color={focused ? '#956540' : 'gray'}
+                  color={focused ? variables.isabelle : 'gray'}
                 ></FontAwesome5>
               </View>
             }
           },
           tabBarShowLabel: false,
           headerShown: false,
-          //Floating Tab Bar...
-          style: {
-            backgroundColor: 'white',
-            position: 'absolute',
-            bottom: 40,
-            marginHorizontal: 20,
-            // Max Height...
-            height: 60,
-            borderRadius: 10,
-            // Shadow...
-            shadowColor: '#000',
-            shadowOpacity: 0.06,
-            shadowOffset: {
-              width: 10,
-              height: 10
+          tabBarStyle:{
+            shadowColor: "black",
+            shadowOpacity: 0.3,
+            shadowRadius: 5,
+            shadowOffset:
+            {
+              width: 0,
+              height:-1
             },
-            paddingHorizontal: 20,
+            borderRadius: 30
           }
         })}>
   

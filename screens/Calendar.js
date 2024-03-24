@@ -248,11 +248,10 @@ const CalendarScreen = ({ navigation }) => {
             todayTextColor: variables.aubere,
             selectedDayTextColor: "white",
             selectedDayBackgroundColor: variables.alezan,
-            calendarBackground: variables.rouan,
+            calendarBackground: variables.blanc,
             dayTextColor: variables.bai,
             textDayHeaderTextColor: variables.alezan,
             textSectionTitleColor: variables.alezan
-            
           }}
           enableSwipeMonths={true}
           onDayPress={(day) => onDayPress(day.dateString)}
@@ -314,7 +313,7 @@ const styles = StyleSheet.create({
     color: variables.alezan
   },
   infosContainer: {
-    backgroundColor: variables.rouan,
+    backgroundColor: variables.blanc,
     marginTop: 10,
     display: "flex",
     flexDirection: "column",
@@ -322,7 +321,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     width: "90%",
-    height: "30%"
+    height: "30%",
+    shadowColor: "black",
+    shadowOpacity: 0.1,
+    shadowRadius:5,
+    shadowOffset:{width:0, height:2}
   },
   calendarContainer: {
     marginTop: 20,
@@ -333,6 +336,10 @@ const styles = StyleSheet.create({
   },
   calendar: {
     borderRadius: 5,
+    shadowColor: "black",
+    shadowOpacity: 0.1,
+    shadowRadius:5,
+    shadowOffset:{width:0, height:2}
   },
   imagePrez: {
     height: "90%",
@@ -356,7 +363,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor: Variables.blanc
+    backgroundColor: Variables.default
   },
 });
 

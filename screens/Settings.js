@@ -5,31 +5,34 @@ import ButtonLong from "../components/ButtonLong";
 import Variables from "../components/styles/Variables";
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import LogoutModal from "../components/Modals/ModalLogout";
+import Button from "../components/Button";
+import { TouchableOpacity } from "react-native";
 
 const SettingsScreen = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const { user } = useContext(AuthenticatedUserContext);
     const styles = StyleSheet.create({
         card:{
-            paddingTop: 30,
             paddingBottom: 30,
             alignItems: "center",
-            backgroundColor: "rgba(255, 255, 255, 0.8)",
+            backgroundColor: Variables.blanc,
             justifyContent: "center",
             width: "90%",
             borderRadius: 10,
             marginLeft: "auto",
             marginRight: "auto",
+            shadowColor: "black",
+            shadowOpacity: "0.3",
+            shadowRadius: 5,
+            shadowOffset: {width: 0, height: 2}
         },
         settings:{
-            flex: 1,
+            backgroundColor: Variables.default,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            marginTop: 80
         },
         title:{
-            color: Variables.bouton_secondary,
             fontSize: 25,
             fontWeight: "bold",
             marginTop: 30,
@@ -44,49 +47,67 @@ const SettingsScreen = ({ navigation }) => {
             width: 100,
             height: 100,
             borderRadius: 50,
-            borderWidth: 0.7,
+            borderWidth: 3,
             borderColor: 'white',
-            position: 'absolute',
             alignSelf: 'center',
-            marginTop: 80,
+            top: 25,
             zIndex: 1,
             backgroundColor: "white"
+        },
+        contentContainer: {
+            height: "100%",
+            backgroundColor: Variables.default,
+        },
+        button: {
+            width: "70%",
+            alignItems: "center",
+            marginBottom: 10,
+            padding: 10,
+            borderRadius: 5
+        },
+        buttonNormal: {
+            backgroundColor: Variables.default,
+        },
+        buttonDisconnect:{
+            backgroundColor: Variables.aubere,
         },
     });
 
     return (
         <>
+        <View style={styles.contentContainer}>
             <LogoutModal
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
             />
             <Back/>
-            <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")} />
-            <View style={styles.settings}>
-                <View style={styles.card}>
-                    <Text style={styles.title}>{user.prenom}</Text>
-                    <Text style={styles.email}>{user.email}</Text>
-                    <ButtonLong style={styles.button}>
-                        <Text>Mon compte</Text>
-                    </ButtonLong>
-                    <ButtonLong style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
-                        <Text>Ma whishlist</Text>
-                    </ButtonLong>
-                    <ButtonLong style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
-                        <Text>Mes contacts</Text>
-                    </ButtonLong>
-                    <ButtonLong style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
-                        <Text>Mes notes</Text>
-                    </ButtonLong>
-                    <ButtonLong style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
-                        <Text>Ma structure</Text>
-                    </ButtonLong>
-                    <ButtonLong style={styles.button} onPress={() => setModalVisible(!modalVisible)}>
-                        <Text>Thèmes</Text>
-                    </ButtonLong>
-                    <ButtonLong style={styles.button} type={"disconnect"} onPress={() => setModalVisible(!modalVisible)}>
-                        <Text>Déconnexion</Text>
-                    </ButtonLong>
+                <View style={styles.settings}>
+                    <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")} />
+                    <View style={styles.card}>
+                        <Text style={styles.title}>{user.prenom}</Text>
+                        <Text style={styles.email}>{user.email}</Text>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                            <Text>Mon compte</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                            <Text>Ma whishlist</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                            <Text>Mes contacts</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                            <Text>Mes notes</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                            <Text>Ma structure</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                            <Text>Thèmes</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVisible(!modalVisible)}>
+                            <Text>Déconnexion</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </>

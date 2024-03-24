@@ -457,13 +457,13 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor:  Variables.blanc
+    backgroundColor:  Variables.default
   },
   form: {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    backgroundColor: Variables.rouan,
+    backgroundColor: Variables.blanc,
     justifyContent: "center",
     width: "90%",
     height: "65%",
@@ -473,6 +473,10 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingBottom: 10,
     paddingTop: 10,
+    shadowColor: "black",
+    shadowOpacity: 0.1,
+    shadowRadius:5,
+    shadowOffset:{width:0, height:2}
   },
   formContainer:{
     paddingLeft: 30,

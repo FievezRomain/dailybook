@@ -51,8 +51,12 @@ const styles = StyleSheet.create({
         width: "90%",
         padding: 20,
         borderRadius: 5,
-        backgroundColor: variables.rouan,
+        backgroundColor: variables.blanc,
         marginBottom: 10,
+        shadowColor: "black",
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        shadowOffset: {width: 0, height: 2}
     },
     headerContainer:{
         display: "flex",
