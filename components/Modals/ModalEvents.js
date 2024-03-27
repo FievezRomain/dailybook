@@ -4,7 +4,7 @@ import Variables from "../styles/Variables";
 import { useForm } from "react-hook-form";
 import Button from "../Button";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import ModalAnimals from "./ModalAnimals";
+import ModalAnimals from "./ModalSelectAnimals";
 import AnimalsService from "../../services/AnimalsService";
 import EventService from "../../services/EventService";
 import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";

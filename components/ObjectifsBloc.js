@@ -6,7 +6,7 @@ import variables from "./styles/Variables";
 import { TouchableOpacity } from "react-native";
 import CompletionBar from './CompletionBar';
 import ObjectifService from '../services/ObjectifService';
-import ModalSubMenuActions from './Modals/ModalSubMenuActions';
+import ModalSubMenuObjectifActions from './Modals/ModalSubMenuObjectifActions';
 import ModalObjectif from './Modals/ModalObjectif';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
@@ -138,7 +138,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
 
     return (
         <>
-            <ModalSubMenuActions
+            <ModalSubMenuObjectifActions
                 modalVisible={modalSubMenuObjectifVisible}
                 setModalVisible={setModalSubMenuObjectifVisible}
                 handleModify={handleModify}

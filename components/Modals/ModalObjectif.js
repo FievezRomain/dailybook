@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity,
 import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { useForm } from "react-hook-form";
-import ModalAnimals from "./ModalAnimals";
+import ModalAnimals from "./ModalSelectAnimals";
 import AnimalsService from "../../services/AnimalsService";
 import ObjectifService from "../../services/ObjectifService";
 import ModalDropdwn from "./ModalDropdown";
