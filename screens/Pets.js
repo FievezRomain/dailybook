@@ -12,6 +12,8 @@ import AnimalsService from "../services/AnimalsService";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalVerif from "../components/Modals/ModalVerif";
 import DateField from "../components/DateField";
+import { Entypo } from '@expo/vector-icons';
+import ModalSubMenuAnimalActions from "../components/Modals/ModalSubMenuAnimalActions";
 
 const PetsScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
@@ -29,6 +31,7 @@ const PetsScreen = ({ navigation }) => {
   const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
   const [loadingEvent, setLoadingPets] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
   
 
   useEffect(() => {
@@ -230,6 +233,10 @@ const PetsScreen = ({ navigation }) => {
         event={deletePet}
         message={"Êtes-vous sûr de vouloir supprimer cet animal ?"}
       />
+      <ModalSubMenuAnimalActions
+        modalVisible={modalSubMenuAnimalActionsVisible}
+        setModalVisible={setModalSubMenuAnimalActionsVisible}
+      />
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
@@ -246,8 +253,18 @@ const PetsScreen = ({ navigation }) => {
         />
       </View>
       <View style={styles.form}>
+        <View style={styles.headerCard}>
+          <View style={styles.titleCard}>
+            <Text style={styles.title}>Informations</Text>
+          </View>
+          
+          <TouchableOpacity onPress={() => setModalSubMenuAnimalActionsVisible(true)} >
+            <Entypo name='dots-three-horizontal' size={20} />
+          </TouchableOpacity>
+        </View>
         <ScrollView style={{width:"100%"}}>
           <View style={styles.formContainer}>
+            
             <View style={styles.inputContainer}>
               <Text style={styles.textInput}>Nom de l'animal :</Text>
               {errors.nom && <Text style={styles.errorInput}>Nom obligatoire</Text>}
@@ -410,6 +427,18 @@ const PetsScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  headerCard:{
+    display: "flex",
+    flexDirection: "row",
+    width: "90%"
+  },
+  titleCard:{
+    alignItems: "center", 
+    flex: 1
+  },
+  title:{
+    color: Variables.alezan,
+  },
   errorInput: {
     color: "red"
   },
@@ -498,7 +527,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 5,
     paddingLeft: 15,
-    backgroundColor: Variables.fond_secondary,
+    backgroundColor: Variables.rouan,
     color: "black",
     alignSelf: "baseline"
   },

@@ -9,6 +9,7 @@ import ModalObjectif from "../components/Modals/ModalObjectif";
 import ModalWish from "../components/Modals/ModalWish";
 import ModalContact from "../components/Modals/ModalContact";
 import ModalNote from "../components/Modals/ModalNote";
+import ModalAnimal from "../components/Modals/ModalAnimal";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const ActionScreen = ({ navigation }) => {
@@ -20,6 +21,7 @@ const ActionScreen = ({ navigation }) => {
   const [isWishModalVisible, setWishModalVisible] = useState(false);
   const [isContactModalVisible, setContactModalVisible] = useState(false);
   const [isNoteModalVisible, setNoteModalVisible] = useState(false);
+  const [isAnimalModalVisible, setAnimalModalVisible] = useState(false);
   const [event, setEvent] = useState({});
   const list = [
     {title: "Balade", id: "balade"},
@@ -57,6 +59,14 @@ const ActionScreen = ({ navigation }) => {
       type: "success",
       position: "top",
       text1: "Création d'un souhait réussi"
+    });
+  }
+
+  const handleCreateAnimal = (animal) =>{
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Création d'un animal réussi"
     });
   }
 
@@ -99,6 +109,12 @@ const ActionScreen = ({ navigation }) => {
         setVisible={setNoteModalVisible}
         onModify={handleCreateNote}
       />
+      <ModalAnimal
+        actionType={"create"}
+        isVisible={isAnimalModalVisible}
+        setVisible={setAnimalModalVisible}
+        onModify={handleCreateAnimal}
+      />
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
@@ -106,7 +122,7 @@ const ActionScreen = ({ navigation }) => {
           <ScrollView style={{width:"100%"}} persistentScrollbar={true}>
             <View style={styles.formContainer}>
 
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setAnimalModalVisible(true)}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="paw" size={20} style={styles.iconButton}/>

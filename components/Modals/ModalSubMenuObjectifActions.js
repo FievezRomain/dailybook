@@ -3,7 +3,7 @@ import Button from "../Button";
 import Variables from "../styles/Variables";
 import { FontAwesome5, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 
-const ModalSubMenuActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleManageTasks }) => {
+const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleManageTasks }) => {
 
     const onAction = (event) =>{
         setModalVisible(false);
@@ -130,4 +130,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default ModalSubMenuActions;
+export default ModalSubMenuObjectifActions;
