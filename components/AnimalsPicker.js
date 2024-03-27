@@ -73,14 +73,6 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
     }
     return(
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={true} indicatorStyle="white" contentContainerStyle={styles.containerAnimaux}>
-            {buttonAdd && 
-            <TouchableOpacity style={styles.containerAvatar} onPress={()=>reset()}>
-                <View style={styles.containerAvatar}>
-                    <Image source={plus} style={styles.add}/>
-                    <Text>Ajouter</Text>
-                </View>
-            </TouchableOpacity>
-            }
             {animaux.map((animal, index) => {
                 return (
                     <TouchableOpacity style={styles.containerAvatar} onPress={()=>changeSelectedAnimals(animal)} key={animal.id}>
