@@ -14,6 +14,9 @@ import ModalVerif from "../components/Modals/ModalVerif";
 import DateField from "../components/DateField";
 import { Entypo } from '@expo/vector-icons';
 import ModalSubMenuAnimalActions from "../components/Modals/ModalSubMenuAnimalActions";
+import ModalAnimal from "../components/Modals/ModalAnimal";
+import DateUtils from "../utils/DateUtils";
+import { getImagePath } from '../services/Config';
 
 const PetsScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
@@ -30,8 +33,9 @@ const PetsScreen = ({ navigation }) => {
   annee = today.getFullYear();
   const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
   const [loadingEvent, setLoadingPets] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
   const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
+  const dateUtils = new DateUtils();
   
 
   useEffect(() => {
@@ -76,88 +80,7 @@ const PetsScreen = ({ navigation }) => {
     }
   };
 
-  const submitPets = async(data) =>{
-    // Récupération de l'identifiant de l'utilisateur (propriétaire)
-    data["idProprietaire"] =  user.id;
-    setLoadingPets(true);
-
-    let formData = data;
-    if (data.image != undefined){
-      formData = new FormData();
-      if(image != null){
-        filename = data.image.split("/");
-        filename = filename[filename.length-1].split(".")[0] + user.id;
-        formData.append("picture", {
-          name: filename,
-          type: "image/jpeg",
-          uri: data.image
-        });
-      } else{
-        formData.append("files", "empty");
-      }
-      data = { ...data, image: data.image };
-      formData.append("recipe", JSON.stringify(data));
-    }
-    
-
-    // Si un animal est selectionné, cela veut dire qu'on doit le modifier, sinon le créer
-    if(selected.length > 0){
-      // Modification de l'animal dans le back (BDD)
-      animalsService.modify(formData)
-      .then((response) =>{
-        setLoadingPets(false);
-        // Une fois la modification terminée, on valorise le hook avec la liste à jour des animaux
-        //animauxTemp = animaux;
-        //animauxFiltered = animaux.filter((a) => a.id === response.id);
-        //animauxTemp[animaux.indexOf(animauxFiltered)] = response;
-        indice = animaux.findIndex((a) => a.id == response.id);
-        animaux[indice] = response;
-        setAnimaux(animaux);
-        setSelected([animaux[indice]]);
-          Toast.show({
-              type: "success",
-              position: "top",
-              text1: "Modification réussie"
-          }); 
-          
-      })
-      .catch((err) =>{
-          console.log(err);
-          setLoadingPets(false);
-          Toast.show({
-              type: "error",
-              position: "top",
-              text1: err.message
-          });
-      });
-    } else{
-      // Création de l'animal dans le back (BDD)
-      animalsService.create(formData)
-      .then((response) =>{
-        setLoadingPets(false);
-        // Une fois la création terminée, on valorise le hook avec la liste à jour des animaux
-        setAnimaux([...animaux, response]);
-          Toast.show({
-              type: "success",
-              position: "top",
-              text1: "Création d'un nouvel animal réussie"
-          }); 
-          
-      })
-      .catch((err) =>{
-          console.log(err);
-          setLoadingPets(false);
-          Toast.show({
-              type: "error",
-              position: "top",
-              text1: err.message
-          });
-      });
-    }
-    
-  };
-
-  const deletePet = async() =>{
+  const handleDeletePet = async() =>{
     let data = {};
     // Récupération de l'identifiant de l'utilisateur (propriétaire)
     data["idProprietaire"] =  user.id;
@@ -169,14 +92,33 @@ const PetsScreen = ({ navigation }) => {
     animalsService.delete(data)
     .then((response) =>{
       setLoadingPets(false);
+
       // Une fois la suppression terminée, on valorise le hook avec l'animal en moins
       setAnimaux(animaux.filter((a) => a.id !== data["id"]));
-      setSelected([]);
-        Toast.show({
-            type: "success",
-            position: "top",
-            text1: "Suppression réussie"
-        }); 
+
+      // On change l'animal sélectionné par le premier de la liste
+      var animalToDisplay = animaux.filter((a) => a.id !== data["id"])[0];
+      setSelected(animalToDisplay);
+      setValue("id", animalToDisplay.id);
+      setValue("nom", animalToDisplay.nom);
+      setValue("espece", animalToDisplay.espece);
+      setValue("datenaissance", animalToDisplay.datenaissance !== null ? dateUtils.dateFormatter(animalToDisplay.datenaissance, "dd/MM/yyyy", "/") : undefined);
+      setValue("race", animalToDisplay.race !== null ? animalToDisplay.race : undefined);
+      setValue("taille", animalToDisplay.taille !== null ? animalToDisplay.taille.toString() : undefined);
+      setValue("poids", animalToDisplay.poids !== null ? animalToDisplay.poids.toString() : undefined);
+      setValue("sexe", animalToDisplay.sexe !== null ? animalToDisplay.sexe : undefined);
+      setValue("couleur", animalToDisplay.couleur !== null ? animalToDisplay.couleur : undefined);
+      setValue("nomPere", animalToDisplay.nompere !== null ? animalToDisplay.nompere : undefined);
+      setValue("nomMere", animalToDisplay.nommere !== null ? animalToDisplay.nommere : undefined);
+      setDate(animalToDisplay.datenaissance !== null ? animalToDisplay.datenaissance : String(jour + "/" + mois + "/" + annee));
+
+
+      // Affichage d'un message de réussite
+      Toast.show({
+          type: "success",
+          position: "top",
+          text1: "Suppression réussie"
+      }); 
         
     })
     .catch((err) =>{
@@ -190,32 +132,26 @@ const PetsScreen = ({ navigation }) => {
     });
   }
 
-  const onChangeDate = (selectedDate) => {
-    nbOccur = (String(selectedDate).match(/\//g) || []).length;
-    oldNbOccur = (String(date).match(/\//g) || []).length;
-    if(String(selectedDate).length === 2){
-        if(nbOccur === 0 && oldNbOccur === 0){
-            selectedDate = selectedDate + "/";
-            setValue("datenaissance", selectedDate);
-            setDate(selectedDate);
-        }
-    } else if(String(selectedDate).length === 5){
-        if(nbOccur === 1 && oldNbOccur === 1){
-            selectedDate = selectedDate + "/";
-            setValue("datenaissance", selectedDate);
-            setDate(selectedDate);
-        }
-    } else if(String(selectedDate).length === 9){
-        firstDatePart = String(selectedDate).split("/")[0];
-        if(String(firstDatePart).length === 1){
-            selectedDate = "0" + selectedDate;
-            setValue("datenaissance", selectedDate);
-            setDate(selectedDate);
-        }
-    }
-    setValue("datenaissance", selectedDate);
-    setDate(selectedDate);
-  };
+  const handleModify = () => {
+    setModalAnimalVisible(true);
+  }
+
+  const onModify = (animal) => {
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Modification de l'animal"
+    }); 
+
+    // Une fois la modification terminée, on valorise le hook avec la liste à jour des animaux
+    //animauxTemp = animaux;
+    //animauxFiltered = animaux.filter((a) => a.id === response.id);
+    //animauxTemp[animaux.indexOf(animauxFiltered)] = response;
+    var indice = animaux.findIndex((a) => a.id == animal.id);
+    animaux[indice] = animal;
+    setAnimaux(animaux);
+    setSelected([animaux[indice]]);
+  }
 
   return (
     <>
@@ -227,15 +163,18 @@ const PetsScreen = ({ navigation }) => {
           />
       </View>
       )}
-      <ModalVerif
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        event={deletePet}
-        message={"Êtes-vous sûr de vouloir supprimer cet animal ?"}
+      <ModalAnimal
+        actionType={"modify"}
+        isVisible={modalAnimalVisible}
+        setVisible={setModalAnimalVisible}
+        animal={selected[0]}
+        onModify={onModify}
       />
       <ModalSubMenuAnimalActions
         modalVisible={modalSubMenuAnimalActionsVisible}
         setModalVisible={setModalSubMenuAnimalActionsVisible}
+        handleDelete={handleDeletePet}
+        handleModify={handleModify}
       />
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
@@ -274,7 +213,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("nom", text)}
                 defaultValue={getValues("nom")}
-                {...register("nom", { required: true })}
+                editable={false}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -286,7 +225,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("espece", text)}
                 defaultValue={getValues("espece")}
-                {...register("espece", { required: true })}
+                editable={false}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -299,6 +238,7 @@ const PetsScreen = ({ navigation }) => {
                   placeholderTextColor={Variables.texte}
                   onChangeText={(text) => onChangeDate(text)}
                   value={date}
+                  editable={false}
               />
               {/* <DateField
                 defaultValue={getValues}
@@ -321,16 +261,14 @@ const PetsScreen = ({ navigation }) => {
             </View>
             <View style={styles.inputContainer}>
               <Text style={styles.textInput}>Image :</Text>
-              <AvatarPicker
-                setImage={setImage}
-                setValue={setValue}
-              />
-              {image &&
+              {selected[0] !== undefined  && selected[0].image !== null &&
                 <View style={styles.imageContainer}>
-                  <Image source={{uri: image}} style={styles.avatar}/>
-                  <TouchableOpacity onPress={() => setImage(null)}>
-                    <Image source={require("../assets/cross.png")} style={{height: 20, width: 20}}/>
-                  </TouchableOpacity>
+                  <Image source={{uri: `${getImagePath()}${selected[0].image}`}} style={styles.avatar}/>
+                </View>
+              }
+              {selected[0] !== undefined  && selected[0].image === null &&
+                <View style={styles.imageContainer}>
+                  <Text>Aucune image</Text>
                 </View>
               }
             </View>
@@ -342,6 +280,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("race", text)}
                 defaultValue={getValues("race")}
+                editable={false}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -353,6 +292,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("taille", text)}
                 defaultValue={getValues("taille")}
+                editable={false}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -364,6 +304,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("poids", text)}
                 defaultValue={getValues("poids")}
+                editable={false}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -374,6 +315,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("sexe", text)}
                 defaultValue={getValues("sexe")}
+                editable={false}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -384,6 +326,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("couleur", text)}
                 defaultValue={getValues("couleur")}
+                editable={false}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -394,6 +337,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("nomPere", text)}
                 defaultValue={getValues("nomPere")}
+                editable={false}
               />
             </View>
             <View style={styles.inputContainer}>
@@ -404,21 +348,9 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("nomMere", text)}
                 defaultValue={getValues("nomMere")}
+                editable={false}
               />
             </View>
-            <View style={styles.registerButton}>
-              <Button type="primary" onPress={handleSubmit(submitPets)}>
-                {selected.length > 0 && <Text style={styles.textButton}>Modifier</Text>}
-                {selected.length == 0 && <Text style={styles.textButton}>Créer</Text>}
-              </Button>
-            </View>
-              {selected.length > 0 && 
-                <View style={styles.registerButton}>
-                  <Button type="primary" onPress={() => setModalVisible(!modalVisible)}>
-                    <Text style={styles.textButton}>Supprimer</Text>
-                  </Button>
-                </View>
-              }
           </View>
         </ScrollView>
       </View>
@@ -542,7 +474,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignSelf: "flex-start",
     marginTop: 5,
-    marginBottom: 5
+    marginBottom: 15
   },
   datePicker:{
     marginBottom: 10,

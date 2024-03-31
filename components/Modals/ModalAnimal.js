@@ -8,6 +8,7 @@ import AnimalsService from "../../services/AnimalsService";
 import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
 import DatePickerModal from "./ModalDatePicker";
 import AvatarPicker from "../AvatarPicker";
+import DateUtils from "../../utils/DateUtils";
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
@@ -15,6 +16,27 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
+    const dateUtils = new DateUtils();
+
+    useEffect(() => {
+        if(animal.id !== undefined){
+            initValuesAnimal();
+        }
+    }, [animal]);
+
+    const initValuesAnimal = () => {
+        setValue("id", animal.id);
+        setValue("nom", animal.nom);
+        setValue("espece", animal.espece);
+        setValue("datenaissance", animal.datenaissance !== null ? dateUtils.dateFormatter(animal.datenaissance, "dd/MM/yyyy", "/") : undefined);
+        setValue("race", animal.race !== null ? animal.race : undefined);
+        setValue("taille", animal.taille !== null ? animal.taille.toString() : undefined);
+        setValue("poids", animal.poids !== null ? animal.poids.toString() : undefined);
+        setValue("sexe", animal.sexe !== null ? animal.sexe : undefined);
+        setValue("couleur", animal.couleur !== null ? animal.couleur : undefined);
+        setValue("nomPere", animal.nompere !== null ? animal.nompere : undefined);
+        setValue("nomMere", animal.nommere !== null ? animal.nommere : undefined);
+    }
 
     const closeModal = () => {
         setVisible(false);
@@ -42,20 +64,20 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
 
         let formData = data;
         if (data.image != undefined){
-        formData = new FormData();
-        if(image != null){
-            filename = data.image.split("/");
-            filename = filename[filename.length-1].split(".")[0] + user.id;
-            formData.append("picture", {
-            name: filename,
-            type: "image/jpeg",
-            uri: data.image
-            });
-        } else{
-            formData.append("files", "empty");
-        }
-        data = { ...data, image: data.image };
-        formData.append("recipe", JSON.stringify(data));
+            formData = new FormData();
+            if(image != null){
+                filename = data.image.split("/");
+                filename = filename[filename.length-1].split(".")[0] + user.id;
+                formData.append("picture", {
+                name: filename,
+                type: "image/jpeg",
+                uri: data.image
+                });
+            } else{
+                formData.append("files", "empty");
+            }
+            data = { ...data, image: data.image };
+            formData.append("recipe", JSON.stringify(data));
         }
         
 
@@ -65,14 +87,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             animalsService.modify(formData)
             .then((response) =>{
                 setLoadingEvent(false);
-                // Une fois la modification terminée, on valorise le hook avec la liste à jour des animaux
-                //animauxTemp = animaux;
-                //animauxFiltered = animaux.filter((a) => a.id === response.id);
-                //animauxTemp[animaux.indexOf(animauxFiltered)] = response;
-                indice = animaux.findIndex((a) => a.id == response.id);
-                animaux[indice] = response;
-                setAnimaux(animaux);
-                setSelected([animaux[indice]]);
                 Toast.show({
                     type: "success",
                     position: "top",
@@ -202,9 +216,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     <View style={styles.containerDate}>
                                         <Text style={styles.textInput}>Date de naissance : {convertDateToText("datenaissance")} <Text style={{color: "red"}}>*</Text></Text>
                                         <DatePickerModal
-                                        onDayChange={onChangeDate}
-                                        propertyName={"datenaissance"}
-                                        defaultDate={getValues("datenaissance")}
+                                            onDayChange={onChangeDate}
+                                            propertyName={"datenaissance"}
+                                            defaultDate={getValues("datenaissance")}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>
