@@ -11,7 +11,7 @@ import AvatarPicker from "../AvatarPicker";
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
-    const animalService = new AnimalsService();
+    const animalsService = new AnimalsService();
     const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
@@ -32,10 +32,88 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("couleur", undefined);
         setValue("nomPere", undefined);
         setValue("nomMere", undefined);
+        setImage(null);
     };
 
     const submitRegister = async(data) =>{
-        console.log("register");
+        // Récupération de l'identifiant de l'utilisateur (propriétaire)
+        data["idProprietaire"] =  user.id;
+        setLoadingEvent(true);
+
+        let formData = data;
+        if (data.image != undefined){
+        formData = new FormData();
+        if(image != null){
+            filename = data.image.split("/");
+            filename = filename[filename.length-1].split(".")[0] + user.id;
+            formData.append("picture", {
+            name: filename,
+            type: "image/jpeg",
+            uri: data.image
+            });
+        } else{
+            formData.append("files", "empty");
+        }
+        data = { ...data, image: data.image };
+        formData.append("recipe", JSON.stringify(data));
+        }
+        
+
+        // Si un animal est selectionné, cela veut dire qu'on doit le modifier, sinon le créer
+        if(actionType === "modify"){
+            // Modification de l'animal dans le back (BDD)
+            animalsService.modify(formData)
+            .then((response) =>{
+                setLoadingEvent(false);
+                // Une fois la modification terminée, on valorise le hook avec la liste à jour des animaux
+                //animauxTemp = animaux;
+                //animauxFiltered = animaux.filter((a) => a.id === response.id);
+                //animauxTemp[animaux.indexOf(animauxFiltered)] = response;
+                indice = animaux.findIndex((a) => a.id == response.id);
+                animaux[indice] = response;
+                setAnimaux(animaux);
+                setSelected([animaux[indice]]);
+                Toast.show({
+                    type: "success",
+                    position: "top",
+                    text1: "Modification de l'animal"
+                }); 
+                resetValues();
+                closeModal();
+                onModify(response);
+            })
+            .catch((err) =>{
+                console.log(err);
+                setLoadingEvent(false);
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: err.message
+                });
+            });
+        } else{
+            // Création de l'animal dans le back (BDD)
+            animalsService.create(formData)
+            .then((response) =>{
+                setLoadingEvent(false);
+                Toast.show({
+                    type: "success",
+                    position: "top",
+                    text1: "Création de l'animal"
+                }); 
+                resetValues();
+                closeModal();
+                onModify(response);
+            })
+            .catch((err) =>{
+                setLoadingEvent(false);
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: err.message
+                });
+            });
+        }
     }
 
     const onChangeDate = (propertyName, selectedDate) => {
@@ -98,7 +176,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                 <View style={styles.formContainer}>
 
                                     <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Nom de l'animal :</Text>
+                                        <Text style={styles.textInput}>Nom de l'animal : <Text style={{color: "red"}}>*</Text></Text>
                                         {errors.nom && <Text style={styles.errorInput}>Nom obligatoire</Text>}
                                         <TextInput
                                             style={styles.input}
@@ -110,7 +188,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Espèce :</Text>
+                                        <Text style={styles.textInput}>Espèce : <Text style={{color: "red"}}>*</Text></Text>
                                         {errors.nom && <Text style={styles.errorInput}>Espèce obligatoire</Text>}
                                         <TextInput
                                             style={styles.input}
@@ -122,11 +200,11 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         />
                                     </View>
                                     <View style={styles.containerDate}>
-                                        <Text style={styles.textInput}>Date : {convertDateToText("date")} <Text style={{color: "red"}}>*</Text></Text>
+                                        <Text style={styles.textInput}>Date de naissance : {convertDateToText("datenaissance")} <Text style={{color: "red"}}>*</Text></Text>
                                         <DatePickerModal
                                         onDayChange={onChangeDate}
-                                        propertyName={"date"}
-                                        defaultDate={getValues("date")}
+                                        propertyName={"datenaissance"}
+                                        defaultDate={getValues("datenaissance")}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>
@@ -306,6 +384,19 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignSelf: "flex-start",
         width: "100%"
+    },
+    imageContainer:{
+        flexDirection: "row",
+        alignSelf: "flex-start",
+        marginTop: 5,
+        marginBottom: 5
+    },
+    avatar: {
+        width: 60,
+        height: 60,
+        borderRadius: 50,
+        borderWidth: 2,
+        zIndex: 1,
     },
 })
 

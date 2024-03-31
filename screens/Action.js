@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     position: "absolute",
     justifyContent: "center",
-    backgroundColor:  Variables.blanc
+    backgroundColor:  Variables.default
   },
   formContainer:{
     paddingLeft: 30,
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   },
   form: {
     alignItems: "center",
-    backgroundColor: Variables.rouan,
+    backgroundColor: Variables.blanc,
     justifyContent: "center",
     width: "90%",
     marginLeft: "auto",
@@ -348,6 +348,10 @@ const styles = StyleSheet.create({
     height: "85%",
     paddingBottom: 10,
     paddingTop: 10,
+    shadowColor: "black",
+    shadowOpacity: 0.3,
+    shadowRadius:5,
+    shadowOffset:{width:0, height:2}
   },
 loaderEvent: {
     width: 200,
@@ -374,7 +378,7 @@ loadingEvent: {
     borderRightWidth: 30,
     borderBottomWidth: 0,
     borderLeftWidth: 30,
-    borderTopColor: Variables.rouan,
+    borderTopColor: Variables.blanc,
     borderRightColor: 'transparent',
     borderBottomColor: "transparent",
     borderLeftColor: 'transparent',
