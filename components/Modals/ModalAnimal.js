@@ -33,6 +33,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("taille", animal.taille !== null ? animal.taille.toString() : undefined);
         setValue("poids", animal.poids !== null ? animal.poids.toString() : undefined);
         setValue("sexe", animal.sexe !== null ? animal.sexe : undefined);
+        setValue("food", animal.food !== null ? animal.food : undefined);
+        setValue("quantity", animal.quantity !== null ? animal.quantity.toString() : undefined);
         setValue("couleur", animal.couleur !== null ? animal.couleur : undefined);
         setValue("nomPere", animal.nompere !== null ? animal.nompere : undefined);
         setValue("nomMere", animal.nommere !== null ? animal.nommere : undefined);
@@ -51,6 +53,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("taille", undefined);
         setValue("poids", undefined);
         setValue("sexe", undefined);
+        setValue("food", undefined);
+        setValue("quantity", undefined);
         setValue("couleur", undefined);
         setValue("nomPere", undefined);
         setValue("nomMere", undefined);
@@ -276,6 +280,28 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("sexe", text)}
                                             defaultValue={getValues("sexe")}
+                                        />
+                                    </View>
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Nom alimentation :</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : Pure feed"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("food", text)}
+                                            defaultValue={getValues("food")}
+                                            editable={false}
+                                        />
+                                    </View>
+                                    <View style={styles.inputContainer}>
+                                        <Text style={styles.textInput}>Quantité (gramme / cl) :</Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : 200"
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => setValue("quantity", text)}
+                                            defaultValue={getValues("quantity")}
+                                            editable={false}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>

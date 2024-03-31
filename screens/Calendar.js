@@ -58,8 +58,8 @@ const CalendarScreen = ({ navigation }) => {
         const result = await eventService.getEvents(user.id);
         if (result.length !== 0) {
           setEventArray(result);
-          setLoadingEvent(false);
         }
+        setLoadingEvent(false);
       } catch (error) {
         console.error("Error fetching events:", error);
         setLoadingEvent(false);

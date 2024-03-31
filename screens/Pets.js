@@ -69,6 +69,8 @@ const PetsScreen = ({ navigation }) => {
         if(result.rows[0].taille !== null ? setValue("taille", String(result.rows[0].taille)) : null);
         if(result.rows[0].poids !== null ? setValue("poids", String(result.rows[0].poids)) : null);
         if(result.rows[0].sexe !== null ? setValue("sexe", result.rows[0].sexe) : null);
+        if(result.rows[0].food !== null ? setValue("food", result.rows[0].food) : null);
+        if(result.rows[0].quantity !== null ? setValue("quantity", String(result.rows[0].quantity)) : null);
         if(result.rows[0].couleur !== null ? setValue("couleur", result.rows[0].couleur) : null);
         if(result.rows[0].nomPere !== null ? setValue("nomPere", result.rows[0].nomPere) : null);
         if(result.rows[0].nomMere !== null ? setValue("nomMere", result.rows[0].nomMere) : null);
@@ -107,6 +109,8 @@ const PetsScreen = ({ navigation }) => {
       setValue("taille", animalToDisplay.taille !== null ? animalToDisplay.taille.toString() : undefined);
       setValue("poids", animalToDisplay.poids !== null ? animalToDisplay.poids.toString() : undefined);
       setValue("sexe", animalToDisplay.sexe !== null ? animalToDisplay.sexe : undefined);
+      setValue("food", animalToDisplay.food !== null ? animalToDisplay.food : undefined);
+      setValue("quantity", animalToDisplay.quantity !== null ? animalToDisplay.quantity.toString() : undefined);
       setValue("couleur", animalToDisplay.couleur !== null ? animalToDisplay.couleur : undefined);
       setValue("nomPere", animalToDisplay.nompere !== null ? animalToDisplay.nompere : undefined);
       setValue("nomMere", animalToDisplay.nommere !== null ? animalToDisplay.nommere : undefined);
@@ -315,6 +319,28 @@ const PetsScreen = ({ navigation }) => {
                 placeholderTextColor={Variables.texte}
                 onChangeText={(text) => setValue("sexe", text)}
                 defaultValue={getValues("sexe")}
+                editable={false}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.textInput}>Nom alimentation :</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Exemple : Pure feed"
+                placeholderTextColor={Variables.texte}
+                onChangeText={(text) => setValue("food", text)}
+                defaultValue={getValues("food")}
+                editable={false}
+              />
+            </View>
+            <View style={styles.inputContainer}>
+              <Text style={styles.textInput}>Quantité (gramme / cl) :</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Exemple : 200"
+                placeholderTextColor={Variables.texte}
+                onChangeText={(text) => setValue("quantity", text)}
+                defaultValue={getValues("quantity")}
                 editable={false}
               />
             </View>
