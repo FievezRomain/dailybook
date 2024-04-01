@@ -17,6 +17,7 @@ import ModalSubMenuAnimalActions from "../components/Modals/ModalSubMenuAnimalAc
 import ModalAnimal from "../components/Modals/ModalAnimal";
 import DateUtils from "../utils/DateUtils";
 import { getImagePath } from '../services/Config';
+import ModalManageBodyAnimal from "../components/Modals/ModalManageBodyAnimal";
 
 const PetsScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
@@ -36,6 +37,7 @@ const PetsScreen = ({ navigation }) => {
   const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
   const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
   const dateUtils = new DateUtils();
+  const [modalManageBodyAnimalVisible, setModalBodyAnimalVisible] = useState(false);
   
 
   useEffect(() => {
@@ -157,6 +159,14 @@ const PetsScreen = ({ navigation }) => {
     setSelected([animaux[indice]]);
   }
 
+  const handleManageBodyAnimal = () => {
+    setModalBodyAnimalVisible(true);
+  }
+
+  const onModifyBodyAnimalHistory = (animal) =>{
+    console.log("enregitrer historique");
+  }
+
   return (
     <>
       {loadingEvent && (
@@ -179,6 +189,13 @@ const PetsScreen = ({ navigation }) => {
         setModalVisible={setModalSubMenuAnimalActionsVisible}
         handleDelete={handleDeletePet}
         handleModify={handleModify}
+        handleManageBody={handleManageBodyAnimal}
+      />
+      <ModalManageBodyAnimal
+        isVisible={modalManageBodyAnimalVisible}
+        setVisible={setModalBodyAnimalVisible}
+        animal={selected[0]}
+        onModify={onModifyBodyAnimalHistory}
       />
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
