@@ -7,8 +7,10 @@ import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider
 import LogoutModal from "../components/Modals/ModalLogout";
 import Button from "../components/Button";
 import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-const SettingsScreen = ({ navigation }) => {
+const SettingsScreen = ({ }) => {
+    const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
     const { user } = useContext(AuthenticatedUserContext);
     const styles = StyleSheet.create({
@@ -95,7 +97,7 @@ const SettingsScreen = ({ navigation }) => {
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
                             <Text>Mes contacts</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Note")}>
                             <Text>Mes notes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
