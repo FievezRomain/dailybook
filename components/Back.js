@@ -1,13 +1,12 @@
 import { StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Constants from 'expo-constants';
+
+import { Ionicons } from '@expo/vector-icons';
+import variables from "./styles/Variables";
 
 const Back = () => {
     const styles = StyleSheet.create({
         backButton:{
-            height: 25,
-            width: 25,
-            marginTop: Constants.statusBarHeight + 10,
             marginLeft: 20
         }
     });
@@ -16,7 +15,7 @@ const Back = () => {
 
     return(
         <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image style={styles.backButton} source={require("../assets/back.png")}/>
+            <Ionicons name="chevron-back" style={styles.backButton} size={30} color={variables.alezan} />
         </TouchableOpacity>
     );
 }

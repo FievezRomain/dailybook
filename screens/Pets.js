@@ -281,19 +281,6 @@ const PetsScreen = ({ navigation }) => {
               /> */}
             </View>
             <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Image :</Text>
-              {selected[0] !== undefined  && selected[0].image !== null &&
-                <View style={styles.imageContainer}>
-                  <Image source={{uri: `${getImagePath()}${selected[0].image}`}} style={styles.avatar}/>
-                </View>
-              }
-              {selected[0] !== undefined  && selected[0].image === null &&
-                <View style={styles.imageContainer}>
-                  <Text>Aucune image</Text>
-                </View>
-              }
-            </View>
-            <View style={styles.inputContainer}>
               <Text style={styles.textInput}>Race :</Text>
               <TextInput
                 style={styles.input}

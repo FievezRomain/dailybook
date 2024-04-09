@@ -3,8 +3,9 @@ import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome5, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
+import Back from "./Back";
 
-const TopTab = ({message1, message2}) => {
+const TopTabSecondary = ({message1, message2}) => {
     const navigation = useNavigation();
     const styles = StyleSheet.create({
         topTabContainer:{
@@ -12,20 +13,12 @@ const TopTab = ({message1, message2}) => {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            paddingLeft: 30,
             paddingRight: 30,
             paddingBottom: 10,
         },
         textContainer:{
             flex: 1,
-        },
-        imageContainer:{
-            flex: 1,
-            gap: 20,
-            direction: "ltr",
-            justifyContent: "flex-end",
-            alignItems: "center",
-            flexDirection: "row"
+            marginLeft: 20,
         },
         image:{
             height: 25,
@@ -50,20 +43,13 @@ const TopTab = ({message1, message2}) => {
 
     return(
         <View style={styles.topTabContainer}>
+            <Back />
             <View style={styles.textContainer}>
                 <Text style={styles.text}>{message1}</Text>
                 <Text style={[styles.name, styles.text]}>{message2}</Text>
-            </View>
-            <View style={styles.imageContainer}>
-                <TouchableOpacity>
-                    <Ionicons name="notifications" size={25} color={Variables.alezan} />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
-                    <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")}/>
-                </TouchableOpacity>
             </View>
         </View>
     );
 }
 
-export default TopTab;
+export default TopTabSecondary;

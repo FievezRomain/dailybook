@@ -8,6 +8,7 @@ import LogoutModal from "../components/Modals/ModalLogout";
 import Button from "../components/Button";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import Constants from 'expo-constants';
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
@@ -59,6 +60,7 @@ const SettingsScreen = ({ }) => {
         contentContainer: {
             height: "100%",
             backgroundColor: Variables.default,
+            marginTop: Constants.statusBarHeight + 10,
         },
         button: {
             width: "70%",
@@ -91,7 +93,7 @@ const SettingsScreen = ({ }) => {
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
                             <Text>Mon compte</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Wish")}>
                             <Text>Ma whishlist</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>

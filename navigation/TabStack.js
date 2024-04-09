@@ -104,14 +104,13 @@ const TabStack = () => {
           headerShown: false,
           tabBarStyle:{
             shadowColor: "black",
-            shadowOpacity: 0.3,
+            shadowOpacity: 0.1,
             shadowRadius: 5,
             shadowOffset:
             {
               width: 0,
               height:-1
             },
-            borderRadius: 30
           }
         })}>
   

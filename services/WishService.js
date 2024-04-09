@@ -15,7 +15,7 @@ export default class WishService {
 
     async update(body) {
         await this.updateAxiosAuthorization();
-        return axios.put(`${getBaseUrl()}updateObjectif`, body)
+        return axios.put(`${getBaseUrl()}updateWish`, body)
         .then((response) => {
             return response.data;
         })
@@ -25,17 +25,17 @@ export default class WishService {
 
     async delete(body) {
         await this.updateAxiosAuthorization();
-        return axios.delete(`${getBaseUrl()}deleteObjectif`, {data: body})
+        return axios.delete(`${getBaseUrl()}deleteWish`, {data: body})
         .then((response) => {
             return response.data;
         })
         .catch();
     }
 
-    async getObjectifs(id){
+    async getWishs(id){
         await this.updateAxiosAuthorization();
         return axios
-        .get(`${getBaseUrl()}objectifsByUser?idProprietaire=${id}`)
+        .get(`${getBaseUrl()}wishsByUser?idProprietaire=${id}`)
         .then(({data}) => {
             return data
         })
