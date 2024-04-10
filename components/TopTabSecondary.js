@@ -15,6 +15,7 @@ const TopTabSecondary = ({message1, message2}) => {
             alignItems: "center",
             paddingRight: 30,
             paddingBottom: 10,
+            backgroundColor: Variables.default
         },
         textContainer:{
             flex: 1,

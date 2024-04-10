@@ -1,22 +1,24 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, FlatList, Dimensions, Linking } from "react-native";
 import React, { useContext, useState, useEffect } from 'react';
-import Back from "../components/Back";
-import ButtonLong from "../components/ButtonLong";
 import Variables from "../components/styles/Variables";
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
-import LogoutModal from "../components/Modals/ModalLogout";
-import Button from "../components/Button";
+import { Entypo } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
 import TopTabSecondary from "../components/TopTabSecondary";
 import WishService from "../services/WishService";
 import { getImagePath } from '../services/Config';
-import MasonryList from 'react-native-masonry-list';
+import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishActions";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import ModalWish from "../components/Modals/ModalWish";
 
 const WishScreen = ({ navigation }) => {
     const { user } = useContext(AuthenticatedUserContext);
     const [wishs, setWishs] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [selectedWish, setSelectedWish] = useState(null);
     const wishService = new WishService();
+    const [modalSubMenuWishVisible, setModalSubMenuWishVisible] = useState(false);
+    const [modalWishVisible, setModalWishVisible] = useState(false);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
@@ -34,12 +36,67 @@ const WishScreen = ({ navigation }) => {
         if(result.length != 0){
             setWishs(result.rows);
         }
-        
     }
 
+    const handleModify = () => {
+        setModalWishVisible(true);
+    };
+
+    const onModify = (wish) => {
+        Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Modification d'un souhait réussi"
+        });
+        var indice = wishs.findIndex((a) => a.id == selectedWish.id);
+        wishs[indice] = wish;
+
+        setWishs(wishs);
+        setSelectedWish(wish);
+    };
+
+    const handleRedirect = () => {
+        Linking.openURL(selectedWish.url);
+    };
+
+    const handleDelete = () => {
+        setLoading(true);
+
+        let data = {};
+        data["id"] = selectedWish.id;
+        wishService.delete(data)
+            .then((response) =>{
+                setLoading(false);
+
+                var filteredArray = wishs.filter((item) => item.id != selectedWish.id);
+                setWishs(filteredArray);
+                setSelectedWish(null);
+
+                Toast.show({
+                    type: "success",
+                    position: "top",
+                    text1: "Suppression d'un souhait réussi"
+                });
+            })
+            .catch((err) =>{
+                setLoading(false);
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: err.message
+                });
+            });
+    };
+    const handleShare = () => {
+
+    };
+
+    const openSubMenuWish = (wish) => {
+        setSelectedWish(wish);
+        setModalSubMenuWishVisible(true)
+    };
     return(
         <>
-            <View style={styles.contentContainer}>
                 {loading && (
                     <View style={styles.loading}>
                         <Image
@@ -52,16 +109,50 @@ const WishScreen = ({ navigation }) => {
                     message1={"Vos"}
                     message2={"souhaits"}
                 />
+                <ModalSubMenuWishActions
+                    modalVisible={modalSubMenuWishVisible}
+                    setModalVisible={setModalSubMenuWishVisible}
+                    wish={selectedWish}
+                    handleRedirect={handleRedirect}
+                    handleModify={handleModify}
+                    handleDelete={handleDelete}
+                    handleShare={handleShare}
+                />
+                <ModalWish
+                    actionType={"modify"}
+                    isVisible={modalWishVisible}
+                    setVisible={setModalWishVisible}
+                    wish={selectedWish}
+                    onModify={onModify}
+                />
                 <View style={styles.container}>
-                    <MasonryList
-                        images={wishs.map(item => item.image)}
-                        customImageComponent={({ imageUri }) => (
-                          <Image source={{uri: `${getImagePath()}${imageUri.image}`}} style={styles.image} />
+                    <FlatList
+                        data={wishs}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item, index }) => (
+                            <TouchableOpacity style={[styles.itemContainer, index % 2 !== 0 && styles.itemContainerSecondColumn]} onPress={() => openSubMenuWish(item)}>
+                                {item.image !== null && item.image !== undefined &&
+                                    <Image source={{uri: `${getImagePath()}${item.image}`}} style={styles.image} />
+                                }
+                                {item.image === null || item.image === undefined &&
+                                    <View style={{backgroundColor: Variables.pinterest}}>
+                                        <Text>No content</Text>
+                                    </View>
+                                }
+                                {item.prix !== null &&
+                                    <View style={styles.labelContainer}>
+                                        <Entypo name="price-tag" size={16} color={Variables.alezan} /> 
+                                        <Text style={styles.price}>{item.prix} €</Text> 
+                                    </View>
+                                }
+                                <Text style={styles.title}>{item.nom}</Text>
+                                <Text>{item.destinataire}</Text>
+                            </TouchableOpacity>
                         )}
-                        onPressImage={image => console.log('Image pressée:', image)}
+                        numColumns={2}
                     />
                 </View>
-            </View>
+                <Text>  </Text>
             
         </>
     )
@@ -73,7 +164,7 @@ const styles = StyleSheet.create({
         width: 200,
         height: 200
       },
-      loading: {
+    loading: {
         position: "absolute",
         justifyContent: "center",
         alignItems: "center",
@@ -82,21 +173,45 @@ const styles = StyleSheet.create({
         height: "100%",
         backgroundColor: "#000000b8",
         paddingTop: 50
-      },
-      container: {
+    },
+    container: {
         flex: 1,
-        paddingHorizontal: 10,
-        paddingTop: 20,
-      },
-      image: {
+        backgroundColor: Variables.default,
+    },
+    itemContainer: {
+        flex: 1,
+        margin: 5,
+    },
+    itemContainerSecondColumn: {
+        marginTop: Dimensions.get('window').width * 0.05,
+    },
+    image: {
         width: '100%',
-        height: 200,
+        aspectRatio: 1, // Garantit que les images conservent leur ratio original
         borderRadius: 10,
-        marginBottom: 10,
-      },
-      contentContainer:{
-        backgroundColor: Variables.default
-      },
+    },
+    title: {
+        fontSize: 12,
+        color: Variables.bai,
+        marginTop: 5,
+        fontWeight: "bold"
+    },
+    labelContainer: {
+        position: 'absolute',
+        top: 10, 
+        left: 10, 
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        padding: 5,
+        borderRadius: 5,
+        zIndex: 1, 
+    },
+    price: {
+        marginLeft: 5,
+        color: Variables.alezan,
+        fontSize: 12
+    },
 });
 
 module.exports = WishScreen;

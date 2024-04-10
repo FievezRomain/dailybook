@@ -9,6 +9,7 @@ import variables from "../styles/Variables";
 import { FontAwesome } from '@expo/vector-icons';
 import WishService from "../../services/WishService";
 import { AuthenticatedUserContext } from '../../providers/AuthenticatedUserProvider';
+import { getImagePath } from '../../services/Config';
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
@@ -17,8 +18,29 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
 
+    useEffect(() => {
+        if(wish !== null){
+            initValues();
+        }
+    }, [isVisible, wish]);
+
     const closeModal = () => {
         setVisible(false);
+    };
+
+    const initValues = () =>{
+        setValue("id", wish.id);
+        setValue("nom", wish.nom);
+        setValue("url", wish.url);
+        setValue("prix", wish.prix);
+        setValue("destinataire", wish.destinataire);
+        if(wish.image !== null && wish.image !== undefined){
+            setImage(`${getImagePath()}${wish.image}`);
+        } else{
+            setImage(null);
+        }
+        setValue("image", wish.image);
+        setValue("previousimage", wish.image);
     };
 
     const resetValues = () =>{
@@ -30,41 +52,44 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         setValue("image", undefined);
     };
 
+    const deleteImage = () => {
+        if(actionType === "modify"){
+            setValue("image", "todelete");
+        }
+        setImage(null);
+    };
+
     const submitRegister = async(data) =>{
         setLoadingEvent(true);
         data["idproprietaire"] =  user.id;
 
         let formData = data;
         if (data.image != undefined){
-            formData = new FormData();
-            if(image != null){
-                filename = data.image.split("/");
-                filename = filename[filename.length-1].split(".")[0] + user.id;
-                formData.append("picture", {
-                name: filename,
-                type: "image/jpeg",
-                uri: data.image
-                });
-            } else{
-                formData.append("files", "empty");
+            if(actionType !== "modify" || data["previousimage"] !== data["image"]){
+                formData = new FormData();
+                if(image != null){
+                    filename = data.image.split("/");
+                    filename = filename[filename.length-1].split(".")[0] + user.id;
+                    formData.append("picture", {
+                    name: filename,
+                    type: "image/jpeg",
+                    uri: data.image
+                    });
+                } else{
+                    formData.append("files", "empty");
+                }
+                data = { ...data, image: data.image };
+                formData.append("recipe", JSON.stringify(data));
             }
-            data = { ...data, image: data.image };
-            formData.append("recipe", JSON.stringify(data));
         }
 
         if(actionType === "modify"){
             wishService.update(formData)
                 .then((reponse) =>{
                     setLoadingEvent(false);
-
-                    Toast.show({
-                        type: "success",
-                        position: "top",
-                        text1: "Modification d'un souhait réussi"
-                    });
-                    onModify(reponse);
                     resetValues();
                     closeModal();
+                    onModify(reponse);
                 })
                 .catch((err) =>{
                     setLoadingEvent(false);
@@ -172,7 +197,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                         {image &&
                                             <View style={styles.imageContainer}>
                                                 <Image source={{uri: image}} style={styles.avatar}/>
-                                                <TouchableOpacity onPress={() => setImage(null)}>
+                                                <TouchableOpacity onPress={() => deleteImage()}>
                                                     <Entypo name="circle-with-cross" size={25} color={variables.alezan}/>
                                                 </TouchableOpacity>
                                             </View>
