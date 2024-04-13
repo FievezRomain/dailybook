@@ -25,11 +25,14 @@ const TabStack = () => {
                 position: 'absolute',
                 top: 15
               }}>
-                <FontAwesome5
-                  name="home"
-                  size={20}
-                  color={focused ? variables.isabelle : 'gray'}
-                ></FontAwesome5>
+                <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
+                  <FontAwesome5
+                    name="home"
+                    size={20}
+                    color={focused ? variables.isabelle : 'gray'}
+                  ></FontAwesome5>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.isabelle : 'gray'}}>Accueil</Text>
+                </View>
               </View>
             } else if(route.name === 'Statistic'){
               return <View style={{
@@ -37,11 +40,15 @@ const TabStack = () => {
                 position: 'absolute',
                 top: 15
               }}>
-                <FontAwesome5
-                  name="signal"
-                  size={20}
-                  color={focused ? variables.isabelle : 'gray'}
-                ></FontAwesome5>
+                <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
+                  <FontAwesome5
+                    name="signal"
+                    size={20}
+                    color={focused ? variables.isabelle : 'gray'}
+                  ></FontAwesome5>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.isabelle : 'gray'}}>Performances</Text>
+                </View>
+                
               </View>
             } else if(route.name === 'ActionButton'){
               return <><MotiView
@@ -79,12 +86,16 @@ const TabStack = () => {
                 // centring Tab Button...
                 position: 'absolute',
                 top: 15
+                
               }}>
-                <FontAwesome5
-                  name="calendar-alt"
-                  size={20}
-                  color={focused ? variables.isabelle : 'gray'}
-                ></FontAwesome5>
+                <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
+                  <FontAwesome5
+                    name="calendar-alt"
+                    size={20}
+                    color={focused ? variables.isabelle : 'gray'}
+                  ></FontAwesome5>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.isabelle : 'gray'}}>Calendrier</Text>
+                </View>
               </View>
             } else if (route.name === 'Pets'){
               return <View style={{
@@ -92,11 +103,14 @@ const TabStack = () => {
                 position: 'absolute',
                 top: 15
               }}>
-                <FontAwesome5
-                  name="paw"
-                  size={20}
-                  color={focused ? variables.isabelle : 'gray'}
-                ></FontAwesome5>
+                <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
+                  <FontAwesome5
+                    name="paw"
+                    size={20}
+                    color={focused ? variables.isabelle : 'gray'}
+                  ></FontAwesome5>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.isabelle : 'gray'}}>Animaux</Text>
+                </View>
               </View>
             }
           },

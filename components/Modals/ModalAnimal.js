@@ -9,6 +9,7 @@ import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvi
 import DatePickerModal from "./ModalDatePicker";
 import AvatarPicker from "../AvatarPicker";
 import DateUtils from "../../utils/DateUtils";
+import { getImagePath } from '../../services/Config';
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
@@ -38,6 +39,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("couleur", animal.couleur !== null ? animal.couleur : undefined);
         setValue("nomPere", animal.nompere !== null ? animal.nompere : undefined);
         setValue("nomMere", animal.nommere !== null ? animal.nommere : undefined);
+        setValue("image", animal.image);
+        setValue("previousimage", animal.image);
+        setImage(`${getImagePath()}${animal.image}`);
     }
 
     const closeModal = () => {
@@ -68,20 +72,22 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
 
         let formData = data;
         if (data.image != undefined){
-            formData = new FormData();
-            if(image != null){
-                filename = data.image.split("/");
-                filename = filename[filename.length-1].split(".")[0] + user.id;
-                formData.append("picture", {
-                name: filename,
-                type: "image/jpeg",
-                uri: data.image
-                });
-            } else{
-                formData.append("files", "empty");
+            if(actionType !== "modify" || data["previousimage"] !== data["image"]){
+                formData = new FormData();
+                if(image != null){
+                    filename = data.image.split("/");
+                    filename = filename[filename.length-1].split(".")[0] + user.id;
+                    formData.append("picture", {
+                    name: filename,
+                    type: "image/jpeg",
+                    uri: data.image
+                    });
+                } else{
+                    formData.append("files", "empty");
+                }
+                data = { ...data, image: data.image };
+                formData.append("recipe", JSON.stringify(data));
             }
-            data = { ...data, image: data.image };
-            formData.append("recipe", JSON.stringify(data));
         }
         
 
@@ -146,6 +152,13 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         dateObject  = new Date(date);
         return String(dateObject.toLocaleDateString("fr-FR", options));
+    };
+
+    const deleteImage = () => {
+        if(actionType === "modify"){
+            setValue("image", "todelete");
+        }
+        setImage(null);
     };
 
     return(
@@ -234,7 +247,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         {image &&
                                             <View style={styles.imageContainer}>
                                             <Image source={{uri: image}} style={styles.avatar}/>
-                                            <TouchableOpacity onPress={() => setImage(null)}>
+                                            <TouchableOpacity onPress={() => deleteImage()}>
                                                 <Image source={require("../../assets/cross.png")} style={{height: 20, width: 20}}/>
                                             </TouchableOpacity>
                                             </View>
