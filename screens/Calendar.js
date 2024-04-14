@@ -138,7 +138,6 @@ const CalendarScreen = ({ navigation }) => {
 
   const changeEventsCurrentDateSelected = (date) => {
     const arrayFiltered = eventArray.filter(item => item.dateevent === date);
-    console.log(arrayFiltered);
     setEventArrayCurrentDateSelected(arrayFiltered);
   }
 
@@ -181,7 +180,6 @@ const CalendarScreen = ({ navigation }) => {
   const onModifyEvent = (idEventModified, response) => {
     var arrayTempArray = eventArray;
     var index = arrayTempArray.findIndex(objet => objet.id === idEventModified);
-    console.log(response);
 
     if(index !== -1){
       arrayTempArray[index] = response;
