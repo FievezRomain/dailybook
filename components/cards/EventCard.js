@@ -8,6 +8,7 @@ import EntrainementCard from './eventCards/EntrainementCard';
 import ConcoursCard from './eventCards/ConcoursCard';
 import RdvCard from './eventCards/RdvCard';
 import ModalEvents from "../Modals/ModalEvents";
+import DepenseCard from "./eventCards/DepenseCard";
 import React, { useState } from 'react';
 
 const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
@@ -31,7 +32,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
             backgroundColor: variables.alezan,
         },
         autre:{
-            backgroundColor: variables.blanc,
+            backgroundColor: variables.pinterest,
         },
         rdv:{
             backgroundColor: variables.souris,
@@ -44,6 +45,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
         },
         concours:{
             backgroundColor: variables.bai,
+        },
+        depense:{
+            backgroundColor: variables.rouan,
         }
     });
     
@@ -119,6 +123,17 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
                     <View style={styles.actionEventContainer}>
                         <TouchableOpacity onPress={() => {setModalModificationVisible(true)}}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15, color: variables.blanc}}/></TouchableOpacity>
                         <TouchableOpacity onPress={() => {deleteFunction(eventInfos)}}><FontAwesome5 name="trash-alt" size={18} style={{color: variables.blanc}}/></TouchableOpacity>
+                    </View>
+                </View>
+            }
+            {eventInfos.eventtype == "depense" &&
+                <View style={[styles.eventContainer, styles.depense]}>
+                    <DepenseCard
+                        eventInfos={eventInfos}
+                    />
+                    <View style={styles.actionEventContainer}>
+                        <TouchableOpacity onPress={() => {setModalModificationVisible(true)}}><FontAwesome5 name="pencil-alt" size={18} style={{marginBottom: 15}}/></TouchableOpacity>
+                        <TouchableOpacity onPress={() => {deleteFunction(eventInfos)}}><FontAwesome5 name="trash-alt" size={18}/></TouchableOpacity>
                     </View>
                 </View>
             }
