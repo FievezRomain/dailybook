@@ -38,6 +38,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Rendez-vous", id: "rdv"},
     {title: "Soins", id: "soins"},
     {title: "Autre", id: "autre"},
+    {title: "Depense", id: "depense"},
   ];
   const listNotif = [
     {title: "Aucune notification", id: "None"},
@@ -86,8 +87,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
   const initValuesEvent = () => {
     setValue("id", event.id);
-    setValue("eventTypePrecedent", event.eventtype);
-    setValue("date", event.dateevent);
+    setValue("dateevent", event.dateevent);
     setValue("nom", event.nom);
     setValue("lieu", event.lieu);
     setValue("heuredebutbalade", event.heuredebutbalade);
@@ -110,16 +110,16 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         setSelected(animaux.filter((item) => event.animaux.includes(item.id)));
       }
     }
-    setValue("eventType", event.eventtype);
+    setValue("eventtype", event.eventtype);
     var eventTypeSelected = list.filter((item) =>item.id === event.eventtype)[0];
     if(eventTypeSelected != undefined){
       setEventType(list.filter((item) =>item.id === event.eventtype)[0]);
     }
-    setValue("frequenceValue", event.frequencevalue);
+    setValue("frequencevalue", event.frequencevalue);
     setValue("depense", event.depense);
-    setValue("frequenceType", event.frequencetype);
+    setValue("frequencetype", event.frequencetype);
     setValue("notif", "");
-    setValue("optionNotif", "");
+    setValue("optionnotif", "");
   }
 
   const submitRegister = async(data) =>{
@@ -127,7 +127,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setLoadingEvent(true);
 
     // Vérification complétion du formulaire
-    if(data.date === undefined){
+    if(data.dateevent === undefined){
       complete = false;
       setLoadingEvent(false);
       Toast.show({
@@ -212,7 +212,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
             text1: "Modification d'un événement réussi"
           });
           resetValues();
-          onModify(data.id, reponse);
+          onModify(data.id, data);
+          closeModal();
         })
         .catch((err) =>{
           setLoadingEvent(false);
@@ -249,8 +250,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
   const resetValues = () =>{
     setValue("id", "");
-    setValue("eventTypePrecedent", "");
-    setValue("date", event.dateevent);
+    setValue("dateevent", event.dateevent);
     setValue("nom", "");
     setValue("lieu", "");
     setValue("heuredebutbalade", "");
@@ -267,13 +267,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("datefinsoins", "");
     setValue("commentaire", "");
     setValue("animaux", []);
-    setValue("eventType", "");
+    setValue("eventtype", "");
     setEventType(false);
     setValue("notif", "");
-    setValue("optionNotif", "");
-    setValue("frequenceValue", "");
+    setValue("optionnotif", "");
+    setValue("frequencevalue", "");
     setValue("depense", "");
-    setValue("frequenceType", "");
+    setValue("frequencetype", "");
   }
 
   const onChangeDate = (propertyName, selectedDate) => {
@@ -352,7 +352,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           setState={setEventType}
           state={eventType}
           setValue={setValue}
-          valueName={"eventType"}
+          valueName={"eventtype"}
         />
         <ModalDropdwn
           list={listNotif}
@@ -370,7 +370,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           setState={setOptionNotifType}
           state={optionNotifType}
           setValue={setValue}
-          valueName={"optionNotif"}
+          valueName={"optionnotif"}
         />
         <ModalNotifications
           modalVisible={modalNotifications}
@@ -406,11 +406,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                 <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
                     <View style={styles.formContainer}>
                       <View style={styles.containerDate}>
-                        <Text style={styles.textInput}>Date : {convertDateToText("date")} <Text style={{color: "red"}}>*</Text></Text>
+                        <Text style={styles.textInput}>Date : {convertDateToText("dateevent")} <Text style={{color: "red"}}>*</Text></Text>
                         <DatePickerModal
                           onDayChange={onChangeDate}
-                          propertyName={"date"}
-                          defaultDate={getValues("date")}
+                          propertyName={"dateevent"}
+                          defaultDate={getValues("dateevent")}
                         />
                       </View>
                     
@@ -652,17 +652,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               defaultValue={getValues("depense")}
                             />
                           </View>
-                          <View style={styles.inputContainer}>
-                            <Text style={styles.textInput}>Dépense :</Text>
-                            <TextInput
-                              style={styles.input}
-                              placeholder="Exemple : 0 (un doux rêve)"
-                              keyboardType="numeric"
-                              placeholderTextColor={Variables.texte}
-                              onChangeText={(text) => setValue("depense", text)}
-                              defaultValue={getValues("depense")}
-                            />
-                          </View>
                         </>
                       )}
 
@@ -706,6 +695,22 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                                 onChangeText={(text) => setValue("depense", text)}
                                 defaultValue={getValues("depense")}
                               />
+                          </View>
+                        </>
+                      )}
+
+                      {eventType.id === "depense" && (
+                        <>
+                          <View style={styles.inputContainer}>
+                            <Text style={styles.textInput}>Dépense :</Text>
+                            <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : 1"
+                              keyboardType="numeric"
+                              placeholderTextColor={Variables.texte}
+                              onChangeText={(text) => setValue("depense", text)}
+                              defaultValue={getValues("depense")}
+                            />
                           </View>
                         </>
                       )}
