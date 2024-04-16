@@ -3,7 +3,7 @@ import Button from "../Button";
 import Variables from "../styles/Variables";
 import { FontAwesome5, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 
-const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handleModify, handleDelete }) => {
+const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handleModify, handleDelete, handleShare }) => {
 
     const onAction = (event) =>{
         setModalVisible(false);
@@ -26,6 +26,15 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                 <View style={styles.card}>
                     <Text>Gérer l'événement</Text>
                     <View style={styles.actionButtonContainer}>
+                        <TouchableOpacity style={[styles.actionButton, styles.disabledButton]}>
+                            <View style={styles.informationsActionButton}>
+                                <Feather name="share-2" size={20} style={styles.disabledText}/>
+                                <Text style={[styles.textActionButton, styles.disabledText]}>
+                                    Partager (bientôt disponible)
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                        <View style={styles.bottomBar} />
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
@@ -66,7 +75,6 @@ const styles = StyleSheet.create({
         backgroundColor: Variables.souris,
     },
     actionButtonContainer:{
-        height: "60%",
         width: "90%",
         borderRadius: 10,
         backgroundColor: Variables.rouan,
@@ -75,7 +83,7 @@ const styles = StyleSheet.create({
         marginBottom: 15
     },
     actionButton:{
-        padding: 10,
+        padding: 15,
     },
     card: {
         backgroundColor: Variables.blanc,
@@ -119,6 +127,14 @@ const styles = StyleSheet.create({
     },
     title:{
         color: "white"
+    },
+    disabledButton:{
+        backgroundColor: Variables.pinterest,
+        borderTopStartRadius: 5,
+        borderTopEndRadius: 5,
+    },
+    disabledText:{
+        color: Variables.rouan
     },
 });
 
