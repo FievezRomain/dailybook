@@ -24,7 +24,7 @@ const PetsScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Mes", message2: "animaux"});
   const animalsService = new AnimalsService;
   const [animaux, setAnimaux] = useState([]);
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState([{}]);
   const [addingForm, setAddingForm] = useState(false);
   const [image, setImage] = useState(null);
   const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
@@ -55,31 +55,29 @@ const PetsScreen = ({ navigation }) => {
   const getAnimals = async () => {
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
-      setLoadingPets(true);
       // On récupère les animaux de l'utilisateur courant
       var result = await animalsService.getAnimals(user.id);
-      setLoadingPets(false);
       // Si l'utilisateur a des animaux, alors
-      if(result.rowCount !== 0){
+      if(result.length !== 0){
         // On valorise l'animal selectionné par défaut au premier de la liste
-        setSelected([result.rows[0]]);
-        if(result.rows[0].id !== null ? setValue("id", result.rows[0].id) : null);
-        if(result.rows[0].nom !== null ? setValue("nom", result.rows[0].nom) : null);
-        if(result.rows[0].espace !== null ? setValue("espece", result.rows[0].espece) : null);
-        if(result.rows[0].datenaissance !== null ? setValue("datenaissance", result.rows[0].datenaissance) : null);
-        if(result.rows[0].race !== null ? setValue("race", result.rows[0].race) : null );
-        if(result.rows[0].taille !== null ? setValue("taille", String(result.rows[0].taille)) : null);
-        if(result.rows[0].poids !== null ? setValue("poids", String(result.rows[0].poids)) : null);
-        if(result.rows[0].sexe !== null ? setValue("sexe", result.rows[0].sexe) : null);
-        if(result.rows[0].food !== null ? setValue("food", result.rows[0].food) : null);
-        if(result.rows[0].quantity !== null ? setValue("quantity", String(result.rows[0].quantity)) : null);
-        if(result.rows[0].couleur !== null ? setValue("couleur", result.rows[0].couleur) : null);
-        if(result.rows[0].nomPere !== null ? setValue("nomPere", result.rows[0].nomPere) : null);
-        if(result.rows[0].nomMere !== null ? setValue("nomMere", result.rows[0].nomMere) : null);
-        if(result.rows[0].datenaissance !== null ? setDate(result.rows[0].datenaissance) : setDate(null));
+        setSelected([result[0]]);
+        if(result[0].id !== null ? setValue("id", result[0].id) : null);
+        if(result[0].nom !== null ? setValue("nom", result[0].nom) : null);
+        if(result[0].espace !== null ? setValue("espece", result[0].espece) : null);
+        if(result[0].datenaissance !== null ? setValue("datenaissance", result[0].datenaissance) : null);
+        if(result[0].race !== null ? setValue("race", result[0].race) : null );
+        if(result[0].taille !== null ? setValue("taille", String(result[0].taille)) : null);
+        if(result[0].poids !== null ? setValue("poids", String(result[0].poids)) : null);
+        if(result[0].sexe !== null ? setValue("sexe", result[0].sexe) : null);
+        if(result[0].food !== null ? setValue("food", result[0].food) : null);
+        if(result[0].quantity !== null ? setValue("quantity", String(result[0].quantity)) : null);
+        if(result[0].couleur !== null ? setValue("couleur", result[0].couleur) : null);
+        if(result[0].nomPere !== null ? setValue("nomPere", result[0].nomPere) : null);
+        if(result[0].nomMere !== null ? setValue("nomMere", result[0].nomMere) : null);
+        if(result[0].datenaissance !== null ? setDate(result[0].datenaissance) : setDate(null));
 
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
-        setAnimaux(result.rows);
+        setAnimaux(result);
       }
     }
   };
@@ -149,10 +147,6 @@ const PetsScreen = ({ navigation }) => {
       text1: "Modification de l'animal"
     }); 
 
-    // Une fois la modification terminée, on valorise le hook avec la liste à jour des animaux
-    //animauxTemp = animaux;
-    //animauxFiltered = animaux.filter((a) => a.id === response.id);
-    //animauxTemp[animaux.indexOf(animauxFiltered)] = response;
     var indice = animaux.findIndex((a) => a.id == animal.id);
     animaux[indice] = animal;
     setAnimaux(animaux);
@@ -232,8 +226,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : Vasco"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("nom", text)}
-                defaultValue={getValues("nom")}
+                defaultValue={selected[0].nom}
                 editable={false}
               />
             </View>
@@ -244,8 +237,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : Cheval"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("espece", text)}
-                defaultValue={getValues("espece")}
+                defaultValue={selected[0].espece}
                 editable={false}
               />
             </View>
@@ -257,8 +249,7 @@ const PetsScreen = ({ navigation }) => {
                   keyboardType="numeric"
                   maxLength={10}
                   placeholderTextColor={Variables.texte}
-                  onChangeText={(text) => onChangeDate(text)}
-                  value={date}
+                  defaultValue={selected[0].datenaissance}
                   editable={false}
               />
               {/* <DateField
@@ -286,8 +277,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : Fjord"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("race", text)}
-                defaultValue={getValues("race")}
+                defaultValue={selected[0].race}
                 editable={false}
               />
             </View>
@@ -298,8 +288,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : 140"
                 keyboardType="numeric"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("taille", text)}
-                defaultValue={getValues("taille")}
+                defaultValue={selected[0].taille}
                 editable={false}
               />
             </View>
@@ -310,8 +299,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : 300"
                 keyboardType="numeric"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("poids", text)}
-                defaultValue={getValues("poids")}
+                defaultValue={selected[0].poids}
                 editable={false}
               />
             </View>
@@ -321,8 +309,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : Mâle"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("sexe", text)}
-                defaultValue={getValues("sexe")}
+                defaultValue={selected[0].sexe}
                 editable={false}
               />
             </View>
@@ -332,8 +319,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : Pure feed"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("food", text)}
-                defaultValue={getValues("food")}
+                defaultValue={selected[0].food}
                 editable={false}
               />
             </View>
@@ -343,8 +329,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : 200"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("quantity", text)}
-                defaultValue={getValues("quantity")}
+                defaultValue={selected[0].quantity}
                 editable={false}
               />
             </View>
@@ -354,8 +339,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : Noir"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("couleur", text)}
-                defaultValue={getValues("couleur")}
+                defaultValue={selected[0].couleur}
                 editable={false}
               />
             </View>
@@ -365,8 +349,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : Sirius"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("nomPere", text)}
-                defaultValue={getValues("nomPere")}
+                defaultValue={selected[0].nomPere}
                 editable={false}
               />
             </View>
@@ -376,8 +359,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : Hermès"
                 placeholderTextColor={Variables.texte}
-                onChangeText={(text) => setValue("nomMere", text)}
-                defaultValue={getValues("nomMere")}
+                defaultValue={selected[0].nomMere}
                 editable={false}
               />
             </View>

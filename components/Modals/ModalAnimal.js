@@ -18,6 +18,11 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
     const dateUtils = new DateUtils();
+    today = new Date();
+    jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
+    mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
+    annee = today.getFullYear();
+    const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
 
     useEffect(() => {
         if(animal.id !== undefined){
@@ -41,6 +46,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nomMere", animal.nommere !== null ? animal.nommere : undefined);
         setValue("image", animal.image);
         setValue("previousimage", animal.image);
+        setDate(animal.datenaissance);
         setImage(`${getImagePath()}${animal.image}`);
     }
 
@@ -140,14 +146,44 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         }
     }
 
-    const onChangeDate = (propertyName, selectedDate) => {
-        setValue(propertyName, selectedDate);
+    const onChangeDate = (selectedDate) => {
+        nbOccur = (String(selectedDate).match(/\//g) || []).length;
+        oldNbOccur = (String(date).match(/\//g) || []).length;
+        if(String(selectedDate).length === 2){
+            if(nbOccur === 0 && oldNbOccur === 0){
+                selectedDate = selectedDate + "/";
+                setValue("datenaissance", selectedDate);
+                setDate(selectedDate);
+            }
+        } else if(String(selectedDate).length === 5){
+            if(nbOccur === 1 && oldNbOccur === 1){
+                selectedDate = selectedDate + "/";
+                setValue("datenaissance", selectedDate);
+                setDate(selectedDate);
+            }
+        } else if(String(selectedDate).length === 9){
+            firstDatePart = String(selectedDate).split("/")[0];
+            if(String(firstDatePart).length === 1){
+                selectedDate = "0" + selectedDate;
+                setValue("datenaissance", selectedDate);
+                setDate(selectedDate);
+            }
+        }
+
+        setDate(selectedDate);
+        setValue("datenaissance", selectedDate);
     };
 
     const convertDateToText = (fieldname) =>{
-        var date = watch(fieldname);
-        if(date == undefined){
+        var date = fieldname;
+        if(date === undefined || date === null){
           return "";
+        }
+        if(date.length != 10){
+            return "Invalid Date";
+        }
+        if(date.includes("/")){
+            date = dateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
         }
         options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         dateObject  = new Date(date);
@@ -231,11 +267,15 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         />
                                     </View>
                                     <View style={styles.containerDate}>
-                                        <Text style={styles.textInput}>Date de naissance : {convertDateToText("datenaissance")} <Text style={{color: "red"}}>*</Text></Text>
-                                        <DatePickerModal
-                                            onDayChange={onChangeDate}
-                                            propertyName={"datenaissance"}
-                                            defaultDate={getValues("datenaissance")}
+                                        <Text style={styles.textInput}>Date de naissance : {convertDateToText(date)} <Text style={{color: "red"}}>*</Text></Text>
+                                        <TextInput
+                                            style={styles.input}
+                                            placeholder="Exemple : 01/01/1900"
+                                            keyboardType="numeric"
+                                            maxLength={10}
+                                            placeholderTextColor={Variables.texte}
+                                            onChangeText={(text) => onChangeDate(text)}
+                                            value={date}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>

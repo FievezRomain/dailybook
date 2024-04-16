@@ -8,7 +8,8 @@ export default class AnimalsService {
             headers: {'Content-Type': 'multipart/form-data'},
             transformRequest: (data) => {return data;}
         })
-        .then((response) => {
+        .then(async (response) => {
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch();
@@ -16,7 +17,8 @@ export default class AnimalsService {
     
     async createWithoutPicture(body){
         return axios.post(`${getBaseUrl()}createEquide`, body)
-        .then((response) => {
+        .then(async (response) => {
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch();
@@ -41,7 +43,8 @@ export default class AnimalsService {
 
     async modifyWithoutPicture(body){
         return axios.put(`${getBaseUrl()}modifyEquide`, body)
-        .then((response) => {
+        .then(async (response) => {
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch();
@@ -52,7 +55,8 @@ export default class AnimalsService {
             headers: {'Content-Type': 'multipart/form-data'},
             transformRequest: (data) => {return data;}
         })
-        .then((response) => {
+        .then(async (response) => {
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch();
@@ -77,13 +81,19 @@ export default class AnimalsService {
     }
 
     async getAnimals(id){
-        await this.updateAxiosAuthorization();
-        return axios
-        .get(`${getBaseUrl()}equideByUser?idProprietaire=${id}`)
-        .then(({data}) => {
-            return data
-        })
-        .catch();
+        await AsyncStorage.removeItem("animals");
+        if(await this.isInCache()){
+            return await this.getCache();
+        } else{
+            await this.updateAxiosAuthorization();
+            return axios
+            .get(`${getBaseUrl()}equideByUser?idProprietaire=${id}`)
+            .then(async ({data}) => {
+                await this.putInCache(data.rows);
+                return await this.getCache();
+            })
+            .catch();
+        }
     }
 
     async updateAxiosAuthorization() {
@@ -101,5 +111,35 @@ export default class AnimalsService {
     async getAuthToken() {
         let auth = await AsyncStorage.getItem("auth");
         return auth ? JSON.parse(auth) : null;
+     }
+
+     async isInCache() {
+        let animals = await AsyncStorage.getItem("animals");
+        return animals === null ? false : true;
+     }
+
+     async getCache() {
+        let animals = await AsyncStorage.getItem("animals");
+        return animals ? JSON.parse(animals) : null;
+     }
+
+     async putInCache(animals) {
+        if(await this.isInCache()){
+            let animals = JSON.parse(await AsyncStorage.getItem("animals"));
+
+            animals.forEach((animal) => {
+                var indice = animals.findIndex((a) => a.id == animal.id);
+
+                if(indice === -1){
+                    animals.push(animal);
+                } else{
+                    animals[indice] = animal;
+                }
+            });
+
+            await AsyncStorage.setItem("animals",  JSON.stringify(animals));
+        } else {
+            await AsyncStorage.setItem("animals", Array.isArray(animals) ? JSON.stringify(animals) : JSON.stringify([animals]));
+        }
      }
 }
