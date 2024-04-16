@@ -14,6 +14,7 @@ import DatePickerModal from "./ModalDatePicker";
 import RatingInput from "../RatingInput";
 import FrequencyInput from "../FrequencyInput";
 import ToogleSwitch from "../ToggleSwitch";
+import StatePicker from "../StatePicker";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
 
@@ -25,12 +26,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [modalDropdownNotifVisible, setModalDropdownNotifVisible] = useState(false);
   const [modalNotifications, setModalNotifications] = useState(false);
   const [modalOptionNotifications, setModalOptionNotifications] = useState(false);
+  const [modalCategorieDepense, setModalCategorieDepense] = useState(false);
   const [animaux, setAnimaux] = useState([]);
   const [selected, setSelected] = useState([]);
   const [loadingEvent, setLoadingEvent] = useState(false);
   const [eventType, setEventType] = useState(false);
   const [notifType, setNotifType] = useState(false);
   const [optionNotifType, setOptionNotifType] = useState(false);
+  const [categorieDepense, setCategorieDepense] = useState(false);
   const list = [
     {title: "Balade", id: "balade"},
     {title: "Entraînement", id: "entrainement"},
@@ -48,6 +51,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const listOptionsNotif = [
     {title: "Aucune option supplémentaire", id: "None"},
     {title: "Me rappeler l'événement dans 1 an", id: "Annee"},
+  ];
+  const listCategorieDepense = [
+    {title: "Alimentation", id: "alimentation"},
+    {title: "Équipement", id: "equipement"},
+    {title: "Accessoire", id: "accessoire"},
+    {title: "Service de garde / Pension", id: "garde"},
+    {title: "Formation", id: "formation"},
+    {title: "Assurance", id: "assurance"},
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
@@ -87,7 +98,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
   const initValuesEvent = () => {
     setValue("id", event.id);
-    setValue("dateevent", event.dateevent);
+    setValue("dateevent", event.dateevent === undefined ? new Date().toISOString().split('T')[0] : event.dateevent);
     setValue("nom", event.nom);
     setValue("lieu", event.lieu);
     setValue("heuredebutbalade", event.heuredebutbalade);
@@ -117,9 +128,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     }
     setValue("frequencevalue", event.frequencevalue);
     setValue("depense", event.depense);
+    setValue("categoriedepense", event.categoriedepense);
     setValue("frequencetype", event.frequencetype);
     setValue("notif", "");
     setValue("optionnotif", "");
+    setValue("state", event.state === undefined ? "À faire" : event.state);
+    setValue("todisplay", event.todisplay === undefined ? true : event.todisplay);
   }
 
   const submitRegister = async(data) =>{
@@ -273,7 +287,10 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("optionnotif", "");
     setValue("frequencevalue", "");
     setValue("depense", "");
+    setValue("categoriedepense", "");
     setValue("frequencetype", "");
+    setValue("state", "");
+    setValue("todisplay", "");
   }
 
   const onChangeDate = (propertyName, selectedDate) => {
@@ -290,9 +307,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   };
 
   const handleFrequencyChange = (newValue, newType) => {
-    setValue("frequenceValue", newValue);
-    setValue("frequenceType", newType);
+    setValue("frequencevalue", newValue);
+    setValue("frequencetype", newType);
   };
+
+  const handleStateChange = (value) => {
+    setValue("state", value);
+}
 
   const getActualTime = ()=>{
     today = new Date();
@@ -371,6 +392,15 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           state={optionNotifType}
           setValue={setValue}
           valueName={"optionnotif"}
+        />
+        <ModalDropdwn
+          list={listCategorieDepense}
+          modalVisible={modalCategorieDepense}
+          setModalVisible={setModalCategorieDepense}
+          setState={setCategorieDepense}
+          state={categorieDepense}
+          setValue={setValue}
+          valueName={"categoriedepense"}
         />
         <ModalNotifications
           modalVisible={modalNotifications}
@@ -681,8 +711,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <FrequencyInput
                               label="Fréquence du traitement :"
                               onChange={handleFrequencyChange}
-                              defaultFrequencyType={getValues("frequencyType")}
-                              defaultInputValue={getValues("frequencyValue")}
+                              defaultFrequencyType={getValues("frequencytype")}
+                              defaultInputValue={getValues("frequencyvalue")}
                             />
                           </View>
                           <View style={styles.inputContainer}>
@@ -712,14 +742,42 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               defaultValue={getValues("depense")}
                             />
                           </View>
+
+                          <View style={styles.inputContainer}>
+                            <Text style={styles.textInput}>Catégorie :</Text>
+                            <TouchableOpacity 
+                              style={styles.textInput} 
+                              onPress={()=>{setModalCategorieDepense(true)}} 
+                            >
+                              <View style={styles.containerAnimaux}>
+                                {categorieDepense == false &&
+                                  <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Par défaut, la dépense n'est dans aucune catégorie</Text></View>
+                                }
+                                {
+                                  categorieDepense != false &&
+                                  <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{categorieDepense.title}</Text></View>
+                                }
+                              </View>
+                            </TouchableOpacity>
+                          </View>
                         </>
                       )}
+
+                      <Text style={styles.textInput}>Status de l'événement :</Text>
+                      <View style={styles.inputToggleContainer}>
+                        <StatePicker
+                          firstState={"À faire"}
+                          secondState={"Terminé"}
+                          handleChange={handleStateChange}
+                          defaultState={watch("state") === undefined ? "À faire" : watch("state")}
+                        />
+                      </View>
 
                       <View style={styles.inputToggleContainer}>
                         <Text style={styles.textInput}>Afficher sur le calendrier :</Text>
                         <ToogleSwitch
-                          isActive={watch("isOnCalendar")}
-                          onToggle={(value) => setValue("isOnCalendar", value)}
+                          isActive={watch("todisplay")}
+                          onToggle={(value) => setValue("todisplay", value)}
                         />
                       </View>
 
@@ -787,7 +845,7 @@ const styles = StyleSheet.create({
     display: "flex", 
     flexDirection: "row", 
     width: "100%",
-    marginBottom: 10
+    marginBottom: 15
   },
   modalContainer: {
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

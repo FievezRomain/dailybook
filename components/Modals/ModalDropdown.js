@@ -40,6 +40,7 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
             <View style={styles.background}>
             <TouchableOpacity
                 style={styles.emptyBackground}
+                onPress={() => setModalVisible(false)}
             ></TouchableOpacity>
             <View style={styles.card}>
                 <View style={styles.itemContainer}>
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 35,
+    marginTop: 20,
     marginBottom: 20
   },
   itemContainer:{
