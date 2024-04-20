@@ -10,6 +10,8 @@ import ModalDropdwn from "./ModalDropdown";
 import Button from "../Button";
 import { AntDesign } from '@expo/vector-icons';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import DatePickerModal from "./ModalDatePicker";
+import DateUtils from "../../utils/DateUtils";
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
@@ -23,6 +25,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
     const [modalDropdownTemporalityVisible, setModalDropdownTemporalityVisible] = useState(false);
     const [temporalityObjectif, setTemporalityObjectif] = useState(false);
     const [inputs, setInputs] = useState(['']);
+    const dateUtils = new DateUtils();
     const list = [
         {title: "Semaine", id: "week"},
         {title: "Mois", id: "month"},
@@ -40,6 +43,10 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         initValuesEvent();
     }, [animaux]);
 
+    useEffect(() => {
+        changeObjectifEndDate();
+    }, [modalDropdownTemporalityVisible])
+
     const getAnimals = async () => {
   
         // Si aucun animal est déjà présent dans la liste, alors
@@ -49,9 +56,9 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             var result = await animalsService.getAnimals(user.id);
             setLoadingEvent(false);
             // Si l'utilisateur a des animaux, alors
-            if(result.rowCount !== 0){
+            if(result.length !== 0){
             // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
-                setAnimaux(result.rows);
+                setAnimaux(result);
             
             }
         }
@@ -60,6 +67,8 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
 
     const initValuesEvent = () => {
         setValue("id", objectif.id);
+        setValue("datedebut", objectif.datedebut === undefined ? new Date().toISOString().split('T')[0] : objectif.datedebut);
+        setValue("datefin", objectif.datefin === undefined ? dateUtils.dateFormatter(new Date().toISOString().split('T')[0], "yyyy-mm-dd", "-") : objectif.datefin);
         setValue("title", objectif.title);
         setValue("animaux", objectif.animaux);
         if(objectif.animaux != undefined){
@@ -92,6 +101,8 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setValue("temporalityobjectif", "");
         setValue("animaux", []);
         setValue("sousetapes", []);
+        setValue("datedebut", new Date().toISOString().split('T')[0]);
+        setValue("datefin", new Date().toISOString().split('T')[0]);
     };
 
     const submitRegister = async(data) =>{
@@ -116,6 +127,15 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                 type: "error",
                 position: "top",
                 text1: "Veuillez saisir une temporalité"
+            });
+        }
+        if(data.datedebut === undefined){
+            complete = false;
+            setLoadingEvent(false);
+            Toast.show({
+              type: "error",
+              position: "top",
+              text1: "Veuillez saisir une date de début pour l'objectif"
             });
         }
         const isNotEmpty = inputs.some(str => str.etape.trim().length > 0);
@@ -196,6 +216,43 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setInputs(newInputs);
         setValue("sousetapes", newInputs);
     };
+
+    const convertDateToText = (fieldname) =>{
+        var date = watch(fieldname);
+        if(date == undefined){
+            return "";
+        }
+        if(date.includes("/")){
+            date = dateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
+        }
+        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateObject  = new Date(date);
+        return String(dateObject.toLocaleDateString("fr-FR", options));
+    };
+
+    const onChangeDate = (propertyName, selectedDate) => {
+        setValue(propertyName, selectedDate);
+        changeObjectifEndDate();
+    };
+
+    const changeObjectifEndDate = () => {
+        if(temporalityObjectif === false || temporalityObjectif === undefined || getValues("datedebut") === undefined){
+            return;
+        }
+        var dateFin = new Date(getValues("datedebut"));
+        console.log("Date début :" + dateFin + " temporality : " + temporalityObjectif.id);
+        if(temporalityObjectif.id === "week"){
+            dateFin.setDate(dateFin.getDate() + 7);
+        }
+        if(temporalityObjectif.id === "month"){
+            dateFin.setMonth(dateFin.getMonth() + 1);
+        }
+        if(temporalityObjectif.id === "year"){
+            dateFin.setFullYear(dateFin.getFullYear() + 1);
+        }
+        console.log("Date fin : " + dateFin);
+        setValue("datefin", dateFin.toLocaleDateString());
+    }
 
     return(
         <>
@@ -314,6 +371,24 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                             }
                                         </View>
                                         </TouchableOpacity>
+                                    </View>
+
+                                    <View style={styles.containerDate}>
+                                        <Text style={styles.textInput}>Date de début : {convertDateToText("datedebut")} <Text style={{color: "red"}}>*</Text></Text>
+                                        <DatePickerModal
+                                            onDayChange={onChangeDate}
+                                            propertyName={"datedebut"}
+                                            defaultDate={getValues("datedebut")}
+                                        />
+                                    </View>
+
+                                    <View style={styles.containerDate}>
+                                        <Text style={styles.textInput}>Date de fin : {convertDateToText("datefin")} </Text>
+                                        <TextInput
+                                            value={getValues("datefin")}
+                                            style={styles.input}
+                                            editable={false}
+                                        />
                                     </View>
 
                                     <View style={styles.inputContainer}>
@@ -457,6 +532,11 @@ const styles = StyleSheet.create({
     toastContainer: {
         zIndex: 9999, 
     },
+    containerDate:{
+        flexDirection: "column",
+        alignSelf: "flex-start",
+        width: "100%"
+      },
 
 });
 

@@ -51,6 +51,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
 
         if(existingObj){
             var objectifsAnimal = objectifsArray[selectedAnimal[0].id];
+            console.log(objectifsAnimal);
 
             filteredObjectifs = objectifsAnimal.filter((item) => item.temporalityobjectif == temporality);
         }
