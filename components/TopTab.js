@@ -4,7 +4,7 @@ import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome5, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
 
-const TopTab = ({message1, message2}) => {
+const TopTab = ({message1, message2, withBackground=false}) => {
     const navigation = useNavigation();
     const styles = StyleSheet.create({
         topTabContainer:{
@@ -40,11 +40,11 @@ const TopTab = ({message1, message2}) => {
             height: 40,
             borderRadius: 50,
             borderWidth: 0.7,
-            borderColor: Variables.alezan,
-            backgroundColor: Variables.alezan
+            borderColor: withBackground == false ? Variables.alezan : Variables.blanc,
+            backgroundColor: withBackground == false ? Variables.alezan : Variables.blanc,
         },
         text:{
-            color: Variables.alezan,
+            color: withBackground == false ? Variables.alezan : Variables.blanc,
         }
     });
 
@@ -56,7 +56,7 @@ const TopTab = ({message1, message2}) => {
             </View>
             <View style={styles.imageContainer}>
                 <TouchableOpacity>
-                    <Ionicons name="notifications" size={25} color={Variables.alezan} />
+                    <Ionicons name="notifications" size={25} color={withBackground == false ? Variables.alezan : Variables.blanc} />
                 </TouchableOpacity>
                 <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
                     <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")}/>
