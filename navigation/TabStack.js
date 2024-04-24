@@ -29,9 +29,9 @@ const TabStack = () => {
                   <FontAwesome5
                     name="home"
                     size={20}
-                    color={focused ? variables.isabelle : 'gray'}
+                    color={focused ? variables.alezan : 'gray'}
                   ></FontAwesome5>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.isabelle : 'gray'}}>Accueil</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Accueil</Text>
                 </View>
               </View>
             } else if(route.name === 'Statistic'){
@@ -44,9 +44,9 @@ const TabStack = () => {
                   <FontAwesome5
                     name="signal"
                     size={20}
-                    color={focused ? variables.isabelle : 'gray'}
+                    color={focused ? variables.alezan : 'gray'}
                   ></FontAwesome5>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.isabelle : 'gray'}}>Performances</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Performances</Text>
                 </View>
                 
               </View>
@@ -76,7 +76,7 @@ const TabStack = () => {
                 <Image source={plus} style={{
                   width: 45,
                   height: 45,
-                  tintColor: expanded ? Variables.alezan : Variables.isabelle,
+                  tintColor: expanded ? Variables.souris : Variables.alezan,
                   zIndex: 1
                 }}></Image>
               </MotiView>
@@ -92,9 +92,9 @@ const TabStack = () => {
                   <FontAwesome5
                     name="calendar-alt"
                     size={20}
-                    color={focused ? variables.isabelle : 'gray'}
+                    color={focused ? variables.alezan : 'gray'}
                   ></FontAwesome5>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.isabelle : 'gray'}}>Calendrier</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Calendrier</Text>
                 </View>
               </View>
             } else if (route.name === 'Pets'){
@@ -107,9 +107,9 @@ const TabStack = () => {
                   <FontAwesome5
                     name="paw"
                     size={20}
-                    color={focused ? variables.isabelle : 'gray'}
+                    color={focused ? variables.alezan : 'gray'}
                   ></FontAwesome5>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.isabelle : 'gray'}}>Animaux</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Animaux</Text>
                 </View>
               </View>
             }
@@ -210,7 +210,7 @@ const TabStack = () => {
         <Animated.View style={{
           width: getWidth() - 15,
           //height: 2,
-          backgroundColor: Variables.isabelle,
+          backgroundColor: Variables.alezan,
           position: 'absolute',
           // bottom: (667 / (Dimensions.get("window").height / 10)) *5,
           // Horizontal Padding = 20...

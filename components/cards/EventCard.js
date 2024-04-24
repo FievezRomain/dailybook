@@ -12,7 +12,7 @@ import DepenseCard from "./eventCards/DepenseCard";
 import React, { useState } from 'react';
 import ModalSubMenuEventActions from "../Modals/ModalSubMenuEventActions";
 
-const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
+const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=true}) => {
     const [modalModificationVisible, setModalModificationVisible] = useState(false);
     const [modalSubMenuEventVisible, setModalSubMenuEventVisible] = useState(false);
 
@@ -82,9 +82,12 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
                     <BaladeCard
                         eventInfos={eventInfos}
                     />
-                    <View style={styles.actionEventContainer}>
-                        <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                    </View>
+                    {withSubMenu === true &&
+                        <View style={styles.actionEventContainer}>
+                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                        </View>
+                    }
+                    
                 </View>
             }
             {eventInfos.eventtype == "rdv" &&
@@ -92,9 +95,11 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
                     <RdvCard
                         eventInfos={eventInfos}
                     />
-                    <View style={styles.actionEventContainer}>
-                        <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                    </View>
+                    {withSubMenu === true &&
+                        <View style={styles.actionEventContainer}>
+                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                        </View>
+                    }
                 </View>
             }
             {eventInfos.eventtype == "soins" &&
@@ -102,9 +107,11 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
                     <SoinsCard
                         eventInfos={eventInfos}
                     />
-                    <View style={styles.actionEventContainer}>
-                        <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                    </View>
+                    {withSubMenu === true &&
+                        <View style={styles.actionEventContainer}>
+                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                        </View>
+                    }
                 </View>
             }
             {eventInfos.eventtype == "entrainement" &&
@@ -112,9 +119,11 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
                     <EntrainementCard
                         eventInfos={eventInfos}
                     />
-                    <View style={styles.actionEventContainer}>
-                        <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                    </View>
+                    {withSubMenu === true &&
+                        <View style={styles.actionEventContainer}>
+                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                        </View>
+                    }
                 </View>
             }
             {eventInfos.eventtype == "autre" &&
@@ -122,9 +131,11 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
                     <AutreCard
                         eventInfos={eventInfos}
                     />
-                    <View style={styles.actionEventContainer}>
-                        <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                    </View>
+                    {withSubMenu === true &&
+                        <View style={styles.actionEventContainer}>
+                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                        </View>
+                    }
                 </View>
             }
             {eventInfos.eventtype == "concours" &&
@@ -132,9 +143,11 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
                     <ConcoursCard
                         eventInfos={eventInfos}
                     />
-                    <View style={styles.actionEventContainer}>
-                        <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                    </View>
+                    {withSubMenu === true &&
+                        <View style={styles.actionEventContainer}>
+                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                        </View>
+                    }
                 </View>
             }
             {eventInfos.eventtype == "depense" &&
@@ -142,9 +155,11 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction}) => {
                     <DepenseCard
                         eventInfos={eventInfos}
                     />
-                    <View style={styles.actionEventContainer}>
-                        <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                    </View>
+                    {withSubMenu === true &&
+                        <View style={styles.actionEventContainer}>
+                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                        </View>
+                    }
                 </View>
             }
         </>

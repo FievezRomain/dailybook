@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 20,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: variables.blanc,
     borderRadius: 10,
     overflow: 'hidden',
     position: 'relative', // Ajout d'une position relative

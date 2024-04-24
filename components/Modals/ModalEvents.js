@@ -87,9 +87,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       var result = await animalsService.getAnimals(user.id);
       setLoadingEvent(false);
       // Si l'utilisateur a des animaux, alors
-      if(result.rowCount !== 0){
+      if(result.length !== 0){
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
-        setAnimaux(result.rows);
+        setAnimaux(result);
         
       }
     }
