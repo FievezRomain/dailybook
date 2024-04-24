@@ -1,13 +1,33 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
 import variables from './styles/Variables';
 
-const CompletionBar = ({ percentage }) => {
+const CompletionBar = ({ percentage=0 }) => {
+  const [animatedPercentage] = useState(new Animated.Value(0));
   const isCompleted = percentage === 100;
+
+  useEffect(() => {
+    Animated.timing(animatedPercentage, {
+      toValue: percentage,
+      duration: 250, // Durée de l'animation en millisecondes
+      easing: Easing.linear, // Type d'animation (facultatif)
+      useNativeDriver: false // Nécessaire pour les propriétés non supportées par le moteur natif
+    }).start();
+  }, [percentage]);
 
   return (
     <View style={styles.container}>
-      <View style={[styles.bar, { width: `${percentage}%`, backgroundColor: isCompleted ? variables.isabelle : variables.alezan }]} />
+      <Animated.View
+        style={[
+          styles.bar,
+          { width: animatedPercentage.interpolate({
+              inputRange: [0, 100],
+              outputRange: ['0%', '100%']
+            }),
+            backgroundColor: isCompleted ? variables.isabelle : variables.alezan
+          }
+        ]}
+      />
       <Text style={[styles.percentageText, { color: isCompleted ? variables.blanc : variables.rouan }]}>
         {percentage}%
       </Text>
