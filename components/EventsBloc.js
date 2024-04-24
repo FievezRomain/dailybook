@@ -5,12 +5,16 @@ import variables from './styles/Variables';
 import CompletionBar from './CompletionBar';
 import EventCard from './cards/EventCard';
 import StatePicker from './StatePicker';
+import EventService from '../services/EventService';
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const EventsBloc = ({ navigation, events, setSummary }) => {
     const [periodView, setPeriodView] = useState("Aujourd'hui");
     const [eventsToday, setEventsToday] = useState([]);
     const [eventsUpcoming, setEventsUpcoming] = useState([]);
     const [eventsExceeded, setEventsExceeded] = useState([]);
+    const [percentEventsDone, setPercentEventsDone] = useState(0);
+    const eventService = new EventService();
 
     useEffect(() => {
         filterByPeriod();
@@ -18,6 +22,7 @@ const EventsBloc = ({ navigation, events, setSummary }) => {
 
     useEffect(() => {
         defineSummary();
+        definePercentDone();
     }, [periodView, eventsToday, eventsUpcoming, eventsExceeded]);
 
 
@@ -51,6 +56,8 @@ const EventsBloc = ({ navigation, events, setSummary }) => {
             updatedEvents[indice] = objet;
             setEventsToday(updatedEvents);
         }
+
+        updateEvent(objet);
     }
 
     const calculateOverdueDays = (event) => {
@@ -109,6 +116,40 @@ const EventsBloc = ({ navigation, events, setSummary }) => {
         if(periodView !== "À venir" && (eventsToday.length !== 0 || eventsExceeded.length !== 0)){
             setSummary("Vous avez " + (eventsToday.length + eventsExceeded.length) +" événement(s) aujourd'hui");
         }
+    }
+
+    const definePercentDone = () => {
+        var total = 0;
+        var done = 0;
+
+        if(periodView !== "À venir"){
+            total = eventsToday.length + eventsExceeded.length;
+            done = eventsToday.filter((event) => event.state === "Terminé").length + eventsExceeded.filter((event) => event.state === "Terminé").length;
+        }
+        if(periodView === "À venir"){
+            total = eventsUpcoming.length;
+            done = eventsUpcoming.filter((event) => event.state === "Terminé").length;
+        }
+        
+        setPercentEventsDone(done === 0 ? 0 : ((done / total) * 100).toFixed(2));
+    }
+
+    const updateEvent = async (objet) => {
+        let data = {};
+        data["id"] = objet.id;
+        data["state"] = objet.state;
+
+        eventService.updateState(data)
+            .then((reponse) => {
+
+            })
+            .catch((err) => {
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: err.message
+                });
+            })
     }
     return(
         <>
@@ -192,7 +233,7 @@ const EventsBloc = ({ navigation, events, setSummary }) => {
                     <Text style={styles.title}>Progression :</Text>
                     <View style={styles.containerCompletionBar}>
                         <CompletionBar
-                            percentage={10}
+                            percentage={percentEventsDone}
                         />
                     </View>
                 </View>
