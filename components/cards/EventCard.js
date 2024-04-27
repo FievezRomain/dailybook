@@ -9,12 +9,29 @@ import ConcoursCard from './eventCards/ConcoursCard';
 import RdvCard from './eventCards/RdvCard';
 import ModalEvents from "../Modals/ModalEvents";
 import DepenseCard from "./eventCards/DepenseCard";
-import React, { useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import ModalSubMenuEventActions from "../Modals/ModalSubMenuEventActions";
+import AnimalsService from "../../services/AnimalsService";
+import { AuthenticatedUserContext } from '../../providers/AuthenticatedUserProvider';
 
 const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=true}) => {
+    const { user } = useContext(AuthenticatedUserContext);
     const [modalModificationVisible, setModalModificationVisible] = useState(false);
     const [modalSubMenuEventVisible, setModalSubMenuEventVisible] = useState(false);
+    const animalsService = new AnimalsService;
+    const [animaux, setAnimaux] = useState([]);
+
+    useEffect(() => {
+        if(animaux.length == 0){
+            getAnimaux();
+        }
+    })
+
+    const getAnimaux = async () => {
+        var result = await animalsService.getAnimals(user.id);
+
+        setAnimaux(result);
+    }
 
     const styles = StyleSheet.create({
         actionEventContainer:{
@@ -81,6 +98,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 <View style={[styles.eventContainer, styles.balade]}>
                     <BaladeCard
                         eventInfos={eventInfos}
+                        animaux={animaux}
                     />
                     {withSubMenu === true &&
                         <View style={styles.actionEventContainer}>
@@ -94,6 +112,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 <View style={[styles.eventContainer, styles.rdv]}>
                     <RdvCard
                         eventInfos={eventInfos}
+                        animaux={animaux}
                     />
                     {withSubMenu === true &&
                         <View style={styles.actionEventContainer}>
@@ -106,6 +125,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 <View style={[styles.eventContainer, styles.soins]}>
                     <SoinsCard
                         eventInfos={eventInfos}
+                        animaux={animaux}
                     />
                     {withSubMenu === true &&
                         <View style={styles.actionEventContainer}>
@@ -118,6 +138,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 <View style={[styles.eventContainer, styles.entrainement]}>
                     <EntrainementCard
                         eventInfos={eventInfos}
+                        animaux={animaux}
                     />
                     {withSubMenu === true &&
                         <View style={styles.actionEventContainer}>
@@ -130,6 +151,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 <View style={[styles.eventContainer, styles.autre]}>
                     <AutreCard
                         eventInfos={eventInfos}
+                        animaux={animaux}
                     />
                     {withSubMenu === true &&
                         <View style={styles.actionEventContainer}>
@@ -142,6 +164,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 <View style={[styles.eventContainer, styles.concours]}>
                     <ConcoursCard
                         eventInfos={eventInfos}
+                        animaux={animaux}
                     />
                     {withSubMenu === true &&
                         <View style={styles.actionEventContainer}>
@@ -154,6 +177,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 <View style={[styles.eventContainer, styles.depense]}>
                     <DepenseCard
                         eventInfos={eventInfos}
+                        animaux={animaux}
                     />
                     {withSubMenu === true &&
                         <View style={styles.actionEventContainer}>
