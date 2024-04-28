@@ -51,7 +51,7 @@ const EntrainementCard = ({eventInfos, animaux}) => {
     return(
         <View style={styles.eventTextContainer}>
             <View style={{display: "flex", flexDirection: "row"}}>
-                <Text style={[styles.eventTitle, styles.text]}>{eventInfos.nom} - </Text>
+                <Text style={[styles.eventTitle, styles.text]}>{eventInfos.nom}  </Text>
                 {eventInfos !== undefined && animaux.length !== 0 && eventInfos.animaux.map((eventAnimal, index) => {
                     var animal = getAnimalById(eventAnimal);
                     return(

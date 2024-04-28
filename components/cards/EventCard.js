@@ -35,16 +35,14 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
 
     const styles = StyleSheet.create({
         actionEventContainer:{
-            width: "20%",
-            alignItems: "flex-end",
+            marginRight: 10
         },
         eventContainer:{
-            backgroundColor: variables.rouan,
+            backgroundColor: variables.blanc,
             borderRadius: 5,
             width: "100%",
             display: "flex",
             flexDirection: "row",
-            padding: 10,
             marginBottom: 10,
         },
         balade:{
@@ -67,6 +65,19 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
         },
         depense:{
             backgroundColor: variables.rouan,
+        },
+        typeEventIndicator:{
+            width: "3%", 
+            height: "100%", 
+            borderTopStartRadius: 5, 
+            borderBottomStartRadius: 5
+        },
+        cardEventContainer:{
+            padding: 10, 
+            display: "flex", 
+            flexDirection: "row", 
+            width: "100%", 
+            justifyContent: "space-between"
         }
     });
 
@@ -95,95 +106,117 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 setModalVisible={setModalSubMenuEventVisible}
             />
             {eventInfos.eventtype == "balade" &&
-                <View style={[styles.eventContainer, styles.balade]}>
-                    <BaladeCard
-                        eventInfos={eventInfos}
-                        animaux={animaux}
-                    />
-                    {withSubMenu === true &&
-                        <View style={styles.actionEventContainer}>
-                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                        </View>
-                    }
+                <View style={[styles.eventContainer]}>
+                    <View style={[styles.balade, styles.typeEventIndicator]}></View>
+                    <View style={styles.cardEventContainer}>
+                        <BaladeCard
+                            eventInfos={eventInfos}
+                            animaux={animaux}
+                        />
+                        {withSubMenu === true &&
+                            <View style={styles.actionEventContainer}>
+                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                            </View>
+                        }
+                    </View>
                     
                 </View>
             }
             {eventInfos.eventtype == "rdv" &&
-                <View style={[styles.eventContainer, styles.rdv]}>
-                    <RdvCard
-                        eventInfos={eventInfos}
-                        animaux={animaux}
-                    />
-                    {withSubMenu === true &&
-                        <View style={styles.actionEventContainer}>
-                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                        </View>
-                    }
+                <View style={[styles.eventContainer]}>
+                    <View style={[styles.rdv, styles.typeEventIndicator]}></View>
+                    <View style={styles.cardEventContainer}>
+                        <RdvCard
+                            eventInfos={eventInfos}
+                            animaux={animaux}
+                        />
+                        {withSubMenu === true &&
+                            <View style={styles.actionEventContainer}>
+                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                            </View>
+                        }
+                    </View>
                 </View>
             }
             {eventInfos.eventtype == "soins" &&
-                <View style={[styles.eventContainer, styles.soins]}>
-                    <SoinsCard
-                        eventInfos={eventInfos}
-                        animaux={animaux}
-                    />
-                    {withSubMenu === true &&
-                        <View style={styles.actionEventContainer}>
-                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                        </View>
-                    }
+                <View style={[styles.eventContainer]}>
+                    <View style={[styles.soins, styles.typeEventIndicator]}></View>
+                    <View style={styles.cardEventContainer}>
+                        <SoinsCard
+                            eventInfos={eventInfos}
+                            animaux={animaux}
+                        />
+                        {withSubMenu === true &&
+                            <View style={styles.actionEventContainer}>
+                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                            </View>
+                        }
+                    </View>
                 </View>
             }
             {eventInfos.eventtype == "entrainement" &&
-                <View style={[styles.eventContainer, styles.entrainement]}>
-                    <EntrainementCard
-                        eventInfos={eventInfos}
-                        animaux={animaux}
-                    />
-                    {withSubMenu === true &&
-                        <View style={styles.actionEventContainer}>
-                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                        </View>
-                    }
+                <View style={[styles.eventContainer]}>
+                    <View style={[styles.entrainement, styles.typeEventIndicator]}></View>
+                    <View style={styles.cardEventContainer}>
+                        <EntrainementCard
+                            eventInfos={eventInfos}
+                            animaux={animaux}
+                        />
+                        {withSubMenu === true &&
+                            <View style={styles.actionEventContainer}>
+                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                            </View>
+                        }
+                    </View>
+                    
                 </View>
             }
             {eventInfos.eventtype == "autre" &&
-                <View style={[styles.eventContainer, styles.autre]}>
-                    <AutreCard
-                        eventInfos={eventInfos}
-                        animaux={animaux}
-                    />
-                    {withSubMenu === true &&
-                        <View style={styles.actionEventContainer}>
-                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                        </View>
-                    }
+                <View style={[styles.eventContainer]}>
+                    <View style={[styles.autre, styles.typeEventIndicator]}></View>
+                    <View style={styles.cardEventContainer}>
+                        <AutreCard
+                            eventInfos={eventInfos}
+                            animaux={animaux}
+                        />
+                        {withSubMenu === true &&
+                            <View style={styles.actionEventContainer}>
+                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                            </View>
+                        }
+                    </View>
                 </View>
             }
             {eventInfos.eventtype == "concours" &&
-                <View style={[styles.eventContainer, styles.concours]}>
-                    <ConcoursCard
-                        eventInfos={eventInfos}
-                        animaux={animaux}
-                    />
-                    {withSubMenu === true &&
-                        <View style={styles.actionEventContainer}>
-                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                        </View>
-                    }
+                <View style={[styles.eventContainer]}>
+                    <View style={[styles.concours, styles.typeEventIndicator]}></View>
+                    <View style={styles.cardEventContainer}>
+                        <ConcoursCard
+                            eventInfos={eventInfos}
+                            animaux={animaux}
+                        />
+                        {withSubMenu === true &&
+                            <View style={styles.actionEventContainer}>
+                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                            </View>
+                        }
+                    </View>
                 </View>
             }
             {eventInfos.eventtype == "depense" &&
-                <View style={[styles.eventContainer, styles.depense]}>
-                    <DepenseCard
-                        eventInfos={eventInfos}
-                        animaux={animaux}
-                    />
-                    {withSubMenu === true &&
-                        <View style={styles.actionEventContainer}>
-                            <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                        </View>
-                    }
+                <View style={[styles.eventContainer]}>
+                    <View style={[styles.depense, styles.typeEventIndicator]}></View>
+                    <View style={styles.cardEventContainer}>
+                        <DepenseCard
+                            eventInfos={eventInfos}
+                            animaux={animaux}
+                        />
+                        {withSubMenu === true &&
+                            <View style={styles.actionEventContainer}>
+                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
+                            </View>
+                        }
+                    </View>
                 </View>
             }
         </>

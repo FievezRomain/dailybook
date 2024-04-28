@@ -92,7 +92,7 @@ const EventsBloc = ({ navigation, events, setSummary }) => {
           if(event.state === "À faire" && currentDate < new Date().setHours(0, 0, 0, 0)){
             exceededArray.push(event);
           }
-          if(currentDate > new Date().setHours(0, 0, 0, 0) && currentDate <= currentDate.setDate(currentDate.getDate() + 7)){
+          if(currentDate > new Date().setHours(0, 0, 0, 0) && currentDate <= new Date().setHours(0, 0, 0, 0).setDate(new Date().setHours(0, 0, 0, 0).getDate() + 7)){
             upcomingArray.push(event);
           }
         })
@@ -316,11 +316,14 @@ const styles = StyleSheet.create({
     },
     overdueIndicatorContainer:{
         backgroundColor: "white", 
+        alignSelf: "flex-end",
         top: -20, 
         width: "40%", 
         padding: 5, 
         borderRadius: 60, 
-        marginLeft: 50, 
+        marginRight: 10, 
+        borderColor: variables.bai,
+        borderWidth: 0.2,
         alignItems: "center",
         shadowColor: "black",
         shadowOpacity: 0.1,
