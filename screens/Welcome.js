@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
 import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
@@ -7,19 +7,22 @@ import EventsBloc from "../components/EventsBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
 import WavyHeader from "../components/WavyHeader";
 import EventService from "../services/EventService";
-import StatePicker from "../components/StatePicker";
+import ObjectifService from "../services/ObjectifService";
+import ObjectifsInProgressBloc from "../components/ObjectifsInProgressBloc";
 
 const WelcomeScreen = ({ navigation })=> {
     const { user } = useContext(AuthenticatedUserContext);
     const [messages, setMessages] = useState({message1 :"Bienvenue,", message2: user.prenom});
     const eventService = new EventService();
+    const objectifService = new ObjectifService();
     const [events, setEvents] = useState([]);
-    const [summary, setSummary] = useState(false);
+    const [objectifs, setObjectifs] = useState([]);
 
     useEffect(() => {
       const unsubscribe = navigation.addListener("focus", () => {
         setMessages({message1: "Bienvenue,", message2: user.prenom});
         getEventsForUser();
+        getObjectifsForUser();
       });
       return unsubscribe;
     }, [navigation]);
@@ -35,6 +38,17 @@ const WelcomeScreen = ({ navigation })=> {
       }
     }
 
+    const getObjectifsForUser = async () => {
+      try {
+        const result = await objectifService.getObjectifs(user.id);
+        if (result.length !== 0) {
+          setObjectifs(result);
+        }
+      } catch (error) {
+        console.error("Error fetching objectifs:", error);
+      }
+    }
+
     const convertDateToText = () =>{
       options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
       dateObject  = new Date();
@@ -45,6 +59,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     return (
       <>
+      <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
       <View style={{flex: 1}}>
         <WavyHeader
             customBgColor={Variables.rouan}
@@ -58,12 +73,15 @@ const WelcomeScreen = ({ navigation })=> {
             <Text style={styles.summary}>{convertDateToText()}</Text>
         </View>
         <View style={{marginTop: 20}}>
-            <EventsBloc 
-              events={events}
-            />
+              <EventsBloc 
+                events={events}
+              />
+              <ObjectifsInProgressBloc
+                objectifs={objectifs}
+              />
         </View>
       </View>
-      
+      </ScrollView>
       </>
       );
 }

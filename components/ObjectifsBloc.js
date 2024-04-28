@@ -36,7 +36,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
     const getObjectifs = async () => {
         setLoading(true);
 
-        var result = await objectifService.getObjectifs(user.id);
+        var result = await objectifService.getObjectifsPerAnimals(user.id);
 
         setLoading(false);
 
