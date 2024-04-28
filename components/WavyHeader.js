@@ -14,7 +14,7 @@ export default function WavyHeader({
           <Svg
             height="60%"
             width="100%"
-            viewBox="0 0 1440 320"
+            viewBox="0 0 1440 220"
             style={{ position: 'absolute', top: customTop }}
           >
             <Path fill={customBgColor} d={customWavePattern} />

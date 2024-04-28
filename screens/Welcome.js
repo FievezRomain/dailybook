@@ -47,9 +47,9 @@ const WelcomeScreen = ({ navigation })=> {
       <>
       <View style={{flex: 1}}>
         <WavyHeader
-            customBgColor={Variables.alezan}
-            customHeight={140}
-            customTop={130}
+            customBgColor={Variables.rouan}
+            customHeight={100}
+            customTop={90}
             customWavePattern={"M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"}
             customStyles={styles.svgCurve}
           />
@@ -57,7 +57,7 @@ const WelcomeScreen = ({ navigation })=> {
         <View style={styles.summaryContainer}>
             <Text style={styles.summary}>{convertDateToText()}</Text>
         </View>
-        <View style={{marginTop: 50}}>
+        <View style={{marginTop: 20}}>
             <EventsBloc 
               events={events}
             />
@@ -89,11 +89,12 @@ const styles = StyleSheet.create({
     width: Dimensions.get('window').width
   },
   summaryContainer:{
-    alignItems: "center", 
-    marginTop: 20
+    paddingLeft: 30,
+    top: -5
   },
   summary:{
-    color: Variables.blanc
+    color: Variables.alezan,
+    fontWeight: "bold",
   },
 })
 
