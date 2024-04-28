@@ -35,6 +35,14 @@ const WelcomeScreen = ({ navigation })=> {
       }
     }
 
+    const convertDateToText = () =>{
+      options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      dateObject  = new Date();
+      dateText = String(dateObject.toLocaleDateString("fr-FR", options));
+      dateText = dateText.charAt(0).toUpperCase() + dateText.slice(1);
+      return dateText;
+    }
+
     return (
       <>
       <View style={{flex: 1}}>
@@ -47,12 +55,11 @@ const WelcomeScreen = ({ navigation })=> {
           />
         <TopTab message1={messages.message1} message2={messages.message2} withBackground={true}/>
         <View style={styles.summaryContainer}>
-            <Text style={styles.summary}>{summary}</Text>
+            <Text style={styles.summary}>{convertDateToText()}</Text>
         </View>
         <View style={{marginTop: 50}}>
             <EventsBloc 
               events={events}
-              setSummary={setSummary}
             />
         </View>
       </View>

@@ -8,12 +8,13 @@ import StatePicker from './StatePicker';
 import EventService from '../services/EventService';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
-const EventsBloc = ({ navigation, events, setSummary }) => {
+const EventsBloc = ({ navigation, events }) => {
     const [periodView, setPeriodView] = useState("Aujourd'hui");
     const [eventsToday, setEventsToday] = useState([]);
     const [eventsUpcoming, setEventsUpcoming] = useState([]);
     const [eventsExceeded, setEventsExceeded] = useState([]);
     const [percentEventsDone, setPercentEventsDone] = useState(0);
+    const [summary, setSummary] = useState("");
     const eventService = new EventService();
 
     useEffect(() => {
@@ -159,13 +160,14 @@ const EventsBloc = ({ navigation, events, setSummary }) => {
                     <FontAwesome name='check-circle' size={20} color={variables.alezan} style={styles.icon} />
                     <Text style={styles.title}>Tâches</Text>
                 </View>
-                <View style={{width: "90%", alignSelf: "center", marginBottom: 30}}>
+                <View style={{width: "90%", alignSelf: "center", alignItems: "center", marginBottom: 30}}>
                     <StatePicker
                         firstState={"Aujourd'hui"}
                         secondState={"À venir"}
                         handleChange={handlePeriodViewChange}
                         defaultState={periodView}
                     />
+                    <Text style={{marginTop: 10}}>{summary}</Text>
                 </View>
                 <View>
                     {periodView === "Aujourd'hui" && (
@@ -230,12 +232,26 @@ const EventsBloc = ({ navigation, events, setSummary }) => {
                     ))}
                 </View>
                 <View>
-                    <Text style={styles.title}>Progression :</Text>
-                    <View style={styles.containerCompletionBar}>
-                        <CompletionBar
-                            percentage={percentEventsDone}
-                        />
-                    </View>
+                    {periodView === "Aujourd'hui" && (eventsExceeded.length !== 0 || eventsToday !== 0) &&
+                        <>
+                            <Text style={styles.title}>Progression :</Text>
+                            <View style={styles.containerCompletionBar}>
+                                <CompletionBar
+                                    percentage={percentEventsDone}
+                                />
+                            </View>
+                        </>
+                    }
+                    {periodView === "À venir" && eventsUpcoming.length !== 0 &&
+                        <>
+                        <Text style={styles.title}>Progression :</Text>
+                        <View style={styles.containerCompletionBar}>
+                            <CompletionBar
+                                percentage={percentEventsDone}
+                            />
+                        </View>
+                    </>
+                    }
                 </View>
             </View>
 
