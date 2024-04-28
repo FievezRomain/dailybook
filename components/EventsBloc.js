@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FontAwesome5, FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome5, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import variables from './styles/Variables';
 import CompletionBar from './CompletionBar';
 import EventCard from './cards/EventCard';
-import StatePicker from './StatePicker';
 import EventService from '../services/EventService';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const EventsBloc = ({ navigation, events }) => {
-    const [periodView, setPeriodView] = useState("Aujourd'hui");
     const [eventsToday, setEventsToday] = useState([]);
     const [eventsUpcoming, setEventsUpcoming] = useState([]);
     const [eventsExceeded, setEventsExceeded] = useState([]);
     const [percentEventsDone, setPercentEventsDone] = useState(0);
-    const [summary, setSummary] = useState("");
     const eventService = new EventService();
 
     useEffect(() => {
@@ -22,9 +19,8 @@ const EventsBloc = ({ navigation, events }) => {
     }, [events]);
 
     useEffect(() => {
-        defineSummary();
         definePercentDone();
-    }, [periodView, eventsToday, eventsUpcoming, eventsExceeded]);
+    }, [eventsToday, eventsUpcoming, eventsExceeded]);
 
 
     const handleChangeState = (objet, type) =>{
@@ -75,10 +71,6 @@ const EventsBloc = ({ navigation, events }) => {
 
     }
 
-    const handlePeriodViewChange = (period) =>{
-        setPeriodView(period);
-    }
-
     const filterByPeriod = () => {
         var todayArray = [];
         var upcomingArray = [];
@@ -93,7 +85,7 @@ const EventsBloc = ({ navigation, events }) => {
           if(event.state === "À faire" && currentDate < new Date().setHours(0, 0, 0, 0)){
             exceededArray.push(event);
           }
-          if(currentDate > new Date().setHours(0, 0, 0, 0) && currentDate <= new Date().setHours(0, 0, 0, 0).setDate(new Date().setHours(0, 0, 0, 0).getDate() + 7)){
+          if(currentDate > new Date().setHours(0, 0, 0, 0) && currentDate <= new Date().setDate(new Date().getDate() + 7)){
             upcomingArray.push(event);
           }
         })
@@ -105,16 +97,16 @@ const EventsBloc = ({ navigation, events }) => {
     }
 
     const defineSummary = () => {
-        if(periodView === "À venir" && eventsUpcoming.length === 0){
+        if(eventsUpcoming.length === 0){
             setSummary("Vous n'avez pas d'événement(s) à venir");
         }
-        if(periodView === "À venir" && eventsUpcoming.length !== 0){
+        if(eventsUpcoming.length !== 0){
             setSummary("Vous avez " + eventsUpcoming.length + " événement(s) à venir");
         }
-        if(periodView !== "À venir" && (eventsToday.length === 0 && eventsExceeded.length === 0)){
+        if((eventsToday.length === 0 && eventsExceeded.length === 0)){
             setSummary("Vous n'avez pas d'événement(s) pour aujourd'hui");
         }
-        if(periodView !== "À venir" && (eventsToday.length !== 0 || eventsExceeded.length !== 0)){
+        if((eventsToday.length !== 0 || eventsExceeded.length !== 0)){
             setSummary("Vous avez " + (eventsToday.length + eventsExceeded.length) +" événement(s) aujourd'hui");
         }
     }
@@ -123,16 +115,10 @@ const EventsBloc = ({ navigation, events }) => {
         var total = 0;
         var done = 0;
 
-        if(periodView !== "À venir"){
-            total = eventsToday.length + eventsExceeded.length;
-            done = eventsToday.filter((event) => event.state === "Terminé").length + eventsExceeded.filter((event) => event.state === "Terminé").length;
-        }
-        if(periodView === "À venir"){
-            total = eventsUpcoming.length;
-            done = eventsUpcoming.filter((event) => event.state === "Terminé").length;
-        }
+        total = eventsToday.length + eventsExceeded.length;
+        done = eventsToday.filter((event) => event.state === "Terminé").length + eventsExceeded.filter((event) => event.state === "Terminé").length;
         
-        setPercentEventsDone(done === 0 ? 0 : ((done / total) * 100).toFixed(2));
+        setPercentEventsDone(done === 0 ? 0 : ((done / total) * 100).toFixed(0));
     }
 
     const updateEvent = async (objet) => {
@@ -152,6 +138,24 @@ const EventsBloc = ({ navigation, events }) => {
                 });
             })
     }
+
+    const getDayText = (date) =>{
+        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateObject  = new Date(date);
+        dateText = String(dateObject.toLocaleDateString("fr-FR", options));
+        dateText = dateText.charAt(0).toUpperCase() + dateText.slice(1);
+        return dateText.slice(0,3);
+      }
+
+      const getDateText = (date) =>{
+        var dateObjet = new Date(date);
+        var jour = ('0' + dateObjet.getDate()).slice(-2); 
+        var mois = ('0' + (dateObjet.getMonth() + 1)).slice(-2);
+        const dateFormatee = jour + '/' + mois;
+        return dateFormatee;
+      }
+
+
     return(
         <>
         <View style={styles.container}>
@@ -160,81 +164,9 @@ const EventsBloc = ({ navigation, events }) => {
                     <FontAwesome name='check-circle' size={20} color={variables.alezan} style={styles.icon} />
                     <Text style={styles.title}>Tâches</Text>
                 </View>
-                <View style={{width: "90%", alignSelf: "center", alignItems: "center", marginBottom: 30}}>
-                    <StatePicker
-                        firstState={"Aujourd'hui"}
-                        secondState={"À venir"}
-                        handleChange={handlePeriodViewChange}
-                        defaultState={periodView}
-                    />
-                    <Text style={{marginTop: 10}}>{summary}</Text>
-                </View>
                 <View>
-                    {periodView === "Aujourd'hui" && (
+                    {(eventsExceeded.length !== 0 || eventsToday !== 0) &&
                         <>
-                            {eventsExceeded.map((eventItem, index) => (
-                                <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "exceeded")}>
-                                    <View style={styles.eventContainer}>
-                                        <View style={styles.stateContainer}>
-                                            <View style={[styles.inputStateContainer, eventItem.state === "À faire" ? styles.inputStateContainerDefault : styles.inputStateContainerSelected]}>
-                                                <MaterialIcons name="check" size={20} color={eventItem.state === "À faire" ? variables.rouan : variables.blanc} />
-                                            </View>
-                                        </View>
-                                        <View style={styles.cardEventContainer}>
-                                            <EventCard
-                                                eventInfos={eventItem}
-                                                withSubMenu={true}
-                                            />
-                                        </View>
-                                    </View>
-                                    <View style={styles.overdueIndicatorContainer}>
-                                        <Text style={styles.overdueIndicator}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
-                                    </View>
-                                </TouchableOpacity>
-                                
-                            ))}
-                            {eventsToday.map((eventItem, index) => (
-                                <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "today")}>
-                                    <View style={styles.stateContainer}>
-                                        <View style={styles.inputStateContainer}>
-                                            <MaterialIcons name="check" size={20} color={eventItem.state === "À faire" ? variables.rouan : variables.alezan} />
-                                        </View>
-                                    </View>
-                                    <View style={styles.cardEventContainer}>
-                                        <EventCard
-                                            eventInfos={eventItem}
-                                            withSubMenu={true}
-                                        />
-                                    </View>
-                                    
-                                </TouchableOpacity>
-                                
-                            ))}
-                        </>
-                        
-                    )}
-                    {periodView === "À venir" && eventsUpcoming.map((eventItem, index) => (
-                        <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "upcoming")}>
-                            <View style={styles.stateContainer}>
-                                <View style={styles.inputStateContainer}>
-                                    <MaterialIcons name="check" size={20} color={eventItem.state === "À faire" ? variables.rouan : variables.alezan} />
-                                </View>
-                            </View>
-                            <View style={styles.cardEventContainer}>
-                                <EventCard
-                                    eventInfos={eventItem}
-                                    withSubMenu={true}
-                                />
-                            </View>
-                            
-                        </TouchableOpacity>
-                        
-                    ))}
-                </View>
-                <View>
-                    {periodView === "Aujourd'hui" && (eventsExceeded.length !== 0 || eventsToday !== 0) &&
-                        <>
-                            <Text style={styles.title}>Progression :</Text>
                             <View style={styles.containerCompletionBar}>
                                 <CompletionBar
                                     percentage={percentEventsDone}
@@ -242,26 +174,76 @@ const EventsBloc = ({ navigation, events }) => {
                             </View>
                         </>
                     }
-                    {periodView === "À venir" && eventsUpcoming.length !== 0 &&
-                        <>
-                        <Text style={styles.title}>Progression :</Text>
-                        <View style={styles.containerCompletionBar}>
-                            <CompletionBar
-                                percentage={percentEventsDone}
-                            />
-                        </View>
-                    </>
-                    }
+                </View>
+                <View>
+                    {eventsExceeded.map((eventItem, index) => (
+                        <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "exceeded")}>
+                            <View style={styles.eventContainer}>
+                                <View style={styles.stateContainer}>
+                                    <View style={[styles.inputStateContainer, eventItem.state === "À faire" ? styles.inputStateContainerDefault : styles.inputStateContainerSelected]}>
+                                        <MaterialIcons name="check" size={20} color={eventItem.state === "À faire" ? variables.rouan : variables.blanc} />
+                                    </View>
+                                </View>
+                                <View style={[styles.cardEventContainer, {paddingLeft: 10}]}>
+                                    <EventCard
+                                        eventInfos={eventItem}
+                                        withSubMenu={true}
+                                    />
+                                </View>
+                            </View>
+                            <View style={styles.overdueIndicatorContainer}>
+                                <Text style={styles.overdueIndicator}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
+                            </View>
+                        </TouchableOpacity>
+                        
+                    ))}
+                    {eventsToday.map((eventItem, index) => (
+                        <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "today")}>
+                            <View style={styles.eventContainer}>
+                                <View style={styles.stateContainer}>
+                                    <View style={styles.inputStateContainer}>
+                                        <MaterialIcons name="check" size={20} color={eventItem.state === "À faire" ? variables.rouan : variables.alezan} />
+                                    </View>
+                                </View>
+                                <View style={[styles.cardEventContainer, {paddingLeft: 10}]}>
+                                    <EventCard
+                                        eventInfos={eventItem}
+                                        withSubMenu={true}
+                                    />
+                                </View>
+                            </View>
+                        </TouchableOpacity>
+                        
+                    ))}
                 </View>
             </View>
 
-            <View style={styles.card}>
+            <View style={styles.eventUpcomingContainer}>
                 <View style={styles.headerContainer}>
                     <FontAwesome name='calendar' size={20} color={variables.alezan} style={styles.icon}/>
                     <Text style={styles.title}>Évenements à venir</Text>
                 </View>
                 <View>
-                    {/** Liste des tâches à venir */ }
+                    {eventsUpcoming.map((eventItem, index) => (
+                        <TouchableOpacity key={eventItem.id}>
+                            <View style={styles.eventContainer}>
+                                <View style={styles.dateContainer}>
+                                    <View style={styles.inputDateContainer}>
+                                        <Text>{getDayText(eventItem.dateevent)}.</Text>
+                                        <Text style={{fontSize: 11}}>{getDateText(eventItem.dateevent)}</Text>
+                                    </View>
+                                </View>
+                                <View style={[styles.cardEventContainer, {paddingLeft: 10}]}>
+                                    <EventCard
+                                        eventInfos={eventItem}
+                                        withSubMenu={true}
+                                    />
+                                </View>
+                            </View>
+                            
+                        </TouchableOpacity>
+                        
+                    ))}
                 </View>
             </View>
         </View>
@@ -275,22 +257,19 @@ const styles = StyleSheet.create({
         width: "100%",
         alignItems: "center",
     },
-    card:{
-        width: "90%",
-        padding: 20,
-        borderRadius: 5,
-        backgroundColor: variables.blanc,
-        marginBottom: 10,
-        shadowColor: "black",
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        shadowOffset: {width: 0, height: 2}
-    },
     eventTodayContainer:{
         width: "100%",
-        padding: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 20,
         borderRadius: 5,
-        marginBottom: 10,
+    },
+    eventUpcomingContainer:{
+        width: "100%",
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 20,
+        borderRadius: 5,
     },
     headerContainer:{
         display: "flex",
@@ -305,7 +284,8 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     containerCompletionBar:{
-        padding: 10,
+        paddingBottom: 20,
+        paddingTop: 10
     },
     eventContainer:{
         display: "flex",
@@ -326,6 +306,16 @@ const styles = StyleSheet.create({
         borderRadius: 60, 
         borderBlockColor: variables.alezan, 
         borderWidth: 0.2
+    },
+    dateContainer:{
+        width: "10%", 
+        justifyContent: "center", 
+        alignItems: "center", 
+        marginBottom: 10
+    },
+    inputDateContainer:{
+        alignItems: "center", 
+        justifyContent: "center",
     },
     cardEventContainer:{
         width: "90%"
