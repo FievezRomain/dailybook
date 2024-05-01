@@ -27,7 +27,7 @@ const EntrainementCard = ({eventInfos, animaux}) => {
             padding: 10,
         },
         eventCommentaire:{
-
+            fontSize: 12
         },
         avatarText: {
             color: "white",
@@ -67,10 +67,30 @@ const EntrainementCard = ({eventInfos, animaux}) => {
                     )
                 })}
             </View>
+            <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", flexWrap: "wrap"}}>
+                {eventInfos.lieu != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.aubere}}>Lieu : </Text>{eventInfos.lieu}</Text>
+                    </View>
+                }
+                {eventInfos.discipline != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.aubere}}>Discipline : </Text>{eventInfos.discipline}</Text>
+                    </View>
+                }
+                {eventInfos.note != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.aubere}}>Note : </Text>{eventInfos.note} / 5</Text>
+                    </View>
+                }
+                {eventInfos.commentaire != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.aubere}}>Commentaire : </Text>{eventInfos.commentaire}</Text>
+                    </View>
+                }
+            </View>
             
-            {eventInfos.commentaire != "" && 
-                <Text style={[styles.eventCommentaire, styles.text]}>{eventInfos.commentaire}</Text>
-            }
+            
         </View>
     );
 }

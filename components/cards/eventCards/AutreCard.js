@@ -26,7 +26,7 @@ const AutreCard = ({eventInfos, animaux}) => {
             padding: 10,
         },
         eventCommentaire:{
-
+            fontSize: 12
         },
         avatarText: {
             color: "white",
@@ -65,9 +65,18 @@ const AutreCard = ({eventInfos, animaux}) => {
                         )
                 })}
             </View>
-            {eventInfos.commentaire != "" && 
-                <Text style={[styles.eventCommentaire, styles.text]}>{eventInfos.commentaire}</Text>
-            }
+            <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", flexWrap: "wrap"}}>
+                {eventInfos.lieu != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.pinterest}}>Lieu : </Text>{eventInfos.lieu}</Text>
+                    </View>
+                }
+                {eventInfos.commentaire != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.pinterest}}>Commentaire : </Text>{eventInfos.commentaire}</Text>
+                    </View>
+                }
+            </View>
         </View>
     );
 }

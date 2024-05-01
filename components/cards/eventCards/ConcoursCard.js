@@ -26,7 +26,7 @@ const ConcoursCard = ({eventInfos, animaux}) => {
             padding: 10,
         },
         eventCommentaire:{
-
+            fontSize: 12
         },
         text:{
             color: variables.blanc,
@@ -69,9 +69,43 @@ const ConcoursCard = ({eventInfos, animaux}) => {
                         )
                 })}
             </View>
-            {eventInfos.commentaire != "" && 
-                <Text style={[styles.eventCommentaire, styles.text]}>{eventInfos.commentaire}</Text>
-            }
+            <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", flexWrap: "wrap"}}>
+                {eventInfos.lieu != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.bai}}>Lieu : </Text>{eventInfos.lieu}</Text>
+                    </View>
+                }
+                {eventInfos.discipline != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.bai}}>Discipline : </Text>{eventInfos.discipline}</Text>
+                    </View>
+                }
+                {eventInfos.epreuve != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.bai}}>Épreuve : </Text>{eventInfos.epreuve}</Text>
+                    </View>
+                }
+                {eventInfos.dossart != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.bai}}>Dossart : </Text>{eventInfos.dossart}</Text>
+                    </View>
+                }
+                {eventInfos.placement != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.bai}}>Placement : </Text>{eventInfos.placement}</Text>
+                    </View>
+                }
+                {eventInfos.note != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.bai}}>Note : </Text>{eventInfos.note} / 5</Text>
+                    </View>
+                }
+                {eventInfos.commentaire != null && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.bai}}>Commentaire : </Text>{eventInfos.commentaire}</Text>
+                    </View>
+                }
+            </View>
         </View>
     );
 }
