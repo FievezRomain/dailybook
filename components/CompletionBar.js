@@ -42,8 +42,11 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 20,
     backgroundColor: variables.blanc,
-    borderRadius: 10,
-    overflow: 'hidden',
+    borderRadius: 60,
+    shadowColor: variables.bai,
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+    shadowOffset: {width: 0, height: 1},
     position: 'relative', // Ajout d'une position relative
   },
   bar: {
