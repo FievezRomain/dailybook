@@ -7,7 +7,8 @@ export default class ContactService {
     async create(body) {
         await this.updateAxiosAuthorization();
         return axios.post(`${getBaseUrl()}createContact`, body)
-        .then((response) => {
+        .then(async(response) => {
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch(); 
@@ -15,8 +16,9 @@ export default class ContactService {
 
     async update(body) {
         await this.updateAxiosAuthorization();
-        return axios.put(`${getBaseUrl()}updateObjectif`, body)
-        .then((response) => {
+        return axios.put(`${getBaseUrl()}updateContact`, body)
+        .then(async(response) => {
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch(); 
@@ -25,21 +27,28 @@ export default class ContactService {
 
     async delete(body) {
         await this.updateAxiosAuthorization();
-        return axios.delete(`${getBaseUrl()}deleteObjectif`, {data: body})
-        .then((response) => {
+        return axios.delete(`${getBaseUrl()}deleteContact`, {data: body})
+        .then(async(response) => {
+            await this.deleteInCache(body);
             return response.data;
         })
         .catch();
     }
 
-    async getObjectifs(id){
-        await this.updateAxiosAuthorization();
-        return axios
-        .get(`${getBaseUrl()}objectifsByUser?idProprietaire=${id}`)
-        .then(({data}) => {
-            return data
-        })
-        .catch();
+    async getContacts(id){
+        if(await this.isInCache()){
+            return await this.getCache();
+        } else{
+            await this.updateAxiosAuthorization();
+            return axios
+            .get(`${getBaseUrl()}contactsByUser?idProprietaire=${id}`)
+            .then(async ({data}) => {
+                await this.putInCache(data.rows);
+                return await this.getCache();
+            })
+            .catch();
+        }
+        
     }
 
     async updateAxiosAuthorization() {
@@ -58,4 +67,46 @@ export default class ContactService {
         let auth = await AsyncStorage.getItem("auth");
         return auth ? JSON.parse(auth) : null;
      }
+
+     async isInCache() {
+        let contacts = await AsyncStorage.getItem("contacts");
+        return contacts ? true : false;
+     }
+
+     async getCache() {
+        let contacts = await AsyncStorage.getItem("contacts");
+        return contacts ? JSON.parse(contacts) : null;
+     }
+
+    async putInCache(contacts) {
+        if(await this.isInCache()){
+            let contacts = JSON.parse(await AsyncStorage.getItem("contacts"));
+
+            contacts.forEach((contact) => {
+                var indice = contacts.findIndex((a) => a.id == contact.id);
+
+                if(indice === -1){
+                    contacts.push(contact);
+                } else{
+                    contacts[indice] = contact;
+                }
+            });
+
+            await AsyncStorage.setItem("contacts",  JSON.stringify(contacts));
+        } else {
+            await AsyncStorage.setItem("contacts", Array.isArray(contacts) ? JSON.stringify(contacts) : JSON.stringify([contacts]));
+        }
+    }
+
+    async deleteInCache(contact) {
+        if(await this.isInCache()){
+            let contacts = JSON.parse(await AsyncStorage.getItem("contacts"));
+
+            var indice = contacts.findIndex((a) => a.id == contact.id);
+
+            contacts.splice(indice, 1);
+
+            await AsyncStorage.setItem("contacts",  JSON.stringify(contacts));
+        }
+    }
 }

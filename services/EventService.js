@@ -7,7 +7,8 @@ export default class EventService {
     async create(body) {
         await this.updateAxiosAuthorization();
         return axios.post(`${getBaseUrl()}createEvent`, body)
-        .then((response) => {
+        .then(async (response) => {
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch(); 
@@ -16,7 +17,18 @@ export default class EventService {
     async update(body) {
         await this.updateAxiosAuthorization();
         return axios.put(`${getBaseUrl()}modifyEvent`, body)
-        .then((response) => {
+        .then(async(response) => {
+            await this.putInCache(response.data);
+            return response.data;
+        })
+        .catch(); 
+    } 
+
+    async updateState(body) {
+        await this.updateAxiosAuthorization();
+        return axios.put(`${getBaseUrl()}modifyEventState`, body)
+        .then(async (response) => {
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch(); 
@@ -26,20 +38,27 @@ export default class EventService {
     async delete(body) {
         await this.updateAxiosAuthorization();
         return axios.delete(`${getBaseUrl()}deleteEvent`, {data: body})
-        .then((response) => {
+        .then(async (response) => {
+            await this.deleteInCache(body);
             return response.data;
         })
         .catch();
     }
 
     async getEvents(id){
-        await this.updateAxiosAuthorization();
-        return axios
-        .get(`${getBaseUrl()}eventsByUser?idProprietaire=${id}`)
-        .then(({data}) => {
-            return data
-        })
-        .catch();
+        if(await this.isInCache()){
+            return await this.getCache();
+        } else{
+            await this.updateAxiosAuthorization();
+            return axios
+            .get(`${getBaseUrl()}eventsByUser?idProprietaire=${id}`)
+            .then(async({data}) => {
+                await this.putInCache(data);
+                return await this.getCache();
+            })
+            .catch();
+        }
+        
     }
 
     async updateAxiosAuthorization() {
@@ -58,4 +77,46 @@ export default class EventService {
         let auth = await AsyncStorage.getItem("auth");
         return auth ? JSON.parse(auth) : null;
      }
+
+     async isInCache() {
+        let events = await AsyncStorage.getItem("events");
+        return events ? true : false;
+     }
+
+     async getCache() {
+        let events = await AsyncStorage.getItem("events");
+        return events ? JSON.parse(events) : null;
+     }
+
+    async putInCache(events) {
+        if(await this.isInCache()){
+            let events = JSON.parse(await AsyncStorage.getItem("events"));
+
+            events.forEach((event) => {
+                var indice = events.findIndex((a) => a.id == event.id);
+
+                if(indice === -1){
+                    events.push(event);
+                } else{
+                    events[indice] = event;
+                }
+            });
+
+            await AsyncStorage.setItem("events",  JSON.stringify(events));
+        } else {
+            await AsyncStorage.setItem("events", Array.isArray(events) ? JSON.stringify(events) : JSON.stringify([events]));
+        }
+    }
+
+    async deleteInCache(event) {
+        if(await this.isInCache()){
+            let events = JSON.parse(await AsyncStorage.getItem("events"));
+
+            var indice = events.findIndex((a) => a.id == event.id);
+
+            events.splice(indice, 1);
+
+            await AsyncStorage.setItem("events",  JSON.stringify(events));
+        }
+    }
 }

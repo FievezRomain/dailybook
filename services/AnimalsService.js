@@ -74,14 +74,14 @@ export default class AnimalsService {
     async delete(body) {
         await this.updateAxiosAuthorization();
         return axios.delete(`${getBaseUrl()}deleteEquide`, {data: body})
-        .then((response) => {
+        .then(async (response) => {
+            await this.deleteInCache(body);
             return response.data;
         })
         .catch();
     }
 
     async getAnimals(id){
-        await AsyncStorage.removeItem("animals");
         if(await this.isInCache()){
             return await this.getCache();
         } else{
@@ -111,19 +111,19 @@ export default class AnimalsService {
     async getAuthToken() {
         let auth = await AsyncStorage.getItem("auth");
         return auth ? JSON.parse(auth) : null;
-     }
+    }
 
-     async isInCache() {
+    async isInCache() {
         let animals = await AsyncStorage.getItem("animals");
         return animals === null ? false : true;
-     }
+    }
 
-     async getCache() {
+    async getCache() {
         let animals = await AsyncStorage.getItem("animals");
         return animals ? JSON.parse(animals) : null;
-     }
+    }
 
-     async putInCache(animals) {
+    async putInCache(animals) {
         if(await this.isInCache()){
             let animals = JSON.parse(await AsyncStorage.getItem("animals"));
 
@@ -141,5 +141,17 @@ export default class AnimalsService {
         } else {
             await AsyncStorage.setItem("animals", Array.isArray(animals) ? JSON.stringify(animals) : JSON.stringify([animals]));
         }
-     }
+    }
+
+    async deleteInCache(animal) {
+        if(await this.isInCache()){
+            let animals = JSON.parse(await AsyncStorage.getItem("animals"));
+
+            var indice = animals.findIndex((a) => a.id == animal.id);
+
+            animals.splice(indice, 1);
+
+            await AsyncStorage.setItem("animals",  JSON.stringify(animals));
+        }
+    }
 }
