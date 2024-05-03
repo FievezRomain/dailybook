@@ -16,7 +16,6 @@ const StatsScreen = ({ navigation }) => {
   const [temporality, setTemporality] = useState("week");
   const [animaux, setAnimaux] = useState([]);
   const [selectedAnimal, setSelectedAnimal] = useState([]);
-  const [loadingObjectif, setLoadingObjectif] = useState(false);
   const animalsService = new AnimalsService;
 
   useEffect(() => {
@@ -30,10 +29,8 @@ const StatsScreen = ({ navigation }) => {
   const getAnimals = async () => {
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
-      setLoadingObjectif(true);
       // On récupère les animaux de l'utilisateur courant
       var result = await animalsService.getAnimals(user.id);
-      setLoadingObjectif(false);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On valorise l'animal selectionné par défaut au premier de la liste
@@ -51,14 +48,6 @@ const StatsScreen = ({ navigation }) => {
 
   return (
     <>
-      {loadingObjectif && (
-        <View style={styles.loadingEvent}>
-          <Image
-            style={styles.loaderEvent}
-            source={require("../assets/loader.gif")}
-          />
-        </View>
-      )}
       <Image style={styles.image}/>
       <TopTab message1={messages.message1} message2={messages.message2} />
       <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20, marginBottom: 10}}>
@@ -86,7 +75,6 @@ const StatsScreen = ({ navigation }) => {
           <ObjectifsBloc
             animaux={animaux}
             selectedAnimal={selectedAnimal}
-            setLoading={setLoadingObjectif}
             temporality={temporality}
             navigation={navigation}
           />

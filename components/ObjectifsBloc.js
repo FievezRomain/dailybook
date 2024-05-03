@@ -11,7 +11,7 @@ import ModalObjectif from './Modals/ModalObjectif';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
 
-const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navigation }) =>{
+const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
     const { user } = useContext(AuthenticatedUserContext);
     const [objectifsArray, setObjectifsArray] = useState([]);
     const [objectifsArrayDisplay, setObjectifsArrayDisplay] = useState([]);
@@ -34,11 +34,8 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
     }, [objectifsArray, temporality, selectedAnimal]);
 
     const getObjectifs = async () => {
-        setLoading(true);
 
         var result = await objectifService.getObjectifsPerAnimals(user.id);
-
-        setLoading(false);
 
         if(result.length != 0){
             setObjectifsArray(result);
@@ -91,13 +88,11 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
         changeObjectifsDisplay();
     }
     const handleDelete = () => {
-        setLoading(true);
         let data = {};
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
         data["id"] = currentObjectif.id;
         objectifService.delete(data)
             .then((reponse) =>{
-                setLoading(false);
 
                 var arrayTemp = objectifsArray;
                 var arrayObjectifAnimal = arrayTemp[selectedAnimal[0].id];
@@ -115,7 +110,6 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, setLoading, temporality, navig
 
             })
             .catch((err) =>{
-                setLoading(false);
                 Toast.show({
                     type: "error",
                     position: "top",

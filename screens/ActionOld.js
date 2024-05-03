@@ -28,7 +28,6 @@ const ActionScreen = ({ navigation }) => {
   const [modalOptionNotifications, setModalOptionNotifications] = useState(false);
   const [animaux, setAnimaux] = useState([]);
   const [selected, setSelected] = useState([]);
-  const [loadingEvent, setLoadingEvent] = useState(false);
   const [eventType, setEventType] = useState(false);
   const [notifType, setNotifType] = useState(false);
   const [optionNotifType, setOptionNotifType] = useState(false);
@@ -69,10 +68,8 @@ const ActionScreen = ({ navigation }) => {
   
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
-      setLoadingEvent(true);
       // On récupère les animaux de l'utilisateur courant
       var result = await animalsService.getAnimals(user.id);
-      setLoadingEvent(false);
       // Si l'utilisateur a des animaux, alors
       if(result.rowCount !== 0){
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
@@ -84,12 +81,10 @@ const ActionScreen = ({ navigation }) => {
 
   const submitRegister = async(data) =>{
     var complete = true;
-    setLoadingEvent(true);
 
     // Vérification complétion du formulaire
     if(data.date === undefined){
       complete = false;
-      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -98,7 +93,6 @@ const ActionScreen = ({ navigation }) => {
     }
     if(animaux.length === 0){
       complete = false;
-      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -109,7 +103,6 @@ const ActionScreen = ({ navigation }) => {
     }
     if(data.nom === undefined){
       complete = false;
-      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -118,7 +111,6 @@ const ActionScreen = ({ navigation }) => {
     }
     if(eventType === false){
       complete = false;
-      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -128,7 +120,6 @@ const ActionScreen = ({ navigation }) => {
       if(eventType.id === "entrainement"){
         if(data.discipline === undefined){
           complete = false;
-          setLoadingEvent(false);
           Toast.show({
             type: "error",
             position: "top",
@@ -139,7 +130,6 @@ const ActionScreen = ({ navigation }) => {
       if(eventType.id === "concours"){
         if(data.discipline === undefined){
           complete = false;
-          setLoadingEvent(false);
           Toast.show({
             type: "error",
             position: "top",
@@ -150,7 +140,6 @@ const ActionScreen = ({ navigation }) => {
       if(eventType.id === "soins"){
         if(data.traitement === undefined){
           complete = false;
-          setLoadingEvent(false);
           Toast.show({
             type: "error",
             position: "top",
@@ -164,7 +153,6 @@ const ActionScreen = ({ navigation }) => {
     if(complete === true){
       eventService.create(data)
         .then((reponse) =>{
-          setLoadingEvent(false);
 
           Toast.show({
             type: "success",
@@ -175,7 +163,6 @@ const ActionScreen = ({ navigation }) => {
           resetValues();
         })
         .catch((err) =>{
-          setLoadingEvent(false);
           Toast.show({
               type: "error",
               position: "top",
@@ -249,14 +236,6 @@ const ActionScreen = ({ navigation }) => {
 
   return (
     <>
-      {loadingEvent && (
-      <View style={styles.loadingEvent}>
-          <Image
-          style={styles.loaderEvent}
-          source={require("../assets/loader.gif")}
-          />
-      </View>
-      )}
       <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
       <ModalAnimals
         modalVisible={modalVisible}

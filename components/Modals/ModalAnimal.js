@@ -14,7 +14,6 @@ import { getImagePath } from '../../services/Config';
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
     const animalsService = new AnimalsService();
-    const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
     const dateUtils = new DateUtils();
@@ -74,7 +73,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     const submitRegister = async(data) =>{
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
         data["idProprietaire"] =  user.id;
-        setLoadingEvent(true);
 
         let formData = data;
         if (data.image != undefined){
@@ -102,7 +100,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             // Modification de l'animal dans le back (BDD)
             animalsService.modify(formData)
             .then((response) =>{
-                setLoadingEvent(false);
                 Toast.show({
                     type: "success",
                     position: "top",
@@ -114,7 +111,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             })
             .catch((err) =>{
                 console.log(err);
-                setLoadingEvent(false);
                 Toast.show({
                     type: "error",
                     position: "top",
@@ -125,7 +121,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             // Création de l'animal dans le back (BDD)
             animalsService.create(formData)
             .then((response) =>{
-                setLoadingEvent(false);
                 Toast.show({
                     type: "success",
                     position: "top",
@@ -136,7 +131,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                 onModify(response);
             })
             .catch((err) =>{
-                setLoadingEvent(false);
                 Toast.show({
                     type: "error",
                     position: "top",
@@ -205,14 +199,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                 visible={isVisible}
                 onRequestClose={closeModal}
             >
-                {loadingEvent && (
-                    <View style={styles.loadingEvent}>
-                        <Image
-                        style={styles.loaderEvent}
-                        source={require("../../assets/loader.gif")}
-                        />
-                    </View>
-                )}
                 <View style={styles.modalContainer}>
                     <View style={styles.form}>
                         <View style={styles.toastContainer}>

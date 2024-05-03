@@ -39,13 +39,11 @@ const ObjectifCard = ({ objectif, animaux }) => {
     }
 
     const handleDelete = () => {
-        setLoading(true);
         let data = {};
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
         data["id"] = currentObjectif.id;
         objectifService.delete(data)
             .then((reponse) =>{
-                setLoading(false);
 
                 Toast.show({
                     type: "success",
@@ -55,7 +53,6 @@ const ObjectifCard = ({ objectif, animaux }) => {
 
             })
             .catch((err) =>{
-                setLoading(false);
                 Toast.show({
                     type: "error",
                     position: "top",
@@ -65,9 +62,11 @@ const ObjectifCard = ({ objectif, animaux }) => {
     }
 
     const calculPercentCompletude = (objectif) => {
-        var sousEtapesFinished = objectif.sousEtapes.filter((item) => item.state == true);
+        if(objectif.sousEtapes != undefined){
+            var sousEtapesFinished = objectif.sousEtapes.filter((item) => item.state == true);
 
-        return Math.floor((sousEtapesFinished.length * 100) / objectif.sousEtapes.length);
+            return Math.floor((sousEtapesFinished.length * 100) / objectif.sousEtapes.length);
+        }
     }
 
     const getAnimalById = (idAnimal) =>{

@@ -14,7 +14,6 @@ import ModalWish from "../components/Modals/ModalWish";
 const WishScreen = ({ navigation }) => {
     const { user } = useContext(AuthenticatedUserContext);
     const [wishs, setWishs] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [selectedWish, setSelectedWish] = useState(null);
     const wishService = new WishService();
     const [modalSubMenuWishVisible, setModalSubMenuWishVisible] = useState(false);
@@ -30,11 +29,9 @@ const WishScreen = ({ navigation }) => {
     }, [navigation]);
 
     const getWishs = async () => {
-        setLoading(true);
         var result = await wishService.getWishs(user.id);
-        setLoading(false);
         if(result.length != 0){
-            setWishs(result.rows);
+            setWishs(result);
         }
     }
 
@@ -60,13 +57,11 @@ const WishScreen = ({ navigation }) => {
     };
 
     const handleDelete = () => {
-        setLoading(true);
 
         let data = {};
         data["id"] = selectedWish.id;
         wishService.delete(data)
             .then((response) =>{
-                setLoading(false);
 
                 var filteredArray = wishs.filter((item) => item.id != selectedWish.id);
                 setWishs(filteredArray);
@@ -79,7 +74,6 @@ const WishScreen = ({ navigation }) => {
                 });
             })
             .catch((err) =>{
-                setLoading(false);
                 Toast.show({
                     type: "error",
                     position: "top",
@@ -97,14 +91,6 @@ const WishScreen = ({ navigation }) => {
     };
     return(
         <>
-                {loading && (
-                    <View style={styles.loading}>
-                        <Image
-                        style={styles.loader}
-                        source={require("../assets/loader.gif")}
-                        />
-                    </View>
-                )}
                 <TopTabSecondary
                     message1={"Vos"}
                     message2={"souhaits"}

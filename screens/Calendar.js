@@ -19,7 +19,6 @@ const CalendarScreen = ({ navigation }) => {
   const dateUtils = new DateUtils();
   const [eventArray, setEventArray] = useState([]);
   const [eventArrayCurrentDateSelected, setEventArrayCurrentDateSelected] = useState([]);
-  const [loadingEvent, setLoadingEvent] = useState(false);
   const [marked, setMarked] = useState({});
 
   const INITIAL_DATE = new Date().toISOString().split('T')[0];
@@ -53,16 +52,13 @@ const CalendarScreen = ({ navigation }) => {
 
   const getEventsForUser = async () => {
     if (eventArray.length === 0) {
-      setLoadingEvent(true);
       try {
         const result = await eventService.getEvents(user.id);
         if (result.length !== 0) {
           setEventArray(result);
         }
-        setLoadingEvent(false);
       } catch (error) {
         console.error("Error fetching events:", error);
-        setLoadingEvent(false);
       }
     }
   }
@@ -194,10 +190,8 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const onDeleteEvent = (infosEvent) => {
-    setLoadingEvent(true);
     eventService.delete(infosEvent)
         .then((reponse) =>{
-          setLoadingEvent(false);
 
           Toast.show({
             type: "success",
@@ -220,7 +214,6 @@ const CalendarScreen = ({ navigation }) => {
 
         })
         .catch((err) =>{
-          setLoadingEvent(false);
           Toast.show({
               type: "error",
               position: "top",
@@ -231,14 +224,6 @@ const CalendarScreen = ({ navigation }) => {
 
   return (
     <>
-      {loadingEvent && (
-        <View style={styles.loadingEvent}>
-          <Image
-            style={styles.loaderEvent}
-            source={require("../assets/loader.gif")}
-          />
-        </View>
-      )}
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2} />
       <View style={styles.calendarContainer}>

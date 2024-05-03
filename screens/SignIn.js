@@ -11,7 +11,6 @@ import Button from "../components/Button";
 import * as Notifications from 'expo-notifications';
 
 const SignInScreen = ({ navigation })=> {
-    const [loadingLogin, setLoadingLogin] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
     const authService = new AuthService;
     const { setUser } = useContext(AuthenticatedUserContext);
@@ -24,13 +23,11 @@ const SignInScreen = ({ navigation })=> {
     }, [navigation]);
 
     const submitLogin = async(data) =>{
-        setLoadingLogin(true);
         const { data: token } = await Notifications.getExpoPushTokenAsync();
         data = { ...data, expotoken: token };
         authService.loginUser(data)
         .then((user) =>{
             if(user.accessToken){
-                setLoadingLogin(false);
                 setUser(user);
                 Toast.show({
                     type: "success",
@@ -41,7 +38,6 @@ const SignInScreen = ({ navigation })=> {
             }
         })
         .catch((err) =>{
-            setLoadingLogin(false);
             Toast.show({
                 type: "error",
                 position: "top",
@@ -52,14 +48,6 @@ const SignInScreen = ({ navigation })=> {
 
     return (
         <>
-        {loadingLogin && (
-        <View style={styles.loadingLogin}>
-            <Image
-            style={styles.loaderLogin}
-            source={require("../assets/loader.gif")}
-            />
-        </View>
-        )}
         <Image style={styles.image} source={wallpaper_login} />
         <KeyboardAwareScrollView contentContainerStyle={styles.login}>
             <Text style={styles.title}>Connexion</Text>

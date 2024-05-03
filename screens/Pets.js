@@ -33,7 +33,6 @@ const PetsScreen = ({ navigation }) => {
   mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
   annee = today.getFullYear();
   const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
-  const [loadingEvent, setLoadingPets] = useState(false);
   const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
   const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
   const dateUtils = new DateUtils();
@@ -86,14 +85,12 @@ const PetsScreen = ({ navigation }) => {
     let data = {};
     // Récupération de l'identifiant de l'utilisateur (propriétaire)
     data["idProprietaire"] =  user.id;
-    setLoadingPets(true);
 
     // Récupération de l'identifiant de l'animal
     data["id"] = selected[0].id;
 
     animalsService.delete(data)
     .then((response) =>{
-      setLoadingPets(false);
 
       // Une fois la suppression terminée, on valorise le hook avec l'animal en moins
       setAnimaux(animaux.filter((a) => a.id !== data["id"]));
@@ -127,7 +124,6 @@ const PetsScreen = ({ navigation }) => {
     })
     .catch((err) =>{
         console.log(err);
-        setLoadingPets(false);
         Toast.show({
             type: "error",
             position: "top",
@@ -163,14 +159,6 @@ const PetsScreen = ({ navigation }) => {
 
   return (
     <>
-      {loadingEvent && (
-      <View style={styles.loadingEvent}>
-          <Image
-          style={styles.loaderEvent}
-          source={require("../assets/loader.gif")}
-          />
-      </View>
-      )}
       <ModalAnimal
         actionType={"modify"}
         isVisible={modalAnimalVisible}

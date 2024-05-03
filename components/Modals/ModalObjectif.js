@@ -17,7 +17,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
     const { user } = useContext(AuthenticatedUserContext);
     const animalsService = new AnimalsService;
     const objectifService = new ObjectifService;
-    const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const [animaux, setAnimaux] = useState([]);
@@ -51,10 +50,8 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
   
         // Si aucun animal est déjà présent dans la liste, alors
         if(animaux.length == 0){
-            setLoadingEvent(true);
             // On récupère les animaux de l'utilisateur courant
             var result = await animalsService.getAnimals(user.id);
-            setLoadingEvent(false);
             // Si l'utilisateur a des animaux, alors
             if(result.length !== 0){
             // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
@@ -107,11 +104,9 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
 
     const submitRegister = async(data) =>{
         var complete = true;
-        setLoadingEvent(true);
 
         if(selected.length === 0){
             complete = false;
-            setLoadingEvent(false);
             Toast.show({
               type: "error",
               position: "top",
@@ -122,7 +117,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         }
         if(temporalityObjectif === false){
             complete = false;
-            setLoadingEvent(false);
             Toast.show({
                 type: "error",
                 position: "top",
@@ -131,7 +125,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         }
         if(data.datedebut === undefined){
             complete = false;
-            setLoadingEvent(false);
             Toast.show({
               type: "error",
               position: "top",
@@ -141,7 +134,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         const isNotEmpty = inputs.some(str => str.etape.trim().length > 0);
         if(!isNotEmpty){
             complete = false;
-            setLoadingEvent(false);
             Toast.show({
                 type: "error",
                 position: "top",
@@ -154,7 +146,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             if(actionType === "modify"){
                 objectifService.update(data)
                     .then((reponse) =>{
-                        setLoadingEvent(false);
 
                         Toast.show({
                             type: "success",
@@ -165,7 +156,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                         closeModal();
                     })
                     .catch((err) =>{
-                        setLoadingEvent(false);
                         Toast.show({
                             type: "error",
                             position: "top",
@@ -176,7 +166,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             else{
                 objectifService.create(data)
                     .then((reponse) =>{
-                        setLoadingEvent(false);
 
                         Toast.show({
                             type: "success",
@@ -186,7 +175,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                         closeModal();
                     })
                     .catch((err) =>{
-                        setLoadingEvent(false);
                         Toast.show({
                             type: "error",
                             position: "top",
@@ -262,14 +250,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                 visible={isVisible}
                 onRequestClose={closeModal}
             >
-                {loadingEvent && (
-                <View style={styles.loadingEvent}>
-                    <Image
-                    style={styles.loaderEvent}
-                    source={require("../../assets/loader.gif")}
-                    />
-                </View>
-                )}
                 <ModalAnimals
                     modalVisible={modalAnimalVisible}
                     setModalVisible={setModalAnimalVisible}

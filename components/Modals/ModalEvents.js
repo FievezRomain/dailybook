@@ -29,7 +29,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [modalCategorieDepense, setModalCategorieDepense] = useState(false);
   const [animaux, setAnimaux] = useState([]);
   const [selected, setSelected] = useState([]);
-  const [loadingEvent, setLoadingEvent] = useState(false);
   const [eventType, setEventType] = useState(false);
   const [notifType, setNotifType] = useState(false);
   const [optionNotifType, setOptionNotifType] = useState(false);
@@ -82,10 +81,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
-      setLoadingEvent(true);
       // On récupère les animaux de l'utilisateur courant
       var result = await animalsService.getAnimals(user.id);
-      setLoadingEvent(false);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
@@ -138,12 +135,10 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
   const submitRegister = async(data) =>{
     var complete = true;
-    setLoadingEvent(true);
 
     // Vérification complétion du formulaire
     if(data.dateevent === undefined){
       complete = false;
-      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -152,7 +147,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     }
     if(selected.length === 0){
       complete = false;
-      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -163,7 +157,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     }
     if(data.nom === undefined){
       complete = false;
-      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -172,7 +165,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     }
     if(eventType === false){
       complete = false;
-      setLoadingEvent(false);
       Toast.show({
         type: "error",
         position: "top",
@@ -182,7 +174,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       if(eventType.id === "entrainement"){
         if(data.discipline === undefined){
           complete = false;
-          setLoadingEvent(false);
           Toast.show({
             type: "error",
             position: "top",
@@ -193,7 +184,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       if(eventType.id === "concours"){
         if(data.discipline === undefined){
           complete = false;
-          setLoadingEvent(false);
           Toast.show({
             type: "error",
             position: "top",
@@ -204,7 +194,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       if(eventType.id === "soins"){
         if(data.traitement === undefined){
           complete = false;
-          setLoadingEvent(false);
           Toast.show({
             type: "error",
             position: "top",
@@ -218,7 +207,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       if(actionType === "modify"){
         eventService.update(data)
         .then((reponse) =>{
-          setLoadingEvent(false);
 
           Toast.show({
             type: "success",
@@ -230,7 +218,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           closeModal();
         })
         .catch((err) =>{
-          setLoadingEvent(false);
           Toast.show({
               type: "error",
               position: "top",
@@ -240,7 +227,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       } else {
         eventService.create(data)
         .then((reponse) =>{
-          setLoadingEvent(false);
 
           Toast.show({
             type: "success",
@@ -250,7 +236,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           closeModal();
         })
         .catch((err) =>{
-          setLoadingEvent(false);
           Toast.show({
               type: "error",
               position: "top",
@@ -348,14 +333,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         visible={isVisible}
         onRequestClose={closeModal}
       >
-        {loadingEvent && (
-        <View style={styles.loadingEvent}>
-            <Image
-            style={styles.loaderEvent}
-            source={require("../../assets/loader.gif")}
-            />
-        </View>
-        )}
         <ModalAnimals
         modalVisible={modalVisible}
         setModalVisible={setModalVisible}

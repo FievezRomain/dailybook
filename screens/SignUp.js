@@ -10,22 +10,18 @@ import Button from "../components/Button";
 import Back from "../components/Back";
 
 const SignUpScreen = ({ navigation })=> {
-    const [loadingRegister, setLoadingRegister] = useState(false);
     const [evenPassword, setEvenPassword] = useState(true);
     const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
     const authService = new AuthService;
 
     const submitRegister = async(data) =>{
-        setLoadingRegister(true);
         if(data.password !== data.password_confirm){
             setEvenPassword(false);
-            setLoadingRegister(false);
         } else{
             setEvenPassword(true);
 
             authService.register(data)
             .then((res) =>{
-                setLoadingRegister(false);
                 navigation.navigate("Login");
                 Toast.show({
                     type: "success",
@@ -36,7 +32,6 @@ const SignUpScreen = ({ navigation })=> {
             })
             .catch((err) =>{
                 console.log(err);
-                setLoadingRegister(false);
                 Toast.show({
                     type: "error",
                     position: "top",
@@ -48,14 +43,6 @@ const SignUpScreen = ({ navigation })=> {
 
     return (
         <>
-        {loadingRegister && (
-        <View style={styles.loadingRegister}>
-            <Image
-            style={styles.loaderRegister}
-            source={require("../assets/loader.gif")}
-            />
-        </View>
-        )}
         <Image style={styles.image} source={wallpaper_login} />
         <Back/>
         <KeyboardAwareScrollView contentContainerStyle={styles.register}>

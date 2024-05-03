@@ -10,7 +10,6 @@ import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvi
 const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
     const contactService = new ContactService();
-    const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
     const closeModal = () => {
@@ -27,13 +26,11 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
     };
 
     const submitRegister = async(data) =>{
-        setLoadingEvent(true);
         data["idproprietaire"] = user.id;
         
         if(actionType === "modify"){
             contactService.update(data)
                 .then((reponse) =>{
-                    setLoadingEvent(false);
 
                     Toast.show({
                         type: "success",
@@ -45,7 +42,6 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                     closeModal();
                 })
                 .catch((err) =>{
-                    setLoadingEvent(false);
                     Toast.show({
                         type: "error",
                         position: "top",
@@ -56,13 +52,11 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         else{
             contactService.create(data)
                 .then((reponse) =>{
-                    setLoadingEvent(false);
                     resetValues();
                     closeModal();
                     onModify(reponse);
                 })
                 .catch((err) =>{
-                    setLoadingEvent(false);
                     Toast.show({
                         type: "error",
                         position: "top",
@@ -80,14 +74,6 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                 visible={isVisible}
                 onRequestClose={closeModal}
             >
-                {loadingEvent && (
-                <View style={styles.loadingEvent}>
-                    <Image
-                    style={styles.loaderEvent}
-                    source={require("../../assets/loader.gif")}
-                    />
-                </View>
-                )}
                 <View style={styles.modalContainer}>
                     <View style={styles.form}>
                         <View style={styles.toastContainer}>

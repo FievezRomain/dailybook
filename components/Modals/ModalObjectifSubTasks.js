@@ -9,7 +9,6 @@ import _ from 'lodash';
 import ObjectifService from "../../services/ObjectifService";
 
 const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, objectif={}}) => {
-    const [loadingEvent, setLoadingEvent] = useState(false);
     const objectifService = new ObjectifService();
     const [percentageObjectif, setPercentageObjectif] = useState(0);
     const [temporaryObjectif, setTemporaryObjectif] = useState(_.cloneDeep(objectif));
@@ -33,11 +32,9 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
     };
 
     const submitRegister = async (data) => {
-        setLoadingEvent(true);
 
         objectifService.updateTasks(data)
             .then((reponse) =>{
-                setLoadingEvent(false);
 
                 Toast.show({
                     type: "success",
@@ -48,7 +45,6 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                 closeModal();
             })
             .catch((err) =>{
-                setLoadingEvent(false);
                 Toast.show({
                     type: "error",
                     position: "top",
@@ -81,14 +77,6 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                 visible={isVisible}
                 onRequestClose={closeModal}
             >
-                {loadingEvent && (
-                    <View style={styles.loadingEvent}>
-                        <Image
-                        style={styles.loaderEvent}
-                        source={require("../../assets/loader.gif")}
-                        />
-                    </View>
-                )}
                 <View style={styles.modalContainer}>
                     <View style={styles.form}>
                         <View style={styles.toastContainer}>

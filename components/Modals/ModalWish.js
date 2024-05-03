@@ -14,7 +14,6 @@ import { getImagePath } from '../../services/Config';
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
     const wishService = new WishService();
-    const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
 
@@ -60,7 +59,6 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
     };
 
     const submitRegister = async(data) =>{
-        setLoadingEvent(true);
         data["idproprietaire"] =  user.id;
 
         let formData = data;
@@ -86,13 +84,11 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         if(actionType === "modify"){
             wishService.update(formData)
                 .then((reponse) =>{
-                    setLoadingEvent(false);
                     resetValues();
                     closeModal();
                     onModify(reponse);
                 })
                 .catch((err) =>{
-                    setLoadingEvent(false);
                     Toast.show({
                         type: "error",
                         position: "top",
@@ -103,13 +99,11 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         else{
             wishService.create(formData)
                 .then((reponse) =>{
-                    setLoadingEvent(false);
                     resetValues();
                     closeModal();
                     onModify(reponse);
                 })
                 .catch((err) =>{
-                    setLoadingEvent(false);
                     Toast.show({
                         type: "error",
                         position: "top",
@@ -127,14 +121,6 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 visible={isVisible}
                 onRequestClose={closeModal}
             >
-                {loadingEvent && (
-                <View style={styles.loadingEvent}>
-                    <Image
-                    style={styles.loaderEvent}
-                    source={require("../../assets/loader.gif")}
-                    />
-                </View>
-                )}
                 <View style={styles.modalContainer}>
                     <View style={styles.form}>
                         <View style={styles.toastContainer}>

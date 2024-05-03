@@ -15,7 +15,6 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "élément"})
   const { user } = useContext(AuthenticatedUserContext);
-  const [loadingEvent, setLoadingEvent] = useState(false);
   const [isEventModalVisible, setEventModalVisible] = useState(false);
   const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
   const [isWishModalVisible, setWishModalVisible] = useState(false);
@@ -72,14 +71,6 @@ const ActionScreen = ({ navigation }) => {
 
   return (
     <>
-      {loadingEvent && (
-      <View style={styles.loadingEvent}>
-          <Image
-          style={styles.loaderEvent}
-          source={require("../assets/loader.gif")}
-          />
-      </View>
-      )}
       <ModalEvents
         actionType={"create"}
         isVisible={isEventModalVisible}

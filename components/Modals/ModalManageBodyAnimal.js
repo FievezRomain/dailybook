@@ -10,7 +10,6 @@ import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvi
 const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
     const contactService = new ContactService();
-    const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
     const closeModal = () => {
@@ -30,14 +29,6 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undef
                 visible={isVisible}
                 onRequestClose={closeModal}
             >
-                {loadingEvent && (
-                <View style={styles.loadingEvent}>
-                    <Image
-                    style={styles.loaderEvent}
-                    source={require("../../assets/loader.gif")}
-                    />
-                </View>
-                )}
                 <View style={styles.modalContainer}>
                     <View style={styles.form}>
                         <View style={styles.toastContainer}>

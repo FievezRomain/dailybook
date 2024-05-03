@@ -10,7 +10,6 @@ import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvi
 const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
     const noteService = new NoteService();
-    const [loadingEvent, setLoadingEvent] = useState(false);
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
     const closeModal = () => {
@@ -23,13 +22,11 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
     };
 
     const submitRegister = async(data) =>{
-        setLoadingEvent(true);
         data["idproprietaire"] = user.id;
         
         if(actionType === "modify"){
             noteService.update(data)
                 .then((reponse) =>{
-                    setLoadingEvent(false);
 
                     Toast.show({
                         type: "success",
@@ -41,7 +38,6 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                     closeModal();
                 })
                 .catch((err) =>{
-                    setLoadingEvent(false);
                     Toast.show({
                         type: "error",
                         position: "top",
@@ -52,13 +48,11 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
         else{
             noteService.create(data)
                 .then((reponse) =>{
-                    setLoadingEvent(false);
                     resetValues();
                     closeModal();
                     onModify(reponse);
                 })
                 .catch((err) =>{
-                    setLoadingEvent(false);
                     Toast.show({
                         type: "error",
                         position: "top",
@@ -76,14 +70,6 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                 visible={isVisible}
                 onRequestClose={closeModal}
             >
-                {loadingEvent && (
-                <View style={styles.loadingEvent}>
-                    <Image
-                    style={styles.loaderEvent}
-                    source={require("../../assets/loader.gif")}
-                    />
-                </View>
-                )}
                 <View style={styles.modalContainer}>
                     <View style={styles.form}>
                         <View style={styles.toastContainer}>
