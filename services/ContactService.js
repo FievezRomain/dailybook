@@ -80,19 +80,28 @@ export default class ContactService {
 
     async putInCache(contacts) {
         if(await this.isInCache()){
-            let contacts = JSON.parse(await AsyncStorage.getItem("contacts"));
+            let contactsMemory = JSON.parse(await AsyncStorage.getItem("contacts"));
+            if(Array.isArray(contacts)){
+                contacts.forEach((contact) => {
+                    var indice = contactsMemory.findIndex((a) => a.id == contact.id);
+    
+                    if(indice === -1){
+                        contactsMemory.push(contact);
+                    } else{
+                        contactsMemory[indice] = contact;
+                    }
+                });
+            } else{
+                var indice = contactsMemory.findIndex((a) => a.id == contacts.id);
+    
+                    if(indice === -1){
+                        contactsMemory.push(contacts);
+                    } else{
+                        contactsMemory[indice] = contacts;
+                    }
+            }
 
-            contacts.forEach((contact) => {
-                var indice = contacts.findIndex((a) => a.id == contact.id);
-
-                if(indice === -1){
-                    contacts.push(contact);
-                } else{
-                    contacts[indice] = contact;
-                }
-            });
-
-            await AsyncStorage.setItem("contacts",  JSON.stringify(contacts));
+            await AsyncStorage.setItem("contacts",  JSON.stringify(contactsMemory));
         } else {
             await AsyncStorage.setItem("contacts", Array.isArray(contacts) ? JSON.stringify(contacts) : JSON.stringify([contacts]));
         }

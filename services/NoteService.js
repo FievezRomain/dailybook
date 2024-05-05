@@ -79,19 +79,28 @@ export default class NoteService {
 
     async putInCache(notes) {
         if(await this.isInCache()){
-            let notes = JSON.parse(await AsyncStorage.getItem("notes"));
-
-            notes.forEach((note) => {
-                var indice = notes.findIndex((a) => a.id == note.id);
-
+            let notesMemory = JSON.parse(await AsyncStorage.getItem("notes"));
+            if(Array.isArray(notes)){
+                notes.forEach((note) => {
+                    var indice = notesMemory.findIndex((a) => a.id == note.id);
+    
+                    if(indice === -1){
+                        notesMemory.push(note);
+                    } else{
+                        notesMemory[indice] = note;
+                    }
+                });
+            } else{
+                var indice = notesMemory.findIndex((a) => a.id == notes.id);
+    
                 if(indice === -1){
-                    notes.push(note);
+                    notesMemory.push(notes);
                 } else{
-                    notes[indice] = note;
+                    notesMemory[indice] = notes;
                 }
-            });
+            }
 
-            await AsyncStorage.setItem("notes",  JSON.stringify(notes));
+            await AsyncStorage.setItem("notes",  JSON.stringify(notesMemory));
         } else {
             await AsyncStorage.setItem("notes", Array.isArray(notes) ? JSON.stringify(notes) : JSON.stringify([notes]));
         }

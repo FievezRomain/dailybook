@@ -90,19 +90,27 @@ export default class EventService {
 
     async putInCache(events) {
         if(await this.isInCache()){
-            let events = JSON.parse(await AsyncStorage.getItem("events"));
+            let eventsMemory = JSON.parse(await AsyncStorage.getItem("events"));
+            if(Array.isArray(events)){
+                events.forEach((event) => {
+                    var indice = eventsMemory.findIndex((a) => a.id == event.id);
 
-            events.forEach((event) => {
-                var indice = events.findIndex((a) => a.id == event.id);
+                    if(indice === -1){
+                        eventsMemory.push(event);
+                    } else{
+                        eventsMemory[indice] = event;
+                    }
+                });
+            } else{
+                var indice = eventsMemory.findIndex((a) => a.id == events.id);
 
                 if(indice === -1){
-                    events.push(event);
+                    eventsMemory.push(events);
                 } else{
-                    events[indice] = event;
+                    eventsMemory[indice] = events;
                 }
-            });
-
-            await AsyncStorage.setItem("events",  JSON.stringify(events));
+            }
+            await AsyncStorage.setItem("events",  JSON.stringify(eventsMemory));
         } else {
             await AsyncStorage.setItem("events", Array.isArray(events) ? JSON.stringify(events) : JSON.stringify([events]));
         }

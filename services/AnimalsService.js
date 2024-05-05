@@ -125,19 +125,28 @@ export default class AnimalsService {
 
     async putInCache(animals) {
         if(await this.isInCache()){
-            let animals = JSON.parse(await AsyncStorage.getItem("animals"));
+            let animalsMemory = JSON.parse(await AsyncStorage.getItem("animals"));
+            if(Array.isArray(animals)){
+                animals.forEach((animal) => {
+                    var indice = animalsMemory.findIndex((a) => a.id == animal.id);
+    
+                    if(indice === -1){
+                        animalsMemory.push(animal);
+                    } else{
+                        animalsMemory[indice] = animal;
+                    }
+                });
+            } else {
+                var indice = animalsMemory.findIndex((a) => a.id == animals.id);
+    
+                    if(indice === -1){
+                        animalsMemory.push(animals);
+                    } else{
+                        animalsMemory[indice] = animals;
+                    }
+            }
 
-            animals.forEach((animal) => {
-                var indice = animals.findIndex((a) => a.id == animal.id);
-
-                if(indice === -1){
-                    animals.push(animal);
-                } else{
-                    animals[indice] = animal;
-                }
-            });
-
-            await AsyncStorage.setItem("animals",  JSON.stringify(animals));
+            await AsyncStorage.setItem("animals",  JSON.stringify(animalsMemory));
         } else {
             await AsyncStorage.setItem("animals", Array.isArray(animals) ? JSON.stringify(animals) : JSON.stringify([animals]));
         }

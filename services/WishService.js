@@ -80,19 +80,28 @@ export default class WishService {
 
     async putInCache(wishs) {
         if(await this.isInCache()){
-            let wishs = JSON.parse(await AsyncStorage.getItem("wishs"));
-
-            wishs.forEach((wish) => {
-                var indice = wishs.findIndex((a) => a.id == wish.id);
-
+            let wishsMemory = JSON.parse(await AsyncStorage.getItem("wishs"));
+            if(Array.isArray(wishs)){
+                wishs.forEach((wish) => {
+                    var indice = wishsMemory.findIndex((a) => a.id == wish.id);
+    
+                    if(indice === -1){
+                        wishsMemory.push(wish);
+                    } else{
+                        wishsMemory[indice] = wish;
+                    }
+                });
+            } else{
+                var indice = wishsMemory.findIndex((a) => a.id == wishs.id);
+    
                 if(indice === -1){
-                    wishs.push(wish);
+                    wishsMemory.push(wishs);
                 } else{
-                    wishs[indice] = wish;
+                    wishsMemory[indice] = wishs;
                 }
-            });
+            }
 
-            await AsyncStorage.setItem("wishs",  JSON.stringify(wishs));
+            await AsyncStorage.setItem("wishs",  JSON.stringify(wishsMemory));
         } else {
             await AsyncStorage.setItem("wishs", Array.isArray(wishs) ? JSON.stringify(wishs) : JSON.stringify([wishs]));
         }

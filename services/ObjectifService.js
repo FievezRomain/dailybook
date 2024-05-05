@@ -106,19 +106,28 @@ export default class ObjectifService {
 
     async putInCache(objectifs) {
         if(await this.isInCache()){
-            let objectifs = JSON.parse(await AsyncStorage.getItem("objectifs"));
-
-            objectifs.forEach((objectif) => {
-                var indice = objectifs.findIndex((a) => a.id == objectif.id);
-
+            let objectifsMemory = JSON.parse(await AsyncStorage.getItem("objectifs"));
+            if(Array.isArray(objectifs)){
+                objectifs.forEach((objectif) => {
+                    var indice = objectifsMemory.findIndex((a) => a.id == objectif.id);
+    
+                    if(indice === -1){
+                        objectifsMemory.push(objectif);
+                    } else{
+                        objectifsMemory[indice] = objectif;
+                    }
+                });
+            } else{
+                var indice = objectifsMemory.findIndex((a) => a.id == objectifs.id);
+    
                 if(indice === -1){
-                    objectifs.push(objectif);
+                    objectifsMemory.push(objectifs);
                 } else{
-                    objectifs[indice] = objectif;
+                    objectifsMemory[indice] = objectifs;
                 }
-            });
+            }
 
-            await AsyncStorage.setItem("objectifs",  JSON.stringify(objectifs));
+            await AsyncStorage.setItem("objectifs",  JSON.stringify(objectifsMemory));
         } else {
             await AsyncStorage.setItem("objectifs", Array.isArray(objectifs) ? JSON.stringify(objectifs) : JSON.stringify([objectifs]));
         }
