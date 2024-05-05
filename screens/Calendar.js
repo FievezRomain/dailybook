@@ -246,11 +246,12 @@ const CalendarScreen = ({ navigation }) => {
           markedDates={marked}
         />
       </View>
+      
       <View style={styles.infosContainer}>
         <View style={styles.selectedDateContainer}>
           <Text style={styles.selectedDateText}>{convertDateToText(selectedDate)}</Text>
         </View>
-        <ScrollView style={{ width: "100%" }}>
+        <ScrollView style={{ width: "100%", height: "100%" }}>
           <View style={styles.listEventContainer}>
             {eventArrayCurrentDateSelected.length == 0 &&
               <Text>Vous n'avez aucun événement pour cette date</Text>
@@ -266,6 +267,7 @@ const CalendarScreen = ({ navigation }) => {
           </View>
         </ScrollView>
       </View>
+      
     </>
   );
 }
@@ -300,7 +302,6 @@ const styles = StyleSheet.create({
     color: variables.alezan
   },
   infosContainer: {
-    backgroundColor: variables.blanc,
     marginTop: 10,
     display: "flex",
     flexDirection: "column",
@@ -308,11 +309,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     width: "90%",
-    height: "30%",
-    shadowColor: "black",
-    shadowOpacity: 0.1,
-    shadowRadius:5,
-    shadowOffset:{width:0, height:2}
   },
   calendarContainer: {
     marginTop: 20,
