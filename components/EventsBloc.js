@@ -125,6 +125,7 @@ const EventsBloc = ({ navigation, events }) => {
         let data = {};
         data["id"] = objet.id;
         data["state"] = objet.state;
+        data["animaux"] = objet.animaux;
 
         eventService.updateState(data)
             .then((reponse) => {
@@ -201,8 +202,8 @@ const EventsBloc = ({ navigation, events }) => {
                         <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "today")}>
                             <View style={styles.eventContainer}>
                                 <View style={styles.stateContainer}>
-                                    <View style={styles.inputStateContainer}>
-                                        <MaterialIcons name="check" size={20} color={eventItem.state === "À faire" ? variables.rouan : variables.alezan} />
+                                    <View style={[styles.inputStateContainer, eventItem.state === "À faire" ? styles.inputStateContainerDefault : styles.inputStateContainerSelected]}>
+                                        <MaterialIcons name="check" size={20} color={eventItem.state === "À faire" ? variables.rouan : variables.blanc} />
                                     </View>
                                 </View>
                                 <View style={[styles.cardEventContainer, {paddingLeft: 10}]}>
