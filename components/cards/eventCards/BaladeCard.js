@@ -28,9 +28,6 @@ const BaladeCard = ({eventInfos, animaux}) => {
         eventCommentaire:{
             fontSize: 12
         },
-        text:{
-            color: variables.blanc,
-        },
         avatarText: {
             color: "white",
             textAlign: "center"
