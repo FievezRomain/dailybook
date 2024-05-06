@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import CompletionBar from '../CompletionBar';
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import ObjectifService from '../../services/ObjectifService';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import React, { useState, useEffect, useContext } from 'react';
@@ -8,6 +8,7 @@ import ModalSubMenuObjectifActions from '../Modals/ModalSubMenuObjectifActions';
 import ModalObjectifSubTasks from '../Modals/ModalObjectifSubTasks';
 import variables from '../styles/Variables';
 import { getImagePath } from '../../services/Config';
+import ModalObjectif from '../Modals/ModalObjectif';
 
 const ObjectifCard = ({ objectif, animaux }) => {
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
@@ -90,28 +91,53 @@ const ObjectifCard = ({ objectif, animaux }) => {
                 objectif={objectif}
                 handleTasksStateChange={onModify}
             />
+            <ModalObjectif
+                actionType={"modify"}
+                isVisible={modalObjectifVisible}
+                setVisible={setModalObjectifVisible}
+                objectif={currentObjectif}
+                onModify={onModify}
+            />
             <View style={styles.objectifContainer} key={objectif.id}>
                 <View style={styles.headerObjectif}>
                     <View style={{display: "flex", flexDirection: "row"}}>
-                        <Text style={{fontWeight: "bold"}}>{objectif.title}</Text>
-                        {objectif !== undefined && animaux.length !== 0 && objectif.animaux.map((eventAnimal, index) => {
-                            var animal = getAnimalById(eventAnimal);
-                            return(
-                                <View key={animal.id} style={{marginLeft: 5}}>
-                                    <View style={{height: 20, width: 20, backgroundColor: variables.bai, borderRadius: 10, justifyContent: "center"}}>
-                                        { animal.image !== null ? 
-                                            <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
-                                            :
-                                            <Text style={styles.avatarText}>{animal.nom[0]}</Text>
-                                        }
+                        <View style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-start", width: "90%"}}>
+                            <Text style={{fontWeight: "bold"}}>{objectif.title}</Text>
+                            {objectif !== undefined && animaux.length !== 0 && objectif.animaux.map((eventAnimal, index) => {
+                                var animal = getAnimalById(eventAnimal);
+                                return(
+                                    <View key={animal.id} style={{marginLeft: 5}}>
+                                        <View style={{height: 20, width: 20, backgroundColor: variables.bai, borderRadius: 10, justifyContent: "center"}}>
+                                            { animal.image !== null ? 
+                                                <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                                                :
+                                                <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                            }
+                                        </View>
                                     </View>
-                                </View>
-                            )
-                        })}
+                                )
+                            })}
+                        </View>
                     </View>
-                    <TouchableOpacity onPress={() => onPressOptions()}>
+                    <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "center", width: "10%"}} onPress={() => onPressOptions()}>
                         <Entypo name='dots-three-horizontal' size={20} />
                     </TouchableOpacity>
+                </View>
+                <View style={{display: "flex", flexDirection: "column"}}>
+                    {currentObjectif.sousEtapes !== undefined && currentObjectif.sousEtapes.map((etape, index) => {
+                        return(
+                            <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
+                                <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                    {etape.state === true &&
+                                        <MaterialIcons name="check-box" size={30} color={variables.alezan} />
+                                        ||
+                                        <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                    }
+                                    <Text>{etape.etape}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        )
+                    })}
                 </View>
                 <View style={styles.completionBarContainer}>
                     <CompletionBar
