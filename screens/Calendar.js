@@ -246,28 +246,28 @@ const CalendarScreen = ({ navigation }) => {
           markedDates={marked}
         />
       </View>
-      
-      <View style={styles.infosContainer}>
-        <View style={styles.selectedDateContainer}>
-          <Text style={styles.selectedDateText}>{convertDateToText(selectedDate)}</Text>
-        </View>
-        <ScrollView style={{ width: "100%", height: "100%" }}>
-          <View style={styles.listEventContainer}>
-            {eventArrayCurrentDateSelected.length == 0 &&
-              <Text>Vous n'avez aucun événement pour cette date</Text>
-            }
-            {eventArrayCurrentDateSelected.map((eventItem, index) => (
-              <EventCard
-                eventInfos={eventItem}
-                key={eventItem.id}
-                deleteFunction={onDeleteEvent}
-                updateFunction={onModifyEvent}
-              />
-            ))}
-          </View>
-        </ScrollView>
+      <View style={styles.selectedDateContainer}>
+        <Text style={styles.selectedDateText}>{convertDateToText(selectedDate)}</Text>
       </View>
-      
+      <ScrollView style={{ width: "100%" }}>
+        <View style={styles.infosContainer}>
+          
+            <View style={styles.listEventContainer}>
+              {eventArrayCurrentDateSelected.length == 0 &&
+                <Text>Vous n'avez aucun événement pour cette date</Text>
+              }
+              {eventArrayCurrentDateSelected.map((eventItem, index) => (
+                <EventCard
+                  eventInfos={eventItem}
+                  key={eventItem.id}
+                  deleteFunction={onDeleteEvent}
+                  updateFunction={onModifyEvent}
+                />
+              ))}
+            </View>
+          
+        </View>
+      </ScrollView>
     </>
   );
 }
@@ -293,6 +293,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   selectedDateContainer: {
+    marginTop: 10,
     padding: 2,
     width: "100%",
     marginBottom: 10,
@@ -302,7 +303,6 @@ const styles = StyleSheet.create({
     color: variables.alezan
   },
   infosContainer: {
-    marginTop: 10,
     display: "flex",
     flexDirection: "column",
     alignSelf: "center",
