@@ -1,8 +1,9 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import variables from "../../styles/Variables";
 import { getImagePath } from '../../../services/Config';
+import { Entypo } from '@expo/vector-icons'
 
-const BaladeCard = ({eventInfos, animaux}) => {
+const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
     const styles = StyleSheet.create({
         eventTextContainer:{
             display: "flex",
@@ -12,6 +13,7 @@ const BaladeCard = ({eventInfos, animaux}) => {
         eventTitle:{
             fontWeight: "bold",
             marginBottom: 10,
+            fontSize: 16
         },
         actionEventContainer:{
             width: "20%",
@@ -26,7 +28,7 @@ const BaladeCard = ({eventInfos, animaux}) => {
             padding: 10,
         },
         eventCommentaire:{
-            fontSize: 12
+            fontSize: 14
         },
         avatarText: {
             color: "white",
@@ -49,21 +51,26 @@ const BaladeCard = ({eventInfos, animaux}) => {
     return(
         <View style={styles.eventTextContainer}>
             <View style={{display: "flex", flexDirection: "row"}}>
-                <Text style={[styles.eventTitle, styles.text]}>{eventInfos.nom}  </Text>
-                {eventInfos !== undefined && animaux.length !== 0 && eventInfos.animaux.map((eventAnimal, index) => {
-                        var animal = getAnimalById(eventAnimal);
-                        return(
-                            <View key={animal.id} style={{marginRight: 5}}>
-                                <View style={{height: 20, width: 20, backgroundColor: variables.bai, borderRadius: 10, justifyContent: "center"}}>
-                                    { animal.image !== null ? 
-                                        <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
-                                        :
-                                        <Text style={styles.avatarText}>{animal.nom[0]}</Text>
-                                    }
+                <View style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-start", width: "90%"}}>
+                    <Text style={[styles.eventTitle, styles.text]}>{eventInfos.nom}  </Text>
+                    {eventInfos !== undefined && animaux.length !== 0 && eventInfos.animaux.map((eventAnimal, index) => {
+                            var animal = getAnimalById(eventAnimal);
+                            return(
+                                <View key={animal.id} style={{marginRight: 5}}>
+                                    <View style={{height: 20, width: 20, backgroundColor: variables.bai, borderRadius: 10, justifyContent: "center"}}>
+                                        { animal.image !== null ? 
+                                            <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                                            :
+                                            <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                        }
+                                    </View>
                                 </View>
-                            </View>
-                        )
-                })}
+                            )
+                    })}
+                </View>
+                <View style={{display: "flex", flexDirection: "row", justifyContent: "center", width: "10%"}}>
+                    <Entypo name='dots-three-horizontal' size={20} onPress={() => setSubMenu(true)}/>
+                </View>
             </View>
             <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", flexWrap: "wrap"}}>
                 {eventInfos.lieu != null && 

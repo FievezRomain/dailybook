@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import variables from "../styles/Variables";
-import { Entypo } from '@expo/vector-icons'
+import { Entypo, MaterialIcons } from '@expo/vector-icons'
 import BaladeCard from './eventCards/BaladeCard';
 import SoinsCard from './eventCards/SoinsCard';
 import AutreCard from './eventCards/AutreCard';
@@ -14,7 +14,7 @@ import ModalSubMenuEventActions from "../Modals/ModalSubMenuEventActions";
 import AnimalsService from "../../services/AnimalsService";
 import { AuthenticatedUserContext } from '../../providers/AuthenticatedUserProvider';
 
-const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=true}) => {
+const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=true, withDate=false, withState=false, handleStateChange=undefined, typeEvent=undefined}) => {
     const { user } = useContext(AuthenticatedUserContext);
     const [modalModificationVisible, setModalModificationVisible] = useState(false);
     const [modalSubMenuEventVisible, setModalSubMenuEventVisible] = useState(false);
@@ -73,7 +73,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             borderBottomStartRadius: 5
         },
         cardEventContainer:{
-            padding: 10, 
+            paddingVertical: 10,
             display: "flex", 
             flexDirection: "row", 
             width: "100%", 
@@ -87,6 +87,22 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
 
     const handleModify = () =>{
         setModalModificationVisible(true);
+    }
+
+    const getDateText = (date) =>{
+        var dateObjet = new Date(date);
+        var jour = ('0' + dateObjet.getDate()).slice(-2); 
+        var mois = ('0' + (dateObjet.getMonth() + 1)).slice(-2);
+        const dateFormatee = jour + '/' + mois;
+        return dateFormatee;
+    }
+
+    const getDayText = (date) =>{
+        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateObject  = new Date(date);
+        dateText = String(dateObject.toLocaleDateString("fr-FR", options));
+        dateText = dateText.charAt(0).toUpperCase() + dateText.slice(1);
+        return dateText.slice(0,3);
     }
     
     return(
@@ -108,16 +124,27 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             {eventInfos.eventtype == "balade" &&
                 <View style={[styles.eventContainer]}>
                     <View style={[styles.balade, styles.typeEventIndicator]}></View>
+                    { withState === true &&
+                        <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={{justifyContent: "center", padding: 5}}>
+                            {eventInfos.state === "À faire" && 
+                                <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                ||
+                                <MaterialIcons name="check-box" size={30} color={variables.alezan} />
+                            }
+                        </TouchableOpacity>
+                    }
+                    { withDate === true &&
+                        <View style={{justifyContent: "center", padding: 5}}>
+                            <Text>{getDayText(eventInfos.dateevent)}.</Text>
+                            <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                        </View>
+                    }
                     <View style={styles.cardEventContainer}>
                         <BaladeCard
                             eventInfos={eventInfos}
                             animaux={animaux}
+                            setSubMenu={setModalSubMenuEventVisible}
                         />
-                        {withSubMenu === true &&
-                            <View style={styles.actionEventContainer}>
-                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                            </View>
-                        }
                     </View>
                     
                 </View>
@@ -125,10 +152,26 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             {eventInfos.eventtype == "rdv" &&
                 <View style={[styles.eventContainer]}>
                     <View style={[styles.rdv, styles.typeEventIndicator]}></View>
+                    { withState === true &&
+                        <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={{justifyContent: "center", padding: 5}}>
+                            {eventInfos.state === "À faire" && 
+                                <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                ||
+                                <MaterialIcons name="check-box" size={30} color={variables.souris} />
+                            }
+                        </TouchableOpacity>
+                    }
+                    { withDate === true &&
+                        <View style={{justifyContent: "center", padding: 5}}>
+                            <Text>{getDayText(eventInfos.dateevent)}.</Text>
+                            <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                        </View>
+                    }
                     <View style={styles.cardEventContainer}>
                         <RdvCard
                             eventInfos={eventInfos}
                             animaux={animaux}
+                            setSubMenu={setModalSubMenuEventVisible}
                         />
                         {withSubMenu === true &&
                             <View style={styles.actionEventContainer}>
@@ -141,10 +184,26 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             {eventInfos.eventtype == "soins" &&
                 <View style={[styles.eventContainer]}>
                     <View style={[styles.soins, styles.typeEventIndicator]}></View>
+                    { withState === true &&
+                        <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={{justifyContent: "center", padding: 5}}>
+                            {eventInfos.state === "À faire" && 
+                                <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                ||
+                                <MaterialIcons name="check-box" size={30} color={variables.isabelle} />
+                            }
+                        </TouchableOpacity>
+                    }
+                    { withDate === true &&
+                        <View style={{justifyContent: "center", padding: 5}}>
+                            <Text>{getDayText(eventInfos.dateevent)}.</Text>
+                            <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                        </View>
+                    }
                     <View style={styles.cardEventContainer}>
                         <SoinsCard
                             eventInfos={eventInfos}
                             animaux={animaux}
+                            setSubMenu={setModalSubMenuEventVisible}
                         />
                         {withSubMenu === true &&
                             <View style={styles.actionEventContainer}>
@@ -157,10 +216,26 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             {eventInfos.eventtype == "entrainement" &&
                 <View style={[styles.eventContainer]}>
                     <View style={[styles.entrainement, styles.typeEventIndicator]}></View>
+                    { withState === true &&
+                        <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={{justifyContent: "center", padding: 5}}>
+                            {eventInfos.state === "À faire" && 
+                                <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                ||
+                                <MaterialIcons name="check-box" size={30} color={variables.aubere} />
+                            }
+                        </TouchableOpacity>
+                    }
+                    { withDate === true &&
+                        <View style={{justifyContent: "center", padding: 5}}>
+                            <Text>{getDayText(eventInfos.dateevent)}.</Text>
+                            <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                        </View>
+                    }
                     <View style={styles.cardEventContainer}>
                         <EntrainementCard
                             eventInfos={eventInfos}
                             animaux={animaux}
+                            setSubMenu={setModalSubMenuEventVisible}
                         />
                         {withSubMenu === true &&
                             <View style={styles.actionEventContainer}>
@@ -174,10 +249,26 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             {eventInfos.eventtype == "autre" &&
                 <View style={[styles.eventContainer]}>
                     <View style={[styles.autre, styles.typeEventIndicator]}></View>
+                    { withState === true &&
+                        <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={{justifyContent: "center", padding: 5}}>
+                            {eventInfos.state === "À faire" && 
+                                <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                ||
+                                <MaterialIcons name="check-box" size={30} color={variables.pinterest} />
+                            }
+                        </TouchableOpacity>
+                    }
+                    { withDate === true &&
+                        <View style={{justifyContent: "center", padding: 5}}>
+                            <Text>{getDayText(eventInfos.dateevent)}.</Text>
+                            <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                        </View>
+                    }
                     <View style={styles.cardEventContainer}>
                         <AutreCard
                             eventInfos={eventInfos}
                             animaux={animaux}
+                            setSubMenu={setModalSubMenuEventVisible}
                         />
                         {withSubMenu === true &&
                             <View style={styles.actionEventContainer}>
@@ -190,10 +281,26 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             {eventInfos.eventtype == "concours" &&
                 <View style={[styles.eventContainer]}>
                     <View style={[styles.concours, styles.typeEventIndicator]}></View>
+                    { withState === true &&
+                        <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={{justifyContent: "center", padding: 5}}>
+                            {eventInfos.state === "À faire" && 
+                                <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                ||
+                                <MaterialIcons name="check-box" size={30} color={variables.bai} />
+                            }
+                        </TouchableOpacity>
+                    }
+                    { withDate === true &&
+                        <View style={{justifyContent: "center", padding: 5}}>
+                            <Text>{getDayText(eventInfos.dateevent)}.</Text>
+                            <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                        </View>
+                    }
                     <View style={styles.cardEventContainer}>
                         <ConcoursCard
                             eventInfos={eventInfos}
                             animaux={animaux}
+                            setSubMenu={setModalSubMenuEventVisible}
                         />
                         {withSubMenu === true &&
                             <View style={styles.actionEventContainer}>
@@ -206,10 +313,26 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             {eventInfos.eventtype == "depense" &&
                 <View style={[styles.eventContainer]}>
                     <View style={[styles.depense, styles.typeEventIndicator]}></View>
+                    { withState === true &&
+                        <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={{justifyContent: "center", padding: 5}}>
+                            {eventInfos.state === "À faire" && 
+                                <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                ||
+                                <MaterialIcons name="check-box" size={30} color={variables.rouan} />
+                            }
+                        </TouchableOpacity>
+                    }
+                    { withDate === true &&
+                        <View style={{justifyContent: "center", padding: 5}}>
+                            <Text>{getDayText(eventInfos.dateevent)}.</Text>
+                            <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                        </View>
+                    }
                     <View style={styles.cardEventContainer}>
                         <DepenseCard
                             eventInfos={eventInfos}
                             animaux={animaux}
+                            setSubMenu={setModalSubMenuEventVisible}
                         />
                         {withSubMenu === true &&
                             <View style={styles.actionEventContainer}>

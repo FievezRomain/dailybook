@@ -140,23 +140,6 @@ const EventsBloc = ({ navigation, events }) => {
             })
     }
 
-    const getDayText = (date) =>{
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateObject  = new Date(date);
-        dateText = String(dateObject.toLocaleDateString("fr-FR", options));
-        dateText = dateText.charAt(0).toUpperCase() + dateText.slice(1);
-        return dateText.slice(0,3);
-      }
-
-      const getDateText = (date) =>{
-        var dateObjet = new Date(date);
-        var jour = ('0' + dateObjet.getDate()).slice(-2); 
-        var mois = ('0' + (dateObjet.getMonth() + 1)).slice(-2);
-        const dateFormatee = jour + '/' + mois;
-        return dateFormatee;
-      }
-
-
     return(
         <>
         <View style={styles.container}>
@@ -180,17 +163,13 @@ const EventsBloc = ({ navigation, events }) => {
                     {eventsExceeded.map((eventItem, index) => (
                         <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "exceeded")}>
                             <View style={styles.eventContainer}>
-                                <View style={styles.stateContainer}>
-                                    <View style={[styles.inputStateContainer, eventItem.state === "À faire" ? styles.inputStateContainerDefault : styles.inputStateContainerSelected]}>
-                                        <MaterialIcons name="check" size={20} color={eventItem.state === "À faire" ? variables.rouan : variables.blanc} />
-                                    </View>
-                                </View>
-                                <View style={[styles.cardEventContainer, {paddingLeft: 10}]}>
-                                    <EventCard
-                                        eventInfos={eventItem}
-                                        withSubMenu={true}
-                                    />
-                                </View>
+                                <EventCard
+                                    eventInfos={eventItem}
+                                    withSubMenu={true}
+                                    withState={true}
+                                    handleStateChange={handleChangeState}
+                                    typeEvent={"exceeded"}
+                                />
                             </View>
                             <View style={styles.overdueIndicatorContainer}>
                                 <Text style={styles.overdueIndicator}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
@@ -226,24 +205,15 @@ const EventsBloc = ({ navigation, events }) => {
                 </View>
                 <View>
                     {eventsUpcoming.map((eventItem, index) => (
-                        <TouchableOpacity key={eventItem.id}>
-                            <View style={styles.eventContainer}>
-                                <View style={styles.dateContainer}>
-                                    <View style={styles.inputDateContainer}>
-                                        <Text>{getDayText(eventItem.dateevent)}.</Text>
-                                        <Text style={{fontSize: 11}}>{getDateText(eventItem.dateevent)}</Text>
-                                    </View>
-                                </View>
-                                <View style={[styles.cardEventContainer, {paddingLeft: 10}]}>
-                                    <EventCard
-                                        eventInfos={eventItem}
-                                        withSubMenu={true}
-                                    />
-                                </View>
+                        <View style={styles.eventContainer} key={eventItem.id}>
+                            <View style={[styles.cardEventContainer]}>
+                                <EventCard
+                                    eventInfos={eventItem}
+                                    withSubMenu={true}
+                                    withDate={true}
+                                />
                             </View>
-                            
-                        </TouchableOpacity>
-                        
+                        </View>
                     ))}
                 </View>
             </View>
@@ -319,7 +289,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     cardEventContainer:{
-        width: "90%"
+        width: "100%"
     },
     overdueIndicatorContainer:{
         backgroundColor: "white", 
