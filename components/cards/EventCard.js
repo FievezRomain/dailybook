@@ -75,9 +75,16 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
         cardEventContainer:{
             paddingVertical: 10,
             display: "flex", 
-            flexDirection: "row", 
-            width: "100%", 
+            flexDirection: "row",  
             justifyContent: "space-between"
+        },
+        cardEventContainerWithIndicator:{
+            width: "80%",
+        },
+        cardEventContainerWithoutIndicator:{
+            width: "100%",
+            paddingRight: 30,
+            paddingLeft: 10
         }
     });
 
@@ -139,7 +146,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
                         </View>
                     }
-                    <View style={styles.cardEventContainer}>
+                    <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
                         <BaladeCard
                             eventInfos={eventInfos}
                             animaux={animaux}
@@ -167,17 +174,12 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
                         </View>
                     }
-                    <View style={styles.cardEventContainer}>
+                    <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
                         <RdvCard
                             eventInfos={eventInfos}
                             animaux={animaux}
                             setSubMenu={setModalSubMenuEventVisible}
                         />
-                        {withSubMenu === true &&
-                            <View style={styles.actionEventContainer}>
-                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                            </View>
-                        }
                     </View>
                 </View>
             }
@@ -199,17 +201,12 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
                         </View>
                     }
-                    <View style={styles.cardEventContainer}>
+                    <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
                         <SoinsCard
                             eventInfos={eventInfos}
                             animaux={animaux}
                             setSubMenu={setModalSubMenuEventVisible}
                         />
-                        {withSubMenu === true &&
-                            <View style={styles.actionEventContainer}>
-                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                            </View>
-                        }
                     </View>
                 </View>
             }
@@ -231,17 +228,12 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
                         </View>
                     }
-                    <View style={styles.cardEventContainer}>
+                    <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
                         <EntrainementCard
                             eventInfos={eventInfos}
                             animaux={animaux}
                             setSubMenu={setModalSubMenuEventVisible}
                         />
-                        {withSubMenu === true &&
-                            <View style={styles.actionEventContainer}>
-                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                            </View>
-                        }
                     </View>
                     
                 </View>
@@ -264,17 +256,12 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
                         </View>
                     }
-                    <View style={styles.cardEventContainer}>
+                    <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
                         <AutreCard
                             eventInfos={eventInfos}
                             animaux={animaux}
                             setSubMenu={setModalSubMenuEventVisible}
                         />
-                        {withSubMenu === true &&
-                            <View style={styles.actionEventContainer}>
-                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                            </View>
-                        }
                     </View>
                 </View>
             }
@@ -296,22 +283,17 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
                         </View>
                     }
-                    <View style={styles.cardEventContainer}>
+                    <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
                         <ConcoursCard
                             eventInfos={eventInfos}
                             animaux={animaux}
                             setSubMenu={setModalSubMenuEventVisible}
                         />
-                        {withSubMenu === true &&
-                            <View style={styles.actionEventContainer}>
-                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                            </View>
-                        }
                     </View>
                 </View>
             }
             {eventInfos.eventtype == "depense" &&
-                <View style={[styles.eventContainer]}>
+                <View style={[styles.eventContainer, withDate === false && withState === false ? {padding: 10} : null]}>
                     <View style={[styles.depense, styles.typeEventIndicator]}></View>
                     { withState === true &&
                         <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={{justifyContent: "center", padding: 5}}>
@@ -328,17 +310,12 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
                         </View>
                     }
-                    <View style={styles.cardEventContainer}>
+                    <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
                         <DepenseCard
                             eventInfos={eventInfos}
                             animaux={animaux}
                             setSubMenu={setModalSubMenuEventVisible}
                         />
-                        {withSubMenu === true &&
-                            <View style={styles.actionEventContainer}>
-                                <Entypo name='dots-three-horizontal' size={20} onPress={() => setModalSubMenuEventVisible(true)}/>
-                            </View>
-                        }
                     </View>
                 </View>
             }

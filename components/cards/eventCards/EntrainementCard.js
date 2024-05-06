@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, Image } from "react-native";
 import variables from "../../styles/Variables";
 import { getImagePath } from '../../../services/Config';
 import { Entypo } from '@expo/vector-icons'
+import { TouchableOpacity } from "react-native";
 
 const EntrainementCard = ({eventInfos, animaux, setSubMenu}) => {
 
@@ -9,7 +10,6 @@ const EntrainementCard = ({eventInfos, animaux, setSubMenu}) => {
         eventTextContainer:{
             display: "flex",
             flexDirection: "column",
-            width: "80%",
         },
         eventTitle:{
             fontWeight: "bold",
@@ -70,9 +70,9 @@ const EntrainementCard = ({eventInfos, animaux, setSubMenu}) => {
                         )
                     })}
                 </View>
-                <View style={{display: "flex", flexDirection: "row", justifyContent: "center", width: "10%"}}>
-                    <Entypo name='dots-three-horizontal' size={20} onPress={() => setSubMenu(true)}/>
-                </View>
+                <TouchableOpacity style={{display: "flex", flexDirection: "row", justifyContent: "center", width: "10%"}} onPress={() => setSubMenu(true)}>
+                    <Entypo name='dots-three-horizontal' size={20} />
+                </TouchableOpacity>
             </View>
             <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between", flexWrap: "wrap"}}>
                 {eventInfos.lieu != null && 
