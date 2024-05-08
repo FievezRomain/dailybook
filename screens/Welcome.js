@@ -9,6 +9,7 @@ import WavyHeader from "../components/WavyHeader";
 import EventService from "../services/EventService";
 import ObjectifService from "../services/ObjectifService";
 import ObjectifsInProgressBloc from "../components/ObjectifsInProgressBloc";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const WelcomeScreen = ({ navigation })=> {
     const { user } = useContext(AuthenticatedUserContext);
@@ -57,6 +58,24 @@ const WelcomeScreen = ({ navigation })=> {
       return dateText;
     }
 
+    const handleObjectifChange = (objectif) => {
+      let updatedObjectifs = [];
+      updatedObjectifs = [... objectifs];
+
+      var index = updatedObjectifs.findIndex((a) => a.id == objectif.id);
+      updatedObjectifs[index] = objectif;
+      setObjectifs(updatedObjectifs);
+    }
+
+    const handleObjectifDelete = (objectif) => {
+      let updatedObjectifs = [];
+      updatedObjectifs = [... objectifs];
+
+      var index = updatedObjectifs.findIndex((a) => a.id == objectif.id);
+      updatedObjectifs.splice(index, 1);
+      setObjectifs(updatedObjectifs);
+    }
+
     return (
       <>
       <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
@@ -78,6 +97,8 @@ const WelcomeScreen = ({ navigation })=> {
               />
               <ObjectifsInProgressBloc
                 objectifs={objectifs}
+                handleObjectifChange={handleObjectifChange}
+                handleObjectifDelete={handleObjectifDelete}
               />
         </View>
       </View>

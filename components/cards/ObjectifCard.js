@@ -10,7 +10,7 @@ import variables from '../styles/Variables';
 import { getImagePath } from '../../services/Config';
 import ModalObjectif from '../Modals/ModalObjectif';
 
-const ObjectifCard = ({ objectif, animaux }) => {
+const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
     const objectifService = new ObjectifService;
     const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
@@ -36,7 +36,14 @@ const ObjectifCard = ({ objectif, animaux }) => {
     }
 
     const onModify = (objectif) => {
+        Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Modification d'un objectif réussi"
+        });
+
         setCurrentObjectif(objectif);
+        handleObjectifChange(objectif);
     }
 
     const handleDelete = () => {
@@ -51,6 +58,8 @@ const ObjectifCard = ({ objectif, animaux }) => {
                     position: "top",
                     text1: "Suppression d'un objectif réussi"
                 });
+
+                handleObjectifDelete(currentObjectif);
 
             })
             .catch((err) =>{

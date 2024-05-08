@@ -7,7 +7,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import AnimalsService from "../services/AnimalsService";
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 
-const ObjectifsInProgressBloc = ({ objectifs }) => {
+const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObjectifDelete }) => {
     const { user } = useContext(AuthenticatedUserContext);
     const animalsService = new AnimalsService;
     const [animaux, setAnimaux] = useState([]);
@@ -32,6 +32,9 @@ const ObjectifsInProgressBloc = ({ objectifs }) => {
                     <Text style={styles.title}>Objectifs en cours</Text>
                 </View>
                 <View>
+                    {objectifs.length === 0 &&
+                        <Text style={{marginBottom: 30}}>Vous n'avez aucun objectif en cours</Text>
+                    }
                     {objectifs.map((objectifItem, index) => (
                         <TouchableOpacity key={objectifItem.id}>
                             <View style={styles.objectifContainer}>
@@ -39,6 +42,8 @@ const ObjectifsInProgressBloc = ({ objectifs }) => {
                                     <ObjectifCard
                                         objectif={objectifItem}
                                         animaux={animaux}
+                                        handleObjectifChange={handleObjectifChange}
+                                        handleObjectifDelete={handleObjectifDelete}
                                     />
                                 </View>
                             </View>
