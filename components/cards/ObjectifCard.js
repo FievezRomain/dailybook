@@ -15,7 +15,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
     const objectifService = new ObjectifService;
     const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
     const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
-    const [currentObjectif, setCurrentObjectif] = useState({});
+    const [currentObjectif, setCurrentObjectif] = useState(objectif);
 
     useEffect(() =>{
         if(objectif !== undefined){
@@ -85,6 +85,35 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
         return animal;
     }
 
+    const handleTasksStateChange = async (etape) =>{
+        var objectifUpdated = currentObjectif;
+        var indice = objectifUpdated.sousEtapes.findIndex((a) => a.id === etape.id);
+        let data = {};
+
+        etape.state = etape.state === false ? true : false;
+        objectifUpdated.sousEtapes[indice] = etape;
+        await setCurrentObjectif(objectifUpdated);
+        
+        data["id"] = currentObjectif.id;
+        data["datedebut"] = currentObjectif.datedebut;
+        data["datefin"] = currentObjectif.datefin;
+        data["title"] = currentObjectif.title;
+        data["animaux"] = currentObjectif.animaux;
+        data["temporalityobjectif"] = currentObjectif.temporalityobjectif;
+        data["sousetapes"] = currentObjectif.sousEtapes;
+        objectifService.updateTasks(data)
+            .then((reponse) =>{
+                handleObjectifChange(currentObjectif);
+            })
+            .catch((err) =>{
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: err.message
+                });
+            })
+    }
+
     return(
         <>
             <ModalSubMenuObjectifActions
@@ -97,7 +126,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
             <ModalObjectifSubTasks
                 isVisible={modalManageTasksVisible}
                 setVisible={setModalManageTasksVisible}
-                objectif={objectif}
+                objectif={currentObjectif}
                 handleTasksStateChange={onModify}
             />
             <ModalObjectif
