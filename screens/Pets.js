@@ -276,7 +276,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : 140"
                 keyboardType="numeric"
                 placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].taille}
+                defaultValue={selected[0].taille != null ? String(selected[0].taille) : undefined}
                 editable={false}
               />
             </View>
@@ -287,7 +287,7 @@ const PetsScreen = ({ navigation }) => {
                 placeholder="Exemple : 300"
                 keyboardType="numeric"
                 placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].poids}
+                defaultValue={selected[0].poids != null ? String(selected[0].poids) : undefined}
                 editable={false}
               />
             </View>
@@ -317,7 +317,7 @@ const PetsScreen = ({ navigation }) => {
                 style={styles.input}
                 placeholder="Exemple : 200"
                 placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].quantity}
+                defaultValue={selected[0].quantity != null ? String(selected[0].quantity) : undefined}
                 editable={false}
               />
             </View>

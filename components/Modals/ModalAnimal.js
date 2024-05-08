@@ -329,7 +329,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("food", text)}
                                             defaultValue={getValues("food")}
-                                            editable={false}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>
@@ -340,7 +339,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("quantity", text)}
                                             defaultValue={getValues("quantity")}
-                                            editable={false}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>
