@@ -44,6 +44,12 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             display: "flex",
             flexDirection: "row",
             marginBottom: 10,
+            shadowColor: variables.bai,
+            shadowOpacity: 0.3,
+            shadowOffset: {
+              width: 0,
+              height: 1
+            },
         },
         balade:{
             backgroundColor: variables.alezan,
