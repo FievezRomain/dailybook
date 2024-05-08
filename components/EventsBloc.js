@@ -180,17 +180,13 @@ const EventsBloc = ({ navigation, events }) => {
                     {eventsToday.map((eventItem, index) => (
                         <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "today")}>
                             <View style={styles.eventContainer}>
-                                <View style={styles.stateContainer}>
-                                    <View style={[styles.inputStateContainer, eventItem.state === "À faire" ? styles.inputStateContainerDefault : styles.inputStateContainerSelected]}>
-                                        <MaterialIcons name="check" size={20} color={eventItem.state === "À faire" ? variables.rouan : variables.blanc} />
-                                    </View>
-                                </View>
-                                <View style={[styles.cardEventContainer, {paddingLeft: 10}]}>
-                                    <EventCard
-                                        eventInfos={eventItem}
-                                        withSubMenu={true}
-                                    />
-                                </View>
+                                <EventCard
+                                    eventInfos={eventItem}
+                                    withSubMenu={true}
+                                    withState={true}
+                                    handleStateChange={handleChangeState}
+                                    typeEvent={"today"}
+                                />
                             </View>
                         </TouchableOpacity>
                         

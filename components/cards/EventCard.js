@@ -293,7 +293,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 </View>
             }
             {eventInfos.eventtype == "depense" &&
-                <View style={[styles.eventContainer, withDate === false && withState === false ? {padding: 10} : null]}>
+                <View style={styles.eventContainer}>
                     <View style={[styles.depense, styles.typeEventIndicator]}></View>
                     { withState === true &&
                         <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={{justifyContent: "center", padding: 5}}>
