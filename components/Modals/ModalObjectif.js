@@ -69,9 +69,9 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setValue("title", objectif.title);
         setValue("animaux", objectif.animaux);
         if(objectif.animaux != undefined){
-            var animauxSelected = animaux.filter((item) => objectif.animaux.includes(String(item.id)));
+            var animauxSelected = animaux.filter((item) => objectif.animaux.includes(item.id));
             if(animauxSelected != undefined){
-              setSelected(animaux.filter((item) => objectif.animaux.includes(String(item.id))));
+              setSelected(animaux.filter((item) => objectif.animaux.includes(item.id)));
             }
         }
         setValue("temporalityobjectif", objectif.temporalityobjectif);
@@ -100,6 +100,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setValue("sousetapes", []);
         setValue("datedebut", new Date().toISOString().split('T')[0]);
         setValue("datefin", new Date().toISOString().split('T')[0]);
+        setAnimaux([]);
     };
 
     const submitRegister = async(data) =>{
@@ -228,7 +229,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             return;
         }
         var dateFin = new Date(getValues("datedebut"));
-        console.log("Date début :" + dateFin + " temporality : " + temporalityObjectif.id);
         if(temporalityObjectif.id === "week"){
             dateFin.setDate(dateFin.getDate() + 7);
         }
@@ -238,7 +238,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         if(temporalityObjectif.id === "year"){
             dateFin.setFullYear(dateFin.getFullYear() + 1);
         }
-        console.log("Date fin : " + dateFin);
         setValue("datefin", dateFin.toLocaleDateString());
     }
 

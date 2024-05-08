@@ -17,6 +17,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
     useEffect(() => {
         // Réinitialise la copie temporaire lorsque l'objetif change
         setTemporaryObjectif(_.cloneDeep(objectif));
+        initValues();
     }, [objectif]);
 
     useEffect(() => {
@@ -25,6 +26,16 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
             calculPercentCompletude();
         }
     }, [temporaryObjectif]);
+
+    const initValues = () => {
+        setValue("id", objectif.id);
+        setValue("datedebut", objectif.datedebut);
+        setValue("datefin", objectif.datefin);
+        setValue("title", objectif.title);
+        setValue("animaux", objectif.animaux);
+        setValue("temporalityobjectif", objectif.temporalityobjectif);
+        setValue("sousetapes", objectif.sousEtapes);
+    };
 
     const closeModal = () => {
         setTemporaryObjectif(_.cloneDeep(objectif));
