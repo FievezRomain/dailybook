@@ -7,7 +7,9 @@ const variables = {
     isabelle: "#956540",
     bai: "#1f110f",
     pinterest: "#F4EDEB",
-    default: "#f4f4f4"
+    default: "#f4f4f4",
+    bai_cerise: "#955250",
+    palomino: "#FFDBB6"
   };
   
   export default variables;
