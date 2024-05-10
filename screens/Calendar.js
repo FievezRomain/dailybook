@@ -307,7 +307,6 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignSelf: "center",
     borderRadius: 5,
-    padding: 10,
     width: "90%",
   },
   calendarContainer: {
