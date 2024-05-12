@@ -3,6 +3,7 @@ import { getImagePath } from '../services/Config';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import plus from '../assets/plus.png'
 import variables from "./styles/Variables";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined }) => {
 
@@ -78,7 +79,11 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                     <TouchableOpacity style={styles.containerAvatar} onPress={()=>changeSelectedAnimals(animal)} key={animal.id}>
                         <View style={styles.containerAvatar}>
                             { animal.image !== null ? 
-                            <Image style={[styles.avatar, checkSelected(animal) ? styles.selectedAvatar : styles.defaultAvatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                            <View style={checkSelected(animal) ? {borderRadius: 50, borderWidth: 2, borderLeftColor: variables.alezan, borderTopColor: variables.alezan, borderBottomColor: variables.aubere, borderRightColor: variables.aubere} : {borderRadius: 50, borderWidth: 2, borderColor: variables.default}}>
+                                <View style={checkSelected(animal) ? {borderWidth: 2, borderRadius: 50, borderColor: "white"} : [{borderRadius: 50, borderWidth: 2, borderColor: variables.default}]}>
+                                    <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                                </View>
+                            </View>
                             :
                             <View style={[styles.avatar, checkSelected(animal) ? styles.selectedAvatar : styles.defaultAvatar]}>
                                 <Text style={styles.avatarText}>{animal.nom[0]}</Text>
@@ -140,7 +145,7 @@ const styles = StyleSheet.create({
         color: Variables.isabelle
     },
     selectedText:{
-        color: Variables.bai
+        color: Variables.alezan
     },
 });
 
