@@ -1,22 +1,16 @@
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated } from "react-native";
 import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import AnimalsPicker from "../components/AnimalsPicker";
-import AvatarPicker from "../components/AvatarPicker";
 import { useForm } from "react-hook-form";
-import Button from "../components/Button";
-import DateTimePicker from '@react-native-community/datetimepicker';
 import AnimalsService from "../services/AnimalsService";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import ModalVerif from "../components/Modals/ModalVerif";
-import DateField from "../components/DateField";
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import ModalSubMenuAnimalActions from "../components/Modals/ModalSubMenuAnimalActions";
 import ModalAnimal from "../components/Modals/ModalAnimal";
 import DateUtils from "../utils/DateUtils";
-import { getImagePath } from '../services/Config';
 import ModalManageBodyAnimal from "../components/Modals/ModalManageBodyAnimal";
 
 const PetsScreen = ({ navigation }) => {
@@ -37,6 +31,8 @@ const PetsScreen = ({ navigation }) => {
   const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
   const dateUtils = new DateUtils();
   const [modalManageBodyAnimalVisible, setModalBodyAnimalVisible] = useState(false);
+  const [activeRubrique, setActiveRubrique] = useState(0);
+  const separatorPosition = useRef(new Animated.Value(0)).current;
   
 
   useEffect(() => {
@@ -157,6 +153,14 @@ const PetsScreen = ({ navigation }) => {
     console.log("enregitrer historique");
   }
 
+  const moveSeparator = (index) => {
+    Animated.timing(separatorPosition, {
+      toValue: index,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
+
   return (
     <>
       <ModalAnimal
@@ -193,6 +197,21 @@ const PetsScreen = ({ navigation }) => {
           setAddingForm={setAddingForm}
           setDate={setDate}
         />
+      </View>
+      <View style={styles.rubriqueContainer}>
+        <View style={styles.iconsContainer}>
+          <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+            <Entypo name="info-with-circle" size={30} color={activeRubrique === 0 ? Variables.alezan : "gray"}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+            <FontAwesome6 name="utensils" size={25} color={activeRubrique === 1 ? Variables.alezan : "gray"}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
+            <FontAwesome6 name="book-medical" size={25} color={activeRubrique === 2 ? Variables.alezan : "gray"}/>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.separatorFix}></View>
+        <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1, 2], outputRange: ['0%', '33.3%', '66.6%'] }) }]} />
       </View>
       <View style={styles.form}>
         <View style={styles.headerCard}>
@@ -481,6 +500,30 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
     borderRadius: 5,
   },
+
+  rubriqueContainer:{
+    marginTop: 10
+  },
+  iconsContainer:{
+    display: "flex", 
+    flexDirection: "row", 
+    paddingVertical: 10
+  },
+  separatorFix:{
+    borderTopColor: "gray", 
+    borderTopWidth: 1, 
+    position: 'absolute', 
+    bottom: 0, 
+    height: 2, 
+    width: "100%"
+  },
+  separatorAnimated:{
+    height: 3, 
+    backgroundColor: Variables.alezan, 
+    position: 'absolute', 
+    bottom: 0, 
+    width: '33.3%',
+  }
 })
 
 module.exports = PetsScreen;
