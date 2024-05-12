@@ -3,7 +3,7 @@ import { Animated, Dimensions, Image, Platform, StyleSheet, Text, View } from 'r
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import plus from '../assets/plus.png'
-import { FontAwesome5 } from '@expo/vector-icons'
+import { FontAwesome6 } from '@expo/vector-icons'
 import { useRef } from 'react';
 
 const Tab = createBottomTabNavigator();
@@ -21,11 +21,11 @@ const BottomTabNavigator = () => {
                 position: 'absolute',
                 top: 15
               }}>
-                <FontAwesome5
+                <FontAwesome6
                   name="home"
                   size={20}
                   color={focused ? '#956540' : 'gray'}
-                ></FontAwesome5>
+                ></FontAwesome6>
               </View>
             } else if(route.name === 'Statistic'){
               return <View style={{
@@ -33,11 +33,11 @@ const BottomTabNavigator = () => {
                 position: 'absolute',
                 top: 15
               }}>
-                <FontAwesome5
+                <FontAwesome6
                   name="signal"
                   size={20}
                   color={focused ? '#956540' : 'gray'}
-                ></FontAwesome5>
+                ></FontAwesome6>
               </View>
             } else if(route.name === 'ActionButton'){
               return <View style={{
@@ -61,11 +61,11 @@ const BottomTabNavigator = () => {
                 position: 'absolute',
                 top: 15
               }}>
-                <FontAwesome5
+                <FontAwesome6
                   name="calendar-alt"
                   size={20}
                   color={focused ? '#956540' : 'gray'}
-                ></FontAwesome5>
+                ></FontAwesome6>
               </View>
             } else if (route.name === 'Pets'){
               return <View style={{
@@ -73,11 +73,11 @@ const BottomTabNavigator = () => {
                 position: 'absolute',
                 top: 15
               }}>
-                <FontAwesome5
+                <FontAwesome6
                   name="paw"
                   size={20}
                   color={focused ? '#956540' : 'gray'}
-                ></FontAwesome5>
+                ></FontAwesome6>
               </View>
             }
           },

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { FontAwesome5, FontAwesome, MaterialCommunityIcons, Entypo, Feather } from '@expo/vector-icons';
+import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather } from '@expo/vector-icons';
 import variables from "./styles/Variables";
 import { TouchableOpacity } from "react-native";
 
@@ -20,7 +20,7 @@ const StatistiquesBloc = () =>{
                 </View>
                 <View style={styles.statistiqueIndicatorContainer}>
                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
-                        <FontAwesome5 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                        <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
                         <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
@@ -35,7 +35,7 @@ const StatistiquesBloc = () =>{
                         <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("soins")}}>
-                        <FontAwesome5 name="hand-holding-medical" size={20} style={itemStatistique == "soins" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                        <FontAwesome6 name="hand-holding-medical" size={20} style={itemStatistique == "soins" ? styles.itemIconSelected : styles.itemIconDefault}  />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("rdv")}}>
                         <FontAwesome name="stethoscope" size={20} style={itemStatistique == "rdv" ? styles.itemIconSelected : styles.itemIconDefault}  />

@@ -39,6 +39,9 @@
         "projectId": "9733b21a-2b6a-413e-98ff-c4fdc8c1765d"
       }
     },
-    "owner": "riujin"
+    "owner": "riujin",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { FontAwesome5, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
+import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import variables from './styles/Variables';
 import ObjectifCard from './cards/ObjectifCard';

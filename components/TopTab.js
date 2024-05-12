@@ -2,7 +2,7 @@ import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome5, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
+import { FontAwesome6, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
 
 const TopTab = ({message1, message2, withBackground=false}) => {
     const navigation = useNavigation();

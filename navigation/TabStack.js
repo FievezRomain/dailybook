@@ -2,7 +2,7 @@ import { Animated, Dimensions, Image, Platform, StyleSheet, Text, View, Pressabl
 import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import plus from '../assets/plus.png'
-import { FontAwesome5 } from '@expo/vector-icons'
+import { FontAwesome6, Ionicons } from '@expo/vector-icons'
 import { useRef } from 'react';
 import { WelcomeScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen } from "../screens";
 import { AnimatePresence, MotiView } from 'moti';
@@ -26,11 +26,11 @@ const TabStack = () => {
                 top: 15
               }}>
                 <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
-                  <FontAwesome5
+                  <Ionicons
                     name="home"
                     size={20}
                     color={focused ? variables.alezan : 'gray'}
-                  ></FontAwesome5>
+                  ></Ionicons>
                   <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Accueil</Text>
                 </View>
               </View>
@@ -41,11 +41,11 @@ const TabStack = () => {
                 top: 15
               }}>
                 <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
-                  <FontAwesome5
+                  <FontAwesome6
                     name="signal"
                     size={20}
                     color={focused ? variables.alezan : 'gray'}
-                  ></FontAwesome5>
+                  ></FontAwesome6>
                   <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Performances</Text>
                 </View>
                 
@@ -89,11 +89,11 @@ const TabStack = () => {
                 
               }}>
                 <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
-                  <FontAwesome5
+                  <FontAwesome6
                     name="calendar-alt"
                     size={20}
                     color={focused ? variables.alezan : 'gray'}
-                  ></FontAwesome5>
+                  ></FontAwesome6>
                   <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Calendrier</Text>
                 </View>
               </View>
@@ -104,11 +104,11 @@ const TabStack = () => {
                 top: 15
               }}>
                 <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
-                  <FontAwesome5
+                  <FontAwesome6
                     name="paw"
                     size={20}
                     color={focused ? variables.alezan : 'gray'}
-                  ></FontAwesome5>
+                  ></FontAwesome6>
                   <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Animaux</Text>
                 </View>
               </View>

@@ -1,7 +1,7 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import Variables from "../styles/Variables";
-import { FontAwesome5, Octicons, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
+import { FontAwesome6, Octicons, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 
 const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleManageBody }) => {
 

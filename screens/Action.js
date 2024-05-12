@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import Variables from "../components/styles/Variables";
 import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
 import TopTab from '../components/TopTab';
-import { FontAwesome5, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import ModalEvents from "../components/Modals/ModalEvents";
 import ModalObjectif from "../components/Modals/ModalObjectif";
 import ModalWish from "../components/Modals/ModalWish";
@@ -171,7 +171,7 @@ const ActionScreen = ({ navigation }) => {
               <TouchableOpacity onPress={() => openModalEvent("soins")}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
-                    <FontAwesome5 name="hand-holding-medical" size={20} style={styles.iconButton}/>
+                    <FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton}/>
                     <Text>Soin</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
@@ -182,7 +182,7 @@ const ActionScreen = ({ navigation }) => {
               <TouchableOpacity onPress={() => openModalEvent("depense")}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
-                    <FontAwesome5 name="money-bill-wave" size={20} style={styles.iconButton}/>
+                    <FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton}/>
                     <Text>Dépense</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
@@ -193,7 +193,7 @@ const ActionScreen = ({ navigation }) => {
               <TouchableOpacity onPress={() => openModalEvent("autre")}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
-                    <FontAwesome5 name="check-circle" size={20} style={styles.iconButton}/>
+                    <FontAwesome6 name="check-circle" size={20} style={styles.iconButton}/>
                     <Text>Autre tâche</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>

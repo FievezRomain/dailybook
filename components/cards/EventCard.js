@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import variables from "../styles/Variables";
-import { Entypo, MaterialIcons, FontAwesome5, FontAwesome } from '@expo/vector-icons'
+import { Entypo, MaterialIcons, FontAwesome6, FontAwesome } from '@expo/vector-icons'
 import BaladeCard from './eventCards/BaladeCard';
 import SoinsCard from './eventCards/SoinsCard';
 import AutreCard from './eventCards/AutreCard';
@@ -244,7 +244,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                     <View style={styles.headerEventContainer}>
                         <View style={[styles.soins, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
-                            <FontAwesome5 name="hand-holding-medical" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
+                            <FontAwesome6 name="hand-holding-medical" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
                                 <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Soins</Text>
                             </View>
                             <View>
@@ -327,7 +327,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                     <View style={styles.headerEventContainer}>
                         <View style={[styles.autre, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome5 name="check-circle" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
+                                <FontAwesome6 name="check-circle" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
                                 <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Autre</Text>
                             </View>
                             <View>
@@ -411,7 +411,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                     <View style={styles.headerEventContainer}>
                         <View style={[styles.depense, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome5 name="money-bill-wave" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
+                                <FontAwesome6 name="money-bill-wave" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
                                 <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Dépense</Text>
                             </View>
                             <View>

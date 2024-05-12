@@ -1,7 +1,7 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import Variables from "../styles/Variables";
-import { FontAwesome5, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
+import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 
 const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleManageTasks }) => {
 
@@ -28,7 +28,7 @@ const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModi
                     <View style={styles.actionButtonContainer}>
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleManageTasks)}>
                             <View style={styles.informationsActionButton}>
-                                <FontAwesome5 name="tasks" size={20}/>
+                                <FontAwesome6 name="tasks" size={20}/>
                                 <Text style={styles.textActionButton}>
                                     Avancement des sous-étapes
                                 </Text>

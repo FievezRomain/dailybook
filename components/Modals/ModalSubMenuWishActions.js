@@ -1,7 +1,7 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import Variables from "../styles/Variables";
-import { FontAwesome5, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
+import { FontAwesome6, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 
 const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleModify, handleDelete, handleShare, handleRedirect }) => {
 
