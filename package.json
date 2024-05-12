@@ -36,6 +36,7 @@
     "react-native-calendars": "^1.1303.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-masonry-list": "^2.16.1",
     "react-native-modal-datetime-picker": "^17.1.0",
     "react-native-reanimated": "~3.10.1",
@@ -43,7 +44,8 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "15.2.0",
     "react-native-swiper": "^1.6.0",
-    "react-native-toast-message": "^2.1.6"
+    "react-native-toast-message": "^2.1.6",
+    "expo-linear-gradient": "~13.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0"

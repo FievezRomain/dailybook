@@ -73,20 +73,26 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
         setDate(String(jour + "/" + mois + "/" + annee));
     }
     return(
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={true} indicatorStyle="white" contentContainerStyle={styles.containerAnimaux}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} indicatorStyle="white" contentContainerStyle={styles.containerAnimaux}>
             {animaux.map((animal, index) => {
                 return (
                     <TouchableOpacity style={styles.containerAvatar} onPress={()=>changeSelectedAnimals(animal)} key={animal.id}>
                         <View style={styles.containerAvatar}>
                             { animal.image !== null ? 
-                            <View style={checkSelected(animal) ? {borderRadius: 50, borderWidth: 2, borderLeftColor: variables.alezan, borderTopColor: variables.alezan, borderBottomColor: variables.aubere, borderRightColor: variables.aubere} : {borderRadius: 50, borderWidth: 2, borderColor: variables.default}}>
-                                <View style={checkSelected(animal) ? {borderWidth: 2, borderRadius: 50, borderColor: "white"} : [{borderRadius: 50, borderWidth: 2, borderColor: variables.default}]}>
+                            <LinearGradient
+                                colors={checkSelected(animal) ? [variables.alezan, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
+                                style={styles.containerWithGradient}
+                                start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
+                            >
+                                <View style={[styles.containerAvatarWithImage, checkSelected(animal) ? {backgroundColor: variables.blanc} : {backgroundColor: "transparent"}]}>
                                     <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
                                 </View>
-                            </View>
+                            </LinearGradient>
                             :
-                            <View style={[styles.avatar, checkSelected(animal) ? styles.selectedAvatar : styles.defaultAvatar]}>
-                                <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                            <View style={styles.containerAvatarWithoutImage}>
+                                <View style={[styles.avatar, checkSelected(animal) ? styles.selectedAvatar : styles.defaultAvatar]}>
+                                    <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                </View>
                             </View>
                             }
                             <Text style={checkSelected(animal) ? styles.selectedText : styles.defaultText}>{animal.nom}</Text>
@@ -139,13 +145,32 @@ const styles = StyleSheet.create({
         alignItems: "center",
         alignSelf: "center",
         marginLeft: 5,
-        marginRight: 20
     },
     defaultText:{
         color: Variables.isabelle
     },
     selectedText:{
         color: Variables.alezan
+    },
+    containerAvatarWithoutImage:{
+        height: 70, 
+        width: 70, 
+        justifyContent: "center", 
+        alignItems: "center"
+    },
+    containerWithGradient:{
+        width: 70, 
+        height: 70, 
+        borderRadius: 50, 
+        alignItems: "center", 
+        justifyContent: "center"
+    },
+    containerAvatarWithImage:{
+        width: 65, 
+        height: 65, 
+        borderRadius: 50, 
+        alignItems: "center", 
+        justifyContent: "center"
     },
 });
 
