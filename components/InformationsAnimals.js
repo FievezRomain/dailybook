@@ -51,7 +51,7 @@ const InformationsAnimals = ({ animal, onModify, onDelete }) => {
                 onModify={onModifyBodyAnimalHistory}
             />
             <ScrollView>
-                <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1}}>
+                <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
                     <Text style={{color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Informations</Text>
                     {animal.image !== null ?
                         <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: variables.alezan}} source={{uri: `${getImagePath()}${animal.image}`}} />

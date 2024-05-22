@@ -336,6 +336,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={styles.input}
                                             placeholder="Exemple : 200"
+                                            keyboardType="numeric"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("quantity", text)}
                                             defaultValue={getValues("quantity")}
