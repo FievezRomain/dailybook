@@ -6,12 +6,11 @@ import React, { useState, useContext, useEffect, useRef } from 'react';
 import AnimalsPicker from "../components/AnimalsPicker";
 import { useForm } from "react-hook-form";
 import AnimalsService from "../services/AnimalsService";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
-import ModalSubMenuAnimalActions from "../components/Modals/ModalSubMenuAnimalActions";
-import ModalAnimal from "../components/Modals/ModalAnimal";
-import DateUtils from "../utils/DateUtils";
-import ModalManageBodyAnimal from "../components/Modals/ModalManageBodyAnimal";
+import InformationsAnimals from "../components/InformationsAnimals";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import NutritionHistory from "../components/NutritionHistory";
+import MedicalBook from "../components/MedicalBook";
 
 const PetsScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
@@ -19,18 +18,12 @@ const PetsScreen = ({ navigation }) => {
   const animalsService = new AnimalsService;
   const [animaux, setAnimaux] = useState([]);
   const [selected, setSelected] = useState([{}]);
-  const [addingForm, setAddingForm] = useState(false);
-  const [image, setImage] = useState(null);
-  const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
+  const { setValue } = useForm();
   today = new Date();
   jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
   mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
   annee = today.getFullYear();
   const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
-  const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
-  const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
-  const dateUtils = new DateUtils();
-  const [modalManageBodyAnimalVisible, setModalBodyAnimalVisible] = useState(false);
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
   
@@ -83,7 +76,7 @@ const PetsScreen = ({ navigation }) => {
     data["idProprietaire"] =  user.id;
 
     // Récupération de l'identifiant de l'animal
-    data["id"] = selected[0].id;
+    data["id"] = animal.id;
 
     animalsService.delete(data)
     .then((response) =>{
@@ -128,10 +121,6 @@ const PetsScreen = ({ navigation }) => {
     });
   }
 
-  const handleModify = () => {
-    setModalAnimalVisible(true);
-  }
-
   const onModify = (animal) => {
     Toast.show({
       type: "success",
@@ -145,14 +134,6 @@ const PetsScreen = ({ navigation }) => {
     setSelected([animaux[indice]]);
   }
 
-  const handleManageBodyAnimal = () => {
-    setModalBodyAnimalVisible(true);
-  }
-
-  const onModifyBodyAnimalHistory = (animal) =>{
-    console.log("enregitrer historique");
-  }
-
   const moveSeparator = (index) => {
     Animated.timing(separatorPosition, {
       toValue: index,
@@ -163,26 +144,6 @@ const PetsScreen = ({ navigation }) => {
 
   return (
     <>
-      <ModalAnimal
-        actionType={"modify"}
-        isVisible={modalAnimalVisible}
-        setVisible={setModalAnimalVisible}
-        animal={selected[0]}
-        onModify={onModify}
-      />
-      <ModalSubMenuAnimalActions
-        modalVisible={modalSubMenuAnimalActionsVisible}
-        setModalVisible={setModalSubMenuAnimalActionsVisible}
-        handleDelete={handleDeletePet}
-        handleModify={handleModify}
-        handleManageBody={handleManageBodyAnimal}
-      />
-      <ModalManageBodyAnimal
-        isVisible={modalManageBodyAnimalVisible}
-        setVisible={setModalBodyAnimalVisible}
-        animal={selected[0]}
-        onModify={onModifyBodyAnimalHistory}
-      />
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
@@ -194,7 +155,6 @@ const PetsScreen = ({ navigation }) => {
           setValue={setValue}
           mode="single"
           buttonAdd={true}
-          setAddingForm={setAddingForm}
           setDate={setDate}
         />
       </View>
@@ -213,296 +173,32 @@ const PetsScreen = ({ navigation }) => {
         <View style={styles.separatorFix}></View>
         <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1, 2], outputRange: ['0%', '33.3%', '66.6%'] }) }]} />
       </View>
-      <View style={styles.form}>
-        <View style={styles.headerCard}>
-          <View style={styles.titleCard}>
-            <Text style={styles.title}>Informations</Text>
-          </View>
-          
-          <TouchableOpacity onPress={() => setModalSubMenuAnimalActionsVisible(true)} >
-            <Entypo name='dots-three-horizontal' size={20} />
-          </TouchableOpacity>
-        </View>
-        <ScrollView style={{width:"100%"}}>
-          <View style={styles.formContainer}>
-            
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Nom de l'animal :</Text>
-              {errors.nom && <Text style={styles.errorInput}>Nom obligatoire</Text>}
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : Vasco"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].nom}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Espèce :</Text>
-              {errors.nom && <Text style={styles.errorInput}>Espèce obligatoire</Text>}
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : Cheval"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].espece}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Date de naissance :</Text>
-              <TextInput
-                  style={styles.input}
-                  placeholder="Exemple : 01/01/1900"
-                  keyboardType="numeric"
-                  maxLength={10}
-                  placeholderTextColor={Variables.texte}
-                  defaultValue={selected[0].datenaissance}
-                  editable={false}
-              />
-              {/* <DateField
-                defaultValue={getValues}
-                style={styles.input}
-                setValue={setValue}
-                valueName={"datenaissance"}
-                getValues={getValues}
-                date={date}
-                setDate={setDate}
-              /> */}
-              {/* <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date}
-                  mode="date"
-                  is24Hour={true}
-                  onChange={onChangeDate}
-                  accentColor={Variables.bouton}
-                  style={styles.datePicker}
-              /> */}
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Race :</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : Fjord"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].race}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Taille (cm) :</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : 140"
-                keyboardType="numeric"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].taille != null ? String(selected[0].taille) : undefined}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Poids (kg) :</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : 300"
-                keyboardType="numeric"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].poids != null ? String(selected[0].poids) : undefined}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Sexe :</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : Mâle"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].sexe}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Nom alimentation :</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : Pure feed"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].food}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Quantité (gramme / cl) :</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : 200"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].quantity != null ? String(selected[0].quantity) : undefined}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Couleur :</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : Noir"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].couleur}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Nom du père :</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : Sirius"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].nomPere}
-                editable={false}
-              />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={styles.textInput}>Nom de la mère :</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Exemple : Hermès"
-                placeholderTextColor={Variables.texte}
-                defaultValue={selected[0].nomMere}
-                editable={false}
-              />
-            </View>
-          </View>
-        </ScrollView>
-      </View>
+      {activeRubrique === 0 && 
+        <InformationsAnimals
+          animal={selected[0]}
+          onDelete={handleDeletePet}
+          onModify={onModify}
+        />
+      }
+      {activeRubrique === 1 &&
+        <NutritionHistory 
+          animal={selected[0]}
+        />
+      }
+      {activeRubrique === 2 &&
+        <MedicalBook 
+          animal={selected[0]}
+        />
+      }
     </>
     );
 };
 
 const styles = StyleSheet.create({
-  headerCard:{
-    display: "flex",
-    flexDirection: "row",
-    width: "90%"
-  },
-  titleCard:{
-    alignItems: "center", 
-    flex: 1
-  },
-  title:{
-    color: Variables.alezan,
-  },
-  errorInput: {
-    color: "red"
-  },
-  loaderEvent: {
-    width: 200,
-    height: 200
-  },
-  loadingEvent: {
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 9,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#000000b8",
-    paddingTop: 50
-  },
-  textButton:{
-    color: "white"
-  },
-  registerButton: {
-    marginBottom: 20,
-    marginTop: 10,
-    backgroundColor: Variables.bouton,
-    borderRadius: 10
-  },
-  imagePrez:{
-    height: "90%",
-    width: "100%"
-  },
-  screenContainer:{
-    backgroundColor: Variables.fond,
-  },
-  contentContainer:{
-    display: "flex",
-    height: "90%",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  image: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-    resizeMode: "cover",
-    position: "absolute",
-    justifyContent: "center",
-    backgroundColor:  Variables.default
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    backgroundColor: Variables.blanc,
-    justifyContent: "center",
-    width: "90%",
-    height: "65%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    borderRadius: 10,
-    marginTop: 10,
-    paddingBottom: 10,
-    paddingTop: 10,
-    shadowColor: "black",
-    shadowOpacity: 0.1,
-    shadowRadius:5,
-    shadowOffset:{width:0, height:2}
-  },
-  formContainer:{
-    paddingLeft: 30,
-    paddingRight: 30,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  inputContainer:{
-    alignItems: "center",
-    width: "100%"
-  },
-  textInput:{
-    alignSelf: "flex-start",
-    marginBottom: 5
-  },
-  input: {
-    height: 40,
-    width: "100%",
-    marginBottom: 15,
-    borderRadius: 5,
-    paddingLeft: 15,
-    backgroundColor: Variables.rouan,
-    color: "black",
-    alignSelf: "baseline"
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 50,
-    borderWidth: 2,
-    zIndex: 1,
-  },
-  imageContainer:{
-    flexDirection: "row",
-    alignSelf: "flex-start",
-    marginTop: 5,
-    marginBottom: 15
-  },
-  datePicker:{
-    marginBottom: 10,
-    alignSelf: "flex-start",
-    borderRadius: 5,
-  },
 
   rubriqueContainer:{
-    marginTop: 10
+    marginTop: 10,
+    marginBottom: 10,
   },
   iconsContainer:{
     display: "flex", 
