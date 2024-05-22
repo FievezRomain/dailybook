@@ -4,6 +4,7 @@ import StatePicker from './StatePicker';
 import EventService from '../services/EventService';
 import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import EventCard from './cards/EventCard';
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const MedicalBook = ({ animal }) => {
     const [typeEvent, setTypeEvent] = useState("Rendez-vous");
@@ -25,18 +26,52 @@ const MedicalBook = ({ animal }) => {
             var arrayEventsRdv = [];
 
             arrayEventsSoins = await result.filter((event) => event.eventtype === "soins");
+            arrayEventsSoins.sort(compareDates);
             arrayEventsRdv = await result.filter((event) => event.eventtype === "rdv");
+            arrayEventsRdv.sort(compareDates);
 
-            setEventsRdv(arrayEventsRdv);
-            setEventsSoins(arrayEventsSoins);
+            await setEventsRdv(arrayEventsRdv);
+            await setEventsSoins(arrayEventsSoins);
           } catch (error) {
             console.error("Error fetching events:", error);
           }
     }
 
+    const compareDates = (a, b) => {
+        return new Date(a.dateevent) - new Date(b.dateevent);
+    }
+
     const handleStateChange = () =>{
         setTypeEvent(typeEvent === "Soins" ? "Rendez-vous" : "Soins");
     }
+
+    const onDeleteEvent = (infosEvent) => {
+        eventService.delete(infosEvent)
+            .then((reponse) =>{
+
+                Toast.show({
+                type: "success",
+                position: "top",
+                text1: "Suppression d'un événement réussi"
+                });
+
+                getEvents();
+
+            })
+            .catch((err) =>{
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: err.message
+                });
+            });
+    }
+
+    const onModifyEvent = (idEventModified, response) => {
+        getEvents();
+        
+    }
+
     return(
         <>
             <View style={{width: "95%", alignSelf: "center"}}>
@@ -57,6 +92,8 @@ const MedicalBook = ({ animal }) => {
                                     eventInfos={eventItem}
                                     withSubMenu={true}
                                     withDate={true}
+                                    deleteFunction={onDeleteEvent}
+                                    updateFunction={onModifyEvent}
                                 />
                             </View>
                         ))
@@ -67,6 +104,8 @@ const MedicalBook = ({ animal }) => {
                                     eventInfos={eventItem}
                                     withSubMenu={true}
                                     withDate={true}
+                                    deleteFunction={onDeleteEvent}
+                                    updateFunction={onModifyEvent}
                                 />
                             </View>
                         ))
