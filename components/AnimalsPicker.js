@@ -89,11 +89,17 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                                 </View>
                             </LinearGradient>
                             :
-                            <View style={styles.containerAvatarWithoutImage}>
-                                <View style={[styles.avatar, checkSelected(animal) ? styles.selectedAvatar : styles.defaultAvatar]}>
-                                    <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                            <LinearGradient
+                                colors={checkSelected(animal) ? [variables.alezan, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
+                                style={styles.containerWithGradient}
+                                start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
+                            >
+                                <View style={[styles.containerAvatarWithoutImage, checkSelected(animal) ? {backgroundColor: variables.blanc} : {backgroundColor: "transparent"}]}>
+                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: variables.alezan} : {backgroundColor: variables.isabelle}]}>
+                                        <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                    </View>
                                 </View>
-                            </View>
+                            </LinearGradient>
                             }
                             <Text style={checkSelected(animal) ? styles.selectedText : styles.defaultText}>{animal.nom}</Text>
                         </View>
@@ -153,8 +159,9 @@ const styles = StyleSheet.create({
         color: Variables.alezan
     },
     containerAvatarWithoutImage:{
-        height: 70, 
-        width: 70, 
+        height: 65, 
+        width: 65, 
+        borderRadius: 50, 
         justifyContent: "center", 
         alignItems: "center"
     },
