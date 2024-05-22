@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         borderBlockColor: "black",
         borderWidth: 0.4,
-        backgroundColor: variables.rouan,
+        backgroundColor: variables.default,
         borderRadius: 5
     },
     textContainer:{

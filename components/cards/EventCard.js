@@ -133,6 +133,12 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
         return dateFormatee;
     }
 
+    const getYearText = (date) =>{
+        var dateObjet = new Date(date);
+        var annee = dateObjet.getFullYear();
+        return annee;
+    }
+
     const getDayText = (date) =>{
         options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         dateObject  = new Date(date);
@@ -224,9 +230,10 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             </TouchableOpacity>
                         }
                         { withDate === true &&
-                            <View style={{justifyContent: "center", padding: 5}}>
+                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
                                 <Text>{getDayText(eventInfos.dateevent)}.</Text>
                                 <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
                         <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>

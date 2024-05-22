@@ -12,7 +12,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const StatsScreen = ({ navigation }) => {
   const { user } = useContext(AuthenticatedUserContext);
-  const [messages, setMessages] = useState({message1: "Mes", message2: "statistiques"})
+  const [messages, setMessages] = useState({message1: "Mes", message2: "performances"})
   const [temporality, setTemporality] = useState("week");
   const [animaux, setAnimaux] = useState([]);
   const [selectedAnimal, setSelectedAnimal] = useState([]);
@@ -20,7 +20,7 @@ const StatsScreen = ({ navigation }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      setMessages({message1: "Mes", message2: "statistiques & objectifs"});
+      setMessages({message1: "Mes", message2: "performances"});
       getAnimals();
     });
     return unsubscribe;

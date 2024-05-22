@@ -59,7 +59,7 @@ const TabStack = () => {
                   borderRadius: 30,
                   justifyContent: 'center',
                   alignItems: 'center',
-                  marginBottom: Platform.OS == "android" ? 50 : 30,
+                  marginBottom: Platform.OS == "android" ? 30 : 30,
                   shadowColor: "black",
                   shadowOpacity: 0.3,
                   shadowRadius: 10,
