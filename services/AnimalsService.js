@@ -1,6 +1,7 @@
 import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 
 export default class AnimalsService {
     async createWithPicture(body){
@@ -81,13 +82,13 @@ export default class AnimalsService {
         .catch();
     }
 
-    async getAnimals(id){
+    async getAnimals(email){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}equideByUser?idProprietaire=${id}`)
+            .get(`${getBaseUrl()}equideByUser?email=${email}`)
             .then(async ({data}) => {
                 await this.putInCache(data.rows);
                 return await this.getCache();
@@ -97,7 +98,7 @@ export default class AnimalsService {
     }
 
     async updateAxiosAuthorization() {
-        let token = await this.getAuthToken();
+        let token = await getAuth().currentUser.getIdToken();
         if (token) {
             //Bonne solution pour connexion
             axios.defaults.headers.common = { 'x-access-token': `${token}` };
@@ -106,11 +107,6 @@ export default class AnimalsService {
         }else {
           delete axios.defaults.headers.common["x-access-token"];
         }
-    }
-
-    async getAuthToken() {
-        let auth = await AsyncStorage.getItem("auth");
-        return auth ? JSON.parse(auth) : null;
     }
 
     async isInCache() {
@@ -162,5 +158,10 @@ export default class AnimalsService {
 
             await AsyncStorage.setItem("animals",  JSON.stringify(animals));
         }
+    }
+
+    async refreshCache(email){
+        await AsyncStorage.removeItem("animals");
+        await this.getAnimals(email);
     }
 }

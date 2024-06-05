@@ -5,14 +5,14 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
 import { AntDesign } from '@expo/vector-icons';
 import AnimalsService from "../../services/AnimalsService";
-import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import DatePickerModal from "./ModalDatePicker";
 import AvatarPicker from "../AvatarPicker";
 import DateUtils from "../../utils/DateUtils";
 import { getImagePath } from '../../services/Config';
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const animalsService = new AnimalsService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
@@ -72,7 +72,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
 
     const submitRegister = async(data) =>{
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
-        data["idProprietaire"] =  user.id;
+        data["email"] =  currentUser.email;
 
         let formData = data;
         if (data.image != undefined){
@@ -80,7 +80,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                 formData = new FormData();
                 if(image != null){
                     filename = data.image.split("/");
-                    filename = filename[filename.length-1].split(".")[0] + user.id;
+                    filename = filename[filename.length-1].split(".")[0] + currentUser.id;
                     formData.append("picture", {
                     name: filename,
                     type: "image/jpeg",

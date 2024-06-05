@@ -1,7 +1,6 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import Variables from "../styles/Variables";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import React, { useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';

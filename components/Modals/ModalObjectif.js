@@ -1,4 +1,4 @@
-import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
@@ -14,7 +14,7 @@ import DatePickerModal from "./ModalDatePicker";
 import DateUtils from "../../utils/DateUtils";
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const animalsService = new AnimalsService;
     const objectifService = new ObjectifService;
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
@@ -51,7 +51,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         // Si aucun animal est déjà présent dans la liste, alors
         if(animaux.length == 0){
             // On récupère les animaux de l'utilisateur courant
-            var result = await animalsService.getAnimals(user.id);
+            var result = await animalsService.getAnimals(currentUser.id);
             // Si l'utilisateur a des animaux, alors
             if(result.length !== 0){
             // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)

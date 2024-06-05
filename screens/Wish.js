@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, FlatList, Dimensions, Linking } from "react-native";
 import React, { useContext, useState, useEffect } from 'react';
 import Variables from "../components/styles/Variables";
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
+import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { Entypo } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
 import TopTabSecondary from "../components/TopTabSecondary";
@@ -12,7 +12,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalWish from "../components/Modals/ModalWish";
 
 const WishScreen = ({ navigation }) => {
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const [wishs, setWishs] = useState([]);
     const [selectedWish, setSelectedWish] = useState(null);
     const wishService = new WishService();
@@ -29,7 +29,7 @@ const WishScreen = ({ navigation }) => {
     }, [navigation]);
 
     const getWishs = async () => {
-        var result = await wishService.getWishs(user.id);
+        var result = await wishService.getWishs(currentUser.id);
         if(result.length != 0){
             setWishs(result);
         }

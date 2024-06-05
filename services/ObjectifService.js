@@ -1,6 +1,7 @@
 import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 
 export default class ObjectifService {
 
@@ -61,13 +62,13 @@ export default class ObjectifService {
         
     }
 
-    async getObjectifs(id){
+    async getObjectifs(email){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}objectifsByUser?idProprietaire=${id}`)
+            .get(`${getBaseUrl()}objectifsByUser?email=${email}`)
             .then(async({data}) => {
                 await this.putInCache(data);
                 return await this.getCache();
@@ -78,7 +79,7 @@ export default class ObjectifService {
     }
 
     async updateAxiosAuthorization() {
-        let token = await this.getAuthToken();
+        let token = await getAuth().currentUser.getIdToken();
         if (token) {
             //Bonne solution pour connexion
             axios.defaults.headers.common = { 'x-access-token': `${token}` };
@@ -88,11 +89,6 @@ export default class ObjectifService {
           delete axios.defaults.headers.common["x-access-token"];
         }
     }
-
-    async getAuthToken() {
-        let auth = await AsyncStorage.getItem("auth");
-        return auth ? JSON.parse(auth) : null;
-     }
 
      async isInCache() {
         let objectifs = await AsyncStorage.getItem("objectifs");
@@ -143,5 +139,10 @@ export default class ObjectifService {
 
             await AsyncStorage.setItem("objectifs",  JSON.stringify(objectifs));
         }
+    }
+
+    async refreshCache(email){
+        await AsyncStorage.removeItem("objectifs");
+        await this.getObjectifs(email);
     }
 }

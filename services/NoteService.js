@@ -1,6 +1,7 @@
 import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 
 export default class NoteService {
 
@@ -35,13 +36,13 @@ export default class NoteService {
         .catch();
     }
 
-    async getNotes(id){
+    async getNotes(email){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}notesByUser?idProprietaire=${id}`)
+            .get(`${getBaseUrl()}notesByUser?email=${email}`)
             .then(async({data}) => {
                 await this.putInCache(data.rows);
                 return await this.getCache();
@@ -51,7 +52,7 @@ export default class NoteService {
     }
 
     async updateAxiosAuthorization() {
-        let token = await this.getAuthToken();
+        let token = await getAuth().currentUser.getIdToken();
         if (token) {
             //Bonne solution pour connexion
             axios.defaults.headers.common = { 'x-access-token': `${token}` };
@@ -61,11 +62,6 @@ export default class NoteService {
           delete axios.defaults.headers.common["x-access-token"];
         }
     }
-
-    async getAuthToken() {
-        let auth = await AsyncStorage.getItem("auth");
-        return auth ? JSON.parse(auth) : null;
-     }
 
      async isInCache() {
         let notes = await AsyncStorage.getItem("notes");
@@ -116,5 +112,10 @@ export default class NoteService {
 
             await AsyncStorage.setItem("notes",  JSON.stringify(notes));
         }
+    }
+
+    async refreshCache(email){
+        await AsyncStorage.removeItem("notes");
+        await this.getNotes(email);
     }
 }

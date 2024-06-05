@@ -1,6 +1,7 @@
 import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 
 export default class ContactService {
 
@@ -35,13 +36,13 @@ export default class ContactService {
         .catch();
     }
 
-    async getContacts(id){
+    async getContacts(email){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}contactsByUser?idProprietaire=${id}`)
+            .get(`${getBaseUrl()}contactsByUser?email=${email}`)
             .then(async ({data}) => {
                 await this.putInCache(data.rows);
                 return await this.getCache();
@@ -52,7 +53,7 @@ export default class ContactService {
     }
 
     async updateAxiosAuthorization() {
-        let token = await this.getAuthToken();
+        let token = await getAuth().currentUser.getIdToken();
         if (token) {
             //Bonne solution pour connexion
             axios.defaults.headers.common = { 'x-access-token': `${token}` };
@@ -62,11 +63,6 @@ export default class ContactService {
           delete axios.defaults.headers.common["x-access-token"];
         }
     }
-
-    async getAuthToken() {
-        let auth = await AsyncStorage.getItem("auth");
-        return auth ? JSON.parse(auth) : null;
-     }
 
      async isInCache() {
         let contacts = await AsyncStorage.getItem("contacts");
@@ -117,5 +113,10 @@ export default class ContactService {
 
             await AsyncStorage.setItem("contacts",  JSON.stringify(contacts));
         }
+    }
+
+    async refreshCache(email){
+        await AsyncStorage.removeItem("contacts");
+        await this.getContacts(email);
     }
 }

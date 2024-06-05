@@ -5,10 +5,10 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
 import { AntDesign } from '@expo/vector-icons';
 import ContactService from "../../services/ContactService";
-import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
 
 const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undefined}) => {
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const contactService = new ContactService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 

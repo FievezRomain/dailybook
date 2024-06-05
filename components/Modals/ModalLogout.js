@@ -1,18 +1,14 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity } from "react-native";
 import Button from "../Button";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Variables from "../styles/Variables";
-import { useNavigation } from "@react-navigation/native";
-import AuthService from "../../services/AuthService";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
 
-const LogoutModal = ({ modalVisible, setModalVisible }) => {
-  const navigation = useNavigation();
-  const authService = new AuthService;
+const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
+  const { logout } = useAuth();
 
   const disconnect = async () => {
-    AsyncStorage.removeItem("auth");
-    await authService.updateAxiosAuthorization();
-    navigation.navigate("Login");
+    navigation.navigate("Loading");
+    await logout();
   };
 
   return (

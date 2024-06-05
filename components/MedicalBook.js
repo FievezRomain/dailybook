@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
 import StatePicker from './StatePicker';
 import EventService from '../services/EventService';
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
+import { useAuth } from '../providers/AuthenticatedUserProvider';
 import EventCard from './cards/EventCard';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
@@ -10,7 +10,7 @@ const MedicalBook = ({ animal }) => {
     const [typeEvent, setTypeEvent] = useState("Rendez-vous");
     const [eventsSoins, setEventsSoins] = useState([]);
     const [eventsRdv, setEventsRdv] = useState([]);
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const eventService = new EventService();
 
     useEffect(() =>{
@@ -19,7 +19,7 @@ const MedicalBook = ({ animal }) => {
 
     const getEvents = async () =>{
         try {
-            var result = await eventService.getEvents(user.id);
+            var result = await eventService.getEvents(currentUser.email);
             result = await result.filter((event) => event.animaux.includes(animal.id));
 
             var arrayEventsSoins = [];

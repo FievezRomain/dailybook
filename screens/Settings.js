@@ -3,17 +3,17 @@ import React, { useContext, useState } from 'react';
 import Back from "../components/Back";
 import ButtonLong from "../components/ButtonLong";
 import Variables from "../components/styles/Variables";
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import LogoutModal from "../components/Modals/ModalLogout";
 import Button from "../components/Button";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Constants from 'expo-constants';
+import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const styles = StyleSheet.create({
         card:{
             paddingBottom: 30,
@@ -83,13 +83,14 @@ const SettingsScreen = ({ }) => {
             <LogoutModal
                 modalVisible={modalVisible}
                 setModalVisible={setModalVisible}
+                navigation={navigation}
             />
             <Back/>
                 <View style={styles.settings}>
                     <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")} />
                     <View style={styles.card}>
-                        <Text style={styles.title}>{user.prenom}</Text>
-                        <Text style={styles.email}>{user.email}</Text>
+                        <Text style={styles.title}>{currentUser.displayName}</Text>
+                        <Text style={styles.email}>{currentUser.email}</Text>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
                             <Text>Mon compte</Text>
                         </TouchableOpacity>

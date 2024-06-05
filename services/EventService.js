@@ -1,6 +1,7 @@
 import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 
 export default class EventService {
 
@@ -45,13 +46,13 @@ export default class EventService {
         .catch();
     }
 
-    async getEvents(id){
+    async getEvents(email){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}eventsByUser?idProprietaire=${id}`)
+            .get(`${getBaseUrl()}eventsByUser?email=${email}`)
             .then(async({data}) => {
                 await this.putInCache(data);
                 return await this.getCache();
@@ -62,7 +63,7 @@ export default class EventService {
     }
 
     async updateAxiosAuthorization() {
-        let token = await this.getAuthToken();
+        let token = await getAuth().currentUser.getIdToken();
         if (token) {
             //Bonne solution pour connexion
             axios.defaults.headers.common = { 'x-access-token': `${token}` };
@@ -72,11 +73,6 @@ export default class EventService {
           delete axios.defaults.headers.common["x-access-token"];
         }
     }
-
-    async getAuthToken() {
-        let auth = await AsyncStorage.getItem("auth");
-        return auth ? JSON.parse(auth) : null;
-     }
 
      async isInCache() {
         let events = await AsyncStorage.getItem("events");
@@ -126,5 +122,10 @@ export default class EventService {
 
             await AsyncStorage.setItem("events",  JSON.stringify(events));
         }
+    }
+
+    async refreshCache(email){
+        await AsyncStorage.removeItem("events");
+        await this.getEvents(email);
     }
 }

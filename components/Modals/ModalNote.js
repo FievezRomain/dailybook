@@ -5,10 +5,10 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
 import { SimpleLineIcons } from '@expo/vector-icons';
 import NoteService from "../../services/NoteService";
-import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
 
 const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefined}) => {
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const noteService = new NoteService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
@@ -22,7 +22,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
     };
 
     const submitRegister = async(data) =>{
-        data["idproprietaire"] = user.id;
+        data["email"] = currentUser.email;
         
         if(actionType === "modify"){
             noteService.update(data)

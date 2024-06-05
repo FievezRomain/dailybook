@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated } from "react-native";
 import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import AnimalsPicker from "../components/AnimalsPicker";
 import { useForm } from "react-hook-form";
@@ -11,9 +10,10 @@ import InformationsAnimals from "../components/InformationsAnimals";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import NutritionHistory from "../components/NutritionHistory";
 import MedicalBook from "../components/MedicalBook";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const PetsScreen = ({ navigation }) => {
-  const { user } = useContext(AuthenticatedUserContext);
+  const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "animaux"});
   const animalsService = new AnimalsService;
   const [animaux, setAnimaux] = useState([]);
@@ -44,7 +44,7 @@ const PetsScreen = ({ navigation }) => {
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(user.id);
+      var result = await animalsService.getAnimals(currentUser.id);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On valorise l'animal selectionné par défaut au premier de la liste
@@ -73,7 +73,7 @@ const PetsScreen = ({ navigation }) => {
   const handleDeletePet = async() =>{
     let data = {};
     // Récupération de l'identifiant de l'utilisateur (propriétaire)
-    data["idProprietaire"] =  user.id;
+    data["email"] =  currentUser.id;
 
     // Récupération de l'identifiant de l'animal
     data["id"] = animal.id;

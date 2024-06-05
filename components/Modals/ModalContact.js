@@ -5,10 +5,10 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
 import { AntDesign } from '@expo/vector-icons';
 import ContactService from "../../services/ContactService";
-import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
 
 const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=undefined}) => {
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const contactService = new ContactService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
@@ -22,11 +22,11 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         setValue("profession", undefined);
         setValue("telephone", undefined);
         setValue("email", undefined);
-        setValue("idproprietaire", undefined);
+        setValue("emailproprietaire", undefined);
     };
 
     const submitRegister = async(data) =>{
-        data["idproprietaire"] = user.id;
+        data["emailproprietaire"] = currentUser.email;
         
         if(actionType === "modify"){
             contactService.update(data)

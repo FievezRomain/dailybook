@@ -7,7 +7,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalAnimals from "./ModalSelectAnimals";
 import AnimalsService from "../../services/AnimalsService";
 import EventService from "../../services/EventService";
-import { AuthenticatedUserContext } from "../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import ModalDropdwn from "./ModalDropdown";
 import ModalNotifications from "./ModalNotifications";
 import DatePickerModal from "./ModalDatePicker";
@@ -17,10 +17,9 @@ import ToogleSwitch from "../ToggleSwitch";
 import StatePicker from "../StatePicker";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
-
+  const { currentUser } = useAuth();
   const animalsService = new AnimalsService;
   const eventService = new EventService;
-  const { user } = useContext(AuthenticatedUserContext);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDropdownVisible, setModalDropdownVisible] = useState(false);
   const [modalDropdownNotifVisible, setModalDropdownNotifVisible] = useState(false);
@@ -82,7 +81,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(user.id);
+      var result = await animalsService.getAnimals(currentUser.id);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)

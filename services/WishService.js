@@ -1,6 +1,7 @@
 import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 
 export default class WishService {
 
@@ -35,13 +36,13 @@ export default class WishService {
         .catch();
     }
 
-    async getWishs(id){
+    async getWishs(email){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}wishsByUser?idProprietaire=${id}`)
+            .get(`${getBaseUrl()}wishsByUser?email=${email}`)
             .then(async({data}) => {
                 await this.putInCache(data.rows);
                 return await this.getCache();
@@ -52,7 +53,7 @@ export default class WishService {
     }
 
     async updateAxiosAuthorization() {
-        let token = await this.getAuthToken();
+        let token = await getAuth().currentUser.getIdToken();
         if (token) {
             //Bonne solution pour connexion
             axios.defaults.headers.common = { 'x-access-token': `${token}` };
@@ -62,11 +63,6 @@ export default class WishService {
           delete axios.defaults.headers.common["x-access-token"];
         }
     }
-
-    async getAuthToken() {
-        let auth = await AsyncStorage.getItem("auth");
-        return auth ? JSON.parse(auth) : null;
-     }
 
      async isInCache() {
         let wishs = await AsyncStorage.getItem("wishs");
@@ -117,5 +113,10 @@ export default class WishService {
 
             await AsyncStorage.setItem("wishs",  JSON.stringify(wishs));
         }
+    }
+
+    async refreshCache(email){
+        await AsyncStorage.removeItem("wishs");
+        await this.getWishs(email);
     }
 }

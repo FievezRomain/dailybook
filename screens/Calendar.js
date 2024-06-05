@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, Image } from "react-native";
 import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Calendar, CalendarUtils, LocaleConfig } from 'react-native-calendars';
 import variables from "../components/styles/Variables";
@@ -11,9 +10,10 @@ import EventCard from "../components/cards/EventCard";
 import EventService from "../services/EventService";
 import DateUtils from "../utils/DateUtils";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const CalendarScreen = ({ navigation }) => {
-  const { user } = useContext(AuthenticatedUserContext);
+  const { currentUser } = useAuth();
   const [messages, setMessages] = useState({ message1: "Mon", message2: "calendrier" });
   const eventService = new EventService();
   const dateUtils = new DateUtils();
@@ -53,7 +53,7 @@ const CalendarScreen = ({ navigation }) => {
   const getEventsForUser = async () => {
     if (eventArray.length === 0) {
       try {
-        const result = await eventService.getEvents(user.id);
+        const result = await eventService.getEvents(currentUser.id);
         if (result.length !== 0) {
           setEventArray(result);
         }

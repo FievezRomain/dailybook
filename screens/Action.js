@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useState, useContext } from "react";
 import Variables from "../components/styles/Variables";
-import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
 import TopTab from '../components/TopTab';
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import ModalEvents from "../components/Modals/ModalEvents";
@@ -11,10 +10,11 @@ import ModalContact from "../components/Modals/ModalContact";
 import ModalNote from "../components/Modals/ModalNote";
 import ModalAnimal from "../components/Modals/ModalAnimal";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const ActionScreen = ({ navigation }) => {
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "élément"})
-  const { user } = useContext(AuthenticatedUserContext);
+  const { currentUser } = useAuth();
   const [isEventModalVisible, setEventModalVisible] = useState(false);
   const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
   const [isWishModalVisible, setWishModalVisible] = useState(false);

@@ -5,13 +5,12 @@ import React, { useState, useContext, useEffect } from 'react';
 import { TouchableOpacity } from "react-native";
 import AnimalsPicker from "../components/AnimalsPicker";
 import AnimalsService from "../services/AnimalsService";
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const StatsScreen = ({ navigation }) => {
-  const { user } = useContext(AuthenticatedUserContext);
+  const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "performances"})
   const [temporality, setTemporality] = useState("week");
   const [animaux, setAnimaux] = useState([]);
@@ -30,7 +29,7 @@ const StatsScreen = ({ navigation }) => {
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(user.id);
+      var result = await animalsService.getAnimals(currentUser.id);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On valorise l'animal selectionné par défaut au premier de la liste

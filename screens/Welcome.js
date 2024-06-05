@@ -10,10 +10,11 @@ import EventService from "../services/EventService";
 import ObjectifService from "../services/ObjectifService";
 import ObjectifsInProgressBloc from "../components/ObjectifsInProgressBloc";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const WelcomeScreen = ({ navigation })=> {
-    const { user } = useContext(AuthenticatedUserContext);
-    const [messages, setMessages] = useState({message1 :"Bienvenue,", message2: user.prenom});
+    const { currentUser } = useAuth();
+    const [messages, setMessages] = useState({message1 :"Bienvenue,", message2: ""});
     const eventService = new EventService();
     const objectifService = new ObjectifService();
     const [events, setEvents] = useState([]);
@@ -21,7 +22,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     useEffect(() => {
       const unsubscribe = navigation.addListener("focus", () => {
-        setMessages({message1: "Bienvenue,", message2: user.prenom});
+        setMessages({message1: "Bienvenue,", message2: currentUser.displayName});
         getEventsForUser();
         getObjectifsForUser();
       });
@@ -30,7 +31,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     const getEventsForUser = async () => {
       try {
-        const result = await eventService.getEvents(user.id);
+        const result = await eventService.getEvents(currentUser.id);
         if (result.length !== 0) {
           setEvents(result);
         }
@@ -41,7 +42,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     const getObjectifsForUser = async () => {
       try {
-        const result = await objectifService.getObjectifs(user.id);
+        const result = await objectifService.getObjectifs(currentUser.id);
         if (result.length !== 0) {
           setObjectifs(result);
         }

@@ -5,10 +5,10 @@ import variables from './styles/Variables';
 import ObjectifCard from './cards/ObjectifCard';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import AnimalsService from "../services/AnimalsService";
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
+import { useAuth } from '../providers/AuthenticatedUserProvider';
 
 const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObjectifDelete }) => {
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const animalsService = new AnimalsService;
     const [animaux, setAnimaux] = useState([]);
 
@@ -19,7 +19,7 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
     }, [objectifs]);
 
     const getAnimaux = async () => {
-        var result = await animalsService.getAnimals(user.id);
+        var result = await animalsService.getAnimals(currentUser.id);
 
         setAnimaux(result);
     }

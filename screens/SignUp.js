@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Image, TextInput } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator } from "react-native";
 import { useForm } from "react-hook-form";
 import wallpaper_login from "../assets/wallpaper_login.png";
 import variables from "../components/styles/Variables";
@@ -8,106 +8,168 @@ import Toast from "react-native-toast-message";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from "../components/Button";
 import Back from "../components/Back";
+import { getFirebaseAuth } from "../firebase";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
+import Constants from 'expo-constants';
+
 
 const SignUpScreen = ({ navigation })=> {
     const [evenPassword, setEvenPassword] = useState(true);
     const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
     const authService = new AuthService;
+    const auth = getFirebaseAuth();
+    const [loading, setLoading] = useState(false);
 
     const submitRegister = async(data) =>{
-        if(data.password !== data.password_confirm){
-            setEvenPassword(false);
-        } else{
-            setEvenPassword(true);
+        if(!loading){
+            try{
+                await setLoading(true);
+                if(data.password !== data.password_confirm){
+                    setEvenPassword(false);
+                } else{
+                    setEvenPassword(true);
+    
+                    const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+                    const user = userCredential.user;
+                    await updateProfile(user, {
+                        displayName: `${data.prenom}`,
+                    });
 
-            authService.register(data)
-            .then((res) =>{
-                navigation.navigate("Login");
-                Toast.show({
-                    type: "success",
-                    position: "top",
-                    text1: "Enregistrement réussie"
-                });
-                
-            })
-            .catch((err) =>{
-                console.log(err);
+                    await sendEmailVerification(user);
+    
+                    authService.register(data)
+                    .then((res) =>{
+                        navigation.navigate("VerifyEmail");
+                        Toast.show({
+                            type: "success",
+                            position: "top",
+                            text1: "Enregistrement réussie"
+                        });
+                        
+                    })
+                    .catch((err) =>{
+                        Toast.show({
+                            type: "error",
+                            position: "top",
+                            text1: "Erreur :" + err
+                        });
+                    });
+                }
+            }
+            catch(err){
                 Toast.show({
                     type: "error",
                     position: "top",
-                    text1: "Email déjà utilisée"
+                    text1: handleFirebaseError(err)
                 });
-            });
+            }
+            setLoading(false);
+        }
+    };
+
+    const handleFirebaseError = (error) => {
+        switch (error.code) {
+            case 'auth/email-already-in-use':
+                return 'Cette adresse e-mail est déjà utilisée.';
+            case 'auth/invalid-email':
+                return 'Adresse e-mail invalide.';
+            case 'auth/operation-not-allowed':
+                return "L'inscription par e-mail et mot de passe est désactivée.";
+            case 'auth/weak-password':
+                return 'Le mot de passe est trop faible.';
+            default:
+                return "Une erreur inconnue s'est produite. Veuillez réessayer.";
         }
     };
 
     return (
         <>
-        <Image style={styles.image} source={wallpaper_login} />
-        <Back/>
-        <KeyboardAwareScrollView contentContainerStyle={styles.register}>
-        <Text style={styles.title}>S'inscrire</Text>
-            <View style={styles.form}>
-                
-                {errors.email && <Text style={styles.errorInput}>Email obligatoire</Text>}
-                <TextInput
-                style={styles.input}
-                placeholder="Email"
-                placeholderTextColor={variables.texte}
-                onChangeText={(text) => setValue("email", text)}
-                {...register("email", { 
-                    required: true,
-                    pattern: {
-                        value: /\S+@\S+\.\S+/,
-                        message: "Email invalide",
-                    },
-                })}
-                />
-                {errors.prenom && <Text style={styles.errorInput}>Prenom obligatoire</Text>}
-                <TextInput
-                style={styles.input}
-                placeholder="Votre prenom"
-                placeholderTextColor={variables.texte}
-                onChangeText={(text) => setValue("prenom", text)}
-                defaultValue={getValues("prenom")}
-                {...register("prenom", { required: true })}
-                />
-                {errors.password && <Text style={styles.errorInput}>Le mot de passe doit contenir au moins 6 caractères</Text>}
-                <TextInput
-                style={styles.input}
-                placeholder="Mot de passe"
-                placeholderTextColor={variables.texte}
-                secureTextEntry={true}
-                onChangeText={(text) => setValue("password", text)}
-                defaultValue={getValues("password")}
-                {...register("password", { required: true, minLength: 6 })}
-                />
-                {errors.password_confirm && <Text style={styles.errorInput}>Confirmation du mot de passe obligatoire</Text>}
-                {!evenPassword && <Text style={styles.errorInput}>Mots de passe différents</Text>}
-                <TextInput
-                style={styles.input}
-                placeholder="Confirmation mot de passe"
-                placeholderTextColor={variables.texte}
-                secureTextEntry={true}
-                onChangeText={(text) => setValue("password_confirm", text)}
-                defaultValue={getValues("password_confirm")}
-                {...register("password_confirm", { required: true })}
-                />
-                <View style={styles.registerButton}>
-                    <Button
-                        onPress={handleSubmit(submitRegister)}
-                        type="primary"
-                    >
-                        <Text style={styles.textButton}>S'enregister</Text>
-                    </Button>
-                </View>
+            <Image style={styles.image} source={wallpaper_login} />
+            <View style={{height: "100%", width: "100%", paddingTop: Constants.statusBarHeight + 10,}}>
+                <Back/>
+                <KeyboardAwareScrollView contentContainerStyle={styles.register}>
+                    <Text style={styles.title}>S'inscrire</Text>
+                    <View style={styles.form}>
+                        
+                        {errors.email && <Text style={styles.errorInput}>Email obligatoire</Text>}
+                        <Text style={styles.textInput}>Email :</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Email"
+                            placeholderTextColor={variables.texte}
+                            onChangeText={(text) => setValue("email", text)}
+                            {...register("email", { 
+                                required: true,
+                                pattern: {
+                                    value: /\S+@\S+\.\S+/,
+                                    message: "Email invalide",
+                                },
+                            })}
+                        />
+                        {errors.prenom && <Text style={styles.errorInput}>Prenom obligatoire</Text>}
+                        <Text style={styles.textInput}>Prénom :</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Votre prenom"
+                            placeholderTextColor={variables.texte}
+                            onChangeText={(text) => setValue("prenom", text)}
+                            defaultValue={getValues("prenom")}
+                            {...register("prenom", { required: true })}
+                        />
+                        {errors.password && <Text style={styles.errorInput}>Le mot de passe doit contenir au moins 6 caractères</Text>}
+                        <Text style={styles.textInput}>Mot de passe :</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Mot de passe"
+                            placeholderTextColor={variables.texte}
+                            secureTextEntry={true}
+                            onChangeText={(text) => setValue("password", text)}
+                            defaultValue={getValues("password")}
+                            {...register("password", { required: true, minLength: 6 })}
+                        />
+                        {errors.password_confirm && <Text style={styles.errorInput}>Confirmation du mot de passe obligatoire</Text>}
+                        {!evenPassword && <Text style={styles.errorInput}>Mots de passe différents</Text>}
+                        <Text style={styles.textInput}>Confirmation du mot de passe :</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Confirmation mot de passe"
+                            placeholderTextColor={variables.texte}
+                            secureTextEntry={true}
+                            onChangeText={(text) => setValue("password_confirm", text)}
+                            defaultValue={getValues("password_confirm")}
+                            {...register("password_confirm", { required: true })}
+                        />
+                        <View style={styles.registerButton}>
+                                {!loading ?
+                                    <Button
+                                        onPress={handleSubmit(submitRegister)}
+                                        type="primary"
+                                        size={"m"}
+                                    >
+                                        <Text style={styles.textButton}>S'enregister</Text>
+                                    </Button>
+                                :
+                                    <Button
+                                        type="quaternary"
+                                        size={"m"}
+                                    >
+                                        <ActivityIndicator size="large" color={variables.blanc} />
+                                    </Button>
+                                }
+                        </View>
+                    </View>
+                </KeyboardAwareScrollView>
             </View>
-        </KeyboardAwareScrollView>
         </>
     );
 };
 
 const styles = StyleSheet.create({
+    textInput:{
+        alignSelf: "flex-start",
+        marginLeft: 35,
+        marginBottom: 10
+    },
     image: {
         flex: 1,
         height: "100%",
@@ -141,19 +203,21 @@ const styles = StyleSheet.create({
     form: {
         paddingTop: 50,
         alignItems: "center",
-        backgroundColor: "rgba(255, 255, 255, 0.8)",
+        backgroundColor: "rgba(255, 255, 255, 0.9)",
         justifyContent: "center",
         width: "90%",
+        top: - (Constants.statusBarHeight + 10),
         borderRadius: 10,
         marginLeft: "auto",
         marginRight: "auto",
     },
     title: {
+        top: - (Constants.statusBarHeight + 10),
         color: variables.texte,
         fontSize: 30,
         letterSpacing: 2,
         marginBottom:20,
-        fontWeight: "bold"
+        fontWeight: "300"
     },
     input: {
         height: 40,
@@ -161,8 +225,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         borderRadius: 5,
         paddingLeft: 15,
-        backgroundColor: variables.fond_secondary,
-        opacity: 0.6,
+        backgroundColor: variables.rouan,
         color: "black",
     },
     account: {

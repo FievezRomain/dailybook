@@ -1,28 +1,26 @@
 import { View, Image, StyleSheet } from "react-native";
-import { useEffect, useContext } from "react";
-import AuthService from "../services/AuthService";
-import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
+import { useEffect } from "react";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const LoadingScreen = ({ navigation })=> {
-    const authService = new AuthService;
-    const { setUser } = useContext(AuthenticatedUserContext);
+    const { cacheUpdated, currentUser, loading, emailVerified } = useAuth();
 
     useEffect(() => {
-    
-        authService.getUserLogged().then((myUser) => {
-          if(myUser) {
-            setUser(myUser)
+      try {
+        if(!loading){
+          if(currentUser && !emailVerified){
+            navigation.navigate("VerifyEmail");
+          }else if(currentUser && cacheUpdated){
             navigation.navigate("App");
-          }else {
-            navigation.navigate("Home");
+          } else if(!currentUser){
+            navigation.navigate("Login");
           }
-        }).catch()
-        // authService.getUserLogged().then((user) => {
-        //   if(user) {
-        //     navigation.navigate("App")
-        //   }
-        // })
-      }, []);    
+        }
+        
+      } catch (error) {
+          console.error('Erreur :', error);
+      }
+    }, [currentUser, cacheUpdated, navigation, loading]);   
 
     return (
       <View style={styles.loadingEvent}>

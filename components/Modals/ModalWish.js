@@ -8,11 +8,11 @@ import { Entypo } from '@expo/vector-icons';
 import variables from "../styles/Variables";
 import { FontAwesome } from '@expo/vector-icons';
 import WishService from "../../services/WishService";
-import { AuthenticatedUserContext } from '../../providers/AuthenticatedUserProvider';
+import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { getImagePath } from '../../services/Config';
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const wishService = new WishService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
@@ -59,7 +59,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
     };
 
     const submitRegister = async(data) =>{
-        data["idproprietaire"] =  user.id;
+        data["email"] =  currentUser.email;
 
         let formData = data;
         if (data.image != undefined){
@@ -67,7 +67,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 formData = new FormData();
                 if(image != null){
                     filename = data.image.split("/");
-                    filename = filename[filename.length-1].split(".")[0] + user.id;
+                    filename = filename[filename.length-1].split(".")[0] + currentUser.id;
                     formData.append("picture", {
                     name: filename,
                     type: "image/jpeg",

@@ -12,10 +12,10 @@ import DepenseCard from "./eventCards/DepenseCard";
 import React, { useEffect, useState, useContext } from 'react';
 import ModalSubMenuEventActions from "../Modals/ModalSubMenuEventActions";
 import AnimalsService from "../../services/AnimalsService";
-import { AuthenticatedUserContext } from '../../providers/AuthenticatedUserProvider';
+import { useAuth } from '../../providers/AuthenticatedUserProvider';
 
 const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=true, withDate=false, withState=false, handleStateChange=undefined, typeEvent=undefined}) => {
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const [modalModificationVisible, setModalModificationVisible] = useState(false);
     const [modalSubMenuEventVisible, setModalSubMenuEventVisible] = useState(false);
     const animalsService = new AnimalsService;
@@ -28,7 +28,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
     }, [eventInfos])
 
     const getAnimaux = async () => {
-        var result = await animalsService.getAnimals(user.id);
+        var result = await animalsService.getAnimals(currentUser.id);
 
         setAnimaux(result);
     }

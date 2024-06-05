@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
+import { useAuth } from '../providers/AuthenticatedUserProvider';
 import variables from "./styles/Variables";
 import { TouchableOpacity } from "react-native";
 import CompletionBar from './CompletionBar';
@@ -12,7 +12,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
 
 const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
-    const { user } = useContext(AuthenticatedUserContext);
+    const { currentUser } = useAuth();
     const [objectifsArray, setObjectifsArray] = useState([]);
     const [objectifsArrayDisplay, setObjectifsArrayDisplay] = useState([]);
     const [currentObjectif, setCurrentObjectif] = useState({});
@@ -35,7 +35,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
 
     const getObjectifs = async () => {
 
-        var result = await objectifService.getObjectifsPerAnimals(user.id);
+        var result = await objectifService.getObjectifsPerAnimals(currentUser.email);
 
         if(result.length != 0){
             setObjectifsArray(result);
