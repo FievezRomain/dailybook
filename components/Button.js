@@ -20,6 +20,9 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress }) => {
     } else if (type === "tertiary") {
       backgroundColor = Variables.alezan
       color = Variables.blanc;
+    } else if (type === "quaternary"){
+      backgroundColor = Variables.souris;
+      color = Variables.blanc;
     }
 
     if(disabled === true){

@@ -11,7 +11,6 @@
   "dependencies": {
     "@blump-tech/native-base-select": "^0.2.0",
     "@react-native-async-storage/async-storage": "1.23.1",
-    "@react-native-community/datetimepicker": "7.7.0",
     "@react-native-picker/picker": "2.7.5",
     "@react-native-seoul/masonry-list": "^1.4.2",
     "@react-navigation/bottom-tabs": "^6.5.7",
@@ -26,6 +25,7 @@
     "expo-notifications": "^0.28.3",
     "expo-permissions": "~14.2.1",
     "expo-status-bar": "~1.12.1",
+    "firebase": "^10.12.1",
     "moment": "^2.29.4",
     "moti": "^0.25.3",
     "native-base": "^3.4.28",
