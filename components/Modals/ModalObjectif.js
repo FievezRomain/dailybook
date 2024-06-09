@@ -12,6 +12,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import DatePickerModal from "./ModalDatePicker";
 import DateUtils from "../../utils/DateUtils";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -144,6 +145,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
 
         // Si formulaire complet, on enregistre
         if(complete === true){
+            data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
             if(actionType === "modify"){
                 objectifService.update(data)
                     .then((reponse) =>{

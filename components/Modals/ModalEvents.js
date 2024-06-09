@@ -15,6 +15,7 @@ import RatingInput from "../RatingInput";
 import FrequencyInput from "../FrequencyInput";
 import ToogleSwitch from "../ToggleSwitch";
 import StatePicker from "../StatePicker";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
   const { currentUser } = useAuth();
@@ -203,6 +204,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     }
     // Si formulaire complet, on enregistre
     if(complete === true){
+      data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
       if(actionType === "modify"){
         eventService.update(data)
         .then((reponse) =>{

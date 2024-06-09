@@ -138,6 +138,7 @@ export default class AuthService {
     if (expoToken) {
       var data = {};
       data.expotoken = expoToken;
+      AsyncStorage.setItem("userExpoToken", JSON.stringify(expoToken));
       return this.loginUser(data);
     }
   }
