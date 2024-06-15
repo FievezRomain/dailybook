@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, FlatList } from "react-native";
 import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect, useCallback } from 'react';
@@ -11,6 +11,9 @@ import EventService from "../services/EventService";
 import DateUtils from "../utils/DateUtils";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { TextInput } from "react-native";
+import { TouchableOpacity } from "react-native";
 
 const CalendarScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -19,7 +22,9 @@ const CalendarScreen = ({ navigation }) => {
   const dateUtils = new DateUtils();
   const [eventArray, setEventArray] = useState([]);
   const [eventArrayCurrentDateSelected, setEventArrayCurrentDateSelected] = useState([]);
+  const [filteredEvents, setFilteredEvents] = useState([]);
   const [marked, setMarked] = useState({});
+  const [searchQuery, setSearchQuery] = useState('');
 
   const INITIAL_DATE = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(INITIAL_DATE);
@@ -152,6 +157,7 @@ const CalendarScreen = ({ navigation }) => {
 
   const onDayPress = (day) => {
     setSelectedDate(day);
+    setSearchQuery("");
 
     Object.entries(marked).forEach(([key, value]) => value.selected = false);
     const existingObj = marked[day];
@@ -222,10 +228,47 @@ const CalendarScreen = ({ navigation }) => {
         });
   }
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query === '') {
+      setFilteredEvents(eventArray);
+    } else {
+      const filtered = eventArray.filter(event => {
+        const lowercaseQuery = query.toLowerCase();
+        return (
+          (event.discipline && event.discipline.toLowerCase().includes(lowercaseQuery)) ||
+          (event.epreuve && event.epreuve.toLowerCase().includes(lowercaseQuery)) ||
+          (event.eventtype && event.eventtype.toLowerCase().includes(lowercaseQuery)) ||
+          (event.lieu && event.lieu.toLowerCase().includes(lowercaseQuery)) ||
+          (event.nom && event.nom.toLowerCase().includes(lowercaseQuery)) ||
+          (event.traitement && event.traitement.toLowerCase().includes(lowercaseQuery)) 
+        );
+      });
+      setFilteredEvents(filtered);
+    }
+  }
+
   return (
     <>
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2} />
+      <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: variables.blanc, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
+        <View style={{flexDirection: "row"}}>
+          <AntDesign name="search1" size={16} color={variables.bai}/>
+          <TextInput
+            placeholder="Recherche"
+            style={{marginLeft: 5, width: "80%"}}
+            value={searchQuery}
+            onChangeText={handleSearch}
+          />
+        </View>
+        <View>
+          <TouchableOpacity>
+            <Ionicons name="filter" size={20} color={variables.bai}/>
+          </TouchableOpacity>
+        </View>
+        
+      </View>
       <View style={styles.calendarContainer}>
         <Calendar
           style={styles.calendar}
@@ -247,27 +290,27 @@ const CalendarScreen = ({ navigation }) => {
         />
       </View>
       <View style={styles.selectedDateContainer}>
-        <Text style={styles.selectedDateText}>{convertDateToText(selectedDate)}</Text>
+        {searchQuery != "" ?
+          <Text style={styles.selectedDateText}>Résultats pour la recherche "{searchQuery}"</Text>
+        : 
+          <Text style={styles.selectedDateText}>{convertDateToText(selectedDate)}</Text>
+        }
       </View>
-      <ScrollView style={{ width: "100%" }}>
-        <View style={styles.infosContainer}>
           
-            <View style={styles.listEventContainer}>
-              {eventArrayCurrentDateSelected.length == 0 &&
-                <Text>Vous n'avez aucun événement pour cette date</Text>
-              }
-              {eventArrayCurrentDateSelected.map((eventItem, index) => (
-                <EventCard
-                  eventInfos={eventItem}
-                  key={eventItem.id}
-                  deleteFunction={onDeleteEvent}
-                  updateFunction={onModifyEvent}
-                />
-              ))}
-            </View>
-          
-        </View>
-      </ScrollView>
+        <FlatList
+          data={searchQuery !== "" ? filteredEvents : eventArrayCurrentDateSelected}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <EventCard
+              eventInfos={item}
+              deleteFunction={onDeleteEvent}
+              updateFunction={onModifyEvent}
+              withDate={searchQuery !== ""}
+            />
+          )}
+          ListEmptyComponent={<Text style={styles.noEventsText}>Vous n'avez aucun événement pour cette date</Text>}
+          contentContainerStyle={styles.listEventContainer}
+      />
     </>
   );
 }
@@ -289,8 +332,8 @@ const styles = StyleSheet.create({
   },
   listEventContainer: {
     display: "flex",
-    justifyContent: "center",
-    width: "100%",
+    alignSelf: "center",
+    width: "90%",
   },
   selectedDateContainer: {
     marginTop: 10,
@@ -310,7 +353,7 @@ const styles = StyleSheet.create({
     width: "90%",
   },
   calendarContainer: {
-    marginTop: 20,
+    marginTop: 10,
     width: "90%",
     display: "flex",
     alignSelf: "center",
