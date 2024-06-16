@@ -46,22 +46,6 @@ export default class ObjectifService {
         .catch();
     }
 
-    async getObjectifsPerAnimals(id){
-        if(await this.isInCache()){
-            return await this.getCache();
-        } else{
-            await this.updateAxiosAuthorization();
-            return axios
-            .get(`${getBaseUrl()}objectifsPerAnimalsByUser?idProprietaire=${id}`)
-            .then(async ({data}) => {
-                await this.putInCache(data);
-                return await this.getCache();
-            })
-            .catch();
-        }
-        
-    }
-
     async getObjectifs(email){
         if(await this.isInCache()){
             return await this.getCache();

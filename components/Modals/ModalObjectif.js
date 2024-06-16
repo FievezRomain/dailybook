@@ -65,8 +65,8 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
 
     const initValuesEvent = () => {
         setValue("id", objectif.id);
-        setValue("datedebut", objectif.datedebut === undefined ? new Date().toISOString().split('T')[0] : objectif.datedebut);
-        setValue("datefin", objectif.datefin === undefined ? dateUtils.dateFormatter(new Date().toISOString().split('T')[0], "yyyy-mm-dd", "-") : objectif.datefin);
+        setValue("datedebut", objectif.datedebut === undefined ? new Date().toISOString().split('T')[0] : objectif.datedebut.split('T')[0]);
+        setValue("datefin", objectif.datefin === undefined ? dateUtils.dateFormatter(new Date().toISOString().split('T')[0], "yyyy-mm-dd", "-") : dateUtils.dateFormatter(objectif.datefin.split('T')[0], "yyyy-mm-dd", "-"));
         setValue("title", objectif.title);
         setValue("animaux", objectif.animaux);
         if(objectif.animaux != undefined){

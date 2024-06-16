@@ -42,7 +42,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     const getObjectifsForUser = async () => {
       try {
-        const result = await objectifService.getObjectifs(currentUser.id);
+        const result = await objectifService.getObjectifs(currentUser.email);
         if (result.length !== 0) {
           setObjectifs(result);
         }

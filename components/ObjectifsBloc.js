@@ -10,6 +10,7 @@ import ModalSubMenuObjectifActions from './Modals/ModalSubMenuObjectifActions';
 import ModalObjectif from './Modals/ModalObjectif';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
+import ObjectifCard from './cards/ObjectifCard';
 
 const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
     const { currentUser } = useAuth();
@@ -28,14 +29,11 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
     }, [animaux, navigation]);
 
     useEffect(() => {
-        if(objectifsArray.length !== 0){
-            changeObjectifsDisplay();
-        }
+        changeObjectifsDisplay();
     }, [objectifsArray, temporality, selectedAnimal]);
 
     const getObjectifs = async () => {
-
-        var result = await objectifService.getObjectifsPerAnimals(currentUser.email);
+        var result = await objectifService.getObjectifs(currentUser.email);
 
         if(result.length != 0){
             setObjectifsArray(result);
@@ -44,22 +42,11 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
 
     const changeObjectifsDisplay = () => {
         var filteredObjectifs = []
-        var existingObj = objectifsArray[selectedAnimal[0].id];
 
-        if(existingObj){
-            var objectifsAnimal = objectifsArray[selectedAnimal[0].id];
-            console.log(objectifsAnimal);
-
-            filteredObjectifs = objectifsAnimal.filter((item) => item.temporalityobjectif == temporality);
-        }
+        filteredObjectifs = objectifsArray.filter((item) => item.temporalityobjectif === temporality);
+        console.log(objectifsArray);
 
         setObjectifsArrayDisplay(filteredObjectifs);
-    }
-
-    const calculPercentCompletude = (objectif) => {
-        var sousEtapesFinished = objectif.sousEtapes.filter((item) => item.state == true);
-
-        return Math.floor((sousEtapesFinished.length * 100) / objectif.sousEtapes.length);
     }
 
     const handleModify = () => {
@@ -69,66 +56,28 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
     const onModify = (objectif) => {
         var tempArray = objectifsArray;
 
-        objectif.animaux.forEach(idAnimal => {
-            var existingObj = tempArray[idAnimal];
+        var index = tempArray.findIndex(objet => objet.id === objectif.id);
 
-            if(existingObj){
-                var existingAnimal = tempArray[idAnimal];
-                var filteredArray = existingAnimal.filter((item) => item.id != objectif.id);
-
-                filteredArray.push({'id': objectif.id, 'sousEtapes': objectif.sousEtapes, 'temporalityobjectif': objectif.temporalityobjectif, 'title': objectif.title});
-                tempArray[idAnimal] = filteredArray;
-            }
-            else{
-                tempArray[idAnimal] = {'id': objectif.id, 'sousEtapes': objectif.sousEtapes, 'temporalityobjectif': objectif.temporalityobjectif, 'title': objectif.title};
-            }
-        });
+        if(index !== -1){
+            tempArray[index] = objectif;
+        }
 
         setObjectifsArray(tempArray);
         changeObjectifsDisplay();
     }
-    const handleDelete = () => {
-        let data = {};
-        // Récupération de l'identifiant de l'utilisateur (propriétaire)
-        data["id"] = currentObjectif.id;
-        objectifService.delete(data)
-            .then((reponse) =>{
+    const handleDelete = (objectif) => {
+        let updatedObjectifs = [];
+        updatedObjectifs = [... objectifsArray];
 
-                var arrayTemp = objectifsArray;
-                var arrayObjectifAnimal = arrayTemp[selectedAnimal[0].id];
-                var filteredArray = arrayObjectifAnimal.filter((item) => item.id != currentObjectif.id);
-                arrayTemp[selectedAnimal[0].id] = filteredArray;
+        var index = updatedObjectifs.findIndex((a) => a.id == objectif.id);
+        updatedObjectifs.splice(index, 1);
 
-                setObjectifsArray(arrayTemp);
-                changeObjectifsDisplay();
-
-                Toast.show({
-                    type: "success",
-                    position: "top",
-                    text1: "Suppression d'un objectif réussi"
-                });
-
-            })
-            .catch((err) =>{
-                Toast.show({
-                    type: "error",
-                    position: "top",
-                    text1: err.message
-                });
-            });
+        setObjectifsArray(updatedObjectifs);
+        changeObjectifsDisplay();
     }
 
     const handleManageTasks = () => {
         setModalManageTasksVisible(true);
-    }
-
-    const onPressOptions = (objectif) => {
-        let clesFiltrees = Object.keys(objectifsArray).filter((cle) => {
-            return objectifsArray[cle].some((element) => element.id === objectif.id);
-        });
-        objectif.animaux = clesFiltrees;
-        setCurrentObjectif(objectif);
-        setModalSubMenuObjectifVisible(true)
     }
 
     return (
@@ -154,25 +103,17 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                 handleTasksStateChange={onModify}
             />
             <View style={styles.composantContainer}>
-                <View style={styles.headerContainer}>
-                    <SimpleLineIcons name="target" size={24} color={variables.alezan} />
-                    <Text style={styles.title}>Objectifs</Text>
-                </View>
+                <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Objectifs</Text>
                 <View>
                     {objectifsArrayDisplay.map((objectif, index) => {
                         return(
                             <View style={styles.objectifContainer} key={objectif.id}>
-                                <View style={styles.headerObjectif}>
-                                    <Text>{objectif.title}</Text>
-                                    <TouchableOpacity onPress={() => onPressOptions(objectif)}>
-                                        <Entypo name='dots-three-horizontal' size={20} />
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.completionBarContainer}>
-                                    <CompletionBar
-                                        percentage={calculPercentCompletude(objectif)}
+                                <ObjectifCard
+                                        objectif={objectif}
+                                        animaux={animaux}
+                                        handleObjectifChange={onModify}
+                                        handleObjectifDelete={handleDelete}
                                     />
-                                </View>
                                 
                             </View>
                         );

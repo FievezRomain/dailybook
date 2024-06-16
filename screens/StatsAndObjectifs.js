@@ -1,21 +1,31 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Animated } from "react-native";
 import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import { TouchableOpacity } from "react-native";
 import AnimalsPicker from "../components/AnimalsPicker";
 import AnimalsService from "../services/AnimalsService";
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import TemporalityPicker from "../components/TemporalityPicker";
+import { SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 
 const StatsScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "performances"})
-  const [temporality, setTemporality] = useState("week");
+  const list = [
+    {title: "Semaine", id: "week"},
+    {title: "Mois", id: "month"},
+    {title: "Année", id: "year"}
+  ];
+  const [temporality, setTemporality] = useState(list[0]);
   const [animaux, setAnimaux] = useState([]);
   const [selectedAnimal, setSelectedAnimal] = useState([]);
   const animalsService = new AnimalsService;
+  const [activeRubrique, setActiveRubrique] = useState(0);
+  const separatorPosition = useRef(new Animated.Value(0)).current;
+  
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
@@ -43,7 +53,15 @@ const StatsScreen = ({ navigation }) => {
 
   const onTemporalityChange = (value) => {
     setTemporality(value);
-  }
+  };
+
+  const moveSeparator = (index) => {
+    Animated.timing(separatorPosition, {
+      toValue: index,
+      duration: 300,
+      useNativeDriver: false,
+    }).start();
+  };
 
   return (
     <>
@@ -57,34 +75,69 @@ const StatsScreen = ({ navigation }) => {
             mode="single"
           />
       </View>
-      <View style={styles.contentContainer}>
-        
-        <View style={styles.temporalityIndicator}>
-          <TouchableOpacity style={[styles.buttonTouchableOpacity, temporality == "week" ? styles.fondSelectedTouchableOpacity : styles.fondDefaultTouchableOpacity]} onPress={() => onTemporalityChange("week")}>
-            <Text style={styles.textDefaultTouchableOpacity}>Semaine</Text>
+      <View style={styles.rubriqueContainer}>
+        <View style={styles.iconsContainer}>
+          <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+            <SimpleLineIcons name="target" size={30} color={activeRubrique === 0 ? Variables.alezan : "gray"}/>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.buttonTouchableOpacity, temporality == "month" ? styles.fondSelectedTouchableOpacity : styles.fondDefaultTouchableOpacity]} onPress={() => onTemporalityChange("month")}>
-            <Text style={styles.textDefaultTouchableOpacity}>Mois</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.buttonTouchableOpacity, temporality == "year" ? styles.fondSelectedTouchableOpacity : styles.fondDefaultTouchableOpacity]} onPress={() => onTemporalityChange("year")}>
-            <Text style={styles.textDefaultTouchableOpacity}>Année</Text>
+          <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+            <FontAwesome name="pie-chart" size={25} color={activeRubrique === 1 ? Variables.alezan : "gray"}/>
           </TouchableOpacity>
         </View>
-        <View style={styles.bloc}>
+        <View style={styles.separatorFix}></View>
+        <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1], outputRange: ['0%', '50%'] }) }]} />
+      </View>
+      <View style={styles.contentContainer}>
+
+        
+        <View style={styles.temporalityIndicator}>
+          <TemporalityPicker
+            arrayState={list}
+            handleChange={onTemporalityChange}
+            defaultState={temporality}
+          />
+        </View>
+
+        {activeRubrique === 0 ?
           <ObjectifsBloc
             animaux={animaux}
             selectedAnimal={selectedAnimal}
-            temporality={temporality}
+            temporality={temporality.id}
             navigation={navigation}
           />
+        :
           <StatistiquesBloc/>
-        </View>
+        }
       </View>
     </>
     );
 }
 
 const styles = StyleSheet.create({
+  iconsContainer:{
+    display: "flex", 
+    flexDirection: "row", 
+    paddingVertical: 10
+  },
+  rubriqueContainer:{
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  separatorFix:{
+    borderTopColor: "gray", 
+    borderTopWidth: 1, 
+    position: 'absolute', 
+    bottom: 0, 
+    height: 2, 
+    width: "100%"
+  },
+  separatorAnimated:{
+    height: 3, 
+    backgroundColor: Variables.alezan, 
+    position: 'absolute', 
+    bottom: 0, 
+    width: '50%',
+  },
   textDefaultTouchableOpacity:{
     color: Variables.blanc
   },

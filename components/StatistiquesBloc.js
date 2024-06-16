@@ -14,10 +14,7 @@ const StatistiquesBloc = () =>{
     return (
         <>
             <View style={styles.composantContainer}>
-                <View style={styles.headerContainer}>
-                    <FontAwesome name="pie-chart" size={24} color={variables.alezan} />
-                    <Text style={styles.title}>Statistiques</Text>
-                </View>
+                <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Statistiques</Text>
                 <View style={styles.statistiqueIndicatorContainer}>
                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
                         <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
