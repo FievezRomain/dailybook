@@ -1,6 +1,7 @@
 import { View, Image, StyleSheet } from "react-native";
 import { useEffect } from "react";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import variables from "../components/styles/Variables";
 
 const LoadingScreen = ({ navigation })=> {
     const { cacheUpdated, currentUser, loading, emailVerified } = useAuth();
@@ -13,7 +14,7 @@ const LoadingScreen = ({ navigation })=> {
           }else if(currentUser && cacheUpdated){
             navigation.navigate("App");
           } else if(!currentUser){
-            navigation.navigate("Login");
+            navigation.navigate("Home");
           }
         }
         
@@ -25,8 +26,12 @@ const LoadingScreen = ({ navigation })=> {
     return (
       <View style={styles.loadingEvent}>
           <Image
-          style={styles.loaderEvent}
-          source={require("../assets/loader.gif")}
+            style={styles.loaderEvent}
+            source={require("../assets/logo-2.png")}
+          />
+          <Image
+            style={styles.loaderEvent}
+            source={require("../assets/loader.gif")}
           />
       </View>
     );
@@ -44,7 +49,7 @@ loadingEvent: {
     zIndex: 9,
     width: "100%",
     height: "100%",
-    backgroundColor: "#000000b8",
+    backgroundColor: variables.default,
     paddingTop: 50
   },
 })

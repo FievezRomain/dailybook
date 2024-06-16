@@ -57,7 +57,7 @@ export default class AuthService {
         return Promise.reject("Vous ne disposez pas des droits pour effectuer cette action.");
       }
       if(status === 500) {
-        return Promise.reject("Un problème est survenu sur le serveur lors de l'authentification.");
+        return Promise.reject("Un problème est survenu sur le serveur back.");
       }
       return Promise.reject(error);
     });
