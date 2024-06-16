@@ -30,6 +30,7 @@ const NutritionHistory = ({ animal }) => {
         <>
         <ScrollView>
             <View style={{display: "flex", flexDirection: "column"}}>
+                <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Nutrition</Text>
                 <View style={{width: "60%", alignSelf: "center"}}>
                     <Button size={"m"} type={"tertiary"}>
                         <Text>Ajouter un poids</Text>

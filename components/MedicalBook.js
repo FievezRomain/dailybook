@@ -5,6 +5,7 @@ import EventService from '../services/EventService';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import EventCard from './cards/EventCard';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import variables from './styles/Variables';
 
 const MedicalBook = ({ animal }) => {
     const [typeEvent, setTypeEvent] = useState("Rendez-vous");
@@ -75,6 +76,7 @@ const MedicalBook = ({ animal }) => {
     return(
         <>
             <View style={{width: "95%", alignSelf: "center"}}>
+                <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Dossier médical</Text>
                 <View style={{marginBottom: 10}}>
                     <StatePicker
                         firstState={"Rendez-vous"}
