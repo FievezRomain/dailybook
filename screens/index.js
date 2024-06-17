@@ -10,7 +10,8 @@ import CalendarScreen from './Calendar';
 import StatsScreen from './StatsAndObjectifs';
 import SettingsScreen from "./Settings";
 import NoteScreen from "./Note";
-import WishScreen from "./Wish"
+import WishScreen from "./Wish";
+import FirstPageAddAnimalScreen from "./FirstPageAddAnimal";
 //import { ForgotPasswordScreen } from './ForgotPasswordScreen';
 
-module.exports = { SignInScreen, SignUpScreen, VerifyEmailScreen, WelcomeScreen, HomeScreen, LoadingScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen, NoteScreen, WishScreen };
+module.exports = { SignInScreen, SignUpScreen, VerifyEmailScreen, WelcomeScreen, HomeScreen, LoadingScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen, NoteScreen, WishScreen, FirstPageAddAnimalScreen };

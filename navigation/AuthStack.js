@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { HomeScreen, SignInScreen, SignUpScreen, LoadingScreen, VerifyEmailScreen } from "../screens";
+import { HomeScreen, SignInScreen, SignUpScreen, LoadingScreen, VerifyEmailScreen, FirstPageAddAnimalScreen } from "../screens";
 import AppStack from './AppStack';
 
 const Stack = createNativeStackNavigator();
@@ -14,6 +14,7 @@ const AuthStack = () => {
         <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="Login" component={SignInScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="Register" component={SignUpScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="FirstPageAddAnimal" component={FirstPageAddAnimalScreen} options={{ headerShown: false }}/>
     </Stack.Navigator>
   );
 };

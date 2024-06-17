@@ -2,25 +2,38 @@ import { View, Image, StyleSheet, Text } from "react-native";
 import { useEffect } from "react";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import variables from "../components/styles/Variables";
+import AnimalsService from "../services/AnimalsService";
 
 const LoadingScreen = ({ navigation })=> {
     const { cacheUpdated, currentUser, loading, emailVerified } = useAuth();
+    const animalService = new AnimalsService();
 
     useEffect(() => {
-      try {
-        if(!loading){
-          if(currentUser && !emailVerified){
-            navigation.navigate("VerifyEmail");
-          }else if(currentUser && cacheUpdated){
-            navigation.navigate("App");
-          } else if(!currentUser){
-            navigation.navigate("Home");
+
+      const checkAuth = async () => {
+        try {
+          if(!loading){
+            if(currentUser && !emailVerified){
+              navigation.navigate("VerifyEmail");
+            }else if(currentUser && cacheUpdated){
+              var animaux = await animalService.getAnimals(currentUser.email);
+              if(Array.isArray(animaux) && animaux.length > 0){
+                navigation.navigate("App");
+              } else{
+                navigation.navigate("FirstPageAddAnimal");
+              }
+            } else if(!currentUser){
+              navigation.navigate("Home");
+            }
           }
+          
+        } catch (error) {
+            console.error('Erreur :', error);
         }
-        
-      } catch (error) {
-          console.error('Erreur :', error);
-      }
+      };
+  
+      checkAuth();
+      
     }, [currentUser, cacheUpdated, navigation, loading]);   
 
     return (
