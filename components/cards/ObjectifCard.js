@@ -114,6 +114,28 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
             })
     }
 
+    const getDayText = (date) =>{
+        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        dateObject  = new Date(date);
+        dateText = String(dateObject.toLocaleDateString("fr-FR", options));
+        dateText = dateText.charAt(0).toUpperCase() + dateText.slice(1);
+        return dateText.slice(0,3);
+    }
+
+    const getDateText = (date) =>{
+        var dateObjet = new Date(date);
+        var jour = ('0' + dateObjet.getDate()).slice(-2); 
+        var mois = ('0' + (dateObjet.getMonth() + 1)).slice(-2);
+        const dateFormatee = jour + '/' + mois;
+        return dateFormatee;
+    }
+
+    const getYearText = (date) =>{
+        var dateObjet = new Date(date);
+        var annee = dateObjet.getFullYear();
+        return annee;
+    }
+
     return(
         <>
             <ModalSubMenuObjectifActions
@@ -136,7 +158,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                 objectif={currentObjectif}
                 onModify={onModify}
             />
-            <View style={styles.objectifContainer} key={objectif.id}>
+            {/* <View style={styles.objectifContainer} key={objectif.id}>
                 <View style={styles.headerObjectif}>
                     <View style={{display: "flex", flexDirection: "row"}}>
                         <View style={{display: "flex", flexDirection: "row", flexWrap: "wrap", justifyContent: "flex-start", width: "90%"}}>
@@ -183,6 +205,71 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                     />
                 </View>
                 
+            </View> */}
+
+            <View style={styles.objectifContainer} key={objectif.id}>
+                <View style={{display: "flex",flexDirection: "row"}}>
+                    <View style={{flexDirection: "row",justifyContent: "space-between", width: "100%",borderTopStartRadius: 5,borderTopEndRadius: 5, padding: 10}}>
+                        <View>
+                            <Text style={{color: variables.blanc}}>{objectif.title}</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => onPressOptions()}>
+                            <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={{display: "flex", flexDirection: "row", backgroundColor: variables.blanc, borderBottomStartRadius: 5, borderBottomEndRadius: 5}}>
+                    <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: variables.alezan, alignItems: "center"}}>
+                        <Text>{getDayText(objectif.datefin)}.</Text>
+                        <Text style={{fontSize: 11}}>{getDateText(objectif.datefin)}</Text>
+                        <Text style={{fontSize: 9}}>{getYearText(objectif.datefin)}</Text>
+                    </View>
+                    <View style={{paddingVertical: 10,display: "flex", flexDirection: "column", width: "80%"}}>
+
+                        <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                            <View style={{flexDirection: "column"}}>
+                                {currentObjectif.sousEtapes !== undefined && currentObjectif.sousEtapes.map((etape, index) => {
+                                    return(
+                                        <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
+                                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                                {etape.state === true &&
+                                                    <MaterialIcons name="check-box" size={30} color={variables.alezan} />
+                                                    ||
+                                                    <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                                }
+                                                <Text>{etape.etape}</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )
+                                })}
+                            </View>
+                            <View style={{flexDirection: "row"}}>
+                                {objectif !== undefined && animaux.length !== 0 && objectif.animaux.map((eventAnimal, index) => {
+                                    var animal = getAnimalById(eventAnimal);
+                                    return(
+                                        <View key={animal.id} style={{marginLeft: -3}}>
+                                            <View style={{height: 20, width: 20, backgroundColor: variables.bai, borderRadius: 10, justifyContent: "center"}}>
+                                                { animal.image !== null ? 
+                                                    <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                                                    :
+                                                    <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                                }
+                                            </View>
+                                        </View>
+                                    )
+                                })}
+                            </View>
+                        </View>
+                        
+
+                        <View style={[styles.completionBarContainer, {flexDirection: "column"}]}>
+                            <CompletionBar
+                                percentage={calculPercentCompletude(currentObjectif)}
+                            />
+                        </View>
+                    </View>
+                    
+                </View>
             </View>
         </>
         
@@ -204,10 +291,18 @@ const styles = StyleSheet.create({
         overflow: "hidden"
     },
     objectifContainer:{
-        backgroundColor: variables.blanc,
-        padding: 10,
+        backgroundColor: variables.bai_cerise,
+        borderRadius: 5,
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
         marginBottom: 10,
-        borderRadius: 5
+        shadowColor: variables.bai,
+        shadowOpacity: 0.3,
+        shadowOffset: {
+            width: 0,
+            height: 1
+        },
     },
     avatarText: {
         color: "white",

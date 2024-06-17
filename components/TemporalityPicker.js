@@ -35,11 +35,13 @@ const styles = StyleSheet.create({
     },
     textContainerSelectedLeft:{
         borderBottomStartRadius: 5,
-        borderTopStartRadius: 5
+        borderTopStartRadius: 5,
+        borderRightWidth: 0.2
     },
     textContainerSelectedRight:{
         borderBottomEndRadius: 5,
-        borderTopEndRadius: 5
+        borderTopEndRadius: 5,
+        borderLeftWidth: 0.2
     },
     textContainerSelect:{
         backgroundColor: variables.alezan,

@@ -72,7 +72,8 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     title:{
-        color: variables.alezan
+        color: variables.alezan,
+        fontWeight: "bold"
     },
     icon:{
         marginRight: 10,

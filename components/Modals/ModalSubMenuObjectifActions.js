@@ -24,8 +24,8 @@ const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModi
                     onPress={() => setModalVisible(false)}
                 ></TouchableOpacity>
                 <View style={styles.card}>
-                    <Text>Gérer les informations</Text>
-                    <View style={styles.actionButtonContainer}>
+                    <Text>Gérer l'objectif</Text>
+                    <View style={styles.actionButtonContainer}>{/* 
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleManageTasks)}>
                             <View style={styles.informationsActionButton}>
                                 <FontAwesome5 name="tasks" size={20}/>
@@ -33,8 +33,8 @@ const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModi
                                     Avancement des sous-étapes
                                 </Text>
                             </View>
-                        </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        </TouchableOpacity> 
+                        <View style={styles.bottomBar} />*/}
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
