@@ -44,7 +44,7 @@ const PetsScreen = ({ navigation }) => {
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.id);
+      var result = await animalsService.getAnimals(currentUser.email);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On valorise l'animal selectionné par défaut au premier de la liste
@@ -73,10 +73,10 @@ const PetsScreen = ({ navigation }) => {
   const handleDeletePet = async() =>{
     let data = {};
     // Récupération de l'identifiant de l'utilisateur (propriétaire)
-    data["email"] =  currentUser.id;
+    data["email"] =  currentUser.email;
 
     // Récupération de l'identifiant de l'animal
-    data["id"] = animal.id;
+    data["id"] = selected[0].id;
 
     animalsService.delete(data)
     .then((response) =>{
@@ -86,7 +86,13 @@ const PetsScreen = ({ navigation }) => {
 
       // On change l'animal sélectionné par le premier de la liste
       var animalToDisplay = animaux.filter((a) => a.id !== data["id"])[0];
-      setSelected(animalToDisplay);
+      console.log(animalToDisplay);
+      if(animalToDisplay === undefined){
+        navigation.navigate("FirstPageAddAnimal");
+        return;
+      } else{
+        setSelected([animalToDisplay]);
+      }
       setValue("id", animalToDisplay.id);
       setValue("nom", animalToDisplay.nom);
       setValue("espece", animalToDisplay.espece);

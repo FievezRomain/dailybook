@@ -8,7 +8,7 @@ import ModalAnimal from './Modals/ModalAnimal';
 import ModalManageBodyAnimal from './Modals/ModalManageBodyAnimal';
 import DateUtils from '../utils/DateUtils';
 
-const InformationsAnimals = ({ animal, onModify, onDelete }) => {
+const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const dateUtils = new DateUtils();
