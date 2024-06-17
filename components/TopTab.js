@@ -55,9 +55,9 @@ const TopTab = ({message1, message2, withBackground=false}) => {
                 <Text style={[styles.name, styles.text]}>{message2}</Text>
             </View>
             <View style={styles.imageContainer}>
-                <TouchableOpacity>
+                {/* <TouchableOpacity>
                     <Ionicons name="notifications" size={25} color={withBackground == false ? Variables.alezan : Variables.blanc} />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
                     <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")}/>
                 </TouchableOpacity>

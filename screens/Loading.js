@@ -1,4 +1,4 @@
-import { View, Image, StyleSheet } from "react-native";
+import { View, Image, StyleSheet, Text } from "react-native";
 import { useEffect } from "react";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import variables from "../components/styles/Variables";
@@ -26,31 +26,36 @@ const LoadingScreen = ({ navigation })=> {
     return (
       <View style={styles.loadingEvent}>
           <Image
-            style={styles.loaderEvent}
-            source={require("../assets/logo-2.png")}
+            style={styles.logo}
+            source={require("../assets/logo.png")}
           />
           <Image
             style={styles.loaderEvent}
             source={require("../assets/loader.gif")}
           />
+        <View style={{position: "absolute", bottom: 0, marginBottom: 50, flexDirection: "row"}}>
+          <Text style={{color: variables.rouan, fontWeight: "800", fontSize: 22, fontFamily: "Quicksand-Regular"}}>From</Text>
+          <Text style={{color: variables.isabelle, fontWeight: "800", fontSize: 22, fontFamily: "Quicksand-Regular"}}> Vasco & Co</Text>
+        </View>
       </View>
     );
 }
 
 const styles = StyleSheet.create({
   loaderEvent: {
-    width: 200,
-    height: 200
-},
-loadingEvent: {
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 9,
-    width: "100%",
+    width: 150,
+    height: 150
+  },
+  logo:{
+    width: 250,
+    height: 250
+  },
+  loadingEvent: {
+    display: "flex",
     height: "100%",
-    backgroundColor: variables.default,
-    paddingTop: 50
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
   },
 })
 
