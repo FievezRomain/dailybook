@@ -16,6 +16,7 @@ import FrequencyInput from "../FrequencyInput";
 import ToogleSwitch from "../ToggleSwitch";
 import StatePicker from "../StatePicker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateUtils from "../../utils/DateUtils";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
   const { currentUser } = useAuth();
@@ -62,6 +63,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
   const INITIAL_DATE = new Date().toISOString().split('T')[0];
+  const dateUtils = new DateUtils();
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
   //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
@@ -198,6 +200,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
             type: "error",
             position: "top",
             text1: "Veuillez saisir un traitement"
+          });
+        }
+        if(data.datefinsoins !== undefined && new Date(data.dateevent) > new Date(data.datefinsoins)){
+          complete = false;
+          Toast.show({
+            type: "error",
+            position: "top",
+            text1: "Date de fin de traitement postérieure à la date d'evénement"
           });
         }
       }

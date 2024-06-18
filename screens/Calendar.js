@@ -77,9 +77,8 @@ const CalendarScreen = ({ navigation }) => {
       date.setDate(date.getDate() + count);
       return CalendarUtils.getCalendarDateString(date);
     };
-  
-    eventArray.forEach((item) => {
-      const dateString = item.dateevent;
+
+    const treatmentItem = (item, dateString) =>{
       const existingObj = newMarked[dateString];
   
       if (existingObj) {
@@ -94,6 +93,21 @@ const CalendarScreen = ({ navigation }) => {
           selectedTextColor: variables.blanc,
           dots: [getEventTypeDot(item.eventtype)]
         };
+      }
+    };
+  
+    eventArray.forEach((item) => {
+      const dateString = item.dateevent;
+      treatmentItem(item, dateString);
+
+      if(item.datefinsoins !== null){
+        let currentDate = new Date(item.dateevent);
+        let endDate = new Date(dateUtils.dateFormatter(item.datefinsoins, "dd/MM/yyyy", "/"));
+        while (currentDate <= endDate) {
+          treatmentItem(item, currentDate.toISOString().split("T")[0]);
+
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
       }
     });
     
@@ -129,7 +143,7 @@ const CalendarScreen = ({ navigation }) => {
       case "soins":
         return { color: variables.isabelle };
       case "autre":
-        return { color: variables.pinterest };
+        return { color: variables.bai_cerise };
       case "depense":
         return { color: variables.rouan };
       default:
@@ -138,7 +152,7 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const changeEventsCurrentDateSelected = (date) => {
-    const arrayFiltered = eventArray.filter(item => item.dateevent === date);
+    const arrayFiltered = eventArray.filter(item => item.dateevent === date || (item.datefinsoins !== null && new Date(date) >= new Date(item.dateevent) && new Date(date) <= new Date(dateUtils.dateFormatter(item.datefinsoins, "dd/MM/yyyy", "/"))));
     setEventArrayCurrentDateSelected(arrayFiltered);
   }
 
