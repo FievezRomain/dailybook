@@ -29,19 +29,19 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
                         <Text style={{fontSize: 12, fontWeight: "bold"}}>{wish.nom}</Text>
                     }
                     <View style={styles.actionButtonContainer}>
-                        <TouchableOpacity style={[styles.actionButton, wish === null || wish.url === null && styles.disabledButton]} onPress={() => onAction(handleRedirect)} disabled={wish === null || wish.url === null}>
+                        <TouchableOpacity style={[styles.actionButton, (wish === null || wish.url === null || wish.url === undefined) && styles.disabledButton]} onPress={() => onAction(handleRedirect)} disabled={(wish === null || wish.url === null || wish.url === undefined)}>
                             <View style={styles.informationsActionButton}>
-                                <Feather name="external-link" size={20} style={wish === null || wish.url === null && styles.disabledText}/>
-                                <Text style={[styles.textActionButton, wish === null || wish.url === null && styles.disabledText]}>
+                                <Feather name="external-link" size={20} style={(wish === null || wish.url === null || wish.url === undefined) && styles.disabledText}/>
+                                <Text style={[styles.textActionButton, (wish === null || wish.url === null || wish.url === undefined) && styles.disabledText]}>
                                     Accéder au lien
                                 </Text>
                             </View>
                         </TouchableOpacity>
                         <View style={styles.bottomBar} />
-                        <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleShare)}>
+                        <TouchableOpacity style={[styles.actionButton, styles.disabledButton]} onPress={() => onAction(handleShare)} disabled={true}>
                             <View style={styles.informationsActionButton}>
-                                <Feather name="share-2" size={20}/>
-                                <Text style={styles.textActionButton}>
+                                <Feather name="share-2" size={20} style={styles.disabledText}/>
+                                <Text style={[styles.textActionButton, styles.disabledText]}>
                                     Partager
                                 </Text>
                             </View>

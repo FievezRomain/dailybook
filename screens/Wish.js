@@ -10,6 +10,7 @@ import { getImagePath } from '../services/Config';
 import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishActions";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalWish from "../components/Modals/ModalWish";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const WishScreen = ({ navigation }) => {
     const { currentUser } = useAuth();
@@ -120,12 +121,12 @@ const WishScreen = ({ navigation }) => {
                                 {item.image !== null && item.image !== undefined &&
                                     <Image source={{uri: `${getImagePath()}${item.image}`}} style={styles.image} />
                                 }
-                                {item.image === null || item.image === undefined &&
-                                    <View style={{backgroundColor: Variables.pinterest}}>
-                                        <Text>No content</Text>
+                                {(item.image === null || item.image === undefined) &&
+                                    <View style={[{backgroundColor: Variables.rouan, alignItems: "center", justifyContent: "center"}, styles.image]}>
+                                        <MaterialIcons name="no-photography" size={50} />
                                     </View>
                                 }
-                                {item.prix !== null &&
+                                {item.prix !== null && item.prix !== undefined &&
                                     <View style={styles.labelContainer}>
                                         <Entypo name="price-tag" size={16} color={Variables.alezan} /> 
                                         <Text style={styles.price}>{item.prix} €</Text> 
