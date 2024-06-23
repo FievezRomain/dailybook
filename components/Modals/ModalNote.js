@@ -6,11 +6,13 @@ import { useForm } from "react-hook-form";
 import { SimpleLineIcons } from '@expo/vector-icons';
 import NoteService from "../../services/NoteService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
+import { ActivityIndicator } from "react-native";
 
 const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
     const noteService = new NoteService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
+    const [loading, setLoading] = useState(false);
 
     const closeModal = () => {
         setVisible(false);
@@ -22,6 +24,11 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
     };
 
     const submitRegister = async(data) =>{
+        if(loading){
+            return;
+        }
+        setLoading(true);
+        
         data["email"] = currentUser.email;
         
         if(actionType === "modify"){
@@ -36,6 +43,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                     onModify(reponse);
                     resetValues();
                     closeModal();
+                    setLoading(false);
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -43,6 +51,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                         position: "top",
                         text1: err.message
                     });
+                    setLoading(false);
                 });
         }
         else{
@@ -51,6 +60,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                     resetValues();
                     closeModal();
                     onModify(reponse);
+                    setLoading(false);
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -58,6 +68,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                         position: "top",
                         text1: err.message
                     });
+                    setLoading(false);
                 });
         }
     }
@@ -87,11 +98,13 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                                 <Text style={{fontWeight: "bold"}}>Créer une note</Text>
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                { actionType === "modify" && 
-                                <Text style={{color: Variables.alezan}}>Modifier</Text>
-                                }
-                                { actionType === "create" && 
-                                <Text style={{color: Variables.alezan}}>Créer</Text>
+                                { loading ? 
+                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                :
+                                    actionType === "modify" ?
+                                    <Text style={{color: Variables.alezan}}>Modifier</Text>
+                                    :
+                                    <Text style={{color: Variables.alezan}}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>

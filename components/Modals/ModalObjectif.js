@@ -13,6 +13,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import DatePickerModal from "./ModalDatePicker";
 import DateUtils from "../../utils/DateUtils";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ActivityIndicator } from "react-native";
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -31,6 +32,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         {title: "Mois", id: "month"},
         {title: "Année", id: "year"},
     ];
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if(isVisible){
@@ -105,6 +107,11 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
     };
 
     const submitRegister = async(data) =>{
+        if(loading){
+            return;
+        }
+        setLoading(true);
+
         var complete = true;
 
         if(selected.length === 0){
@@ -157,6 +164,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                         });
                         onModify(reponse);
                         closeModal();
+                        setLoading(false);
                     })
                     .catch((err) =>{
                         Toast.show({
@@ -164,6 +172,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             position: "top",
                             text1: err.message
                         });
+                        setLoading(false);
                     });
             }
             else{
@@ -176,6 +185,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             text1: "Création d'un objectif réussi"
                         });
                         closeModal();
+                        setLoading(false);
                     })
                     .catch((err) =>{
                         Toast.show({
@@ -183,8 +193,11 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             position: "top",
                             text1: err.message
                         });
+                        setLoading(false);
                     });
             }
+        } else{
+            setLoading(false);
         }
     };
 
@@ -287,11 +300,13 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 <Text style={{fontWeight: "bold"}}>Créer un objectif</Text>
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                { actionType === "modify" && 
-                                <Text style={{color: Variables.alezan}}>Modifier</Text>
-                                }
-                                { actionType === "create" && 
-                                <Text style={{color: Variables.alezan}}>Créer</Text>
+                                { loading ? 
+                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                :
+                                    actionType === "modify" ?
+                                    <Text style={{color: Variables.alezan}}>Modifier</Text>
+                                    :
+                                    <Text style={{color: Variables.alezan}}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -312,7 +327,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                             <View><Text style={[styles.badgeAnimal, styles.errorInput]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
                                             }
                                             {selected.length == 0 && animaux.length > 0 &&
-                                            <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Sélectionner un animal</Text></View>
+                                            <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Sélectionner un ou plusieurs animaux</Text></View>
                                             }
                                             {selected.map((animal, index) => {
                                             return (

@@ -10,6 +10,7 @@ import DatePickerModal from "./ModalDatePicker";
 import AvatarPicker from "../AvatarPicker";
 import DateUtils from "../../utils/DateUtils";
 import { getImagePath } from '../../services/Config';
+import { ActivityIndicator } from "react-native";
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -22,6 +23,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
     annee = today.getFullYear();
     const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if(animal.id !== undefined){
@@ -71,6 +73,11 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     };
 
     const submitRegister = async(data) =>{
+        if(loading){
+            return;
+        }
+        setLoading(true);
+
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
         data["email"] =  currentUser.email;
 
@@ -108,14 +115,15 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                 resetValues();
                 closeModal();
                 onModify(response);
+                setLoading(false);
             })
             .catch((err) =>{
-                console.log(err);
                 Toast.show({
                     type: "error",
                     position: "top",
                     text1: err.message
                 });
+                setLoading(false);
             });
         } else{
             // Création de l'animal dans le back (BDD)
@@ -129,6 +137,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                 resetValues();
                 closeModal();
                 onModify(response);
+                setLoading(false);
             })
             .catch((err) =>{
                 Toast.show({
@@ -136,6 +145,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                     position: "top",
                     text1: err.message
                 });
+                setLoading(false);
             });
         }
     }
@@ -215,10 +225,12 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                 <Text style={{fontWeight: "bold"}}>Créer un animal</Text>
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                { actionType === "modify" && 
+                                { loading ? 
+                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                :
+                                    actionType === "modify" ?
                                     <Text style={{color: Variables.alezan}}>Modifier</Text>
-                                }
-                                { actionType === "create" && 
+                                    :
                                     <Text style={{color: Variables.alezan}}>Créer</Text>
                                 }
                             </TouchableOpacity>

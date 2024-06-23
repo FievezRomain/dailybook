@@ -6,11 +6,13 @@ import { useForm } from "react-hook-form";
 import { AntDesign } from '@expo/vector-icons';
 import ContactService from "../../services/ContactService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
+import { ActivityIndicator } from "react-native";
 
 const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
     const contactService = new ContactService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
+    const [loading, setLoading] = useState(false);
 
     const closeModal = () => {
         setVisible(false);
@@ -26,6 +28,11 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
     };
 
     const submitRegister = async(data) =>{
+        if(loading){
+            return;
+        }
+        setLoading(true);
+
         data["emailproprietaire"] = currentUser.email;
         
         if(actionType === "modify"){
@@ -40,6 +47,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                     onModify(reponse);
                     resetValues();
                     closeModal();
+                    setLoading(false);
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -47,6 +55,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                         position: "top",
                         text1: err.message
                     });
+                    setLoading(false);
                 });
         }
         else{
@@ -55,6 +64,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                     resetValues();
                     closeModal();
                     onModify(reponse);
+                    setLoading(false);
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -62,6 +72,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                         position: "top",
                         text1: err.message
                     });
+                    setLoading(false);
                 });
         }
     }
@@ -91,11 +102,13 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                 <Text style={{fontWeight: "bold"}}>Créer un contact</Text>
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                { actionType === "modify" && 
-                                <Text style={{color: Variables.alezan}}>Modifier</Text>
-                                }
-                                { actionType === "create" && 
-                                <Text style={{color: Variables.alezan}}>Créer</Text>
+                                { loading ? 
+                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                :
+                                    actionType === "modify" ?
+                                    <Text style={{color: Variables.alezan}}>Modifier</Text>
+                                    :
+                                    <Text style={{color: Variables.alezan}}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>

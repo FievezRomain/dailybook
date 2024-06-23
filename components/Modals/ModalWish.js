@@ -10,18 +10,20 @@ import { FontAwesome } from '@expo/vector-icons';
 import WishService from "../../services/WishService";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { getImagePath } from '../../services/Config';
+import { ActivityIndicator } from "react-native";
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
     const wishService = new WishService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if(wish !== null){
             initValues();
         }
-    }, [isVisible, wish]);
+    }, [isVisible]);
 
     const closeModal = () => {
         setVisible(false);
@@ -59,6 +61,11 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
     };
 
     const submitRegister = async(data) =>{
+        if(loading){
+            return;
+        }
+        setLoading(true);
+
         data["email"] =  currentUser.email;
 
         let formData = data;
@@ -87,6 +94,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                     resetValues();
                     closeModal();
                     onModify(reponse);
+                    setLoading(false);
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -94,6 +102,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                         position: "top",
                         text1: err.message
                     });
+                    setLoading(false);
                 });
         }
         else{
@@ -102,6 +111,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                     resetValues();
                     closeModal();
                     onModify(reponse);
+                    setLoading(false);
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -109,6 +119,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                         position: "top",
                         text1: err.message
                     });
+                    setLoading(false);
                 });
         }
     }
@@ -138,11 +149,13 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                 <Text style={{fontWeight: "bold"}}>Créer un souhait</Text>
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                { actionType === "modify" && 
-                                <Text style={{color: Variables.alezan}}>Modifier</Text>
-                                }
-                                { actionType === "create" && 
-                                <Text style={{color: Variables.alezan}}>Créer</Text>
+                                { loading ? 
+                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                :
+                                    actionType === "modify" ?
+                                    <Text style={{color: Variables.alezan}}>Modifier</Text>
+                                    :
+                                    <Text style={{color: Variables.alezan}}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>

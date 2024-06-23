@@ -16,7 +16,7 @@ import FrequencyInput from "../FrequencyInput";
 import ToogleSwitch from "../ToggleSwitch";
 import StatePicker from "../StatePicker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateUtils from "../../utils/DateUtils";
+import { ActivityIndicator } from "react-native";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
   const { currentUser } = useAuth();
@@ -62,8 +62,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
-  const INITIAL_DATE = new Date().toISOString().split('T')[0];
-  const dateUtils = new DateUtils();
+  const [loading, setLoading] = useState(false);
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
   //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
@@ -129,14 +128,18 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("depense", event.depense);
     setValue("categoriedepense", event.categoriedepense);
     setValue("frequencetype", event.frequencetype);
-    setValue("notif", "");
-    setValue("optionnotif", "");
+    setValue("notif", event.frequencetype);
+    setValue("optionnotif", event.frequencetype);
     setValue("state", event.state === undefined ? "À faire" : event.state);
     setValue("todisplay", event.todisplay === undefined ? true : event.todisplay);
   }
 
   const submitRegister = async(data) =>{
+    if(loading){
+      return;
+    }
     var complete = true;
+    setLoading(true);
 
     // Vérification complétion du formulaire
     if(data.dateevent === undefined){
@@ -214,7 +217,15 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     }
     // Si formulaire complet, on enregistre
     if(complete === true){
+      // Mise à défaut de l'option notif si rien de selectionné
+      if(notifType === false)
+      {
+        data.notif = "JourJ";
+      }
+
+      // Récupération du expo token pour gérer les notifications
       data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
+
       if(actionType === "modify"){
         eventService.update(data)
         .then((reponse) =>{
@@ -227,6 +238,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           resetValues();
           onModify(data.id, data);
           closeModal();
+          setLoading(false);
         })
         .catch((err) =>{
           Toast.show({
@@ -234,6 +246,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
               position: "top",
               text1: err.message
           });
+          setLoading(false);
         });
       } else {
         eventService.create(data)
@@ -245,6 +258,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
             text1: "Création d'un événement réussi"
           });
           closeModal();
+          setLoading(false);
         })
         .catch((err) =>{
           Toast.show({
@@ -252,9 +266,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
               position: "top",
               text1: err.message
           });
+          setLoading(false);
         });
       }
-      
+    } else{
+      setLoading(false);
     }
   };
 
@@ -287,10 +303,16 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("frequencetype", "");
     setValue("state", "");
     setValue("todisplay", "");
+    setSelected([]);
   }
 
   const onChangeDate = (propertyName, selectedDate) => {
     setValue(propertyName, selectedDate);
+    if(new Date() > new Date(selectedDate)){
+      handleStateChange("Terminé");
+      setNotifType({title: "Aucune notification", id: "None"});
+      setValue("notif", "None");
+    }
   };
 
   const onChangeTime = (fieldname, text) =>{
@@ -411,11 +433,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                 <Text style={{fontWeight: "bold"}}>Créer un événement</Text>
               }
               <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                { actionType === "modify" && 
-                  <Text style={{color: Variables.alezan}}>Modifier</Text>
-                }
-                { actionType === "create" && 
-                  <Text style={{color: Variables.alezan}}>Créer</Text>
+                { loading ? 
+                    <ActivityIndicator size={10} color={Variables.bai} />
+                  :
+                    actionType === "modify" ?
+                      <Text style={{color: Variables.alezan}}>Modifier</Text>
+                    :
+                      <Text style={{color: Variables.alezan}}>Créer</Text>
                 }
               </TouchableOpacity>
             </View>
@@ -444,7 +468,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               <View><Text style={[styles.badgeAnimal, styles.errorInput]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
                             }
                             {selected.length == 0 && animaux.length > 0 &&
-                              <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Sélectionner un animal</Text></View>
+                              <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Sélectionner un ou plusieurs animaux</Text></View>
                             }
                             {selected.map((animal, index) => {
                               return (
@@ -498,7 +522,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
                       {eventType.id === "balade" && (
                           <>
-                            <View style={styles.inputContainer}>
+                            {/* <View style={styles.inputContainer}>
                               <Text style={styles.textInput}>Heure de début :</Text>
                               <TextInput
                                 style={styles.input}
@@ -510,7 +534,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                                 value={watch("heuredebutbalade")}
                                 defaultValue={getActualTime()}
                               />
-                            </View>
+                            </View> */}
                             <View style={styles.inputContainer}>
                               <Text style={styles.textInput}>Dépense :</Text>
                               <TextInput
@@ -529,7 +553,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                                 propertyName={"datefinbalade"}
                               />
                             </View>
-                            <View style={styles.inputContainer}>
+                            {/* <View style={styles.inputContainer}>
                               <Text style={styles.textInput}>Heure de fin :</Text>
                               <TextInput
                                 style={styles.input}
@@ -540,6 +564,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                                 onChangeText={(text) => onChangeTime("heurefinbalade", setDate, text)}
                                 value={watch("heurefinbalade")}
                                 defaultValue={getActualTime()}
+                              />
+                            </View> */}
+                            <View style={styles.inputContainer}>
+                              <Text style={styles.textInput}>Ressenti :</Text>
+                              <RatingInput 
+                                onRatingChange={handleRatingChange}
+                                defaultRating={getValues("note")}
                               />
                             </View>
                           </>
@@ -677,7 +708,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         <>
                           <View style={styles.inputContainer}>
                             <Text style={styles.textInput}>Traitement : <Text style={{color: "red"}}>*</Text></Text>
-                            {errors.discipline && <Text style={styles.errorInput}>Traitement obligatoire </Text>}
+                            {errors.traitement && <Text style={styles.errorInput}>Traitement obligatoire </Text>}
                             <TextInput
                               style={styles.input}
                               placeholder="Exemple : Cure de CMV"
@@ -791,7 +822,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         >
                           <View style={styles.containerAnimaux}>
                             {notifType == false &&
-                              <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Par défaut, vous ne recevrez pas de notification</Text></View>
+                              <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Par défaut, vous recevrez une notification le jour J</Text></View>
                             }
                             {
                               notifType != false &&
