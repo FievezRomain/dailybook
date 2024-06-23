@@ -148,69 +148,85 @@ const EventsBloc = ({ navigation, events }) => {
                     <FontAwesome name='check-circle' size={20} color={variables.alezan} style={styles.icon} />
                     <Text style={styles.title}>Tâches</Text>
                 </View>
-                <View>
-                    {(eventsExceeded.length !== 0 || eventsToday !== 0) &&
-                        <>
-                            <View style={styles.containerCompletionBar}>
-                                <CompletionBar
-                                    percentage={percentEventsDone}
-                                />
-                            </View>
-                        </>
-                    }
-                </View>
-                <View>
-                    {eventsExceeded.map((eventItem, index) => (
-                        <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "exceeded")}>
-                            <View style={styles.eventContainer}>
-                                <EventCard
-                                    eventInfos={eventItem}
-                                    withSubMenu={true}
-                                    withState={true}
-                                    handleStateChange={handleChangeState}
-                                    typeEvent={"exceeded"}
-                                />
-                            </View>
-                            <View style={styles.overdueIndicatorContainer}>
-                                <Text style={styles.overdueIndicator}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
-                            </View>
-                        </TouchableOpacity>
-                        
-                    ))}
-                    {eventsToday.map((eventItem, index) => (
-                        <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "today")}>
-                            <View style={styles.eventContainer}>
-                                <EventCard
-                                    eventInfos={eventItem}
-                                    withSubMenu={true}
-                                    withState={true}
-                                    handleStateChange={handleChangeState}
-                                    typeEvent={"today"}
-                                />
-                            </View>
-                        </TouchableOpacity>
-                        
-                    ))}
-                </View>
+                {eventsExceeded.length !== 0 || eventsToday.length !== 0 ?
+                    <>
+                        <View>
+                            {(eventsExceeded.length !== 0 || eventsToday !== 0) &&
+                                <>
+                                    <View style={styles.containerCompletionBar}>
+                                        <CompletionBar
+                                            percentage={percentEventsDone}
+                                        />
+                                    </View>
+                                </>
+                            }
+                        </View>
+                        <View>
+                            {eventsExceeded.map((eventItem, index) => (
+                                <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "exceeded")}>
+                                    <View style={styles.eventContainer}>
+                                        <EventCard
+                                            eventInfos={eventItem}
+                                            withSubMenu={true}
+                                            withState={true}
+                                            handleStateChange={handleChangeState}
+                                            typeEvent={"exceeded"}
+                                        />
+                                    </View>
+                                    <View style={styles.overdueIndicatorContainer}>
+                                        <Text style={styles.overdueIndicator}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                
+                            ))}
+                            {eventsToday.map((eventItem, index) => (
+                                <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "today")}>
+                                    <View style={styles.eventContainer}>
+                                        <EventCard
+                                            eventInfos={eventItem}
+                                            withSubMenu={true}
+                                            withState={true}
+                                            handleStateChange={handleChangeState}
+                                            typeEvent={"today"}
+                                        />
+                                    </View>
+                                </TouchableOpacity>
+                                
+                            ))}
+                        </View>
+                    </>
+                :
+                    <View>
+                        <Text style={{color: "gray"}}>Vous n'avez aucun évenements aujourd'hui</Text>
+                    </View>
+                }
+                
             </View>
 
             <View style={styles.eventUpcomingContainer}>
                 <View style={styles.headerContainer}>
                     <FontAwesome name='calendar' size={20} color={variables.alezan} style={styles.icon}/>
-                    <Text style={styles.title}>Évenements à venir</Text>
+                    <Text style={styles.title}>Événements à venir</Text>
                 </View>
                 <View>
-                    {eventsUpcoming.map((eventItem, index) => (
-                        <View style={styles.eventContainer} key={eventItem.id}>
-                            <View style={[styles.cardEventContainer]}>
-                                <EventCard
-                                    eventInfos={eventItem}
-                                    withSubMenu={true}
-                                    withDate={true}
-                                />
+                    {eventsUpcoming.length !== 0 ?
+                        eventsUpcoming.map((eventItem, index) => (
+                            <View style={styles.eventContainer} key={eventItem.id}>
+                                <View style={[styles.cardEventContainer]}>
+                                    <EventCard
+                                        eventInfos={eventItem}
+                                        withSubMenu={true}
+                                        withDate={true}
+                                    />
+                                </View>
                             </View>
+                        ))
+                    :    
+                        <View>
+                            <Text style={{color: "gray"}}>Vous n'avez aucun évenements à venir</Text>
                         </View>
-                    ))}
+                    }
+                    
                 </View>
             </View>
         </View>

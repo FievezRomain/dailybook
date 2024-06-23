@@ -33,7 +33,7 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
                 </View>
                 <View>
                     {objectifs.length === 0 &&
-                        <Text style={{marginBottom: 30}}>Vous n'avez aucun objectif en cours</Text>
+                        <Text style={{marginBottom: 30, color: "gray"}}>Vous n'avez aucun objectif en cours</Text>
                     }
                     {objectifs.map((objectifItem, index) => (
                         <TouchableOpacity key={objectifItem.id}>

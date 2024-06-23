@@ -104,19 +104,26 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
             <View style={styles.composantContainer}>
                 <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Objectifs</Text>
                 <View>
-                    {objectifsArrayDisplay.map((objectif, index) => {
-                        return(
-                            <View style={styles.objectifContainer} key={objectif.id}>
-                                <ObjectifCard
-                                        objectif={objectif}
-                                        animaux={animaux}
-                                        handleObjectifChange={onModify}
-                                        handleObjectifDelete={handleDelete}
-                                    />
-                                
-                            </View>
-                        );
-                    })}
+                    {objectifsArrayDisplay.length !== 0 ?
+                        objectifsArrayDisplay.map((objectif, index) => {
+                            return(
+                                <View style={styles.objectifContainer} key={objectif.id}>
+                                    <ObjectifCard
+                                            objectif={objectif}
+                                            animaux={animaux}
+                                            handleObjectifChange={onModify}
+                                            handleObjectifDelete={handleDelete}
+                                        />
+                                    
+                                </View>
+                            );
+                        })
+                    :
+                        <View>
+                            <Text style={{color: "gray", textAlign: "center"}}>Vous n'avez aucun objectif</Text>
+                        </View>
+                    }
+                    
                     
                 </View>
                 
