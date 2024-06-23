@@ -223,33 +223,33 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setContactModalVisible(true)}>
+              <TouchableOpacity onPress={() => setContactModalVisible(true)} disabled={true}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <AntDesign name="contacts" size={20} style={styles.iconButton}/>
-                    <Text>Contact</Text>
+                    <Text style={{color: Variables.rouan}}>Contact</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setNoteModalVisible(true)}>
+              <TouchableOpacity onPress={() => setNoteModalVisible(true)} disabled={true}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <SimpleLineIcons name="note" size={20} style={styles.iconButton}/>
-                    <Text>Note</Text>
+                    <Text style={{color: Variables.rouan}}>Note</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity>
+              <TouchableOpacity disabled={true}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="group" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textDesactivated}>Groupe</Text>
+                    <Text /* style={styles.textDesactivated} */ style={{color: Variables.rouan}}>Groupe</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
@@ -259,11 +259,11 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity>
+              <TouchableOpacity disabled={true}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <MaterialCommunityIcons name="barn" size={25} style={styles.iconButton}/>
-                    <Text style={styles.textDesactivated}>Structure</Text>
+                    <Text /* style={styles.textDesactivated} */ style={{color: Variables.rouan}}>Structure</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
