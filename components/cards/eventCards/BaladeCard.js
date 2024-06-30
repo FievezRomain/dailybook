@@ -69,7 +69,7 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
         <View style={styles.eventTextContainer}>
             <View style={styles.headerEventContainer}>
                 <View style={styles.titleAndAnimalsContainer}>
-                    <View>
+                    <View style={{width: "70%"}}>
                         <Text style={[styles.eventTitle, styles.text]}>{eventInfos.nom}  </Text>
                     </View>
                     <View style={{flexDirection: "row", marginRight: 5}}>
