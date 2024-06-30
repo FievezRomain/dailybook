@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { View, Button, Text } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import variables from './styles/Variables';
+import { TouchableOpacity } from 'react-native';
 
-const DateTimePickerCustom = () => {
+const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(defaultValue);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -16,26 +18,31 @@ const DateTimePickerCustom = () => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
+    setValue(valueName, date.getHours() + "h" + date.getMinutes());
     hideDatePicker();
   };
 
   return (
-    <View>
-      <Button title="Sélectionner une date" onPress={showDatePicker} />
+    <>
+      <TouchableOpacity onPress={showDatePicker} style={{backgroundColor: variables.rouan, alignSelf: "flex-start", padding: 10, borderRadius: 5}}>
+        {selectedDate ?
+            <Text>{selectedDate.getHours()}h{selectedDate.getMinutes()}</Text>
+          :
+            <Text>Sélectionner une heure</Text>
+        }
+      </TouchableOpacity>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
-        mode="date"
+        mode="time"
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
         locale="fr"
-        confirmText="Valider" // Libellé du bouton de confirmation
-        cancelText="Annuler"   // Libellé du bouton d'annulation
+        confirmTextIOS='Valider'
+        cancelTextIOS='Annuler'
+        buttonTextColorIOS={variables.alezan}
       />
-      {selectedDate && (
-        <Text>Date sélectionnée : {selectedDate.toString()}</Text>
-      )}
-    </View>
+    </>
   );
 };
 
-export default DateTimePickerCustom;
+export default TimePickerCustom;

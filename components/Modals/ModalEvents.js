@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, TouchableWithoutFeedback, KeyboardAvoidingView } from "react-native";
-import { useState, useEffect, useContext, useRef } from "react";
+import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import { useState, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { useForm } from "react-hook-form";
-import Button from "../Button";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalAnimals from "./ModalSelectAnimals";
 import AnimalsService from "../../services/AnimalsService";
@@ -12,11 +11,11 @@ import ModalDropdwn from "./ModalDropdown";
 import ModalNotifications from "./ModalNotifications";
 import DatePickerModal from "./ModalDatePicker";
 import RatingInput from "../RatingInput";
-import FrequencyInput from "../FrequencyInput";
 import ToogleSwitch from "../ToggleSwitch";
 import StatePicker from "../StatePicker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
+import TimePickerCustom from "../TimePicker";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
   const { currentUser } = useAuth();
@@ -28,12 +27,15 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [modalNotifications, setModalNotifications] = useState(false);
   const [modalOptionNotifications, setModalOptionNotifications] = useState(false);
   const [modalCategorieDepense, setModalCategorieDepense] = useState(false);
+  const [modalFrequence, setModalFrequence] = useState(false);
   const [animaux, setAnimaux] = useState([]);
   const [selected, setSelected] = useState([]);
   const [eventType, setEventType] = useState(false);
   const [notifType, setNotifType] = useState(false);
   const [optionNotifType, setOptionNotifType] = useState(false);
   const [categorieDepense, setCategorieDepense] = useState(false);
+  const [frequence, setFrequence] = useState(false);
+  const [dateEvent, setDateEvent] = useState(null);
   const list = [
     {title: "Balade", id: "balade"},
     {title: "Entraînement", id: "entrainement"},
@@ -60,6 +62,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Formation", id: "formation"},
     {title: "Assurance", id: "assurance"},
   ];
+  const listFrequency = [
+    {title: "Tous les jours", id: "tlj"},
+    {title: "Toutes les semaines", id: "tls"},
+    {title: "Toutes les 2 semaines", id:"tl2s"},
+    {title: "Tous les mois", id:"tlm"}
+  ]
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -97,7 +105,19 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const initValuesEvent = () => {
     setValue("id", event.id);
     setValue("dateevent", event.dateevent === undefined ? new Date().toISOString().split('T')[0] : event.dateevent);
+    var defaultDate;
+    if( event.dateevent !== null && event.heuredebutevent !== null && event.dateevent !== undefined && event.heuredebutevent !== undefined ){
+      defaultDate = new Date(event.dateevent)
+      var heure = parseInt(event.heuredebutevent.split("h")[0], 10);
+      var minutes = parseInt(event.heuredebutevent.split("h")[1], 10);
+      defaultDate.setHours(heure);
+      defaultDate.setMinutes(minutes);
+    } else{
+      defaultDate = null;;
+    }
+    setDateEvent( defaultDate );
     setValue("nom", event.nom);
+    setValue("heuredebutevent", event.heuredebutevent === undefined ? null : event.heuredebutevent);
     setValue("lieu", event.lieu);
     setValue("heuredebutbalade", event.heuredebutbalade);
     setValue("datefinbalade", event.datefinbalade);
@@ -222,6 +242,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       {
         data.notif = "JourJ";
       }
+      if(frequence === false){
+        data.frequencevalue = "tlj";
+      }
 
       // Récupération du expo token pour gérer les notifications
       data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
@@ -278,6 +301,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("id", "");
     setValue("dateevent", event.dateevent);
     setValue("nom", "");
+    setValue("heuredebutevent", "");
     setValue("lieu", "");
     setValue("heuredebutbalade", "");
     setValue("datefinbalade", "");
@@ -412,6 +436,15 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           setValue={setValue}
           valueName={"categoriedepense"}
         />
+        <ModalDropdwn
+          list={listFrequency}
+          modalVisible={modalFrequence}
+          setModalVisible={setModalFrequence}
+          setState={setFrequence}
+          state={frequence}
+          setValue={setValue}
+          valueName={"frequencevalue"}
+        />
         <ModalNotifications
           modalVisible={modalNotifications}
           setModalVisible={setModalNotifications}
@@ -457,7 +490,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       </View>
                     
                       <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Animal : <Text style={{color: "red"}}>*</Text></Text>
+                        <Text style={styles.textInput}>Animaux : <Text style={{color: "red"}}>*</Text></Text>
                         <TouchableOpacity 
                           style={styles.textInput}
                           disabled={animaux.length > 0 ? false : true}
@@ -509,6 +542,17 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           {...register("nom", { required: true })}
                         />
                       </View>
+
+                      <View style={[styles.inputContainer, {marginBottom: 15}]}>
+                        <Text style={styles.textInput}>Heure de début : </Text>
+                        <TimePickerCustom
+                          setValue={setValue}
+                          valueName={"heuredebutevent"}
+                          defaultValue={dateEvent}
+                        />
+                      </View>
+                      
+
                       <View style={styles.inputContainer}>
                         <Text style={styles.textInput}>Lieu de l'événement :</Text>
                         <TextInput
@@ -727,12 +771,20 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           </View>
                           <View style={styles.inputContainer}>
                             <Text style={styles.textInput}>Fréquence :</Text>
-                            <FrequencyInput
-                              label="Fréquence du traitement :"
-                              onChange={handleFrequencyChange}
-                              defaultFrequencyType={getValues("frequencytype")}
-                              defaultInputValue={getValues("frequencyvalue")}
-                            />
+                            <TouchableOpacity 
+                              style={styles.textInput} 
+                              onPress={()=>{setModalFrequence(true)}} 
+                            >
+                              <View style={styles.containerAnimaux}>
+                                {frequence == false &&
+                                  <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Par défaut, le soin sera tous les jours</Text></View>
+                                }
+                                {
+                                  frequence != false &&
+                                  <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{frequence.title}</Text></View>
+                                }
+                              </View>
+                            </TouchableOpacity>
                           </View>
                           <View style={styles.inputContainer}>
                               <Text style={styles.textInput}>Dépense :</Text>
@@ -991,12 +1043,13 @@ loadingEvent: {
     flexWrap: "wrap"
   },
   badgeAnimal: {
-    padding: 8,
+    padding: 10,
   },
   containerBadgeAnimal: {
-    borderRadius: 10,
+    borderRadius: 5,
     backgroundColor: Variables.rouan,
-    margin: 5,
+    marginRight: 5,
+    marginBottom: 5
   },
   containerDate:{
     flexDirection: "column",

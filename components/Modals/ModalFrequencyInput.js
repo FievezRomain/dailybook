@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import Variables from './styles/Variables';
-import Button from './Button';
+import Variables from '../styles/Variables';
+import Button from '../Button';
 
-const FrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInputValue }) => {
+const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInputValue }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [frequencyValue, setFrequencyValue] = useState('');
   const [inputValue, setInputValue] = useState(defaultInputValue == undefined || defaultInputValue == null ? '' : defaultInputValue);
@@ -217,4 +217,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default FrequencyInput;
+export default ModalFrequencyInput;
