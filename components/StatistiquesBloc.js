@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather } from '@expo/vector-icons';
 import variables from "./styles/Variables";
 import { TouchableOpacity } from "react-native";
+import OfferInformations from './OfferInformations';
 
 const StatistiquesBloc = () =>{
     const [itemStatistique, setItemStatistique] = useState("depense");
@@ -15,7 +16,9 @@ const StatistiquesBloc = () =>{
         <>
             <View style={styles.composantContainer}>
                 <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Statistiques</Text>
-                <View style={styles.statistiqueIndicatorContainer}>
+                
+
+                {/* <View style={styles.statistiqueIndicatorContainer}>
                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
                         <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
                     </TouchableOpacity>
@@ -41,9 +44,10 @@ const StatistiquesBloc = () =>{
                 <View style={styles.bottomBar} />
                 <View style={styles.statistiquesContainer}>
                     <Text>Découvrez vos statistiques avec la version premuim</Text>
-                </View>
+                </View> */}
                 
             </View>
+            <OfferInformations />
         </>
     );
 }
@@ -62,7 +66,6 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginLeft: 10,
         marginRight: 10,
-        height: "50%",
     },
     headerContainer:{
         display: "flex",

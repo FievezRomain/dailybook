@@ -197,7 +197,7 @@ const EventsBloc = ({ navigation, events }) => {
                     </>
                 :
                     <View>
-                        <Text style={{color: "gray"}}>Vous n'avez aucun évenements aujourd'hui</Text>
+                        <Text style={{color: "gray"}}>Vous n'avez aucun événement aujourd'hui</Text>
                     </View>
                 }
                 
@@ -223,7 +223,7 @@ const EventsBloc = ({ navigation, events }) => {
                         ))
                     :    
                         <View>
-                            <Text style={{color: "gray"}}>Vous n'avez aucun évenements à venir</Text>
+                            <Text style={{color: "gray"}}>Vous n'avez aucun événement à venir</Text>
                         </View>
                     }
                     
