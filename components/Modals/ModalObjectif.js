@@ -204,7 +204,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
     // Fonction pour mettre à jour le state avec une nouvelle valeur ajoutée
     const handleInputChange = (text, index) => {
         const newInputs = [...inputs];
-        newInputs[index] = {'id': undefined, 'etape': text, 'state': false};
+        newInputs[index] = {'id': undefined, 'etape': text, 'state': false, 'order': index};
         setInputs(newInputs);
         setValue("sousetapes", newInputs);
     };
