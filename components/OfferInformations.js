@@ -111,7 +111,8 @@ const styles = StyleSheet.create({
   },
   offerButtonPrice:{
     alignItems: "center",
-    marginTop: 10
+    marginTop: 10,
+    marginBottom: 30
   },
   price:{
     marginTop: 5

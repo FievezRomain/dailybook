@@ -157,7 +157,6 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     alignSelf: "center",
-    marginBottom: 30,
     height: "100%",
     width: "90%",
     borderRadius: 10,
