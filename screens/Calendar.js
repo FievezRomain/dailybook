@@ -95,20 +95,20 @@ const CalendarScreen = ({ navigation }) => {
         };
       }
     };
-  
+    
     eventArray.forEach((item) => {
       const dateString = item.dateevent;
       treatmentItem(item, dateString);
 
-      if(item.datefinsoins !== null){
+      /* if(item.datefinsoins !== null){
         let currentDate = new Date(item.dateevent);
         let endDate = new Date(dateUtils.dateFormatter(item.datefinsoins, "dd/MM/yyyy", "/"));
         while (currentDate <= endDate) {
           treatmentItem(item, currentDate.toISOString().split("T")[0]);
 
           currentDate.setDate(currentDate.getDate() + 1);
-        }
-      }
+        } 
+      }*/ 
     });
     
     if(isInit){
@@ -152,7 +152,7 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const changeEventsCurrentDateSelected = (date) => {
-    const arrayFiltered = eventArray.filter(item => item.dateevent === date || (item.datefinsoins !== null && new Date(date) >= new Date(item.dateevent) && new Date(date) <= new Date(dateUtils.dateFormatter(item.datefinsoins, "dd/MM/yyyy", "/"))));
+    const arrayFiltered = eventArray.filter(item => item.dateevent === date /* || (item.datefinsoins !== null && new Date(date) >= new Date(item.dateevent) && new Date(date) <= new Date(dateUtils.dateFormatter(item.datefinsoins, "dd/MM/yyyy", "/"))) */);
     setEventArrayCurrentDateSelected(arrayFiltered);
   }
 
