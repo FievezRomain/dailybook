@@ -3,8 +3,17 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'rea
 import { Fontisto, AntDesign } from '@expo/vector-icons';
 import variables from './styles/Variables';
 import Button from './Button';
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const OfferInformations = ({ }) => {
+
+  const handleInscription = () =>{
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Inscription réussie"
+    });
+  }
 
   const DATA = [
     { id: '1', label: "Gestion d'animaux", free: 'Yes', premium: 'Yes' },
@@ -68,6 +77,7 @@ const OfferInformations = ({ }) => {
           <Button
             size={"m"}
             type={"tertiary"}
+            onPress={() => handleInscription()}
           >
             <Text>S'inscrire pour être averti de la sortie de la version premium</Text>
           </Button>
