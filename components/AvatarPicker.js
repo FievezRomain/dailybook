@@ -34,7 +34,8 @@ const AvatarPicker = ({ setImage, setValue }) => {
 const styles = StyleSheet.create({
   textInput:{
     alignSelf: "flex-start",
-    marginBottom: 5
+    marginBottom: 5,
+    width: "100%",
   },
   buttonContainer:{
     backgroundColor: Variables.rouan,

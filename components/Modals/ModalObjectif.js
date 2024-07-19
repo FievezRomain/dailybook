@@ -327,7 +327,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                             <View><Text style={[styles.badgeAnimal, styles.errorInput]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
                                             }
                                             {selected.length == 0 && animaux.length > 0 &&
-                                            <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Sélectionner un ou plusieurs animaux</Text></View>
+                                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>Sélectionner un ou plusieurs animaux</Text></View>
                                             }
                                             {selected.map((animal, index) => {
                                             return (
@@ -359,11 +359,11 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                         >
                                         <View style={styles.containerAnimaux}>
                                             {temporalityObjectif == false &&
-                                            <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>Sélectionner une temporalité</Text></View>
+                                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>Sélectionner une temporalité</Text></View>
                                             }
                                             {
                                             temporalityObjectif != false &&
-                                            <View style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{temporalityObjectif.title}</Text></View>
+                                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>{temporalityObjectif.title}</Text></View>
                                             }
                                         </View>
                                         </TouchableOpacity>
@@ -403,9 +403,10 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                             </View>
                                         ))}
                                         <Button
-                                        onPress={handleAddInput}
-                                        type={"primary"}
-                                        size={"m"}
+                                            onPress={handleAddInput}
+                                            type={"primary"}
+                                            size={"s"}
+                                            isLong={true}
                                         >
                                             <Text>Ajouter une sous-étape</Text>
                                         </Button>
@@ -495,9 +496,10 @@ const styles = StyleSheet.create({
         padding: 8,
     },
     containerBadgeAnimal: {
-        borderRadius: 10,
+        borderRadius: 5,
         backgroundColor: Variables.rouan,
-        margin: 5,
+        marginRight: 5,
+        marginBottom: 5,
     },
     input: {
         height: 40,

@@ -24,7 +24,7 @@ const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
 
   return (
     <>
-      <TouchableOpacity onPress={showDatePicker} style={{backgroundColor: variables.rouan, alignSelf: "flex-start", padding: 10, borderRadius: 5}}>
+      <TouchableOpacity onPress={showDatePicker} style={{backgroundColor: variables.rouan, alignSelf: "flex-start", padding: 10, borderRadius: 5, width: "100%"}}>
         {selectedDate ?
             <Text>{selectedDate.getHours()}h{selectedDate.getMinutes()}</Text>
           :

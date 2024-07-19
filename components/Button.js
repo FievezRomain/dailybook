@@ -2,7 +2,7 @@ import { Text, View, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 
-const Button = ({ children, type, size, optionalStyle, disabled, onPress }) => {
+const Button = ({ children, type, size, optionalStyle, disabled, onPress, isUppercase=true, isLong=false }) => {
     let backgroundColor = Variables.isabelle;
     let color = Variables.blanc;
     let paddingLeft = 5;
@@ -10,6 +10,7 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress }) => {
     let paddingBottom = 10;
     let paddingTop = 10;
     let fontSize = 12;
+    let textTransform = "uppercase";
   
     if (type === "primary") {
       backgroundColor = Variables.isabelle
@@ -49,6 +50,15 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress }) => {
       paddingTop = 10;
       fontSize = 12;
     }
+
+    if(!isUppercase){
+      textTransform = "capitalize";
+    }
+
+    if(isLong){
+      paddingLeft = 40;
+      paddingRight = 40;
+    }
   
     const styles = StyleSheet.create({
       button: {
@@ -64,7 +74,7 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress }) => {
         color: color,
         textAlign: "center",
         fontSize: fontSize,
-        textTransform: "uppercase"
+        textTransform: textTransform
       },
     });
   

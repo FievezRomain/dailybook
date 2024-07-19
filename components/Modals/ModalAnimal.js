@@ -316,7 +316,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <Text style={styles.textInput}>Poids (kg) :</Text>
                                         <TextInput
                                             style={styles.input}
-                                            placeholder="Exemple : 300"
+                                            placeholder="Exemple : 400"
                                             keyboardType="numeric"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("poids", text)}
@@ -337,7 +337,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <Text style={styles.textInput}>Nom alimentation :</Text>
                                         <TextInput
                                             style={styles.input}
-                                            placeholder="Exemple : Pure feed"
+                                            placeholder="Exemple : Granulés X"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("food", text)}
                                             defaultValue={getValues("food")}
@@ -358,7 +358,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <Text style={styles.textInput}>Couleur :</Text>
                                         <TextInput
                                             style={styles.input}
-                                            placeholder="Exemple : Noir"
+                                            placeholder="Exemple : Isabelle"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("couleur", text)}
                                             defaultValue={getValues("couleur")}
@@ -368,7 +368,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <Text style={styles.textInput}>Nom du père :</Text>
                                         <TextInput
                                             style={styles.input}
-                                            placeholder="Exemple : Sirius"
+                                            placeholder="Exemple : Esgard"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("nomPere", text)}
                                             defaultValue={getValues("nomPere")}
@@ -378,7 +378,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <Text style={styles.textInput}>Nom de la mère :</Text>
                                         <TextInput
                                             style={styles.input}
-                                            placeholder="Exemple : Hermès"
+                                            placeholder="Exemple : Sherry"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("nomMere", text)}
                                             defaultValue={getValues("nomMere")}
