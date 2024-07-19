@@ -42,8 +42,8 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
 
     const changeObjectifsDisplay = () => {
         var filteredObjectifs = []
-
-        filteredObjectifs = objectifsArray.filter((item) => item.temporalityobjectif === temporality);
+        
+        filteredObjectifs = objectifsArray.filter((item) => item.temporalityobjectif === temporality && item.animaux.includes(selectedAnimal[0].id));
 
         setObjectifsArrayDisplay(filteredObjectifs);
     }
