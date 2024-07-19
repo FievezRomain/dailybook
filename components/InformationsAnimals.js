@@ -14,19 +14,21 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const dateUtils = new DateUtils();
     const [modalManageBodyAnimalVisible, setModalBodyAnimalVisible] = useState(false);
 
+    function isValidString(str) {
+      return str !== null && str !== undefined && str.trim() !== "";
+    }
     
-    
-      const handleModify = () => {
-        setModalAnimalVisible(true);
-      }
-    
-      const handleManageBodyAnimal = () => {
-        setModalBodyAnimalVisible(true);
-      }
-    
-      const onModifyBodyAnimalHistory = (animal) =>{
-        console.log("enregitrer historique");
-      }
+    const handleModify = () => {
+      setModalAnimalVisible(true);
+    }
+  
+    const handleManageBodyAnimal = () => {
+      setModalBodyAnimalVisible(true);
+    }
+  
+    const onModifyBodyAnimalHistory = (animal) =>{
+      console.log("enregitrer historique");
+    }
 
     return(
         <>
@@ -69,131 +71,154 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                     </View>
                     
                     <View style={styles.formContainer}>
-                        
+                      {isValidString(animal.nom) && 
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Nom de l'animal :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : Vasco"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.nom}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Nom de l'animal :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : Vasco"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.nom}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {isValidString(animal.espece) && 
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Espèce :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : Cheval"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.espece}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Espèce :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : Cheval"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.espece}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {isValidString(animal.datenaissance) && 
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Date de naissance :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : 01/01/1900"
-                            keyboardType="numeric"
-                            maxLength={10}
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.datenaissance}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Date de naissance :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : 01/01/1900"
+                              keyboardType="numeric"
+                              maxLength={10}
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.datenaissance}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {isValidString(animal.race) &&
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Race :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : Fjord"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.race}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Race :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : Fjord"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.race}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {animal.taille != null && animal.taille != undefined &&
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Taille (cm) :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : 140"
-                            keyboardType="numeric"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.taille != null ? String(animal.taille) : undefined}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Taille (cm) :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : 140"
+                              keyboardType="numeric"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={String(animal.taille)}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {animal.poids != null && animal.poids != undefined &&
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Poids (kg) :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : 300"
-                            keyboardType="numeric"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.poids != null ? String(animal.poids) : undefined}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Poids (kg) :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : 400"
+                              keyboardType="numeric"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.poids != null ? String(animal.poids) : undefined}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {isValidString(animal.sexe) &&
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Sexe :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : Mâle"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.sexe}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Sexe :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : Mâle"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.sexe}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {isValidString(animal.food) &&
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Nom alimentation :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : Pure feed"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.food}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Nom alimentation :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : Granulés X"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.food}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {animal.quantity != null && animal.quantity != undefined &&
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Quantité (gramme / cl) :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : 200"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.quantity != null ? String(animal.quantity) : undefined}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Quantité (gramme / cl) :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : 200"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.quantity != null ? String(animal.quantity) : undefined}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {isValidString(animal.couleur) &&
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Couleur :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : Noir"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.couleur}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Couleur :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : Isabelle"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.couleur}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {isValidString(animal.nomPere) &&
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Nom du père :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : Sirius"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.nomPere}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Nom du père :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : Esgard"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.nomPere}
+                              editable={false}
+                          />
                         </View>
+                      }
+                      {isValidString(animal.nomMere) &&
                         <View style={styles.inputContainer}>
-                        <Text style={styles.textInput}>Nom de la mère :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Exemple : Hermès"
-                            placeholderTextColor={variables.texte}
-                            defaultValue={animal.nomMere}
-                            editable={false}
-                        />
+                          <Text style={styles.textInput}>Nom de la mère :</Text>
+                          <TextInput
+                              style={styles.input}
+                              placeholder="Exemple : Sherry"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.nomMere}
+                              editable={false}
+                          />
                         </View>
+                      }
                     </View>
                 </View>
             </ScrollView>
