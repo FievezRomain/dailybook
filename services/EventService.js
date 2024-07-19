@@ -35,6 +35,16 @@ export default class EventService {
         .catch(); 
     } 
 
+    async updateCommentaireNote(body) {
+        await this.updateAxiosAuthorization();
+        return axios.put(`${getBaseUrl()}modifyEventCommentNote`, body)
+        .then(async (response) => {
+            await this.putInCache(response.data);
+            return response.data;
+        })
+        .catch(); 
+    } 
+
 
     async delete(body) {
         await this.updateAxiosAuthorization();

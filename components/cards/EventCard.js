@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import variables from "../styles/Variables";
-import { Entypo, MaterialIcons, FontAwesome6, FontAwesome } from '@expo/vector-icons'
+import { Entypo, MaterialIcons, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import BaladeCard from './eventCards/BaladeCard';
 import SoinsCard from './eventCards/SoinsCard';
 import AutreCard from './eventCards/AutreCard';
@@ -13,11 +13,13 @@ import React, { useEffect, useState, useContext } from 'react';
 import ModalSubMenuEventActions from "../Modals/ModalSubMenuEventActions";
 import AnimalsService from "../../services/AnimalsService";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
+import ModalEventDetails from "../Modals/ModalEventDetails";
 
 const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=true, withDate=false, withState=false, handleStateChange=undefined, typeEvent=undefined}) => {
     const { currentUser } = useAuth();
     const [modalModificationVisible, setModalModificationVisible] = useState(false);
     const [modalSubMenuEventVisible, setModalSubMenuEventVisible] = useState(false);
+    const [modalEventDetailsVisible, setModalEventDetailsVisible] = useState(false);
     const animalsService = new AnimalsService;
     const [animaux, setAnimaux] = useState([]);
 
@@ -163,6 +165,13 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 modalVisible={modalSubMenuEventVisible}
                 setModalVisible={setModalSubMenuEventVisible}
             />
+            <ModalEventDetails
+                isVisible={modalEventDetailsVisible}
+                setVisible={setModalEventDetailsVisible}
+                event={eventInfos}
+                animaux={animaux}
+                onModify={updateFunction}
+            />
             {eventInfos.eventtype == "balade" &&
                 <View style={[styles.eventContainer]}>
                     <View style={styles.headerEventContainer}>
@@ -189,18 +198,19 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             </TouchableOpacity>
                         }
                         { withDate === true &&
-                            <View style={{justifyContent: "center", padding: 5}}>
+                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
                                 <Text>{getDayText(eventInfos.dateevent)}.</Text>
                                 <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
-                        <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
+                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
                             <BaladeCard
                                 eventInfos={eventInfos}
                                 animaux={animaux}
                                 setSubMenu={setModalSubMenuEventVisible}
                             />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
             }
@@ -236,13 +246,13 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                                 <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
-                        <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
+                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
                             <RdvCard
                                 eventInfos={eventInfos}
                                 animaux={animaux}
                                 setSubMenu={setModalSubMenuEventVisible}
                             />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
             }
@@ -272,18 +282,19 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             </TouchableOpacity>
                         }
                         { withDate === true &&
-                            <View style={{justifyContent: "center", padding: 5}}>
+                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
                                 <Text>{getDayText(eventInfos.dateevent)}.</Text>
                                 <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
-                        <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
+                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
                             <SoinsCard
                                 eventInfos={eventInfos}
                                 animaux={animaux}
                                 setSubMenu={setModalSubMenuEventVisible}
                             />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
             }
@@ -313,18 +324,19 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             </TouchableOpacity>
                         }
                         { withDate === true &&
-                            <View style={{justifyContent: "center", padding: 5}}>
+                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
                                 <Text>{getDayText(eventInfos.dateevent)}.</Text>
                                 <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
-                        <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
+                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
                             <EntrainementCard
                                 eventInfos={eventInfos}
                                 animaux={animaux}
                                 setSubMenu={setModalSubMenuEventVisible}
                             />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     
                 </View>
@@ -355,18 +367,19 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             </TouchableOpacity>
                         }
                         { withDate === true &&
-                            <View style={{justifyContent: "center", padding: 5}}>
+                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
                                 <Text>{getDayText(eventInfos.dateevent)}.</Text>
                                 <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
-                        <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
+                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
                             <AutreCard
                                 eventInfos={eventInfos}
                                 animaux={animaux}
                                 setSubMenu={setModalSubMenuEventVisible}
                             />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     
                 </View>
@@ -397,18 +410,19 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             </TouchableOpacity>
                         }
                         { withDate === true &&
-                            <View style={{justifyContent: "center", padding: 5}}>
+                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
                                 <Text>{getDayText(eventInfos.dateevent)}.</Text>
                                 <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
-                        <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
+                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
                             <ConcoursCard
                                 eventInfos={eventInfos}
                                 animaux={animaux}
                                 setSubMenu={setModalSubMenuEventVisible}
                             />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     
                 </View>
@@ -439,18 +453,19 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                             </TouchableOpacity>
                         }
                         { withDate === true &&
-                            <View style={styles.indicatorEventContainer}>
-                                <Text style={{color: variables.alezan}}>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={{fontSize: 11, color: variables.alezan}}>{getDateText(eventInfos.dateevent)}</Text>
+                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
+                                <Text>{getDayText(eventInfos.dateevent)}.</Text>
+                                <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
-                        <View style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]}>
+                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
                             <DepenseCard
                                 eventInfos={eventInfos}
                                 animaux={animaux}
                                 setSubMenu={setModalSubMenuEventVisible}
                             />
-                        </View>
+                        </TouchableOpacity>
                     </View>
                     
                     
