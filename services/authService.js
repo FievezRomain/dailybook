@@ -39,6 +39,26 @@ export default class AuthService {
     });
   }
 
+  async getUser(email){
+    await this.updateAxiosAuthorization();
+    return axios
+    .get(`${getBaseUrl()}user?email=${email}`)
+    .then(({data}) => {
+        return data;
+    })
+    .catch();
+  }
+
+  async modifyUser(user){
+    await this.updateAxiosAuthorization();
+    return axios
+    .post(`${getBaseUrl()}user`, user)
+    .then(({data}) => {
+        return data;
+    })
+    .catch();
+  }
+
   /* async getUser() {
     await this.updateAxiosInterceptors();
     await this.updateAxiosAuthorization();

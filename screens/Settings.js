@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image } from "react-native";
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Back from "../components/Back";
 import ButtonLong from "../components/ButtonLong";
 import Variables from "../components/styles/Variables";
@@ -14,6 +14,7 @@ const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
     const { currentUser } = useAuth();
+
     const styles = StyleSheet.create({
         card:{
             paddingBottom: 30,
@@ -59,7 +60,6 @@ const SettingsScreen = ({ }) => {
         },
         contentContainer: {
             height: "100%",
-            backgroundColor: Variables.default,
             marginTop: Constants.statusBarHeight + 10,
         },
         button: {
@@ -72,13 +72,16 @@ const SettingsScreen = ({ }) => {
         buttonNormal: {
             backgroundColor: Variables.default,
         },
+        buttonPremium:{
+            backgroundColor: Variables.bai_cerise,
+        },
         buttonDisconnect:{
             backgroundColor: Variables.aubere,
         },
     });
 
     return (
-        <>
+        <View style={{backgroundColor: Variables.default,}}>
         <View style={styles.contentContainer}>
             <LogoutModal
                 modalVisible={modalVisible}
@@ -87,12 +90,12 @@ const SettingsScreen = ({ }) => {
             />
             <Back/>
                 <View style={styles.settings}>
-                    <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")} />
+                    <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} />
                     <View style={styles.card}>
                         <Text style={styles.title}>{currentUser.displayName}</Text>
                         <Text style={styles.email}>{currentUser.email}</Text>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={{color: "gray"}}>Mon compte</Text>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Account")}>
+                            <Text>Mon compte</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Wish")} >
                             <Text>Ma whishlist</Text>
@@ -109,13 +112,16 @@ const SettingsScreen = ({ }) => {
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
                             <Text style={{color: "gray"}}>Thèmes</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => navigation.navigate("DiscoverPremium")}>
+                            <Text style={{color: Variables.blanc}}>Découvrir l'offre premium</Text>
+                        </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVisible(!modalVisible)}>
                             <Text>Déconnexion</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </View>
-        </>
+        </View>
       );
 };
 

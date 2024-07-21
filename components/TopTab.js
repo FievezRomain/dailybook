@@ -3,9 +3,11 @@ import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome6, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
+import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const TopTab = ({message1, message2, withBackground=false}) => {
     const navigation = useNavigation();
+    const { currentUser } = useAuth();
     const styles = StyleSheet.create({
         topTabContainer:{
             paddingTop: Constants.statusBarHeight + 10,
@@ -45,6 +47,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
         },
         text:{
             color: withBackground == false ? Variables.alezan : Variables.blanc,
+            fontFamily: 'Quicksand-Medium',
         }
     });
 
@@ -59,7 +62,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
                     <Ionicons name="notifications" size={25} color={withBackground == false ? Variables.alezan : Variables.blanc} />
                 </TouchableOpacity> */}
                 <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
-                    <Image style={styles.avatar} source={require("../assets/wallpaper_login.png")}/>
+                    <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}}/>
                 </TouchableOpacity>
             </View>
         </View>

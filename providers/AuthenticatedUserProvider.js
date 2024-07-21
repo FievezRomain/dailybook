@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut, updateEmail, updatePassword, updateProfile, getAuth } from 'firebase/auth';
 import React, { useState, createContext, useEffect, useContext } from 'react';
 import AnimalsService from "../services/AnimalsService";
 import EventService from "../services/EventService";
@@ -8,6 +8,7 @@ import WishService from "../services/WishService";
 import ObjectifService from "../services/ObjectifService";
 import AuthService from "../services/AuthService";
 import { getFirebaseAuth } from '../firebase';
+import { getImagePath } from '../services/Config';
 
 const AuthenticatedUserContext = createContext();
 
@@ -31,6 +32,11 @@ export const AuthenticatedUserProvider =  ({ children }) => {
       if (user) {
           try {
               await authService.initNotifications();
+              // Récupération de l'image de profil
+              /* var result = await authService.getUser(user.email);
+              if(result.filename != undefined){
+                user.photoURL = getImagePath() + result.filename;
+              } */
               setCurrentUser(user);
 
               if (user.emailVerified) {
@@ -78,8 +84,60 @@ export const AuthenticatedUserProvider =  ({ children }) => {
     }
   };
 
+  const updateEmailForUser = async (newEmail) => {
+    try {
+      await updateEmail(currentUser, newEmail);
+      const updatedUser = await getAuth().currentUser;
+      setCurrentUser( {...currentUser, email: newEmail});
+      setCurrentUser(updatedUser);
+      console.log("Email updated successfully!");
+    } catch (error) {
+      console.error("Failed to update email:", error);
+      // Handle errors here, such as email already in use
+    }
+  };
+
+  const updateDisplayName = async (newDisplayName) => {
+    try {
+      await updateProfile(currentUser, {
+        displayName: newDisplayName
+      });
+      const updatedUser = await getAuth().currentUser;
+      setCurrentUser( {...currentUser, displayName: newDisplayName});
+      setCurrentUser(updatedUser);
+      console.log("Display name updated successfully!");
+    } catch (error) {
+      console.error("Failed to update display name:", error);
+      // Handle errors here
+    }
+  };
+
+  const updatePasswordForUser = async (newPassword) => {
+    try {
+      await updatePassword(currentUser, newPassword);
+      console.log("Password updated successfully!");
+    } catch (error) {
+      console.error("Failed to update password:", error);
+      // Handle errors here, such as weak password
+    }
+  };
+
+  const updatePhotoURL = async (newPhotoURL) => {
+    try {
+      await updateProfile(currentUser, {
+        photoURL: getImagePath() + newPhotoURL + ".jpg"
+      });
+      const updatedUser = await getAuth().currentUser;
+      setCurrentUser( {...currentUser, photoURL: getImagePath() + newPhotoURL + ".jpg"});
+      setCurrentUser(updatedUser);
+      console.log("Photo URL updated successfully!");
+    } catch (error) {
+      console.error("Failed to update photo URL:", error);
+    }
+  };
+
   return (
-    <AuthenticatedUserContext.Provider value={{ currentUser, cacheUpdated, loading, emailVerified, logout }}>
+    <AuthenticatedUserContext.Provider value={{ currentUser, cacheUpdated, loading, emailVerified, logout, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL }}>
       {children}
     </AuthenticatedUserContext.Provider>
   );
