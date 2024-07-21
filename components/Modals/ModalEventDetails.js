@@ -225,6 +225,139 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
 
     }
 
+    const isWithRating = () => {
+        return event.eventtype != "depense" && event.eventtype != "rdv" && event.eventtype != "soins";
+    }
+
+    const styles = StyleSheet.create({
+        background: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            justifyContent: "flex-end",
+            height: "100%",
+        },
+        emptyBackground: {
+            height: "80%",
+        },
+        card: {
+            backgroundColor: variables.default,
+            borderTopStartRadius: 10,
+            borderTopEndRadius: 10,
+            height: "80%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+        },
+        enteteActions: {
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            padding: 10
+        },
+        closeButton: {
+            backgroundColor: variables.default,
+            paddingHorizontal: 3,
+            paddingVertical: 5,
+            borderRadius: 15,
+            shadowColor: variables.bai,
+            shadowOpacity: 0.1,
+            shadowOffset: {
+                width: 0,
+                height: 1
+            }
+        },
+        footer: {
+            height: "15%",
+        },
+        footerActions: {
+            flexDirection: "row",
+            justifyContent: "space-around",
+        },
+        separator: {
+            borderTopWidth: 0.2,
+            borderTopColor: variables.default,
+            shadowColor: variables.bai,
+            shadowOpacity: 1,
+            elevation: 5,
+            shadowOffset: {
+                width: 0,
+                height: -15
+            },
+            shadowRadius: 2,
+            height: 10
+        },
+        balade: {
+            backgroundColor: variables.alezan,
+        },
+        autre: {
+            backgroundColor: variables.bai_cerise,
+        },
+        rdv: {
+            backgroundColor: variables.souris,
+        },
+        soins: {
+            backgroundColor: variables.isabelle,
+        },
+        entrainement: {
+            backgroundColor: variables.aubere,
+        },
+        concours: {
+            backgroundColor: variables.bai,
+        },
+        depense: {
+            backgroundColor: variables.rouan,
+        },
+        tableauIcon: {
+            height: isWithRating() ? "45%" : "55%",
+            justifyContent: "center",
+            borderTopStartRadius: 10,
+            borderTopEndRadius: 10,
+        },
+        tableauPrimaryInfos: {
+            height: isWithRating() ? "35%" : "45%",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between"
+        },
+        tableauSecondaryInfo:{
+            height: "20%",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            marginBottom: 15
+        },
+        tableauInfos:{
+            marginLeft: 30
+        },
+        colorTextBlack:{
+            color: variables.bai,
+        },
+        colorTextWhite:{
+            color: variables.blanc,
+        },
+        animauxPicturesContainer:{
+            marginRight: 10,
+            flexDirection: "row",
+            width: "50%",
+            flexWrap: "wrap",
+            justifyContent: "flex-end"
+        },
+        avatarText: {
+            color: "white",
+            textAlign: "center"
+        },
+        avatar: {
+            width: 25,
+            height: 25,
+            borderRadius: 15,
+            zIndex: 1,
+            justifyContent: "center"
+        },
+        tableauxContainer:{
+            height: isWithRating() ? "40%" : "30%",
+            marginBottom: 15
+        }
+        
+    });
+
     return (
         <Modal
             animationType="slide"
@@ -242,7 +375,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                     <KeyboardAwareScrollView>
                         <View style={{height: 500}}>
                             
-                            <View style={{ height: "40%"}}>
+                            <View style={styles.tableauxContainer}>
                                 <View style={[styles.tableauIcon, {backgroundColor: hexToRgba(getColorEventType(), 1)}]}>
                                     
                                     <View style={{ alignItems: "center", opacity: 0.6}}>
@@ -273,7 +406,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                     </View>
 
                                 </View>
-                                {event.eventtype != "depense" && event.eventtype != "rdv" && event.eventtype != "soins" &&
+                                {isWithRating() &&
                                     <View style={[styles.tableauSecondaryInfo, {backgroundColor: hexToRgba(getColorEventType(), 0.2)}]}>
                                         <RatingInput
                                             onRatingChange={handleRatingChange}
@@ -363,130 +496,5 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         </Modal>
     );
 };
-
-const styles = StyleSheet.create({
-    background: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: "flex-end",
-        height: "100%",
-    },
-    emptyBackground: {
-        height: "80%",
-    },
-    card: {
-        backgroundColor: variables.default,
-        borderTopStartRadius: 10,
-        borderTopEndRadius: 10,
-        height: "80%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-    },
-    enteteActions: {
-        flexDirection: "row",
-        justifyContent: "flex-end",
-        padding: 10
-    },
-    closeButton: {
-        backgroundColor: variables.default,
-        paddingHorizontal: 3,
-        paddingVertical: 5,
-        borderRadius: 15,
-        shadowColor: variables.bai,
-        shadowOpacity: 0.1,
-        shadowOffset: {
-            width: 0,
-            height: 1
-        }
-    },
-    footer: {
-        height: "15%",
-    },
-    footerActions: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-    },
-    separator: {
-        borderTopWidth: 0.2,
-        borderTopColor: variables.default,
-        shadowColor: variables.bai,
-        shadowOpacity: 1,
-        elevation: 5,
-        shadowOffset: {
-            width: 0,
-            height: -15
-        },
-        shadowRadius: 2,
-        height: 10
-    },
-    balade: {
-        backgroundColor: variables.alezan,
-    },
-    autre: {
-        backgroundColor: variables.bai_cerise,
-    },
-    rdv: {
-        backgroundColor: variables.souris,
-    },
-    soins: {
-        backgroundColor: variables.isabelle,
-    },
-    entrainement: {
-        backgroundColor: variables.aubere,
-    },
-    concours: {
-        backgroundColor: variables.bai,
-    },
-    depense: {
-        backgroundColor: variables.rouan,
-    },
-    tableauIcon: {
-        height: "45%",
-        justifyContent: "center",
-        borderTopStartRadius: 10,
-        borderTopEndRadius: 10,
-    },
-    tableauPrimaryInfos: {
-        height: "35%",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between"
-    },
-    tableauSecondaryInfo:{
-        height: "20%",
-        justifyContent: "center",
-        alignItems: "center",
-        width: "100%",
-        marginBottom: 15
-    },
-    tableauInfos:{
-        marginLeft: 30
-    },
-    colorTextBlack:{
-        color: variables.bai,
-    },
-    colorTextWhite:{
-        color: variables.blanc,
-    },
-    animauxPicturesContainer:{
-        marginRight: 10,
-        flexDirection: "row",
-        width: "50%",
-        flexWrap: "wrap",
-        justifyContent: "flex-end"
-    },
-    avatarText: {
-        color: "white",
-        textAlign: "center"
-    },
-    avatar: {
-        width: 25,
-        height: 25,
-        borderRadius: 15,
-        zIndex: 1,
-        justifyContent: "center"
-    },
-    
-});
 
 export default ModalEventDetails;
