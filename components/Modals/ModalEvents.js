@@ -71,6 +71,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [events, setEvents] = useState([]);
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
   //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
@@ -78,12 +79,18 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   useEffect(() => {
     if(isVisible){
       getAnimals();
-      initValuesEvent();
+      initValuesEvent(event);
+      if( event.idparent != null && event.idparent != undefined){
+        getEvents();
+      }
     }
   }, [isVisible]);
 
   useEffect(() => {
-    initValuesEvent();
+    initValuesEvent(event);
+    if( event.idparent != null && event.idparent != undefined){
+      getEvents();
+    }
   }, [animaux]);
 
   const getAnimals = async () => {
@@ -102,7 +109,22 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   
   };
 
-  const initValuesEvent = () => {
+  const getEvents = async () => {
+    // Récupération des events
+    var result = await eventService.getEvents(currentUser.email);
+    setEvents(result);
+
+    // Si idParent non null, modification de l'event
+    var eventParent = await events.filter(element => {
+      if( element.id === event.idparent ){
+        return element;
+      }
+    })
+
+    await initValuesEvent(eventParent);
+  }
+
+  const initValuesEvent = (event) => {
     setValue("id", event.id);
     setValue("dateevent", event.dateevent === undefined ? new Date().toISOString().split('T')[0] : event.dateevent);
     var defaultDate;
@@ -517,7 +539,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         <Text style={styles.textInput}>Événement : <Text style={{color: "red"}}>*</Text></Text>
                         <TouchableOpacity 
                           style={styles.textInput} 
-                          onPress={()=>{setModalDropdownVisible(true)}} 
+                          //onPress={()=>{setModalDropdownVisible(true)}} 
                         >
                           <View style={styles.containerAnimaux}>
                             {eventType == false &&
@@ -772,6 +794,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <DatePickerModal
                                 onDayChange={onChangeDate}
                                 propertyName={"datefinsoins"}
+                                defaultDate={getValues("datefinsoins")}
                             />
                           </View>
                           <View style={styles.inputContainer}>

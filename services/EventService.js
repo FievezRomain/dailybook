@@ -126,6 +126,24 @@ export default class EventService {
         if(await this.isInCache()){
             let events = JSON.parse(await AsyncStorage.getItem("events"));
 
+            // Suppression des enfants si l'event en possède
+            var eventsEnfants = [];
+            events.map(element => {
+                if( element.idparent === event.id ){
+                    eventsEnfants.push(element);
+                }
+            })
+
+            eventsEnfants.map(element => {
+                var index = events.findIndex(objet => objet.id === element.id);
+
+                if(index !== -1){
+                    events.splice(index, 1);
+                }
+
+            })
+
+            // Suppression du parent
             var indice = events.findIndex((a) => a.id == event.id);
 
             events.splice(indice, 1);
