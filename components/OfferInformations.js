@@ -5,7 +5,7 @@ import variables from './styles/Variables';
 import Button from './Button';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
-const OfferInformations = ({ }) => {
+const OfferInformations = ({ withMessageFunctionality=true }) => {
 
   const handleInscription = () =>{
     Toast.show({
@@ -49,7 +49,9 @@ const OfferInformations = ({ }) => {
 
   return (
     <>
-      <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "500", marginHorizontal: 50, marginBottom: 5, fontSize: 14}}>Cette fonctionnalité est disponible avec la version premium</Text>
+      {withMessageFunctionality &&
+        <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "500", marginHorizontal: 50, marginBottom: 5, fontSize: 14}}>Cette fonctionnalité est disponible avec la version premium</Text>
+      }
       <ScrollView>
         <View style={styles.table}>
           <View style={styles.headerRow}>

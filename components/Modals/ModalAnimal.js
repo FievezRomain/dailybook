@@ -81,13 +81,18 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
         data["email"] =  currentUser.email;
 
+        // Modification des , en . pour les champs numériques taille, poids et quantity à cause de la possibilité de mettre les 2 sur android
+        data["poids"] = data["poids"].replace(",", ".");
+        data["taille"] = data["taille"].replace(",", ".");
+        data["quantity"] = data["quantity"].replace(",", ".");
+
         let formData = data;
         if (data.image != undefined){
             if(actionType !== "modify" || data["previousimage"] !== data["image"]){
                 formData = new FormData();
                 if(image != null){
                     filename = data.image.split("/");
-                    filename = filename[filename.length-1].split(".")[0] + currentUser.id;
+                    filename = filename[filename.length-1].split(".")[0] + currentUser.uid;
                     formData.append("picture", {
                     name: filename,
                     type: "image/jpeg",

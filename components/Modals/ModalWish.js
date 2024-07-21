@@ -74,7 +74,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 formData = new FormData();
                 if(image != null){
                     filename = data.image.split("/");
-                    filename = filename[filename.length-1].split(".")[0] + currentUser.id;
+                    filename = filename[filename.length-1].split(".")[0] + currentUser.uid;
                     formData.append("picture", {
                     name: filename,
                     type: "image/jpeg",

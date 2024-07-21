@@ -216,7 +216,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="heart" size={20} style={styles.iconButton}/>
-                    <Text>Voeux</Text>
+                    <Text>Souhait</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>

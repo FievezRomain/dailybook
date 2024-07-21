@@ -113,31 +113,35 @@ const WishScreen = ({ navigation }) => {
                     onModify={onModify}
                 />
                 <View style={styles.container}>
-                    <FlatList
-                        data={wishs}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item, index }) => (
-                            <TouchableOpacity style={[styles.itemContainer, index % 2 !== 0 && styles.itemContainerSecondColumn]} onPress={() => openSubMenuWish(item)}>
-                                {item.image !== null && item.image !== undefined &&
-                                    <Image source={{uri: `${getImagePath()}${item.image}`}} style={styles.image} />
-                                }
-                                {(item.image === null || item.image === undefined) &&
-                                    <View style={[{backgroundColor: Variables.rouan, alignItems: "center", justifyContent: "center"}, styles.image]}>
-                                        <MaterialIcons name="no-photography" size={50} />
-                                    </View>
-                                }
-                                {item.prix !== null && item.prix !== undefined &&
-                                    <View style={styles.labelContainer}>
-                                        <Entypo name="price-tag" size={16} color={Variables.alezan} /> 
-                                        <Text style={styles.price}>{item.prix} €</Text> 
-                                    </View>
-                                }
-                                <Text style={styles.title}>{item.nom}</Text>
-                                <Text>{item.destinataire}</Text>
-                            </TouchableOpacity>
-                        )}
-                        numColumns={2}
-                    />
+                    {wishs.length === 0 ?
+                        <Text style={{color: "gray", textAlign: "center", marginTop: 20}}>Aucun souhait enregistré</Text>
+                    :    
+                        <FlatList
+                            data={wishs}
+                            keyExtractor={(item) => item.id.toString()}
+                            renderItem={({ item, index }) => (
+                                <TouchableOpacity style={[styles.itemContainer, index % 2 !== 0 && styles.itemContainerSecondColumn]} onPress={() => openSubMenuWish(item)}>
+                                    {item.image !== null && item.image !== undefined &&
+                                        <Image source={{uri: `${getImagePath()}${item.image}`}} style={styles.image} />
+                                    }
+                                    {(item.image === null || item.image === undefined) &&
+                                        <View style={[{backgroundColor: Variables.rouan, alignItems: "center", justifyContent: "center"}, styles.image]}>
+                                            <MaterialIcons name="no-photography" size={50} />
+                                        </View>
+                                    }
+                                    {item.prix !== null && item.prix !== undefined &&
+                                        <View style={styles.labelContainer}>
+                                            <Entypo name="price-tag" size={16} color={Variables.alezan} /> 
+                                            <Text style={styles.price}>{item.prix} €</Text> 
+                                        </View>
+                                    }
+                                    <Text style={styles.title}>{item.nom}</Text>
+                                    <Text>{item.destinataire}</Text>
+                                </TouchableOpacity>
+                            )}
+                            numColumns={2}
+                        />
+                    }
                 </View>
                 <Text>  </Text>
             

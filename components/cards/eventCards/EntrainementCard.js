@@ -55,7 +55,7 @@ const EntrainementCard = ({eventInfos, animaux, setSubMenu}) => {
         },
         contentEventContainer:{
             display: "flex", 
-            flexDirection: "row", 
+            flexDirection: "column", 
             justifyContent: "space-between", 
             flexWrap: "wrap"
         }
@@ -65,6 +65,10 @@ const EntrainementCard = ({eventInfos, animaux, setSubMenu}) => {
         var animal = animaux.filter((animal) => animal.id === idAnimal)[0];
 
         return animal;
+    }
+
+    function isValidString(str) {
+        return str !== null && str !== undefined && str.trim() !== "";
     }
 
     return(
@@ -93,12 +97,12 @@ const EntrainementCard = ({eventInfos, animaux, setSubMenu}) => {
                 </View>
             </View>
             <View style={styles.contentEventContainer}>
-                {eventInfos.lieu != null && 
+                {isValidString(eventInfos.lieu) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
                         <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Lieu : </Text>{eventInfos.lieu}</Text>
                     </View>
                 }
-                {eventInfos.discipline != null && 
+                {isValidString(eventInfos.discipline) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
                         <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Discipline : </Text>{eventInfos.discipline}</Text>
                     </View>
@@ -108,7 +112,7 @@ const EntrainementCard = ({eventInfos, animaux, setSubMenu}) => {
                         <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Note : </Text>{eventInfos.note} / 5</Text>
                     </View>
                 }
-                {eventInfos.commentaire != null && 
+                {isValidString(eventInfos.commentaire) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
                         <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Commentaire : </Text>{eventInfos.commentaire}</Text>
                     </View>

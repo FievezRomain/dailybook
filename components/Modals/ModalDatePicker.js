@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import { Calendar } from 'react-native-calendars';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
 import DateUtils from "../../utils/DateUtils";
 import variables from "../styles/Variables";
 import Button from "../Button";
@@ -9,6 +9,19 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
   const [selectedDate, setSelectedDate] = useState(defaultDate == undefined ? new Date().toISOString().split('T')[0] : defaultDate);
   const [modalVisible, setModalVisible] = useState(false);
   const dateUtils = new DateUtils();
+
+  LocaleConfig.locales['fr'] = {
+    monthNames: [
+      'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'
+    ],
+    monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin',
+      'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+    dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+    dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+    today: "Aujourd'hui"
+  };
+  LocaleConfig.defaultLocale = 'fr';
 
   const handleDayPress = (day) => {
     setSelectedDate(day.dateString);
@@ -42,6 +55,7 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
               <View style={styles.modalContent}>
                 <Calendar
                   onDayPress={handleDayPress}
+                  firstDay={1}
                   markedDates={selectedDate ? { [selectedDate]: { selected: true } } : {}}
                   theme={{
                     arrowColor: variables.isabelle,

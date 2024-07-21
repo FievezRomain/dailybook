@@ -54,7 +54,7 @@ const DepenseCard = ({eventInfos, animaux, setSubMenu}) => {
         },
         contentEventContainer:{
             display: "flex", 
-            flexDirection: "row", 
+            flexDirection: "column", 
             justifyContent: "space-between", 
             flexWrap: "wrap"
         }
@@ -64,6 +64,10 @@ const DepenseCard = ({eventInfos, animaux, setSubMenu}) => {
         var animal = animaux.filter((animal) => animal.id === idAnimal)[0];
 
         return animal;
+    }
+
+    function isValidString(str) {
+        return str !== null && str !== undefined && str.trim() !== "";
     }
 
     return(
@@ -92,7 +96,7 @@ const DepenseCard = ({eventInfos, animaux, setSubMenu}) => {
                 </View>
             </View>
             <View style={styles.contentEventContainer}>
-                {eventInfos.lieu != null && 
+                {isValidString(eventInfos.lieu) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
                         <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Lieu : </Text>{eventInfos.lieu}</Text>
                     </View>
@@ -102,7 +106,7 @@ const DepenseCard = ({eventInfos, animaux, setSubMenu}) => {
                         <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Dépense : </Text>{eventInfos.depense} euros</Text>
                     </View>
                 }
-                {eventInfos.commentaire != null && 
+                {isValidString(eventInfos.commentaire) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
                         <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Commentaire : </Text>{eventInfos.commentaire}</Text>
                     </View>
