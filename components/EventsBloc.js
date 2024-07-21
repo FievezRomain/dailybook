@@ -7,7 +7,7 @@ import EventCard from './cards/EventCard';
 import EventService from '../services/EventService';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
-const EventsBloc = ({ navigation, events }) => {
+const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEvent }) => {
     const [eventsToday, setEventsToday] = useState([]);
     const [eventsUpcoming, setEventsUpcoming] = useState([]);
     const [eventsExceeded, setEventsExceeded] = useState([]);
@@ -75,8 +75,12 @@ const EventsBloc = ({ navigation, events }) => {
         var todayArray = [];
         var upcomingArray = [];
         var exceededArray = [];
+
+        events.sort((a, b) => {
+            return new Date(a.dateevent) - new Date(b.dateevent);
+        })
   
-        events.filter((event) => {
+        events.map((event) => {
           var currentDate = new Date(event.dateevent).setHours(0, 0, 0, 0);
   
           if(currentDate === new Date().setHours(0, 0, 0, 0)){
@@ -85,13 +89,13 @@ const EventsBloc = ({ navigation, events }) => {
           if(event.state === "À faire" && currentDate < new Date().setHours(0, 0, 0, 0)){
             exceededArray.push(event);
           }
-          if(currentDate > new Date().setHours(0, 0, 0, 0) && currentDate <= new Date().setDate(new Date().getDate() + 7)){
+          if(currentDate > new Date().setHours(0, 0, 0, 0)){
             upcomingArray.push(event);
           }
         })
   
         setEventsToday(todayArray);
-        setEventsUpcoming(upcomingArray);
+        setEventsUpcoming(upcomingArray.slice(0,5));
         setEventsExceeded(exceededArray);
   
     }
@@ -129,7 +133,7 @@ const EventsBloc = ({ navigation, events }) => {
 
         eventService.updateState(data)
             .then((reponse) => {
-
+                handleModifiedEvent(objet);
             })
             .catch((err) => {
                 Toast.show({
@@ -139,6 +143,53 @@ const EventsBloc = ({ navigation, events }) => {
                 });
             })
     }
+
+    const handleModifyEvent = (idEventModified, response) => {
+        var arrayTempArray = events;
+        var index = arrayTempArray.findIndex(objet => objet.id === idEventModified);
+
+        if(index !== -1){
+            arrayTempArray[index] = response;
+        }
+
+        events = arrayTempArray;
+
+        Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Modification d'un événement réussi"
+          });
+
+        handleModifiedEvent(response);
+    }
+
+    const handleDeleteEvent = (infosEvent) => {
+        eventService.delete(infosEvent)
+            .then((reponse) =>{
+    
+              Toast.show({
+                type: "success",
+                position: "top",
+                text1: "Suppression d'un événement réussi"
+              });
+    
+              handleDeletedEvent(infosEvent);
+
+              Toast.show({
+                type: "success",
+                position: "top",
+                text1: "Suppression d'un événement réussi"
+              });
+    
+            })
+            .catch((err) =>{
+              Toast.show({
+                  type: "error",
+                  position: "top",
+                  text1: err.message
+              });
+            });
+      }
 
     return(
         <>
@@ -171,6 +222,8 @@ const EventsBloc = ({ navigation, events }) => {
                                             withState={true}
                                             handleStateChange={handleChangeState}
                                             typeEvent={"exceeded"}
+                                            updateFunction={handleModifiedEvent}
+                                            deleteFunction={handleDeleteEvent}
                                         />
                                     </View>
                                     <View style={styles.overdueIndicatorContainer}>
@@ -188,6 +241,8 @@ const EventsBloc = ({ navigation, events }) => {
                                             withState={true}
                                             handleStateChange={handleChangeState}
                                             typeEvent={"today"}
+                                            deleteFunction={handleDeleteEvent}
+                                            updateFunction={handleModifiedEvent}
                                         />
                                     </View>
                                 </TouchableOpacity>
@@ -217,6 +272,9 @@ const EventsBloc = ({ navigation, events }) => {
                                         eventInfos={eventItem}
                                         withSubMenu={true}
                                         withDate={true}
+                                        deleteFunction={handleDeleteEvent}
+                                        handleStateChange={handleChangeState}
+                                        updateFunction={handleModifiedEvent}
                                     />
                                 </View>
                             </View>

@@ -77,6 +77,42 @@ const WelcomeScreen = ({ navigation })=> {
       setObjectifs(updatedObjectifs);
     }
 
+    const handleEventChange = (idEventModified, response) => {
+      let updatedEvents = [];
+      updatedEvents = [... events];
+
+      var index = updatedEvents.findIndex((a) => a.id == idEventModified);
+      updatedEvents[index] = response;
+      setEvents(updatedEvents);
+    }
+
+    const handleEventDelete = (event) => {
+      let updatedEvents = [];
+      updatedEvents = [... events];
+
+      // Si l'event à des enfants, on supprime les enfants du tableau des events
+      var eventsEnfants = [];
+      updatedEvents.map(element => {
+          if( element.idparent === event.id ){
+              eventsEnfants.push(element);
+          }
+      })
+
+      eventsEnfants.map(element => {
+          var index = updatedEvents.findIndex(objet => objet.id === element.id);
+
+          if(index !== -1){
+            updatedEvents.splice(index, 1);
+          }
+
+      })
+
+      // Suppression de l'event parent suite à la suppression des enfants
+      var index = updatedEvents.findIndex((a) => a.id == event.id);
+      updatedEvents.splice(index, 1);
+      setEvents(updatedEvents);
+    }
+
     return (
       <>
       <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
@@ -95,6 +131,8 @@ const WelcomeScreen = ({ navigation })=> {
         <View style={{marginTop: 20}}>
               <EventsBloc 
                 events={events}
+                handleDeletedEvent={handleEventDelete}
+                handleModifiedEvent={handleEventChange}
               />
               <ObjectifsInProgressBloc
                 objectifs={objectifs}
@@ -122,7 +160,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: "100%",
-    backgroundColor: Variables.default,
+    backgroundColor: Variables.blanc,
   },
   svgCurve:{
     position: 'absolute',
@@ -134,7 +172,8 @@ const styles = StyleSheet.create({
   },
   summary:{
     color: Variables.alezan,
-    fontWeight: "bold",
+    fontSize: 15,
+    fontFamily: "Quicksand-Bold"
   },
 })
 
