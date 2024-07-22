@@ -86,7 +86,9 @@ const SignUpScreen = ({ navigation })=> {
         <>
             <Image style={styles.image} source={wallpaper_login} />
             <View style={{height: "100%", width: "100%", paddingTop: Constants.statusBarHeight + 10,}}>
-                <Back/>
+                <Back
+                    isWithBackground={true}   
+                />
                 <KeyboardAwareScrollView contentContainerStyle={styles.register}>
                     <Text style={styles.title}>S'inscrire</Text>
                     <View style={styles.form}>
