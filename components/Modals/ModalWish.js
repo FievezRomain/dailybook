@@ -11,6 +11,7 @@ import WishService from "../../services/WishService";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { getImagePath } from '../../services/Config';
 import { ActivityIndicator } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -160,79 +161,77 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
-                        <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="height">
-                            <ScrollView style={{ width: "100%", maxHeight: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
-                                <View style={styles.formContainer}>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Nom : <Text style={{color: "red"}}>*</Text></Text>
-                                        {errors.title && <Text style={styles.errorInput}>Nom obligatoire</Text>}
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Selle western"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("nom", text)}
-                                            defaultValue={getValues("nom")}
-                                            {...register("nom", { required: true })}
-                                        />
-                                    </View>
+                        <KeyboardAwareScrollView>
+                            <View style={styles.formContainer}>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Nom : <Text style={{color: "red"}}>*</Text></Text>
+                                    {errors.title && <Text style={styles.errorInput}>Nom obligatoire</Text>}
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Selle western"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("nom", text)}
+                                        defaultValue={getValues("nom")}
+                                        {...register("nom", { required: true })}
+                                    />
+                                </View>
 
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>URL : </Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : https://vascoandco.fr"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("url", text)}
-                                            defaultValue={getValues("url")}
-                                        />
-                                    </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>URL : </Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : https://vascoandco.fr"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("url", text)}
+                                        defaultValue={getValues("url")}
+                                    />
+                                </View>
 
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Image :</Text>
-                                        <AvatarPicker
-                                            setImage={setImage}
-                                            setValue={setValue}
-                                        />
-                                        {image &&
-                                            <View style={styles.imageContainer}>
-                                                <Image source={{uri: image}} style={styles.avatar}/>
-                                                <TouchableOpacity onPress={() => deleteImage()}>
-                                                    <Entypo name="circle-with-cross" size={25} color={variables.alezan}/>
-                                                </TouchableOpacity>
-                                            </View>
-                                        }
-                                    </View>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Prix : </Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            keyboardType="numeric"
-                                            placeholder="Exemple : 20"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("prix", text)}
-                                            defaultValue={getValues("prix")}
-                                        />
-                                    </View>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Destinataire : </Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Par défaut, pour vous"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("destinataire", text)}
-                                            defaultValue={getValues("destinataire")}
-                                        />
-                                    </View>
-                                    <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
-                                        <View style={styles.iconContainer}>
-                                            <FontAwesome name="heart" size={60} color={Variables.blanc} style={{marginTop: 5}}/>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Image :</Text>
+                                    <AvatarPicker
+                                        setImage={setImage}
+                                        setValue={setValue}
+                                    />
+                                    {image &&
+                                        <View style={styles.imageContainer}>
+                                            <Image source={{uri: image}} style={styles.avatar}/>
+                                            <TouchableOpacity onPress={() => deleteImage()}>
+                                                <Entypo name="circle-with-cross" size={25} color={variables.alezan}/>
+                                            </TouchableOpacity>
                                         </View>
+                                    }
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Prix : </Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        keyboardType="numeric"
+                                        placeholder="Exemple : 20"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("prix", text)}
+                                        defaultValue={getValues("prix")}
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Destinataire : </Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Par défaut, pour vous"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("destinataire", text)}
+                                        defaultValue={getValues("destinataire")}
+                                    />
+                                </View>
+                                <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                                    <View style={styles.iconContainer}>
+                                        <FontAwesome name="heart" size={60} color={Variables.blanc} style={{marginTop: 5}}/>
                                     </View>
                                 </View>
-                            </ScrollView>
-                        </KeyboardAvoidingView>
+                            </View>
+                        </KeyboardAwareScrollView>
                     </View>
                 </View>
             </Modal>
@@ -296,7 +295,6 @@ const styles = StyleSheet.create({
         height: "100%"
     },
     inputContainer:{
-        alignItems: "center",
         width: "100%"
     },
     textInput:{

@@ -11,6 +11,7 @@ import AvatarPicker from "../AvatarPicker";
 import DateUtils from "../../utils/DateUtils";
 import { getImagePath } from '../../services/Config';
 import { ActivityIndicator } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -241,158 +242,156 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
-                        <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="padding">
-                            <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
-                                <View style={styles.formContainer}>
+                        <KeyboardAwareScrollView>
+                            <View style={styles.formContainer}>
 
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Nom de l'animal : <Text style={{color: "red"}}>*</Text></Text>
-                                        {errors.nom && <Text style={styles.errorInput}>Nom obligatoire</Text>}
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Vasco"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("nom", text)}
-                                            defaultValue={getValues("nom")}
-                                            {...register("nom", { required: true })}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Espèce : <Text style={{color: "red"}}>*</Text></Text>
-                                        {errors.nom && <Text style={styles.errorInput}>Espèce obligatoire</Text>}
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Cheval"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("espece", text)}
-                                            defaultValue={getValues("espece")}
-                                            {...register("espece", { required: true })}
-                                        />
-                                    </View>
-                                    <View style={styles.containerDate}>
-                                        <Text style={styles.textInput}>Date de naissance : {convertDateToText(date)} <Text style={{color: "red"}}>*</Text></Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : 01/01/1900"
-                                            keyboardType="numeric"
-                                            maxLength={10}
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => onChangeDate(text)}
-                                            value={date}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Image :</Text>
-                                        <AvatarPicker
-                                            setImage={setImage}
-                                            setValue={setValue}
-                                        />
-                                        {image &&
-                                            <View style={styles.imageContainer}>
-                                            <Image source={{uri: image}} style={styles.avatar}/>
-                                            <TouchableOpacity onPress={() => deleteImage()}>
-                                                <Image source={require("../../assets/cross.png")} style={{height: 20, width: 20}}/>
-                                            </TouchableOpacity>
-                                            </View>
-                                        }
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Race :</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Fjord"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("race", text)}
-                                            defaultValue={getValues("race")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Taille (cm) :</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : 140"
-                                            keyboardType="numeric"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("taille", text)}
-                                            defaultValue={getValues("taille")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Poids (kg) :</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : 400"
-                                            keyboardType="numeric"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("poids", text)}
-                                            defaultValue={getValues("poids")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Sexe :</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Mâle"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("sexe", text)}
-                                            defaultValue={getValues("sexe")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Nom alimentation :</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Granulés X"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("food", text)}
-                                            defaultValue={getValues("food")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Quantité (gramme / cl) :</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : 200"
-                                            keyboardType="numeric"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("quantity", text)}
-                                            defaultValue={getValues("quantity")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Couleur :</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Isabelle"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("couleur", text)}
-                                            defaultValue={getValues("couleur")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Nom du père :</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Esgard"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("nomPere", text)}
-                                            defaultValue={getValues("nomPere")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Nom de la mère :</Text>
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Sherry"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("nomMere", text)}
-                                            defaultValue={getValues("nomMere")}
-                                        />
-                                    </View>
-
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Nom de l'animal : <Text style={{color: "red"}}>*</Text></Text>
+                                    {errors.nom && <Text style={styles.errorInput}>Nom obligatoire</Text>}
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Vasco"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("nom", text)}
+                                        defaultValue={getValues("nom")}
+                                        {...register("nom", { required: true })}
+                                    />
                                 </View>
-                            </ScrollView>
-                        </KeyboardAvoidingView>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Espèce : <Text style={{color: "red"}}>*</Text></Text>
+                                    {errors.nom && <Text style={styles.errorInput}>Espèce obligatoire</Text>}
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Cheval"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("espece", text)}
+                                        defaultValue={getValues("espece")}
+                                        {...register("espece", { required: true })}
+                                    />
+                                </View>
+                                <View style={styles.containerDate}>
+                                    <Text style={styles.textInput}>Date de naissance : {convertDateToText(date)} <Text style={{color: "red"}}>*</Text></Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : 01/01/1900"
+                                        keyboardType="numeric"
+                                        maxLength={10}
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => onChangeDate(text)}
+                                        value={date}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Image :</Text>
+                                    <AvatarPicker
+                                        setImage={setImage}
+                                        setValue={setValue}
+                                    />
+                                    {image &&
+                                        <View style={styles.imageContainer}>
+                                        <Image source={{uri: image}} style={styles.avatar}/>
+                                        <TouchableOpacity onPress={() => deleteImage()}>
+                                            <Image source={require("../../assets/cross.png")} style={{height: 20, width: 20}}/>
+                                        </TouchableOpacity>
+                                        </View>
+                                    }
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Race :</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Fjord"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("race", text)}
+                                        defaultValue={getValues("race")}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Taille (cm) :</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : 140"
+                                        keyboardType="numeric"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("taille", text)}
+                                        defaultValue={getValues("taille")}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Poids (kg) :</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : 400"
+                                        keyboardType="numeric"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("poids", text)}
+                                        defaultValue={getValues("poids")}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Sexe :</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Mâle"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("sexe", text)}
+                                        defaultValue={getValues("sexe")}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Nom alimentation :</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Granulés X"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("food", text)}
+                                        defaultValue={getValues("food")}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Quantité (gramme / cl) :</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : 200"
+                                        keyboardType="numeric"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("quantity", text)}
+                                        defaultValue={getValues("quantity")}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Couleur :</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Isabelle"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("couleur", text)}
+                                        defaultValue={getValues("couleur")}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Nom du père :</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Esgard"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("nomPere", text)}
+                                        defaultValue={getValues("nomPere")}
+                                    />
+                                </View>
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Nom de la mère :</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Sherry"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("nomMere", text)}
+                                        defaultValue={getValues("nomMere")}
+                                    />
+                                </View>
+
+                            </View>
+                        </KeyboardAwareScrollView>
                     </View>
                 </View>
             </Modal>
@@ -455,7 +454,6 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
     },
     inputContainer:{
-        alignItems: "center",
         width: "100%"
     },
     textInput:{

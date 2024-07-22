@@ -14,6 +14,7 @@ import DatePickerModal from "./ModalDatePicker";
 import DateUtils from "../../utils/DateUtils";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -311,110 +312,108 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
-                        <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="padding">
-                            <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
-                                <View style={styles.formContainer}>
-                                
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Animal : <Text style={{color: "red"}}>*</Text></Text>
-                                        <TouchableOpacity 
-                                        style={styles.textInput}
-                                        disabled={animaux.length > 0 ? false : true}
-                                        onPress={()=>{setModalAnimalVisible(true)}} 
-                                        >
-                                        <View style={styles.containerAnimaux}>
-                                            {animaux.length === 0 &&
-                                            <View><Text style={[styles.badgeAnimal, styles.errorInput]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
-                                            }
-                                            {selected.length == 0 && animaux.length > 0 &&
-                                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>Sélectionner un ou plusieurs animaux</Text></View>
-                                            }
-                                            {selected.map((animal, index) => {
-                                            return (
-                                                <View key={animal.id} style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{animal.nom}</Text></View>
-                                            );
-                                            })}
-                                        </View>
-                                        </TouchableOpacity>
+                        <KeyboardAwareScrollView>
+                            <View style={styles.formContainer}>
+                            
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Animal : <Text style={{color: "red"}}>*</Text></Text>
+                                    <TouchableOpacity 
+                                    style={styles.textInput}
+                                    disabled={animaux.length > 0 ? false : true}
+                                    onPress={()=>{setModalAnimalVisible(true)}} 
+                                    >
+                                    <View style={styles.containerAnimaux}>
+                                        {animaux.length === 0 &&
+                                        <View><Text style={[styles.badgeAnimal, styles.errorInput]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
+                                        }
+                                        {selected.length == 0 && animaux.length > 0 &&
+                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>Sélectionner un ou plusieurs animaux</Text></View>
+                                        }
+                                        {selected.map((animal, index) => {
+                                        return (
+                                            <View key={animal.id} style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{animal.nom}</Text></View>
+                                        );
+                                        })}
                                     </View>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Titre de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
-                                        {errors.title && <Text style={styles.errorInput}>Titre obligatoire</Text>}
-                                        <TextInput
-                                            style={styles.input}
-                                            placeholder="Exemple : Rendez-vous vétérinaire"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("title", text)}
-                                            defaultValue={getValues("title")}
-                                            {...register("title", { required: true })}
-                                        />
-                                    </View>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Temporalité : <Text style={{color: "red"}}>*</Text></Text>
-                                        <TouchableOpacity 
-                                        style={styles.textInput} 
-                                        onPress={()=>{setModalDropdownTemporalityVisible(true)}} 
-                                        >
-                                        <View style={styles.containerAnimaux}>
-                                            {temporalityObjectif == false &&
-                                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>Sélectionner une temporalité</Text></View>
-                                            }
-                                            {
-                                            temporalityObjectif != false &&
-                                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>{temporalityObjectif.title}</Text></View>
-                                            }
-                                        </View>
-                                        </TouchableOpacity>
-                                    </View>
-
-                                    <View style={styles.containerDate}>
-                                        <Text style={styles.textInput}>Date de début : {convertDateToText("datedebut")} <Text style={{color: "red"}}>*</Text></Text>
-                                        <DatePickerModal
-                                            onDayChange={onChangeDate}
-                                            propertyName={"datedebut"}
-                                            defaultDate={getValues("datedebut")}
-                                        />
-                                    </View>
-
-                                    <View style={styles.containerDate}>
-                                        <Text style={styles.textInput}>Date de fin : {convertDateToText("datefin")} </Text>
-                                        <TextInput
-                                            value={getValues("datefin")}
-                                            style={styles.input}
-                                            editable={false}
-                                        />
-                                    </View>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Sous-étapes de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
-                                        {inputs.map((value, index) => (
-                                            <View style={styles.sousEtapesContainer} key={index}>
-                                                <TextInput
-                                                    style={styles.inputSousEtape}
-                                                    value={value.etape}
-                                                    onChangeText={(text) => handleInputChange(text, index)}
-                                                    placeholder="Entrez une valeur"
-                                                />
-                                                <TouchableOpacity onPress={() => handleRemoveInput(index)}>
-                                                    <AntDesign name="delete" size={20} color={Variables.alezan}/>
-                                                </TouchableOpacity>
-                                            </View>
-                                        ))}
-                                        <Button
-                                            onPress={handleAddInput}
-                                            type={"primary"}
-                                            size={"s"}
-                                            isLong={true}
-                                        >
-                                            <Text>Ajouter une sous-étape</Text>
-                                        </Button>
-                                    </View>
-
+                                    </TouchableOpacity>
                                 </View>
-                            </ScrollView>
-                        </KeyboardAvoidingView>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Titre de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
+                                    {errors.title && <Text style={styles.errorInput}>Titre obligatoire</Text>}
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Exemple : Rendez-vous vétérinaire"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("title", text)}
+                                        defaultValue={getValues("title")}
+                                        {...register("title", { required: true })}
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Temporalité : <Text style={{color: "red"}}>*</Text></Text>
+                                    <TouchableOpacity 
+                                    style={styles.textInput} 
+                                    onPress={()=>{setModalDropdownTemporalityVisible(true)}} 
+                                    >
+                                    <View style={styles.containerAnimaux}>
+                                        {temporalityObjectif == false &&
+                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>Sélectionner une temporalité</Text></View>
+                                        }
+                                        {
+                                        temporalityObjectif != false &&
+                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>{temporalityObjectif.title}</Text></View>
+                                        }
+                                    </View>
+                                    </TouchableOpacity>
+                                </View>
+
+                                <View style={styles.containerDate}>
+                                    <Text style={styles.textInput}>Date de début : {convertDateToText("datedebut")} <Text style={{color: "red"}}>*</Text></Text>
+                                    <DatePickerModal
+                                        onDayChange={onChangeDate}
+                                        propertyName={"datedebut"}
+                                        defaultDate={getValues("datedebut")}
+                                    />
+                                </View>
+
+                                <View style={styles.containerDate}>
+                                    <Text style={styles.textInput}>Date de fin : {convertDateToText("datefin")} </Text>
+                                    <TextInput
+                                        value={getValues("datefin")}
+                                        style={styles.input}
+                                        editable={false}
+                                    />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={styles.textInput}>Sous-étapes de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
+                                    {inputs.map((value, index) => (
+                                        <View style={styles.sousEtapesContainer} key={index}>
+                                            <TextInput
+                                                style={styles.inputSousEtape}
+                                                value={value.etape}
+                                                onChangeText={(text) => handleInputChange(text, index)}
+                                                placeholder="Entrez une valeur"
+                                            />
+                                            <TouchableOpacity onPress={() => handleRemoveInput(index)}>
+                                                <AntDesign name="delete" size={20} color={Variables.alezan}/>
+                                            </TouchableOpacity>
+                                        </View>
+                                    ))}
+                                    <Button
+                                        onPress={handleAddInput}
+                                        type={"primary"}
+                                        size={"s"}
+                                        isLong={true}
+                                    >
+                                        <Text>Ajouter une sous-étape</Text>
+                                    </Button>
+                                </View>
+
+                            </View>
+                        </KeyboardAwareScrollView>
                     </View>
                 </View>
             </Modal>
