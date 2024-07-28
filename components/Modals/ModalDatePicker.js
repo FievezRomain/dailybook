@@ -40,7 +40,7 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
     <View>
       <TouchableOpacity onPress={() => setModalVisible(true)} >
         <View style={styles.dateContainer}>
-          <Text style={styles.date}>{dateUtils.dateFormatter(selectedDate, "yyyy-mm-dd", "-")}</Text>
+          <Text style={[styles.date, styles.textFontRegular]}>{dateUtils.dateFormatter(selectedDate, "yyyy-mm-dd", "-")}</Text>
         </View>
       </TouchableOpacity>
       <Modal
@@ -67,7 +67,7 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
                 />
                 <View style={styles.closeButtonContainer}>
                   <Button onPress={closeModal}>
-                    <Text>Fermer</Text>
+                    <Text style={styles.textFontMedium}>Fermer</Text>
                   </Button>
                 </View>
               </View>
@@ -102,6 +102,15 @@ const styles = StyleSheet.create({
   },
   closeButtonContainer:{
     marginTop: 20,
+  },
+  textFontRegular:{
+      fontFamily: variables.fontRegular
+  },
+  textFontMedium:{
+      fontFamily: variables.fontMedium
+  },
+  textFontBold:{
+      fontFamily: variables.fontBold
   }
 });
 

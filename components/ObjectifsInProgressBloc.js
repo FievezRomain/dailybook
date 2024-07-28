@@ -29,11 +29,11 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
             <View style={styles.objectifsInProgressContainer}>
                 <View style={styles.headerContainer}>
                     <SimpleLineIcons name="target" size={20} color={variables.alezan} style={styles.icon}/>
-                    <Text style={styles.title}>Objectifs en cours</Text>
+                    <Text style={[styles.title, styles.textFontBold]}>Objectifs en cours</Text>
                 </View>
                 <View>
                     {objectifs.length === 0 &&
-                        <Text style={{marginBottom: 30, color: "gray"}}>Vous n'avez aucun objectif en cours</Text>
+                        <Text style={[{marginBottom: 30, color: "gray"}, styles.textFontRegular]}>Vous n'avez aucun objectif en cours</Text>
                     }
                     {objectifs.map((objectifItem, index) => (
                         <TouchableOpacity key={objectifItem.id}>
@@ -73,7 +73,6 @@ const styles = StyleSheet.create({
     },
     title:{
         color: variables.alezan,
-        fontWeight: "bold"
     },
     icon:{
         marginRight: 10,
@@ -86,6 +85,15 @@ const styles = StyleSheet.create({
     cardObjectifContainer:{
         width: "100%"
     },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: variables.fontBold
+    }
 });
 
 export default ObjectifsInProgressBloc;

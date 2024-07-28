@@ -34,7 +34,6 @@ const TopTab = ({message1, message2, withBackground=false}) => {
             width: 25,
         },
         name:{
-            fontWeight: "bold",
             fontSize: 18
         },
         avatar: {
@@ -47,15 +46,20 @@ const TopTab = ({message1, message2, withBackground=false}) => {
         },
         text:{
             color: withBackground == false ? Variables.alezan : Variables.blanc,
-            fontFamily: 'Quicksand-Medium',
+        },
+        textFontRegular:{
+            fontFamily: Variables.fontRegular
+        },
+        textFontBold:{
+            fontFamily: Variables.fontBold
         }
     });
 
     return(
         <View style={styles.topTabContainer}>
             <View style={styles.textContainer}>
-                <Text style={styles.text}>{message1}</Text>
-                <Text style={[styles.name, styles.text]}>{message2}</Text>
+                <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text>
+                <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
             </View>
             <View style={styles.imageContainer}>
                 {/* <TouchableOpacity>

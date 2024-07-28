@@ -222,22 +222,22 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                         </View>
                         <View style={styles.containerActionsButtons}>
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={{color: Variables.aubere}}>Annuler</Text>
+                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             { actionType === "modify" && 
-                                <Text style={{fontWeight: "bold"}}>Modifier un animal</Text>
+                                <Text style={[styles.textFontBold]}>Modifier un animal</Text>
                             }
                             { actionType === "create" && 
-                                <Text style={{fontWeight: "bold"}}>Créer un animal</Text>
+                                <Text style={[styles.textFontBold]}>Créer un animal</Text>
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 { loading ? 
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={{color: Variables.alezan}}>Modifier</Text>
+                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={{color: Variables.alezan}}>Créer</Text>
+                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -246,10 +246,10 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                             <View style={styles.formContainer}>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Nom de l'animal : <Text style={{color: "red"}}>*</Text></Text>
-                                    {errors.nom && <Text style={styles.errorInput}>Nom obligatoire</Text>}
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Nom de l'animal : <Text style={{color: "red"}}>*</Text></Text>
+                                    {errors.nom && <Text style={[styles.errorInput, styles.textFontRegular]}>Nom obligatoire</Text>}
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Vasco"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("nom", text)}
@@ -258,10 +258,10 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Espèce : <Text style={{color: "red"}}>*</Text></Text>
-                                    {errors.nom && <Text style={styles.errorInput}>Espèce obligatoire</Text>}
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Espèce : <Text style={{color: "red"}}>*</Text></Text>
+                                    {errors.nom && <Text style={[styles.errorInput, styles.textFontRegular]}>Espèce obligatoire</Text>}
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Cheval"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("espece", text)}
@@ -270,9 +270,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.containerDate}>
-                                    <Text style={styles.textInput}>Date de naissance : {convertDateToText(date)} <Text style={{color: "red"}}>*</Text></Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Date de naissance : {convertDateToText(date)} <Text style={{color: "red"}}>*</Text></Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : 01/01/1900"
                                         keyboardType="numeric"
                                         maxLength={10}
@@ -282,7 +282,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Image :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Image :</Text>
                                     <AvatarPicker
                                         setImage={setImage}
                                         setValue={setValue}
@@ -297,9 +297,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     }
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Race :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Race :</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Fjord"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("race", text)}
@@ -307,9 +307,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Taille (cm) :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Taille (cm) :</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : 140"
                                         keyboardType="numeric"
                                         placeholderTextColor={Variables.texte}
@@ -318,9 +318,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Poids (kg) :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Poids (kg) :</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : 400"
                                         keyboardType="numeric"
                                         placeholderTextColor={Variables.texte}
@@ -329,9 +329,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Sexe :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Sexe :</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Mâle"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("sexe", text)}
@@ -339,9 +339,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Nom alimentation :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Nom alimentation :</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Granulés X"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("food", text)}
@@ -349,9 +349,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Quantité (gramme / cl) :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Quantité (gramme / cl) :</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : 200"
                                         keyboardType="numeric"
                                         placeholderTextColor={Variables.texte}
@@ -360,9 +360,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Couleur :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Couleur :</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Isabelle"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("couleur", text)}
@@ -370,9 +370,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Nom du père :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Nom du père :</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Esgard"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("nomPere", text)}
@@ -380,9 +380,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                 </View>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Nom de la mère :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Nom de la mère :</Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Sherry"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("nomMere", text)}
@@ -491,6 +491,16 @@ const styles = StyleSheet.create({
         borderWidth: 2,
         zIndex: 1,
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
+    
 })
 
 export default ModalAnimal;

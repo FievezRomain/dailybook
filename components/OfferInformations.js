@@ -33,7 +33,7 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
 
   const Item = ({ label, free, premium }) => (
     <View style={styles.row}>
-      <Text style={styles.cell}>{label}</Text>
+      <Text style={[styles.cell, styles.textFontRegular]}>{label}</Text>
       { free === "Yes" ?
           <AntDesign name="checkcircle" size={20} style={styles.cell} />
         :
@@ -50,18 +50,18 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
   return (
     <>
       {withMessageFunctionality &&
-        <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "500", marginHorizontal: 50, marginBottom: 5, fontSize: 14}}>Cette fonctionnalité est disponible avec la version premium</Text>
+        <Text style={[{textAlign: "center", color: variables.alezan, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
       }
       <ScrollView>
         <View style={styles.table}>
           <View style={styles.headerRow}>
-            <Text style={[styles.cell, styles.headerCell]}> </Text>
-            <Text style={[styles.cell, styles.headerCell]}>Gratuit</Text>
-            <Text style={[styles.cell, styles.headerCell]}>Premium</Text>
+            <Text style={[styles.cell, styles.headerCell, styles.textFontBold]}> </Text>
+            <Text style={[styles.cell, styles.headerCell, styles.textFontBold]}>Gratuit</Text>
+            <Text style={[styles.cell, styles.headerCell, styles.textFontBold]}>Premium</Text>
           </View>
           {DATA.map((item) => (
             <View key={item.id} style={styles.row}>
-              <Text style={styles.cell}>{item.label}</Text>
+              <Text style={[styles.cell, styles.textFontRegular]}>{item.label}</Text>
               { item.free === "Yes" ?
                 <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.alezan} />
               :
@@ -81,9 +81,9 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
             type={"tertiary"}
             onPress={() => handleInscription()}
           >
-            <Text>S'inscrire pour être averti de la sortie de la version premium</Text>
+            <Text style={styles.textFontMedium}>S'inscrire pour être averti de la sortie de la version premium</Text>
           </Button>
-          <Text style={styles.price}>4€99 /mois ou 32€ /an</Text>
+          <Text style={[styles.price, styles.textFontRegular]}>4€99 /mois ou 32€ /an</Text>
         </View>
       </ScrollView>
     </>
@@ -111,7 +111,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   headerCell: {
-    fontWeight: 'bold',
     color: variables.alezan
   },
   table:{
@@ -128,6 +127,15 @@ const styles = StyleSheet.create({
   },
   price:{
     marginTop: 5
+  },
+  textFontRegular:{
+      fontFamily: variables.fontRegular
+  },
+  textFontMedium:{
+      fontFamily: variables.fontMedium
+  },
+  textFontBold:{
+      fontFamily: variables.fontBold
   }
 });
 

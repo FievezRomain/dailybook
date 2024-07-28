@@ -46,7 +46,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
   return (
     <>
       <TouchableOpacity onPress={openModal} style={styles.frequencyButton}>
-        <Text>{frequencyValue || 'Saisir une fréquence'}</Text>
+        <Text style={styles.textFontRegular}>{frequencyValue || 'Saisir une fréquence'}</Text>
       </TouchableOpacity>
       
       <Modal
@@ -65,7 +65,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
             <View style={styles.card}>
 
                 <View style={styles.headerCard}>
-                    <Text>Saisir la fréquence des soins</Text>
+                    <Text style={styles.textFontRegular}>Saisir la fréquence des soins</Text>
                 </View>
                 <View style={styles.bottomBar} />
 
@@ -75,31 +75,31 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                     <View>
 
                         <View>
-                            <Text>Jamais</Text>
+                            <Text style={styles.textFontRegular}>Jamais</Text>
                         </View>
 
                         <View>
-                            <Text>Tous les jours</Text>
+                            <Text style={styles.textFontRegular}>Tous les jours</Text>
                         </View>
 
                         <View>
-                            <Text>Toutes les semaines</Text>
+                            <Text style={styles.textFontRegular}>Toutes les semaines</Text>
                         </View>
 
                         <View>
-                            <Text>Toutes les 2 semaines</Text>
+                            <Text style={styles.textFontRegular}>Toutes les 2 semaines</Text>
                         </View>
 
                         <View>
-                            <Text>Tous les mois</Text>
+                            <Text style={styles.textFontRegular}>Tous les mois</Text>
                         </View>
 
                         <View>
-                            <Text>Tous les ans</Text>
+                            <Text style={styles.textFontRegular}>Tous les ans</Text>
                         </View>
 
                         <View>
-                            <Text>Personnaliser</Text>
+                            <Text style={styles.textFontRegular}>Personnaliser</Text>
                         </View>
                     </View>
                     
@@ -111,7 +111,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                             type={"primary"}
                             onPress={handleFrequencyChange}
                         >
-                        OK
+                        <Text style={styles.textFontMedium}>OK</Text>
                         </Button>
                     </View>
                 </View>
@@ -204,6 +204,15 @@ const styles = StyleSheet.create({
     keyboardAvoidingContainer: {
         flex: 1,
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 });
 
 export default ModalFrequencyInput;

@@ -24,7 +24,7 @@ const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModi
                     onPress={() => setModalVisible(false)}
                 ></TouchableOpacity>
                 <View style={styles.card}>
-                    <Text>Gérer l'objectif</Text>
+                    <Text style={styles.textFontRegular}>Gérer l'objectif</Text>
                     <View style={styles.actionButtonContainer}>{/* 
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleManageTasks)}>
                             <View style={styles.informationsActionButton}>
@@ -38,7 +38,7 @@ const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModi
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
-                                <Text style={styles.textActionButton}>
+                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Modifier
                                 </Text>
                             </View>
@@ -47,7 +47,7 @@ const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModi
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
                             <View style={styles.informationsActionButton}>
                                 <AntDesign name="delete" size={20}/>
-                                <Text style={styles.textActionButton}>
+                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Supprimer
                                 </Text>
                             </View>
@@ -128,6 +128,15 @@ const styles = StyleSheet.create({
     title:{
         color: "white"
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 });
 
 export default ModalSubMenuObjectifActions;

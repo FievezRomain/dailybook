@@ -15,7 +15,7 @@ const StatistiquesBloc = () =>{
     return (
         <>
             <View style={styles.composantContainer}>
-                <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Statistiques</Text>
+                <Text style={[{textAlign: "center", color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text>
                 
 
                 {/* <View style={styles.statistiqueIndicatorContainer}>
@@ -95,6 +95,15 @@ const styles = StyleSheet.create({
     itemIconSelected:{
         color: variables.alezan,
     },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: variables.fontBold
+    }
 });
 
 export default StatistiquesBloc;

@@ -31,7 +31,7 @@ const TabStack = () => {
                     size={20}
                     color={focused ? variables.alezan : 'gray'}
                   ></Ionicons>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Accueil</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Accueil</Text>
                 </View>
               </View>
             } else if(route.name === 'Statistic'){
@@ -46,7 +46,7 @@ const TabStack = () => {
                     size={20}
                     color={focused ? variables.alezan : 'gray'}
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Performances</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Performances</Text>
                 </View>
                 
               </View>
@@ -94,7 +94,7 @@ const TabStack = () => {
                     size={20}
                     color={focused ? variables.alezan : 'gray'}
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Calendrier</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Calendrier</Text>
                 </View>
               </View>
             } else if (route.name === 'Pets'){
@@ -109,7 +109,7 @@ const TabStack = () => {
                     size={20}
                     color={focused ? variables.alezan : 'gray'}
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray'}}>Animaux</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Animaux</Text>
                 </View>
               </View>
             }

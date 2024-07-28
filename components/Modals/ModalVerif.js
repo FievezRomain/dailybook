@@ -22,7 +22,7 @@ const ModalVerif = ({ modalVisible, setModalVisible, message, event }) => {
             onPress={() => setModalVisible(!modalVisible)}
           ></TouchableOpacity>
           <View style={styles.card}>
-            <Text style={styles.message}>{message}</Text>
+            <Text style={[styles.message, styles.textFontRegular]}>{message}</Text>
             <View style={styles.buttonContainer}>
                 <Button
                 onPress={() => {
@@ -30,14 +30,14 @@ const ModalVerif = ({ modalVisible, setModalVisible, message, event }) => {
                     eventToCall()
                 }}
                 >
-                Oui
+                  <Text style={styles.textFontMedium}>Oui</Text>
                 </Button>
                 <Button
                 onPress={() => {
                     setModalVisible(!modalVisible)
                 }}
                 >
-                Non
+                  <Text style={styles.textFontMedium}>Non</Text>
                 </Button>
             </View>
           </View>
@@ -71,6 +71,15 @@ const styles = StyleSheet.create({
   message:{
     alignSelf: "center",
     color: "white"
+  },
+  textFontRegular:{
+      fontFamily: Variables.fontRegular
+  },
+  textFontMedium:{
+      fontFamily: Variables.fontMedium
+  },
+  textFontBold:{
+      fontFamily: Variables.fontBold
   }
 });
 

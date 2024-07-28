@@ -57,6 +57,15 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
             flexDirection: "column", 
             justifyContent: "space-between", 
             flexWrap: "wrap"
+        },
+        textFontRegular:{
+            fontFamily: variables.fontRegular
+        },
+        textFontMedium:{
+            fontFamily: variables.fontMedium
+        },
+        textFontBold:{
+            fontFamily: variables.fontBold
         }
     });
 
@@ -75,7 +84,7 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
             <View style={styles.headerEventContainer}>
                 <View style={styles.titleAndAnimalsContainer}>
                     <View style={{width: "70%"}}>
-                        <Text style={[styles.eventTitle, styles.text]}>{eventInfos.nom}  </Text>
+                        <Text style={[styles.eventTitle, styles.text, styles.textFontBold]}>{eventInfos.nom}  </Text>
                     </View>
                     <View style={{flexDirection: "row", marginRight: 5}}>
                         {eventInfos !== undefined && animaux.length !== 0 && eventInfos.animaux.map((eventAnimal, index) => {
@@ -86,7 +95,7 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
                                             { animal.image !== null ? 
                                                 <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
                                                 :
-                                                <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                                <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                             }
                                         </View>
                                     </View>
@@ -98,17 +107,17 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
             <View style={styles.contentEventContainer}>
                 {isValidString(eventInfos.lieu) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Lieu : </Text>{eventInfos.lieu}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Lieu : </Text>{eventInfos.lieu}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.heurededebutbalade) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Heure de début : </Text>{eventInfos.heurededebutbalade}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Heure de début : </Text>{eventInfos.heurededebutbalade}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.commentaire) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Commentaire : </Text>{eventInfos.commentaire}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
                     </View>
                 }
             </View>

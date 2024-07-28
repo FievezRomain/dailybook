@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import plus from '../assets/plus.png'
 import { FontAwesome6 } from '@expo/vector-icons'
 import { useRef } from 'react';
+import variables from './styles/Variables';
 
 const Tab = createBottomTabNavigator();
 
@@ -189,7 +190,7 @@ function getWidth() {
 const ActionScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-        <Text>Action!</Text>
+        <Text style={styles.textFontRegular}>Action!</Text>
       </View>
     );
 }
@@ -197,7 +198,7 @@ const ActionScreen = () => {
 const PetsScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-        <Text>Pets!</Text>
+        <Text style={styles.textFontRegular}>Pets!</Text>
       </View>
     );
 }
@@ -205,7 +206,7 @@ const PetsScreen = () => {
 const HomeScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-        <Text>Home!</Text>
+        <Text style={styles.textFontRegular}>Home!</Text>
       </View>
     );
 }
@@ -213,7 +214,7 @@ const HomeScreen = () => {
 const CalendarScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-        <Text>Calendar!</Text>
+        <Text style={styles.textFontRegular}>Calendar!</Text>
       </View>
     );
 }
@@ -221,7 +222,7 @@ const CalendarScreen = () => {
 const StatsScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-        <Text>Statistic!</Text>
+        <Text style={styles.textFontRegular}>Statistic!</Text>
       </View>
     );
 }
@@ -233,6 +234,15 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
     },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: variables.fontBold
+    }
 });
 
 export default BottomTabNavigator;

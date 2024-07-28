@@ -66,8 +66,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "depense" ){
             return (
                 <>
-                    <Text style={{fontWeight: "bold", color: styles.colorTextBlack}}>Dépense</Text>
-                    <Text style={{color: styles.colorTextBlack}}>{convertDateToText(event.dateevent)}</Text>
+                    <Text style={[{color: styles.colorTextBlack}, styles.textFontBold]}>Dépense</Text>
+                    <Text style={[{color: styles.colorTextBlack}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
                     {checkOverdueEvent(event, variables.bai)}
                 </>
             
@@ -76,8 +76,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "balade" ){
             return (
                 <>
-                    <Text style={{fontWeight: "bold", color: styles.colorTextWhite}}>Balade</Text>
-                    <Text style={{color: styles.colorTextWhite}}>{convertDateToText(event.dateevent)}</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Balade</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
                     {checkOverdueEvent(event, variables.blanc)}
                 </>
             );
@@ -85,8 +85,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "soins" ){
             return (
                 <>
-                    <Text style={{fontWeight: "bold", color: styles.colorTextWhite}}>Soins</Text>
-                    <Text style={{color: styles.colorTextWhite}}>{convertDateToText(event.dateevent)}</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Soins</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
                     {checkOverdueEvent(event, variables.blanc)}
                 </>
             );
@@ -94,8 +94,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "concours" ){
             return (
                 <>
-                    <Text style={{fontWeight: "bold", color: styles.colorTextWhite}}>Concours</Text>
-                    <Text style={{color: styles.colorTextWhite}}>{convertDateToText(event.dateevent)}</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Concours</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
                     {checkOverdueEvent(event, variables.blanc)}
                 </>
             );
@@ -103,8 +103,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "entrainement" ){
             return (
                 <>
-                    <Text style={{fontWeight: "bold", color: styles.colorTextBlack}}>Entrainement</Text>
-                    <Text style={{color: styles.colorTextBlack}}>{convertDateToText(event.dateevent)}</Text>
+                    <Text style={[{color: styles.colorTextBlack}, styles.textFontBold]}>Entrainement</Text>
+                    <Text style={[{color: styles.colorTextBlack}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
                     {checkOverdueEvent(event, variables.bai)}
                 </>
             
@@ -113,8 +113,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "autre" ){
             return (
                 <>
-                    <Text style={{fontWeight: "bold", color: styles.colorTextWhite}}>Autre</Text>
-                    <Text style={{color: styles.colorTextWhite}}>{convertDateToText(event.dateevent)}</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Autre</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
                     {checkOverdueEvent(event, variables.blanc)}
                 </>
             );
@@ -122,8 +122,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "rdv" ){
             return (
                 <>
-                    <Text style={{fontWeight: "bold", color: styles.colorTextWhite}}>Rendez-vous</Text>
-                    <Text style={{color: styles.colorTextWhite}}>{convertDateToText(event.dateevent)}</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Rendez-vous</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
                     {checkOverdueEvent(event, variables.blanc)}
                 </>
             );
@@ -354,6 +354,15 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         tableauxContainer:{
             height: isWithRating() ? "40%" : "30%",
             marginBottom: 15
+        },
+        textFontRegular:{
+            fontFamily: variables.fontRegular
+        },
+        textFontMedium:{
+            fontFamily: variables.fontMedium
+        },
+        textFontBold:{
+            fontFamily: variables.fontBold
         }
         
     });
@@ -397,7 +406,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                                         { animal.image !== null ? 
                                                             <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
                                                             :
-                                                            <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                                            <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                                         }
                                                     </View>
                                                 </View>
@@ -418,47 +427,47 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                 }
                             </View>
                             <View style={styles.tableauInfos}>
-                                <Text style={{fontWeight: "bold", marginBottom: 10}}>{event.nom}</Text>
+                                <Text style={[{marginBottom: 10}, styles.textFontBold]}>{event.nom}</Text>
                                 {isValidString(event.heuredebutevent) &&
-                                    <Text>Heure : {event.heuredebutevent}</Text>
+                                    <Text style={styles.textFontRegular}>Heure : {event.heuredebutevent}</Text>
                                 }
                                 {isValidString(event.discipline) &&
-                                    <Text>Discipline : {event.discipline}</Text>
+                                    <Text style={styles.textFontRegular}>Discipline : {event.discipline}</Text>
                                 }
                                 {isValidString(event.lieu) &&
-                                    <Text>Lieu : {event.lieu}</Text>
+                                    <Text style={styles.textFontRegular}>Lieu : {event.lieu}</Text>
                                 }
                                 {isValidString(event.datefinbalade) &&
-                                    <Text>Date de fin de balade : {event.datefinbalade}</Text>
+                                    <Text style={styles.textFontRegular}>Date de fin de balade : {event.datefinbalade}</Text>
                                 }
                                 {isValidString(event.heurefinbalade) &&
-                                    <Text>Heure de fin de balade : {event.heurefinbalade}</Text>
+                                    <Text style={styles.textFontRegular}>Heure de fin de balade : {event.heurefinbalade}</Text>
                                 }
                                 {isValidString(event.epreuve) &&
-                                    <Text>Note : {event.epreuve}</Text>
+                                    <Text style={styles.textFontRegular}>Note : {event.epreuve}</Text>
                                 }
                                 {isValidString(event.dossart) &&
-                                    <Text>Dossart : {event.dossart}</Text>
+                                    <Text style={styles.textFontRegular}>Dossart : {event.dossart}</Text>
                                 }
                                 {event.placement != null && event.placement != undefined &&
-                                    <Text>Classement : {event.placement}</Text>
+                                    <Text style={styles.textFontRegular}>Classement : {event.placement}</Text>
                                 }
                                 {isValidString(event.specialiste) &&
-                                    <Text>Spécialiste : {event.specialiste}</Text>
+                                    <Text style={styles.textFontRegular}>Spécialiste : {event.specialiste}</Text>
                                 }
                                 {isValidString(event.depense) &&
-                                    <Text>Dépense : {event.depense}</Text>
+                                    <Text style={styles.textFontRegular}>Dépense : {event.depense}</Text>
                                 }
                                 {isValidString(event.traitement) &&
-                                    <Text>Traitement : {event.traitement}</Text>
+                                    <Text style={styles.textFontRegular}>Traitement : {event.traitement}</Text>
                                 }
                                 {isValidString(event.datefinsoins) &&
-                                    <Text>Date de fin du soin : {event.datefinsoins}</Text>
+                                    <Text style={styles.textFontRegular}>Date de fin du soin : {event.datefinsoins}</Text>
                                 }
                                 <View style={{width: "90%"}}>
-                                    <Text style={{marginBottom: 5}}>Commentaire :</Text>
+                                    <Text style={[{marginBottom: 5}, styles.textFontRegular]}>Commentaire :</Text>
                                     <TextInput
-                                        style={{backgroundColor: variables.rouan, padding: 10, borderRadius: 5, height: 200}}
+                                        style={[{backgroundColor: variables.rouan, padding: 10, borderRadius: 5, height: 200}, styles.textFontRegular]}
                                         multiline={true}
                                         numberOfLines={4}
                                         maxLength={2000}
@@ -478,7 +487,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                 isLong={true}
                                 onPress={() => closeModal()}
                             >
-                                <Text>Annuler</Text>
+                                <Text style={styles.textFontMedium}>Annuler</Text>
                             </Button>
 
                             <Button
@@ -487,7 +496,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                 isLong={true}
                                 onPress={() => handleModifyEvent()}
                             >
-                                <Text>Enregistrer</Text>
+                                <Text style={styles.textFontMedium}>Enregistrer</Text>
                             </Button>
                         </View>
                     </View>

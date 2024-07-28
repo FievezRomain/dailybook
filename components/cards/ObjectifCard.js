@@ -211,7 +211,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                 <View style={{display: "flex",flexDirection: "row"}}>
                     <View style={{flexDirection: "row",justifyContent: "space-between", width: "100%",borderTopStartRadius: 5,borderTopEndRadius: 5, padding: 10}}>
                         <View>
-                            <Text style={{color: variables.blanc}}>{objectif.title}</Text>
+                            <Text style={[{color: variables.blanc}, styles.textFontRegular]}>{objectif.title}</Text>
                         </View>
                         <TouchableOpacity onPress={() => onPressOptions()}>
                             <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
@@ -220,9 +220,9 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                 </View>
                 <View style={{display: "flex", flexDirection: "row", backgroundColor: variables.blanc, borderBottomStartRadius: 5, borderBottomEndRadius: 5}}>
                     <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: variables.alezan, alignItems: "center"}}>
-                        <Text>{getDayText(objectif.datefin)}.</Text>
-                        <Text style={{fontSize: 11}}>{getDateText(objectif.datefin)}</Text>
-                        <Text style={{fontSize: 9}}>{getYearText(objectif.datefin)}</Text>
+                        <Text style={styles.textFontRegular}>{getDayText(objectif.datefin)}.</Text>
+                        <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(objectif.datefin)}</Text>
+                        <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(objectif.datefin)}</Text>
                     </View>
                     <View style={{paddingVertical: 10,display: "flex", flexDirection: "column", width: "80%"}}>
 
@@ -237,7 +237,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                                     ||
                                                     <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
                                                 }
-                                                <Text>{etape.etape}</Text>
+                                                <Text style={styles.textFontRegular}>{etape.etape}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     )
@@ -252,7 +252,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                                 { animal.image !== null ? 
                                                     <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
                                                     :
-                                                    <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                                    <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                                 }
                                             </View>
                                         </View>
@@ -315,6 +315,15 @@ const styles = StyleSheet.create({
         zIndex: 1,
         justifyContent: "center"
     },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: variables.fontBold
+    }
 });
 
 export default ObjectifCard;

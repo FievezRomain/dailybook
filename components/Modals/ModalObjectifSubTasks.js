@@ -96,18 +96,18 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={{color: Variables.aubere}}>Annuler</Text>
+                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                                <Text style={{fontWeight: "bold"}}>Gérer les sous-étapes</Text>
+                                <Text style={[styles.textFontBold]}>Gérer les sous-étapes</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                <Text style={{color: Variables.alezan}}>Enregistrer</Text>
+                                <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
                         <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="padding">
                             <View style={styles.formContainer}>
                                 <View style={styles.headerObjectif}>
-                                    <Text>{objectif.title}</Text>
+                                    <Text style={styles.textFontRegular}>{objectif.title}</Text>
                                 </View>
                                 <View style={styles.completionBarContainer}>
                                     <CompletionBar
@@ -123,7 +123,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                                                     onChange={handleChangeState}
                                                     objet={item}
                                                 />
-                                                <Text>{item.etape}</Text>
+                                                <Text style={styles.textFontRegular}>{item.etape}</Text>
                                             </View>
                                         );
                                     })}
@@ -203,6 +203,15 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 10,
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 
 })
 

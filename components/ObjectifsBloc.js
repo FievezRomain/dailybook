@@ -102,7 +102,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                 handleTasksStateChange={onModify}
             />
             <View style={styles.composantContainer}>
-                <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Objectifs</Text>
+                <Text style={[{textAlign: "center", color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text>
                 <View>
                     {objectifsArrayDisplay.length !== 0 ?
                         objectifsArrayDisplay.map((objectif, index) => {
@@ -120,7 +120,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                         })
                     :
                         <View>
-                            <Text style={{color: "gray", textAlign: "center"}}>Vous n'avez aucun objectif</Text>
+                            <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Vous n'avez aucun objectif</Text>
                         </View>
                     }
                     
@@ -185,6 +185,15 @@ const styles = StyleSheet.create({
     itemIconSelected:{
         color: variables.alezan,
     },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: variables.fontBold
+    }
 });
 
 export default ObjectifsBloc;

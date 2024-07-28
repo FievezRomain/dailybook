@@ -117,7 +117,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="paw" size={20} style={styles.iconButton}/>
-                    <Text>Animal</Text>
+                    <Text style={styles.textFontRegular}>Animal</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -128,7 +128,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <Entypo name="compass" size={20} style={styles.iconButton}/>
-                    <Text>Balade</Text>
+                    <Text style={styles.textFontRegular}>Balade</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -139,7 +139,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <Entypo name="traffic-cone" size={20} style={styles.iconButton}/>
-                    <Text>Entraînement</Text>
+                    <Text style={styles.textFontRegular}>Entraînement</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -150,7 +150,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="trophy" size={20} style={styles.iconButton}/>
-                    <Text>Concours</Text>
+                    <Text style={styles.textFontRegular}>Concours</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -161,7 +161,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="stethoscope" size={20} style={styles.iconButton}/>
-                    <Text>Rendez-vous médical</Text>
+                    <Text style={styles.textFontRegular}>Rendez-vous médical</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -172,7 +172,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton}/>
-                    <Text>Soin</Text>
+                    <Text style={styles.textFontRegular}>Soin</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -183,7 +183,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton}/>
-                    <Text>Dépense</Text>
+                    <Text style={styles.textFontRegular}>Dépense</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -194,7 +194,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome6 name="check-circle" size={20} style={styles.iconButton}/>
-                    <Text>Autre tâche</Text>
+                    <Text style={styles.textFontRegular}>Autre tâche</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -205,7 +205,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <SimpleLineIcons name="target" size={20} style={styles.iconButton}/>
-                    <Text>Objectif</Text>
+                    <Text style={styles.textFontRegular}>Objectif</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -216,7 +216,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="heart" size={20} style={styles.iconButton}/>
-                    <Text>Souhait</Text>
+                    <Text style={styles.textFontRegular}>Souhait</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -227,7 +227,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <AntDesign name="contacts" size={20} style={styles.iconButton}/>
-                    <Text style={{color: Variables.rouan}}>Contact</Text>
+                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Contact</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -238,7 +238,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <SimpleLineIcons name="note" size={20} style={styles.iconButton}/>
-                    <Text style={{color: Variables.rouan}}>Note</Text>
+                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Note</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -249,7 +249,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="group" size={20} style={styles.iconButton}/>
-                    <Text /* style={styles.textDesactivated} */ style={{color: Variables.rouan}}>Groupe</Text>
+                    <Text /* style={styles.textDesactivated} */ style={[{color: Variables.rouan}, styles.textFontRegular]}>Groupe</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
@@ -263,7 +263,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <MaterialCommunityIcons name="barn" size={25} style={styles.iconButton}/>
-                    <Text /* style={styles.textDesactivated} */ style={{color: Variables.rouan}}>Structure</Text>
+                    <Text /* style={styles.textDesactivated} */ style={[{color: Variables.rouan}, styles.textFontRegular]}>Structure</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
@@ -374,6 +374,9 @@ loadingEvent: {
     borderBottomColor: "transparent",
     borderLeftColor: 'transparent',
   },
+  textFontRegular:{
+    fontFamily: Variables.fontRegular
+  }
 });
 
 module.exports = ActionScreen;

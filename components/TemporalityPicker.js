@@ -10,7 +10,7 @@ const TemporalityPicker = ({ arrayState, handleChange, defaultState=undefined })
             <View style={styles.container}>
             {arrayState.map((state, index) => (
                 <TouchableOpacity key={index} onPress={() => handleChange(state)} style={[styles.textContainer, {width: (100 / arrayState.length) + "%"}, index === 0 ? styles.textContainerSelectedLeft : null, index === arrayState.length -1 ? styles.textContainerSelectedRight : null, defaultState.id === state.id || defaultState === undefined ? styles.textContainerSelect : null]}>
-                    <Text style={[defaultState.id === state.id || defaultState.id === undefined ? styles.textSelected : null]}>{state.title}</Text>
+                    <Text style={[(defaultState.id === state.id || defaultState.id === undefined ? styles.textSelected : null), styles.textFontRegular]}>{state.title}</Text>
                 </TouchableOpacity>
             ))}
             </View>
@@ -48,7 +48,10 @@ const styles = StyleSheet.create({
     },
     textSelected:{
         color: variables.blanc
-    }
+    },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
 });
 
 export default TemporalityPicker;

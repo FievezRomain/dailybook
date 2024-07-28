@@ -24,15 +24,15 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
                     onPress={() => setModalVisible(false)}
                 ></TouchableOpacity>
                 <View style={styles.card}>
-                    <Text>Gérer le souhait</Text>
+                    <Text style={styles.textFontRegular}>Gérer le souhait</Text>
                     {wish !== null &&
-                        <Text style={{fontSize: 12, fontWeight: "bold"}}>{wish.nom}</Text>
+                        <Text style={[{fontSize: 12}, styles.textFontBold]}>{wish.nom}</Text>
                     }
                     <View style={styles.actionButtonContainer}>
                         <TouchableOpacity style={[styles.actionButton, (wish === null || wish.url === null || wish.url === undefined) && styles.disabledButton]} onPress={() => onAction(handleRedirect)} disabled={(wish === null || wish.url === null || wish.url === undefined)}>
                             <View style={styles.informationsActionButton}>
                                 <Feather name="external-link" size={20} style={(wish === null || wish.url === null || wish.url === undefined) && styles.disabledText}/>
-                                <Text style={[styles.textActionButton, (wish === null || wish.url === null || wish.url === undefined) && styles.disabledText]}>
+                                <Text style={[styles.textActionButton, styles.textFontMedium, (wish === null || wish.url === null || wish.url === undefined) && styles.disabledText]}>
                                     Accéder au lien
                                 </Text>
                             </View>
@@ -41,7 +41,7 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
                         <TouchableOpacity style={[styles.actionButton, styles.disabledButton]} onPress={() => onAction(handleShare)} disabled={true}>
                             <View style={styles.informationsActionButton}>
                                 <Feather name="share-2" size={20} style={styles.disabledText}/>
-                                <Text style={[styles.textActionButton, styles.disabledText]}>
+                                <Text style={[styles.textActionButton, styles.disabledText, styles.textFontMedium]}>
                                     Partager
                                 </Text>
                             </View>
@@ -50,7 +50,7 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
-                                <Text style={styles.textActionButton}>
+                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Modifier
                                 </Text>
                             </View>
@@ -59,7 +59,7 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
                             <View style={styles.informationsActionButton}>
                                 <AntDesign name="delete" size={20}/>
-                                <Text style={styles.textActionButton}>
+                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Supprimer
                                 </Text>
                             </View>
@@ -148,6 +148,15 @@ const styles = StyleSheet.create({
     disabledText:{
         color: Variables.rouan
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 });
 
 export default ModalSubMenuWishActions;

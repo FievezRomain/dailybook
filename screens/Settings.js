@@ -79,6 +79,9 @@ const SettingsScreen = ({ }) => {
         buttonDisconnect:{
             backgroundColor: Variables.aubere,
         },
+        textFontMedium:{
+            fontFamily: Variables.fontMedium
+        }
     });
 
     return (
@@ -104,28 +107,28 @@ const SettingsScreen = ({ }) => {
                         <Text style={styles.title}>{currentUser.displayName}</Text>
                         <Text style={styles.email}>{currentUser.email}</Text>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Account")}>
-                            <Text>Mon compte</Text>
+                            <Text style={styles.textFontMedium}>Mon compte</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Wish")} >
-                            <Text>Ma whishlist</Text>
+                            <Text style={styles.textFontMedium}>Ma whishlist</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} disabled={true}>
-                            <Text style={{color: "gray"}}>Mes contacts</Text>
+                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Mes contacts</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} /* onPress={() => navigation.navigate("Note")} */>
-                            <Text style={{color: "gray"}}>Mes notes</Text>
+                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Mes notes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={{color: "gray"}}>Ma structure</Text>
+                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Ma structure</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={{color: "gray"}}>Thèmes</Text>
+                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Thèmes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => navigation.navigate("DiscoverPremium")}>
-                            <Text style={{color: Variables.blanc}}>Découvrir l'offre premium</Text>
+                            <Text style={[{color: Variables.blanc}, styles.textFontMedium]}>Découvrir l'offre premium</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVisible(!modalVisible)}>
-                            <Text>Déconnexion</Text>
+                            <Text style={styles.textFontMedium}>Déconnexion</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

@@ -10,10 +10,10 @@ const StatePicker = ({ firstState, secondState, handleChange, defaultState=undef
         <>
             <View style={styles.container}>
                 <TouchableOpacity onPress={() => handleChange(firstState)} style={[styles.textContainer, defaultState === firstState || defaultState === undefined ? styles.textContainerSelectedLeft : null]}>
-                    <Text style={[defaultState === firstState || defaultState === undefined ? styles.textSelected : null]}>{firstState}</Text>
+                    <Text style={[(defaultState === firstState || defaultState === undefined ? styles.textSelected : null), styles.textFontRegular]}>{firstState}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => handleChange(secondState)} style={[styles.textContainer, defaultState === secondState ? styles.textContainerSelectedRight : null]}>
-                    <Text style={[defaultState === secondState  ? styles.textSelected : null]}>{secondState}</Text>
+                    <Text style={[(defaultState === secondState  ? styles.textSelected : null), styles.textFontRegular]}>{secondState}</Text>
                 </TouchableOpacity>
             </View>
         </>
@@ -48,7 +48,10 @@ const styles = StyleSheet.create({
     },
     textSelected:{
         color: variables.blanc
-    }
+    },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
 });
 
 export default StatePicker;

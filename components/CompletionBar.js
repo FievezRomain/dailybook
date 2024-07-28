@@ -28,7 +28,7 @@ const CompletionBar = ({ percentage=0 }) => {
           }
         ]}
       />
-      <Text style={[styles.percentageText, { color: isCompleted ? variables.blanc : variables.rouan }]}>
+      <Text style={[styles.percentageText, styles.textFontRegular, { color: isCompleted ? variables.blanc : variables.rouan }]}>
         {percentage}%
       </Text>
     </View>
@@ -61,6 +61,9 @@ const styles = StyleSheet.create({
     zIndex: 1, // Assure que le texte est au-dessus de la barre de progression
     marginLeft: 5,
     fontSize: 13,
+  },
+  textFontRegular:{
+    fontFamily: variables.fontRegular
   },
 });
 

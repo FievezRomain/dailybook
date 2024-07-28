@@ -93,22 +93,22 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={{color: Variables.aubere}}>Annuler</Text>
+                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             { actionType === "modify" && 
-                                <Text style={{fontWeight: "bold"}}>Modifier un contact</Text>
+                                <Text style={styles.textFontBold}>Modifier un contact</Text>
                             }
                             { actionType === "create" && 
-                                <Text style={{fontWeight: "bold"}}>Créer un contact</Text>
+                                <Text style={styles.textFontBold}>Créer un contact</Text>
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 { loading ? 
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={{color: Variables.alezan}}>Modifier</Text>
+                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={{color: Variables.alezan}}>Créer</Text>
+                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -118,10 +118,10 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                 <View style={styles.formContainer}>
 
                                     <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Nom : <Text style={{color: "red"}}>*</Text></Text>
-                                        {errors.title && <Text style={styles.errorInput}>Nom obligatoire</Text>}
+                                        <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{color: "red"}}>*</Text></Text>
+                                        {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Nom obligatoire</Text>}
                                         <TextInput
-                                            style={styles.input}
+                                            style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : John Doe"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("nom", text)}
@@ -131,9 +131,9 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                     </View>
 
                                     <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Profession : </Text>
+                                        <Text style={[styles.textInput, styles.textFontRegular]}>Profession : </Text>
                                         <TextInput
-                                            style={styles.input}
+                                            style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Vétérinaire"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("profession", text)}
@@ -142,9 +142,9 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                     </View>
 
                                     <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Numéro de téléphone : </Text>
+                                        <Text style={[styles.textInput, styles.textFontRegular]}>Numéro de téléphone : </Text>
                                         <TextInput
-                                            style={styles.input}
+                                            style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 0606060606"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("telephone", text)}
@@ -153,9 +153,9 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                     </View>
 
                                     <View style={styles.inputContainer}>
-                                        <Text style={styles.textInput}>Email : </Text>
+                                        <Text style={[styles.textInput, styles.textFontRegular]}>Email : </Text>
                                         <TextInput
-                                            style={styles.input}
+                                            style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : test@gmail.com"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("email", text)}
@@ -258,6 +258,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center"
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 })
 
 export default ModalContact;

@@ -47,7 +47,7 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
                     {list.map((item, index) => {
                         return(
                             <TouchableOpacity key={item.id} onPress={() => { handleSelected(item) }} style={[styles.item, checkState(item) ? styles.selected : null]}>
-                                <Text style={styles.title}>{item.title}</Text>
+                                <Text style={[styles.title, styles.textFontRegular]}>{item.title}</Text>
                             </TouchableOpacity>
                         );
                     })}
@@ -66,7 +66,7 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
                         setModalVisible(!modalVisible)
                     }}
                     >
-                    OK
+                    <Text style={styles.textFontMedium}>OK</Text>
                     </Button>
                 </View>
             </View>
@@ -119,6 +119,15 @@ const styles = StyleSheet.create({
   title:{
     color: "white"
   },
+  textFontRegular:{
+      fontFamily: Variables.fontRegular
+  },
+  textFontMedium:{
+      fontFamily: Variables.fontMedium
+  },
+  textFontBold:{
+      fontFamily: Variables.fontBold
+  }
 });
 
 export default ModalDropdwn;

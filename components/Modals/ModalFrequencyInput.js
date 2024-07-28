@@ -67,13 +67,13 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                 <View style={styles.headerCard}>
                     <View style={[styles.headerButtonContainer, (frequencyType == "days" || frequencyType == "") && styles.typeSelected]}>
                         <TouchableOpacity onPress={() => handleTypeChange('days')}>
-                            <Text style={[styles.textTypeButton, (frequencyType == "days" || frequencyType == "") && styles.textSelectedTypeButton]}>Plusieurs fois dans la période</Text>
+                            <Text style={[styles.textTypeButton, styles.textFontRegular, (frequencyType == "days" || frequencyType == "") && styles.textSelectedTypeButton]}>Plusieurs fois dans la période</Text>
                         </TouchableOpacity>
                     </View>
                     
                     <View style={[styles.headerButtonContainer, frequencyType == "times" && styles.typeSelected]}>
                         <TouchableOpacity onPress={() => handleTypeChange('times')}>
-                            <Text style={[styles.textTypeButton, frequencyType == "times" && styles.textSelectedTypeButton]}>Plusieurs fois par jour</Text>
+                            <Text style={[styles.textTypeButton, styles.textFontRegular, frequencyType == "times" && styles.textSelectedTypeButton]}>Plusieurs fois par jour</Text>
                         </TouchableOpacity>
                     </View>
                     
@@ -86,15 +86,15 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                     <View style={styles.informationInputContainer}>
                         {(frequencyType == "days" || frequencyType == "") && 
                             <>
-                                <Text>Tous les </Text>
+                                <Text style={styles.textFontRegular}>Tous les </Text>
                                 <TextInput
                                     keyboardType="numeric"
                                     placeholder="X"
-                                    style={styles.input}
+                                    style={[styles.input, styles.textFontRegular]}
                                     value={inputValue}
                                     onChangeText={(text) => setInputValue(text)}
                                 />
-                                <Text> jours</Text>
+                                <Text style={styles.textFontRegular}> jours</Text>
                             </>
                         }
 
@@ -103,11 +103,11 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                                 <TextInput
                                     keyboardType="numeric"
                                     placeholder="X"
-                                    style={styles.input}
+                                    style={[styles.input, styles.textFontRegular]}
                                     value={inputValue}
                                     onChangeText={(text) => setInputValue(text)}
                                 />
-                                <Text> fois par jour</Text>
+                                <Text style={styles.textFontRegular}> fois par jour</Text>
                             </>
                         }
                         
@@ -121,7 +121,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                             type={"primary"}
                             onPress={handleFrequencyChange}
                         >
-                        OK
+                        <Text style={styles.textFontMedium}>OK</Text>
                         </Button>
                     </View>
                 </View>
@@ -215,6 +215,15 @@ const styles = StyleSheet.create({
     keyboardAvoidingContainer: {
         flex: 1,
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 });
 
 export default ModalFrequencyInput;

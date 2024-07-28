@@ -21,12 +21,12 @@ const InputTextInLine = ({ inputTextLabel, value, isEditable=true, isPassword=fa
     return (
         <TouchableOpacity style={[styles.touchableOpacity, { backgroundColor: variables.blanc }]} onPress={handleClicModifyValue} >
           <View style={styles.row}>
-            <Text style={[styles.textLabel, styles.textFont]}>{inputTextLabel}</Text>
+            <Text style={[styles.textFontBold]}>{inputTextLabel}</Text>
             <View style={styles.valueContainer}>
                 <TextInput
                     placeholder={value}
                     defaultValue={isPassword ? "                  " : null}
-                    style={[styles.valueText, styles.textFont]} 
+                    style={[styles.valueText, styles.textFontRegular]} 
                     placeholderTextColor={"gray"}
                     editable={true}
                     secureTextEntry={isPassword && !isPasswordVisible}
@@ -79,9 +79,15 @@ const InputTextInLine = ({ inputTextLabel, value, isEditable=true, isPassword=fa
       icon: {
         width: 20, // Fixed width for the icon
       },
-      textFont: {
-        fontFamily: "Quicksand"
+      textFontRegular:{
+          fontFamily: variables.fontRegular
       },
+      textFontMedium:{
+          fontFamily: variables.fontMedium
+      },
+      textFontBold:{
+          fontFamily: variables.fontBold
+      }
     })
 
 export default InputTextInLine;

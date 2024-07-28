@@ -267,11 +267,11 @@ const CalendarScreen = ({ navigation }) => {
       <Image style={styles.image} />
       <TopTab message1={messages.message1} message2={messages.message2} />
       <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: variables.blanc, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
-        <View style={{flexDirection: "row"}}>
+        <View style={{flexDirection: "row", alignItems: "center"}}>
           <AntDesign name="search1" size={16} color={variables.bai}/>
           <TextInput
             placeholder="Recherche"
-            style={{marginLeft: 5, width: "80%"}}
+            style={[{marginLeft: 5, width: "80%"}, styles.textFontRegular]}
             value={searchQuery}
             onChangeText={handleSearch}
           />
@@ -285,7 +285,7 @@ const CalendarScreen = ({ navigation }) => {
       </View>
       <View style={styles.calendarContainer}>
         <Calendar
-          style={styles.calendar}
+          style={[styles.calendar, styles.textFontRegular]}
           firstDay={1}
           theme={{
             arrowColor: variables.isabelle,
@@ -305,9 +305,9 @@ const CalendarScreen = ({ navigation }) => {
       </View>
       <View style={styles.selectedDateContainer}>
         {searchQuery != "" ?
-          <Text style={styles.selectedDateText}>Résultats pour la recherche "{searchQuery}"</Text>
+          <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats pour la recherche "{searchQuery}"</Text>
         : 
-          <Text style={styles.selectedDateText}>{convertDateToText(selectedDate)}</Text>
+          <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
         }
       </View>
           
@@ -322,7 +322,7 @@ const CalendarScreen = ({ navigation }) => {
               withDate={searchQuery !== ""}
             />
           )}
-          ListEmptyComponent={<Text style={styles.noEventsText}>Vous n'avez aucun événement pour cette date</Text>}
+          ListEmptyComponent={<Text style={[styles.noEventsText, styles.textFontRegular]}>Vous n'avez aucun événement pour cette date</Text>}
           contentContainerStyle={styles.listEventContainer}
       />
     </>
@@ -404,6 +404,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: Variables.default
   },
+  textFontRegular: {
+    fontFamily: variables.fontRegular
+  },
+  textFontMedium: {
+    fontFamily: variables.fontMedium,
+  }
 });
 
 export default CalendarScreen;

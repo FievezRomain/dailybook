@@ -32,7 +32,6 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
 
             </RNDateTimePicker>
         ) */
-        console.log(notification);
         return(
                 <View style={styles.containerBadgeNotif}>
                     <View key={notification.key} style={styles.containerNotifIcon}>
@@ -103,7 +102,7 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                             <AntDesign name="close" size={22} color={Variables.alezan} style={styles.closeButton}/>
                         </TouchableOpacity>
                         <View style={styles.titleContainer}>
-                            <Text style={styles.title}>Notifications</Text>
+                            <Text style={[styles.title, styles.textFontBold]}>Notifications</Text>
                         </View>
                         <ScrollView showsVerticalScrollIndicator={true} indicatorStyle="white" contentContainerStyle={styles.contentContainer}>
                             <View style={styles.notificationsContainer}>
@@ -119,7 +118,7 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                                     handleAddingNotification(handleAddingNotification)
                                 }}
                             >
-                                Ajouter
+                                <Text style={styles.textFontMedium}>Ajouter</Text>
                             </Button>
                         </View>
                         <View style={styles.buttonContainer}>
@@ -130,7 +129,7 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                                     setModalVisible(!modalVisible)
                                 }}
                             >
-                                Valider
+                                <Text style={styles.textFontMedium}>Valider</Text>
                             </Button>
                         </View>
                         <View style={styles.buttonContainer}>
@@ -142,7 +141,7 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                                     handleReinitialiserNotifs()
                                 }}
                             >
-                                Réinitialiser
+                                <Text style={styles.textFontMedium}>Réinitialiser</Text>
                             </Button>
                         </View>
                     </View>
@@ -176,7 +175,6 @@ const styles = StyleSheet.create({
         width: "100%"
     },
     title:{
-        fontWeight: "bold",
         fontSize: 18,
         paddingBottom: 5,
         color: Variables.alezan,
@@ -204,6 +202,15 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-around"
+    },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
     }
 });
 

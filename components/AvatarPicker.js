@@ -66,6 +66,15 @@ const AvatarPicker = ({ setImage, setValue, backgroundColor=Variables.rouan }) =
       backgroundColor: backgroundColor,
       borderRadius: 5,
       padding: 10,
+    },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
     }
   });
 
@@ -83,7 +92,7 @@ const AvatarPicker = ({ setImage, setValue, backgroundColor=Variables.rouan }) =
           onPress={() => setModalVisibleSubMenu(true)} 
         >
           <View style={styles.buttonContainer}>
-            <Text>Sélectionner une image</Text>
+            <Text style={styles.textFontRegular}>Sélectionner une image</Text>
           </View>
         </TouchableOpacity>
     </View>

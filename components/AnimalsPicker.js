@@ -96,12 +96,12 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                             >
                                 <View style={[styles.containerAvatarWithoutImage, checkSelected(animal) ? {backgroundColor: variables.blanc} : {backgroundColor: "transparent"}]}>
                                     <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: variables.alezan} : {backgroundColor: variables.isabelle}]}>
-                                        <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                        <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                     </View>
                                 </View>
                             </LinearGradient>
                             }
-                            <Text style={checkSelected(animal) ? styles.selectedText : styles.defaultText}>{animal.nom}</Text>
+                            <Text style={[(checkSelected(animal) ? styles.selectedText : styles.defaultText), styles.textFontRegular]}>{animal.nom}</Text>
                         </View>
                     </TouchableOpacity>
                 );
@@ -179,6 +179,15 @@ const styles = StyleSheet.create({
         alignItems: "center", 
         justifyContent: "center"
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 });
 
 export default AnimalsPicker;

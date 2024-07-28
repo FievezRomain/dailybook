@@ -24,12 +24,12 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                     onPress={() => setModalVisible(false)}
                 ></TouchableOpacity>
                 <View style={styles.card}>
-                    <Text>Gérer l'événement</Text>
+                    <Text style={styles.textFontRegular}>Gérer l'événement</Text>
                     <View style={styles.actionButtonContainer}>
                         <TouchableOpacity style={[styles.actionButton, styles.disabledButton]}>
                             <View style={styles.informationsActionButton}>
                                 <Feather name="share-2" size={20} style={styles.disabledText}/>
-                                <Text style={[styles.textActionButton, styles.disabledText]}>
+                                <Text style={[styles.textActionButton, styles.disabledText, styles.textFontMedium]}>
                                     Partager (bientôt disponible)
                                 </Text>
                             </View>
@@ -38,7 +38,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
-                                <Text style={styles.textActionButton}>
+                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Modifier
                                 </Text>
                             </View>
@@ -47,7 +47,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
                             <View style={styles.informationsActionButton}>
                                 <AntDesign name="delete" size={20}/>
-                                <Text style={styles.textActionButton}>
+                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Supprimer
                                 </Text>
                             </View>
@@ -136,6 +136,15 @@ const styles = StyleSheet.create({
     disabledText:{
         color: Variables.rouan
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 });
 
 export default ModalSubMenuEventActions;

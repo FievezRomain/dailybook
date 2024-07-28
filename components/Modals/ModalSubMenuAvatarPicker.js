@@ -22,12 +22,12 @@ const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handle
                     onPress={() => setModalVisible(false)}
                 ></TouchableOpacity>
                 <View style={styles.card}>
-                    <Text>Mode de sélection d'image</Text>
+                    <Text style={styles.textFontRegular}>Mode de sélection d'image</Text>
                     <View style={styles.actionButtonContainer}>
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleLibraryPick)}>
                             <View style={styles.informationsActionButton}>
                                 <Entypo name="folder-images" size={20}/>
-                                <Text style={styles.textActionButton}>
+                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Choisir une photo de la librairie
                                 </Text>
                             </View>
@@ -36,7 +36,7 @@ const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handle
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleCameraPick)}>
                             <View style={styles.informationsActionButton}>
                                 <Entypo name="camera" size={20}/>
-                                <Text style={styles.textActionButton}>
+                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Prendre une photo
                                 </Text>
                             </View>
@@ -117,6 +117,15 @@ const styles = StyleSheet.create({
     title:{
         color: "white"
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 });
 
 export default ModalSubMenuAvatarPickerActions;

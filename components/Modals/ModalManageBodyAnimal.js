@@ -37,18 +37,18 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undef
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={{color: Variables.aubere}}>Annuler</Text>
+                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                            <Text style={{fontWeight: "bold"}}>Historique du physique</Text>
+                            <Text style={styles.textFontBold}>Historique du physique</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                <Text style={{color: Variables.alezan}}>Enregistrer</Text>
+                                <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
                         <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="padding">
                             <View style={styles.formContainer}>
                                 <View style={{display: "flex", flexDirection: "column"}}>
-                                    <Text>À venir...</Text>
+                                    <Text style={styles.textFontRegular}>À venir...</Text>
                                 </View>
                             </View>
                         </KeyboardAvoidingView>
@@ -131,6 +131,15 @@ const styles = StyleSheet.create({
         color: "black",
         alignSelf: "baseline"
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 })
 
 export default ModalManageBodyAnimal;

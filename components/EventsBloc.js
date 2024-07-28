@@ -197,7 +197,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
             <View style={styles.eventTodayContainer}>
                 <View style={styles.headerContainer}>
                     <FontAwesome name='check-circle' size={20} color={variables.alezan} style={styles.icon} />
-                    <Text style={styles.title}>Tâches</Text>
+                    <Text style={[styles.title, styles.textFontBold]}>Tâches</Text>
                 </View>
                 {eventsExceeded.length !== 0 || eventsToday.length !== 0 ?
                     <>
@@ -227,7 +227,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                                         />
                                     </View>
                                     <View style={styles.overdueIndicatorContainer}>
-                                        <Text style={styles.overdueIndicator}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
+                                        <Text style={[styles.overdueIndicator, styles.textFontRegular]}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
                                     </View>
                                 </TouchableOpacity>
                                 
@@ -252,7 +252,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                     </>
                 :
                     <View>
-                        <Text style={{color: "gray"}}>Vous n'avez aucun événement aujourd'hui</Text>
+                        <Text style={[{color: "gray"}, styles.textFontRegular]}>Vous n'avez aucun événement aujourd'hui</Text>
                     </View>
                 }
                 
@@ -261,7 +261,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
             <View style={styles.eventUpcomingContainer}>
                 <View style={styles.headerContainer}>
                     <FontAwesome name='calendar' size={20} color={variables.alezan} style={styles.icon}/>
-                    <Text style={styles.title}>Événements à venir</Text>
+                    <Text style={[styles.title, styles.textFontBold]}>Événements à venir</Text>
                 </View>
                 <View>
                     {eventsUpcoming.length !== 0 ?
@@ -281,7 +281,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                         ))
                     :    
                         <View>
-                            <Text style={{color: "gray"}}>Vous n'avez aucun événement à venir</Text>
+                            <Text style={[{color: "gray"}, styles.textFontRegular]}>Vous n'avez aucun événement à venir</Text>
                         </View>
                     }
                     
@@ -320,7 +320,6 @@ const styles = StyleSheet.create({
     },
     title:{
         color: variables.alezan,
-        fontWeight: "bold",
         fontSize: 15
     },
     icon:{
@@ -389,6 +388,15 @@ const styles = StyleSheet.create({
     inputStateContainerSelected:{
         backgroundColor: variables.alezan,
     },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: variables.fontBold
+    }
 
 });
 

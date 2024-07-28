@@ -54,12 +54,12 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
             />
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
-                    <Text style={{color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Informations</Text>
+                    <Text style={[{color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text>
                     {animal.image !== null ?
                         <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: variables.alezan}} source={{uri: `${getImagePath()}${animal.image}`}} />
                     :
                         <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: variables.bai, borderColor: variables.alezan, justifyContent: "center", alignItems: "center"}}>
-                            <Text style={{color: variables.blanc, fontSize: 50, fontWeight: "bold"}}>{animal.nom[0]}</Text>
+                            <Text style={[{color: variables.blanc, fontSize: 50}, styles.textFontBold]}>{animal.nom[0]}</Text>
                         </View>
                     }
                 </View>
@@ -73,9 +73,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                     <View style={styles.formContainer}>
                       {isValidString(animal.nom) && 
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Nom de l'animal :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Nom de l'animal :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Vasco"
                               placeholderTextColor={variables.texte}
                               defaultValue={animal.nom}
@@ -85,9 +85,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {isValidString(animal.espece) && 
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Espèce :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Espèce :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Cheval"
                               placeholderTextColor={variables.texte}
                               defaultValue={animal.espece}
@@ -97,9 +97,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {isValidString(animal.datenaissance) && 
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Date de naissance :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Date de naissance :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 01/01/1900"
                               keyboardType="numeric"
                               maxLength={10}
@@ -111,9 +111,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {isValidString(animal.race) &&
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Race :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Race :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Fjord"
                               placeholderTextColor={variables.texte}
                               defaultValue={animal.race}
@@ -123,9 +123,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {animal.taille != null && animal.taille != undefined &&
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Taille (cm) :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Taille (cm) :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 140"
                               keyboardType="numeric"
                               placeholderTextColor={variables.texte}
@@ -136,9 +136,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {animal.poids != null && animal.poids != undefined &&
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Poids (kg) :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Poids (kg) :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 400"
                               keyboardType="numeric"
                               placeholderTextColor={variables.texte}
@@ -149,9 +149,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {isValidString(animal.sexe) &&
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Sexe :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Sexe :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Mâle"
                               placeholderTextColor={variables.texte}
                               defaultValue={animal.sexe}
@@ -161,9 +161,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {isValidString(animal.food) &&
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Nom alimentation :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Nom alimentation :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Granulés X"
                               placeholderTextColor={variables.texte}
                               defaultValue={animal.food}
@@ -173,9 +173,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {animal.quantity != null && animal.quantity != undefined &&
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Quantité (gramme / cl) :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Quantité (gramme / cl) :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 200"
                               placeholderTextColor={variables.texte}
                               defaultValue={animal.quantity != null ? String(animal.quantity) : undefined}
@@ -185,9 +185,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {isValidString(animal.couleur) &&
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Couleur :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Couleur :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Isabelle"
                               placeholderTextColor={variables.texte}
                               defaultValue={animal.couleur}
@@ -197,9 +197,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {isValidString(animal.nomPere) &&
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Nom du père :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Nom du père :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Esgard"
                               placeholderTextColor={variables.texte}
                               defaultValue={animal.nomPere}
@@ -209,9 +209,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                       }
                       {isValidString(animal.nomMere) &&
                         <View style={styles.inputContainer}>
-                          <Text style={styles.textInput}>Nom de la mère :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Nom de la mère :</Text>
                           <TextInput
-                              style={styles.input}
+                              style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Sherry"
                               placeholderTextColor={variables.texte}
                               defaultValue={animal.nomMere}
@@ -342,6 +342,15 @@ const styles = StyleSheet.create({
         alignSelf: "flex-start",
         borderRadius: 5,
       },
+      textFontRegular:{
+          fontFamily: variables.fontRegular
+      },
+      textFontMedium:{
+          fontFamily: variables.fontMedium
+      },
+      textFontBold:{
+          fontFamily: variables.fontBold
+      }
 });
 
 export default InformationsAnimals;

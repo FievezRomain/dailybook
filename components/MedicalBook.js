@@ -76,7 +76,7 @@ const MedicalBook = ({ animal }) => {
     return(
         <>
             <View style={{width: "95%", alignSelf: "center"}}>
-                <Text style={{textAlign: "center", color: variables.alezan, fontWeight: "bold", fontSize: 16, paddingVertical: 15}}>Dossier médical</Text>
+                <Text style={[{textAlign: "center", color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
                 <View style={{marginBottom: 10}}>
                     <StatePicker
                         firstState={"Rendez-vous"}
@@ -89,7 +89,7 @@ const MedicalBook = ({ animal }) => {
                 <ScrollView contentContainerStyle={{minHeight: "80%"}}>
                     {typeEvent === "Rendez-vous" ? 
                         eventsRdv.length === 0 ?
-                            <Text style={{color: "gray", textAlign: "center"}}>Aucun rendez-vous pour cet animal</Text>
+                            <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Aucun rendez-vous pour cet animal</Text>
                         :
                         eventsRdv.map((eventItem, index) => (
                             <View style={styles.eventContainer} key={eventItem.id}>
@@ -104,7 +104,7 @@ const MedicalBook = ({ animal }) => {
                         ))
                     :
                         eventsRdv.length === 0 ?
-                            <Text style={{color: "gray", textAlign: "center"}}>Aucun soin pour cet animal</Text>
+                            <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Aucun soin pour cet animal</Text>
                         :
                         eventsSoins.map((eventItem, index) => (
                             <View style={styles.eventContainer} key={eventItem.id}>
@@ -130,6 +130,15 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         width: "100%"
     },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: variables.fontBold
+    }
 });
 
 export default MedicalBook;

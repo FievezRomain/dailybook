@@ -116,6 +116,15 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             marginRight: 10, 
             borderRightWidth: 0.3, 
             borderColor: variables.alezan
+        },
+        textFontRegular:{
+            fontFamily: variables.fontRegular
+        },
+        textFontMedium:{
+            fontFamily: variables.fontMedium
+        },
+        textFontBold:{
+            fontFamily: variables.fontBold
         }
     });
 
@@ -178,7 +187,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.balade, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <Entypo name="compass" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Balade</Text>
+                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Balade</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -199,9 +208,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         }
                         { withDate === true &&
                             <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
+                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
+                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
                         <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
@@ -220,7 +229,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.rdv, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <FontAwesome name="stethoscope" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Rendez-vous médical</Text>
+                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Rendez-vous médical</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -241,9 +250,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         }
                         { withDate === true &&
                             <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
+                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
+                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
                         <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
@@ -262,7 +271,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.soins, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                             <FontAwesome6 name="hand-holding-medical" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Soins</Text>
+                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Soins</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -283,9 +292,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         }
                         { withDate === true &&
                             <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
+                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
+                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
                         <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
@@ -304,7 +313,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.entrainement, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <Entypo name="traffic-cone" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Entrainement</Text>
+                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Entrainement</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -325,9 +334,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         }
                         { withDate === true &&
                             <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
+                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
+                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
                         <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
@@ -347,7 +356,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.autre, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <FontAwesome6 name="check-circle" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Autre</Text>
+                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Autre</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -368,9 +377,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         }
                         { withDate === true &&
                             <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
+                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
+                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
                         <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
@@ -390,7 +399,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.concours, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <FontAwesome name="trophy" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Concours</Text>
+                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Concours</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -411,9 +420,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         }
                         { withDate === true &&
                             <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
+                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
+                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
                         <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
@@ -433,7 +442,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.depense, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <FontAwesome6 name="money-bill-wave" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={{color: variables.blanc, fontWeight: "bold", fontSize: 14}}>Dépense</Text>
+                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Dépense</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -454,9 +463,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         }
                         { withDate === true &&
                             <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={{fontSize: 11}}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={{fontSize: 9}}>{getYearText(eventInfos.dateevent)}</Text>
+                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
+                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
+                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
                             </View>
                         }
                         <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>

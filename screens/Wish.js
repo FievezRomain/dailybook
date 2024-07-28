@@ -114,7 +114,7 @@ const WishScreen = ({ navigation }) => {
                 />
                 <View style={styles.container}>
                     {wishs.length === 0 ?
-                        <Text style={{color: "gray", textAlign: "center", marginTop: 20}}>Aucun souhait enregistré</Text>
+                        <Text style={[{color: "gray", textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucun souhait enregistré</Text>
                     :    
                         <FlatList
                             data={wishs}
@@ -132,11 +132,11 @@ const WishScreen = ({ navigation }) => {
                                     {item.prix !== null && item.prix !== undefined &&
                                         <View style={styles.labelContainer}>
                                             <Entypo name="price-tag" size={16} color={Variables.alezan} /> 
-                                            <Text style={styles.price}>{item.prix} €</Text> 
+                                            <Text style={[styles.price, styles.textFontRegular]}>{item.prix} €</Text> 
                                         </View>
                                     }
-                                    <Text style={styles.title}>{item.nom}</Text>
-                                    <Text>{item.destinataire}</Text>
+                                    <Text style={[styles.title, styles.textFontBold]}>{item.nom}</Text>
+                                    <Text style={styles.textFontRegular}>{item.destinataire}</Text>
                                 </TouchableOpacity>
                             )}
                             numColumns={2}
@@ -203,6 +203,12 @@ const styles = StyleSheet.create({
         color: Variables.alezan,
         fontSize: 12
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 });
 
 module.exports = WishScreen;

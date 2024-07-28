@@ -292,22 +292,22 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={{color: Variables.aubere}}>Annuler</Text>
+                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             { actionType === "modify" && 
-                                <Text style={{fontWeight: "bold"}}>Modifier un objectif</Text>
+                                <Text style={[styles.textFontBold]}>Modifier un objectif</Text>
                             }
                             { actionType === "create" && 
-                                <Text style={{fontWeight: "bold"}}>Créer un objectif</Text>
+                                <Text style={[styles.textFontBold]}>Créer un objectif</Text>
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 { loading ? 
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={{color: Variables.alezan}}>Modifier</Text>
+                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={{color: Variables.alezan}}>Créer</Text>
+                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -316,7 +316,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             <View style={styles.formContainer}>
                             
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Animal : <Text style={{color: "red"}}>*</Text></Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Animal : <Text style={{color: "red"}}>*</Text></Text>
                                     <TouchableOpacity 
                                     style={styles.textInput}
                                     disabled={animaux.length > 0 ? false : true}
@@ -324,14 +324,14 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                     >
                                     <View style={styles.containerAnimaux}>
                                         {animaux.length === 0 &&
-                                        <View><Text style={[styles.badgeAnimal, styles.errorInput]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
+                                        <View><Text style={[styles.badgeAnimal, styles.errorInput, styles.textFontRegular]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
                                         }
                                         {selected.length == 0 && animaux.length > 0 &&
-                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>Sélectionner un ou plusieurs animaux</Text></View>
+                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Sélectionner un ou plusieurs animaux</Text></View>
                                         }
                                         {selected.map((animal, index) => {
                                         return (
-                                            <View key={animal.id} style={styles.containerBadgeAnimal}><Text style={styles.badgeAnimal}>{animal.nom}</Text></View>
+                                            <View key={animal.id} style={styles.containerBadgeAnimal}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{animal.nom}</Text></View>
                                         );
                                         })}
                                     </View>
@@ -339,10 +339,10 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Titre de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
-                                    {errors.title && <Text style={styles.errorInput}>Titre obligatoire</Text>}
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Titre de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
+                                    {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Titre obligatoire</Text>}
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Rendez-vous vétérinaire"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("title", text)}
@@ -352,25 +352,25 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Temporalité : <Text style={{color: "red"}}>*</Text></Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Temporalité : <Text style={{color: "red"}}>*</Text></Text>
                                     <TouchableOpacity 
                                     style={styles.textInput} 
                                     onPress={()=>{setModalDropdownTemporalityVisible(true)}} 
                                     >
                                     <View style={styles.containerAnimaux}>
                                         {temporalityObjectif == false &&
-                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>Sélectionner une temporalité</Text></View>
+                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Sélectionner une temporalité</Text></View>
                                         }
                                         {
                                         temporalityObjectif != false &&
-                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={styles.badgeAnimal}>{temporalityObjectif.title}</Text></View>
+                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{temporalityObjectif.title}</Text></View>
                                         }
                                     </View>
                                     </TouchableOpacity>
                                 </View>
 
                                 <View style={styles.containerDate}>
-                                    <Text style={styles.textInput}>Date de début : {convertDateToText("datedebut")} <Text style={{color: "red"}}>*</Text></Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Date de début : {convertDateToText("datedebut")} <Text style={{color: "red"}}>*</Text></Text>
                                     <DatePickerModal
                                         onDayChange={onChangeDate}
                                         propertyName={"datedebut"}
@@ -379,7 +379,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 </View>
 
                                 <View style={styles.containerDate}>
-                                    <Text style={styles.textInput}>Date de fin : {convertDateToText("datefin")} </Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefin")} </Text>
                                     <TextInput
                                         value={getValues("datefin")}
                                         style={styles.input}
@@ -388,11 +388,11 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Sous-étapes de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Sous-étapes de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
                                     {inputs.map((value, index) => (
                                         <View style={styles.sousEtapesContainer} key={index}>
                                             <TextInput
-                                                style={styles.inputSousEtape}
+                                                style={[styles.inputSousEtape, styles.textFontRegular]}
                                                 value={value.etape}
                                                 onChangeText={(text) => handleInputChange(text, index)}
                                                 placeholder="Entrez une valeur"
@@ -408,7 +408,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                         size={"s"}
                                         isLong={true}
                                     >
-                                        <Text>Ajouter une sous-étape</Text>
+                                        <Text style={styles.textFontMedium}>Ajouter une sous-étape</Text>
                                     </Button>
                                 </View>
 
@@ -533,7 +533,16 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignSelf: "flex-start",
         width: "100%"
-      },
+    },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 
 });
 

@@ -141,22 +141,22 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={{color: Variables.aubere}}>Annuler</Text>
+                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             { actionType === "modify" && 
-                                <Text style={{fontWeight: "bold"}}>Modifier un souhait</Text>
+                                <Text style={[styles.textFontBold]}>Modifier un souhait</Text>
                             }
                             { actionType === "create" && 
-                                <Text style={{fontWeight: "bold"}}>Créer un souhait</Text>
+                                <Text style={[styles.textFontBold]}>Créer un souhait</Text>
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 { loading ? 
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={{color: Variables.alezan}}>Modifier</Text>
+                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={{color: Variables.alezan}}>Créer</Text>
+                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -164,10 +164,10 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                         <KeyboardAwareScrollView>
                             <View style={styles.formContainer}>
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Nom : <Text style={{color: "red"}}>*</Text></Text>
-                                    {errors.title && <Text style={styles.errorInput}>Nom obligatoire</Text>}
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{color: "red"}}>*</Text></Text>
+                                    {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Nom obligatoire</Text>}
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Selle western"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("nom", text)}
@@ -177,9 +177,9 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>URL : </Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>URL : </Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : https://vascoandco.fr"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("url", text)}
@@ -188,7 +188,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Image :</Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Image :</Text>
                                     <AvatarPicker
                                         setImage={setImage}
                                         setValue={setValue}
@@ -204,9 +204,9 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Prix : </Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Prix : </Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         keyboardType="numeric"
                                         placeholder="Exemple : 20"
                                         placeholderTextColor={Variables.texte}
@@ -216,9 +216,9 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={styles.textInput}>Destinataire : </Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Destinataire : </Text>
                                     <TextInput
-                                        style={styles.input}
+                                        style={[styles.input, styles.textFontRegular]}
                                         placeholder="Par défaut, pour vous"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("destinataire", text)}
@@ -337,6 +337,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 })
 
 export default ModalWish;

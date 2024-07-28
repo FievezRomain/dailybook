@@ -25,7 +25,7 @@ const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
             onPress={() => setModalVisible(!modalVisible)}
           ></TouchableOpacity>
           <View style={styles.card}>
-            <Text style={styles.message}>Êtes-vous sûr de vouloir vous déconnecter ?</Text>
+            <Text style={[styles.message, styles.textFontRegular]}>Êtes-vous sûr de vouloir vous déconnecter ?</Text>
             <View style={styles.buttonContainer}>
                 <Button
                 onPress={() => {
@@ -34,7 +34,7 @@ const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
                 }}
                 size={"m"}
                 >
-                Oui
+                  <Text style={styles.textFontMedium}>Oui</Text>
                 </Button>
                 <Button
                 onPress={() => {
@@ -42,7 +42,7 @@ const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
                 }}
                 size={"m"}
                 >
-                Non
+                  <Text style={styles.textFontMedium}>Non</Text>
                 </Button>
             </View>
           </View>
@@ -79,6 +79,15 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: "black",
     marginBottom: 20,
+  },
+  textFontRegular:{
+      fontFamily: Variables.fontRegular
+  },
+  textFontMedium:{
+      fontFamily: Variables.fontMedium
+  },
+  textFontBold:{
+      fontFamily: Variables.fontBold
   }
 });
 

@@ -37,7 +37,7 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
                     setModalVisible(!modalVisible)
                 }}
                 >
-                OK
+                <Text style={styles.textFontMedium}>OK</Text>
                 </Button>
             </View>
           </View>
@@ -110,6 +110,15 @@ const styles = StyleSheet.create({
     selectedText:{
         color: Variables.bai
     },
+    textFontRegular:{
+        fontFamily: Variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: Variables.fontMedium
+    },
+    textFontBold:{
+        fontFamily: Variables.fontBold
+    }
 });
 
 export default ModalAnimals;

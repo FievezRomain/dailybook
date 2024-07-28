@@ -1,4 +1,4 @@
-import { View, Text, Image, ActivityIndicator } from "react-native";
+import { View, Text, Image, ActivityIndicator, StyleSheet } from "react-native";
 import React from 'react';
 import variables from "../components/styles/Variables";
 import TopTabSecondary from "../components/TopTabSecondary";
@@ -167,7 +167,7 @@ const AccountScreen = ({ navigation }) => {
                         size={"m"}
                         onPress={() => submitModifications()}
                     >
-                        <Text>Enregistrer</Text>
+                        <Text style={styles.textFontMedium}>Enregistrer</Text>
                     </Button>
                 }
             </View>
@@ -176,5 +176,11 @@ const AccountScreen = ({ navigation }) => {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    }
+})
 
 module.exports = AccountScreen;

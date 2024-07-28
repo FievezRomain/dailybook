@@ -39,7 +39,7 @@ const TopTabSecondary = ({message1, message2}) => {
         },
         text:{
             color: Variables.alezan,
-            fontFamily: "Quicksand"
+            fontFamily: "Quicksand-Regular"
         }
     });
 

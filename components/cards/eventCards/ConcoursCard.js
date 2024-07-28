@@ -57,6 +57,15 @@ const ConcoursCard = ({eventInfos, animaux, setSubMenu}) => {
             flexDirection: "column", 
             justifyContent: "space-between", 
             flexWrap: "wrap"
+        },
+        textFontRegular:{
+            fontFamily: variables.fontRegular
+        },
+        textFontMedium:{
+            fontFamily: variables.fontMedium
+        },
+        textFontBold:{
+            fontFamily: variables.fontBold
         }
     });
 
@@ -75,7 +84,7 @@ const ConcoursCard = ({eventInfos, animaux, setSubMenu}) => {
             <View style={styles.headerEventContainer}>
                 <View style={styles.titleAndAnimalsContainer}>
                     <View style={{width: "70%"}}>
-                        <Text style={[styles.eventTitle, styles.text]}>{eventInfos.nom}  </Text>
+                        <Text style={[styles.eventTitle, styles.text, styles.textFontBold]}>{eventInfos.nom}  </Text>
                     </View>
                     <View style={{flexDirection: "row", marginRight: 5}}>
                         {eventInfos !== undefined && animaux.length !== 0 && eventInfos.animaux.map((eventAnimal, index) => {
@@ -86,7 +95,7 @@ const ConcoursCard = ({eventInfos, animaux, setSubMenu}) => {
                                             { animal.image !== null ? 
                                                 <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
                                                 :
-                                                <Text style={styles.avatarText}>{animal.nom[0]}</Text>
+                                                <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                             }
                                         </View>
                                     </View>
@@ -98,37 +107,37 @@ const ConcoursCard = ({eventInfos, animaux, setSubMenu}) => {
             <View style={styles.contentEventContainer}>
                 {isValidString(eventInfos.lieu) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Lieu : </Text>{eventInfos.lieu}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Lieu : </Text>{eventInfos.lieu}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.discipline) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Discipline : </Text>{eventInfos.discipline}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Discipline : </Text>{eventInfos.discipline}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.epreuve) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Épreuve : </Text>{eventInfos.epreuve}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Épreuve : </Text>{eventInfos.epreuve}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.dossart) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Dossart : </Text>{eventInfos.dossart}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Dossart : </Text>{eventInfos.dossart}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.placement) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Placement : </Text>{eventInfos.placement}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Placement : </Text>{eventInfos.placement}</Text>
                     </View>
                 }
                 {eventInfos.note != null && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Note : </Text>{eventInfos.note} / 5</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Note : </Text>{eventInfos.note} / 5</Text>
                     </View>
                 }
                 {isValidString(eventInfos.commentaire) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text]}><Text style={{fontStyle: "italic", color: variables.alezan}}>Commentaire : </Text>{eventInfos.commentaire}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
                     </View>
                 }
             </View>
