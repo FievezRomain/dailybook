@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signOut, updateEmail, updatePassword, updateProfile, getAuth } from 'firebase/auth';
+import { onAuthStateChanged, signOut, updateEmail, updatePassword, updateProfile, getAuth, reload } from 'firebase/auth';
 import React, { useState, createContext, useEffect, useContext } from 'react';
 import AnimalsService from "../services/AnimalsService";
 import EventService from "../services/EventService";
@@ -30,25 +30,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setLoading(true);
       if (user) {
-          try {
-              await authService.initNotifications();
-              // Récupération de l'image de profil
-              /* var result = await authService.getUser(user.email);
-              if(result.filename != undefined){
-                user.photoURL = getImagePath() + result.filename;
-              } */
-              setCurrentUser(user);
-
-              if (user.emailVerified) {
-                await updateCache(user.email);
-                setCacheUpdated(true);
-                setEmailVerified(true);
-              } else{
-                setEmailVerified(false);
-              }
-          } catch (error) {
-              console.error('Erreur :', error);
-          }
+          await reloadUser(user);
       } else {
           setCurrentUser(null);
           setCacheUpdated(false);
@@ -75,10 +57,12 @@ export const AuthenticatedUserProvider =  ({ children }) => {
 
   const logout = async () => {
     try {
+        setLoading(true);
         await signOut(auth);
         setCurrentUser(null);
         setCacheUpdated(false);
         setEmailVerified(false);
+        setLoading(false);
     } catch (error) {
         console.error('Erreur lors de la déconnexion :', error);
     }
@@ -136,8 +120,31 @@ export const AuthenticatedUserProvider =  ({ children }) => {
     }
   };
 
+  const reloadUser = async (user) => {
+    try {
+      const tempUser = user;
+      await reload(tempUser);
+      await authService.initNotifications();
+      // Récupération de l'image de profil
+      /* var result = await authService.getUser(user.email);
+      if(result.filename != undefined){
+        user.photoURL = getImagePath() + result.filename;
+      } */
+      setCurrentUser(tempUser);
+      if (tempUser.emailVerified) {
+        await updateCache(tempUser.email);
+        setCacheUpdated(true);
+        setEmailVerified(true);
+      } else{
+        setEmailVerified(false);
+      }
+    } catch (error) {
+        console.error('Erreur :', error);
+    }
+  };
+
   return (
-    <AuthenticatedUserContext.Provider value={{ currentUser, cacheUpdated, loading, emailVerified, logout, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL }}>
+    <AuthenticatedUserContext.Provider value={{ currentUser, cacheUpdated, loading, emailVerified, logout, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL, reloadUser }}>
       {children}
     </AuthenticatedUserContext.Provider>
   );

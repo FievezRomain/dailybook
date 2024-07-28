@@ -6,15 +6,16 @@ import AnimalsService from "../services/AnimalsService";
 import * as Font from 'expo-font';
 
 const LoadingScreen = ({ navigation })=> {
-    const { cacheUpdated, currentUser, loading, emailVerified } = useAuth();
-    const [fontsLoaded, setFontsLoaded] = useState(false);
+    const { cacheUpdated, currentUser, loading, emailVerified, reloadUser } = useAuth();
     const animalService = new AnimalsService();
 
     useEffect(() => {
 
       const checkAuth = async () => {
         try {
-          if(!loading && fontsLoaded){
+          if( !loading ){
+            // On force la MAJ de l'utilisateur pour recharger les infos comme l'emailVerified
+            //currentUser && !emailVerified ? await reloadUser(currentUser) : null;
             if(currentUser && !emailVerified){
               navigation.navigate("VerifyEmail");
             }else if(currentUser && cacheUpdated){
@@ -34,25 +35,15 @@ const LoadingScreen = ({ navigation })=> {
         }
       };
 
-      // Chargement de la font
-      if( !fontsLoaded ){
-        loadFonts().then(() => setFontsLoaded(true));
-      }
-
       // Vérification de l'auth
       checkAuth();
-      
-    }, [currentUser, cacheUpdated, navigation, loading, fontsLoaded]);   
 
-    const loadFonts = () => {
-      return Font.loadAsync({
-        'Quicksand-Bold': require('../assets/fonts/Quicksand-Bold.ttf'),
-        'Quicksand-Light': require('../assets/fonts/Quicksand-Light.ttf'),
-        'Quicksand-Medium': require('../assets/fonts/Quicksand-Medium.ttf'),
-        'Quicksand-Regular': require('../assets/fonts/Quicksand-Regular.ttf'),
-        'Quicksand-SemiBold': require('../assets/fonts/Quicksand-SemiBold.ttf')
+      const unsubscribe = navigation.addListener("focus", () => {
+        checkAuth();
       });
-    };
+      return unsubscribe;
+      
+    }, [currentUser, cacheUpdated, navigation, loading, emailVerified]);
 
     return (
       <View style={styles.loadingEvent}>
@@ -65,8 +56,8 @@ const LoadingScreen = ({ navigation })=> {
             source={require("../assets/loader.gif")}
           />
         <View style={{position: "absolute", bottom: 0, marginBottom: 50, flexDirection: "row"}}>
-          <Text style={{color: variables.rouan, fontFamily: "Quicksand", fontWeight: "bold", fontSize: 22}}>From</Text>
-          <Text style={{color: variables.isabelle, fontFamily: "Quicksand", fontWeight: "bold", fontSize: 22}}> Vasco & Co</Text>
+          <Text style={[{color: variables.rouan, fontSize: 22}, styles.textFontRegular]}>From</Text>
+          <Text style={[{color: variables.isabelle, fontSize: 22}, styles.textFontRegular]}> Vasco & Co</Text>
         </View>
       </View>
     );
@@ -88,6 +79,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  textFontRegular: {
+    fontFamily: variables.fontRegular
+  }
 })
 
 module.exports = LoadingScreen;
