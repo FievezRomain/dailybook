@@ -45,17 +45,17 @@ const VerifyEmailScreen = ({ navigation })=> {
             <Image style={styles.image} source={wallpaper_login} />
             <View style={{height: "100%", width: "100%", paddingTop: Constants.statusBarHeight + 10,}}>
                 <KeyboardAwareScrollView contentContainerStyle={styles.register}>
-                    <View style={{padding: 10, marginBottom: 30}}>
-                        <Text style={{fontWeight: "500", textAlign: "center", textTransform: "uppercase", fontSize: 16}}>Veuillez valider votre adresse email pour continuer</Text>
+                    <View style={{padding: 40, marginBottom: 30}}>
+                        <Text style={[{fontWeight: "500", textAlign: "center", textTransform: "uppercase", fontSize: 16}, styles.textFontMedium]}>Veuillez valider votre adresse email pour continuer</Text>
                     </View>
-                    <View>
+                    <View style={{width: "70%", alignSelf: "center"}}>
                         <View style={{shadowColor: variables.bai, shadowOpacity: 0.5, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
                             {!canResend ?
                                 <Button
                                     size={"m"}
                                     type={"secondary"}
                                 >
-                                    <Text>Renvoyer l'email de validation dans {timer}</Text>
+                                    <Text style={styles.textFontMedium}>Renvoyer l'email de validation dans {timer}</Text>
                                 </Button>
                             :
                                 <Button
@@ -63,7 +63,7 @@ const VerifyEmailScreen = ({ navigation })=> {
                                     size={"m"}
                                     type={"primary"}
                                 >
-                                    <Text>Envoyer l'email de validation</Text>
+                                    <Text style={styles.textFontMedium}>Envoyer l'email de validation</Text>
                                 </Button>
                             }
                         </View>
@@ -73,7 +73,7 @@ const VerifyEmailScreen = ({ navigation })=> {
                                 size={"m"}
                                 type={"quaternary"}
                             >
-                                <Text>Je me connecte</Text>
+                                <Text style={styles.textFontMedium}>Je me connecte</Text>
                             </Button>
                         </View>
                         
@@ -165,7 +165,16 @@ const styles = StyleSheet.create({
     },
     errorInput: {
         color: "red"
-      }
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontLight:{
+        fontFamily: variables.fontLight
+    },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    }
     
 });
   

@@ -19,9 +19,9 @@ const HomeScreen = ({ navigation })=> {
               <Image source={logo} style={{height: 120, width: 120, marginTop: 100}} />
 
               <View style={{width: "60%", alignItems: "center"}}>
-                <Text style={[styles.textFont, {color: variables.alezan, textAlign: "center", marginBottom: 15, fontSize: 12}]}>MOINS DE CHARGE MENTALE, PLUS DE MOMENTS INESTIMABLES !</Text>
+                <Text style={[styles.textFontMedium, {color: variables.alezan, textAlign: "center", marginBottom: 15, fontSize: 12}]}>MOINS DE CHARGE MENTALE, PLUS DE MOMENTS INESTIMABLES !</Text>
                 <TouchableOpacity onPress={()=>navigation.navigate("Login")} style={[styles.button, {justifyContent: "flex-end"}]}>
-                    <Text style={[styles.text, styles.textFont]}>Vivre l'aventure</Text>
+                    <Text style={[styles.text, styles.textFontMedium]}>Vivre l'aventure</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -51,8 +51,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: variables.fond
       },
-      textFont:{
-        fontFamily: "Quicksand"
+      textFontMedium:{
+        fontFamily: variables.fontMedium
       },
       text: {
         color: variables.alezan,

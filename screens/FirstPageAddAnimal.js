@@ -25,7 +25,7 @@ const FirstPageAddAnimalScreen = ({ navigation })=> {
             />
             <View style={{width: "100%", height: "100%", alignItems: "center"}}>
                 <View style={{width: "80%", marginTop: 200, marginBottom: 50}}>
-                    <Text style={{fontFamily: "Quicksand", fontSize: 20, textAlign: "center"}}>Bienvenue {currentUser.displayName}, moi c'est Vasco et pour commencer l'aventure, je te propose d'ajouter un animal.</Text>
+                    <Text style={[{fontSize: 20, textAlign: "center"}, styles.textFontRegular]}>Bienvenue {currentUser.displayName}, moi c'est Vasco et pour commencer l'aventure, je te propose d'ajouter un animal.</Text>
                 </View>
                 <View style={{width: "60%"}}>
                     <Button
@@ -33,7 +33,7 @@ const FirstPageAddAnimalScreen = ({ navigation })=> {
                         type={"primary"}
                         onPress={() => setModalAnimalVisible(true)}
                     >
-                        <Text>J'enregistre un animal</Text>
+                        <Text style={styles.textFontMedium}>J'enregistre un animal</Text>
                     </Button>
                 </View>
                 
@@ -52,6 +52,12 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         backgroundColor: variables.pinterest,
     },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    }
 });
 
 module.exports = FirstPageAddAnimalScreen;

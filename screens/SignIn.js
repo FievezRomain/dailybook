@@ -8,18 +8,23 @@ import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/aut
 import { getFirebaseAuth } from "../firebase";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { useState } from "react";
+import { MaterialIcons } from '@expo/vector-icons';
 import Toast from "react-native-toast-message";
 
 const SignInScreen = ({ navigation })=> {
     const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
     const auth = getFirebaseAuth();
+    const { currentUser, reloadUser } = useAuth();
     const [loading, setLoading] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     const submitLogin = async(data) =>{
         try {
             setLoading(true);
 
             await signInWithEmailAndPassword(auth, data.email, data.password);
+
+            currentUser ? await reloadUser(currentUser) : null;
     
             setLoading(false);
             navigation.navigate("Loading");
@@ -74,16 +79,20 @@ const SignInScreen = ({ navigation })=> {
         }
     };
 
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(!isPasswordVisible);
+    };
+
     return (
         <>
         <Image style={styles.image} source={wallpaper_login} />
         <KeyboardAwareScrollView contentContainerStyle={styles.login}>
-            <Text style={styles.title}>Connexion</Text>
+            <Text style={[styles.title, styles.textFontRegular]}>Connexion</Text>
             <View style={styles.form}>
-                {errors.email && <Text style={styles.errorInput}>Identifiant obligatoire</Text>}
-                <Text style={styles.textInput}>Identifiant :</Text>
+                {errors.email && <Text style={[styles.errorInput, styles.textFontRegular]}>Identifiant obligatoire</Text>}
+                <Text style={[styles.textInput, styles.textFontRegular]}>Identifiant :</Text>
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, styles.textFontRegular]}
                     placeholder="email"
                     placeholderTextColor={variables.texte}
                     onChangeText={(text) => setValue("email", text)}
@@ -95,17 +104,23 @@ const SignInScreen = ({ navigation })=> {
                         },
                     })}
                 />
-                {errors.password && <Text style={styles.errorInput}>Mot de passe obligatoire</Text>}
-                <Text style={styles.textInput}>Mot de passe :</Text>
-                <TextInput
-                    style={styles.input}
-                    placeholder="Mot de passe"
-                    placeholderTextColor={variables.texte}
-                    secureTextEntry={true}
-                    onChangeText={(text) => setValue("password", text)}
-                    defaultValue={getValues("password")}
-                    {...register("password", { required: true })}
-                />
+                {errors.password && <Text style={[styles.errorInput, styles.textFontRegular]}>Mot de passe obligatoire</Text>}
+                <Text style={[styles.textInput, styles.textFontRegular]}>Mot de passe :</Text>
+                <View style={[{flexDirection: "row", justifyContent: "space-between", paddingRight: 10}, styles.input]}>
+                    <TextInput
+                        style={[styles.textFontRegular, {width: "90%"}]}
+                        placeholder="Mot de passe"
+                        placeholderTextColor={variables.texte}
+                        secureTextEntry={!isPasswordVisible}
+                        onChangeText={(text) => setValue("password", text)}
+                        defaultValue={getValues("password")}
+                        {...register("password", { required: true })}
+                    />
+                    <TouchableOpacity onPress={togglePasswordVisibility} style={{alignSelf: "center"}}>
+                        <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={22} />
+                    </TouchableOpacity>
+                </View>
+                
                 <View style={styles.loginButton}>
                     {!loading ?
                         <Button
@@ -113,7 +128,7 @@ const SignInScreen = ({ navigation })=> {
                             type="quaternary"
                             size={"l"}
                         >
-                            <Text style={styles.textButton}>Je me connecte</Text>
+                            <Text style={[styles.textButton, styles.textFontMedium]}>Je me connecte</Text>
                         </Button>
                     :
                         <Button
@@ -129,7 +144,7 @@ const SignInScreen = ({ navigation })=> {
                     <TouchableOpacity
                         onPress={() => handlePasswordReset()}
                     >
-                        <Text style={styles.clickableText}>Mot de passe oublié ?</Text>
+                        <Text style={[styles.clickableText, styles.textFontMedium]}>Mot de passe oublié ?</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -139,7 +154,7 @@ const SignInScreen = ({ navigation })=> {
                         type="primary"
                         size={"m"}
                     >
-                        <Text style={styles.textButton}>Pas de compte ? S'inscrire</Text>
+                        <Text style={[styles.textButton, styles.textFontMedium]}>Pas de compte ? S'inscrire</Text>
                     </Button>
                 </View>
             </View>
@@ -242,7 +257,16 @@ const styles = StyleSheet.create({
     },
     errorInput: {
         color: "red"
-      }
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontLight:{
+        fontFamily: variables.fontLight
+    },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    }
     
 });
 

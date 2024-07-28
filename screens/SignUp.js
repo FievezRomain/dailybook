@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator } from "react-native";
+import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import wallpaper_login from "../assets/wallpaper_login.png";
 import variables from "../components/styles/Variables";
@@ -9,6 +9,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Button from "../components/Button";
 import Back from "../components/Back";
 import { getFirebaseAuth } from "../firebase";
+import { MaterialIcons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import Constants from 'expo-constants';
 
@@ -19,6 +20,7 @@ const SignUpScreen = ({ navigation })=> {
     const authService = new AuthService;
     const auth = getFirebaseAuth();
     const [loading, setLoading] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     const submitRegister = async(data) =>{
         if(!loading){
@@ -82,6 +84,10 @@ const SignUpScreen = ({ navigation })=> {
         }
     };
 
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(!isPasswordVisible);
+    };
+
     return (
         <>
             <Image style={styles.image} source={wallpaper_login} />
@@ -90,13 +96,13 @@ const SignUpScreen = ({ navigation })=> {
                     isWithBackground={true}   
                 />
                 <KeyboardAwareScrollView contentContainerStyle={styles.register}>
-                    <Text style={styles.title}>S'inscrire</Text>
+                    <Text style={[styles.title, styles.textFontRegular]}>S'inscrire</Text>
                     <View style={styles.form}>
                         
-                        {errors.email && <Text style={styles.errorInput}>Email obligatoire</Text>}
-                        <Text style={styles.textInput}>Email :</Text>
+                        {errors.email && <Text style={[styles.errorInput, styles.textFontRegular]}>Email obligatoire</Text>}
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Email :</Text>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, styles.textFontRegular]}
                             placeholder="Email"
                             placeholderTextColor={variables.texte}
                             onChangeText={(text) => setValue("email", text)}
@@ -108,39 +114,51 @@ const SignUpScreen = ({ navigation })=> {
                                 },
                             })}
                         />
-                        {errors.prenom && <Text style={styles.errorInput}>Prenom obligatoire</Text>}
-                        <Text style={styles.textInput}>Prénom :</Text>
+                        {errors.prenom && <Text style={[styles.errorInput, styles.textFontRegular]}>Prenom obligatoire</Text>}
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Prénom :</Text>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, , styles.textFontRegular]}
                             placeholder="Votre prenom"
                             placeholderTextColor={variables.texte}
                             onChangeText={(text) => setValue("prenom", text)}
                             defaultValue={getValues("prenom")}
                             {...register("prenom", { required: true })}
                         />
-                        {errors.password && <Text style={styles.errorInput}>Le mot de passe doit contenir au moins 6 caractères</Text>}
-                        <Text style={styles.textInput}>Mot de passe :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Mot de passe"
-                            placeholderTextColor={variables.texte}
-                            secureTextEntry={true}
-                            onChangeText={(text) => setValue("password", text)}
-                            defaultValue={getValues("password")}
-                            {...register("password", { required: true, minLength: 6 })}
-                        />
-                        {errors.password_confirm && <Text style={styles.errorInput}>Confirmation du mot de passe obligatoire</Text>}
-                        {!evenPassword && <Text style={styles.errorInput}>Mots de passe différents</Text>}
-                        <Text style={styles.textInput}>Confirmation du mot de passe :</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Confirmation mot de passe"
-                            placeholderTextColor={variables.texte}
-                            secureTextEntry={true}
-                            onChangeText={(text) => setValue("password_confirm", text)}
-                            defaultValue={getValues("password_confirm")}
-                            {...register("password_confirm", { required: true })}
-                        />
+                        {errors.password && <Text style={[styles.errorInput, styles.textFontRegular]}>Le mot de passe doit contenir au moins 6 caractères</Text>}
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Mot de passe :</Text>
+                        <View style={[{flexDirection: "row", justifyContent: "space-between", paddingRight: 10}, styles.input]}>
+                            <TextInput
+                                style={[styles.textFontRegular, {width: "90%"}]}
+                                placeholder="Mot de passe"
+                                placeholderTextColor={variables.texte}
+                                secureTextEntry={!isPasswordVisible}
+                                onChangeText={(text) => setValue("password", text)}
+                                defaultValue={getValues("password")}
+                                {...register("password", { required: true, minLength: 6 })}
+                            />
+                            <TouchableOpacity onPress={togglePasswordVisibility} style={{alignSelf: "center"}}>
+                                <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={22} />
+                            </TouchableOpacity>
+                        </View>
+                        
+                        {errors.password_confirm && <Text style={[styles.errorInput, styles.textFontRegular]}>Confirmation du mot de passe obligatoire</Text>}
+                        {!evenPassword && <Text style={[styles.errorInput, styles.textFontRegular]}>Mots de passe différents</Text>}
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Confirmation du mot de passe :</Text>
+                        <View style={[{flexDirection: "row", justifyContent: "space-between", paddingRight: 10}, styles.input]}>
+                            <TextInput
+                                style={[styles.textFontRegular, {width: "90%"}]}
+                                placeholder="Confirmation mot de passe"
+                                placeholderTextColor={variables.texte}
+                                secureTextEntry={!isPasswordVisible}
+                                onChangeText={(text) => setValue("password_confirm", text)}
+                                defaultValue={getValues("password_confirm")}
+                                {...register("password_confirm", { required: true })}
+                            />
+                            <TouchableOpacity onPress={togglePasswordVisibility} style={{alignSelf: "center"}}>
+                                <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={22} />
+                            </TouchableOpacity>
+                        </View>
+                        
                         <View style={styles.registerButton}>
                                 {!loading ?
                                     <Button
@@ -148,7 +166,7 @@ const SignUpScreen = ({ navigation })=> {
                                         type="primary"
                                         size={"m"}
                                     >
-                                        <Text style={styles.textButton}>S'enregister</Text>
+                                        <Text style={[styles.textButton, styles.textFontMedium]}>S'enregister</Text>
                                     </Button>
                                 :
                                     <Button
@@ -247,7 +265,16 @@ const styles = StyleSheet.create({
     },
     errorInput: {
         color: "red"
-      }
+    },
+    textFontMedium:{
+        fontFamily: variables.fontMedium
+    },
+    textFontLight:{
+        fontFamily: variables.fontLight
+    },
+    textFontRegular:{
+        fontFamily: variables.fontRegular
+    }
     
 });
   
