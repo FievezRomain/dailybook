@@ -83,9 +83,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         data["email"] =  currentUser.email;
 
         // Modification des , en . pour les champs numériques taille, poids et quantity à cause de la possibilité de mettre les 2 sur android
-        data["poids"] = data["poids"].replace(",", ".");
-        data["taille"] = data["taille"].replace(",", ".");
-        data["quantity"] = data["quantity"].replace(",", ".");
+        data["poids"] !== undefined ? data["poids"] = data["poids"].replace(",", ".") : undefined;
+        data["taille"] !== undefined ? data["taille"] = data["taille"].replace(",", ".") : undefined;
+        data["quantity"] !== undefined ? data["quantity"] = data["quantity"].replace(",", ".") : undefined;
 
         let formData = data;
         if (data.image != undefined){

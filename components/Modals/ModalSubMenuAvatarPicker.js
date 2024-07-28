@@ -1,7 +1,7 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import Variables from "../styles/Variables";
-import { FontAwesome6, Octicons, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
+import { FontAwesome6, Octicons, SimpleLineIcons, Entypo } from '@expo/vector-icons';
 
 const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handleLibraryPick, handleCameraPick }) => {
     const onAction = (event) =>{
@@ -26,7 +26,7 @@ const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handle
                     <View style={styles.actionButtonContainer}>
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleLibraryPick)}>
                             <View style={styles.informationsActionButton}>
-                                <Octicons name="history" size={20}/>
+                                <Entypo name="folder-images" size={20}/>
                                 <Text style={styles.textActionButton}>
                                     Choisir une photo de la librairie
                                 </Text>
@@ -35,7 +35,7 @@ const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handle
                         <View style={styles.bottomBar} />
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleCameraPick)}>
                             <View style={styles.informationsActionButton}>
-                                <SimpleLineIcons name="pencil" size={20}/>
+                                <Entypo name="camera" size={20}/>
                                 <Text style={styles.textActionButton}>
                                     Prendre une photo
                                 </Text>

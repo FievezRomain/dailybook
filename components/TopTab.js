@@ -2,7 +2,7 @@ import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
-import { FontAwesome6, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const TopTab = ({message1, message2, withBackground=false}) => {
@@ -62,7 +62,12 @@ const TopTab = ({message1, message2, withBackground=false}) => {
                     <Ionicons name="notifications" size={25} color={withBackground == false ? Variables.alezan : Variables.blanc} />
                 </TouchableOpacity> */}
                 <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
-                    <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}}/>
+                    {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
+                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}}/>
+                    : 
+                        <FontAwesome5 size={20} name="user-alt" />
+                    }
+                    
                 </TouchableOpacity>
             </View>
         </View>

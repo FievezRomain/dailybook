@@ -9,6 +9,7 @@ import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Constants from 'expo-constants';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { FontAwesome5 } from '@expo/vector-icons';
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
@@ -90,7 +91,15 @@ const SettingsScreen = ({ }) => {
             />
             <Back/>
                 <View style={styles.settings}>
-                    <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} />
+                    {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
+                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} />
+                    :
+                        <View style={[styles.avatar, {alignItems: "center", justifyContent: "center"}]}>
+                            <FontAwesome5 size={40}  name="user-alt" />
+                        </View>
+                        
+                    }
+                    
                     <View style={styles.card}>
                         <Text style={styles.title}>{currentUser.displayName}</Text>
                         <Text style={styles.email}>{currentUser.email}</Text>
