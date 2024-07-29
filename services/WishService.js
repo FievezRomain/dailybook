@@ -5,8 +5,7 @@ import { getAuth } from 'firebase/auth';
 
 export default class WishService {
 
-    async create(body) {
-        await this.updateAxiosAuthorization();
+    async createWithoutPicture(body) {
         return axios.post(`${getBaseUrl()}createWish`, body)
         .then(async(response) => {
             await this.putInCache(response.data);
@@ -14,9 +13,27 @@ export default class WishService {
         })
         .catch(); 
     } 
-
-    async update(body) {
+    async createWithPicture(body) {
+        return axios.post(`${getBaseUrl()}createWish`, body, {
+            headers: {'Content-Type': 'multipart/form-data'},
+            transformRequest: (data) => {return data;}
+        })
+        .then(async(response) => {
+            await this.putInCache(response.data);
+            return response.data;
+        })
+        .catch(); 
+    } 
+    async create(body) {
         await this.updateAxiosAuthorization();
+        if (body._parts === undefined){
+            return this.createWithoutPicture(body);
+        } else{
+            return this.createWithPicture(body);
+        }
+    }
+
+    async updateWithoutPicture(body) {
         return axios.put(`${getBaseUrl()}updateWish`, body)
         .then(async(response) => {
             await this.putInCache(response.data);
@@ -24,6 +41,25 @@ export default class WishService {
         })
         .catch(); 
     } 
+    async updateWithPicture(body) {
+        return axios.put(`${getBaseUrl()}updateWish`, body, {
+            headers: {'Content-Type': 'multipart/form-data'},
+            transformRequest: (data) => {return data;}
+        })
+        .then(async(response) => {
+            await this.putInCache(response.data);
+            return response.data;
+        })
+        .catch(); 
+    } 
+    async update(body) {
+        await this.updateAxiosAuthorization();
+        if (body._parts === undefined){
+            return this.updateWithoutPicture(body);
+        } else{
+            return this.updateWithPicture(body);
+        }
+    }
 
 
     async delete(body) {

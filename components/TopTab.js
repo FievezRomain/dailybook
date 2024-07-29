@@ -69,7 +69,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
                     {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
                         <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}}/>
                     : 
-                        <FontAwesome5 size={20} name="user-alt" />
+                        <FontAwesome5 size={20} color={Variables.alezan} name="user-alt" />
                     }
                     
                 </TouchableOpacity>
