@@ -46,7 +46,7 @@ const VerifyEmailScreen = ({ navigation })=> {
             <View style={{height: "100%", width: "100%", paddingTop: Constants.statusBarHeight + 10,}}>
                 <KeyboardAwareScrollView contentContainerStyle={styles.register}>
                     <View style={{padding: 40, marginBottom: 30}}>
-                        <Text style={[{fontWeight: "500", textAlign: "center", textTransform: "uppercase", fontSize: 16}, styles.textFontMedium]}>Veuillez valider votre adresse email pour continuer</Text>
+                        <Text style={[{textAlign: "center", textTransform: "uppercase", fontSize: 16}, styles.textFontMedium]}>Veuillez valider votre adresse email pour continuer</Text>
                     </View>
                     <View style={{width: "70%", alignSelf: "center"}}>
                         <View style={{shadowColor: variables.bai, shadowOpacity: 0.5, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
         fontSize: 30,
         letterSpacing: 2,
         marginBottom:20,
-        fontWeight: "300"
     },
     input: {
         height: 40,

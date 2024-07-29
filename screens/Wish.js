@@ -185,7 +185,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: Variables.bai,
         marginTop: 5,
-        fontWeight: "bold"
     },
     labelContainer: {
         position: 'absolute',

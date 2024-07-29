@@ -213,7 +213,6 @@ const styles = StyleSheet.create({
         fontSize: 30,
         letterSpacing: 2,
         marginBottom:20,
-        fontWeight: "300"
     },
     input: {
         height: 40,

@@ -11,7 +11,6 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
             flexDirection: "column",
         },
         eventTitle:{
-            fontWeight: "bold",
             marginBottom: 10,
             fontSize: 16
         },

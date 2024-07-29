@@ -39,7 +39,6 @@ const SettingsScreen = ({ }) => {
         },
         title:{
             fontSize: 25,
-            fontWeight: "bold",
             marginTop: 30,
         },
         email:{
@@ -81,6 +80,12 @@ const SettingsScreen = ({ }) => {
         },
         textFontMedium:{
             fontFamily: Variables.fontMedium
+        },
+        textFontRegular:{
+            fontFamily: Variables.fontRegular
+        },
+        textFontBold:{
+            fontFamily: Variables.fontBold
         }
     });
 
@@ -104,8 +109,8 @@ const SettingsScreen = ({ }) => {
                     }
                     
                     <View style={styles.card}>
-                        <Text style={styles.title}>{currentUser.displayName}</Text>
-                        <Text style={styles.email}>{currentUser.email}</Text>
+                        <Text style={[styles.title, styles.textFontBold]}>{currentUser.displayName}</Text>
+                        <Text style={[styles.email, styles.textFontRegular]}>{currentUser.email}</Text>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Account")}>
                             <Text style={styles.textFontMedium}>Mon compte</Text>
                         </TouchableOpacity>

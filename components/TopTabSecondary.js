@@ -26,7 +26,6 @@ const TopTabSecondary = ({message1, message2}) => {
             width: 25,
         },
         name:{
-            fontWeight: "bold",
             fontSize: 18
         },
         avatar: {
@@ -39,7 +38,12 @@ const TopTabSecondary = ({message1, message2}) => {
         },
         text:{
             color: Variables.alezan,
-            fontFamily: "Quicksand-Regular"
+        },
+        textFontRegular:{
+            fontFamily: Variables.fontRegular
+        },
+        textFontBold:{
+            fontFamily: Variables.fontBold
         }
     });
 
@@ -47,8 +51,8 @@ const TopTabSecondary = ({message1, message2}) => {
         <View style={styles.topTabContainer}>
             <Back />
             <View style={styles.textContainer}>
-                <Text style={styles.text}>{message1}</Text>
-                <Text style={[styles.name, styles.text]}>{message2}</Text>
+                <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text>
+                <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
             </View>
         </View>
     );

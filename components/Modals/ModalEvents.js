@@ -971,7 +971,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     letterSpacing: 2,
     marginBottom:20,
-    fontWeight: "bold"
   },
   errorInput: {
     color: "red"

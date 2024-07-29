@@ -187,7 +187,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.balade, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <Entypo name="compass" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Balade</Text>
+                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Balade</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -229,7 +229,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.rdv, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <FontAwesome name="stethoscope" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Rendez-vous médical</Text>
+                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Rendez-vous médical</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -271,7 +271,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.soins, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                             <FontAwesome6 name="hand-holding-medical" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Soins</Text>
+                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Soins</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -313,7 +313,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.entrainement, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <Entypo name="traffic-cone" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Entrainement</Text>
+                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Entrainement</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -356,7 +356,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.autre, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <FontAwesome6 name="check-circle" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Autre</Text>
+                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Autre</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -399,7 +399,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.concours, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <FontAwesome name="trophy" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Concours</Text>
+                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Concours</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
@@ -442,7 +442,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         <View style={[styles.depense, styles.typeEventIndicator, styles.headerEvent]}>
                             <View style={styles.titleTypeEventContainer}>
                                 <FontAwesome6 name="money-bill-wave" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontWeight: "bold", fontSize: 14}, styles.textFontBold]}>Dépense</Text>
+                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Dépense</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
