@@ -12,8 +12,8 @@ import { useState, useEffect } from "react";
 
 const VerifyEmailScreen = ({ navigation })=> {
     const { currentUser } = useAuth();
-    const [canResend, setCanResend] = useState(true);
-    const [timer, setTimer] = useState(0);
+    const [canResend, setCanResend] = useState(false);
+    const [timer, setTimer] = useState(120);
 
     const handleResendVerificationEmail = async () => {
         if (currentUser && canResend) {
@@ -39,6 +39,10 @@ const VerifyEmailScreen = ({ navigation })=> {
             setCanResend(true);
         }
     }, [timer]);
+
+    useEffect(() => {
+        setTimer(120);
+    }, []);
 
     return (
         <>
