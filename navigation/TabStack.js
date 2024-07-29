@@ -1,13 +1,14 @@
-import { Animated, Dimensions, Image, Platform, StyleSheet, Text, View, Pressable } from 'react-native';
+import { Animated, Dimensions, Image, Platform, Text, View } from 'react-native';
 import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import plus from '../assets/plus.png'
 import { FontAwesome6, Ionicons } from '@expo/vector-icons'
 import { useRef } from 'react';
-import { WelcomeScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen } from "../screens";
-import { AnimatePresence, MotiView } from 'moti';
+import { WelcomeScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen } from "../screens";
+import { MotiView } from 'moti';
 import Variables from '../components/styles/Variables';
 import variables from '../components/styles/Variables';
+import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,15 +16,14 @@ const TabStack = () => {
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
   const [expanded, setExpanded] = useState(false);
   const [beforeScreen, setBeforeScreen] = useState("Welcome");
+  const insets = useSafeAreaInsets();
   return (
-    <>
+        <View style={{flex: 1}}>
       <Tab.Navigator screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             if (route.name === 'Welcome'){
               return <View style={{
                 // centring Tab Button...
-                position: 'absolute',
-                top: 15
               }}>
                 <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
                   <Ionicons
@@ -37,8 +37,6 @@ const TabStack = () => {
             } else if(route.name === 'Statistic'){
               return <View style={{
                 // centring Tab Button...
-                position: 'absolute',
-                top: 15
               }}>
                 <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
                   <FontAwesome6
@@ -46,7 +44,7 @@ const TabStack = () => {
                     size={20}
                     color={focused ? variables.alezan : 'gray'}
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Performances</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Performance</Text>
                 </View>
                 
               </View>
@@ -84,8 +82,6 @@ const TabStack = () => {
             } else if (route.name === 'Calendar'){
               return <View style={{
                 // centring Tab Button...
-                position: 'absolute',
-                top: 15
                 
               }}>
                 <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
@@ -100,8 +96,6 @@ const TabStack = () => {
             } else if (route.name === 'Pets'){
               return <View style={{
                 // centring Tab Button...
-                position: 'absolute',
-                top: 15
               }}>
                 <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
                   <FontAwesome6
@@ -222,7 +216,7 @@ const TabStack = () => {
         }}>
   
         </Animated.View>
-    </>
+        </View>
   );
 };
 

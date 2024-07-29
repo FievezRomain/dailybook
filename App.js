@@ -5,6 +5,7 @@ import AuthStack from "./navigation/AuthStack";
 import * as Font from 'expo-font';
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -38,12 +39,12 @@ export default function App() {
 
   return (
     fontsLoaded ?
-      <NavigationContainer>
-      <AuthenticatedUserProvider>
-        <AuthStack/>
-        <Toast />
-      </AuthenticatedUserProvider>
-    </NavigationContainer>
+          <NavigationContainer>
+            <AuthenticatedUserProvider>
+              <AuthStack/>
+              <Toast />
+            </AuthenticatedUserProvider>
+          </NavigationContainer>
       :
       <ActivityIndicator size={10} />
     
