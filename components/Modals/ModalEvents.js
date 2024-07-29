@@ -17,6 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
 import TimePickerCustom from "../TimePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { AntDesign } from '@expo/vector-icons';
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
   const { currentUser } = useAuth();
@@ -884,11 +885,22 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       >
                         <View style={styles.containerAnimaux}>
                           {notifType == false &&
-                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Par défaut, vous recevrez une notification le jour J</Text></View>
+                            <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
+                                <View style={{width: "90%"}}>
+                                  <Text style={[styles.badgeAnimal, styles.textFontRegular]}>Par défaut, vous recevrez une notification le jour J</Text>
+                                </View>
+                                <AntDesign name="caretdown" size={20}/>
+                              
+                            </View>
                           }
                           {
                             notifType != false &&
-                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{notifType.title}</Text></View>
+                            <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
+                              <View style={{width: "90%"}}>
+                                <Text style={[styles.badgeAnimal, styles.textFontRegular]}>{notifType.title}</Text>
+                              </View>
+                              <AntDesign name="caretdown" size={20}/>
+                            </View>
                           }
                         </View>
                       </TouchableOpacity>
@@ -902,11 +914,21 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       >
                         <View style={styles.containerAnimaux}>
                           {optionNotifType == false &&
-                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Aucune option</Text></View>
+                            <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
+                              <View style={{width: "90%"}}>
+                                <Text style={[styles.badgeAnimal, styles.textFontRegular]}>Aucune option</Text>
+                              </View>
+                              <AntDesign name="caretdown" size={20}/>
+                            </View>
                           }
                           {
                             optionNotifType != false &&
-                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{optionNotifType.title}</Text></View>
+                            <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
+                              <View style={{width: "90%"}}>
+                                <Text style={[styles.badgeAnimal, styles.textFontRegular]}>{optionNotifType.title}</Text>
+                              </View>
+                              <AntDesign name="caretdown" size={20}/>
+                            </View>
                           }
                         </View>
                       </TouchableOpacity>
