@@ -11,6 +11,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import NutritionHistory from "../components/NutritionHistory";
 import MedicalBook from "../components/MedicalBook";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import DateUtils from '../utils/DateUtils';
 
 const PetsScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -26,6 +27,7 @@ const PetsScreen = ({ navigation }) => {
   const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
+  const dateUtils = new DateUtils();
   
 
   useEffect(() => {
@@ -86,7 +88,7 @@ const PetsScreen = ({ navigation }) => {
 
       // On change l'animal sélectionné par le premier de la liste
       var animalToDisplay = animaux.filter((a) => a.id !== data["id"])[0];
-      console.log(animalToDisplay);
+      
       if(animalToDisplay === undefined){
         navigation.navigate("FirstPageAddAnimal");
         return;
