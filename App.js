@@ -1,240 +1,53 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { Animated, Dimensions, Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-//import 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-// Plus...
-import plus from './assets/plus.png'
-
-// Icons
-import { FontAwesome5 } from '@expo/vector-icons'
-
-import { useRef } from 'react';
-
-const Tab = createBottomTabNavigator();
+import { NavigationContainer } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
+import { AuthenticatedUserProvider } from "./providers/AuthenticatedUserProvider";
+import AuthStack from "./navigation/AuthStack";
+import * as Font from 'expo-font';
+import { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 export default function App() {
-  const tabOffsetValue = useRef(new Animated.Value(0)).current;
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  useEffect(() => {
+    loadFonts().then(() => setFontsLoaded(true));
+  }, []);
+
+  /*const navigation = useNavigation();
+  const authService = new AuthService;
+  const { setUser } = useContext(AuthenticatedUserProvider);
+
+  useEffect( async () => {
+    const unsubscribe = navigation.addListener("state", () => {
+      authService.getUser().then((myUser) => {
+        setUser(myUser);
+      })
+    });
+    return unsubscribe;
+  }, [navigation]) */
+
+  const loadFonts = () => {
+    return Font.loadAsync({
+      'Quicksand-Bold': require('./assets/fonts/Quicksand-Bold.ttf'),
+      'Quicksand-Light': require('./assets/fonts/Quicksand-Light.ttf'),
+      'Quicksand-Medium': require('./assets/fonts/Quicksand-Medium.ttf'),
+      'Quicksand-Regular': require('./assets/fonts/Quicksand-Regular.ttf'),
+      'Quicksand-SemiBold': require('./assets/fonts/Quicksand-SemiBold.ttf')
+    });
+  };
+
   return (
-    <NavigationContainer>
-      <Tab.Navigator screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          if (route.name === 'Home'){
-            return <View style={{
-              // centring Tab Button...
-              position: 'absolute',
-              top: 15
-            }}>
-              <FontAwesome5
-                name="home"
-                size={20}
-                color={focused ? '#956540' : 'gray'}
-              ></FontAwesome5>
-            </View>
-          } else if(route.name === 'Statistic'){
-            return <View style={{
-              // centring Tab Button...
-              position: 'absolute',
-              top: 15
-            }}>
-              <FontAwesome5
-                name="signal"
-                size={20}
-                color={focused ? '#956540' : 'gray'}
-              ></FontAwesome5>
-            </View>
-          } else if(route.name === 'ActionButton'){
-            return <View style={{
-              width: 55,
-              height: 55,
-              backgroundColor: 'white',
-              borderRadius: 30,
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: Platform.OS == "android" ? 50 : 30
-            }}>
-              <Image source={plus} style={{
-                width: 35,
-                height: 35,
-                tintColor: '#956540',
-              }}></Image>
-            </View>
-          } else if (route.name === 'Calendar'){
-            return <View style={{
-              // centring Tab Button...
-              position: 'absolute',
-              top: 15
-            }}>
-              <FontAwesome5
-                name="calendar-alt"
-                size={20}
-                color={focused ? '#956540' : 'gray'}
-              ></FontAwesome5>
-            </View>
-          } else if (route.name === 'Pets'){
-            return <View style={{
-              // centring Tab Button...
-              position: 'absolute',
-              top: 15
-            }}>
-              <FontAwesome5
-                name="paw"
-                size={20}
-                color={focused ? '#956540' : 'gray'}
-              ></FontAwesome5>
-            </View>
-          }
-        },
-        tabBarShowLabel: false,
-        headerShown: false,
-        //Floating Tab Bar...
-        style: {
-          backgroundColor: 'white',
-          position: 'absolute',
-          bottom: 40,
-          marginHorizontal: 20,
-          // Max Height...
-          height: 60,
-          borderRadius: 10,
-          // Shadow...
-          shadowColor: '#000',
-          shadowOpacity: 0.06,
-          shadowOffset: {
-            width: 10,
-            height: 10
-          },
-          paddingHorizontal: 20,
-        }
-      })}>
-
-        <Tab.Screen name={"Home"} component={HomeScreen} listeners={({ navigation, route }) => ({
-          // Onpress Update....
-          tabPress: e => {
-            Animated.spring(tabOffsetValue, {
-              toValue: 0,
-              useNativeDriver: true
-            }).start();
-          }
-        })}/>
-
-        <Tab.Screen name={"Statistic"} component={StatsScreen} listeners={({ navigation, route }) => ({
-          // Onpress Update....
-          tabPress: e => {
-            Animated.spring(tabOffsetValue, {
-              toValue: getWidth(),
-              useNativeDriver: true
-            }).start();
-          }
-        })}/>
-
-        <Tab.Screen name={"ActionButton"} component={ActionScreen} listeners={({ navigation, route }) => ({
-          // Onpress Update....
-          tabPress: e => {
-            Animated.spring(tabOffsetValue, {
-              toValue: -100,
-              useNativeDriver: true
-            }).start();
-          }
-        })}/>
-
-        <Tab.Screen name={"Calendar"} component={CalendarScreen} listeners={({ navigation, route }) => ({
-          // Onpress Update....
-          tabPress: e => {
-            Animated.spring(tabOffsetValue, {
-              toValue: getWidth() * 3,
-              useNativeDriver: true
-            }).start();
-          }
-        })}/>
-
-        <Tab.Screen name={"Pets"} component={PetsScreen} listeners={({ navigation, route }) => ({
-          // Onpress Update....
-          tabPress: e => {
-            Animated.spring(tabOffsetValue, {
-              toValue: getWidth() * 4,
-              useNativeDriver: true
-            }).start();
-          }
-        })}/>
-
-      </Tab.Navigator>
-
-      <Animated.View style={{
-        width: getWidth() - 15,
-        height: 2,
-        backgroundColor: 'brown',
-        position: 'absolute',
-        bottom: 47,
-        // Horizontal Padding = 20...
-        left: 10,
-        borderRadius: 20,
-        transform: [
-          { translateX: tabOffsetValue }
-        ]
-      }}>
-
-      </Animated.View>
-    </NavigationContainer>
+    fontsLoaded ?
+          <NavigationContainer>
+            <AuthenticatedUserProvider>
+              <AuthStack/>
+              <Toast />
+            </AuthenticatedUserProvider>
+          </NavigationContainer>
+      :
+      <ActivityIndicator size={10} />
+    
+    
   );
-}
-
-function getWidth() {
-  let width = Dimensions.get("window").width
-
-  // Horizontal Padding = 20...
-  width = width - 5
-
-  // Total five Tabs...
-  return width / 5
-}
-
-function ActionScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-      <Text>Action!</Text>
-    </View>
-  );
-}
-
-function PetsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-      <Text>Pets!</Text>
-    </View>
-  );
-}
-
-function HomeScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-      <Text>Home!</Text>
-    </View>
-  );
-}
-
-function CalendarScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-      <Text>Calendar!</Text>
-    </View>
-  );
-}
-
-function StatsScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#c9b69f' }}>
-      <Text>Statistic!</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#c9b69f',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+};

@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "dailybook",
-    "slug": "dailybook",
+    "name": "vasco",
+    "slug": "vasco",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -15,22 +15,42 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vascoandco.vasco",
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
+        "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
+        "NSUserTrackingUsageDescription": "L'application a besoin d'une permission pour vous envoyez des notifications",
+        "UIBackgroundModes": [
+          "fetch", "remote-notification"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.vascoandco.vasco",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "com.google.android.c2dm.permission.RECEIVE"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logo.png"
     },
     "extra": {
       "eas": {
         "projectId": "9733b21a-2b6a-413e-98ff-c4fdc8c1765d"
       }
     },
-    "owner": "riujin"
+    "owner": "FIEVEZ Romain",
+    "plugins": [
+      "expo-font"
+    ]
   }
 }
