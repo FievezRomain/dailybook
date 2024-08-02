@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "vasco",
-    "slug": "vasco",
+    "name": "Vasco",
+    "slug": "dailybook",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
@@ -38,7 +38,8 @@
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
         "com.google.android.c2dm.permission.RECEIVE"
-      ]
+      ],
+      "kotlinVersion": "1.5.31"
     },
     "web": {
       "favicon": "./assets/logo.png"
@@ -48,9 +49,10 @@
         "projectId": "9733b21a-2b6a-413e-98ff-c4fdc8c1765d"
       }
     },
-    "owner": "FIEVEZ Romain",
+    "owner": "riujin",
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-notifications"
     ]
   }
 }
