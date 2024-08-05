@@ -3,11 +3,12 @@
     "name": "Vasco",
     "slug": "dailybook",
     "version": "1.0.0",
+    "sdkVersion": "51.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/icon-store.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo.png",
+      "image": "./assets/icon-store.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -16,7 +17,8 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.vascoandco.vasco",
+      "bundleIdentifier": "com.vascoandco.vasco.ios",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "1.0.0",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
@@ -29,20 +31,24 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo.png",
+        "foregroundImage": "./assets/icon-store.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.vascoandco.vasco",
+      "package": "com.vascoandco.vasco.android",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 1,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
-        "com.google.android.c2dm.permission.RECEIVE"
-      ],
-      "kotlinVersion": "1.5.31"
+        "com.google.android.c2dm.permission.RECEIVE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACCESS_WIFI_STATE"
+      ]
     },
     "web": {
-      "favicon": "./assets/logo.png"
+      "favicon": "./assets/icon-store.png"
     },
     "extra": {
       "eas": {
@@ -52,7 +58,13 @@
     "owner": "riujin",
     "plugins": [
       "expo-font",
-      "expo-notifications"
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "L'application a besoin d'accéder à votre galerie de photos pour que vous puissiez choisir des images."
+        }
+      ]
     ]
   }
 }
