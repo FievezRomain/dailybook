@@ -140,7 +140,9 @@ export default class AuthService {
       alert('Failed to get push token for push notification!');
       return;
     }
-    expoToken = (await Notifications.getExpoPushTokenAsync()).data;
+    expoToken = (await Notifications.getExpoPushTokenAsync({
+      projectId: Constants.expoConfig.extra.eas.projectId
+    })).data;
   
     if (Constants.platform.android) {
       Notifications.setNotificationChannelAsync('default', {
