@@ -2,6 +2,7 @@ import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
+import LoggerService from './LoggerService';
 
 export default class EventService {
 
@@ -12,7 +13,7 @@ export default class EventService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour créer un event : " + err.message )); 
     } 
 
     async update(body) {
@@ -22,7 +23,7 @@ export default class EventService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier un event : " + err.message )); 
     } 
 
     async updateState(body) {
@@ -32,7 +33,7 @@ export default class EventService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier le state d'un event : " + err.message )); 
     } 
 
     async updateCommentaireNote(body) {
@@ -42,7 +43,7 @@ export default class EventService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier le commentaire et la note d'un event : " + err.message )); 
     } 
 
 
@@ -53,7 +54,7 @@ export default class EventService {
             await this.deleteInCache(body);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un event : " + err.message ));
     }
 
     async getEvents(email){
@@ -67,7 +68,7 @@ export default class EventService {
                 await this.putInCache(data);
                 return await this.getCache();
             })
-            .catch();
+            .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les events : " + err.message ));
         }
         
     }

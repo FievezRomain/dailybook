@@ -11,6 +11,7 @@ import ObjectifService from "../services/ObjectifService";
 import ObjectifsInProgressBloc from "../components/ObjectifsInProgressBloc";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import LoggerService from "../services/LoggerService";
 
 const WelcomeScreen = ({ navigation })=> {
     const { currentUser } = useAuth();
@@ -36,6 +37,7 @@ const WelcomeScreen = ({ navigation })=> {
           setEvents(result);
         }
       } catch (error) {
+        LoggerService.log( "Erreur lors de la récupération des events : " + error.message );
         console.error("Error fetching events:", error);
       }
     }
@@ -47,6 +49,7 @@ const WelcomeScreen = ({ navigation })=> {
           setObjectifs(result);
         }
       } catch (error) {
+        LoggerService.log( "Erreur lors de la récupération des objectifs : " + error.message );
         console.error("Error fetching objectifs:", error);
       }
     }

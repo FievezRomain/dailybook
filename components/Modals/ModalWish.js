@@ -12,6 +12,7 @@ import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { getImagePath } from '../../services/Config';
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import LoggerService from "../../services/LoggerService";
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -103,6 +104,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                         position: "top",
                         text1: err.message
                     });
+                    LoggerService.log( "Erreur lors de la MAJ d'un wish : " + err.message );
                     setLoading(false);
                 });
         }
@@ -120,6 +122,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                         position: "top",
                         text1: err.message
                     });
+                    LoggerService.log( "Erreur lors de la création d'un wish : " + err.message );
                     setLoading(false);
                 });
         }

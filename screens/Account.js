@@ -9,6 +9,7 @@ import { useState } from "react";
 import AvatarPicker from "../components/AvatarPicker";
 import AuthService from "../services/AuthService";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import LoggerService from "../services/LoggerService";
 
 const AccountScreen = ({ navigation }) => {
     const { currentUser, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL } = useAuth();
@@ -50,7 +51,8 @@ const AccountScreen = ({ navigation }) => {
             }
 
         }catch(error){
-            console.error("Erreur lors de la MAJ du user sur Firebase : " + error);
+            LoggerService.log( "Erreur lors de la MAJ d'un utilisateur sur Firebase : " + error.message );
+            console.error("Erreur lors de la MAJ du user sur Firebase : " + error.message);
         }
     }
 
@@ -93,6 +95,7 @@ const AccountScreen = ({ navigation }) => {
                 position: "top",
                 text1: err.message
             });
+            LoggerService.log( "Erreur lors de la MAJ d'un utilisateur en BDD : " + err.message );
         });
     }
 

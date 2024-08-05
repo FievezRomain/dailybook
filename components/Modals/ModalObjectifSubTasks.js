@@ -7,6 +7,7 @@ import CheckboxInput from "../CheckboxInput";
 import CompletionBar from "../CompletionBar";
 import _ from 'lodash';
 import ObjectifService from "../../services/ObjectifService";
+import LoggerService from "../../services/LoggerService";
 
 const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, objectif={}}) => {
     const objectifService = new ObjectifService();
@@ -61,6 +62,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la MAJ des étapes d'un objectif : " + err.message );
             });
     }
 

@@ -2,6 +2,7 @@ import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
+import LoggerService from './LoggerService';
 
 export default class AnimalsService {
     async createWithPicture(body){
@@ -13,7 +14,7 @@ export default class AnimalsService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour enregistrer un animal avec une image : " + err.message ));
     }
     
     async createWithoutPicture(body){
@@ -22,7 +23,7 @@ export default class AnimalsService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour enregistrer un animal sans image : " + err.message ));
     }
     async create(body) {
         await this.updateAxiosAuthorization();
@@ -48,7 +49,7 @@ export default class AnimalsService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier un animal sans image : " + err.message ));
     }
 
     async modifyWithPicture(body){
@@ -60,7 +61,7 @@ export default class AnimalsService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier un animal avec une image : " + err.message ));
     }
 
     async modify(body) {
@@ -79,7 +80,7 @@ export default class AnimalsService {
             await this.deleteInCache(body);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un animal : " + err.message ));
     }
 
     async getAnimals(email){
@@ -93,7 +94,7 @@ export default class AnimalsService {
                 await this.putInCache(data.rows);
                 return await this.getCache();
             })
-            .catch();
+            .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les animaux : " + err.message ));
         }
     }
 

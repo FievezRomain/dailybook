@@ -8,6 +8,7 @@ import RatingInput from '../RatingInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import EventService from '../../services/EventService';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import LoggerService from '../../services/LoggerService';
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, onModify }) => {
     const eventService = new EventService();
@@ -221,6 +222,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la MAJ du commentaire et la note d'un event : " + err.message );
             })
 
     }

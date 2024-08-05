@@ -7,6 +7,7 @@ import { AntDesign } from '@expo/vector-icons';
 import ContactService from "../../services/ContactService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { ActivityIndicator } from "react-native";
+import LoggerService from "../../services/LoggerService";
 
 const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -55,6 +56,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                         position: "top",
                         text1: err.message
                     });
+                    LoggerService.log( "Erreur lors de la MAJ d'un contact : " + err.message );
                     setLoading(false);
                 });
         }
@@ -72,6 +74,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                         position: "top",
                         text1: err.message
                     });
+                    LoggerService.log( "Erreur lors de la création d'un contact : " + err.message );
                     setLoading(false);
                 });
         }

@@ -9,6 +9,7 @@ import ModalObjectifSubTasks from '../Modals/ModalObjectifSubTasks';
 import variables from '../styles/Variables';
 import { getImagePath } from '../../services/Config';
 import ModalObjectif from '../Modals/ModalObjectif';
+import LoggerService from '../../services/LoggerService';
 
 const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
@@ -68,6 +69,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la suppression d'un objectif : " + err.message );
             });
     }
 
@@ -111,6 +113,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la MAJ des tâches d'un objectif : " + err.message );
             })
     }
 

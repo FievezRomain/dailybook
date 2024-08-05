@@ -12,6 +12,7 @@ import DateUtils from "../../utils/DateUtils";
 import { getImagePath } from '../../services/Config';
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import LoggerService from "../../services/LoggerService";
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -129,6 +130,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la MAJ d'un animal : " + err.message );
                 setLoading(false);
             });
         } else{
@@ -151,6 +153,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la création d'un animal : " + err.message );
                 setLoading(false);
             });
         }

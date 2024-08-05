@@ -11,6 +11,7 @@ import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishAction
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalWish from "../components/Modals/ModalWish";
 import { MaterialIcons } from "@expo/vector-icons";
+import LoggerService from "../services/LoggerService";
 
 const WishScreen = ({ navigation }) => {
     const { currentUser } = useAuth();
@@ -80,6 +81,7 @@ const WishScreen = ({ navigation }) => {
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la suppression d'un wish : " + err.message );
             });
     };
     const handleShare = () => {

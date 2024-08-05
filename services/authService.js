@@ -4,8 +4,7 @@ import axios from 'axios';
 import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 import { getAuth, signOut } from 'firebase/auth';
-import { getFirebaseAuth } from '../firebase';
-import { useNavigation } from '@react-navigation/native';
+import LoggerService from './LoggerService';
 
 export default class AuthService {
 
@@ -21,6 +20,7 @@ export default class AuthService {
       return data
     })
     .catch((error) =>{
+      LoggerService.log( "Erreur lors de l'envoi de la requête du login de l'utilisateur : " + error.message )
       console.log(error);
     })
   }
@@ -35,6 +35,7 @@ export default class AuthService {
       return data
     })
     .catch((error) =>{
+      LoggerService.log( "Erreur lors de l'envoi de la requête de confirmation du login de l'utilisateur : " + error.message )
       console.error(error);
     });
   }
@@ -46,7 +47,7 @@ export default class AuthService {
     .then(({data}) => {
         return data;
     })
-    .catch();
+    .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer des informations d'un user : " + err.message ));
   }
 
   async modifyUser(user){
@@ -56,7 +57,7 @@ export default class AuthService {
     .then(({data}) => {
         return data;
     })
-    .catch();
+    .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier les informations d'un user : " + err.message ));
   }
 
   /* async getUser() {
@@ -124,7 +125,7 @@ export default class AuthService {
   async register(body) {
     return axios.post(`${getBaseUrl()}register`, body)
     .then((res) => res.data)
-    .catch();
+    .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour enregistrer un user en BDD : " + err.message ));
   }
 
   async registerForPushNotificationsAsync() {

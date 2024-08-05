@@ -6,6 +6,7 @@ import { useAuth } from '../providers/AuthenticatedUserProvider';
 import EventCard from './cards/EventCard';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import variables from './styles/Variables';
+import LoggerService from '../services/LoggerService';
 
 const MedicalBook = ({ animal }) => {
     const [typeEvent, setTypeEvent] = useState("Rendez-vous");
@@ -65,6 +66,7 @@ const MedicalBook = ({ animal }) => {
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la suppression d'un event : " + err.message );
             });
     }
 

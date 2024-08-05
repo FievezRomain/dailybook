@@ -2,6 +2,7 @@ import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
+import LoggerService from './LoggerService';
 
 export default class ContactService {
 
@@ -12,7 +13,7 @@ export default class ContactService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour créer un contact : " + err.message )); 
     } 
 
     async update(body) {
@@ -22,7 +23,7 @@ export default class ContactService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier un contact : " + err.message )); 
     } 
 
 
@@ -33,7 +34,7 @@ export default class ContactService {
             await this.deleteInCache(body);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un contact : " + err.message ));
     }
 
     async getContacts(email){
@@ -47,7 +48,7 @@ export default class ContactService {
                 await this.putInCache(data.rows);
                 return await this.getCache();
             })
-            .catch();
+            .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les contacts : " + err.message ));
         }
         
     }

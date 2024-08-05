@@ -10,6 +10,7 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { useState } from "react";
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from "react-native-toast-message";
+import LoggerService from "../services/LoggerService";
 
 const SignInScreen = ({ navigation })=> {
     const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
@@ -30,6 +31,7 @@ const SignInScreen = ({ navigation })=> {
             navigation.navigate("Loading");
             
           } catch (error) {
+            LoggerService.log( "Erreur lors de la connexion de l'utilisateur avec email et password avec Firebase : " + error.message );
             setLoading(false);
             Toast.show({
                 type: "error",
@@ -71,6 +73,7 @@ const SignInScreen = ({ navigation })=> {
                 text1: "Un e-mail vous a été envoyé"
             });
         } catch (error) {
+            LoggerService.log( "Erreur lors de la tentative de reset le password avec Firebase : " + error.message );
             Toast.show({
                 type: "error",
                 position: "top",
