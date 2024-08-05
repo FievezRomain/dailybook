@@ -43,7 +43,6 @@
         "com.google.android.c2dm.permission.RECEIVE",
         "INTERNET",
         "ACCESS_NETWORK_STATE",
-        "WRITE_EXTERNAL_STORAGE",
         "ACCESS_WIFI_STATE"
       ]
     },
