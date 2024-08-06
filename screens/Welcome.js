@@ -1,10 +1,8 @@
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
 import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
-import { AuthenticatedUserContext } from '../providers/AuthenticatedUserProvider';
 import React, { useState, useContext, useEffect } from 'react';
 import EventsBloc from "../components/EventsBloc";
-import ObjectifsBloc from "../components/ObjectifsBloc";
 import WavyHeader from "../components/WavyHeader";
 import EventService from "../services/EventService";
 import ObjectifService from "../services/ObjectifService";
@@ -12,6 +10,7 @@ import ObjectifsInProgressBloc from "../components/ObjectifsInProgressBloc";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import LoggerService from "../services/LoggerService";
+import Constants from 'expo-constants';
 
 const WelcomeScreen = ({ navigation })=> {
     const { currentUser } = useAuth();
@@ -122,7 +121,7 @@ const WelcomeScreen = ({ navigation })=> {
       <View style={{flex: 1}}>
         <WavyHeader
             customBgColor={Variables.rouan}
-            customHeight={100}
+            customHeight={Constants.statusBarHeight + 100}
             customTop={90}
             customWavePattern={"M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"}
             customStyles={styles.svgCurve}

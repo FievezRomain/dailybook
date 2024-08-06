@@ -9,7 +9,7 @@ const TopTabSecondary = ({message1, message2}) => {
     const navigation = useNavigation();
     const styles = StyleSheet.create({
         topTabContainer:{
-            paddingTop: Constants.platform.ios ? Constants.statusBarHeight + 10 : 0,
+            paddingTop: Constants.platform.ios ? Constants.statusBarHeight + 10 : Constants.statusBarHeight + 10,
             display: "flex",
             flexDirection: "row",
             alignItems: "center",

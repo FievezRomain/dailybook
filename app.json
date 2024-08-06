@@ -44,7 +44,12 @@
         "INTERNET",
         "ACCESS_NETWORK_STATE",
         "ACCESS_WIFI_STATE"
-      ]
+      ],
+      "statusBar": {
+        "backgroundColor": "#ffffff",
+        "translucent": true,
+        "style": "dark-content"
+      }
     },
     "web": {
       "favicon": "./assets/icon-store.png"
@@ -63,7 +68,8 @@
         {
           "photosPermission": "L'application a besoin d'accéder à votre galerie de photos pour que vous puissiez choisir des images."
         }
-      ]
+      ],
+      "expo-task-manager"
     ]
   }
 }
