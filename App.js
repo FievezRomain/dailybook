@@ -6,6 +6,7 @@ import * as Font from 'expo-font';
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import * as Sentry from '@sentry/react-native';
+import { StatusBar } from 'expo-status-bar';
 
 function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -47,6 +48,7 @@ function App() {
     fontsLoaded ?
           <NavigationContainer>
             <AuthenticatedUserProvider>
+              <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
               <AuthStack/>
               <Toast />
             </AuthenticatedUserProvider>
