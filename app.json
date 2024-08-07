@@ -5,10 +5,10 @@
     "version": "1.0.0",
     "sdkVersion": "51.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon-store.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/icon-store.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -31,7 +31,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon-store.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.vascoandco.vasco.android",
@@ -52,7 +52,7 @@
       }
     },
     "web": {
-      "favicon": "./assets/icon-store.png"
+      "favicon": "./assets/icon.png"
     },
     "extra": {
       "eas": {
