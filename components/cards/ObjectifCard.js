@@ -230,7 +230,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                     <View style={{paddingVertical: 10,display: "flex", flexDirection: "column", width: "80%"}}>
 
                         <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-                            <View style={{flexDirection: "column"}}>
+                            <View style={{flexDirection: "column", width: "80%"}}>
                                 {currentObjectif.sousEtapes !== undefined && currentObjectif.sousEtapes.map((etape, index) => {
                                     return(
                                         <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
@@ -240,7 +240,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                                     ||
                                                     <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
                                                 }
-                                                <Text style={styles.textFontRegular}>{etape.etape}</Text>
+                                                <Text style={[styles.textFontRegular, {flexShrink: 1, flexWrap: 'wrap'}]}>{etape.etape}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     )
@@ -265,7 +265,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                         </View>
                         
 
-                        <View style={[styles.completionBarContainer, {flexDirection: "column"}]}>
+                        <View style={[styles.completionBarContainer, {flexDirection: "column", marginRight: 10}]}>
                             <CompletionBar
                                 percentage={calculPercentCompletude(currentObjectif)}
                             />

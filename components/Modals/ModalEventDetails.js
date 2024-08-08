@@ -192,7 +192,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         var dateEvent = new Date(event.dateevent).setHours(0, 0, 0, 0);
         var currentDate = new Date().setHours(0, 0, 0, 0);
 
-        if( dateEvent < currentDate ){
+        if( (dateEvent < currentDate) && event.state !== "Terminé" ){
             // Calcul de la différence en millisecondes
             const differenceInMilliseconds = Math.abs(currentDate - dateEvent);
 
@@ -421,7 +421,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                     <View style={[styles.tableauSecondaryInfo, {backgroundColor: hexToRgba(getColorEventType(), 0.2)}]}>
                                         <RatingInput
                                             onRatingChange={handleRatingChange}
-                                            defaultRating={3}
+                                            defaultRating={event.note !== undefined && event.note !== null ? event.note : 0}
                                             margin={0}
                                             size={25}
                                         />

@@ -37,7 +37,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("id", animal.id);
         setValue("nom", animal.nom);
         setValue("espece", animal.espece);
-        setValue("datenaissance", animal.datenaissance !== null ? animal.datenaissance : undefined);
+        setValue("datenaissance", animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : undefined);
         setValue("race", animal.race !== null ? animal.race : undefined);
         setValue("taille", animal.taille !== null ? animal.taille.toString() : undefined);
         setValue("poids", animal.poids !== null ? animal.poids.toString() : undefined);
@@ -49,7 +49,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nomMere", animal.nommere !== null ? animal.nommere : undefined);
         setValue("image", animal.image);
         setValue("previousimage", animal.image);
-        setDate(animal.datenaissance);
+        setDate(animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : null);
         setImage(`${getImagePath()}${animal.image}`);
     }
 
@@ -72,6 +72,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nomPere", undefined);
         setValue("nomMere", undefined);
         setImage(null);
+        setDate(String(jour + "/" + mois + "/" + annee));
     };
 
     const submitRegister = async(data) =>{
@@ -87,6 +88,11 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         data["poids"] !== undefined ? data["poids"] = data["poids"].replace(",", ".") : undefined;
         data["taille"] !== undefined ? data["taille"] = data["taille"].replace(",", ".") : undefined;
         data["quantity"] !== undefined ? data["quantity"] = data["quantity"].replace(",", ".") : undefined;
+        
+        // Modification du format de la date pour le bon stockage en base
+        if( data["datenaissance"] !== null && data["datenaissance"] !== undefined ){
+            data["datenaissance"] = dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
+        }
 
         let formData = data;
         if (data.image != undefined){

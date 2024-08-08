@@ -104,7 +104,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               keyboardType="numeric"
                               maxLength={10}
                               placeholderTextColor={variables.texte}
-                              defaultValue={animal.datenaissance}
+                              defaultValue={(animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance)}
                               editable={false}
                           />
                         </View>
