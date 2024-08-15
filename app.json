@@ -25,7 +25,8 @@
         "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
         "NSUserTrackingUsageDescription": "L'application a besoin d'une permission pour vous envoyez des notifications",
         "UIBackgroundModes": [
-          "fetch", "remote-notification"
+          "fetch",
+          "remote-notification"
         ]
       }
     },
@@ -69,7 +70,17 @@
           "photosPermission": "L'application a besoin d'accéder à votre galerie de photos pour que vous puissiez choisir des images."
         }
       ],
-      "expo-task-manager"
+      "expo-task-manager",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "deploymentTarget": "13.4",
+            "modularHeaders": true
+          }
+        }
+      ]
     ]
   }
 }
