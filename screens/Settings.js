@@ -109,7 +109,7 @@ const SettingsScreen = ({ }) => {
                     }
                     
                     <View style={styles.card}>
-                        <Text style={[styles.title, styles.textFontBold]}>{currentUser.displayName}</Text>
+                        <Text style={[styles.title, styles.textFontBold]}>{currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName}</Text>
                         <Text style={[styles.email, styles.textFontRegular]}>{currentUser.email}</Text>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Account")}>
                             <Text style={styles.textFontMedium}>Mon compte</Text>

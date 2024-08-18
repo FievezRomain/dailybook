@@ -10,13 +10,16 @@ import AvatarPicker from "../components/AvatarPicker";
 import AuthService from "../services/AuthService";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import LoggerService from "../services/LoggerService";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const AccountScreen = ({ navigation }) => {
     const { currentUser, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL } = useAuth();
     const [password, setPassword] = useState("");
     const [passwordRepeat, setPasswordRepeat] = useState("");
     const [displayName, setDisplayName] = useState(currentUser.displayName);
+    var defaultName = currentUser.displayName;
     const [email, setEmail] = useState(currentUser.email);
+    var defaultEmail = currentUser.email;
     var previousImage = currentUser.photoURL;
     var previousDisplayName = currentUser.displayName;
     var previousEmail = currentUser.email;
@@ -44,7 +47,7 @@ const AccountScreen = ({ navigation }) => {
                 await updatePhotoURL(filename);
             }
             if(previousEmail != email){
-                await updateEmailForUser(email);
+                await updateEmailForUser(email.trim());
             }
             if( password != "" ){
                 await updatePasswordForUser(password);
@@ -105,59 +108,62 @@ const AccountScreen = ({ navigation }) => {
     return(
         <View style={{backgroundColor: variables.default, height: "100%", justifyContent: "space-between"}}>
             <View>
-                <TopTabSecondary
-                    message1={"Mon"}
-                    message2={"Compte"}
-                />
-                {image &&
-                    <View style={{flexDirection: "row",
-                    alignSelf: "flex-start",
-                    marginTop: 30,
-                    marginBottom: 5, alignSelf: "center"}}>
-                        <Image source={{uri: image}} style={{width: 100,height: 100,borderRadius: 50,borderWidth: 2,zIndex: 1}}/>
-                    </View>
-                }
-                <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 20}}>
-                    <AvatarPicker
-                        backgroundColor={variables.blanc}
-                        setImage={setImage}
-                        setValue={setValue}
+                <KeyboardAwareScrollView>
+                    <TopTabSecondary
+                        message1={"Mon"}
+                        message2={"Compte"}
                     />
-                </View>
-                <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>
-                    <InputTextInLine
-                        inputTextLabel={"Email"}
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-                </View>
-
-                <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>
-                    <InputTextInLine
-                        inputTextLabel={"Nom"}
-                        value={displayName}
-                        onChangeText={setDisplayName}
-                    />
-                </View>
-
-                <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>
-                    <InputTextInLine
-                        inputTextLabel={"Mot de passe"}
-                        isPassword={true}
-                        value={password}
-                        onChangeText={setPassword}
-                    />
-                </View>
-                {password != "" &&
-                    <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>
-                        <InputTextInLine
-                            inputTextLabel={"Confirmer le mot de passe"}
-                            isPassword={true}
-                            value={passwordRepeat}
-                            onChangeText={setPasswordRepeat}
+                    {image &&
+                        <View style={{flexDirection: "row",
+                        alignSelf: "flex-start",
+                        marginTop: 30,
+                        marginBottom: 5, alignSelf: "center"}}>
+                            <Image source={{uri: image}} style={{width: 100,height: 100,borderRadius: 50,borderWidth: 2,zIndex: 1}}/>
+                        </View>
+                    }
+                    
+                    <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 20}}>
+                        <AvatarPicker
+                            backgroundColor={variables.blanc}
+                            setImage={setImage}
+                            setValue={setValue}
                         />
                     </View>
-                }
+                    <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>
+                        <InputTextInLine
+                            inputTextLabel={"Email"}
+                            value={defaultEmail}
+                            onChangeText={setEmail}
+                        />
+                    </View>
+
+                    <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>
+                        <InputTextInLine
+                            inputTextLabel={"Nom"}
+                            value={defaultName}
+                            onChangeText={setDisplayName}
+                        />
+                    </View>
+
+                    <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>
+                        <InputTextInLine
+                            inputTextLabel={"Mot de passe"}
+                            isPassword={true}
+                            value={password}
+                            onChangeText={setPassword}
+                        />
+                    </View>
+                    {password != "" &&
+                        <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>
+                            <InputTextInLine
+                                inputTextLabel={"Confirmer le mot de passe"}
+                                isPassword={true}
+                                value={passwordRepeat}
+                                onChangeText={setPasswordRepeat}
+                            />
+                        </View>
+                    }
+                </KeyboardAwareScrollView>
             </View>
 
             <View style={{width: "70%", alignSelf: "center", marginBottom: 50}}>

@@ -22,7 +22,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     useEffect(() => {
       const unsubscribe = navigation.addListener("focus", () => {
-        setMessages({message1: "Bienvenue,", message2: currentUser.displayName});
+        setMessages({message1: "Bienvenue,", message2: currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName});
         getEventsForUser();
         getObjectifsForUser();
       });
