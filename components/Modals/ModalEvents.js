@@ -471,6 +471,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         />
         <View style={styles.modalContainer}>
           <View style={styles.form}>
+            <View style={styles.toastContainer}>
+                <Toast />
+            </View>
             <View style={styles.containerActionsButtons}>
 
               <TouchableOpacity onPress={closeModal}>
@@ -1116,7 +1119,10 @@ loadingEvent: {
   },
   textFontBold:{
       fontFamily: Variables.fontBold
-  }
+  },
+  toastContainer: {
+    zIndex: 9999, 
+  },
 });
 
 export default ModalEvents;
