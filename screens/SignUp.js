@@ -32,7 +32,7 @@ const SignUpScreen = ({ navigation })=> {
                 } else{
                     setEvenPassword(true);
     
-                    const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+                    const userCredential = await createUserWithEmailAndPassword(auth, data.email.trim(), data.password);
                     const user = userCredential.user;
                     await updateProfile(user, {
                         displayName: `${data.prenom}`,

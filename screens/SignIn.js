@@ -23,7 +23,7 @@ const SignInScreen = ({ navigation })=> {
         try {
             setLoading(true);
 
-            await signInWithEmailAndPassword(auth, data.email, data.password);
+            await signInWithEmailAndPassword(auth, data.email.trim(), data.password);
 
             currentUser ? await reloadUser(currentUser) : null;
     
@@ -66,7 +66,7 @@ const SignInScreen = ({ navigation })=> {
                 });
                 return;
             }
-            await sendPasswordResetEmail(auth, getValues("email"));
+            await sendPasswordResetEmail(auth, getValues("email").trim());
             Toast.show({
                 type: "success",
                 position: "top",
