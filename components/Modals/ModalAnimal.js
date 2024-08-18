@@ -94,6 +94,12 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             data["datenaissance"] = dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
         }
 
+        // Ajout d'un 0 sur la première partie de la date de naissance si on a 9 caractères dans la date de naissance
+        if( data["datenaissance"] !== null && data["datenaissance"] !== undefined && data["datenaissance"].length === 9){
+            data["datenaissance"] = "0" + data["datenaissance"];
+            setDate(data["datenaissance"]);
+        }
+
         let formData = data;
         if (data.image != undefined){
             if(actionType !== "modify" || data["previousimage"] !== data["image"]){
@@ -166,6 +172,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     }
 
     const onChangeDate = (selectedDate) => {
+        console.log(selectedDate.length);
         nbOccur = (String(selectedDate).match(/\//g) || []).length;
         oldNbOccur = (String(date).match(/\//g) || []).length;
         if(String(selectedDate).length === 2){
@@ -177,13 +184,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         } else if(String(selectedDate).length === 5){
             if(nbOccur === 1 && oldNbOccur === 1){
                 selectedDate = selectedDate + "/";
-                setValue("datenaissance", selectedDate);
-                setDate(selectedDate);
-            }
-        } else if(String(selectedDate).length === 9){
-            firstDatePart = String(selectedDate).split("/")[0];
-            if(String(firstDatePart).length === 1){
-                selectedDate = "0" + selectedDate;
                 setValue("datenaissance", selectedDate);
                 setDate(selectedDate);
             }
