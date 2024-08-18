@@ -142,7 +142,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
               text1: "Veuillez saisir une date de début pour l'objectif"
             });
         }
-        const isNotEmpty = inputs.some(str => str.etape.trim().length > 0);
+        const isNotEmpty = inputs.some(str => str.etape !== undefined && str.etape.trim().length > 0);
         if(!isNotEmpty){
             complete = false;
             Toast.show({
