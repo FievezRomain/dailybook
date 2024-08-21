@@ -6,6 +6,7 @@ import CompletionBar from './CompletionBar';
 import EventCard from './cards/EventCard';
 import EventService from '../services/EventService';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import LoggerService from '../services/LoggerService';
 
 const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEvent }) => {
     const [eventsToday, setEventsToday] = useState([]);
@@ -141,6 +142,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la MAJ du statut d'un event : " + err.message );
             })
     }
 
@@ -188,6 +190,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                   position: "top",
                   text1: err.message
               });
+              LoggerService.log( "Erreur lors de suppression d'un event : " + err.message );
             });
       }
 

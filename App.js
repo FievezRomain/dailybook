@@ -5,10 +5,17 @@ import AuthStack from "./navigation/AuthStack";
 import * as Font from 'expo-font';
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import * as Sentry from '@sentry/react-native';
+import { StatusBar } from 'expo-status-bar';
 
-export default function App() {
+function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  Sentry.init({
+    dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
+    enableInExpoDevelopment: true,
+    debug: false, // Passez à false en production
+  });
 
   useEffect(() => {
     loadFonts().then(() => setFontsLoaded(true));
@@ -41,6 +48,7 @@ export default function App() {
     fontsLoaded ?
           <NavigationContainer>
             <AuthenticatedUserProvider>
+              <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
               <AuthStack/>
               <Toast />
             </AuthenticatedUserProvider>
@@ -51,3 +59,5 @@ export default function App() {
     
   );
 };
+
+export default Sentry.wrap(App);

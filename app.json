@@ -1,13 +1,14 @@
 {
   "expo": {
-    "name": "vasco",
-    "slug": "vasco",
-    "version": "1.0.0",
+    "name": "Vasco",
+    "slug": "dailybook",
+    "version": "1.0.3",
+    "sdkVersion": "51.0.0",
     "orientation": "portrait",
-    "icon": "./assets/logo.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/logo.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -16,41 +17,70 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.vascoandco.vasco",
-      "buildNumber": "1.0.0",
+      "bundleIdentifier": "com.vascoandco.vasco.ios",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "buildNumber": "1.0.3",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
         "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
         "NSUserTrackingUsageDescription": "L'application a besoin d'une permission pour vous envoyez des notifications",
         "UIBackgroundModes": [
-          "fetch", "remote-notification"
+          "fetch",
+          "remote-notification"
         ]
       }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/logo.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.vascoandco.vasco",
-      "versionCode": 1,
+      "package": "com.vascoandco.vasco.android",
+      "googleServicesFile": "./google-services.json",
+      "versionCode": 3,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
-        "com.google.android.c2dm.permission.RECEIVE"
-      ]
+        "com.google.android.c2dm.permission.RECEIVE",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "ACCESS_WIFI_STATE"
+      ],
+      "statusBar": {
+        "backgroundColor": "#ffffff",
+        "translucent": true,
+        "style": "dark-content"
+      }
     },
     "web": {
-      "favicon": "./assets/logo.png"
+      "favicon": "./assets/icon.png"
     },
     "extra": {
       "eas": {
         "projectId": "9733b21a-2b6a-413e-98ff-c4fdc8c1765d"
       }
     },
-    "owner": "FIEVEZ Romain",
+    "owner": "riujin",
     "plugins": [
-      "expo-font"
+      "expo-font",
+      "expo-notifications",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "L'application a besoin d'accéder à votre galerie de photos pour que vous puissiez choisir des images."
+        }
+      ],
+      "expo-task-manager",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "deploymentTarget": "13.4",
+            "modularHeaders": true
+          }
+        }
+      ]
     ]
   }
 }

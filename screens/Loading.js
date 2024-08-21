@@ -4,6 +4,7 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import variables from "../components/styles/Variables";
 import AnimalsService from "../services/AnimalsService";
 import * as Font from 'expo-font';
+import LoggerService from "../services/LoggerService";
 
 const LoadingScreen = ({ navigation })=> {
     const { cacheUpdated, currentUser, loading, emailVerified, reloadUser } = useAuth();
@@ -21,6 +22,7 @@ const LoadingScreen = ({ navigation })=> {
             }else if(currentUser && cacheUpdated){
               var animaux = await animalService.getAnimals(currentUser.email);
               if(Array.isArray(animaux) && animaux.length > 0){
+                LoggerService.log("Connexion réussie");
                 navigation.navigate("App");
               } else{
                 navigation.navigate("FirstPageAddAnimal");
@@ -31,6 +33,12 @@ const LoadingScreen = ({ navigation })=> {
           }
           
         } catch (error) {
+            LoggerService.log( "Erreur dans le traitement pour vérifier la connexion de l'utilisateur : \n" 
+            + "Valeur du currentUser : " + currentUser + "\n "
+            + "Valeur de la vérification de l'email : " + emailVerified + "\n "
+            + "Etat du chargement : " + loading + "\n "
+            + "Etat de la mise à jour du cache : " + cacheUpdated + "\n "
+            + "Message d'erreur : " +  error.message );
             console.error('Erreur :', error);
         }
       };

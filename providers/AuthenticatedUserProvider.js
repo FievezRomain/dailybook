@@ -9,6 +9,7 @@ import ObjectifService from "../services/ObjectifService";
 import AuthService from "../services/AuthService";
 import { getFirebaseAuth } from '../firebase';
 import { getImagePath } from '../services/Config';
+import LoggerService from '../services/LoggerService';
 
 const AuthenticatedUserContext = createContext();
 
@@ -51,6 +52,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
         await contactService.refreshCache(email);
         await wishService.refreshCache(email);
     } catch (error) {
+        LoggerService.log( "Erreur lors de la mise à jour du cache : " + error.message );
         console.error('Erreur lors de la mise à jour du cache :', error);
     }
   };
@@ -64,6 +66,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
         setEmailVerified(false);
         setLoading(false);
     } catch (error) {
+        LoggerService.log( "Erreur lors de la déconnexion : " + error.message );
         console.error('Erreur lors de la déconnexion :', error);
     }
   };
@@ -76,6 +79,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
       setCurrentUser(updatedUser);
       console.log("Email updated successfully!");
     } catch (error) {
+      LoggerService.log( "Erreur lors de la MAJ de l'email du user sur Firebase : " + error.message );
       console.error("Failed to update email:", error);
       // Handle errors here, such as email already in use
     }
@@ -91,6 +95,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
       setCurrentUser(updatedUser);
       console.log("Display name updated successfully!");
     } catch (error) {
+      LoggerService.log( "Erreur lors de la MAJ du nom du user sur Firebase : " + error.message );
       console.error("Failed to update display name:", error);
       // Handle errors here
     }
@@ -101,6 +106,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
       await updatePassword(currentUser, newPassword);
       console.log("Password updated successfully!");
     } catch (error) {
+      LoggerService.log( "Erreur lors de la MAJ du password du user sur Firebase : " + error.message );
       console.error("Failed to update password:", error);
       // Handle errors here, such as weak password
     }
@@ -116,6 +122,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
       setCurrentUser(updatedUser);
       console.log("Photo URL updated successfully!");
     } catch (error) {
+      LoggerService.log( "Erreur lors de la MAJ de la photo URL du user sur Firebase : " + error.message );
       console.error("Failed to update photo URL:", error);
     }
   };
@@ -139,6 +146,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
         setEmailVerified(false);
       }
     } catch (error) {
+        LoggerService.log( "Erreur lors du rechargement des informations du user sur Firebase : " + error.message );
         console.error('Erreur :', error);
     }
   };

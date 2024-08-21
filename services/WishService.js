@@ -2,6 +2,7 @@ import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
+import LoggerService from './LoggerService';
 
 export default class WishService {
 
@@ -11,7 +12,7 @@ export default class WishService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour créer un wish sans image : " + err.message )); 
     } 
     async createWithPicture(body) {
         return axios.post(`${getBaseUrl()}createWish`, body, {
@@ -22,7 +23,7 @@ export default class WishService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour créer un wish avec une image : " + err.message )); 
     } 
     async create(body) {
         await this.updateAxiosAuthorization();
@@ -39,7 +40,7 @@ export default class WishService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier un wish sans image : " + err.message )); 
     } 
     async updateWithPicture(body) {
         return axios.put(`${getBaseUrl()}updateWish`, body, {
@@ -50,7 +51,7 @@ export default class WishService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier un wish avec une image : " + err.message )); 
     } 
     async update(body) {
         await this.updateAxiosAuthorization();
@@ -69,7 +70,7 @@ export default class WishService {
             await this.deleteInCache(body);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un wish : " + err.message ));
     }
 
     async getWishs(email){
@@ -83,7 +84,7 @@ export default class WishService {
                 await this.putInCache(data.rows);
                 return await this.getCache();
             })
-            .catch();
+            .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les wishs : " + err.message ));
         }
         
     }

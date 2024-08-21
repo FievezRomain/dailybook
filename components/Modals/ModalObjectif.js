@@ -15,6 +15,7 @@ import DateUtils from "../../utils/DateUtils";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import LoggerService from "../../services/LoggerService";
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -141,7 +142,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
               text1: "Veuillez saisir une date de début pour l'objectif"
             });
         }
-        const isNotEmpty = inputs.some(str => str.etape.trim().length > 0);
+        const isNotEmpty = inputs.some(str => str.etape !== undefined && str.etape.trim().length > 0);
         if(!isNotEmpty){
             complete = false;
             Toast.show({
@@ -173,6 +174,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             position: "top",
                             text1: err.message
                         });
+                        LoggerService.log( "Erreur lors de la MAJ d'un objectif : " + err.message );
                         setLoading(false);
                     });
             }
@@ -194,6 +196,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             position: "top",
                             text1: err.message
                         });
+                        LoggerService.log( "Erreur lors de la création d'un objectif : " + err.message );
                         setLoading(false);
                     });
             }

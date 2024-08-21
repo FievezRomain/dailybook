@@ -12,7 +12,7 @@ export default class NoteService {
             await this.deleteInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour créer une note : " + err.message )); 
     } 
 
     async update(body) {
@@ -22,7 +22,7 @@ export default class NoteService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier une note : " + err.message )); 
     } 
 
 
@@ -33,7 +33,7 @@ export default class NoteService {
             await this.deleteInCache(body);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer une note : " + err.message ));
     }
 
     async getNotes(email){
@@ -47,7 +47,7 @@ export default class NoteService {
                 await this.putInCache(data.rows);
                 return await this.getCache();
             })
-            .catch();
+            .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les notes : " + err.message ));
         }
     }
 

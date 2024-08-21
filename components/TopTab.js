@@ -10,7 +10,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
     const { currentUser } = useAuth();
     const styles = StyleSheet.create({
         topTabContainer:{
-            paddingTop: Constants.statusBarHeight + 10,
+            paddingTop: Constants.platform.ios ? Constants.statusBarHeight + 10 : Constants.statusBarHeight + 10,
             display: "flex",
             flexDirection: "row",
             alignItems: "center",

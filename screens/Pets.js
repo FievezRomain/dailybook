@@ -12,6 +12,7 @@ import NutritionHistory from "../components/NutritionHistory";
 import MedicalBook from "../components/MedicalBook";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import DateUtils from '../utils/DateUtils';
+import LoggerService from "../services/LoggerService";
 
 const PetsScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -126,6 +127,7 @@ const PetsScreen = ({ navigation }) => {
             position: "top",
             text1: err.message
         });
+        LoggerService.log( "Erreur lors de la suppression d'un animal : " + err.message );
     });
   }
 

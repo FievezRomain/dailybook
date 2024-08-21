@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "592615799562",
+    "project_id": "dailybook-be27d",
+    "storage_bucket": "dailybook-be27d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:592615799562:android:c6ef412eb95e768da8d8f3",
+        "android_client_info": {
+          "package_name": "com.vascoandco.vasco.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "592615799562-qddjtkcus1ar29h4rveiaqi2r2i9grhr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlEba98gaqTdmot-xuXIzy1AZnTPwOPM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "592615799562-qddjtkcus1ar29h4rveiaqi2r2i9grhr.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "592615799562-ob3qrotnhl11u7je79b4of2b83ghejoe.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.rfievez.dailybook"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

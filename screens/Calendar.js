@@ -14,6 +14,7 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
+import LoggerService from "../services/LoggerService";
 
 const CalendarScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -63,6 +64,7 @@ const CalendarScreen = ({ navigation }) => {
           setEventArray(result);
         }
       } catch (error) {
+        LoggerService.log( "Erreur lors de la récupération des events : " + error.message );
         console.error("Error fetching events:", error);
       }
     }
@@ -239,6 +241,7 @@ const CalendarScreen = ({ navigation }) => {
               position: "top",
               text1: err.message
           });
+          LoggerService.log( "Erreur lors de la suppression d'un event : " + err.message );
         });
   }
 

@@ -2,6 +2,7 @@ import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
+import LoggerService from './LoggerService';
 
 export default class ObjectifService {
 
@@ -12,7 +13,7 @@ export default class ObjectifService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour créer un objectif : " + err.message )); 
     } 
 
     async update(body) {
@@ -22,7 +23,7 @@ export default class ObjectifService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier un objectif : " + err.message )); 
     } 
 
     async updateTasks(body) {
@@ -32,7 +33,7 @@ export default class ObjectifService {
             await this.putInCache(response.data);
             return response.data;
         })
-        .catch(); 
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier les tâches d'un objectif : " + err.message )); 
     } 
 
 
@@ -43,7 +44,7 @@ export default class ObjectifService {
             await this.deleteInCache(body);
             return response.data;
         })
-        .catch();
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un objectif : " + err.message ));
     }
 
     async getObjectifs(email){
@@ -57,7 +58,7 @@ export default class ObjectifService {
                 await this.putInCache(data);
                 return await this.getCache();
             })
-            .catch();
+            .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les objectifs : " + err.message ));
         }
         
     }

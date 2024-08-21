@@ -7,6 +7,7 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 import NoteService from "../../services/NoteService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { ActivityIndicator } from "react-native";
+import LoggerService from "../../services/LoggerService";
 
 const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -51,6 +52,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                         position: "top",
                         text1: err.message
                     });
+                    LoggerService.log( "Erreur lors de la MAJ d'une note : " + err.message );
                     setLoading(false);
                 });
         }
@@ -68,6 +70,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                         position: "top",
                         text1: err.message
                     });
+                    LoggerService.log( "Erreur lors de la création d'une note : " + err.message );
                     setLoading(false);
                 });
         }

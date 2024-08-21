@@ -25,7 +25,7 @@ const FirstPageAddAnimalScreen = ({ navigation })=> {
             />
             <View style={{width: "100%", height: "100%", alignItems: "center"}}>
                 <View style={{width: "80%", marginTop: 200, marginBottom: 50}}>
-                    <Text style={[{fontSize: 20, textAlign: "center"}, styles.textFontRegular]}>Bienvenue {currentUser.displayName}, moi c'est Vasco et pour commencer l'aventure, je te propose d'ajouter un animal.</Text>
+                    <Text style={[{fontSize: 20, textAlign: "center"}, styles.textFontRegular]}>Bienvenue {currentUser !== null && currentUser !== undefined ? currentUser.displayName : ""}, moi c'est Vasco et pour commencer l'aventure, je te propose d'ajouter un animal.</Text>
                 </View>
                 <View style={{width: "60%"}}>
                     <Button

@@ -12,6 +12,7 @@ import { getFirebaseAuth } from "../firebase";
 import { MaterialIcons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import Constants from 'expo-constants';
+import LoggerService from "../services/LoggerService";
 
 
 const SignUpScreen = ({ navigation })=> {
@@ -31,7 +32,7 @@ const SignUpScreen = ({ navigation })=> {
                 } else{
                     setEvenPassword(true);
     
-                    const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+                    const userCredential = await createUserWithEmailAndPassword(auth, data.email.trim(), data.password);
                     const user = userCredential.user;
                     await updateProfile(user, {
                         displayName: `${data.prenom}`,
@@ -55,10 +56,12 @@ const SignUpScreen = ({ navigation })=> {
                             position: "top",
                             text1: "Erreur :" + err
                         });
+                        LoggerService.log( "Erreur lors de l'enregistrement d'un utilisateur en BDD : " + err.message );
                     });
                 }
             }
             catch(err){
+                LoggerService.log( "Erreur lors de l'enregistrement d'un utilisateur sur Firebase : " + err.message );
                 Toast.show({
                     type: "error",
                     position: "top",

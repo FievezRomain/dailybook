@@ -12,6 +12,7 @@ import DateUtils from "../../utils/DateUtils";
 import { getImagePath } from '../../services/Config';
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import LoggerService from "../../services/LoggerService";
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -36,7 +37,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("id", animal.id);
         setValue("nom", animal.nom);
         setValue("espece", animal.espece);
-        setValue("datenaissance", animal.datenaissance !== null ? animal.datenaissance : undefined);
+        setValue("datenaissance", animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : undefined);
         setValue("race", animal.race !== null ? animal.race : undefined);
         setValue("taille", animal.taille !== null ? animal.taille.toString() : undefined);
         setValue("poids", animal.poids !== null ? animal.poids.toString() : undefined);
@@ -48,7 +49,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nomMere", animal.nommere !== null ? animal.nommere : undefined);
         setValue("image", animal.image);
         setValue("previousimage", animal.image);
-        setDate(animal.datenaissance);
+        setDate(animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : null);
         setImage(`${getImagePath()}${animal.image}`);
     }
 
@@ -71,6 +72,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nomPere", undefined);
         setValue("nomMere", undefined);
         setImage(null);
+        setDate(String(jour + "/" + mois + "/" + annee));
     };
 
     const submitRegister = async(data) =>{
@@ -86,6 +88,17 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         data["poids"] !== undefined ? data["poids"] = data["poids"].replace(",", ".") : undefined;
         data["taille"] !== undefined ? data["taille"] = data["taille"].replace(",", ".") : undefined;
         data["quantity"] !== undefined ? data["quantity"] = data["quantity"].replace(",", ".") : undefined;
+        
+        // Modification du format de la date pour le bon stockage en base
+        if( data["datenaissance"] !== null && data["datenaissance"] !== undefined ){
+            data["datenaissance"] = dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
+        }
+
+        // Ajout d'un 0 sur la première partie de la date de naissance si on a 9 caractères dans la date de naissance
+        if( data["datenaissance"] !== null && data["datenaissance"] !== undefined && data["datenaissance"].length === 9){
+            data["datenaissance"] = "0" + data["datenaissance"];
+            setDate(data["datenaissance"]);
+        }
 
         let formData = data;
         if (data.image != undefined){
@@ -129,6 +142,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la MAJ d'un animal : " + err.message );
                 setLoading(false);
             });
         } else{
@@ -151,6 +165,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la création d'un animal : " + err.message );
                 setLoading(false);
             });
         }
@@ -168,13 +183,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         } else if(String(selectedDate).length === 5){
             if(nbOccur === 1 && oldNbOccur === 1){
                 selectedDate = selectedDate + "/";
-                setValue("datenaissance", selectedDate);
-                setDate(selectedDate);
-            }
-        } else if(String(selectedDate).length === 9){
-            firstDatePart = String(selectedDate).split("/")[0];
-            if(String(firstDatePart).length === 1){
-                selectedDate = "0" + selectedDate;
                 setValue("datenaissance", selectedDate);
                 setDate(selectedDate);
             }

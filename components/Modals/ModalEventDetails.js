@@ -8,6 +8,7 @@ import RatingInput from '../RatingInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import EventService from '../../services/EventService';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import LoggerService from '../../services/LoggerService';
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, onModify }) => {
     const eventService = new EventService();
@@ -191,7 +192,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         var dateEvent = new Date(event.dateevent).setHours(0, 0, 0, 0);
         var currentDate = new Date().setHours(0, 0, 0, 0);
 
-        if( dateEvent < currentDate ){
+        if( (dateEvent < currentDate) && event.state !== "Terminé" ){
             // Calcul de la différence en millisecondes
             const differenceInMilliseconds = Math.abs(currentDate - dateEvent);
 
@@ -221,6 +222,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                     position: "top",
                     text1: err.message
                 });
+                LoggerService.log( "Erreur lors de la MAJ du commentaire et la note d'un event : " + err.message );
             })
 
     }
@@ -419,7 +421,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                     <View style={[styles.tableauSecondaryInfo, {backgroundColor: hexToRgba(getColorEventType(), 0.2)}]}>
                                         <RatingInput
                                             onRatingChange={handleRatingChange}
-                                            defaultRating={3}
+                                            defaultRating={event.note !== undefined && event.note !== null ? event.note : 0}
                                             margin={0}
                                             size={25}
                                         />
