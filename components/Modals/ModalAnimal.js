@@ -172,7 +172,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     }
 
     const onChangeDate = (selectedDate) => {
-        console.log(selectedDate.length);
         nbOccur = (String(selectedDate).match(/\//g) || []).length;
         oldNbOccur = (String(date).match(/\//g) || []).length;
         if(String(selectedDate).length === 2){
