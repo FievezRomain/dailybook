@@ -30,7 +30,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
     }, [eventInfos])
 
     const getAnimaux = async () => {
-        var result = await animalsService.getAnimals(currentUser.id);
+        var result = await animalsService.getAnimals(currentUser.email);
 
         setAnimaux(result);
     }

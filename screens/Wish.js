@@ -31,7 +31,7 @@ const WishScreen = ({ navigation }) => {
     }, [navigation]);
 
     const getWishs = async () => {
-        var result = await wishService.getWishs(currentUser.id);
+        var result = await wishService.getWishs(currentUser.email);
         if(result.length != 0){
             setWishs(result);
         }

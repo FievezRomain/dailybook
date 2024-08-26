@@ -101,7 +101,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.id);
+      var result = await animalsService.getAnimals(currentUser.email);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)

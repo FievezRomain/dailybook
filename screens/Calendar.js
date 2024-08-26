@@ -59,7 +59,7 @@ const CalendarScreen = ({ navigation }) => {
   const getEventsForUser = async () => {
     if (eventArray.length === 0) {
       try {
-        const result = await eventService.getEvents(currentUser.id);
+        const result = await eventService.getEvents(currentUser.email);
         if (result.length !== 0) {
           setEventArray(result);
         }

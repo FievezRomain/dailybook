@@ -19,7 +19,7 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
     }, [objectifs]);
 
     const getAnimaux = async () => {
-        var result = await animalsService.getAnimals(currentUser.id);
+        var result = await animalsService.getAnimals(currentUser.email);
 
         setAnimaux(result);
     }

@@ -31,7 +31,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     const getEventsForUser = async () => {
       try {
-        const result = await eventService.getEvents(currentUser.id);
+        const result = await eventService.getEvents(currentUser.email);
         if (result.length !== 0) {
           setEvents(result);
         }

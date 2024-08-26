@@ -39,7 +39,7 @@ const StatsScreen = ({ navigation }) => {
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.id);
+      var result = await animalsService.getAnimals(currentUser.email);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On valorise l'animal selectionné par défaut au premier de la liste
