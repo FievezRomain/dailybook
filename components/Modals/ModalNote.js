@@ -15,11 +15,24 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        if(isVisible){
+          initValuesEvent();
+        }
+    }, [isVisible]);
+
     const closeModal = () => {
         setVisible(false);
     };
 
+    const initValuesEvent = () =>{
+        setValue("id", note.id);
+        setValue("titre", note.titre);
+        setValue("note", note.note);
+    }
+
     const resetValues = () =>{
+        setValue("id", undefined);
         setValue("titre", undefined);
         setValue("note", undefined);
     };
@@ -41,9 +54,9 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                         position: "top",
                         text1: "Modification d'un contact réussi"
                     });
-                    onModify(reponse);
                     resetValues();
                     closeModal();
+                    onModify(reponse);
                     setLoading(false);
                 })
                 .catch((err) =>{
@@ -124,7 +137,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                                             placeholder="Exemple : Note1"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("titre", text)}
-                                            defaultValue={getValues("titre")}
+                                            defaultValue={watch("titre")}
                                             {...register("titre", { required: true })}
                                         />
                                     </View>
@@ -137,7 +150,7 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
                                             placeholder="Exemple : Hello world"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("note", text)}
-                                            defaultValue={getValues("note")}
+                                            defaultValue={watch("note")}
                                             {...register("note", { required: true })}
                                         />
                                     </View>
