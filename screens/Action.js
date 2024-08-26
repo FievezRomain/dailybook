@@ -107,6 +107,9 @@ const ActionScreen = ({ navigation }) => {
         onModify={handleCreateAnimal}
       />
       <Image style={styles.image} />
+      <View style={styles.toastContainer}>
+          <Toast />
+      </View>
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <View style={styles.form}>
@@ -234,11 +237,11 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setNoteModalVisible(true)} disabled={true}>
+              <TouchableOpacity onPress={() => setNoteModalVisible(true)}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <SimpleLineIcons name="note" size={20} style={styles.iconButton}/>
-                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Note</Text>
+                    <Text style={[styles.textFontRegular]}>Note</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -376,7 +379,10 @@ loadingEvent: {
   },
   textFontRegular:{
     fontFamily: Variables.fontRegular
-  }
+  },
+  toastContainer: {
+    zIndex: 9999, 
+},
 });
 
 module.exports = ActionScreen;
