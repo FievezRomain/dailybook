@@ -2,7 +2,7 @@ import React, { useImperativeHandle, forwardRef }from 'react';
 import { View, Text } from 'react-native';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import variables from './styles/Variables';
-import DOMPurify from 'dompurify';
+import sanitizeHtml from 'sanitize-html';
 
 const RichTextEditor = forwardRef(({ defaultValue, onChange }, ref) => {
   const richText = React.useRef();
@@ -16,10 +16,9 @@ const RichTextEditor = forwardRef(({ defaultValue, onChange }, ref) => {
     }
   }));
 
-  // Nettoyer le HTML avant de transmettre au parent
+  
   const handleChange = (html) => {
-    const sanitizedHTML = DOMPurify.sanitize(html);  // Nettoie le HTML avec DOMPurify
-    onChange(sanitizedHTML);  // Appelle la fonction de changement avec le HTML nettoyé
+    onChange(html);  // Appelle la fonction de changement avec le HTML 
   };
 
   return (

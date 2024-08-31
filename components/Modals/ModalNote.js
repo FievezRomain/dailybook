@@ -18,6 +18,7 @@ import NoteService from "../../services/NoteService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import RichTextEditor from "../RichTextEditor";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import sanitizeHtml from 'sanitize-html';
 
 const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = undefined }) => {
     const { currentUser } = useAuth();
@@ -58,7 +59,9 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
         setLoading(true);
         
         data["email"] = currentUser.email;
-        data["note"] = richTextValue;
+
+        // Nettoyer le HTML avant de continuer
+        data["note"] = await sanitizeHtml(richTextValue);
         
         if (actionType === "modify") {
             noteService.update(data)
