@@ -1,23 +1,35 @@
-import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
-import React, { useState, useContext, useEffect } from "react";
-import Variables from "../styles/Variables";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  Modal,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Keyboard,
+  TouchableWithoutFeedback
+} from "react-native";
 import { useForm } from "react-hook-form";
-import { SimpleLineIcons } from '@expo/vector-icons';
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Variables from "../styles/Variables";
 import NoteService from "../../services/NoteService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
-import { ActivityIndicator } from "react-native";
-import LoggerService from "../../services/LoggerService";
+import RichTextEditor from "../RichTextEditor";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefined}) => {
+const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = undefined }) => {
     const { currentUser } = useAuth();
     const noteService = new NoteService();
-    const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
+    const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
     const [loading, setLoading] = useState(false);
+    const richText = useRef();  // Reference to RichTextEditor
+    const [richTextValue, setRichTextValue] = useState(undefined);
 
     useEffect(() => {
-        if(isVisible){
-          initValuesEvent();
+        if (isVisible) {
+            initValuesEvent();
         }
     }, [isVisible]);
 
@@ -25,165 +37,139 @@ const ModalNote = ({isVisible, setVisible, actionType, note={}, onModify=undefin
         setVisible(false);
     };
 
-    const initValuesEvent = () =>{
+    const initValuesEvent = () => {
         setValue("id", note.id);
         setValue("titre", note.titre);
         setValue("note", note.note);
-    }
+        setRichTextValue(note.note !== null ? note.note : undefined);
+    };
 
-    const resetValues = () =>{
+    const resetValues = () => {
         setValue("id", undefined);
         setValue("titre", undefined);
         setValue("note", undefined);
+        setRichTextValue(undefined);
     };
 
-    const submitRegister = async(data) =>{
-        if(loading){
+    const submitRegister = async (data) => {
+        if (loading) {
             return;
         }
         setLoading(true);
         
         data["email"] = currentUser.email;
+        data["note"] = richTextValue;
         
-        if(actionType === "modify"){
+        if (actionType === "modify") {
             noteService.update(data)
-                .then((reponse) =>{
-
+                .then((reponse) => {
                     Toast.show({
                         type: "success",
                         position: "top",
-                        text1: "Modification d'un contact réussi"
+                        text1: "Modification d'une note réussie"
                     });
                     resetValues();
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
                 })
-                .catch((err) =>{
+                .catch((err) => {
                     Toast.show({
                         type: "error",
                         position: "top",
                         text1: err.message
                     });
-                    LoggerService.log( "Erreur lors de la MAJ d'une note : " + err.message );
                     setLoading(false);
                 });
-        }
-        else{
+        } else {
             noteService.create(data)
-                .then((reponse) =>{
+                .then((reponse) => {
                     resetValues();
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
                 })
-                .catch((err) =>{
+                .catch((err) => {
                     Toast.show({
                         type: "error",
                         position: "top",
                         text1: err.message
                     });
-                    LoggerService.log( "Erreur lors de la création d'une note : " + err.message );
                     setLoading(false);
                 });
         }
-    }
+    };
 
-    return(
-        <>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isVisible}
-                onRequestClose={closeModal}
-            >
+    // Function to handle dismissing the keyboard inside the RichTextEditor
+    const dismissRichTextKeyboard = () => {
+        if (richText.current) {
+            richText.current.dismissKeyboard(); // Custom method to dismiss the RichTextEditor keyboard
+        }
+    };
+
+    return (
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isVisible}
+            onRequestClose={closeModal}
+        >
+            {/* Detect taps outside the input fields */}
+            <TouchableWithoutFeedback onPress={dismissRichTextKeyboard} accessible={false}>
                 <View style={styles.modalContainer}>
                     <View style={styles.form}>
                         <View style={styles.toastContainer}>
                             <Toast />
                         </View>
                         <View style={styles.containerActionsButtons}>
-
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
+                                <Text style={[{ color: Variables.aubere }, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                            { actionType === "modify" && 
-                                <Text style={[styles.textFontBold]}>Modifier une note</Text>
-                            }
-                            { actionType === "create" && 
-                                <Text style={[styles.textFontBold]}>Créer une note</Text>
-                            }
+                            <Text style={styles.textFontBold}>
+                                {actionType === "modify" ? "Modifier une note" : "Créer une note"}
+                            </Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                { loading ? 
+                                {loading ? (
                                     <ActivityIndicator size={10} color={Variables.bai} />
-                                :
-                                    actionType === "modify" ?
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
-                                    :
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
-                                }
+                                ) : (
+                                    <Text style={[{ color: Variables.alezan }, styles.textFontRegular]}>
+                                        {actionType === "modify" ? "Modifier" : "Créer"}
+                                    </Text>
+                                )}
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
-                        <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="padding">
-                            <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
-                                <View style={styles.formContainer}>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={[styles.textInput, styles.textFontRegular]}>Titre : <Text style={{color: "red"}}>*</Text></Text>
-                                        {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Titre obligatoire</Text>}
-                                        <TextInput
-                                            style={[styles.input, styles.textFontRegular]}
-                                            placeholder="Exemple : Note1"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("titre", text)}
-                                            defaultValue={watch("titre")}
-                                            {...register("titre", { required: true })}
-                                        />
-                                    </View>
-
-                                    <View style={styles.inputContainer}>
-                                        {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Note obligatoire</Text>}
-                                        <TextInput
-                                            style={[styles.inputTextArea, styles.textFontRegular]}
-                                            multiline={true}
-                                            placeholder="Exemple : Hello world"
-                                            placeholderTextColor={Variables.texte}
-                                            onChangeText={(text) => setValue("note", text)}
-                                            defaultValue={watch("note")}
-                                            {...register("note", { required: true })}
-                                        />
-                                    </View>
-                                    <View style={{alignSelf: "flex-end"}}>
-                                        <View style={{backgroundColor: Variables.alezan, padding: 20, borderRadius: 60, justifyContent: "center", height: 110, width: 110}}>
-                                            <SimpleLineIcons name="note"size={60} style={{alignSelf: "flex-end"}} color={Variables.blanc}/>
-                                        </View>
-                                    </View>
+                        <KeyboardAwareScrollView>
+                            <View style={styles.formContainer}>
+                                <View style={styles.inputContainer}>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>
+                                        Titre : <Text style={{ color: "red" }}>*</Text>
+                                    </Text>
+                                    {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Titre obligatoire</Text>}
+                                    <TextInput
+                                        style={[styles.input, styles.textFontRegular]}
+                                        placeholder="Exemple : Note1"
+                                        placeholderTextColor={Variables.texte}
+                                        onChangeText={(text) => setValue("titre", text)}
+                                        defaultValue={watch("titre")}
+                                        {...register("titre", { required: true })}
+                                    />
+                                    <RichTextEditor
+                                        ref={richText}  // Assign the ref to RichTextEditor
+                                        defaultValue={watch("note") !== undefined ? watch("note") : "Votre texte ici"}
+                                        onChange={(text) => setRichTextValue(text)}
+                                    />
                                 </View>
-                            </ScrollView>
-                        </KeyboardAvoidingView>
+                            </View>
+                        </KeyboardAwareScrollView>
                     </View>
                 </View>
-            </Modal>
-        </>
-    )
+            </TouchableWithoutFeedback>
+        </Modal>
+    );
 }
 
 const styles = StyleSheet.create({
-    loadingEvent: {
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#000000b8",
-        paddingTop: 50
-    },
-    loaderEvent: {
-        width: 200,
-        height: 200
-    },
     modalContainer: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
         height: "100%",
@@ -200,45 +186,25 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
     toastContainer: {
-        zIndex: 9999, 
+        zIndex: 9999,
     },
     containerActionsButtons: {
         flexDirection: "row",
         justifyContent: "space-evenly",
-        alignItems: "center"
+        alignItems: "center",
     },
     bottomBar: {
         width: '100%',
         marginBottom: 10,
         marginTop: 10,
-        height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
+        height: 0.3,
         backgroundColor: Variables.souris,
     },
-    keyboardAvoidingContainer: {
-        flex: 1,
-    },
-    formContainer:{
+    formContainer: {
         paddingLeft: 30,
         paddingRight: 30,
         paddingTop: 10,
         paddingBottom: 10,
-    },
-    inputTextArea: {
-        height: 400,
-        width: "100%",
-        marginBottom: 15,
-        borderRadius: 5,
-        padding: 15,
-        backgroundColor: Variables.rouan,
-        color: "black",
-    },
-    inputContainer:{
-        alignItems: "center",
-        width: "100%"
-    },
-    textInput:{
-        alignSelf: "flex-start",
-        marginBottom: 5
     },
     input: {
         height: 40,
@@ -248,27 +214,21 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         backgroundColor: Variables.rouan,
         color: "black",
-        alignSelf: "baseline"
     },
-    iconContainer:{
-        backgroundColor: Variables.alezan,
-        padding: 20,
-        borderRadius: 60,
-        height: 120,
-        width: 120,
-        justifyContent: "center",
-        alignItems: "center"
+    inputContainer: {
+        alignItems: "center",
+        width: "100%",
     },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
+    textInput: {
+        alignSelf: "flex-start",
+        marginBottom: 5,
     },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
+    textFontRegular: {
+        fontFamily: Variables.fontRegular,
     },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-})
+    textFontBold: {
+        fontFamily: Variables.fontBold,
+    },
+});
 
 export default ModalNote;
-

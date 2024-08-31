@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import variables from '../styles/Variables';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 import ModalSubMenuNoteActions from '../Modals/ModalSubMenuNoteActions';
@@ -7,59 +7,43 @@ import ModalNote from "../Modals/ModalNote";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import NoteService from '../../services/NoteService';
 import LoggerService from '../../services/LoggerService';
+import HTMLView from 'react-native-htmlview';
 
-const NoteCard = ({note, handleNoteChange, handleNoteDelete}) =>{
-
+const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     const [focus, setFocus] = useState(false);
     const [modalSubMenuNoteVisible, setModalSubMenuNoteVisible] = useState(false);
     const [modalNote, setModaleNote] = useState(false);
     const noteService = new NoteService();
 
-    const getDisplayedText = (note) => {
-        if( focus ){
-            return note.note;
-        }
-
-        if( note.note.length > 33 ){
-            return note.note.substring(0, 33) + "...";
-        } else {
-            return note.note;
-        }
-    }
-
     const handleDelete = () => {
         let data = {};
-        // Récupération de l'identifiant de l'utilisateur (propriétaire)
         data["id"] = note.id;
         noteService.delete(data)
-            .then((reponse) =>{
-
+            .then((reponse) => {
                 Toast.show({
                     type: "success",
                     position: "top",
                     text1: "Suppression d'une note réussie"
                 });
-
                 handleNoteDelete(note);
-
             })
-            .catch((err) =>{
+            .catch((err) => {
                 Toast.show({
                     type: "error",
                     position: "top",
                     text1: err.message
                 });
-                LoggerService.log( "Erreur lors de la suppression d'une note : " + err.message );
+                LoggerService.log("Erreur lors de la suppression d'une note : " + err.message);
             });
-    }
+    };
 
     const onPressOptions = () => {
-        setModalSubMenuNoteVisible(true)
-    }
+        setModalSubMenuNoteVisible(true);
+    };
 
     const handleModify = () => {
         setModaleNote(true);
-    }
+    };
 
     const onModify = (noteModified) => {
         Toast.show({
@@ -69,9 +53,15 @@ const NoteCard = ({note, handleNoteChange, handleNoteDelete}) =>{
         });
 
         handleNoteChange(noteModified);
-    }
+    };
 
-    return(
+    const getPreviewHTML = (htmlContent, length) => {
+        const plainText = htmlContent.replace(/<[^>]+>/g, ''); // Supprimer toutes les balises HTML pour avoir du texte brut
+        const trimmedText = plainText.substring(0, length); // Extraire les premiers caractères du texte brut
+        return trimmedText.length >= length ? `${trimmedText}...` : trimmedText;
+    };
+
+    return (
         <>
             <ModalSubMenuNoteActions
                 note={note}
@@ -87,34 +77,83 @@ const NoteCard = ({note, handleNoteChange, handleNoteDelete}) =>{
                 note={note}
                 onModify={onModify}
             />
-            <TouchableOpacity style={{display: "flex", flexDirection: "column", width: "100%", marginBottom: 10, shadowColor: variables.bai, shadowOpacity: 0.3,shadowOffset: {width: 0,height: 1}, padding: 5}} onPress={() => setFocus(!focus)}>
-                <View style={{flexDirection: "row", backgroundColor: variables.pinterest, padding: 10, justifyContent: "space-between", borderTopEndRadius: 5, borderTopStartRadius: 5}}>
+            <TouchableOpacity style={styles.card} onPress={() => setFocus(!focus)}>
+                <View style={styles.header}>
                     <Text style={styles.textFontBold}>{note.titre}</Text>
-                    <View style={{flexDirection: "row"}}>
-                        {focus ? <Ionicons name='chevron-up-circle' size={20} color={variables.alezan} /> : <Ionicons name='chevron-down-circle' size={20} color={variables.aubere} />}
-                        <TouchableOpacity onPress={() => onPressOptions()}>
-                            <Entypo name='dots-three-horizontal' size={20} color={ focus ? variables.alezan : variables.aubere} style={{marginLeft: 10}} />
+                    <View style={styles.icons}>
+                        {focus ? (
+                            <Ionicons name='chevron-up-circle' size={20} color={variables.alezan} />
+                        ) : (
+                            <Ionicons name='chevron-down-circle' size={20} color={variables.aubere} />
+                        )}
+                        <TouchableOpacity onPress={onPressOptions}>
+                            <Entypo name='dots-three-horizontal' size={20} color={focus ? variables.alezan : variables.aubere} style={{ marginLeft: 10 }} />
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{flexDirection: "row", backgroundColor: variables.blanc, padding: 5, borderBottomEndRadius: 5, borderBottomStartRadius: 5}}>
-                    <Text style={styles.textFontRegular}>{getDisplayedText(note)}</Text>
+                <View style={styles.content}>
+                    {focus ? (
+                        // Affiche le contenu HTML complet lorsque focus est activé
+                        <HTMLView
+                            value={note.note} // HTML complet
+                            stylesheet={htmlStyles}
+                        />
+                    ) : (
+                        // Affiche un aperçu limité à 33 caractères, mais avec HTML interprété
+                        <HTMLView
+                            value={getPreviewHTML(note.note, 33)}
+                            stylesheet={htmlStyles}
+                        />
+                    )}
                 </View>
             </TouchableOpacity>
         </>
     );
-}
+};
+
+const htmlStyles = StyleSheet.create({
+    p: {
+        fontSize: 14,
+        color: '#333',
+    },
+    a: {
+        fontWeight: 'bold',
+        color: '#00f',
+    },
+});
 
 const styles = StyleSheet.create({
-    textFontRegular:{
-        fontFamily: variables.fontRegular
+    card: {
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        marginBottom: 10,
+        shadowColor: variables.bai,
+        shadowOpacity: 0.3,
+        shadowOffset: { width: 0, height: 1 },
+        padding: 5
     },
-    textFontMedium:{
-        fontFamily: variables.fontMedium
+    header: {
+        flexDirection: "row",
+        backgroundColor: variables.pinterest,
+        padding: 10,
+        justifyContent: "space-between",
+        borderTopEndRadius: 5,
+        borderTopStartRadius: 5
     },
-    textFontBold:{
+    icons: {
+        flexDirection: "row"
+    },
+    content: {
+        flexDirection: "row",
+        backgroundColor: variables.blanc,
+        padding: 5,
+        borderBottomEndRadius: 5,
+        borderBottomStartRadius: 5
+    },
+    textFontBold: {
         fontFamily: variables.fontBold
     }
-})
+});
 
 export default NoteCard;
