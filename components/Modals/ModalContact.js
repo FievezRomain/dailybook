@@ -15,6 +15,12 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [loading, setLoading] = useState(false);
 
+    useEffect(() => {
+        if (isVisible) {
+            initValues();
+        }
+    }, [isVisible]);
+
     const closeModal = () => {
         setVisible(false);
     };
@@ -26,6 +32,15 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         setValue("telephone", undefined);
         setValue("email", undefined);
         setValue("emailproprietaire", undefined);
+    };
+
+    const initValues = () => {
+        setValue("id", contact.id);
+        setValue("nom", contact.nom);
+        setValue("profession", contact.profession);
+        setValue("telephone", contact.telephone);
+        setValue("email", contact.email);
+        setValue("emailproprietaire", contact.emailproprietaire);
     };
 
     const submitRegister = async(data) =>{
@@ -128,7 +143,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                             placeholder="Exemple : John Doe"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("nom", text)}
-                                            defaultValue={getValues("nom")}
+                                            defaultValue={watch("nom")}
                                             {...register("nom", { required: true })}
                                         />
                                     </View>
@@ -140,7 +155,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                             placeholder="Exemple : Vétérinaire"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("profession", text)}
-                                            defaultValue={getValues("profession")}
+                                            defaultValue={watch("profession")}
                                         />
                                     </View>
 
@@ -151,7 +166,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                             placeholder="Exemple : 0606060606"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("telephone", text)}
-                                            defaultValue={getValues("telephone")}
+                                            defaultValue={watch("telephone")}
                                         />
                                     </View>
 
@@ -162,7 +177,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                             placeholder="Exemple : test@gmail.com"
                                             placeholderTextColor={Variables.texte}
                                             onChangeText={(text) => setValue("email", text)}
-                                            defaultValue={getValues("email")}
+                                            defaultValue={watch("email")}
                                         />
                                     </View>
                                      <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
