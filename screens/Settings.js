@@ -117,8 +117,8 @@ const SettingsScreen = ({ }) => {
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Wish")} >
                             <Text style={styles.textFontMedium}>Ma whishlist</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} disabled={true}>
-                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Mes contacts</Text>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Contact")}>
+                            <Text style={[styles.textFontMedium]}>Mes contacts</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Note")} >
                             <Text style={[styles.textFontMedium]}>Mes notes</Text>

@@ -226,11 +226,11 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setContactModalVisible(true)} disabled={true}>
+              <TouchableOpacity onPress={() => setContactModalVisible(true)}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <AntDesign name="contacts" size={20} style={styles.iconButton}/>
-                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Contact</Text>
+                    <Text style={[styles.textFontRegular]}>Contact</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
