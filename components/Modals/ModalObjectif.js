@@ -391,7 +391,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Sous-étapes de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Étapes de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
                                     {inputs.map((value, index) => (
                                         <View style={styles.sousEtapesContainer} key={index}>
                                             <TextInput

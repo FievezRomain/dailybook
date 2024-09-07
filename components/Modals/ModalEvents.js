@@ -173,8 +173,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("depense", event.depense);
     setValue("categoriedepense", event.categoriedepense);
     setValue("frequencetype", event.frequencetype);
-    setValue("notif", event.frequencetype);
-    setValue("optionnotif", event.frequencetype);
+    setValue("notif", undefined);
+    setValue("optionnotif", undefined);
     setValue("state", event.state === undefined ? "À faire" : event.state);
     setValue("todisplay", event.todisplay === undefined ? true : event.todisplay);
   }
@@ -345,6 +345,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("state", "");
     setValue("todisplay", "");
     setSelected([]);
+    setNotifType(false);
+    setOptionNotifType(false);
   }
 
   const onChangeDate = (propertyName, selectedDate) => {

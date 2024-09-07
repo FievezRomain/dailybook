@@ -215,7 +215,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome6 name="check-circle" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Autre tâche</Text>
+                    <Text style={styles.textFontRegular}>Autre</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>

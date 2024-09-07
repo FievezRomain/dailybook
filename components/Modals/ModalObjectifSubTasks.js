@@ -51,7 +51,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                 Toast.show({
                     type: "success",
                     position: "top",
-                    text1: "Modification des sous-étapes réussi"
+                    text1: "Modification des étapes réussi"
                 });
                 handleTasksStateChange(temporaryObjectif);
                 closeModal();
@@ -100,7 +100,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                             <TouchableOpacity onPress={closeModal}>
                                 <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                                <Text style={[styles.textFontBold]}>Gérer les sous-étapes</Text>
+                                <Text style={[styles.textFontBold]}>Gérer les étapes</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
