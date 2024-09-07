@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, TextInput, Modal, TouchableOpacity } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
@@ -9,10 +9,11 @@ import variables from "../styles/Variables";
 import { FontAwesome } from '@expo/vector-icons';
 import WishService from "../../services/WishService";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
-import { getImagePath } from '../../services/Config';
+import { Image } from "expo-image";
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from "../../services/LoggerService";
+import FileStorageService from "../../services/FileStorageService";
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -20,6 +21,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
+    const fileStorageService = new FileStorageService();
 
     useEffect(() => {
         if(wish !== null){
@@ -38,7 +40,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         setValue("prix", wish.prix);
         setValue("destinataire", wish.destinataire);
         if(wish.image !== null && wish.image !== undefined){
-            setImage(`${getImagePath()}${wish.image}`);
+            setImage( fileStorageService.getFileUrl( wish.image, currentUser.uid ));
         } else{
             setImage(null);
         }
@@ -70,28 +72,19 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
 
         data["email"] =  currentUser.email;
 
-        let formData = data;
         if (data.image != undefined){
             if(actionType !== "modify" || data["previousimage"] !== data["image"]){
-                formData = new FormData();
-                if(image != null){
-                    filename = data.image.split("/");
-                    filename = filename[filename.length-1].split(".")[0] + currentUser.uid;
-                    formData.append("picture", {
-                    name: filename,
-                    type: "image/jpeg",
-                    uri: data.image
-                    });
-                } else{
-                    formData.append("files", "empty");
-                }
-                data = { ...data, image: data.image };
-                formData.append("recipe", JSON.stringify(data));
+                var filename = data.image.split("/");
+                filename = filename[filename.length-1];
+
+                await fileStorageService.uploadFile(image, filename, "image/jpeg", currentUser.uid);
+
+                data.image = filename;
             }
         }
 
         if(actionType === "modify"){
-            wishService.update(formData)
+            wishService.update(data)
                 .then((reponse) =>{
                     resetValues();
                     closeModal();
@@ -109,7 +102,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 });
         }
         else{
-            wishService.create(formData)
+            wishService.create(data)
                 .then((reponse) =>{
                     resetValues();
                     closeModal();
@@ -198,7 +191,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     />
                                     {image &&
                                         <View style={styles.imageContainer}>
-                                            <Image source={{uri: image}} style={styles.avatar}/>
+                                            <Image source={{uri: image}} style={styles.avatar} cachePolicy="disk"/>
                                             <TouchableOpacity onPress={() => deleteImage()}>
                                                 <Entypo name="circle-with-cross" size={25} color={variables.alezan}/>
                                             </TouchableOpacity>

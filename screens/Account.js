@@ -11,6 +11,7 @@ import AuthService from "../services/AuthService";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import LoggerService from "../services/LoggerService";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import FileStorageService from "../services/FileStorageService";
 
 const AccountScreen = ({ navigation }) => {
     const { currentUser, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL } = useAuth();
@@ -26,12 +27,13 @@ const AccountScreen = ({ navigation }) => {
     const [image, setImage] = useState(currentUser.photoURL);
     const authService = new AuthService();
     const [loading, setLoading] = useState(false);
+    const fileStorageService = new FileStorageService();
     
 
     const submitModifications = async () => {
         setLoading(true);
-        await modificationBaseVasco();
         await modificationFirebase();
+        await modificationBaseVasco();
         setLoading(false);
     }
 
@@ -42,9 +44,12 @@ const AccountScreen = ({ navigation }) => {
                 await updateDisplayName(displayName);
             }
             if(previousImage != image){
-                filename = image.split("/");
-                filename = filename[filename.length-1].split(".")[0] + currentUser.uid;
-                await updatePhotoURL(filename);
+                // Enregistrement de l'image sur le S3
+                var filename = image.split("/");
+                filename = filename[filename.length-1];
+                var fileURL = await fileStorageService.uploadFile(image, filename, "image/jpeg", currentUser.uid);
+
+                await updatePhotoURL(fileURL);
             }
             if(previousEmail != email){
                 await updateEmailForUser(email.trim());
@@ -65,27 +70,12 @@ const AccountScreen = ({ navigation }) => {
 
         data.email = currentUser.email;
         data.newEmail = email;
-        data.image = image;
 
-        let formData = data;
-        if (data.image != undefined && image !== previousImage){
-            formData = new FormData();
-            if(image != null && image != undefined){
-                filename = data.image.split("/");
-                filename = filename[filename.length-1].split(".")[0] + currentUser.uid;
-                formData.append("picture", {
-                name: filename,
-                type: "image/jpeg",
-                uri: data.image
-                });
-            } else{
-                formData.append("files", "empty");
-            }
-            data = { ...data, image: data.image };
-            formData.append("recipe", JSON.stringify(data));
-        }
+        var filename = image.split("/");
+        filename = filename[filename.length-1];
+        data.image = filename;
 
-        authService.modifyUser(formData)
+        authService.modifyUser(data)
         .then((response) =>{
             Toast.show({
                 type: "success",

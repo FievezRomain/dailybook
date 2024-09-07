@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import CompletionBar from '../CompletionBar';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import ObjectifService from '../../services/ObjectifService';
@@ -7,9 +7,11 @@ import React, { useState, useEffect, useContext } from 'react';
 import ModalSubMenuObjectifActions from '../Modals/ModalSubMenuObjectifActions';
 import ModalObjectifSubTasks from '../Modals/ModalObjectifSubTasks';
 import variables from '../styles/Variables';
-import { getImagePath } from '../../services/Config';
 import ModalObjectif from '../Modals/ModalObjectif';
 import LoggerService from '../../services/LoggerService';
+import FileStorageService from '../../services/FileStorageService';
+import { useAuth } from '../../providers/AuthenticatedUserProvider';
+import { Image } from "expo-image";
 
 const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
@@ -17,6 +19,8 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
     const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
     const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
     const [currentObjectif, setCurrentObjectif] = useState(objectif);
+    const fileStorageService = new FileStorageService();
+    const { currentUser } = useAuth();
 
     useEffect(() =>{
         if(objectif !== undefined){
@@ -253,7 +257,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                         <View key={animal.id} style={{marginLeft: -3}}>
                                             <View style={{height: 20, width: 20, backgroundColor: variables.bai, borderRadius: 10, justifyContent: "center"}}>
                                                 { animal.image !== null ? 
-                                                    <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                                                    <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid )}} cachePolicy="disk" />
                                                     :
                                                     <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                                 }

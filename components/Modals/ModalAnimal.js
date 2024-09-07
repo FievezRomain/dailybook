@@ -1,18 +1,17 @@
-import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, TextInput, Modal, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useForm } from "react-hook-form";
-import { AntDesign } from '@expo/vector-icons';
 import AnimalsService from "../../services/AnimalsService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
-import DatePickerModal from "./ModalDatePicker";
 import AvatarPicker from "../AvatarPicker";
 import DateUtils from "../../utils/DateUtils";
-import { getImagePath } from '../../services/Config';
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from "../../services/LoggerService";
+import FileStorageService from "../../services/FileStorageService";
+import { Image } from "expo-image";
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -26,6 +25,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     annee = today.getFullYear();
     const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
     const [loading, setLoading] = useState(false);
+    const fileStorageService = new FileStorageService();
 
     useEffect(() => {
         if(animal.id !== undefined){
@@ -50,7 +50,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("image", animal.image);
         setValue("previousimage", animal.image);
         setDate(animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : null);
-        setImage(`${getImagePath()}${animal.image}`);
+        setImage(fileStorageService.getFileUrl( animal.image, currentUser.uid ));
     }
 
     const closeModal = () => {
@@ -100,23 +100,18 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             setDate(data["datenaissance"]);
         }
 
-        let formData = data;
+        // Si une image est saisie
         if (data.image != undefined){
+            // Si on est sur une création ou que l'image de base est modifiée, on enregistre sur le S3 et on renseigne uniquement le filename dans data pour la BDD
             if(actionType !== "modify" || data["previousimage"] !== data["image"]){
-                formData = new FormData();
                 if(image != null){
-                    filename = data.image.split("/");
-                    filename = filename[filename.length-1].split(".")[0] + currentUser.uid;
-                    formData.append("picture", {
-                    name: filename,
-                    type: "image/jpeg",
-                    uri: data.image
-                    });
-                } else{
-                    formData.append("files", "empty");
-                }
-                data = { ...data, image: data.image };
-                formData.append("recipe", JSON.stringify(data));
+                    var filename = data.image.split("/");
+                    filename = filename[filename.length-1];
+
+                    await fileStorageService.uploadFile(image, filename, "image/jpeg", currentUser.uid);
+
+                    data.image = filename;
+                } 
             }
         }
         
@@ -124,7 +119,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         // Si un animal est selectionné, cela veut dire qu'on doit le modifier, sinon le créer
         if(actionType === "modify"){
             // Modification de l'animal dans le back (BDD)
-            animalsService.modify(formData)
+            animalsService.modify(data)
             .then((response) =>{
                 Toast.show({
                     type: "success",
@@ -147,7 +142,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             });
         } else{
             // Création de l'animal dans le back (BDD)
-            animalsService.create(formData)
+            animalsService.create(data)
             .then((response) =>{
                 Toast.show({
                     type: "success",
@@ -297,10 +292,10 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     />
                                     {image &&
                                         <View style={styles.imageContainer}>
-                                        <Image source={{uri: image}} style={styles.avatar}/>
-                                        <TouchableOpacity onPress={() => deleteImage()}>
-                                            <Image source={require("../../assets/cross.png")} style={{height: 20, width: 20}}/>
-                                        </TouchableOpacity>
+                                            <Image source={{uri: image}} style={styles.avatar} cachePolicy="disk"/>
+                                            <TouchableOpacity onPress={() => deleteImage()}>
+                                                <Image source={require("../../assets/cross.png")} style={{height: 20, width: 20}}/>
+                                            </TouchableOpacity>
                                         </View>
                                     }
                                 </View>

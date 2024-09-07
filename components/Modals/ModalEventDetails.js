@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput, Image } from "react-native";
+import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput } from "react-native";
 import variables from "../styles/Variables";
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import Button from "../Button";
@@ -9,12 +9,16 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import EventService from '../../services/EventService';
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import LoggerService from '../../services/LoggerService';
+import FileStorageService from "../../services/FileStorageService";
+import { Image } from "expo-image";
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, onModify }) => {
+    const { currentUser } = useAuth();
     const eventService = new EventService();
     var eventBeforeEditCommentaire;
     var eventBeforeEditRessenti;
     var eventBeforeEditState;
+    const fileStorageService = new FileStorageService();
 
     useEffect(() => {
         eventBeforeEditCommentaire = event.commentaire;
@@ -406,7 +410,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                                 <View key={animal.id} style={{marginRight: -3}}>
                                                     <View style={{height: 25, width: 25, backgroundColor: variables.bai, borderRadius: 15, justifyContent: "center"}}>
                                                         { animal.image !== null ? 
-                                                            <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                                                            <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                                                             :
                                                             <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                                         }

@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import variables from "./styles/Variables";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
-import { getImagePath } from '../services/Config';
 import ModalSubMenuAnimalActions from './Modals/ModalSubMenuAnimalActions';
 import ModalAnimal from './Modals/ModalAnimal';
 import ModalManageBodyAnimal from './Modals/ModalManageBodyAnimal';
 import DateUtils from '../utils/DateUtils';
+import { Image } from "expo-image";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
+import FileStorageService from "../services/FileStorageService";
 
 const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const dateUtils = new DateUtils();
     const [modalManageBodyAnimalVisible, setModalBodyAnimalVisible] = useState(false);
+    const fileStorageService = new FileStorageService();
+    const { currentUser } = useAuth();
 
     function isValidString(str) {
       return str !== null && str !== undefined && str.trim() !== "";
@@ -56,7 +60,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                 <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
                     <Text style={[{color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text>
                     {animal.image !== null ?
-                        <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: variables.alezan}} source={{uri: `${getImagePath()}${animal.image}`}} />
+                        <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: variables.alezan}} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                     :
                         <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: variables.bai, borderColor: variables.alezan, justifyContent: "center", alignItems: "center"}}>
                             <Text style={[{color: variables.blanc, fontSize: 50}, styles.textFontBold]}>{animal.nom[0]}</Text>

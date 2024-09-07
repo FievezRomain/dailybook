@@ -1,11 +1,16 @@
 import Variables from "./styles/Variables";
-import { getImagePath } from '../services/Config';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-native";
 import plus from '../assets/plus.png'
 import variables from "./styles/Variables";
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from "expo-image";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
+import FileStorageService from "../services/FileStorageService";
 
 const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined }) => {
+    const fileStorageService = new FileStorageService();
+    const { currentUser } = useAuth();
+
 
     const changeSelectedAnimals = (animal) => {
         const found = animaux.find(e => e.id === animal.id);
@@ -85,7 +90,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
                                 <View style={[styles.containerAvatarWithImage, checkSelected(animal) ? {backgroundColor: variables.blanc} : {backgroundColor: "transparent"}]}>
-                                    <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                                    <Image style={[styles.avatar]} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                                 </View>
                             </LinearGradient>
                             :

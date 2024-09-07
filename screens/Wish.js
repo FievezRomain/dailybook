@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, FlatList, Dimensions, Linking } from "react-native";
+import { View, Text, StyleSheet, FlatList, Dimensions, Linking } from "react-native";
 import React, { useContext, useState, useEffect } from 'react';
 import Variables from "../components/styles/Variables";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -6,12 +6,13 @@ import { Entypo } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
 import TopTabSecondary from "../components/TopTabSecondary";
 import WishService from "../services/WishService";
-import { getImagePath } from '../services/Config';
+import { Image } from "expo-image";
 import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishActions";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ModalWish from "../components/Modals/ModalWish";
 import { MaterialIcons } from "@expo/vector-icons";
 import LoggerService from "../services/LoggerService";
+import FileStorageService from "../services/FileStorageService";
 
 const WishScreen = ({ navigation }) => {
     const { currentUser } = useAuth();
@@ -20,6 +21,7 @@ const WishScreen = ({ navigation }) => {
     const wishService = new WishService();
     const [modalSubMenuWishVisible, setModalSubMenuWishVisible] = useState(false);
     const [modalWishVisible, setModalWishVisible] = useState(false);
+    const fileStorageService = new FileStorageService();
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
@@ -124,7 +126,7 @@ const WishScreen = ({ navigation }) => {
                             renderItem={({ item, index }) => (
                                 <TouchableOpacity style={[styles.itemContainer, index % 2 !== 0 && styles.itemContainerSecondColumn]} onPress={() => openSubMenuWish(item)}>
                                     {item.image !== null && item.image !== undefined &&
-                                        <Image source={{uri: `${getImagePath()}${item.image}`}} style={styles.image} />
+                                        <Image source={{uri: fileStorageService.getFileUrl( item.image, currentUser.uid )}} style={styles.image} cachePolicy="disk" />
                                     }
                                     {(item.image === null || item.image === undefined) &&
                                         <View style={[{backgroundColor: Variables.rouan, alignItems: "center", justifyContent: "center"}, styles.image]}>

@@ -1,9 +1,10 @@
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { Image } from "expo-image";
 
 const TopTab = ({message1, message2, withBackground=false}) => {
     const navigation = useNavigation();
@@ -67,7 +68,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
                 </TouchableOpacity> */}
                 <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
                     {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
-                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}}/>
+                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk"/>
                     : 
                         <FontAwesome5 size={20} color={Variables.alezan} name="user-alt" />
                     }

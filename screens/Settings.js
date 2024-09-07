@@ -1,15 +1,14 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React, { useContext, useEffect, useState } from 'react';
 import Back from "../components/Back";
-import ButtonLong from "../components/ButtonLong";
 import Variables from "../components/styles/Variables";
 import LogoutModal from "../components/Modals/ModalLogout";
-import Button from "../components/Button";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Constants from 'expo-constants';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { FontAwesome5 } from '@expo/vector-icons';
+import { Image } from "expo-image";
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
@@ -100,7 +99,7 @@ const SettingsScreen = ({ }) => {
             <Back/>
                 <View style={styles.settings}>
                     {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
-                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} />
+                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk" />
                     :
                         <View style={[styles.avatar, {alignItems: "center", justifyContent: "center"}]}>
                             <FontAwesome5 size={40}  name="user-alt" />

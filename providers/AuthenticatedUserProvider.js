@@ -114,11 +114,12 @@ export const AuthenticatedUserProvider =  ({ children }) => {
 
   const updatePhotoURL = async (newPhotoURL) => {
     try {
+      // Mise à jour du profil firebase
       await updateProfile(currentUser, {
-        photoURL: getImagePath() + newPhotoURL + ".jpg"
+        photoURL: newPhotoURL
       });
       const updatedUser = await getAuth().currentUser;
-      setCurrentUser( {...currentUser, photoURL: getImagePath() + newPhotoURL + ".jpg"});
+      setCurrentUser( {...currentUser, photoURL: newPhotoURL});
       setCurrentUser(updatedUser);
       console.log("Photo URL updated successfully!");
     } catch (error) {
