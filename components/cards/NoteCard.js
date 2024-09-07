@@ -82,12 +82,12 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
                     <Text style={styles.textFontBold}>{note.titre}</Text>
                     <View style={styles.icons}>
                         {focus ? (
-                            <Ionicons name='chevron-up-circle' size={20} color={variables.alezan} />
+                            <Ionicons name='chevron-up-circle' size={20} color={variables.aubere} />
                         ) : (
-                            <Ionicons name='chevron-down-circle' size={20} color={variables.aubere} />
+                            <Ionicons name='chevron-down-circle' size={20} color={variables.alezan} />
                         )}
                         <TouchableOpacity onPress={onPressOptions}>
-                            <Entypo name='dots-three-horizontal' size={20} color={focus ? variables.alezan : variables.aubere} style={{ marginLeft: 10 }} />
+                            <Entypo name='dots-three-horizontal' size={20} color={focus ? variables.aubere : variables.alezan} style={{ marginLeft: 10 }} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     },
     header: {
         flexDirection: "row",
-        backgroundColor: variables.pinterest,
+        backgroundColor: variables.rouan,
         padding: 10,
         justifyContent: "space-between",
         borderTopEndRadius: 5,

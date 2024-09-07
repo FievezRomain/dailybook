@@ -349,7 +349,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
   const onChangeDate = (propertyName, selectedDate) => {
     setValue(propertyName, selectedDate);
-    if(new Date() > new Date(selectedDate)){
+    var currentDate = new Date();
+    currentDate.setHours(2, 0, 0, 0);
+    if(currentDate > new Date(selectedDate)){
       handleStateChange("Terminé");
       setNotifType({title: "Aucune notification", id: "None"});
       setValue("notif", "None");

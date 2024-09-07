@@ -6,7 +6,7 @@ const variables = {
     aubere: "#c9b69f",
     isabelle: "#956540",
     bai: "#1f110f",
-    pinterest: "#F4EDEB",
+    gris: "#F4EDEB",
     default: "#f4f4f4",
     bai_cerise: "#955250",
     palomino: "#FFDBB6",

@@ -10,7 +10,7 @@ export default class NoteService {
         await this.updateAxiosAuthorization();
         return axios.post(`${getBaseUrl()}createNote`, body)
         .then(async(response) => {
-            await this.deleteInCache(response.data);
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour créer une note : " + err.message )); 

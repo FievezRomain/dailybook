@@ -150,60 +150,69 @@ const ContactScreen = ({ navigation }) => {
                 onModify={onModify}
             />
             <View style={{ flex: 1, backgroundColor: variables.default }}>
-                <SectionList
-                    ref={sectionListRef}
-                    sections={sections}
-                    keyExtractor={(item, index) => item.nom + index}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity style={styles.itemContainer} onPress={() => focusContact(item)}>
-                            <View>
-                                <Text style={styles.name}>{item.nom}</Text>
-                                {item.profession && <Text style={styles.profession}>{item.profession}</Text>}
-                                <Text style={styles.phone}>{item.telephone}</Text>
-                                <Text style={styles.phone}>{item.email}</Text>
-                            </View>
-                            <View style={styles.iconsContainer}>
-                                {item.telephone != null && item.telephone != undefined &&
-                                    <>
-                                        <TouchableOpacity style={{marginRight: 5}} onPress={() => makePhoneCall(item.telephone)}>
-                                            <Entypo name='phone' size={25}/>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={{marginRight: 5}} onPress={() => sendSMS(item.telephone)}>
-                                            <Entypo name='message' size={25}/>
-                                        </TouchableOpacity>
-                                    </>
-                                }
-                                {item.email != null && item.email != undefined &&
-                                    <TouchableOpacity onPress={() => sendEmail(item.email)}>
-                                        <Zocial name='email' size={25}/>
-                                    </TouchableOpacity>
-                                }
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                    renderSectionHeader={({ section: { title } }) => (
-                        <View style={styles.headerContainer}>
-                            <Text style={styles.header}>{title}</Text>
+                {contacts.length === 0 ?
+                    <Text style={[{color: "gray", textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucun contact enregistré</Text>
+                :
+                    <>
+                        <SectionList
+                            ref={sectionListRef}
+                            sections={sections}
+                            keyExtractor={(item, index) => item.nom + index}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity style={styles.itemContainer} onPress={() => focusContact(item)}>
+                                    <View>
+                                        <Text style={styles.name}>{item.nom}</Text>
+                                        {item.profession && <Text style={styles.profession}>{item.profession}</Text>}
+                                        <Text style={styles.phone}>{item.telephone}</Text>
+                                        <Text style={styles.phone}>{item.email}</Text>
+                                    </View>
+                                    <View style={styles.iconsContainer}>
+                                        {item.telephone != null && item.telephone != undefined &&
+                                            <>
+                                                <TouchableOpacity style={{marginRight: 5}} onPress={() => makePhoneCall(item.telephone)}>
+                                                    <Entypo name='phone' size={25}/>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={{marginRight: 5}} onPress={() => sendSMS(item.telephone)}>
+                                                    <Entypo name='message' size={25}/>
+                                                </TouchableOpacity>
+                                            </>
+                                        }
+                                        {item.email != null && item.email != undefined &&
+                                            <TouchableOpacity onPress={() => sendEmail(item.email)}>
+                                                <Zocial name='email' size={25}/>
+                                            </TouchableOpacity>
+                                        }
+                                    </View>
+                                </TouchableOpacity>
+                            )}
+                            renderSectionHeader={({ section: { title } }) => (
+                                <View style={styles.headerContainer}>
+                                    <Text style={styles.header}>{title}</Text>
+                                </View>
+                            )}
+                            ListFooterComponent={<View style={{ height: 50 }} />}
+                            ItemSeparatorComponent={() => <View style={styles.separator} />}
+                            viewabilityConfig={{
+                                itemVisiblePercentThreshold: 50,
+                            }}
+                            getItemLayout={(data, index) => {
+                                return { length: 50, offset: 50 * index, index };
+                            }}
+                        />
+                    
+                    
+                    
+                        <View style={styles.sidebarContainer}>
+                            {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => (
+                                <TouchableOpacity key={letter} onPress={() => handleLetterSelect(letter)}>
+                                    <Text style={[styles.letter]}>
+                                        {letter}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
                         </View>
-                    )}
-                    ListFooterComponent={<View style={{ height: 50 }} />}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
-                    viewabilityConfig={{
-                        itemVisiblePercentThreshold: 50,
-                    }}
-                    getItemLayout={(data, index) => {
-                        return { length: 50, offset: 50 * index, index };
-                    }}
-                />
-                <View style={styles.sidebarContainer}>
-                    {'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(letter => (
-                        <TouchableOpacity key={letter} onPress={() => handleLetterSelect(letter)}>
-                            <Text style={[styles.letter]}>
-                                {letter}
-                            </Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                    </>
+                }
             </View>
         </>
     );

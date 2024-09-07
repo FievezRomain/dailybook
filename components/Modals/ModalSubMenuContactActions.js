@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
         color: "white"
     },
     disabledButton:{
-        backgroundColor: Variables.pinterest,
+        backgroundColor: Variables.gris,
         borderTopStartRadius: 5,
         borderTopEndRadius: 5,
     },

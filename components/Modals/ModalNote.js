@@ -151,7 +151,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                                     {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Titre obligatoire</Text>}
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
-                                        placeholder="Exemple : Note1"
+                                        placeholder="Exemple : Titre"
                                         placeholderTextColor={Variables.texte}
                                         onChangeText={(text) => setValue("titre", text)}
                                         defaultValue={watch("titre")}
@@ -159,7 +159,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                                     />
                                     <RichTextEditor
                                         ref={richText}  // Assign the ref to RichTextEditor
-                                        defaultValue={watch("note") !== undefined ? watch("note") : "Votre texte ici"}
+                                        defaultValue={watch("note") !== undefined ? watch("note") : undefined}
                                         onChange={(text) => setRichTextValue(text)}
                                     />
                                 </View>
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     textFontRegular: {
-        fontFamily: Variables.fontRegular,
+        fontFamily: Variables.fontBold,
     },
     textFontBold: {
         fontFamily: Variables.fontBold,

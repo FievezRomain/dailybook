@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "center",
-        backgroundColor: Variables.pinterest,
+        backgroundColor: Variables.gris,
         paddingVertical: 15
     },
     bodyCard:{

@@ -5,6 +5,7 @@ import variables from "../components/styles/Variables";
 import AnimalsService from "../services/AnimalsService";
 import * as Font from 'expo-font';
 import LoggerService from "../services/LoggerService";
+import Constants from 'expo-constants';
 
 const LoadingScreen = ({ navigation })=> {
     const { cacheUpdated, currentUser, loading, emailVerified, reloadUser } = useAuth();
@@ -56,16 +57,17 @@ const LoadingScreen = ({ navigation })=> {
     return (
       <View style={styles.loadingEvent}>
           <Image
-            style={styles.logo}
-            source={require("../assets/logo.png")}
-          />
-          <Image
             style={styles.loaderEvent}
             source={require("../assets/loader.gif")}
           />
-        <View style={{position: "absolute", bottom: 0, marginBottom: 50, flexDirection: "row"}}>
-          <Text style={[{color: variables.rouan, fontSize: 22}, styles.textFontRegular]}>From</Text>
-          <Text style={[{color: variables.isabelle, fontSize: 22}, styles.textFontRegular]}> Vasco & Co</Text>
+        <View style={{position: "absolute", bottom: 0, marginBottom: 50}}>
+          <View style={{flexDirection: "row"}}>
+            <Text style={[{color: variables.rouan, fontSize: 22}, styles.textFontRegular]}>From</Text>
+            <Text style={[{color: variables.isabelle, fontSize: 22}, styles.textFontRegular]}> Vasco & Co</Text>
+          </View>
+          <View style={{flexDirection: "column"}}>
+            <Text style={[styles.textFontRegular, {color: variables.isabelle, textAlign: "center"}]}>{Constants.expoConfig?.version}</Text>
+          </View>
         </View>
       </View>
     );

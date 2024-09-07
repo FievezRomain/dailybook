@@ -51,7 +51,7 @@ function App() {
             <AuthenticatedUserProvider>
               <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
               <AuthStack/>
-              <Toast ref={(ref) => Toast.setRef(ref)}/>
+              <Toast/>
             </AuthenticatedUserProvider>
           </NavigationContainer>
       :
