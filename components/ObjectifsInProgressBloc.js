@@ -3,7 +3,7 @@ import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import variables from './styles/Variables';
 import ObjectifCard from './cards/ObjectifCard';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import AnimalsService from "../services/AnimalsService";
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 

@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import Variables from "../components/styles/Variables";
 import { useForm } from "react-hook-form";
 import Button from "../components/Button";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import ModalAnimals from "../components/Modals/ModalAnimals";
 import AnimalsService from "../services/AnimalsService";
 import EventService from "../services/EventService";

@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import CompletionBar from '../CompletionBar';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import ObjectifService from '../../services/ObjectifService';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import React, { useState, useEffect, useContext } from 'react';
 import ModalSubMenuObjectifActions from '../Modals/ModalSubMenuObjectifActions';
 import ModalObjectifSubTasks from '../Modals/ModalObjectifSubTasks';

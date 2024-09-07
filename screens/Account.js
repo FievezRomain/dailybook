@@ -8,7 +8,7 @@ import Button from "../components/Button";
 import { useState } from "react";
 import AvatarPicker from "../components/AvatarPicker";
 import AuthService from "../services/AuthService";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import LoggerService from "../services/LoggerService";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FileStorageService from "../services/FileStorageService";

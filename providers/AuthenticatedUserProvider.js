@@ -8,7 +8,6 @@ import WishService from "../services/WishService";
 import ObjectifService from "../services/ObjectifService";
 import AuthService from "../services/AuthService";
 import { getFirebaseAuth } from '../firebase';
-import { getImagePath } from '../services/Config';
 import LoggerService from '../services/LoggerService';
 
 const AuthenticatedUserContext = createContext();

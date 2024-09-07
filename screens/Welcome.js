@@ -7,7 +7,7 @@ import WavyHeader from "../components/WavyHeader";
 import EventService from "../services/EventService";
 import ObjectifService from "../services/ObjectifService";
 import ObjectifsInProgressBloc from "../components/ObjectifsInProgressBloc";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import LoggerService from "../services/LoggerService";
 import Constants from 'expo-constants';

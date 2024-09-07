@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TextInput, Modal, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import AnimalsService from "../../services/AnimalsService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";

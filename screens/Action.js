@@ -9,7 +9,7 @@ import ModalWish from "../components/Modals/ModalWish";
 import ModalContact from "../components/Modals/ModalContact";
 import ModalNote from "../components/Modals/ModalNote";
 import ModalAnimal from "../components/Modals/ModalAnimal";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const ActionScreen = ({ navigation }) => {
@@ -69,6 +69,22 @@ const ActionScreen = ({ navigation }) => {
     });
   }
 
+  const handleCreateEvent = (event) =>{
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Création d'un événement réussi"
+    });
+  }
+
+  const handleCreateObjectif = (event) =>{
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Création d'un objectif réussi"
+    });
+  }
+
   return (
     <>
       <ModalEvents
@@ -76,11 +92,13 @@ const ActionScreen = ({ navigation }) => {
         isVisible={isEventModalVisible}
         setVisible={setEventModalVisible}
         event={event}
+        onModify={handleCreateEvent}
       />
       <ModalObjectif
         actionType={"create"}
         isVisible={isObjectifModalVisible}
         setVisible={setObjectifModalVisible}
+        onModify={handleCreateObjectif}
       />
       <ModalWish
         actionType={"create"}

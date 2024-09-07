@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback
 } from "react-native";
 import { useForm } from "react-hook-form";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import Variables from "../styles/Variables";
 import NoteService from "../../services/NoteService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";

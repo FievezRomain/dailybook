@@ -8,7 +8,7 @@ import TopTabSecondary from "../components/TopTabSecondary";
 import WishService from "../services/WishService";
 import { Image } from "expo-image";
 import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishActions";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import ModalWish from "../components/Modals/ModalWish";
 import { MaterialIcons } from "@expo/vector-icons";
 import LoggerService from "../services/LoggerService";

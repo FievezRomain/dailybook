@@ -9,7 +9,7 @@ import { Linking } from 'react-native';
 import LoggerService from '../services/LoggerService';
 import ModalSubMenuContactActions from '../components/Modals/ModalSubMenuContactActions';
 import ModalContact from "../components/Modals/ModalContact";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 
 const ContactScreen = ({ navigation }) => {
     const sectionListRef = useRef(null);

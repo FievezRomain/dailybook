@@ -3,14 +3,14 @@ import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput } from "reac
 import variables from "../styles/Variables";
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import Button from "../Button";
-import { getImagePath } from '../../services/Config';
 import RatingInput from '../RatingInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import EventService from '../../services/EventService';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import LoggerService from '../../services/LoggerService';
 import FileStorageService from "../../services/FileStorageService";
 import { Image } from "expo-image";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, onModify }) => {
     const { currentUser } = useAuth();

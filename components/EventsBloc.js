@@ -5,7 +5,7 @@ import variables from './styles/Variables';
 import CompletionBar from './CompletionBar';
 import EventCard from './cards/EventCard';
 import EventService from '../services/EventService';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import LoggerService from '../services/LoggerService';
 
 const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEvent }) => {

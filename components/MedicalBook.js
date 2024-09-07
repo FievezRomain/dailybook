@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image 
 import StatePicker from './StatePicker';
 import EventService from '../services/EventService';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
-import EventCard from './cards/EventCard';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import variables from './styles/Variables';
 import LoggerService from '../services/LoggerService';
 

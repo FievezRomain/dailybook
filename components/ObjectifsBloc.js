@@ -8,7 +8,7 @@ import CompletionBar from './CompletionBar';
 import ObjectifService from '../services/ObjectifService';
 import ModalSubMenuObjectifActions from './Modals/ModalSubMenuObjectifActions';
 import ModalObjectif from './Modals/ModalObjectif';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
 import ObjectifCard from './cards/ObjectifCard';
 

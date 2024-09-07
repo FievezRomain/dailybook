@@ -4,7 +4,7 @@ import variables from '../styles/Variables';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 import ModalSubMenuNoteActions from '../Modals/ModalSubMenuNoteActions';
 import ModalNote from "../Modals/ModalNote";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import NoteService from '../../services/NoteService';
 import LoggerService from '../../services/LoggerService';
 import HTMLView from 'react-native-htmlview';

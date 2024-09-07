@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity,
 import { useState, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { useForm } from "react-hook-form";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import ModalAnimals from "./ModalSelectAnimals";
 import AnimalsService from "../../services/AnimalsService";
 import EventService from "../../services/EventService";

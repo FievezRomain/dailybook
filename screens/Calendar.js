@@ -9,7 +9,7 @@ import moment from "moment";
 import EventCard from "../components/cards/EventCard";
 import EventService from "../services/EventService";
 import DateUtils from "../utils/DateUtils";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { TextInput } from "react-native";

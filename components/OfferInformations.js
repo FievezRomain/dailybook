@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'rea
 import { Fontisto, AntDesign } from '@expo/vector-icons';
 import variables from './styles/Variables';
 import Button from './Button';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 
 const OfferInformations = ({ withMessageFunctionality=true }) => {
 

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import AnimalsService from "../services/AnimalsService";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import InformationsAnimals from "../components/InformationsAnimals";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import NutritionHistory from "../components/NutritionHistory";
 import MedicalBook from "../components/MedicalBook";
 import { useAuth } from "../providers/AuthenticatedUserProvider";

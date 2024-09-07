@@ -9,7 +9,7 @@ import ObjectifService from "../../services/ObjectifService";
 import ModalDropdwn from "./ModalDropdown";
 import Button from "../Button";
 import { AntDesign } from '@expo/vector-icons';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import DatePickerModal from "./ModalDatePicker";
 import DateUtils from "../../utils/DateUtils";
 import AsyncStorage from '@react-native-async-storage/async-storage';
