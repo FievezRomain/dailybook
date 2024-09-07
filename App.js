@@ -8,13 +8,14 @@ import { ActivityIndicator } from "react-native";
 import * as Sentry from '@sentry/react-native';
 import { StatusBar } from 'expo-status-bar';
 
+
 function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
 
   Sentry.init({
     dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
     enableInExpoDevelopment: true,
-    debug: false, // Passez à false en production
+    debug: true, // Passez à false en production
   });
 
   useEffect(() => {
