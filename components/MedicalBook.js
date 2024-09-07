@@ -6,6 +6,7 @@ import { useAuth } from '../providers/AuthenticatedUserProvider';
 import Toast from "react-native-toast-message";
 import variables from './styles/Variables';
 import LoggerService from '../services/LoggerService';
+import EventCard from "./cards/EventCard";
 
 const MedicalBook = ({ animal }) => {
     const [typeEvent, setTypeEvent] = useState("Rendez-vous");
@@ -76,7 +77,7 @@ const MedicalBook = ({ animal }) => {
 
     return(
         <>
-            <View style={{width: "95%", alignSelf: "center"}}>
+            <View style={{width: "95%", alignSelf: "center", flex: 1}}>
                 <Text style={[{textAlign: "center", color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
                 <View style={{marginBottom: 10}}>
                     <StatePicker
@@ -87,7 +88,7 @@ const MedicalBook = ({ animal }) => {
                     />
                 </View>
                 
-                <ScrollView contentContainerStyle={{minHeight: "80%"}}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
                     {typeEvent === "Rendez-vous" ? 
                         eventsRdv.length === 0 ?
                             <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Aucun rendez-vous pour cet animal</Text>
