@@ -111,22 +111,22 @@ const RdvCard = ({eventInfos, animaux, setSubMenu}) => {
             <View style={styles.contentEventContainer}>
                 {isValidString(eventInfos.lieu) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Lieu : </Text>{eventInfos.lieu}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.bai}, styles.textFontRegular]}>Lieu : </Text>{eventInfos.lieu}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.specialiste) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Spécialiste : </Text>{eventInfos.specialiste}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.bai}, styles.textFontRegular]}>Spécialiste : </Text>{eventInfos.specialiste}</Text>
                     </View>
                 }
                 {eventInfos.depense != null && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Dépense : </Text>{eventInfos.depense} euros</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.bai}, styles.textFontRegular]}>Dépense : </Text>{eventInfos.depense} euros</Text>
                     </View>
                 }
                 {isValidString(eventInfos.commentaire) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.alezan}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.bai}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
                     </View>
                 }
             </View>

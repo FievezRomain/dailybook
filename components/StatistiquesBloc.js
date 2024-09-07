@@ -15,7 +15,7 @@ const StatistiquesBloc = () =>{
     return (
         <>
             <View style={styles.composantContainer}>
-                <Text style={[{textAlign: "center", color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text>
+                <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text>
                 
 
                 {/* <View style={styles.statistiqueIndicatorContainer}>
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     bottomBar: {
         width: '100%',
         height: 0.4, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: variables.souris,
+        backgroundColor: variables.bai_brun,
     },
     composantContainer:{
         marginTop: 10,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         color: variables.rouan,
     },
     itemIconSelected:{
-        color: variables.alezan,
+        color: variables.bai,
     },
     textFontRegular:{
         fontFamily: variables.fontRegular

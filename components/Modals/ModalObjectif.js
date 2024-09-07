@@ -308,9 +308,9 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -401,7 +401,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                                 placeholder="Entrez une valeur"
                                             />
                                             <TouchableOpacity onPress={() => handleRemoveInput(index)}>
-                                                <AntDesign name="delete" size={20} color={Variables.alezan}/>
+                                                <AntDesign name="delete" size={20} color={Variables.bai}/>
                                             </TouchableOpacity>
                                         </View>
                                     ))}
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     keyboardAvoidingContainer: {
         flex: 1,

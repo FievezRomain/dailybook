@@ -13,6 +13,7 @@ import MedicalBook from "../components/MedicalBook";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import DateUtils from '../utils/DateUtils';
 import LoggerService from "../services/LoggerService";
+import { LinearGradient } from "expo-linear-gradient";
 
 const PetsScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -154,54 +155,55 @@ const PetsScreen = ({ navigation }) => {
 
   return (
     <>
-      <Image style={styles.image} />
-      <TopTab message1={messages.message1} message2={messages.message2}/>
-      <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
-        <AnimalsPicker
-          setAnimaux={setAnimaux}
-          animaux={animaux}
-          setSelected={setSelected}
-          selected={selected}
-          setValue={setValue}
-          mode="single"
-          buttonAdd={true}
-          setDate={setDate}
-        />
-      </View>
-      <View style={styles.rubriqueContainer}>
-        <View style={styles.iconsContainer}>
-          <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-            <Entypo name="info-with-circle" size={30} color={activeRubrique === 0 ? Variables.alezan : "gray"}/>
-          </TouchableOpacity>
-          <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-            <FontAwesome6 name="utensils" size={25} color={activeRubrique === 1 ? Variables.alezan : "gray"}/>
-          </TouchableOpacity>
-          <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
-            <FontAwesome6 name="book-medical" size={25} color={activeRubrique === 2 ? Variables.alezan : "gray"}/>
-          </TouchableOpacity>
+      <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+        <TopTab message1={messages.message1} message2={messages.message2}/>
+        <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
+          <AnimalsPicker
+            setAnimaux={setAnimaux}
+            animaux={animaux}
+            setSelected={setSelected}
+            selected={selected}
+            setValue={setValue}
+            mode="single"
+            buttonAdd={true}
+            setDate={setDate}
+          />
         </View>
-        <View style={styles.separatorFix}></View>
-        <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1, 2], outputRange: ['0%', '33.3%', '66.6%'] }) }]} />
-      </View>
-      {activeRubrique === 0 && 
-        <InformationsAnimals
-          animal={selected[0]}
-          onDelete={handleDeletePet}
-          onModify={onModify}
-        />
-      }
-      {activeRubrique === 1 &&
-        <NutritionHistory 
-          animal={selected[0]}
-        />
-      }
-      {activeRubrique === 2 &&
-        <MedicalBook 
-          animal={selected[0]}
-        />
-      }
+        <View style={styles.rubriqueContainer}>
+          <View style={styles.iconsContainer}>
+            <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+              <Entypo name="info-with-circle" size={30} color={activeRubrique === 0 ? Variables.bai : "gray"}/>
+            </TouchableOpacity>
+            <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+              <FontAwesome6 name="utensils" size={25} color={activeRubrique === 1 ? Variables.bai : "gray"}/>
+            </TouchableOpacity>
+            <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
+              <FontAwesome6 name="book-medical" size={25} color={activeRubrique === 2 ? Variables.bai : "gray"}/>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.separatorFix}></View>
+          <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1, 2], outputRange: ['0%', '33.3%', '66.6%'] }) }]} />
+        </View>
+        {activeRubrique === 0 && 
+          <InformationsAnimals
+            animal={selected[0]}
+            onDelete={handleDeletePet}
+            onModify={onModify}
+          />
+        }
+        {activeRubrique === 1 &&
+          <NutritionHistory 
+            animal={selected[0]}
+          />
+        }
+        {activeRubrique === 2 &&
+          <MedicalBook 
+            animal={selected[0]}
+          />
+        }
+      </LinearGradient>
     </>
-    );
+  );
 };
 
 const styles = StyleSheet.create({
@@ -225,7 +227,7 @@ const styles = StyleSheet.create({
   },
   separatorAnimated:{
     height: 3, 
-    backgroundColor: Variables.alezan, 
+    backgroundColor: Variables.bai, 
     position: 'absolute', 
     bottom: 0, 
     width: '33.3%',

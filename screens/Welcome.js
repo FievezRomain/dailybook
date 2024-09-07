@@ -11,10 +11,12 @@ import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import LoggerService from "../services/LoggerService";
 import Constants from 'expo-constants';
+import { LinearGradient } from "expo-linear-gradient";
+import Button from "../components/Button";
 
 const WelcomeScreen = ({ navigation })=> {
     const { currentUser } = useAuth();
-    const [messages, setMessages] = useState({message1 :"Bienvenue,", message2: ""});
+    const [messages, setMessages] = useState({message1 :"Bienvenue", message2: ""});
     const eventService = new EventService();
     const objectifService = new ObjectifService();
     const [events, setEvents] = useState([]);
@@ -22,7 +24,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     useEffect(() => {
       const unsubscribe = navigation.addListener("focus", () => {
-        setMessages({message1: "Bienvenue,", message2: currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName});
+        setMessages({message1: "Bienvenue", message2: currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName});
         getEventsForUser();
         getObjectifsForUser();
       });
@@ -117,33 +119,54 @@ const WelcomeScreen = ({ navigation })=> {
 
     return (
       <>
-      <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
-      <View style={{flex: 1}}>
-        <WavyHeader
-            customBgColor={Variables.rouan}
-            customHeight={Constants.platform.ios ? Constants.statusBarHeight + 80 : Constants.statusBarHeight + 80}
-            customTop={90}
-            customWavePattern={"M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"}
-            customStyles={styles.svgCurve}
-          />
-        <TopTab message1={messages.message1} message2={messages.message2} withBackground={true}/>
-        <View style={styles.summaryContainer}>
-            <Text style={styles.summary}>{convertDateToText()}</Text>
-        </View>
-        <View style={{marginTop: 20}}>
-              <EventsBloc 
-                events={events}
-                handleDeletedEvent={handleEventDelete}
-                handleModifiedEvent={handleEventChange}
+        <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
+            <View style={{flex: 1}}>
+              <WavyHeader
+                  customBgColor={Variables.rouan}
+                  customHeight={Constants.platform.ios ? Constants.statusBarHeight + 80 : Constants.statusBarHeight + 80}
+                  customTop={90}
+                  customWavePattern={"M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"}
+                  customStyles={styles.svgCurve}
               />
-              <ObjectifsInProgressBloc
-                objectifs={objectifs}
-                handleObjectifChange={handleObjectifChange}
-                handleObjectifDelete={handleObjectifDelete}
-              />
-        </View>
-      </View>
-      </ScrollView>
+              
+              <TopTab message1={messages.message1} message2={messages.message2} withBackground={true}/>
+              <View style={styles.summaryContainer}>
+                  <Text style={styles.summary}>{convertDateToText()}</Text>
+              </View>
+              <View style={{marginTop: 30, paddingBottom: 20}}>
+                    <EventsBloc 
+                      events={events}
+                      handleDeletedEvent={handleEventDelete}
+                      handleModifiedEvent={handleEventChange}
+                    />
+                    <ObjectifsInProgressBloc
+                      objectifs={objectifs}
+                      handleObjectifChange={handleObjectifChange}
+                      handleObjectifDelete={handleObjectifDelete}
+                    />
+              </View>
+              <View style={{width: "90%", marginBottom: 30, alignSelf: "center", backgroundColor: "white", shadowColor: "black", shadowOpacity: 0.1, shadowOffset: {width: 0,height: 1}, borderRadius: 5}}>
+                <LinearGradient colors={[Variables.bai_brun, Variables.bai]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 1]} style={{flex: 1, padding: 20, borderRadius: 5}}>
+                  <Text style={{fontFamily: Variables.fontBold, color: Variables.blanc, textAlign: "center", marginBottom: 5}}>Avez-vous quelque chose de prévu ?</Text>
+                  <Text style={{fontFamily: Variables.fontRegular, color: Variables.blanc, textAlign: "center", marginBottom: 20}}>Enregistrez ici pour ne rien oublier</Text>
+                  <View style={{width: "70%", alignSelf: "center"}}>
+                    <Button
+                      onPress={() => navigation.navigate("ActionButton")}
+                      size={"m"}
+                      type={"quinary"}
+                      isLong={false}
+                      isUppercase={false}
+                    >
+                      <Text style={{fontFamily: Variables.fontBold}}>Ajouter un élément</Text>
+                    </Button>
+                  </View>
+                </LinearGradient>
+              </View>
+              
+            </View>
+          </ScrollView>
+        </LinearGradient>
       </>
       );
 }
@@ -173,7 +196,7 @@ const styles = StyleSheet.create({
     top: -5
   },
   summary:{
-    color: Variables.alezan,
+    color: Variables.bai,
     fontSize: 15,
     fontFamily: "Quicksand-Bold"
   },

@@ -78,7 +78,7 @@ const MedicalBook = ({ animal }) => {
     return(
         <>
             <View style={{width: "95%", alignSelf: "center", flex: 1}}>
-                <Text style={[{textAlign: "center", color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
+                <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
                 <View style={{marginBottom: 10}}>
                     <StatePicker
                         firstState={"Rendez-vous"}

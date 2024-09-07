@@ -50,7 +50,7 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
   return (
     <>
       {withMessageFunctionality &&
-        <Text style={[{textAlign: "center", color: variables.alezan, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
+        <Text style={[{textAlign: "center", color: variables.bai, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
       }
       <ScrollView>
         <View style={styles.table}>
@@ -63,12 +63,12 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
             <View key={item.id} style={styles.row}>
               <Text style={[styles.cell, styles.textFontRegular]}>{item.label}</Text>
               { item.free === "Yes" ?
-                <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.alezan} />
+                <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.bai} />
               :
                 <Fontisto name="locked" size={20} style={styles.cell} color={variables.aubere}/>
               }
               { item.premium === "Yes" ?
-                  <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.alezan} />
+                  <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.bai} />
                 :
                   <Fontisto name="locked" size={20} style={styles.cell} color={variables.aubere}/>
               }
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   headerCell: {
-    color: variables.alezan
+    color: variables.bai
   },
   table:{
     width: "100%",

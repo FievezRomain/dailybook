@@ -41,7 +41,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undef
                             </TouchableOpacity>
                             <Text style={styles.textFontBold}>Historique du physique</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Enregistrer</Text>
+                                <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     keyboardAvoidingContainer: {
         flex: 1,

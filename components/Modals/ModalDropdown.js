@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   item:{
-    backgroundColor: Variables.alezan,
+    backgroundColor: Variables.bai,
     borderRadius: 5,
     margin: 5,
     padding: 10,

@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         borderLeftWidth: 0.2
     },
     textContainerSelect:{
-        backgroundColor: variables.alezan,
+        backgroundColor: variables.bai,
     },
     textSelected:{
         color: variables.blanc

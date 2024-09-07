@@ -494,9 +494,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <ActivityIndicator size={10} color={Variables.bai} />
                   :
                     actionType === "modify" ?
-                      <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
+                      <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
                     :
-                      <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
+                      <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
                 }
               </TouchableOpacity>
             </View>
@@ -1110,7 +1110,7 @@ loadingEvent: {
     marginBottom: 10,
     marginTop: 10,
     height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-    backgroundColor: Variables.souris,
+    backgroundColor: Variables.bai_brun,
   },
   keyboardAvoidingContainer: {
     flex: 1,

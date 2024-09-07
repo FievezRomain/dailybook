@@ -15,6 +15,7 @@ import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
 import LoggerService from "../services/LoggerService";
+import { LinearGradient } from "expo-linear-gradient";
 
 const CalendarScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -91,7 +92,7 @@ const CalendarScreen = ({ navigation }) => {
         newMarked[dateString] = {
           selected: false,
           disableTouchEvent: false,
-          selectedColor: variables.alezan,
+          selectedColor: variables.bai,
           selectedTextColor: variables.blanc,
           dots: [getEventTypeDot(item.eventtype)]
         };
@@ -120,7 +121,7 @@ const CalendarScreen = ({ navigation }) => {
         newMarked[defaultDateString] = {
           selected: true,
           disableTouchEvent: false,
-          selectedColor: variables.alezan,
+          selectedColor: variables.bai,
           selectedTextColor: variables.blanc,
           dots: []
         };
@@ -135,13 +136,13 @@ const CalendarScreen = ({ navigation }) => {
   const getEventTypeDot = (eventType) => {
     switch (eventType) {
       case "balade":
-        return { color: variables.alezan };
+        return { color: variables.bai };
       case "entrainement":
         return { color: variables.aubere };
       case "concours":
         return { color: variables.bai };
       case "rdv":
-        return { color: variables.souris };
+        return { color: variables.bai_brun };
       case "soins":
         return { color: variables.isabelle };
       case "autre":
@@ -184,7 +185,7 @@ const CalendarScreen = ({ navigation }) => {
       var obj = {
         selected : true,
         disableTouchEvent : false,
-        selectedColor : variables.alezan,
+        selectedColor : variables.bai,
         selectedTextColor: variables.blanc,
         dots: []
       }
@@ -267,67 +268,68 @@ const CalendarScreen = ({ navigation }) => {
 
   return (
     <>
-      <Image style={styles.image} />
-      <TopTab message1={messages.message1} message2={messages.message2} />
-      <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: variables.blanc, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
-        <View style={{flexDirection: "row", alignItems: "center"}}>
-          <AntDesign name="search1" size={16} color={variables.bai}/>
-          <TextInput
-            placeholder="Recherche"
-            style={[{marginLeft: 5, width: "80%"}, styles.textFontRegular]}
-            value={searchQuery}
-            onChangeText={handleSearch}
+      <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+        <TopTab message1={messages.message1} message2={messages.message2} />
+        <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: variables.blanc, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
+          <View style={{flexDirection: "row", alignItems: "center"}}>
+            <AntDesign name="search1" size={16} color={variables.bai}/>
+            <TextInput
+              placeholder="Recherche"
+              style={[{marginLeft: 5, width: "80%"}, styles.textFontRegular]}
+              value={searchQuery}
+              onChangeText={handleSearch}
+            />
+          </View>
+          <View>
+            <TouchableOpacity>
+              <Ionicons name="filter" size={20} color={variables.bai}/>
+            </TouchableOpacity>
+          </View>
+          
+        </View>
+        <View style={styles.calendarContainer}>
+          <Calendar
+            style={[styles.calendar, styles.textFontRegular]}
+            firstDay={1}
+            theme={{
+              arrowColor: variables.isabelle,
+              todayTextColor: variables.aubere,
+              selectedDayTextColor: "white",
+              selectedDayBackgroundColor: variables.bai_brun,
+              calendarBackground: variables.blanc,
+              dayTextColor: variables.bai_brun,
+              textDayHeaderTextColor: variables.bai_brun,
+              textSectionTitleColor: variables.bai_brun
+            }}
+            enableSwipeMonths={true}
+            onDayPress={(day) => onDayPress(day.dateString)}
+            markingType={'multi-dot'}
+            markedDates={marked}
           />
         </View>
-        <View>
-          <TouchableOpacity>
-            <Ionicons name="filter" size={20} color={variables.bai}/>
-          </TouchableOpacity>
+        <View style={styles.selectedDateContainer}>
+          {searchQuery != "" ?
+            <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats pour la recherche "{searchQuery}"</Text>
+          : 
+            <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
+          }
         </View>
-        
-      </View>
-      <View style={styles.calendarContainer}>
-        <Calendar
-          style={[styles.calendar, styles.textFontRegular]}
-          firstDay={1}
-          theme={{
-            arrowColor: variables.isabelle,
-            todayTextColor: variables.aubere,
-            selectedDayTextColor: "white",
-            selectedDayBackgroundColor: variables.alezan,
-            calendarBackground: variables.blanc,
-            dayTextColor: variables.bai,
-            textDayHeaderTextColor: variables.alezan,
-            textSectionTitleColor: variables.alezan
-          }}
-          enableSwipeMonths={true}
-          onDayPress={(day) => onDayPress(day.dateString)}
-          markingType={'multi-dot'}
-          markedDates={marked}
+            
+          <FlatList
+            data={searchQuery !== "" ? filteredEvents : eventArrayCurrentDateSelected}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <EventCard
+                eventInfos={item}
+                deleteFunction={onDeleteEvent}
+                updateFunction={onModifyEvent}
+                withDate={searchQuery !== ""}
+              />
+            )}
+            ListEmptyComponent={<Text style={[styles.noEventsText, styles.textFontRegular]}>Vous n'avez aucun événement pour cette date</Text>}
+            contentContainerStyle={styles.listEventContainer}
         />
-      </View>
-      <View style={styles.selectedDateContainer}>
-        {searchQuery != "" ?
-          <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats pour la recherche "{searchQuery}"</Text>
-        : 
-          <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
-        }
-      </View>
-          
-        <FlatList
-          data={searchQuery !== "" ? filteredEvents : eventArrayCurrentDateSelected}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <EventCard
-              eventInfos={item}
-              deleteFunction={onDeleteEvent}
-              updateFunction={onModifyEvent}
-              withDate={searchQuery !== ""}
-            />
-          )}
-          ListEmptyComponent={<Text style={[styles.noEventsText, styles.textFontRegular]}>Vous n'avez aucun événement pour cette date</Text>}
-          contentContainerStyle={styles.listEventContainer}
-      />
+      </LinearGradient>
     </>
   );
 }
@@ -360,7 +362,7 @@ const styles = StyleSheet.create({
   },
   selectedDateText: {
     textAlign: "center",
-    color: variables.alezan
+    color: variables.bai
   },
   infosContainer: {
     display: "flex",

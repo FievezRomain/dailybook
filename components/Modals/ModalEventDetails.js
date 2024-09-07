@@ -45,7 +45,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return variables.rouan;
         }
         if( event.eventtype === "balade" ){
-            return variables.alezan;
+            return variables.bai;
         }
         if( event.eventtype === "soins" ){
             return variables.isabelle;
@@ -60,7 +60,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return variables.bai_cerise;
         }
         if( event.eventtype === "rdv" ){
-            return variables.souris;
+            return variables.bai_brun;
         }
     }
 
@@ -263,7 +263,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             paddingHorizontal: 3,
             paddingVertical: 5,
             borderRadius: 15,
-            shadowColor: variables.bai,
+            shadowColor: "black",
             shadowOpacity: 0.1,
             shadowOffset: {
                 width: 0,
@@ -280,7 +280,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         separator: {
             borderTopWidth: 0.2,
             borderTopColor: variables.default,
-            shadowColor: variables.bai,
+            shadowColor: "black",
             shadowOpacity: 1,
             elevation: 5,
             shadowOffset: {
@@ -291,13 +291,13 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             height: 10
         },
         balade: {
-            backgroundColor: variables.alezan,
+            backgroundColor: variables.bai,
         },
         autre: {
             backgroundColor: variables.bai_cerise,
         },
         rdv: {
-            backgroundColor: variables.souris,
+            backgroundColor: variables.bai_brun,
         },
         soins: {
             backgroundColor: variables.isabelle,

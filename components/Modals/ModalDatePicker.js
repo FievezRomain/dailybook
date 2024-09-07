@@ -61,7 +61,7 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
                     arrowColor: variables.isabelle,
                     todayTextColor: variables.aubere,
                     selectedDayTextColor: "white",
-                    selectedDayBackgroundColor: variables.alezan
+                    selectedDayBackgroundColor: variables.bai
                   }}
                   enableSwipeMonths={false} // Active le swipe de mois
                 />

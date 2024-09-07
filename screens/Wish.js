@@ -135,7 +135,7 @@ const WishScreen = ({ navigation }) => {
                                     }
                                     {item.prix !== null && item.prix !== undefined &&
                                         <View style={styles.labelContainer}>
-                                            <Entypo name="price-tag" size={16} color={Variables.alezan} /> 
+                                            <Entypo name="price-tag" size={16} color={Variables.bai} /> 
                                             <Text style={[styles.price, styles.textFontRegular]}>{item.prix} €</Text> 
                                         </View>
                                     }
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     },
     price: {
         marginLeft: 5,
-        color: Variables.alezan,
+        color: Variables.bai,
         fontSize: 12
     },
     textFontRegular:{

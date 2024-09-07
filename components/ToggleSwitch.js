@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   active: {
-    backgroundColor: variables.alezan,
+    backgroundColor: variables.bai,
     marginLeft: 20,
   },
   inactive: {

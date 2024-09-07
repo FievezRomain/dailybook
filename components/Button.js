@@ -19,11 +19,14 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress, isUppe
       backgroundColor = Variables.aubere;
       color = Variables.isabelle
     } else if (type === "tertiary") {
-      backgroundColor = Variables.alezan
+      backgroundColor = Variables.bai
       color = Variables.blanc;
     } else if (type === "quaternary"){
-      backgroundColor = Variables.souris;
+      backgroundColor = Variables.bai_brun;
       color = Variables.blanc;
+    } else if (type === "quinary"){
+      backgroundColor = Variables.rouan;
+      color = Variables.bai;
     }
 
     if(disabled === true){
@@ -52,7 +55,7 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress, isUppe
     }
 
     if(!isUppercase){
-      textTransform = "capitalize";
+      textTransform = "none";
     }
 
     if(isLong){

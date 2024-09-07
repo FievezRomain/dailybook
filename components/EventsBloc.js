@@ -199,7 +199,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
         <View style={styles.container}>
             <View style={styles.eventTodayContainer}>
                 <View style={styles.headerContainer}>
-                    <FontAwesome name='check-circle' size={20} color={variables.alezan} style={styles.icon} />
+                    <FontAwesome name='check-circle' size={20} color={variables.bai} style={styles.icon} />
                     <Text style={[styles.title, styles.textFontBold]}>Tâches</Text>
                 </View>
                 {eventsExceeded.length !== 0 || eventsToday.length !== 0 ?
@@ -254,8 +254,8 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                         </View>
                     </>
                 :
-                    <View>
-                        <Text style={[{color: "gray"}, styles.textFontRegular]}>Vous n'avez aucun événement aujourd'hui</Text>
+                    <View style={{backgroundColor: variables.blanc, width: "100%", padding: 20, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowOffset: {width: 0,height: 1},}}>
+                        <Text style={[styles.textFontRegular]}>Vous n'avez aucun événement aujourd'hui</Text>
                     </View>
                 }
                 
@@ -263,7 +263,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
 
             <View style={styles.eventUpcomingContainer}>
                 <View style={styles.headerContainer}>
-                    <FontAwesome name='calendar' size={20} color={variables.alezan} style={styles.icon}/>
+                    <FontAwesome name='calendar' size={20} color={variables.bai} style={styles.icon}/>
                     <Text style={[styles.title, styles.textFontBold]}>Événements à venir</Text>
                 </View>
                 <View>
@@ -283,8 +283,8 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                             </View>
                         ))
                     :    
-                        <View>
-                            <Text style={[{color: "gray"}, styles.textFontRegular]}>Vous n'avez aucun événement à venir</Text>
+                        <View style={{backgroundColor: variables.blanc, width: "100%", padding: 20, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowOffset: {width: 0,height: 1},}}>
+                            <Text style={[styles.textFontRegular]}>Vous n'avez aucun événement à venir</Text>
                         </View>
                     }
                     
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
         marginBottom: 10
     },
     title:{
-        color: variables.alezan,
+        color: variables.bai,
         fontSize: 15
     },
     icon:{
@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
         width: 25, 
         height: 25,  
         borderRadius: 60, 
-        borderBlockColor: variables.alezan, 
+        borderBlockColor: variables.bai, 
         borderWidth: 0.2
     },
     dateContainer:{
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
         backgroundColor: variables.blanc,
     },
     inputStateContainerSelected:{
-        backgroundColor: variables.alezan,
+        backgroundColor: variables.bai,
     },
     textFontRegular:{
         fontFamily: variables.fontRegular

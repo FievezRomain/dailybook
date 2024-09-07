@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     bottomBar: {
         width: '100%',
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     actionButtonContainer:{
         width: "90%",
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     item:{
-        backgroundColor: Variables.alezan,
+        backgroundColor: Variables.bai,
         borderRadius: 5,
         margin: 5,
         padding: 10,

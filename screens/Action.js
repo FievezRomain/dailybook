@@ -307,16 +307,16 @@ const styles = StyleSheet.create({
     color: Variables.isabelle,
   },
   iconAction:{
-    color: Variables.alezan,
+    color: Variables.bai,
   },
   iconButton:{
     marginRight: 20,
-    color: Variables.alezan,
+    color: Variables.bai,
   },
   bottomBar: {
     width: '100%',
     height: 0.7,
-    backgroundColor: Variables.alezan,
+    backgroundColor: Variables.bai,
     marginBottom: 10,
   },
   informationsButtonContainer:{
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 10,
     shadowColor: "black",
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius:5,
     shadowOffset:{width:0, height:2}
   },

@@ -135,7 +135,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                                 {loading ? (
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 ) : (
-                                    <Text style={[{ color: Variables.alezan }, styles.textFontRegular]}>
+                                    <Text style={[{ color: Variables.bai }, styles.textFontRegular]}>
                                         {actionType === "modify" ? "Modifier" : "Créer"}
                                     </Text>
                                 )}
@@ -201,7 +201,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         height: 0.3,
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     formContainer: {
         paddingLeft: 30,

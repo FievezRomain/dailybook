@@ -53,7 +53,7 @@ const VerifyEmailScreen = ({ navigation })=> {
                         <Text style={[{textAlign: "center", textTransform: "uppercase", fontSize: 16}, styles.textFontMedium]}>Veuillez valider votre adresse email pour continuer</Text>
                     </View>
                     <View style={{width: "70%", alignSelf: "center"}}>
-                        <View style={{shadowColor: variables.bai, shadowOpacity: 0.5, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
+                        <View style={{shadowColor: "black", shadowOpacity: 0.1, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
                             {!canResend ?
                                 <Button
                                     size={"m"}
@@ -71,7 +71,7 @@ const VerifyEmailScreen = ({ navigation })=> {
                                 </Button>
                             }
                         </View>
-                        <View style={{marginTop: 10, shadowColor: variables.bai, shadowOpacity: 0.5, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
+                        <View style={{marginTop: 10, shadowColor: "black", shadowOpacity: 0.1, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
                             <Button
                                 onPress={() => navigation.navigate("Login")}
                                 size={"m"}

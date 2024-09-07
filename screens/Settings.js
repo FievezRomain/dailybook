@@ -9,6 +9,7 @@ import Constants from 'expo-constants';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
@@ -26,7 +27,7 @@ const SettingsScreen = ({ }) => {
             marginLeft: "auto",
             marginRight: "auto",
             shadowColor: "black",
-            shadowOpacity: "0.3",
+            shadowOpacity: "0.1",
             shadowRadius: 5,
             shadowOffset: {width: 0, height: 2}
         },
@@ -90,13 +91,13 @@ const SettingsScreen = ({ }) => {
 
     return (
         <View style={{backgroundColor: Variables.default,}}>
-        <View style={styles.contentContainer}>
-            <LogoutModal
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
-                navigation={navigation}
-            />
-            <Back/>
+            <View style={styles.contentContainer}>
+                <LogoutModal
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    navigation={navigation}
+                />
+                <Back/>
                 <View style={styles.settings}>
                     {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
                         <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk" />

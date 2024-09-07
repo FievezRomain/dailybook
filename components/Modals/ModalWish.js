@@ -150,9 +150,9 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -193,7 +193,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                         <View style={styles.imageContainer}>
                                             <Image source={{uri: image}} style={styles.avatar} cachePolicy="disk"/>
                                             <TouchableOpacity onPress={() => deleteImage()}>
-                                                <Entypo name="circle-with-cross" size={25} color={variables.alezan}/>
+                                                <Entypo name="circle-with-cross" size={25} color={variables.bai}/>
                                             </TouchableOpacity>
                                         </View>
                                     }
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     keyboardAvoidingContainer: {
         flex: 1,
@@ -322,10 +322,10 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 5,
         zIndex: 1,
-        borderColor: variables.alezan,
+        borderColor: variables.bai,
     },
     iconContainer:{
-        backgroundColor: Variables.alezan,
+        backgroundColor: Variables.bai,
         padding: 10,
         borderRadius: 60,
         height: 110,

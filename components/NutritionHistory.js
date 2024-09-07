@@ -31,7 +31,7 @@ const NutritionHistory = ({ animal }) => {
         <>
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column"}}>
-                    <Text style={{textAlign: "center", color: variables.alezan, fontFamily: variables.fontBold, fontSize: 16, paddingVertical: 15}}>Nutrition</Text>
+                    <Text style={{textAlign: "center", color: variables.bai, fontFamily: variables.fontBold, fontSize: 16, paddingVertical: 15}}>Nutrition</Text>
 
                     <View style={{width: "90%", alignSelf: "center"}}>
                         <OfferInformations />
@@ -45,7 +45,7 @@ const NutritionHistory = ({ animal }) => {
                     </View>
 
                     <View style={{width: "90%", marginTop: 20, alignSelf: "center"}}>
-                        <Text style={{color: variables.alezan, fontSize: 16}}>Courbe de poids :</Text>
+                        <Text style={{color: variables.bai, fontSize: 16}}>Courbe de poids :</Text>
                         <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10}}>
                             <LineChart
                                 data={data}
@@ -57,8 +57,8 @@ const NutritionHistory = ({ animal }) => {
                                 backgroundGradientFrom: variables.blanc,
                                 backgroundGradientTo: variables.blanc,
                                 decimalPlaces: 1,
-                                color: (opacity = 1) => variables.alezan,
-                                labelColor: (opacity = 1) => variables.alezan,
+                                color: (opacity = 1) => variables.bai,
+                                labelColor: (opacity = 1) => variables.bai,
                                 style: {
                                     borderRadius: 16,
                                 },
@@ -88,7 +88,7 @@ const NutritionHistory = ({ animal }) => {
                                 </TouchableOpacity>
                             )}
                         </View>
-                        <Text style={{color: variables.alezan, fontSize: 16}}>Alimentation :</Text>
+                        <Text style={{color: variables.bai, fontSize: 16}}>Alimentation :</Text>
                         <View style={{backgroundColor: variables.blanc, borderRadius: 10, padding: 30, marginTop: 20}}>
                             <Text>Nom alimentation :</Text>
                             <TextInput

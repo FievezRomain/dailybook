@@ -85,7 +85,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                         <View style={styles.containerAvatar}>
                             { animal.image !== null ? 
                             <LinearGradient
-                                colors={checkSelected(animal) ? [variables.alezan, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [variables.bai, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
@@ -95,12 +95,12 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                             </LinearGradient>
                             :
                             <LinearGradient
-                                colors={checkSelected(animal) ? [variables.alezan, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [variables.bai, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
                                 <View style={[styles.containerAvatarWithoutImage, checkSelected(animal) ? {backgroundColor: variables.blanc} : {backgroundColor: "transparent"}]}>
-                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: variables.alezan} : {backgroundColor: variables.isabelle}]}>
+                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: variables.bai} : {backgroundColor: variables.isabelle}]}>
                                         <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                     </View>
                                 </View>
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
         color: Variables.isabelle
     },
     selectedText:{
-        color: Variables.alezan
+        color: Variables.bai
     },
     containerAvatarWithoutImage:{
         height: 65, 

@@ -196,7 +196,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                             <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
                                 <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                     {etape.state === true &&
-                                        <MaterialIcons name="check-box" size={30} color={variables.alezan} />
+                                        <MaterialIcons name="check-box" size={30} color={variables.bai} />
                                         ||
                                         <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
                                     }
@@ -226,7 +226,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                     </View>
                 </View>
                 <View style={{display: "flex", flexDirection: "row", backgroundColor: variables.blanc, borderBottomStartRadius: 5, borderBottomEndRadius: 5}}>
-                    <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: variables.alezan, alignItems: "center"}}>
+                    <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: variables.bai, alignItems: "center"}}>
                         <Text style={styles.textFontRegular}>{getDayText(objectif.datefin)}.</Text>
                         <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(objectif.datefin)}</Text>
                         <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(objectif.datefin)}</Text>
@@ -240,7 +240,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                         <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
                                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                                 {etape.state === true &&
-                                                    <MaterialIcons name="check-box" size={30} color={variables.alezan} />
+                                                    <MaterialIcons name="check-box" size={30} color={variables.bai} />
                                                     ||
                                                     <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
                                                 }
@@ -304,8 +304,8 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         marginBottom: 10,
-        shadowColor: variables.bai,
-        shadowOpacity: 0.3,
+        shadowColor: "black",
+        shadowOpacity: 0.1,
         shadowOffset: {
             width: 0,
             height: 1

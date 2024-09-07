@@ -46,21 +46,21 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             display: "flex",
             flexDirection: "column",
             marginBottom: 10,
-            shadowColor: variables.bai,
-            shadowOpacity: 0.3,
+            shadowColor: "black",
+            shadowOpacity: 0.1,
             shadowOffset: {
               width: 0,
               height: 1
             },
         },
         balade:{
-            backgroundColor: variables.alezan,
+            backgroundColor: variables.bai,
         },
         autre:{
             backgroundColor: variables.bai_cerise,
         },
         rdv:{
-            backgroundColor: variables.souris,
+            backgroundColor: variables.bai_brun,
         },
         soins:{
             backgroundColor: variables.isabelle,
@@ -115,7 +115,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             padding: 10, 
             marginRight: 10, 
             borderRightWidth: 0.3, 
-            borderColor: variables.alezan
+            borderColor: variables.bai
         },
         textFontRegular:{
             fontFamily: variables.fontRegular
@@ -200,9 +200,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
                                 }
                             </TouchableOpacity>
                         }
@@ -242,9 +242,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
                                 }
                             </TouchableOpacity>
                         }
@@ -284,9 +284,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
                                 }
                             </TouchableOpacity>
                         }
@@ -326,9 +326,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
                                 }
                             </TouchableOpacity>
                         }
@@ -369,9 +369,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
                                 }
                             </TouchableOpacity>
                         }
@@ -412,9 +412,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
                                 }
                             </TouchableOpacity>
                         }
@@ -455,9 +455,9 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.alezan} />
+                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
                                 }
                             </TouchableOpacity>
                         }

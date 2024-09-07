@@ -24,7 +24,7 @@ const CompletionBar = ({ percentage=0 }) => {
               inputRange: [0, 100],
               outputRange: ['0%', '100%']
             }),
-            backgroundColor: isCompleted ? variables.isabelle : variables.alezan
+            backgroundColor: isCompleted ? variables.isabelle : variables.bai
           }
         ]}
       />
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: variables.blanc,
     borderRadius: 60,
-    shadowColor: variables.bai,
+    shadowColor: "black",
     shadowOpacity: 0.1,
     shadowRadius: 1,
     shadowOffset: {width: 0, height: 1},
