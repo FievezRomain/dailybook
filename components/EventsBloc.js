@@ -217,7 +217,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                         </View>
                         <View>
                             {eventsExceeded.map((eventItem, index) => (
-                                <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "exceeded")}>
+                                <TouchableOpacity key={eventItem.id}>
                                     <View style={styles.eventContainer}>
                                         <EventCard
                                             eventInfos={eventItem}
@@ -236,7 +236,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                                 
                             ))}
                             {eventsToday.map((eventItem, index) => (
-                                <TouchableOpacity key={eventItem.id} onPress={() => handleChangeState(eventItem, "today")}>
+                                <TouchableOpacity key={eventItem.id}>
                                     <View style={styles.eventContainer}>
                                         <EventCard
                                             eventInfos={eventItem}
