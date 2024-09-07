@@ -5,9 +5,11 @@ import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import Variables from './styles/Variables';
 import ModalSubMenuAvatarPickerActions from './Modals/ModalSubMenuAvatarPicker';
 import { useState } from 'react';
+import ImageUtils from "../utils/ImageUtils";
 
 const AvatarPicker = ({ setImage, setValue, backgroundColor=Variables.rouan }) => {
   const [modalVisibleSubMenu, setModalVisibleSubMenu] = useState(false);
+  const imageUtils = new ImageUtils();
 
   const pickImageAsync = async () => {
     // Demande la permission d'utiliser la lib photo
@@ -24,8 +26,9 @@ const AvatarPicker = ({ setImage, setValue, backgroundColor=Variables.rouan }) =
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      setValue("image", result.assets[0].uri);
+      var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
+      setImage(uriImageCompressed);
+      setValue("image", uriImageCompressed);
       //setValue("image", result.assets[0].base64);
     }
 
@@ -48,8 +51,9 @@ const AvatarPicker = ({ setImage, setValue, backgroundColor=Variables.rouan }) =
     });
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      setValue("image", result.assets[0].uri);
+      var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
+      setImage(uriImageCompressed);
+      setValue("image", uriImageCompressed);
       // setValue("image", result.assets[0].base64); // Si vous avez besoin de stocker l'image en base64
     }
 
