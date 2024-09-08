@@ -151,7 +151,7 @@ const ContactScreen = ({ navigation }) => {
             />
             <View style={{ flex: 1, backgroundColor: variables.default }}>
                 {contacts.length === 0 ?
-                    <Text style={[{color: "gray", textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucun contact enregistré</Text>
+                    <Text style={[{color: variables.rouan, textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucun contact enregistré</Text>
                 :
                     <>
                         <SectionList
@@ -227,16 +227,17 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 16,
+        color: variables.bai_brun,
         fontFamily: variables.fontBold
     },
     profession: {
         fontSize: 14,
-        color: 'gray',
+        color: variables.bai,
         fontFamily: variables.fontRegular
     },
     phone: {
         fontSize: 14,
-        color: 'gray',
+        color: variables.bai,
         fontFamily: variables.fontRegular
     },
     iconsContainer: {

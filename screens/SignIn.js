@@ -96,7 +96,7 @@ const SignInScreen = ({ navigation })=> {
                 <Text style={[styles.textInput, styles.textFontRegular]}>Identifiant :</Text>
                 <TextInput
                     style={[styles.input, styles.textFontRegular]}
-                    placeholder="email"
+                    placeholder="Email"
                     placeholderTextColor={variables.texte}
                     onChangeText={(text) => setValue("email", text)}
                     {...register("email", { 

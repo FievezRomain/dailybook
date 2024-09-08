@@ -118,7 +118,7 @@ const WishScreen = ({ navigation }) => {
                 />
                 <View style={styles.container}>
                     {wishs.length === 0 ?
-                        <Text style={[{color: "gray", textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucun souhait enregistré</Text>
+                        <Text style={[{color: Variables.rouan, textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucun souhait enregistré</Text>
                     :    
                         <FlatList
                             data={wishs}

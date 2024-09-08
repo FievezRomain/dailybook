@@ -172,13 +172,13 @@ const PetsScreen = ({ navigation }) => {
         <View style={styles.rubriqueContainer}>
           <View style={styles.iconsContainer}>
             <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <Entypo name="info-with-circle" size={30} color={activeRubrique === 0 ? Variables.bai : "gray"}/>
+              <Entypo name="info-with-circle" size={30} color={activeRubrique === 0 ? Variables.bai : Variables.rouan}/>
             </TouchableOpacity>
             <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <FontAwesome6 name="utensils" size={25} color={activeRubrique === 1 ? Variables.bai : "gray"}/>
+              <FontAwesome6 name="utensils" size={25} color={activeRubrique === 1 ? Variables.bai : Variables.rouan}/>
             </TouchableOpacity>
             <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
-              <FontAwesome6 name="book-medical" size={25} color={activeRubrique === 2 ? Variables.bai : "gray"}/>
+              <FontAwesome6 name="book-medical" size={25} color={activeRubrique === 2 ? Variables.bai : Variables.rouan}/>
             </TouchableOpacity>
           </View>
           <View style={styles.separatorFix}></View>
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   separatorFix:{
-    borderTopColor: "gray", 
+    borderTopColor: Variables.rouan, 
     borderTopWidth: 1, 
     position: 'absolute', 
     bottom: 0, 

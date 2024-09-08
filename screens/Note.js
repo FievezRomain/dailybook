@@ -94,7 +94,7 @@ const NoteScreen = ({ navigation }) => {
             </View>
                 <View style={{width: "90%", alignSelf: "center", flex: 1}}>
                     {notes.length === 0 ?
-                            <Text style={[{color: "gray", textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucune note enregistrée</Text>
+                            <Text style={[{color: Variables.rouan, textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucune note enregistrée</Text>
                         : 
                             <>
                                 {searchQuery.length > 0 && 

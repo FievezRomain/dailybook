@@ -91,7 +91,7 @@ const MedicalBook = ({ animal }) => {
                 <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
                     {typeEvent === "Rendez-vous" ? 
                         eventsRdv.length === 0 ?
-                            <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Aucun rendez-vous pour cet animal</Text>
+                            <Text style={[{color: variables.rouan, textAlign: "center"}, styles.textFontRegular]}>Aucun rendez-vous pour cet animal</Text>
                         :
                         eventsRdv.map((eventItem, index) => (
                             <View style={styles.eventContainer} key={eventItem.id}>
@@ -106,7 +106,7 @@ const MedicalBook = ({ animal }) => {
                         ))
                     :
                         eventsRdv.length === 0 ?
-                            <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Aucun soin pour cet animal</Text>
+                            <Text style={[{color: variables.rouan, textAlign: "center"}, styles.textFontRegular]}>Aucun soin pour cet animal</Text>
                         :
                         eventsSoins.map((eventItem, index) => (
                             <View style={styles.eventContainer} key={eventItem.id}>

@@ -120,7 +120,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                         })
                     :
                         <View>
-                            <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Vous n'avez aucun objectif</Text>
+                            <Text style={[{color: variables.rouan, textAlign: "center"}, styles.textFontRegular]}>Vous n'avez aucun objectif</Text>
                         </View>
                     }
                     

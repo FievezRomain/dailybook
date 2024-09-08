@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   separatorFix:{
-    borderTopColor: "gray", 
+    borderTopColor: Variables.rouan, 
     borderTopWidth: 1, 
     position: 'absolute', 
     bottom: 0, 

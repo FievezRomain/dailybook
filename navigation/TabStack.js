@@ -29,9 +29,9 @@ const TabStack = () => {
                   <Ionicons
                     name="home"
                     size={20}
-                    color={focused ? variables.bai : 'gray'}
+                    color={focused ? variables.bai : variables.bai_brun }
                   ></Ionicons>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : 'gray', fontFamily: variables.fontRegular}}>Accueil</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Accueil</Text>
                 </View>
               </View>
             } else if(route.name === 'Statistic'){
@@ -42,9 +42,9 @@ const TabStack = () => {
                   <FontAwesome6
                     name="signal"
                     size={20}
-                    color={focused ? variables.bai : 'gray'}
+                    color={focused ? variables.bai : variables.bai_brun }
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : 'gray', fontFamily: variables.fontRegular}}>Performance</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Performance</Text>
                 </View>
                 
               </View>
@@ -88,9 +88,9 @@ const TabStack = () => {
                   <FontAwesome6
                     name="calendar-alt"
                     size={20}
-                    color={focused ? variables.bai : 'gray'}
+                    color={focused ? variables.bai : variables.bai_brun }
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : 'gray', fontFamily: variables.fontRegular}}>Calendrier</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Calendrier</Text>
                 </View>
               </View>
             } else if (route.name === 'Pets'){
@@ -101,9 +101,9 @@ const TabStack = () => {
                   <FontAwesome6
                     name="paw"
                     size={20}
-                    color={focused ? variables.bai : 'gray'}
+                    color={focused ? variables.bai : variables.bai_brun}
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : 'gray', fontFamily: variables.fontRegular}}>Animaux</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Animaux</Text>
                 </View>
               </View>
             }

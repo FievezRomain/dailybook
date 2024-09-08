@@ -124,10 +124,10 @@ const SettingsScreen = ({ }) => {
                             <Text style={[styles.textFontMedium]}>Mes notes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Ma structure</Text>
+                            <Text style={[{color: Variables.rouan}, styles.textFontMedium]}>Ma structure</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Thèmes</Text>
+                            <Text style={[{color: Variables.rouan}, styles.textFontMedium]}>Thèmes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => navigation.navigate("DiscoverPremium")}>
                             <Text style={[{color: Variables.blanc}, styles.textFontMedium]}>Découvrir l'offre premium</Text>

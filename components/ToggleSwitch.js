@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'grey',
+    borderColor: variables.rouan,
     justifyContent: 'center',
     marginLeft: 10
   },
@@ -41,11 +41,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   active: {
-    backgroundColor: variables.bai,
+    backgroundColor: variables.bai_brun,
     marginLeft: 20,
   },
   inactive: {
-    backgroundColor: 'grey',
+    backgroundColor: variables.rouan,
     marginLeft: 0,
   },
 });
