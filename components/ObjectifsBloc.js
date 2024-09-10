@@ -11,6 +11,7 @@ import ModalObjectif from './Modals/ModalObjectif';
 import Toast from "react-native-toast-message";
 import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
 import ObjectifCard from './cards/ObjectifCard';
+import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 
 const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
     const { currentUser } = useAuth();
@@ -119,9 +120,9 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                             );
                         })
                     :
-                        <View>
-                            <Text style={[{color: variables.rouan, textAlign: "center"}, styles.textFontRegular]}>Vous n'avez aucun objectif</Text>
-                        </View>
+                        <ModalDefaultNoValue
+                            text={"Vous n'avez aucun objectif"}
+                        />
                     }
                     
                     
@@ -153,8 +154,8 @@ const styles = StyleSheet.create({
     },
     composantContainer:{
         marginTop: 10,
-        marginLeft: 10,
-        marginRight: 10,
+        paddingLeft: 20,
+        paddingRight: 20,
         height: "50%",
     },
     headerContainer:{

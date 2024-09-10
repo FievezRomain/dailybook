@@ -25,7 +25,7 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress, isUppe
       backgroundColor = Variables.bai_brun;
       color = Variables.blanc;
     } else if (type === "quinary"){
-      backgroundColor = Variables.rouan;
+      backgroundColor = Variables.blanc;
       color = Variables.bai;
     }
 

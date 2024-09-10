@@ -68,7 +68,7 @@ const StatsScreen = ({ navigation }) => {
     <>
       <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2} />
-        <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20, marginBottom: 10}}>
+        <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
             <AnimalsPicker
               animaux={animaux}
               setSelected={setSelectedAnimal}
@@ -160,16 +160,19 @@ const styles = StyleSheet.create({
     display: "flex",
     alignSelf: "center",
     height: "100%",
-    width: "90%",
+    width: "100%",
     borderRadius: 10,
   },
   temporalityIndicator:{
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-end",
+    width: "100%",
+    alignSelf: "center",
+    paddingLeft: 20,
+    paddingRight: 20,
     top: 5,
     zIndex: 1,
-    marginRight: 5,
   },
   bloc:{
     flex: 1,

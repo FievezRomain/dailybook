@@ -11,6 +11,7 @@ import TopTabSecondary from "../components/TopTabSecondary";
 import NoteService from "../services/NoteService";
 import NoteCard from "../components/cards/NoteCard";
 import { AntDesign } from '@expo/vector-icons';
+import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
 
 const NoteScreen = ({ navigation }) => {
     const [notes, setNotes] = useState([]);
@@ -94,7 +95,9 @@ const NoteScreen = ({ navigation }) => {
             </View>
                 <View style={{width: "90%", alignSelf: "center", flex: 1}}>
                     {notes.length === 0 ?
-                            <Text style={[{color: Variables.rouan, textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucune note enregistrée</Text>
+                            <ModalDefaultNoValue
+                                text={"Aucune note enregistrée"}
+                            />
                         : 
                             <>
                                 {searchQuery.length > 0 && 

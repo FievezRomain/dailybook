@@ -10,6 +10,7 @@ import LoggerService from '../services/LoggerService';
 import ModalSubMenuContactActions from '../components/Modals/ModalSubMenuContactActions';
 import ModalContact from "../components/Modals/ModalContact";
 import Toast from "react-native-toast-message";
+import ModalDefaultNoValue from '../components/Modals/ModalDefaultNoValue';
 
 const ContactScreen = ({ navigation }) => {
     const sectionListRef = useRef(null);
@@ -151,7 +152,11 @@ const ContactScreen = ({ navigation }) => {
             />
             <View style={{ flex: 1, backgroundColor: variables.default }}>
                 {contacts.length === 0 ?
-                    <Text style={[{color: variables.rouan, textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucun contact enregistré</Text>
+                    <View style={{paddingLeft: 20, paddingRight: 20}}>
+                        <ModalDefaultNoValue
+                            text={"Aucun contact enregistré"}
+                        />
+                    </View>
                 :
                     <>
                         <SectionList

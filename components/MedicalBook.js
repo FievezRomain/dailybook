@@ -7,6 +7,7 @@ import Toast from "react-native-toast-message";
 import variables from './styles/Variables';
 import LoggerService from '../services/LoggerService';
 import EventCard from "./cards/EventCard";
+import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 
 const MedicalBook = ({ animal }) => {
     const [typeEvent, setTypeEvent] = useState("Rendez-vous");
@@ -77,9 +78,9 @@ const MedicalBook = ({ animal }) => {
 
     return(
         <>
-            <View style={{width: "95%", alignSelf: "center", flex: 1}}>
+            <View style={{width: "100%", alignSelf: "center", flex: 1}}>
                 <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
-                <View style={{marginBottom: 10}}>
+                <View style={{marginBottom: 10, paddingLeft: 20, paddingRight: 20}}>
                     <StatePicker
                         firstState={"Rendez-vous"}
                         secondState={"Soins"}
@@ -88,10 +89,12 @@ const MedicalBook = ({ animal }) => {
                     />
                 </View>
                 
-                <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 20, paddingTop:10, paddingLeft: 20, paddingRight: 20}}>
                     {typeEvent === "Rendez-vous" ? 
                         eventsRdv.length === 0 ?
-                            <Text style={[{color: variables.rouan, textAlign: "center"}, styles.textFontRegular]}>Aucun rendez-vous pour cet animal</Text>
+                            <ModalDefaultNoValue
+                                text={"Aucun rendez-vous pour cet animal"}
+                            />
                         :
                         eventsRdv.map((eventItem, index) => (
                             <View style={styles.eventContainer} key={eventItem.id}>
@@ -106,7 +109,9 @@ const MedicalBook = ({ animal }) => {
                         ))
                     :
                         eventsRdv.length === 0 ?
-                            <Text style={[{color: variables.rouan, textAlign: "center"}, styles.textFontRegular]}>Aucun soin pour cet animal</Text>
+                            <ModalDefaultNoValue
+                                text={"Aucun soin pour cet animal"}
+                            />
                         :
                         eventsSoins.map((eventItem, index) => (
                             <View style={styles.eventContainer} key={eventItem.id}>

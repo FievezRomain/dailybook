@@ -13,6 +13,7 @@ import ModalWish from "../components/Modals/ModalWish";
 import { MaterialIcons } from "@expo/vector-icons";
 import LoggerService from "../services/LoggerService";
 import FileStorageService from "../services/FileStorageService";
+import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
 
 const WishScreen = ({ navigation }) => {
     const { currentUser } = useAuth();
@@ -118,7 +119,12 @@ const WishScreen = ({ navigation }) => {
                 />
                 <View style={styles.container}>
                     {wishs.length === 0 ?
-                        <Text style={[{color: Variables.rouan, textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucun souhait enregistré</Text>
+                        <View style={{paddingLeft: 20, paddingRight: 20}}>
+                            <ModalDefaultNoValue
+                                text={"Aucun souhait enregistré"}
+                            />
+                        </View>
+                        
                     :    
                         <FlatList
                             data={wishs}

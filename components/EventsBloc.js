@@ -7,6 +7,7 @@ import EventCard from './cards/EventCard';
 import EventService from '../services/EventService';
 import Toast from "react-native-toast-message";
 import LoggerService from '../services/LoggerService';
+import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 
 const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEvent }) => {
     const [eventsToday, setEventsToday] = useState([]);
@@ -283,9 +284,9 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                             </View>
                         ))
                     :    
-                        <View style={{backgroundColor: variables.blanc, width: "100%", padding: 20, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowOffset: {width: 0,height: 1},}}>
-                            <Text style={[styles.textFontRegular]}>Vous n'avez aucun événement à venir</Text>
-                        </View>
+                        <ModalDefaultNoValue
+                            text={"Vous n'avez aucun événement à venir"}
+                        />
                     }
                     
                 </View>

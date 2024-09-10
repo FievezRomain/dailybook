@@ -52,7 +52,6 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
       {withMessageFunctionality &&
         <Text style={[{textAlign: "center", color: variables.bai, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
       }
-      <ScrollView>
         <View style={styles.table}>
           <View style={styles.headerRow}>
             <Text style={[styles.cell, styles.headerCell, styles.textFontBold]}> </Text>
@@ -83,9 +82,8 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
           >
             <Text style={styles.textFontMedium}>S'inscrire pour être averti de la sortie de la version premium</Text>
           </Button>
-          <Text style={[styles.price, styles.textFontRegular]}>4€99 /mois ou 32€ /an</Text>
+          <Text style={[styles.price, styles.textFontRegular]}>8.99€ /an pour les 1 000 premiers inscrits</Text>
         </View>
-      </ScrollView>
     </>
   );
 };

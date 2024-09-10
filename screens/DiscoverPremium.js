@@ -3,6 +3,7 @@ import React from 'react';
 import OfferInformations from '../components/OfferInformations';
 import TopTabSecondary from "../components/TopTabSecondary";
 import variables from "../components/styles/Variables";
+import { ScrollView } from "react-native";
 
 const DiscoverPremiumScreen = ({ navigation }) => {
     return (
@@ -12,9 +13,11 @@ const DiscoverPremiumScreen = ({ navigation }) => {
                     message1={"Découvrez"}
                     message2={"l'offre"}
                 />
-                <OfferInformations
-                    withMessageFunctionality={false}
-                />
+                <ScrollView contentContainerStyle={{paddingBottom: 30}}>
+                    <OfferInformations
+                        withMessageFunctionality={false}
+                    />
+                </ScrollView>
             </View>
         </View>
         

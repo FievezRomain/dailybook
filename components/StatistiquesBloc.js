@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather } from '@expo/vector-icons';
 import variables from "./styles/Variables";
 import { TouchableOpacity } from "react-native";
@@ -15,6 +15,7 @@ const StatistiquesBloc = () =>{
     return (
         <>
             <View style={styles.composantContainer}>
+                <ScrollView contentContainerStyle={{paddingBottom: 30}}>
                 <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text>
                 
 
@@ -45,9 +46,10 @@ const StatistiquesBloc = () =>{
                 <View style={styles.statistiquesContainer}>
                     <Text>Découvrez vos statistiques avec la version premuim</Text>
                 </View> */}
-                
+                <OfferInformations />
+                </ScrollView>
             </View>
-            <OfferInformations />
+            
         </>
     );
 }
@@ -66,6 +68,8 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginLeft: 10,
         marginRight: 10,
+        width: "90%",
+        alignSelf: "center"
     },
     headerContainer:{
         display: "flex",

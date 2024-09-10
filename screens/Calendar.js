@@ -16,6 +16,7 @@ import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
 import LoggerService from "../services/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
+import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
 
 const CalendarScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -326,7 +327,7 @@ const CalendarScreen = ({ navigation }) => {
                 withDate={searchQuery !== ""}
               />
             )}
-            ListEmptyComponent={<Text style={[styles.noEventsText, styles.textFontRegular]}>Vous n'avez aucun événement pour cette date</Text>}
+            ListEmptyComponent={<ModalDefaultNoValue text={"Vous n'avez aucun événement pour cette date"}/>}
             contentContainerStyle={styles.listEventContainer}
         />
       </LinearGradient>
