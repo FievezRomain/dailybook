@@ -113,6 +113,18 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           />
                         </View>
                       }
+                      {isValidString(animal.numeroidentification) &&
+                        <View style={styles.inputContainer}>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Numéro identification :</Text>
+                          <TextInput
+                              style={[styles.input, styles.textFontRegular]}
+                              placeholder="Exemple : XXXXXXXXX"
+                              placeholderTextColor={variables.texte}
+                              defaultValue={animal.numeroidentification}
+                              editable={false}
+                          />
+                        </View>
+                      }
                       {isValidString(animal.race) &&
                         <View style={styles.inputContainer}>
                           <Text style={[styles.textInput, styles.textFontRegular]}>Race :</Text>
