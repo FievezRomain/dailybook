@@ -11,12 +11,14 @@ import EventService from "../services/EventService";
 import DateUtils from "../utils/DateUtils";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
 import LoggerService from "../services/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
 import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
+import ModalFilterCalendar from "../components/Modals/ModalFilterCalendar";
+import { CalendarFilter } from "../business/models/CalendarFilter";
 
 const CalendarScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -28,6 +30,8 @@ const CalendarScreen = ({ navigation }) => {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [marked, setMarked] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [modalFilterVisible, setModalFilterVisible] = useState(false);
+  const [filter, setFilter] = useState(null);
 
   const INITIAL_DATE = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(INITIAL_DATE);
@@ -57,6 +61,18 @@ const CalendarScreen = ({ navigation }) => {
     setupMarkedDates(true);
     changeEventsCurrentDateSelected(selectedDate);
   }, [eventArray]);
+
+  useEffect(() => {
+    applyFilter();
+  }, [filter]);
+
+  const applyFilter = () =>{
+    if( filter ){
+      var result = filter.filter(eventArray);
+      
+      setFilteredEvents(result);
+    }
+  }
 
   const getEventsForUser = async () => {
     if (eventArray.length === 0) {
@@ -174,6 +190,7 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const onDayPress = (day) => {
+    setFilter(null);
     setSelectedDate(day);
     setSearchQuery("");
 
@@ -248,42 +265,42 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const handleSearch = (query) => {
-    setSearchQuery(query);
-    if (query === '') {
-      setFilteredEvents(eventArray);
-    } else {
-      const filtered = eventArray.filter(event => {
-        const lowercaseQuery = query.toLowerCase();
-        return (
-          (event.discipline && event.discipline.toLowerCase().includes(lowercaseQuery)) ||
-          (event.epreuve && event.epreuve.toLowerCase().includes(lowercaseQuery)) ||
-          (event.eventtype && event.eventtype.toLowerCase().includes(lowercaseQuery)) ||
-          (event.lieu && event.lieu.toLowerCase().includes(lowercaseQuery)) ||
-          (event.nom && event.nom.toLowerCase().includes(lowercaseQuery)) ||
-          (event.traitement && event.traitement.toLowerCase().includes(lowercaseQuery)) 
-        );
-      });
-      setFilteredEvents(filtered);
+    if( filter )
+    {
+        setFilter(new CalendarFilter(filter.date, filter.animals, filter.eventType, query));
+    } else{
+        setFilter(new CalendarFilter(null, null, null, query));
     }
   }
 
   return (
     <>
+      <ModalFilterCalendar
+        modalVisible={modalFilterVisible}
+        setModalVisible={setModalFilterVisible}
+        setFilter={setFilter}
+        filter={filter}
+      />
       <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2} />
         <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: variables.blanc, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
           <View style={{flexDirection: "row", alignItems: "center"}}>
             <AntDesign name="search1" size={16} color={variables.bai}/>
+
             <TextInput
               placeholder="Recherche"
               style={[{marginLeft: 5, width: "80%"}, styles.textFontRegular]}
-              value={searchQuery}
+              value={filter ? filter.text : null}
               onChangeText={handleSearch}
             />
           </View>
           <View>
-            <TouchableOpacity>
-              <Ionicons name="filter" size={20} color={variables.bai}/>
+            <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
+              {filter ? 
+                <MaterialCommunityIcons name="filter-variant-plus" size={21} color={variables.bai}/>
+              :
+                <Ionicons name="filter" size={20} color={variables.bai}/>
+              }
             </TouchableOpacity>
           </View>
           
@@ -309,25 +326,25 @@ const CalendarScreen = ({ navigation }) => {
           />
         </View>
         <View style={styles.selectedDateContainer}>
-          {searchQuery != "" ?
-            <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats pour la recherche "{searchQuery}"</Text>
+          {filter ?
+            <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats du filtre</Text>
           : 
             <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
           }
         </View>
             
           <FlatList
-            data={searchQuery !== "" ? filteredEvents : eventArrayCurrentDateSelected}
+            data={filter ? filteredEvents : eventArrayCurrentDateSelected}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <EventCard
                 eventInfos={item}
                 deleteFunction={onDeleteEvent}
                 updateFunction={onModifyEvent}
-                withDate={searchQuery !== ""}
+                withDate={filter ? true : false}
               />
             )}
-            ListEmptyComponent={<ModalDefaultNoValue text={"Vous n'avez aucun événement pour cette date"}/>}
+            ListEmptyComponent={filter ? <ModalDefaultNoValue text={"Aucun événement correspond à ce filtre"}/> : <ModalDefaultNoValue text={"Vous n'avez aucun événement pour cette date"}/>}
             contentContainerStyle={styles.listEventContainer}
         />
       </LinearGradient>
