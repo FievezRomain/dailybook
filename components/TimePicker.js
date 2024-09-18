@@ -40,6 +40,7 @@ const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
         confirmTextIOS='Valider'
         cancelTextIOS='Annuler'
         buttonTextColorIOS={variables.bai}
+        themeVariant="light"
       />
     </>
   );
