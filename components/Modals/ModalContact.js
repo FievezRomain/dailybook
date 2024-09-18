@@ -141,7 +141,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : John Doe"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("nom", text)}
                                             defaultValue={watch("nom")}
                                             {...register("nom", { required: true })}
@@ -153,7 +153,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Vétérinaire"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("profession", text)}
                                             defaultValue={watch("profession")}
                                         />
@@ -164,7 +164,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 0606060606"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("telephone", text)}
                                             defaultValue={watch("telephone")}
                                         />
@@ -175,7 +175,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : test@gmail.com"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("email", text)}
                                             defaultValue={watch("email")}
                                         />

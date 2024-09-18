@@ -97,7 +97,7 @@ const SignInScreen = ({ navigation })=> {
                 <TextInput
                     style={[styles.input, styles.textFontRegular]}
                     placeholder="Email"
-                    placeholderTextColor={variables.texte}
+                    placeholderTextColor={variables.gris}
                     onChangeText={(text) => setValue("email", text)}
                     {...register("email", { 
                         required: true,
@@ -113,7 +113,7 @@ const SignInScreen = ({ navigation })=> {
                     <TextInput
                         style={[styles.textFontRegular, {width: "90%"}]}
                         placeholder="Mot de passe"
-                        placeholderTextColor={variables.texte}
+                        placeholderTextColor={variables.gris}
                         secureTextEntry={!isPasswordVisible}
                         onChangeText={(text) => setValue("password", text)}
                         defaultValue={getValues("password")}
@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     },
     clickableText: {
         marginLeft: 5,
-        color: variables.texte,
+        color: variables.gris,
         alignSelf: "flex-end",
         justifyContent: "flex-end",
     },
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     loginButton: {
         marginBottom: 20,
         marginTop: 10,
-        backgroundColor: variables.texte,
+        backgroundColor: variables.gris,
         borderRadius: 10
     },
     registerButton: {

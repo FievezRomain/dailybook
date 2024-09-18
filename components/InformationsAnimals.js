@@ -81,7 +81,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Vasco"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.nom}
                               editable={false}
                           />
@@ -93,7 +93,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Cheval"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.espece}
                               editable={false}
                           />
@@ -107,7 +107,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               placeholder="Exemple : 01/01/1900"
                               keyboardType="numeric"
                               maxLength={10}
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={(animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance)}
                               editable={false}
                           />
@@ -119,7 +119,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : XXXXXXXXX"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.numeroidentification}
                               editable={false}
                           />
@@ -131,7 +131,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Fjord"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.race}
                               editable={false}
                           />
@@ -144,7 +144,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 140"
                               keyboardType="numeric"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={String(animal.taille)}
                               editable={false}
                           />
@@ -157,7 +157,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 400"
                               keyboardType="numeric"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.poids != null ? String(animal.poids) : undefined}
                               editable={false}
                           />
@@ -169,7 +169,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Mâle"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.sexe}
                               editable={false}
                           />
@@ -181,7 +181,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Granulés X"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.food}
                               editable={false}
                           />
@@ -193,7 +193,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 200"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.quantity != null ? String(animal.quantity) : undefined}
                               editable={false}
                           />
@@ -205,7 +205,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Isabelle"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.couleur}
                               editable={false}
                           />
@@ -217,7 +217,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Esgard"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.nomPere}
                               editable={false}
                           />
@@ -229,7 +229,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Sherry"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.nomMere}
                               editable={false}
                           />

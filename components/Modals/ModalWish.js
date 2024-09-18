@@ -165,7 +165,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Selle western"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("nom", text)}
                                         defaultValue={getValues("nom")}
                                         {...register("nom", { required: true })}
@@ -177,7 +177,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : https://vascoandco.fr"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("url", text)}
                                         defaultValue={getValues("url")}
                                     />
@@ -205,7 +205,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                         style={[styles.input, styles.textFontRegular]}
                                         keyboardType="numeric"
                                         placeholder="Exemple : 20"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("prix", text)}
                                         defaultValue={getValues("prix")}
                                     />
@@ -216,7 +216,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Par défaut, pour vous"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("destinataire", text)}
                                         defaultValue={getValues("destinataire")}
                                     />

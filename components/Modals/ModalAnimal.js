@@ -298,7 +298,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Vasco"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("nom", text)}
                                             defaultValue={getValues("nom")}
                                             {...register("nom", { required: true })}
@@ -340,7 +340,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholder="Exemple : 01/01/1900"
                                             keyboardType="numeric"
                                             maxLength={10}
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => onChangeDate(text)}
                                             value={date}
                                         />
@@ -350,7 +350,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="XXXXXXXXXX"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("numeroidentification", text)}
                                             value={watch("numeroidentification")}
                                         />
@@ -360,7 +360,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Fjord"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("race", text)}
                                             defaultValue={getValues("race")}
                                         />
@@ -371,7 +371,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 140"
                                             keyboardType="numeric"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("taille", text)}
                                             defaultValue={getValues("taille")}
                                         />
@@ -382,7 +382,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 400"
                                             keyboardType="numeric"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("poids", text)}
                                             defaultValue={getValues("poids")}
                                         />
@@ -392,7 +392,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Mâle"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("sexe", text)}
                                             defaultValue={getValues("sexe")}
                                         />
@@ -402,7 +402,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Granulés X"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("food", text)}
                                             defaultValue={getValues("food")}
                                         />
@@ -413,7 +413,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 200"
                                             keyboardType="numeric"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("quantity", text)}
                                             defaultValue={getValues("quantity")}
                                         />
@@ -423,7 +423,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Isabelle"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("couleur", text)}
                                             defaultValue={getValues("couleur")}
                                         />
@@ -433,7 +433,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Esgard"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("nomPere", text)}
                                             defaultValue={getValues("nomPere")}
                                         />
@@ -443,7 +443,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Sherry"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("nomMere", text)}
                                             defaultValue={getValues("nomMere")}
                                         />

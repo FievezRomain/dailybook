@@ -152,7 +152,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Titre"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("titre", text)}
                                         defaultValue={watch("titre")}
                                         {...register("titre", { required: true })}

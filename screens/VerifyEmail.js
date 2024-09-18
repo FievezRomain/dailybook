@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     },
     title: {
         top: - (Constants.statusBarHeight + 10),
-        color: variables.texte,
+        color: variables.gris,
         fontSize: 30,
         letterSpacing: 2,
         marginBottom:20,

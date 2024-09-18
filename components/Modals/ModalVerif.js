@@ -49,7 +49,7 @@ const ModalVerif = ({ modalVisible, setModalVisible, message, event }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Variables.texte,
+    backgroundColor: Variables.gris,
     padding: 30,
     height: "20%",
     justifyContent: "center",

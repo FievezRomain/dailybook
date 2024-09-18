@@ -347,7 +347,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Rendez-vous vétérinaire"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("title", text)}
                                         defaultValue={getValues("title")}
                                         {...register("title", { required: true })}

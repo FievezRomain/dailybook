@@ -571,7 +571,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       <TextInput
                         style={[styles.input, styles.textFontRegular]}
                         placeholder="Exemple : Rendez-vous vétérinaire"
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => setValue("nom", text)}
                         defaultValue={getValues("nom")}
                         {...register("nom", { required: true })}
@@ -593,7 +593,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       <TextInput
                         style={[styles.input, styles.textFontRegular]}
                         placeholder="Exemple : Écurie de la Pomme"
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => setValue("lieu", text)}
                         defaultValue={getValues("lieu")}
                       />
@@ -608,7 +608,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               placeholder="Exemple : 12h45"
                               keyboardType="numeric"
                               maxLength={5}
-                              placeholderTextColor={Variables.texte}
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => onChangeTime("heuredebutbalade", setDate, text)}
                               value={watch("heuredebutbalade")}
                               defaultValue={getActualTime()}
@@ -629,7 +629,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
                               keyboardType="numeric"
-                              placeholderTextColor={Variables.texte}
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
                             />
@@ -642,7 +642,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               placeholder="Exemple : 12h45"
                               keyboardType="numeric"
                               maxLength={5}
-                              placeholderTextColor={Variables.texte}
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => onChangeTime("heurefinbalade", setDate, text)}
                               value={watch("heurefinbalade")}
                               defaultValue={getActualTime()}
@@ -665,7 +665,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : CSO"
-                              placeholderTextColor={Variables.texte}
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("discipline", text)}
                               defaultValue={getValues("discipline")}
                             />
@@ -677,7 +677,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
                               keyboardType="numeric"
-                              placeholderTextColor={Variables.texte}
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
                             />
@@ -702,7 +702,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : CSO"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("discipline", text)}
                             defaultValue={getValues("discipline")}
                             {...register("discipline", { required: true })}
@@ -713,7 +713,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Club 1"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("epreuve", text)}
                             defaultValue={getValues("epreuve")}
                           />
@@ -724,7 +724,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("dossart", text)}
                             defaultValue={getValues("dossart")}
                           />
@@ -735,7 +735,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("placement", text)}
                             defaultValue={getValues("placement")}
                           />
@@ -746,7 +746,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
                           />
@@ -768,7 +768,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Vétérinaire"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("specialiste", text)}
                             defaultValue={getValues("specialiste")}
                           />
@@ -779,7 +779,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 0 (un doux rêve)"
                             keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
                           />
@@ -795,7 +795,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Cure de CMV"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("traitement", text)}
                             defaultValue={getValues("traitement")}
                             {...register("traitement", { required: true })}
@@ -832,7 +832,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
                               keyboardType="numeric"
-                              placeholderTextColor={Variables.texte}
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
                             />
@@ -848,7 +848,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
                           />
@@ -882,7 +882,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         numberOfLines={4}
                         maxLength={2000}
                         placeholder="Exemple : Ça s'est très bien passé"
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => setValue("commentaire", text)}
                         defaultValue={getValues("commentaire")}
                       />

@@ -39,7 +39,7 @@ const DateField = ({ setValue, date, setDate, valueName, style, defaultValue }) 
             placeholder="Exemple : 01/01/1900"
             keyboardType="numeric"
             maxLength={10}
-            placeholderTextColor={Variables.texte}
+            placeholderTextColor={Variables.gris}
             onChangeText={(text) => onChangeDate(text)}
             value={date}
         />
