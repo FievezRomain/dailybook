@@ -107,6 +107,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("couleur", undefined);
         setValue("nomPere", undefined);
         setValue("nomMere", undefined);
+        setValue("image", undefined);
         setImage(null);
         setDate(String(jour + "/" + mois + "/" + annee));
         setEspece(undefined);

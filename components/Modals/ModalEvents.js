@@ -347,6 +347,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setSelected([]);
     setNotifType(false);
     setOptionNotifType(false);
+    setAnimaux([]);
   }
 
   const onChangeDate = (propertyName, selectedDate) => {
