@@ -232,14 +232,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         }
       }
       if(eventType.id === "soins"){
-        if(data.traitement === undefined){
-          complete = false;
-          Toast.show({
-            type: "error",
-            position: "top",
-            text1: "Veuillez saisir un traitement"
-          });
-        }
         if(data.datefinsoins !== undefined && new Date(data.dateevent) > new Date(data.datefinsoins)){
           complete = false;
           Toast.show({
@@ -790,15 +782,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     {eventType.id === "soins" && (
                       <>
                         <View style={styles.inputContainer}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Traitement : <Text style={{color: "red"}}>*</Text></Text>
-                          {errors.traitement && <Text style={[styles.errorInput, styles.textFontRegular]}>Traitement obligatoire </Text>}
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Traitement : </Text>
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Cure de CMV"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("traitement", text)}
                             defaultValue={getValues("traitement")}
-                            {...register("traitement", { required: true })}
                           />
                         </View>
                         <View style={styles.containerDate}>
