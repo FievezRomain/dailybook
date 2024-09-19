@@ -10,6 +10,7 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import variables from "../components/styles/Variables";
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
@@ -28,6 +29,7 @@ const SettingsScreen = ({ }) => {
             marginRight: "auto",
             shadowColor: "black",
             shadowOpacity: "0.1",
+            elevation: 1,
             shadowRadius: 5,
             shadowOffset: {width: 0, height: 2}
         },

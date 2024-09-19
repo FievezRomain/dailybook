@@ -107,7 +107,7 @@ const SignUpScreen = ({ navigation })=> {
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Email"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={variables.gris}
                             onChangeText={(text) => setValue("email", text)}
                             {...register("email", { 
                                 required: true,
@@ -122,7 +122,7 @@ const SignUpScreen = ({ navigation })=> {
                         <TextInput
                             style={[styles.input, , styles.textFontRegular]}
                             placeholder="Votre prenom"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={variables.gris}
                             onChangeText={(text) => setValue("prenom", text)}
                             defaultValue={getValues("prenom")}
                             {...register("prenom", { required: true })}
@@ -133,7 +133,7 @@ const SignUpScreen = ({ navigation })=> {
                             <TextInput
                                 style={[styles.textFontRegular, {width: "90%"}]}
                                 placeholder="Mot de passe"
-                                placeholderTextColor={Variables.gris}
+                                placeholderTextColor={variables.gris}
                                 secureTextEntry={!isPasswordVisible}
                                 onChangeText={(text) => setValue("password", text)}
                                 defaultValue={getValues("password")}
@@ -151,7 +151,7 @@ const SignUpScreen = ({ navigation })=> {
                             <TextInput
                                 style={[styles.textFontRegular, {width: "90%"}]}
                                 placeholder="Confirmation mot de passe"
-                                placeholderTextColor={Variables.gris}
+                                placeholderTextColor={variables.gris}
                                 secureTextEntry={!isPasswordVisible}
                                 onChangeText={(text) => setValue("password_confirm", text)}
                                 defaultValue={getValues("password_confirm")}

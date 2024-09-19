@@ -283,7 +283,7 @@ const CalendarScreen = ({ navigation }) => {
       />
       <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2} />
-        <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: variables.blanc, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
+        <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: variables.blanc, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
           <View style={{flexDirection: "row", alignItems: "center"}}>
             <AntDesign name="search1" size={16} color={variables.bai}/>
 
@@ -400,6 +400,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     shadowColor: "black",
     shadowOpacity: 0.1,
+    elevation: 1,
     shadowRadius:5,
     shadowOffset:{width:0, height:2}
   },

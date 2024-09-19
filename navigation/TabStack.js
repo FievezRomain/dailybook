@@ -60,6 +60,7 @@ const TabStack = () => {
                   marginBottom: Platform.OS == "android" ? 30 : 30,
                   shadowColor: "black",
                   shadowOpacity: 0.1,
+                  elevation: 1,
                   shadowRadius: 10,
                   shadowOffset:{width:0, height: -1}
                 }}
@@ -113,6 +114,7 @@ const TabStack = () => {
           tabBarStyle:{
             shadowColor: "black",
             shadowOpacity: 0.1,
+            elevation: 1,
             shadowRadius: 5,
             shadowOffset:
             {

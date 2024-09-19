@@ -152,7 +152,7 @@ const WelcomeScreen = ({ navigation })=> {
                       handleObjectifDelete={handleObjectifDelete}
                     />
               </View>
-              <View style={{width: "90%", marginBottom: 30, alignSelf: "center", backgroundColor: "white", shadowColor: "black", shadowOpacity: 0.1, shadowOffset: {width: 0,height: 1}, borderRadius: 5}}>
+              <View style={{width: "90%", marginBottom: 30, alignSelf: "center", backgroundColor: "white", shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1}, borderRadius: 5}}>
                 <LinearGradient colors={[Variables.bai_brun, Variables.bai]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 1]} style={{flex: 1, padding: 20, borderRadius: 5}}>
                   <Text style={{fontFamily: Variables.fontBold, color: Variables.blanc, textAlign: "center", marginBottom: 5}}>Avez-vous quelque chose de prévu ?</Text>
                   <Text style={{fontFamily: Variables.fontRegular, color: Variables.blanc, textAlign: "center", marginBottom: 15}}>Enregistrez toutes les informations ici</Text>

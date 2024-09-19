@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     shadowColor: "black",
     shadowOpacity: 0.1,
+    elevation: 1,
     shadowRadius: 1,
     shadowOffset: {width: 0, height: 1},
     position: 'relative', // Ajout d'une position relative

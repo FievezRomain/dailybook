@@ -30,7 +30,7 @@ const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModi
                             <View style={styles.informationsActionButton}>
                                 <FontAwesome5 name="tasks" size={20}/>
                                 <Text style={styles.textActionButton}>
-                                    Avancement des sous-étapes
+                                    Avancement des étapes
                                 </Text>
                             </View>
                         </TouchableOpacity> 

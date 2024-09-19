@@ -48,6 +48,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             marginBottom: 10,
             shadowColor: "black",
             shadowOpacity: 0.1,
+            elevation: 1,
             shadowOffset: {
               width: 0,
               height: 1
@@ -69,7 +70,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             backgroundColor: variables.aubere,
         },
         concours:{
-            backgroundColor: variables.bai,
+            backgroundColor: variables.alezan,
         },
         depense:{
             backgroundColor: variables.rouan,

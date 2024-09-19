@@ -313,6 +313,7 @@ const styles = StyleSheet.create({
         zIndex: 0,
         shadowColor: "black",
         shadowOpacity: 0.1,
+        elevation: 1,
         shadowRadius:5,
         shadowOffset:{width:0, height:2}
       },

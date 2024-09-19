@@ -51,7 +51,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return variables.isabelle;
         }
         if( event.eventtype === "concours" ){
-            return variables.bai;
+            return variables.alezan;
         }
         if( event.eventtype === "entrainement" ){
             return variables.aubere;
@@ -265,6 +265,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             borderRadius: 15,
             shadowColor: "black",
             shadowOpacity: 0.1,
+            elevation: 1,
             shadowOffset: {
                 width: 0,
                 height: 1
@@ -306,7 +307,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             backgroundColor: variables.aubere,
         },
         concours: {
-            backgroundColor: variables.bai,
+            backgroundColor: variables.alezan,
         },
         depense: {
             backgroundColor: variables.rouan,
@@ -342,9 +343,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         animauxPicturesContainer:{
             marginRight: 10,
             flexDirection: "row",
-            width: "50%",
             flexWrap: "wrap",
-            justifyContent: "flex-end"
+            justifyContent: "flex-end",
         },
         avatarText: {
             color: "white",

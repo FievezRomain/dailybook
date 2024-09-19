@@ -148,7 +148,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             Toast.show({
                 type: "error",
                 position: "top",
-                text1: "Veuillez saisir au moins une sous-étape"
+                text1: "Veuillez saisir au moins une étape"
             });
         }
 
@@ -411,7 +411,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                         size={"s"}
                                         isLong={true}
                                     >
-                                        <Text style={styles.textFontMedium}>Ajouter une sous-étape</Text>
+                                        <Text style={styles.textFontMedium}>Ajouter une étape</Text>
                                     </Button>
                                 </View>
 

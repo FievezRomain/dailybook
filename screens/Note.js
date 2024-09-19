@@ -81,7 +81,7 @@ const NoteScreen = ({ navigation }) => {
                 message2={"notes"}
             />
             <View style={styles.container}>
-            <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: Variables.blanc, marginBottom: 10, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
+            <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: Variables.blanc, marginBottom: 10, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
                 <View style={{flexDirection: "row", alignItems: "center"}}>
                     <AntDesign name="search1" size={16} color={Variables.bai}/>
                     <TextInput

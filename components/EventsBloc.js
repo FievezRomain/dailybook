@@ -255,7 +255,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                         </View>
                     </>
                 :
-                    <View style={{backgroundColor: variables.blanc, width: "100%", padding: 20, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowOffset: {width: 0,height: 1},}}>
+                    <View style={{backgroundColor: variables.blanc, width: "100%", padding: 20, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1},}}>
                         <Text style={[styles.textFontRegular]}>Vous n'avez aucun événement aujourd'hui</Text>
                     </View>
                 }
@@ -379,6 +379,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         shadowColor: "black",
         shadowOpacity: 0.1,
+        elevation: 1,
         shadowRadius: 5,
         shadowOffset: {width: 0, height: 2}
     },
