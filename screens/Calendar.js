@@ -133,7 +133,8 @@ const CalendarScreen = ({ navigation }) => {
     
     if(isInit){
       // Setup default selected date
-      const defaultDateString = getDate(0);
+      const defaultDateString = selectedDate;
+
       if (!newMarked[defaultDateString]) {
         newMarked[defaultDateString] = {
           selected: true,
@@ -142,6 +143,10 @@ const CalendarScreen = ({ navigation }) => {
           selectedTextColor: variables.blanc,
           dots: []
         };
+      } else{
+        const existingObj = newMarked[defaultDateString];
+
+        existingObj.selected = true;
       }
     }
   
@@ -196,6 +201,7 @@ const CalendarScreen = ({ navigation }) => {
 
     Object.entries(marked).forEach(([key, value]) => value.selected = false);
     const existingObj = marked[day];
+    console.log(marked);
     if(existingObj){
       existingObj.selected = true;
       marked[day] = existingObj;
@@ -224,9 +230,9 @@ const CalendarScreen = ({ navigation }) => {
 
     setEventArray(arrayTempArray);
 
-    setupMarkedDates(false);
+    setupMarkedDates(true);
 
-    onDayPress(response.dateevent);
+    changeEventsCurrentDateSelected(selectedDate);
     
   }
 
