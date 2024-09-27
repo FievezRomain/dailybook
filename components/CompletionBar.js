@@ -24,7 +24,7 @@ const CompletionBar = ({ percentage=0 }) => {
               inputRange: [0, 100],
               outputRange: ['0%', '100%']
             }),
-            backgroundColor: isCompleted ? variables.isabelle : variables.bai
+            backgroundColor: isCompleted ? variables.bai : variables.bai
           }
         ]}
       />

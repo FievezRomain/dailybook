@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
   dateContainer: {
     borderRadius: 5,
     backgroundColor: variables.rouan,
-    marginBottom: 15,
   },
   date:{
     padding: 10,
