@@ -15,7 +15,7 @@ function App() {
   Sentry.init({
     dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
     enableInExpoDevelopment: true,
-    debug: true, // Passez à false en production
+    debug: false, // Passez à false en production
   });
 
   useEffect(() => {
