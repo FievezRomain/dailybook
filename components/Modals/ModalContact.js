@@ -55,15 +55,16 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             contactService.update(data)
                 .then((reponse) =>{
 
+                    onModify(reponse);
+                    resetValues();
+                    closeModal();
+                    setLoading(false);
+
                     Toast.show({
                         type: "success",
                         position: "top",
                         text1: "Modification d'un contact réussi"
                     });
-                    onModify(reponse);
-                    resetValues();
-                    closeModal();
-                    setLoading(false);
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -78,10 +79,17 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         else{
             contactService.create(data)
                 .then((reponse) =>{
+                    
                     resetValues();
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Création d'un contact réussi"
+                    });
                 })
                 .catch((err) =>{
                     Toast.show({

@@ -159,14 +159,15 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                 objectifService.update(data)
                     .then((reponse) =>{
 
+                        onModify(reponse);
+                        closeModal();
+                        setLoading(false);
+
                         Toast.show({
                             type: "success",
                             position: "top",
                             text1: "Modification d'un objectif réussi"
                         });
-                        onModify(reponse);
-                        closeModal();
-                        setLoading(false);
                     })
                     .catch((err) =>{
                         Toast.show({
@@ -182,13 +183,14 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                 objectifService.create(data)
                     .then((reponse) =>{
 
+                        closeModal();
+                        setLoading(false);
+
                         Toast.show({
                             type: "success",
                             position: "top",
                             text1: "Création d'un objectif réussi"
                         });
-                        closeModal();
-                        setLoading(false);
                     })
                     .catch((err) =>{
                         Toast.show({
@@ -535,7 +537,8 @@ const styles = StyleSheet.create({
     containerDate:{
         flexDirection: "column",
         alignSelf: "flex-start",
-        width: "100%"
+        width: "100%",
+        marginBottom: 15,
     },
     textFontRegular:{
         fontFamily: Variables.fontRegular

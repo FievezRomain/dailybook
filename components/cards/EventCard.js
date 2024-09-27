@@ -14,14 +14,18 @@ import ModalSubMenuEventActions from "../Modals/ModalSubMenuEventActions";
 import AnimalsService from "../../services/AnimalsService";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import ModalEventDetails from "../Modals/ModalEventDetails";
+import EventService from "../../services/EventService";
+import LoggerService from '../../services/LoggerService';
+import Toast from "react-native-toast-message";
 
-const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=true, withDate=false, withState=false, handleStateChange=undefined, typeEvent=undefined}) => {
+const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=false, withState=false, typeEvent=undefined}) => {
     const { currentUser } = useAuth();
     const [modalModificationVisible, setModalModificationVisible] = useState(false);
     const [modalSubMenuEventVisible, setModalSubMenuEventVisible] = useState(false);
     const [modalEventDetailsVisible, setModalEventDetailsVisible] = useState(false);
     const animalsService = new AnimalsService;
     const [animaux, setAnimaux] = useState([]);
+    const eventService = new EventService();
 
     useEffect(() => {
         if(animaux.length == 0){
@@ -79,7 +83,6 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
             width: "100%", 
             borderTopStartRadius: 5,
             borderTopEndRadius: 5,
-            padding: 10
         },
         cardEventContainer:{
             paddingVertical: 10,
@@ -105,7 +108,8 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
         },
         titleTypeEventContainer:{
             flexDirection: "row", 
-            alignItems: "center"
+            alignItems: "center",
+            paddingLeft: 10
         },
         contentEventContainer:{
             display: "flex", 
@@ -126,11 +130,99 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
         },
         textFontBold:{
             fontFamily: variables.fontBold
+        },
+        subMenuContainer:{
+            paddingVertical: 10,
+            paddingLeft: 20,
+            paddingRight: 10
         }
     });
 
     const handleDelete = () =>{
-        deleteFunction(eventInfos);
+        eventInfos.email = currentUser.email;
+        
+        eventService.delete(eventInfos)
+            .then((reponse) =>{
+    
+              Toast.show({
+                type: "success",
+                position: "top",
+                text1: "Suppression d'un événement réussi"
+              });
+    
+              handleEventsChange();
+    
+            })
+            .catch((err) =>{
+              Toast.show({
+                  type: "error",
+                  position: "top",
+                  text1: err.message
+              });
+              LoggerService.log( "Erreur lors de suppression d'un event : " + err.message );
+            });
+    }
+
+    const handleDeleteAll = () =>{
+        eventInfos.email = currentUser.email;
+        eventInfos.id = eventInfos.idparent === null ? eventInfos.id : eventInfos.idparent;
+
+        eventService.delete(eventInfos)
+            .then((reponse) =>{
+    
+              Toast.show({
+                type: "success",
+                position: "top",
+                text1: "Suppression d'un événement réussi"
+              });
+    
+              handleEventsChange();
+    
+            })
+            .catch((err) =>{
+              Toast.show({
+                  type: "error",
+                  position: "top",
+                  text1: err.message
+              });
+              LoggerService.log( "Erreur lors de suppression d'un event : " + err.message );
+            });
+    }
+
+    const handleStateChange = async () => {
+        switch(eventInfos.state){
+            case "À faire":
+                eventInfos.state = "Terminé";
+                break;
+            case "Terminé":
+                eventInfos.state = "À faire";
+                break;
+        }
+
+        let data = {};
+        data["id"] = eventInfos.id;
+        data["state"] = eventInfos.state;
+        data["animaux"] = eventInfos.animaux;
+        data["email"] = currentUser.email;
+
+        eventService.updateState(data)
+            .then((reponse) => {
+                Toast.show({
+                    type: "success",
+                    position: "top",
+                    text1: "Modification d'un événement réussi"
+                });
+
+                handleEventsChange();
+            })
+            .catch((err) => {
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: err.message
+                });
+                LoggerService.log( "Erreur lors de la MAJ du statut d'un event : " + err.message );
+            })
     }
 
     const handleModify = () =>{
@@ -166,7 +258,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 isVisible={modalModificationVisible}
                 setVisible={setModalModificationVisible}
                 actionType={"modify"}
-                onModify={updateFunction}
+                onModify={handleEventsChange}
             />
             <ModalSubMenuEventActions
                 event={eventInfos}
@@ -174,13 +266,14 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                 handleModify={handleModify}
                 modalVisible={modalSubMenuEventVisible}
                 setModalVisible={setModalSubMenuEventVisible}
+                handleDeleteAll={handleDeleteAll}
             />
             <ModalEventDetails
                 isVisible={modalEventDetailsVisible}
                 setVisible={setModalEventDetailsVisible}
                 event={eventInfos}
                 animaux={animaux}
-                onModify={updateFunction}
+                handleEventsChange={handleEventsChange}
             />
             {eventInfos.eventtype == "balade" &&
                 <View style={[styles.eventContainer]}>
@@ -191,7 +284,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                                 <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Balade</Text>
                             </View>
                             <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
+                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
                                     <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
                                 </TouchableOpacity>
                             </View>
@@ -199,7 +292,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                     </View>
                     <View style={styles.contentEventContainer}>
                         { withState === true &&
-                            <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
+                            <TouchableOpacity onPress={()=>handleStateChange()} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
                                     <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
                                     ||
@@ -233,7 +326,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                                 <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Rendez-vous médical</Text>
                             </View>
                             <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
+                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
                                     <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
                                 </TouchableOpacity>
                             </View>
@@ -275,7 +368,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                                 <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Soins</Text>
                             </View>
                             <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
+                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
                                     <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
                                 </TouchableOpacity>
                             </View>
@@ -317,7 +410,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                                 <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Entrainement</Text>
                             </View>
                             <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
+                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
                                     <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
                                 </TouchableOpacity>
                             </View>
@@ -360,7 +453,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                                 <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Autre</Text>
                             </View>
                             <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
+                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
                                     <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
                                 </TouchableOpacity>
                             </View>
@@ -403,7 +496,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                                 <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Concours</Text>
                             </View>
                             <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
+                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
                                     <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
                                 </TouchableOpacity>
                             </View>
@@ -446,7 +539,7 @@ const EventCard = ({eventInfos, updateFunction,  deleteFunction, withSubMenu=tru
                                 <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Dépense</Text>
                             </View>
                             <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)}>
+                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
                                     <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
                                 </TouchableOpacity>
                             </View>

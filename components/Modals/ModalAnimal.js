@@ -164,15 +164,17 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             // Modification de l'animal dans le back (BDD)
             animalsService.modify(data)
             .then((response) =>{
+                
+                resetValues();
+                closeModal();
+                onModify(response);
+                setLoading(false);
+
                 Toast.show({
                     type: "success",
                     position: "top",
                     text1: "Modification de l'animal"
                 }); 
-                resetValues();
-                closeModal();
-                onModify(response);
-                setLoading(false);
             })
             .catch((err) =>{
                 Toast.show({
@@ -187,15 +189,17 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             // Création de l'animal dans le back (BDD)
             animalsService.create(data)
             .then((response) =>{
+                
+                resetValues();
+                closeModal();
+                onModify(response);
+                setLoading(false);
+
                 Toast.show({
                     type: "success",
                     position: "top",
                     text1: "Création de l'animal"
                 }); 
-                resetValues();
-                closeModal();
-                onModify(response);
-                setLoading(false);
             })
             .catch((err) =>{
                 Toast.show({

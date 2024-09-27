@@ -34,9 +34,7 @@ const WelcomeScreen = ({ navigation })=> {
     const getEventsForUser = async () => {
       try {
         const result = await eventService.getEvents(currentUser.email);
-        if (result.length !== 0) {
-          setEvents(result);
-        }
+        setEvents(result);
       } catch (error) {
         LoggerService.log( "Erreur lors de la récupération des events : " + error.message );
         console.error("Error fetching events:", error);
@@ -89,44 +87,14 @@ const WelcomeScreen = ({ navigation })=> {
       setObjectifs(updatedObjectifs);
     }
 
-    const handleEventChange = (idEventModified, response) => {
-      let updatedEvents = [];
-      updatedEvents = [... events];
-
-      var index = updatedEvents.findIndex((a) => a.id == idEventModified);
-      updatedEvents[index] = response;
-      setEvents(updatedEvents);
-    }
-
-    const handleEventDelete = (event) => {
-      let updatedEvents = [];
-      updatedEvents = [... events];
-
-      // Si l'event à des enfants, on supprime les enfants du tableau des events
-      var eventsEnfants = [];
-      updatedEvents.map(element => {
-          if( element.idparent === event.id ){
-              eventsEnfants.push(element);
-          }
-      })
-
-      eventsEnfants.map(element => {
-          var index = updatedEvents.findIndex(objet => objet.id === element.id);
-
-          if(index !== -1){
-            updatedEvents.splice(index, 1);
-          }
-
-      })
-
-      // Suppression de l'event parent suite à la suppression des enfants
-      var index = updatedEvents.findIndex((a) => a.id == event.id);
-      updatedEvents.splice(index, 1);
-      setEvents(updatedEvents);
+    const handleEventChange = async () => {
+      setEvents(await eventService.getEvents(currentUser.email));
     }
 
     return (
       <>
+      <View style={{zIndex:999}}><Toast/></View>
+        
         <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
           <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
             <View style={{flex: 1}}>
@@ -143,8 +111,7 @@ const WelcomeScreen = ({ navigation })=> {
               <View style={{marginTop: 60, paddingBottom: 10}}>
                     <EventsBloc 
                       events={events}
-                      handleDeletedEvent={handleEventDelete}
-                      handleModifiedEvent={handleEventChange}
+                      handleEventsChange={handleEventChange}
                     />
                     <ObjectifsInProgressBloc
                       objectifs={objectifs}

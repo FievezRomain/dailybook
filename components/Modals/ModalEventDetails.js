@@ -11,14 +11,16 @@ import LoggerService from '../../services/LoggerService';
 import FileStorageService from "../../services/FileStorageService";
 import { Image } from "expo-image";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
+import DateUtils from '../../utils/DateUtils';
 
-const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, onModify }) => {
+const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
     const { currentUser } = useAuth();
     const eventService = new EventService();
     var eventBeforeEditCommentaire;
     var eventBeforeEditRessenti;
     var eventBeforeEditState;
     const fileStorageService = new FileStorageService();
+    const dateUtils = new DateUtils();
 
     useEffect(() => {
         eventBeforeEditCommentaire = event.commentaire;
@@ -214,10 +216,11 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         data["commentaire"] = event.commentaire;
         data["animaux"] = event.animaux;
         data["note"] = event.note;
+        data["email"] = currentUser.email;
 
         eventService.updateCommentaireNote(data)
             .then((reponse) => {
-                onModify(event.id, event);
+                handleEventsChange();
                 setVisible(false);
             })
             .catch((err) => {
@@ -444,7 +447,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                     <Text style={styles.textFontRegular}>Lieu : {event.lieu}</Text>
                                 }
                                 {isValidString(event.datefinbalade) &&
-                                    <Text style={styles.textFontRegular}>Date de fin de balade : {event.datefinbalade}</Text>
+                                    <Text style={styles.textFontRegular}>Date de fin de balade : {event.datefinbalade.includes("-") ? dateUtils.dateFormatter(event.datefinbalade, "yyyy-mm-dd", "-") : event.datefinbalade}</Text>
                                 }
                                 {isValidString(event.heurefinbalade) &&
                                     <Text style={styles.textFontRegular}>Heure de fin de balade : {event.heurefinbalade}</Text>
@@ -468,7 +471,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                     <Text style={styles.textFontRegular}>Traitement : {event.traitement}</Text>
                                 }
                                 {isValidString(event.datefinsoins) &&
-                                    <Text style={styles.textFontRegular}>Date de fin du soin : {event.datefinsoins}</Text>
+                                    <Text style={styles.textFontRegular}>Date de fin du soin : {event.datefinsoins.includes("-") ? dateUtils.dateFormatter(event.datefinsoins, "yyyy-mm-dd", "-") : event.datefinsoins}</Text>
                                 }
                                 <View style={{width: "90%"}}>
                                     <Text style={[{marginBottom: 5}, styles.textFontRegular]}>Commentaire :</Text>

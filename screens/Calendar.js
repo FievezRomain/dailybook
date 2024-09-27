@@ -78,9 +78,7 @@ const CalendarScreen = ({ navigation }) => {
     if (eventArray.length === 0) {
       try {
         const result = await eventService.getEvents(currentUser.email);
-        if (result.length !== 0) {
-          setEventArray(result);
-        }
+        setEventArray(result);
       } catch (error) {
         LoggerService.log( "Erreur lors de la récupération des events : " + error.message );
         console.error("Error fetching events:", error);
@@ -201,7 +199,7 @@ const CalendarScreen = ({ navigation }) => {
 
     Object.entries(marked).forEach(([key, value]) => value.selected = false);
     const existingObj = marked[day];
-    console.log(marked);
+
     if(existingObj){
       existingObj.selected = true;
       marked[day] = existingObj;
@@ -220,54 +218,10 @@ const CalendarScreen = ({ navigation }) => {
     changeEventsCurrentDateSelected(day);
   };
 
-  const onModifyEvent = (idEventModified, response) => {
-    var arrayTempArray = eventArray;
-    var index = arrayTempArray.findIndex(objet => objet.id === idEventModified);
+  const handleEventsChange = async () => {
 
-    if(index !== -1){
-      arrayTempArray[index] = response;
-    }
+    setEventArray(await eventService.getEvents(currentUser.email));
 
-    setEventArray(arrayTempArray);
-
-    setupMarkedDates(true);
-
-    changeEventsCurrentDateSelected(selectedDate);
-    
-  }
-
-  const onDeleteEvent = (infosEvent) => {
-    eventService.delete(infosEvent)
-        .then((reponse) =>{
-
-          Toast.show({
-            type: "success",
-            position: "top",
-            text1: "Suppression d'un événement réussi"
-          });
-
-          var arrayTempArray = eventArray;
-          var index = arrayTempArray.findIndex(objet => objet.id === infosEvent.id);
-
-          if(index !== -1){
-            arrayTempArray.splice(index, 1);
-          }
-
-          setEventArray(arrayTempArray);
-
-          setupMarkedDates(false);
-
-          onDayPress(infosEvent.dateevent);
-
-        })
-        .catch((err) =>{
-          Toast.show({
-              type: "error",
-              position: "top",
-              text1: err.message
-          });
-          LoggerService.log( "Erreur lors de la suppression d'un event : " + err.message );
-        });
   }
 
   const handleSearch = (query) => {
@@ -281,6 +235,7 @@ const CalendarScreen = ({ navigation }) => {
 
   return (
     <>
+      <View style={{zIndex:999}}><Toast/></View>
       <ModalFilterCalendar
         modalVisible={modalFilterVisible}
         setModalVisible={setModalFilterVisible}
@@ -345,8 +300,7 @@ const CalendarScreen = ({ navigation }) => {
             renderItem={({ item }) => (
               <EventCard
                 eventInfos={item}
-                deleteFunction={onDeleteEvent}
-                updateFunction={onModifyEvent}
+                handleEventsChange={handleEventsChange}
                 withDate={filter ? true : false}
               />
             )}

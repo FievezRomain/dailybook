@@ -90,6 +90,12 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Modification d'un souhait réussi"
+                    });
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -108,6 +114,12 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Création d'un souhait réussi"
+                    });
                 })
                 .catch((err) =>{
                     Toast.show({

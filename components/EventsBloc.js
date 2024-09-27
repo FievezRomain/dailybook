@@ -9,12 +9,11 @@ import Toast from "react-native-toast-message";
 import LoggerService from '../services/LoggerService';
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 
-const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEvent }) => {
+const EventsBloc = ({ navigation, events, handleEventsChange }) => {
     const [eventsToday, setEventsToday] = useState([]);
     const [eventsUpcoming, setEventsUpcoming] = useState([]);
     const [eventsExceeded, setEventsExceeded] = useState([]);
     const [percentEventsDone, setPercentEventsDone] = useState(0);
-    const eventService = new EventService();
 
     useEffect(() => {
         filterByPeriod();
@@ -23,41 +22,6 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
     useEffect(() => {
         definePercentDone();
     }, [eventsToday, eventsUpcoming, eventsExceeded]);
-
-
-    const handleChangeState = (objet, type) =>{
-        let updatedEvents = [];
-
-        switch(objet.state){
-            case "À faire":
-                objet.state = "Terminé";
-                break;
-            case "Terminé":
-                objet.state = "À faire";
-                break;
-        }
-
-        if(type === "exceeded"){
-            updatedEvents = [... eventsExceeded];
-            var indice = updatedEvents.findIndex((a) => a.id == objet.id);
-            updatedEvents[indice] = objet;
-            setEventsExceeded(updatedEvents);
-        }
-        if(type === "upcoming"){
-            updatedEvents = [... eventsUpcoming];
-            var indice = updatedEvents.findIndex((a) => a.id == objet.id);
-            updatedEvents[indice] = objet;
-            setEventsUpcoming(updatedEvents);
-        }
-        if(type === "today"){
-            updatedEvents = [... eventsToday];
-            var indice = updatedEvents.findIndex((a) => a.id == objet.id);
-            updatedEvents[indice] = objet;
-            setEventsToday(updatedEvents);
-        }
-
-        updateEvent(objet);
-    }
 
     const calculateOverdueDays = (event) => {
         var eventDate = new Date(event.dateevent).setHours(0, 0, 0, 0);
@@ -127,74 +91,6 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
         setPercentEventsDone(done === 0 ? 0 : ((done / total) * 100).toFixed(0));
     }
 
-    const updateEvent = async (objet) => {
-        let data = {};
-        data["id"] = objet.id;
-        data["state"] = objet.state;
-        data["animaux"] = objet.animaux;
-
-        eventService.updateState(data)
-            .then((reponse) => {
-                handleModifiedEvent(objet);
-            })
-            .catch((err) => {
-                Toast.show({
-                    type: "error",
-                    position: "top",
-                    text1: err.message
-                });
-                LoggerService.log( "Erreur lors de la MAJ du statut d'un event : " + err.message );
-            })
-    }
-
-    const handleModifyEvent = (idEventModified, response) => {
-        var arrayTempArray = events;
-        var index = arrayTempArray.findIndex(objet => objet.id === idEventModified);
-
-        if(index !== -1){
-            arrayTempArray[index] = response;
-        }
-
-        events = arrayTempArray;
-
-        Toast.show({
-            type: "success",
-            position: "top",
-            text1: "Modification d'un événement réussi"
-          });
-
-        handleModifiedEvent(response);
-    }
-
-    const handleDeleteEvent = (infosEvent) => {
-        eventService.delete(infosEvent)
-            .then((reponse) =>{
-    
-              Toast.show({
-                type: "success",
-                position: "top",
-                text1: "Suppression d'un événement réussi"
-              });
-    
-              handleDeletedEvent(infosEvent);
-
-              Toast.show({
-                type: "success",
-                position: "top",
-                text1: "Suppression d'un événement réussi"
-              });
-    
-            })
-            .catch((err) =>{
-              Toast.show({
-                  type: "error",
-                  position: "top",
-                  text1: err.message
-              });
-              LoggerService.log( "Erreur lors de suppression d'un event : " + err.message );
-            });
-      }
-
     return(
         <>
         <View style={styles.container}>
@@ -224,10 +120,8 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                                             eventInfos={eventItem}
                                             withSubMenu={true}
                                             withState={true}
-                                            handleStateChange={handleChangeState}
+                                            handleEventsChange={handleEventsChange}
                                             typeEvent={"exceeded"}
-                                            updateFunction={handleModifiedEvent}
-                                            deleteFunction={handleDeleteEvent}
                                         />
                                     </View>
                                     <View style={styles.overdueIndicatorContainer}>
@@ -243,10 +137,8 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                                             eventInfos={eventItem}
                                             withSubMenu={true}
                                             withState={true}
-                                            handleStateChange={handleChangeState}
                                             typeEvent={"today"}
-                                            deleteFunction={handleDeleteEvent}
-                                            updateFunction={handleModifiedEvent}
+                                            handleEventsChange={handleEventsChange}
                                         />
                                     </View>
                                 </TouchableOpacity>
@@ -255,9 +147,9 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                         </View>
                     </>
                 :
-                    <View style={{backgroundColor: variables.blanc, width: "100%", padding: 20, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1},}}>
-                        <Text style={[styles.textFontRegular]}>Vous n'avez aucun événement aujourd'hui</Text>
-                    </View>
+                    <ModalDefaultNoValue
+                        text={"Vous n'avez aucun événement aujourd'hui"}
+                    />
                 }
                 
             </View>
@@ -276,9 +168,7 @@ const EventsBloc = ({ navigation, events, handleModifiedEvent, handleDeletedEven
                                         eventInfos={eventItem}
                                         withSubMenu={true}
                                         withDate={true}
-                                        deleteFunction={handleDeleteEvent}
-                                        handleStateChange={handleChangeState}
-                                        updateFunction={handleModifiedEvent}
+                                        handleEventsChange={handleEventsChange}
                                     />
                                 </View>
                             </View>

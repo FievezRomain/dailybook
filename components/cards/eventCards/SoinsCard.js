@@ -5,10 +5,12 @@ import { TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
 import { useAuth } from "../../../providers/AuthenticatedUserProvider";
 import FileStorageService from "../../../services/FileStorageService";
+import DateUtils from "../../../utils/DateUtils";
 
 const SoinsCard = ({eventInfos, animaux, setSubMenu}) => {
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
+    const dateUtils = new DateUtils();
 
     const styles = StyleSheet.create({
         eventTextContainer:{
@@ -121,7 +123,7 @@ const SoinsCard = ({eventInfos, animaux, setSubMenu}) => {
                 }
                 {isValidString(eventInfos.datefinsoins) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.bai}, styles.textFontRegular]}>Date de fin : </Text>{eventInfos.datefinsoins}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.bai}, styles.textFontRegular]}>Date de fin : </Text>{eventInfos.datefinsoins.includes("-") ? dateUtils.dateFormatter(eventInfos.datefinsoins, "yyyy-mm-dd", "-") : eventInfos.datefinsoins}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.commentaire) && 

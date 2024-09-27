@@ -19,6 +19,7 @@ import TimePickerCustom from "../TimePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AntDesign } from '@expo/vector-icons';
 import LoggerService from "../../services/LoggerService";
+import DateUtils from "../../utils/DateUtils";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
   const { currentUser } = useAuth();
@@ -75,6 +76,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState([]);
+  const dateUtils = new DateUtils();
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
   //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
@@ -124,7 +126,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
     })
 
-    await initValuesEvent(eventParent);
+    //await initValuesEvent(eventParent);
   }
 
   const initValuesEvent = (event) => {
@@ -145,7 +147,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("heuredebutevent", event.heuredebutevent === undefined ? null : event.heuredebutevent);
     setValue("lieu", event.lieu);
     setValue("heuredebutbalade", event.heuredebutbalade);
-    setValue("datefinbalade", event.datefinbalade);
+    setValue("datefinbalade", event.datefinbalade !== null && event.datefinbalade !== undefined ? (event.datefinbalade.includes("/") ? dateUtils.dateFormatter(event.datefinbalade, "dd/MM/yyyy", "/") : event.datefinbalade) : undefined);
     setValue("heurefinbalade", event.heurefinbalade);
     setValue("discipline", event.discipline);
     setValue("note", event.note);
@@ -155,7 +157,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("specialiste", event.specialiste);
     setValue("depense", event.depense);
     setValue("traitement", event.traitement);
-    setValue("datefinsoins", event.datefinsoins);
+    setValue("datefinsoins", event.datefinsoins !== null && event.datefinsoins !== undefined ? (event.datefinsoins.includes("/") ? dateUtils.dateFormatter(event.datefinsoins, "dd/MM/yyyy", "/") : event.datefinsoins) : undefined);
     setValue("commentaire", event.commentaire);
     setValue("animaux", event.animaux);
     if(event.animaux != undefined){
@@ -177,6 +179,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("optionnotif", undefined);
     setValue("state", event.state === undefined ? "À faire" : event.state);
     setValue("todisplay", event.todisplay === undefined ? true : event.todisplay);
+    setValue("idparent", event.idparent);
   }
 
   const submitRegister = async(data) =>{
@@ -241,6 +244,16 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           });
         }
       }
+      if(eventType.id === "balade"){
+        if(data.datefinbalade !== undefined && new Date(data.dateevent) > new Date(data.datefinbalade)){
+          complete = false;
+          Toast.show({
+            type: "error",
+            position: "top",
+            text1: "Date de fin de balade postérieure à la date d'evénement"
+          });
+        }
+      }
     }
     // Si formulaire complet, on enregistre
     if(complete === true){
@@ -255,20 +268,22 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
       // Récupération du expo token pour gérer les notifications
       data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
+      data.email = currentUser.email;
 
       if(actionType === "modify"){
         eventService.update(data)
         .then((reponse) =>{
 
+          resetValues();
+          closeModal();
+          onModify();
+          setLoading(false);
+
           Toast.show({
-            type: "success",
-            position: "top",
+            type:"success",
+            position:"top",
             text1: "Modification d'un événement réussi"
           });
-          resetValues();
-          onModify(data.id, data);
-          closeModal();
-          setLoading(false);
         })
         .catch((err) =>{
           Toast.show({
@@ -282,14 +297,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       } else {
         eventService.create(data)
         .then((reponse) =>{
-
-          Toast.show({
-            type: "success",
-            position: "top",
-            text1: "Création d'un événement réussi"
-          });
           closeModal();
           setLoading(false);
+
+          Toast.show({
+            type:"success",
+            position:"top",
+            text1: "Création d'un événement réussi"
+          });
         })
         .catch((err) =>{
           Toast.show({
@@ -336,6 +351,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("frequencetype", "");
     setValue("state", "");
     setValue("todisplay", "");
+    setValue("idparent", undefined);
     setSelected([]);
     setNotifType(false);
     setOptionNotifType(false);
@@ -506,15 +522,28 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         defaultState={watch("state") === undefined ? "À faire" : watch("state")}
                       />
                     </View>
-
-                    <View style={styles.containerDate}>
-                      <Text style={[styles.textInput, styles.textFontRegular]}>Date : {convertDateToText("dateevent")} <Text style={{color: "red"}}>*</Text></Text>
-                      <DatePickerModal
-                        onDayChange={onChangeDate}
-                        propertyName={"dateevent"}
-                        defaultDate={getValues("dateevent")}
-                      />
-                    </View>
+                    {actionType === "modify" && (eventType.id === "soins" || eventType.id === "balade") ?
+                      <View style={styles.inputContainer}>
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Date : {actionType === "modify" && (eventType.id === "soins" || eventType.id === "balade") && <Text style={{color: Variables.bai_cerise}}>(Non modifiable)</Text>}</Text>
+                        <TextInput
+                          style={[styles.input, styles.textFontRegular, styles.disabledText, styles.disabled]}
+                          placeholder="Exemple : 01/01/2024"
+                          placeholderTextColor={Variables.gris}
+                          defaultValue={convertDateToText("dateevent")}
+                          editable={false}
+                        />
+                      </View>
+                    :
+                      <View style={styles.containerDate}>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Date : {convertDateToText("dateevent")} <Text style={{color: "red"}}>*</Text></Text>
+                          <DatePickerModal
+                            onDayChange={onChangeDate}
+                            propertyName={"dateevent"}
+                            defaultDate={getValues("dateevent")}
+                          />
+                      </View>
+                    }
+                    
                   
                     <View style={styles.inputContainer}>
                       <Text style={[styles.textInput, styles.textFontRegular]}>Animaux : <Text style={{color: "red"}}>*</Text></Text>
@@ -796,22 +825,23 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <DatePickerModal
                               onDayChange={onChangeDate}
                               propertyName={"datefinsoins"}
-                              defaultDate={getValues("datefinsoins")}
+                              defaultDate={watch("datefinsoins")}
                           />
                         </View>
                         <View style={styles.inputContainer}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence : {actionType === "modify" && eventType.id === "soins" && <Text style={{color: Variables.bai_cerise}}>(Non modifiable)</Text>}</Text>
                           <TouchableOpacity 
                             style={styles.textInput} 
                             onPress={()=>{setModalFrequence(true)}} 
+                            disabled={actionType === "modify" && eventType.id === "soins"}
                           >
                             <View style={styles.containerAnimaux}>
                               {frequence == false &&
-                                <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Par défaut, le soin sera tous les jours</Text></View>
+                                <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText]}>Par défaut, le soin sera tous les jours</Text></View>
                               }
                               {
                                 frequence != false &&
-                                <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{frequence.title}</Text></View>
+                                <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText]}>{frequence.title}</Text></View>
                               }
                             </View>
                           </TouchableOpacity>
@@ -935,13 +965,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       </TouchableOpacity>
                     </View>
 
-                    <View style={styles.inputToggleContainer}>
+                    {/* <View style={styles.inputToggleContainer}>
                       <Text style={[styles.textInput, styles.textFontRegular]}>Afficher sur le calendrier :</Text>
                       <ToogleSwitch
                         isActive={watch("todisplay")}
                         onToggle={(value) => setValue("todisplay", value)}
                       />
-                    </View>
+                    </View> */}
 
                   </View>
                 </KeyboardAwareScrollView>
@@ -1094,7 +1124,8 @@ loadingEvent: {
   containerDate:{
     flexDirection: "column",
     alignSelf: "flex-start",
-    width: "100%"
+    width: "100%",
+    marginBottom: 15,
   },
   bottomBar: {
     width: '100%',
@@ -1118,6 +1149,12 @@ loadingEvent: {
   toastContainer: {
     zIndex: 9999, 
   },
+  disabled:{
+    backgroundColor: Variables.default
+  },
+  disabledText:{
+    color: Variables.rouan
+  }
 });
 
 export default ModalEvents;

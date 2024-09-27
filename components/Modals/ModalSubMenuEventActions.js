@@ -3,7 +3,7 @@ import Button from "../Button";
 import Variables from "../styles/Variables";
 import { FontAwesome6, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 
-const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handleModify, handleDelete, handleShare }) => {
+const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handleModify, handleDelete, handleDeleteAll, handleShare }) => {
 
     const onAction = (event) =>{
         setModalVisible(false);
@@ -43,15 +43,33 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
-                        <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
-                            <View style={styles.informationsActionButton}>
-                                <AntDesign name="delete" size={20}/>
-                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
-                                    Supprimer
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
+                        { ((event.eventtype !== "soins" && event.eventtype !== "balade") || 
+                            ((event.eventtype === "soins" || event.eventtype === "balade") && event.idparent !== null && event.idparent !== undefined)) &&
+                            <>
+                                <View style={styles.bottomBar} />
+                                <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
+                                    <View style={styles.informationsActionButton}>
+                                        <AntDesign name="delete" size={20}/>
+                                        <Text style={[styles.textActionButton, styles.textFontMedium]}>
+                                            Supprimer
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </>
+                        }
+                        {(event.eventtype === "soins" || event.eventtype === "balade") && 
+                            <>
+                                <View style={styles.bottomBar} />
+                                <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDeleteAll)}>
+                                    <View style={styles.informationsActionButton}>
+                                        <AntDesign name="delete" size={20}/>
+                                        <Text style={[styles.textActionButton, styles.textFontMedium]}>
+                                            Supprimer les {event.eventtype === "balade" ? "balades" : "soins"} {event.nom !== null && event.nom !== undefined && event.nom.substring(0, 15)}{event.nom !== null && event.nom !== undefined && event.nom.length > 15 && "..."}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </>
+                        }
                     </View>
                 </View>
             </View>

@@ -155,6 +155,7 @@ const PetsScreen = ({ navigation }) => {
 
   return (
     <>
+    <View style={{zIndex:999}}><Toast/></View>
       <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2}/>
         <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
@@ -199,6 +200,7 @@ const PetsScreen = ({ navigation }) => {
         {activeRubrique === 2 &&
           <MedicalBook 
             animal={selected[0]}
+            navigation={navigation}
           />
         }
       </LinearGradient>

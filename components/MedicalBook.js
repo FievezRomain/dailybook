@@ -9,7 +9,7 @@ import LoggerService from '../services/LoggerService';
 import EventCard from "./cards/EventCard";
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 
-const MedicalBook = ({ animal }) => {
+const MedicalBook = ({ animal, navigation }) => {
     const [typeEvent, setTypeEvent] = useState("Rendez-vous");
     const [eventsSoins, setEventsSoins] = useState([]);
     const [eventsRdv, setEventsRdv] = useState([]);
@@ -19,25 +19,36 @@ const MedicalBook = ({ animal }) => {
     useEffect(() =>{
         getEvents();
     }, [animal]);
+    useEffect(() =>{
+        const unsubscribe = navigation.addListener("focus", () => {
+            getEvents();
+        });
+        return unsubscribe;
+    }, [navigation]);
 
     const getEvents = async () =>{
         try {
             var result = await eventService.getEvents(currentUser.email);
-            result = await result.filter((event) => event.animaux.includes(animal.id));
-
-            var arrayEventsSoins = [];
-            var arrayEventsRdv = [];
-
-            arrayEventsSoins = await result.filter((event) => event.eventtype === "soins");
-            arrayEventsSoins.sort(compareDates);
-            arrayEventsRdv = await result.filter((event) => event.eventtype === "rdv");
-            arrayEventsRdv.sort(compareDates);
-
-            await setEventsRdv(arrayEventsRdv);
-            await setEventsSoins(arrayEventsSoins);
+            filter(result);
+            
           } catch (error) {
             console.error("Error fetching events:", error);
           }
+    }
+
+    const filter = async (result) => {
+        result = result.filter((event) => event.animaux.includes(animal.id));
+
+        var arrayEventsSoins = [];
+        var arrayEventsRdv = [];
+
+        arrayEventsSoins = result.filter((event) => event.eventtype === "soins");
+        arrayEventsSoins.sort(compareDates);
+        arrayEventsRdv = result.filter((event) => event.eventtype === "rdv");
+        arrayEventsRdv.sort(compareDates);
+
+        setEventsRdv(arrayEventsRdv);
+        setEventsSoins(arrayEventsSoins);
     }
 
     const compareDates = (a, b) => {
@@ -48,32 +59,8 @@ const MedicalBook = ({ animal }) => {
         setTypeEvent(typeEvent === "Soins" ? "Rendez-vous" : "Soins");
     }
 
-    const onDeleteEvent = (infosEvent) => {
-        eventService.delete(infosEvent)
-            .then((reponse) =>{
-
-                Toast.show({
-                type: "success",
-                position: "top",
-                text1: "Suppression d'un événement réussi"
-                });
-
-                getEvents();
-
-            })
-            .catch((err) =>{
-                Toast.show({
-                    type: "error",
-                    position: "top",
-                    text1: err.message
-                });
-                LoggerService.log( "Erreur lors de la suppression d'un event : " + err.message );
-            });
-    }
-
-    const onModifyEvent = (idEventModified, response) => {
+    const handleEventChange = async () => {
         getEvents();
-        
     }
 
     return(
@@ -102,13 +89,12 @@ const MedicalBook = ({ animal }) => {
                                     eventInfos={eventItem}
                                     withSubMenu={true}
                                     withDate={true}
-                                    deleteFunction={onDeleteEvent}
-                                    updateFunction={onModifyEvent}
+                                    handleEventsChange={handleEventChange}
                                 />
                             </View>
                         ))
                     :
-                        eventsRdv.length === 0 ?
+                        eventsSoins.length === 0 ?
                             <ModalDefaultNoValue
                                 text={"Aucun soin pour cet animal"}
                             />
@@ -119,8 +105,7 @@ const MedicalBook = ({ animal }) => {
                                     eventInfos={eventItem}
                                     withSubMenu={true}
                                     withDate={true}
-                                    deleteFunction={onDeleteEvent}
-                                    updateFunction={onModifyEvent}
+                                    handleEventsChange={handleEventChange}
                                 />
                             </View>
                         ))

@@ -66,15 +66,17 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
         if (actionType === "modify") {
             noteService.update(data)
                 .then((reponse) => {
+                    
+                    resetValues();
+                    closeModal();
+                    onModify(reponse);
+                    setLoading(false);
+
                     Toast.show({
                         type: "success",
                         position: "top",
                         text1: "Modification d'une note réussie"
                     });
-                    resetValues();
-                    closeModal();
-                    onModify(reponse);
-                    setLoading(false);
                 })
                 .catch((err) => {
                     Toast.show({
@@ -91,6 +93,12 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Création d'une note réussie"
+                    });
                 })
                 .catch((err) => {
                     Toast.show({
