@@ -1,5 +1,4 @@
 import { NavigationContainer } from "@react-navigation/native";
-import Toast from "react-native-toast-message";
 import { AuthenticatedUserProvider } from "./providers/AuthenticatedUserProvider";
 import AuthStack from "./navigation/AuthStack";
 import * as Font from 'expo-font';
@@ -48,7 +47,6 @@ function App() {
   return (
     fontsLoaded ?
           <>
-          <Toast/>
           <NavigationContainer>
             <AuthenticatedUserProvider>
               <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
