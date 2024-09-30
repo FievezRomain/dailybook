@@ -38,6 +38,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         { label: 'Cheval', value: 'Cheval' },
         { label: 'Poney', value: 'Poney' },
         { label: 'Âne', value: 'Âne' },
+        { label: 'Mulet et bardot', value: 'Mulet et bardot' },
         { label: 'Poule', value: 'Poule' },
         { label: 'Canard', value: 'Canard' },
         { label: 'Cochon', value: 'Cochon' },
@@ -133,15 +134,29 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         data["quantity"] !== undefined ? data["quantity"] = data["quantity"].replace(",", ".") : undefined;
         
         // Modification du format de la date pour le bon stockage en base
+        if( data["datenaissance"] !== null && data["datenaissance"] !== undefined && data["datenaissance"].length === 0 ){
+            data["datenaissance"] = undefined;
+        }
+
+        if( ( data["datenaissance"] !== null && data["datenaissance"] !== undefined ) && ( data["datenaissance"].length !== 10 || !dateUtils.isDateValid( dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/") ) ) ){
+            Toast.show({
+                position: "top",
+                type: "error",
+                text1: "Problème de format de date"
+            });
+            setLoading(false);
+            return;
+        }
+
         if( data["datenaissance"] !== null && data["datenaissance"] !== undefined ){
             data["datenaissance"] = dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
         }
 
         // Ajout d'un 0 sur la première partie de la date de naissance si on a 9 caractères dans la date de naissance
-        if( data["datenaissance"] !== null && data["datenaissance"] !== undefined && data["datenaissance"].length === 9){
+        /* if( data["datenaissance"] !== null && data["datenaissance"] !== undefined && data["datenaissance"].length === 9){
             data["datenaissance"] = "0" + data["datenaissance"];
             setDate(data["datenaissance"]);
-        }
+        } */
 
         // Si une image est saisie
         if (data.image != undefined){
