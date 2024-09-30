@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   selected:{
-    backgroundColor: Variables.bai,
+    backgroundColor: Variables.bai_brun,
   },
   title:{
     color: "white"

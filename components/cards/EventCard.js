@@ -28,9 +28,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
     const eventService = new EventService();
 
     useEffect(() => {
-        if(animaux.length == 0){
-            getAnimaux();
-        }
+        getAnimaux();
     }, [eventInfos])
 
     const getAnimaux = async () => {
@@ -207,11 +205,6 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
 
         eventService.updateState(data)
             .then((reponse) => {
-                Toast.show({
-                    type: "success",
-                    position: "top",
-                    text1: "Modification d'un événement réussi"
-                });
 
                 handleEventsChange();
             })
