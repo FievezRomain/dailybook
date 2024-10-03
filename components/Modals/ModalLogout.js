@@ -32,7 +32,7 @@ const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
                     setModalVisible(!modalVisible)
                     disconnect()
                 }}
-                size={"m"}
+                size={"l"}
                 >
                   <Text style={styles.textFontMedium}>Oui</Text>
                 </Button>
@@ -40,7 +40,7 @@ const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
                 onPress={() => {
                     setModalVisible(!modalVisible)
                 }}
-                size={"m"}
+                size={"l"}
                 >
                   <Text style={styles.textFontMedium}>Non</Text>
                 </Button>

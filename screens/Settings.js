@@ -11,11 +11,13 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import variables from "../components/styles/Variables";
+import ModalVerif from "../components/Modals/ModalVerif";
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
-    const { currentUser } = useAuth();
+    const [modalVerifDeleteAccountVisible, setModalVerifDeleteAccountVisible] = useState(false);
+    const { currentUser, deleteAccount } = useAuth();
 
     const styles = StyleSheet.create({
         card:{
@@ -99,6 +101,12 @@ const SettingsScreen = ({ }) => {
                     setModalVisible={setModalVisible}
                     navigation={navigation}
                 />
+                <ModalVerif
+                    event={() =>deleteAccount(navigation)}
+                    message={"Êtes-vous sûr de vouloir supprimer votre compte ?"}
+                    modalVisible={modalVerifDeleteAccountVisible}
+                    setModalVisible={setModalVerifDeleteAccountVisible}
+                />
                 <Back/>
                 <View style={styles.settings}>
                     {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
@@ -136,6 +144,9 @@ const SettingsScreen = ({ }) => {
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVisible(!modalVisible)}>
                             <Text style={styles.textFontMedium}>Déconnexion</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVerifDeleteAccountVisible(!modalVerifDeleteAccountVisible)}>
+                            <Text style={styles.textFontMedium}>Supprimer mon compte</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
