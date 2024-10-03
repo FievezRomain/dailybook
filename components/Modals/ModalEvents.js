@@ -255,6 +255,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         }
       }
     }
+
+    // Vérification de la valeur des entiers/décimal
+    if( !checkNumericFormat(data, "depense") || !checkNumericFormat(data, "dossart") || !checkNumericFormat(data, "placement") ){
+      complete = false;
+    }
+
     // Si formulaire complet, on enregistre
     if(complete === true){
       // Mise à défaut de l'option notif si rien de selectionné
@@ -411,6 +417,25 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     resetValues();
     setVisible(false);
   };
+
+  const checkNumericFormat = (data, attribute) => {
+    if( data[attribute] != undefined && data[attribute] != undefined )
+    {
+        const numericValue = parseFloat(data[attribute].replace(',', '.').replace(" ", ""));
+        if (isNaN(numericValue)) {
+            Toast.show({
+                position: "top",
+                type: "error",
+                text1: "Problème de format sur l'attribut " + attribute,
+                text2: "Seul les chiffres, virgule et point sont acceptés"
+            });
+            return false;
+        } else{
+            data[attribute] = numericValue;
+        }
+    }
+    return true;
+  }
 
   return (
     <>
@@ -650,6 +675,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
                               keyboardType="numeric"
+                              inputMode="numeric"
                               placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
@@ -698,6 +724,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
                               keyboardType="numeric"
+                              inputMode="numeric"
                               placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
@@ -745,6 +772,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="numeric"
+                            inputMode="numeric"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("dossart", text)}
                             defaultValue={getValues("dossart")}
@@ -756,6 +784,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="numeric"
+                            inputMode="numeric"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("placement", text)}
                             defaultValue={getValues("placement")}
@@ -767,6 +796,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="numeric"
+                            inputMode="numeric"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
@@ -800,6 +830,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 0 (un doux rêve)"
                             keyboardType="numeric"
+                            inputMode="numeric"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
@@ -852,6 +883,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
                               keyboardType="numeric"
+                              inputMode="numeric"
                               placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
@@ -868,6 +900,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="numeric"
+                            inputMode="numeric"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}

@@ -17,7 +17,7 @@ import DropdawnList from "../DropdawnList";
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
     const animalsService = new AnimalsService();
-    const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch } = useForm();
+    const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch, clearErrors } = useForm();
     const [image, setImage] = useState(null);
     const dateUtils = new DateUtils();
     today = new Date();
@@ -123,6 +123,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         // Vérification du champ espèce
         if (!espece) {
             setError("espece", { type: "manual" });
+            setLoading(false);
+            return;
         }
 
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
@@ -150,6 +152,12 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
 
         if( data["datenaissance"] !== null && data["datenaissance"] !== undefined ){
             data["datenaissance"] = dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
+        }
+
+        // Vérification de la valeur des entiers/décimal
+        if( !checkNumericFormat(data, "taille") || !checkNumericFormat(data, "poids") || !checkNumericFormat(data, "quantity") ){
+            setLoading(false);
+            return;
         }
 
         // Ajout d'un 0 sur la première partie de la date de naissance si on a 9 caractères dans la date de naissance
@@ -272,6 +280,25 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setImage(null);
     };
 
+    const checkNumericFormat = (data, attribute) => {
+        if( data[attribute] != undefined && data[attribute] != undefined )
+        {
+            const numericValue = parseFloat(data[attribute].replace(',', '.').replace(" ", ""));
+            if (isNaN(numericValue)) {
+                Toast.show({
+                    position: "top",
+                    type: "error",
+                    text1: "Problème de format sur l'attribut " + attribute,
+                    text2: "Seul les chiffres, virgule et point sont acceptés"
+                });
+                return false;
+            } else{
+                data[attribute] = numericValue;
+            }
+        }
+        return true;
+    }
+
     return(
         <>
             <Modal
@@ -328,7 +355,12 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         {errors.espece && <Text style={[styles.errorInput, styles.textFontRegular]}>Espèce obligatoire</Text>}
                                         <DropdawnList
                                             list={especeList}
-                                            setValue={setEspece}
+                                            setValue={(value) => {
+                                                setEspece(value);
+                                                if (value) {
+                                                  clearErrors("espece");  // Efface l'erreur si une valeur est sélectionnée
+                                                }
+                                            }}
                                             value={espece}
                                         />
                                     </View>
@@ -358,6 +390,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 01/01/1900"
                                             keyboardType="numeric"
+                                            inputMode="numeric"
                                             maxLength={10}
                                             placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => onChangeDate(text)}
@@ -390,6 +423,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 140"
                                             keyboardType="numeric"
+                                            inputMode="numeric"
                                             placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("taille", text)}
                                             defaultValue={getValues("taille")}
@@ -401,6 +435,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 400"
                                             keyboardType="numeric"
+                                            inputMode="numeric"
                                             placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("poids", text)}
                                             defaultValue={getValues("poids")}
@@ -432,6 +467,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 200"
                                             keyboardType="numeric"
+                                            inputMode="numeric"
                                             placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("quantity", text)}
                                             defaultValue={getValues("quantity")}

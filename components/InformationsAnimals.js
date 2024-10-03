@@ -106,6 +106,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 01/01/1900"
                               keyboardType="numeric"
+                              inputMode="numeric"
                               maxLength={10}
                               placeholderTextColor={variables.gris}
                               defaultValue={(animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance)}
@@ -144,6 +145,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 140"
                               keyboardType="numeric"
+                              inputMode="numeric"
                               placeholderTextColor={variables.gris}
                               defaultValue={String(animal.taille)}
                               editable={false}
@@ -157,6 +159,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 400"
                               keyboardType="numeric"
+                              inputMode="numeric"
                               placeholderTextColor={variables.gris}
                               defaultValue={animal.poids != null ? String(animal.poids) : undefined}
                               editable={false}

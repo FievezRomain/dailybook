@@ -89,6 +89,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                                 <Text style={styles.textFontRegular}>Tous les </Text>
                                 <TextInput
                                     keyboardType="numeric"
+                                    inputMode="numeric"
                                     placeholder="X"
                                     style={[styles.input, styles.textFontRegular]}
                                     value={inputValue}
@@ -102,6 +103,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                             <>
                                 <TextInput
                                     keyboardType="numeric"
+                                    inputMode="numeric"
                                     placeholder="X"
                                     style={[styles.input, styles.textFontRegular]}
                                     value={inputValue}

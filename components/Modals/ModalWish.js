@@ -70,6 +70,12 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         }
         setLoading(true);
 
+        // Vérification de la valeur des entiers/décimal
+        if( !checkNumericFormat(data, "prix") ){
+            setLoading(false);
+            return;
+        }
+
         data["email"] =  currentUser.email;
 
         if (data.image != undefined){
@@ -131,6 +137,25 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                     setLoading(false);
                 });
         }
+    }
+
+    const checkNumericFormat = (data, attribute) => {
+        if( data[attribute] != undefined && data[attribute] != undefined )
+        {
+            const numericValue = parseFloat(data[attribute].replace(',', '.').replace(" ", ""));
+            if (isNaN(numericValue)) {
+                Toast.show({
+                    position: "top",
+                    type: "error",
+                    text1: "Problème de format sur l'attribut " + attribute,
+                    text2: "Seul les chiffres, virgule et point sont acceptés"
+                });
+                return false;
+            } else{
+                data[attribute] = numericValue;
+            }
+        }
+        return true;
     }
 
     return(
@@ -216,6 +241,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         keyboardType="numeric"
+                                        inputMode="numeric"
                                         placeholder="Exemple : 20"
                                         placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("prix", text)}
