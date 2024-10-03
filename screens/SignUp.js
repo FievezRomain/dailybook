@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     },
     title: {
         top: - (Constants.statusBarHeight + 10),
-        color: variables.gris,
+        color: variables.bai_brun,
         fontSize: 30,
         letterSpacing: 2,
         marginBottom:20,

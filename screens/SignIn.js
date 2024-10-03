@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     },
     clickableText: {
         marginLeft: 5,
-        color: variables.gris,
+        color: variables.bai_brun,
         alignSelf: "flex-end",
         justifyContent: "flex-end",
     },

@@ -1,16 +1,13 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TabStack from "./TabStack";
-import Toast from "react-native-toast-message";
 import { SettingsScreen, NoteScreen, WishScreen, DiscoverPremiumScreen, AccountScreen, ContactScreen } from "../screens";
 import Variables from "../components/styles/Variables";
-import { View } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
 const AppStack = () => {
   return (
     <>
-    <View style={{zIndex:999}}><Toast/></View>
     <Stack.Navigator screenOptions={{
       contentStyle: { backgroundColor: Variables.fond}
     }}>
