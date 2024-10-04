@@ -23,7 +23,7 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
         "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
-        "NSUserTrackingUsageDescription": "L'application a besoin d'une permission pour vous envoyez des notifications",
+        "NSUserTrackingUsageDescription": "L'application a besoin de votre permission pour vous envoyer des notifications",
         "UIBackgroundModes": [
           "fetch",
           "remote-notification"

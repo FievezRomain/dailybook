@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import variables from "./styles/Variables";
@@ -102,9 +102,11 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                 objectif={currentObjectif}
                 handleTasksStateChange={onModify}
             />
-            <View style={styles.composantContainer}>
-                <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text>
-                <View>
+            <ScrollView contentContainerStyle={{paddingBottom: 30, width: "100%"}}>
+                <View style={styles.composantContainer}>
+                
+                    <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text>
+                    
                     {objectifsArrayDisplay.length !== 0 ?
                         objectifsArrayDisplay.map((objectif, index) => {
                             return(
@@ -114,8 +116,19 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                                             animaux={animaux}
                                             handleObjectifChange={onModify}
                                             handleObjectifDelete={handleDelete}
-                                        />
-                                    
+                                    />
+                                    <ObjectifCard
+                                            objectif={objectif}
+                                            animaux={animaux}
+                                            handleObjectifChange={onModify}
+                                            handleObjectifDelete={handleDelete}
+                                    />
+                                    <ObjectifCard
+                                            objectif={objectif}
+                                            animaux={animaux}
+                                            handleObjectifChange={onModify}
+                                            handleObjectifDelete={handleDelete}
+                                    />
                                 </View>
                             );
                         })
@@ -125,10 +138,8 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                         />
                     }
                     
-                    
                 </View>
-                
-            </View>
+            </ScrollView>
         </>
     );
 }
@@ -156,7 +167,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         paddingLeft: 20,
         paddingRight: 20,
-        height: "50%",
+        height: "100%",
     },
     headerContainer:{
         display: "flex",
