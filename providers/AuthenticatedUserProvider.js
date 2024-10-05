@@ -133,6 +133,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
       const tempUser = user;
       await reload(tempUser);
       await authService.initNotifications();
+      await authService.initTrackingActivity();
       // Récupération de l'image de profil
       /* var result = await authService.getUser(user.email);
       if(result.filename != undefined){
