@@ -133,7 +133,7 @@ const SettingsScreen = ({ }) => {
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Note")} >
                             <Text style={[styles.textFontMedium]}>Mes notes</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                        {/* <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
                             <Text style={[{color: Variables.rouan}, styles.textFontMedium]}>Ma structure</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
@@ -141,11 +141,11 @@ const SettingsScreen = ({ }) => {
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => navigation.navigate("DiscoverPremium")}>
                             <Text style={[{color: Variables.blanc}, styles.textFontMedium]}>Découvrir l'offre premium</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVisible(!modalVisible)}>
                             <Text style={styles.textFontMedium}>Déconnexion</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVerifDeleteAccountVisible(!modalVerifDeleteAccountVisible)}>
+                        <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => setModalVerifDeleteAccountVisible(!modalVerifDeleteAccountVisible)}>
                             <Text style={styles.textFontMedium}>Supprimer mon compte</Text>
                         </TouchableOpacity>
                     </View>

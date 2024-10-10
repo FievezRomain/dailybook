@@ -266,11 +266,11 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity disabled={true}>
+              {/* <TouchableOpacity disabled={true}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="group" size={20} style={styles.iconButton}/>
-                    <Text /* style={styles.textDesactivated} */ style={[{color: Variables.rouan}, styles.textFontRegular]}>Groupe</Text>
+                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Groupe</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
@@ -284,7 +284,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <MaterialCommunityIcons name="barn" size={25} style={styles.iconButton}/>
-                    <Text /* style={styles.textDesactivated} */ style={[{color: Variables.rouan}, styles.textFontRegular]}>Structure</Text>
+                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Structure</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
@@ -292,7 +292,7 @@ const ActionScreen = ({ navigation }) => {
                   </View>
                 </View>
                 <View style={styles.bottomBar} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </ScrollView>
         </View>
