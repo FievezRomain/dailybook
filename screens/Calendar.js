@@ -64,7 +64,7 @@ const CalendarScreen = ({ navigation }) => {
 
   useEffect(() => {
     applyFilter();
-  }, [filter]);
+  }, [filter, eventArray]);
 
   const applyFilter = () =>{
     if( filter ){

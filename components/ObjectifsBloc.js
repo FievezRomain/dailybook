@@ -117,18 +117,6 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                                             handleObjectifChange={onModify}
                                             handleObjectifDelete={handleDelete}
                                     />
-                                    <ObjectifCard
-                                            objectif={objectif}
-                                            animaux={animaux}
-                                            handleObjectifChange={onModify}
-                                            handleObjectifDelete={handleDelete}
-                                    />
-                                    <ObjectifCard
-                                            objectif={objectif}
-                                            animaux={animaux}
-                                            handleObjectifChange={onModify}
-                                            handleObjectifDelete={handleDelete}
-                                    />
                                 </View>
                             );
                         })

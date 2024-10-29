@@ -93,7 +93,7 @@ const WelcomeScreen = ({ navigation })=> {
 
     return (
       <>
-        
+        <View style={{zIndex:999}}><Toast/></View>
         <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
           <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
             <View style={{flex: 1}}>

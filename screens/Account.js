@@ -96,6 +96,8 @@ const AccountScreen = ({ navigation }) => {
     }
 
     return(
+        <>
+        <View style={{zIndex:999}}><Toast/></View>
         <View style={{backgroundColor: variables.default, height: "100%", justifyContent: "space-between"}}>
             <View>
                 <KeyboardAwareScrollView>
@@ -173,6 +175,7 @@ const AccountScreen = ({ navigation }) => {
             
             
         </View>
+        </>
     );
 }
 

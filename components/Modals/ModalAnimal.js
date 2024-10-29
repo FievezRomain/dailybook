@@ -32,6 +32,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         { label: 'Chien', value: 'Chien' },
         { label: 'Poisson', value: 'Poisson' },
         { label: 'Oiseaux', value: 'Oiseaux' },
+        { label: 'Lapin', value: 'Lapin' },
         { label: 'Rongeur', value: 'Rongeur' },
         { label: 'Reptile', value: 'Reptile' },
         { label: 'Furet', value: 'Furet' },

@@ -11,6 +11,7 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import TemporalityPicker from "../components/TemporalityPicker";
 import { SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
+import Toast from "react-native-toast-message";
 
 const StatsScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -66,6 +67,7 @@ const StatsScreen = ({ navigation }) => {
 
   return (
     <>
+      <View style={{zIndex:999}}><Toast/></View>
       <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2} />
         <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
