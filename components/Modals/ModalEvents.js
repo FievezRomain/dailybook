@@ -671,8 +671,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
-                              keyboardType="numeric"
-                              inputMode="numeric"
+                              keyboardType="decimal-pad"
+                              inputMode="decimal"
                               placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
@@ -720,8 +720,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
-                              keyboardType="numeric"
-                              inputMode="numeric"
+                              keyboardType="decimal-pad"
+                              inputMode="decimal"
                               placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
@@ -768,8 +768,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
-                            keyboardType="numeric"
-                            inputMode="numeric"
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("dossart", text)}
                             defaultValue={getValues("dossart")}
@@ -780,8 +780,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
-                            keyboardType="numeric"
-                            inputMode="numeric"
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("placement", text)}
                             defaultValue={getValues("placement")}
@@ -792,8 +792,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
-                            keyboardType="numeric"
-                            inputMode="numeric"
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
@@ -826,8 +826,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 0 (un doux rêve)"
-                            keyboardType="numeric"
-                            inputMode="numeric"
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
@@ -879,8 +879,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
-                              keyboardType="numeric"
-                              inputMode="numeric"
+                              keyboardType="decimal-pad"
+                              inputMode="decimal"
                               placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
@@ -896,8 +896,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
-                            keyboardType="numeric"
-                            inputMode="numeric"
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
                             placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}

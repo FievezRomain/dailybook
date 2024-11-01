@@ -423,8 +423,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 140"
-                                            keyboardType="numeric"
-                                            inputMode="numeric"
+                                            keyboardType="decimal-pad"
+                                            inputMode="decimal"
                                             placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("taille", text)}
                                             defaultValue={getValues("taille")}
@@ -435,8 +435,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 400"
-                                            keyboardType="numeric"
-                                            inputMode="numeric"
+                                            keyboardType="decimal-pad"
+                                            inputMode="decimal"
                                             placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("poids", text)}
                                             defaultValue={getValues("poids")}
@@ -467,8 +467,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 200"
-                                            keyboardType="numeric"
-                                            inputMode="numeric"
+                                            keyboardType="decimal-pad"
+                                            inputMode="decimal"
                                             placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("quantity", text)}
                                             defaultValue={getValues("quantity")}

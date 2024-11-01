@@ -240,8 +240,8 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <Text style={[styles.textInput, styles.textFontRegular]}>Prix : </Text>
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
-                                        keyboardType="numeric"
-                                        inputMode="numeric"
+                                        keyboardType="decimal-pad"
+                                        inputMode="decimal"
                                         placeholder="Exemple : 20"
                                         placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("prix", text)}

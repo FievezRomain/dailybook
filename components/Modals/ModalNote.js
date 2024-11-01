@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     textFontRegular: {
-        fontFamily: Variables.fontBold,
+        fontFamily: Variables.fontRegular,
     },
     textFontBold: {
         fontFamily: Variables.fontBold,
