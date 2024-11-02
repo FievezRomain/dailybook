@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity,
 import { useState, useEffect } from "react";
 import Variables from "../styles/Variables";
 import { useForm } from "react-hook-form";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import ModalAnimals from "./ModalSelectAnimals";
 import AnimalsService from "../../services/AnimalsService";
 import EventService from "../../services/EventService";
@@ -19,6 +19,7 @@ import TimePickerCustom from "../TimePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AntDesign } from '@expo/vector-icons';
 import LoggerService from "../../services/LoggerService";
+import DateUtils from "../../utils/DateUtils";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
   const { currentUser } = useAuth();
@@ -75,6 +76,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const [events, setEvents] = useState([]);
+  const dateUtils = new DateUtils();
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
   //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
@@ -101,7 +103,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.id);
+      var result = await animalsService.getAnimals(currentUser.email);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
@@ -124,7 +126,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
     })
 
-    await initValuesEvent(eventParent);
+    //await initValuesEvent(eventParent);
   }
 
   const initValuesEvent = (event) => {
@@ -145,7 +147,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("heuredebutevent", event.heuredebutevent === undefined ? null : event.heuredebutevent);
     setValue("lieu", event.lieu);
     setValue("heuredebutbalade", event.heuredebutbalade);
-    setValue("datefinbalade", event.datefinbalade);
+    setValue("datefinbalade", event.datefinbalade !== null && event.datefinbalade !== undefined ? (event.datefinbalade.includes("/") ? dateUtils.dateFormatter(event.datefinbalade, "dd/MM/yyyy", "/") : event.datefinbalade) : undefined);
     setValue("heurefinbalade", event.heurefinbalade);
     setValue("discipline", event.discipline);
     setValue("note", event.note);
@@ -155,7 +157,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("specialiste", event.specialiste);
     setValue("depense", event.depense);
     setValue("traitement", event.traitement);
-    setValue("datefinsoins", event.datefinsoins);
+    setValue("datefinsoins", event.datefinsoins !== null && event.datefinsoins !== undefined ? (event.datefinsoins.includes("/") ? dateUtils.dateFormatter(event.datefinsoins, "dd/MM/yyyy", "/") : event.datefinsoins) : undefined);
     setValue("commentaire", event.commentaire);
     setValue("animaux", event.animaux);
     if(event.animaux != undefined){
@@ -173,10 +175,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("depense", event.depense);
     setValue("categoriedepense", event.categoriedepense);
     setValue("frequencetype", event.frequencetype);
-    setValue("notif", event.frequencetype);
-    setValue("optionnotif", event.frequencetype);
+    setValue("notif", undefined);
+    setValue("optionnotif", undefined);
     setValue("state", event.state === undefined ? "À faire" : event.state);
     setValue("todisplay", event.todisplay === undefined ? true : event.todisplay);
+    setValue("idparent", event.idparent);
   }
 
   const submitRegister = async(data) =>{
@@ -232,14 +235,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         }
       }
       if(eventType.id === "soins"){
-        if(data.traitement === undefined){
-          complete = false;
-          Toast.show({
-            type: "error",
-            position: "top",
-            text1: "Veuillez saisir un traitement"
-          });
-        }
         if(data.datefinsoins !== undefined && new Date(data.dateevent) > new Date(data.datefinsoins)){
           complete = false;
           Toast.show({
@@ -249,7 +244,23 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           });
         }
       }
+      if(eventType.id === "balade"){
+        if(data.datefinbalade !== undefined && new Date(data.dateevent) > new Date(data.datefinbalade)){
+          complete = false;
+          Toast.show({
+            type: "error",
+            position: "top",
+            text1: "Date de fin de balade postérieure à la date d'evénement"
+          });
+        }
+      }
     }
+
+    // Vérification de la valeur des entiers/décimal
+    if( !checkNumericFormat(data, "depense") || !checkNumericFormat(data, "dossart") || !checkNumericFormat(data, "placement") ){
+      complete = false;
+    }
+
     // Si formulaire complet, on enregistre
     if(complete === true){
       // Mise à défaut de l'option notif si rien de selectionné
@@ -263,20 +274,22 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
       // Récupération du expo token pour gérer les notifications
       data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
+      data.email = currentUser.email;
 
       if(actionType === "modify"){
         eventService.update(data)
         .then((reponse) =>{
 
+          resetValues();
+          closeModal();
+          onModify();
+          setLoading(false);
+
           Toast.show({
-            type: "success",
-            position: "top",
+            type:"success",
+            position:"top",
             text1: "Modification d'un événement réussi"
           });
-          resetValues();
-          onModify(data.id, data);
-          closeModal();
-          setLoading(false);
         })
         .catch((err) =>{
           Toast.show({
@@ -290,14 +303,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       } else {
         eventService.create(data)
         .then((reponse) =>{
-
-          Toast.show({
-            type: "success",
-            position: "top",
-            text1: "Création d'un événement réussi"
-          });
           closeModal();
           setLoading(false);
+
+          Toast.show({
+            type:"success",
+            position:"top",
+            text1: "Création d'un événement réussi"
+          });
         })
         .catch((err) =>{
           Toast.show({
@@ -344,12 +357,18 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("frequencetype", "");
     setValue("state", "");
     setValue("todisplay", "");
+    setValue("idparent", undefined);
     setSelected([]);
+    setNotifType(false);
+    setOptionNotifType(false);
+    setAnimaux([]);
   }
 
   const onChangeDate = (propertyName, selectedDate) => {
     setValue(propertyName, selectedDate);
-    if(new Date() > new Date(selectedDate)){
+    var currentDate = new Date();
+    currentDate.setHours(2, 0, 0, 0);
+    if(currentDate > new Date(selectedDate)){
       handleStateChange("Terminé");
       setNotifType({title: "Aucune notification", id: "None"});
       setValue("notif", "None");
@@ -398,6 +417,25 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     resetValues();
     setVisible(false);
   };
+
+  const checkNumericFormat = (data, attribute) => {
+    if( data[attribute] != undefined && data[attribute] != undefined )
+    {
+        const numericValue = parseFloat(data[attribute].replace(',', '.').replace(" ", ""));
+        if (isNaN(numericValue)) {
+            Toast.show({
+                position: "top",
+                type: "error",
+                text1: "Problème de format sur l'attribut " + attribute,
+                text2: "Seul les chiffres, virgule et point sont acceptés"
+            });
+            return false;
+        } else{
+            data[attribute] = numericValue;
+        }
+    }
+    return true;
+  }
 
   return (
     <>
@@ -471,9 +509,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         />
         <View style={styles.modalContainer}>
           <View style={styles.form}>
-            <View style={styles.toastContainer}>
-                <Toast />
-            </View>
             <View style={styles.containerActionsButtons}>
 
               <TouchableOpacity onPress={closeModal}>
@@ -490,9 +525,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <ActivityIndicator size={10} color={Variables.bai} />
                   :
                     actionType === "modify" ?
-                      <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
+                      <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
                     :
-                      <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
+                      <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
                 }
               </TouchableOpacity>
             </View>
@@ -509,15 +544,28 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         defaultState={watch("state") === undefined ? "À faire" : watch("state")}
                       />
                     </View>
-
-                    <View style={styles.containerDate}>
-                      <Text style={[styles.textInput, styles.textFontRegular]}>Date : {convertDateToText("dateevent")} <Text style={{color: "red"}}>*</Text></Text>
-                      <DatePickerModal
-                        onDayChange={onChangeDate}
-                        propertyName={"dateevent"}
-                        defaultDate={getValues("dateevent")}
-                      />
-                    </View>
+                    {actionType === "modify" && (eventType.id === "soins" || eventType.id === "balade") ?
+                      <View style={styles.inputContainer}>
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Date : {actionType === "modify" && (eventType.id === "soins" || eventType.id === "balade") && <Text style={{color: Variables.bai_cerise}}>(Non modifiable)</Text>}</Text>
+                        <TextInput
+                          style={[styles.input, styles.textFontRegular, styles.disabledText, styles.disabled]}
+                          placeholder="Exemple : 01/01/2024"
+                          placeholderTextColor={Variables.gris}
+                          defaultValue={convertDateToText("dateevent")}
+                          editable={false}
+                        />
+                      </View>
+                    :
+                      <View style={styles.containerDate}>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Date : {convertDateToText("dateevent")} <Text style={{color: "red"}}>*</Text></Text>
+                          <DatePickerModal
+                            onDayChange={onChangeDate}
+                            propertyName={"dateevent"}
+                            defaultDate={getValues("dateevent")}
+                          />
+                      </View>
+                    }
+                    
                   
                     <View style={styles.inputContainer}>
                       <Text style={[styles.textInput, styles.textFontRegular]}>Animaux : <Text style={{color: "red"}}>*</Text></Text>
@@ -566,7 +614,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       <TextInput
                         style={[styles.input, styles.textFontRegular]}
                         placeholder="Exemple : Rendez-vous vétérinaire"
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => setValue("nom", text)}
                         defaultValue={getValues("nom")}
                         {...register("nom", { required: true })}
@@ -588,7 +636,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       <TextInput
                         style={[styles.input, styles.textFontRegular]}
                         placeholder="Exemple : Écurie de la Pomme"
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => setValue("lieu", text)}
                         defaultValue={getValues("lieu")}
                       />
@@ -603,7 +651,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               placeholder="Exemple : 12h45"
                               keyboardType="numeric"
                               maxLength={5}
-                              placeholderTextColor={Variables.texte}
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => onChangeTime("heuredebutbalade", setDate, text)}
                               value={watch("heuredebutbalade")}
                               defaultValue={getActualTime()}
@@ -623,8 +671,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
-                              keyboardType="numeric"
-                              placeholderTextColor={Variables.texte}
+                              keyboardType="decimal-pad"
+                              inputMode="decimal"
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
                             />
@@ -637,7 +686,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               placeholder="Exemple : 12h45"
                               keyboardType="numeric"
                               maxLength={5}
-                              placeholderTextColor={Variables.texte}
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => onChangeTime("heurefinbalade", setDate, text)}
                               value={watch("heurefinbalade")}
                               defaultValue={getActualTime()}
@@ -660,7 +709,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : CSO"
-                              placeholderTextColor={Variables.texte}
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("discipline", text)}
                               defaultValue={getValues("discipline")}
                             />
@@ -671,8 +720,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
-                              keyboardType="numeric"
-                              placeholderTextColor={Variables.texte}
+                              keyboardType="decimal-pad"
+                              inputMode="decimal"
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
                             />
@@ -697,7 +747,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : CSO"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("discipline", text)}
                             defaultValue={getValues("discipline")}
                             {...register("discipline", { required: true })}
@@ -708,7 +758,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Club 1"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("epreuve", text)}
                             defaultValue={getValues("epreuve")}
                           />
@@ -718,8 +768,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
-                            keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("dossart", text)}
                             defaultValue={getValues("dossart")}
                           />
@@ -729,8 +780,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
-                            keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("placement", text)}
                             defaultValue={getValues("placement")}
                           />
@@ -740,8 +792,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
-                            keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
                           />
@@ -763,7 +816,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Vétérinaire"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("specialiste", text)}
                             defaultValue={getValues("specialiste")}
                           />
@@ -773,8 +826,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 0 (un doux rêve)"
-                            keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
                           />
@@ -785,15 +839,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     {eventType.id === "soins" && (
                       <>
                         <View style={styles.inputContainer}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Traitement : <Text style={{color: "red"}}>*</Text></Text>
-                          {errors.traitement && <Text style={[styles.errorInput, styles.textFontRegular]}>Traitement obligatoire </Text>}
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Traitement : </Text>
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Cure de CMV"
-                            placeholderTextColor={Variables.texte}
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("traitement", text)}
                             defaultValue={getValues("traitement")}
-                            {...register("traitement", { required: true })}
                           />
                         </View>
                         <View style={styles.containerDate}>
@@ -801,22 +853,23 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <DatePickerModal
                               onDayChange={onChangeDate}
                               propertyName={"datefinsoins"}
-                              defaultDate={getValues("datefinsoins")}
+                              defaultDate={watch("datefinsoins")}
                           />
                         </View>
                         <View style={styles.inputContainer}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence :</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence : {actionType === "modify" && eventType.id === "soins" && <Text style={{color: Variables.bai_cerise}}>(Non modifiable)</Text>}</Text>
                           <TouchableOpacity 
                             style={styles.textInput} 
                             onPress={()=>{setModalFrequence(true)}} 
+                            disabled={actionType === "modify" && eventType.id === "soins"}
                           >
                             <View style={styles.containerAnimaux}>
                               {frequence == false &&
-                                <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Par défaut, le soin sera tous les jours</Text></View>
+                                <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText]}>Par défaut, le soin sera tous les jours</Text></View>
                               }
                               {
                                 frequence != false &&
-                                <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{frequence.title}</Text></View>
+                                <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText]}>{frequence.title}</Text></View>
                               }
                             </View>
                           </TouchableOpacity>
@@ -826,8 +879,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 1"
-                              keyboardType="numeric"
-                              placeholderTextColor={Variables.texte}
+                              keyboardType="decimal-pad"
+                              inputMode="decimal"
+                              placeholderTextColor={Variables.gris}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
                             />
@@ -842,8 +896,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 1"
-                            keyboardType="numeric"
-                            placeholderTextColor={Variables.texte}
+                            keyboardType="decimal-pad"
+                            inputMode="decimal"
+                            placeholderTextColor={Variables.gris}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
                           />
@@ -877,7 +932,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         numberOfLines={4}
                         maxLength={2000}
                         placeholder="Exemple : Ça s'est très bien passé"
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => setValue("commentaire", text)}
                         defaultValue={getValues("commentaire")}
                       />
@@ -940,13 +995,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       </TouchableOpacity>
                     </View>
 
-                    <View style={styles.inputToggleContainer}>
+                    {/* <View style={styles.inputToggleContainer}>
                       <Text style={[styles.textInput, styles.textFontRegular]}>Afficher sur le calendrier :</Text>
                       <ToogleSwitch
                         isActive={watch("todisplay")}
                         onToggle={(value) => setValue("todisplay", value)}
                       />
-                    </View>
+                    </View> */}
 
                   </View>
                 </KeyboardAwareScrollView>
@@ -1099,14 +1154,15 @@ loadingEvent: {
   containerDate:{
     flexDirection: "column",
     alignSelf: "flex-start",
-    width: "100%"
+    width: "100%",
+    marginBottom: 15,
   },
   bottomBar: {
     width: '100%',
     marginBottom: 10,
     marginTop: 10,
     height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-    backgroundColor: Variables.souris,
+    backgroundColor: Variables.bai_brun,
   },
   keyboardAvoidingContainer: {
     flex: 1,
@@ -1123,6 +1179,12 @@ loadingEvent: {
   toastContainer: {
     zIndex: 9999, 
   },
+  disabled:{
+    backgroundColor: Variables.default
+  },
+  disabledText:{
+    color: Variables.rouan
+  }
 });
 
 export default ModalEvents;

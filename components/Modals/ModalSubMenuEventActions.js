@@ -3,7 +3,7 @@ import Button from "../Button";
 import Variables from "../styles/Variables";
 import { FontAwesome6, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 
-const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handleModify, handleDelete, handleShare }) => {
+const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handleModify, handleDelete, handleDeleteAll, handleShare }) => {
 
     const onAction = (event) =>{
         setModalVisible(false);
@@ -43,15 +43,33 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
-                        <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
-                            <View style={styles.informationsActionButton}>
-                                <AntDesign name="delete" size={20}/>
-                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
-                                    Supprimer
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
+                        { ((event.eventtype !== "soins" && event.eventtype !== "balade") || 
+                            ((event.eventtype === "soins" || event.eventtype === "balade") && event.idparent !== null && event.idparent !== undefined)) &&
+                            <>
+                                <View style={styles.bottomBar} />
+                                <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
+                                    <View style={styles.informationsActionButton}>
+                                        <AntDesign name="delete" size={20}/>
+                                        <Text style={[styles.textActionButton, styles.textFontMedium]}>
+                                            Supprimer
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </>
+                        }
+                        {(event.eventtype === "soins" || event.eventtype === "balade") && 
+                            <>
+                                <View style={styles.bottomBar} />
+                                <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDeleteAll)}>
+                                    <View style={styles.informationsActionButton}>
+                                        <AntDesign name="delete" size={20}/>
+                                        <Text style={[styles.textActionButton, styles.textFontMedium]}>
+                                            Supprimer les {event.eventtype === "balade" ? "balades" : "soins"} {event.nom !== null && event.nom !== undefined && event.nom.substring(0, 15)}{event.nom !== null && event.nom !== undefined && event.nom.length > 15 && "..."}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </>
+                        }
                     </View>
                 </View>
             </View>
@@ -72,7 +90,7 @@ const styles = StyleSheet.create({
     bottomBar: {
         width: '100%',
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     actionButtonContainer:{
         width: "90%",
@@ -117,7 +135,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     item:{
-        backgroundColor: Variables.alezan,
+        backgroundColor: Variables.bai,
         borderRadius: 5,
         margin: 5,
         padding: 10,
@@ -129,7 +147,7 @@ const styles = StyleSheet.create({
         color: "white"
     },
     disabledButton:{
-        backgroundColor: Variables.pinterest,
+        backgroundColor: Variables.gris,
         borderTopStartRadius: 5,
         borderTopEndRadius: 5,
     },

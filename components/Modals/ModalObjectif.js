@@ -9,7 +9,7 @@ import ObjectifService from "../../services/ObjectifService";
 import ModalDropdwn from "./ModalDropdown";
 import Button from "../Button";
 import { AntDesign } from '@expo/vector-icons';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import DatePickerModal from "./ModalDatePicker";
 import DateUtils from "../../utils/DateUtils";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -56,7 +56,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         // Si aucun animal est déjà présent dans la liste, alors
         if(animaux.length == 0){
             // On récupère les animaux de l'utilisateur courant
-            var result = await animalsService.getAnimals(currentUser.id);
+            var result = await animalsService.getAnimals(currentUser.email);
             // Si l'utilisateur a des animaux, alors
             if(result.length !== 0){
             // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
@@ -148,7 +148,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             Toast.show({
                 type: "error",
                 position: "top",
-                text1: "Veuillez saisir au moins une sous-étape"
+                text1: "Veuillez saisir au moins une étape"
             });
         }
 
@@ -159,14 +159,15 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                 objectifService.update(data)
                     .then((reponse) =>{
 
+                        onModify(reponse);
+                        closeModal();
+                        setLoading(false);
+
                         Toast.show({
                             type: "success",
                             position: "top",
                             text1: "Modification d'un objectif réussi"
                         });
-                        onModify(reponse);
-                        closeModal();
-                        setLoading(false);
                     })
                     .catch((err) =>{
                         Toast.show({
@@ -182,13 +183,14 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                 objectifService.create(data)
                     .then((reponse) =>{
 
+                        closeModal();
+                        setLoading(false);
+
                         Toast.show({
                             type: "success",
                             position: "top",
                             text1: "Création d'un objectif réussi"
                         });
-                        closeModal();
-                        setLoading(false);
                     })
                     .catch((err) =>{
                         Toast.show({
@@ -308,9 +310,9 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -347,7 +349,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Rendez-vous vétérinaire"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("title", text)}
                                         defaultValue={getValues("title")}
                                         {...register("title", { required: true })}
@@ -391,7 +393,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 </View>
 
                                 <View style={styles.inputContainer}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Sous-étapes de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Étapes de l'objectif : <Text style={{color: "red"}}>*</Text></Text>
                                     {inputs.map((value, index) => (
                                         <View style={styles.sousEtapesContainer} key={index}>
                                             <TextInput
@@ -401,7 +403,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                                 placeholder="Entrez une valeur"
                                             />
                                             <TouchableOpacity onPress={() => handleRemoveInput(index)}>
-                                                <AntDesign name="delete" size={20} color={Variables.alezan}/>
+                                                <AntDesign name="delete" size={20} color={Variables.bai}/>
                                             </TouchableOpacity>
                                         </View>
                                     ))}
@@ -411,7 +413,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                         size={"s"}
                                         isLong={true}
                                     >
-                                        <Text style={styles.textFontMedium}>Ajouter une sous-étape</Text>
+                                        <Text style={styles.textFontMedium}>Ajouter une étape</Text>
                                     </Button>
                                 </View>
 
@@ -464,7 +466,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     keyboardAvoidingContainer: {
         flex: 1,
@@ -535,7 +537,8 @@ const styles = StyleSheet.create({
     containerDate:{
         flexDirection: "column",
         alignSelf: "flex-start",
-        width: "100%"
+        width: "100%",
+        marginBottom: 15,
     },
     textFontRegular:{
         fontFamily: Variables.fontRegular

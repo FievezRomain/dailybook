@@ -2,9 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getBaseUrl } from './Config';
 import axios from 'axios';
 import * as Notifications from 'expo-notifications';
+import * as TrackingTransparency from 'expo-tracking-transparency';
 import Constants from 'expo-constants';
 import { getAuth, signOut } from 'firebase/auth';
 import LoggerService from './LoggerService';
+import { Platform } from 'react-native';
 
 export default class AuthService {
 
@@ -137,13 +139,11 @@ export default class AuthService {
       finalStatus = status;
     }
     if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
       return;
     }
     expoToken = (await Notifications.getExpoPushTokenAsync({
       projectId: Constants.expoConfig.extra.eas.projectId
     })).data;
-  
     if (Constants.platform.android) {
       Notifications.setNotificationChannelAsync('default', {
         name: 'default',
@@ -163,6 +163,21 @@ export default class AuthService {
       data.expotoken = expoToken;
       AsyncStorage.setItem("userExpoToken", JSON.stringify(expoToken));
       return this.loginUser(data);
+    }
+  }
+
+  async initTrackingActivity() {
+    if (Platform.OS === 'ios') {
+      const { status } = await TrackingTransparency.getTrackingPermissionsAsync();
+      if (status !== "granted") {
+        // Demande la permission ATT
+        const { status: newStatus } = await TrackingTransparency.requestTrackingPermissionsAsync();
+        if (newStatus === 'granted') {
+          console.log("Autorisation acceptée");
+        } else {
+          console.log("Autorisation refusée");
+        }
+      }
     }
   }
 }

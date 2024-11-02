@@ -14,6 +14,7 @@ import WishScreen from "./Wish";
 import FirstPageAddAnimalScreen from "./FirstPageAddAnimal";
 import DiscoverPremiumScreen from "./DiscoverPremium";
 import AccountScreen from "./Account";
+import ContactScreen from "./Contact";
 //import { ForgotPasswordScreen } from './ForgotPasswordScreen';
 
-module.exports = { SignInScreen, SignUpScreen, VerifyEmailScreen, WelcomeScreen, HomeScreen, LoadingScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen, NoteScreen, WishScreen, FirstPageAddAnimalScreen, DiscoverPremiumScreen, AccountScreen };
+module.exports = { SignInScreen, SignUpScreen, VerifyEmailScreen, WelcomeScreen, HomeScreen, LoadingScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen, NoteScreen, WishScreen, FirstPageAddAnimalScreen, DiscoverPremiumScreen, AccountScreen, ContactScreen };

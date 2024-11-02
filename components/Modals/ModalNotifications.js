@@ -43,7 +43,7 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                         <TouchableOpacity onPress={() => {
                             handleDeleteNotif(notification);
                         }}>
-                            <AntDesign name="delete" size={22} color={Variables.alezan}/>
+                            <AntDesign name="delete" size={22} color={Variables.bai}/>
                         </TouchableOpacity>
                         
                     </View>
@@ -99,7 +99,7 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                         <TouchableOpacity onPress={() => {
                                     setModalVisible(!modalVisible)
                                 }}>
-                            <AntDesign name="close" size={22} color={Variables.alezan} style={styles.closeButton}/>
+                            <AntDesign name="close" size={22} color={Variables.bai} style={styles.closeButton}/>
                         </TouchableOpacity>
                         <View style={styles.titleContainer}>
                             <Text style={[styles.title, styles.textFontBold]}>Notifications</Text>
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     title:{
         fontSize: 18,
         paddingBottom: 5,
-        color: Variables.alezan,
+        color: Variables.bai,
     },
     closeButton:{
         paddingTop: 5,

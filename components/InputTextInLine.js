@@ -27,7 +27,7 @@ const InputTextInLine = ({ inputTextLabel, value, isEditable=true, isPassword=fa
                     placeholder={value}
                     defaultValue={isPassword ? "                  " : null}
                     style={[styles.valueText, styles.textFontRegular]} 
-                    placeholderTextColor={"gray"}
+                    placeholderTextColor={variables.rouan}
                     editable={true}
                     secureTextEntry={isPassword && !isPasswordVisible}
                     keyboardType={isNumeric ? "numeric" : "default"}

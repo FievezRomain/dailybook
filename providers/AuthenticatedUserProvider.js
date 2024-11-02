@@ -8,8 +8,8 @@ import WishService from "../services/WishService";
 import ObjectifService from "../services/ObjectifService";
 import AuthService from "../services/AuthService";
 import { getFirebaseAuth } from '../firebase';
-import { getImagePath } from '../services/Config';
 import LoggerService from '../services/LoggerService';
+import Toast from "react-native-toast-message";
 
 const AuthenticatedUserContext = createContext();
 
@@ -114,11 +114,12 @@ export const AuthenticatedUserProvider =  ({ children }) => {
 
   const updatePhotoURL = async (newPhotoURL) => {
     try {
+      // Mise à jour du profil firebase
       await updateProfile(currentUser, {
-        photoURL: getImagePath() + newPhotoURL + ".jpg"
+        photoURL: newPhotoURL
       });
       const updatedUser = await getAuth().currentUser;
-      setCurrentUser( {...currentUser, photoURL: getImagePath() + newPhotoURL + ".jpg"});
+      setCurrentUser( {...currentUser, photoURL: newPhotoURL});
       setCurrentUser(updatedUser);
       console.log("Photo URL updated successfully!");
     } catch (error) {
@@ -132,6 +133,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
       const tempUser = user;
       await reload(tempUser);
       await authService.initNotifications();
+      //await authService.initTrackingActivity();
       // Récupération de l'image de profil
       /* var result = await authService.getUser(user.email);
       if(result.filename != undefined){
@@ -151,8 +153,50 @@ export const AuthenticatedUserProvider =  ({ children }) => {
     }
   };
 
+  const deleteAccount = async (navigation) => {
+
+    if (currentUser) {
+      try {
+        navigation.navigate("Loading");
+        
+        // Supprimer le compte de l'utilisateur
+        setLoading(true);
+        await currentUser.delete();
+        setCurrentUser(null);
+        setCacheUpdated(false);
+        setEmailVerified(false);
+        setLoading(false);
+        Toast.show({
+          position: "top",
+          type: "success",
+          text1: "Suppression du compte réussie"
+        });
+
+        // Rediriger ou effectuer une autre action après suppression
+      } catch (error) {
+        if (error.code === 'auth/requires-recent-login') {
+          Toast.show({
+            position: "top",
+            type: "info",
+            text1: "Reconnexion requise",
+            text2: "Vous devez vous reconnecter et refaire la demande"
+          });
+          await logout();
+        } else {
+          Toast.show({
+            position: "top",
+            type: "error",
+            text1: "Erreur lors de la suppression du compte",
+          });
+          LoggerService.log("Erreur lors de la suppression du compte :" + error.message);
+          console.error('Erreur :', error);
+        }
+      }
+    }
+  }
+
   return (
-    <AuthenticatedUserContext.Provider value={{ currentUser, cacheUpdated, loading, emailVerified, logout, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL, reloadUser }}>
+    <AuthenticatedUserContext.Provider value={{ currentUser, cacheUpdated, loading, emailVerified, logout, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL, reloadUser, deleteAccount }}>
       {children}
     </AuthenticatedUserContext.Provider>
   );

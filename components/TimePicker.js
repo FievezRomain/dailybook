@@ -39,7 +39,8 @@ const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
         locale="fr"
         confirmTextIOS='Valider'
         cancelTextIOS='Annuler'
-        buttonTextColorIOS={variables.alezan}
+        buttonTextColorIOS={variables.bai}
+        themeVariant="light"
       />
     </>
   );

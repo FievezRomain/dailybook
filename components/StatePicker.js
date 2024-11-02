@@ -37,12 +37,12 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     textContainerSelectedLeft:{
-        backgroundColor: variables.alezan,
+        backgroundColor: variables.bai,
         borderBottomStartRadius: 5,
         borderTopStartRadius: 5
     },
     textContainerSelectedRight:{
-        backgroundColor: variables.alezan,
+        backgroundColor: variables.bai,
         borderBottomEndRadius: 5,
         borderTopEndRadius: 5
     },

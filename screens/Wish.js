@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, FlatList, Dimensions, Linking } from "react-native";
+import { View, Text, StyleSheet, FlatList, Dimensions, Linking } from "react-native";
 import React, { useContext, useState, useEffect } from 'react';
 import Variables from "../components/styles/Variables";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -6,12 +6,14 @@ import { Entypo } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
 import TopTabSecondary from "../components/TopTabSecondary";
 import WishService from "../services/WishService";
-import { getImagePath } from '../services/Config';
+import { Image } from "expo-image";
 import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishActions";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import ModalWish from "../components/Modals/ModalWish";
 import { MaterialIcons } from "@expo/vector-icons";
 import LoggerService from "../services/LoggerService";
+import FileStorageService from "../services/FileStorageService";
+import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
 
 const WishScreen = ({ navigation }) => {
     const { currentUser } = useAuth();
@@ -20,6 +22,7 @@ const WishScreen = ({ navigation }) => {
     const wishService = new WishService();
     const [modalSubMenuWishVisible, setModalSubMenuWishVisible] = useState(false);
     const [modalWishVisible, setModalWishVisible] = useState(false);
+    const fileStorageService = new FileStorageService();
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
@@ -31,7 +34,7 @@ const WishScreen = ({ navigation }) => {
     }, [navigation]);
 
     const getWishs = async () => {
-        var result = await wishService.getWishs(currentUser.id);
+        var result = await wishService.getWishs(currentUser.email);
         if(result.length != 0){
             setWishs(result);
         }
@@ -116,7 +119,12 @@ const WishScreen = ({ navigation }) => {
                 />
                 <View style={styles.container}>
                     {wishs.length === 0 ?
-                        <Text style={[{color: "gray", textAlign: "center", marginTop: 20}, styles.textFontRegular]}>Aucun souhait enregistré</Text>
+                        <View style={{paddingLeft: 20, paddingRight: 20}}>
+                            <ModalDefaultNoValue
+                                text={"Aucun souhait enregistré"}
+                            />
+                        </View>
+                        
                     :    
                         <FlatList
                             data={wishs}
@@ -124,7 +132,7 @@ const WishScreen = ({ navigation }) => {
                             renderItem={({ item, index }) => (
                                 <TouchableOpacity style={[styles.itemContainer, index % 2 !== 0 && styles.itemContainerSecondColumn]} onPress={() => openSubMenuWish(item)}>
                                     {item.image !== null && item.image !== undefined &&
-                                        <Image source={{uri: `${getImagePath()}${item.image}`}} style={styles.image} />
+                                        <Image source={{uri: fileStorageService.getFileUrl( item.image, currentUser.uid )}} style={styles.image} cachePolicy="disk" />
                                     }
                                     {(item.image === null || item.image === undefined) &&
                                         <View style={[{backgroundColor: Variables.rouan, alignItems: "center", justifyContent: "center"}, styles.image]}>
@@ -133,7 +141,7 @@ const WishScreen = ({ navigation }) => {
                                     }
                                     {item.prix !== null && item.prix !== undefined &&
                                         <View style={styles.labelContainer}>
-                                            <Entypo name="price-tag" size={16} color={Variables.alezan} /> 
+                                            <Entypo name="price-tag" size={16} color={Variables.bai} /> 
                                             <Text style={[styles.price, styles.textFontRegular]}>{item.prix} €</Text> 
                                         </View>
                                     }
@@ -201,7 +209,7 @@ const styles = StyleSheet.create({
     },
     price: {
         marginLeft: 5,
-        color: Variables.alezan,
+        color: Variables.bai,
         fontSize: 12
     },
     textFontRegular:{

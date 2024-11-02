@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'rea
 import { Fontisto, AntDesign } from '@expo/vector-icons';
 import variables from './styles/Variables';
 import Button from './Button';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 
 const OfferInformations = ({ withMessageFunctionality=true }) => {
 
@@ -50,9 +50,8 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
   return (
     <>
       {withMessageFunctionality &&
-        <Text style={[{textAlign: "center", color: variables.alezan, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
+        <Text style={[{textAlign: "center", color: variables.bai, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
       }
-      <ScrollView>
         <View style={styles.table}>
           <View style={styles.headerRow}>
             <Text style={[styles.cell, styles.headerCell, styles.textFontBold]}> </Text>
@@ -63,12 +62,12 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
             <View key={item.id} style={styles.row}>
               <Text style={[styles.cell, styles.textFontRegular]}>{item.label}</Text>
               { item.free === "Yes" ?
-                <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.alezan} />
+                <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.bai} />
               :
                 <Fontisto name="locked" size={20} style={styles.cell} color={variables.aubere}/>
               }
               { item.premium === "Yes" ?
-                  <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.alezan} />
+                  <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.bai} />
                 :
                   <Fontisto name="locked" size={20} style={styles.cell} color={variables.aubere}/>
               }
@@ -83,9 +82,8 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
           >
             <Text style={styles.textFontMedium}>S'inscrire pour être averti de la sortie de la version premium</Text>
           </Button>
-          <Text style={[styles.price, styles.textFontRegular]}>4€99 /mois ou 32€ /an</Text>
+          <Text style={[styles.price, styles.textFontRegular]}>8.99€ /an pour les 1 000 premiers inscrits</Text>
         </View>
-      </ScrollView>
     </>
   );
 };
@@ -111,7 +109,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   headerCell: {
-    color: variables.alezan
+    color: variables.bai
   },
   table:{
     width: "100%",

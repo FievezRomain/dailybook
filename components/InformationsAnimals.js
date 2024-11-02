@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import variables from "./styles/Variables";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
-import { getImagePath } from '../services/Config';
 import ModalSubMenuAnimalActions from './Modals/ModalSubMenuAnimalActions';
 import ModalAnimal from './Modals/ModalAnimal';
 import ModalManageBodyAnimal from './Modals/ModalManageBodyAnimal';
 import DateUtils from '../utils/DateUtils';
+import { Image } from "expo-image";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
+import FileStorageService from "../services/FileStorageService";
 
 const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const dateUtils = new DateUtils();
     const [modalManageBodyAnimalVisible, setModalBodyAnimalVisible] = useState(false);
+    const fileStorageService = new FileStorageService();
+    const { currentUser } = useAuth();
 
     function isValidString(str) {
       return str !== null && str !== undefined && str.trim() !== "";
@@ -54,11 +58,11 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
             />
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
-                    <Text style={[{color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text>
+                    <Text style={[{color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text>
                     {animal.image !== null ?
-                        <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: variables.alezan}} source={{uri: `${getImagePath()}${animal.image}`}} />
+                        <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: variables.bai}} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                     :
-                        <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: variables.bai, borderColor: variables.alezan, justifyContent: "center", alignItems: "center"}}>
+                        <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: variables.bai, borderColor: variables.bai, justifyContent: "center", alignItems: "center"}}>
                             <Text style={[{color: variables.blanc, fontSize: 50}, styles.textFontBold]}>{animal.nom[0]}</Text>
                         </View>
                     }
@@ -77,7 +81,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Vasco"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.nom}
                               editable={false}
                           />
@@ -89,7 +93,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Cheval"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.espece}
                               editable={false}
                           />
@@ -102,9 +106,22 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 01/01/1900"
                               keyboardType="numeric"
+                              inputMode="numeric"
                               maxLength={10}
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={(animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance)}
+                              editable={false}
+                          />
+                        </View>
+                      }
+                      {isValidString(animal.numeroidentification) &&
+                        <View style={styles.inputContainer}>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Numéro identification :</Text>
+                          <TextInput
+                              style={[styles.input, styles.textFontRegular]}
+                              placeholder="Exemple : XXXXXXXXX"
+                              placeholderTextColor={variables.gris}
+                              defaultValue={animal.numeroidentification}
                               editable={false}
                           />
                         </View>
@@ -115,7 +132,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Fjord"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.race}
                               editable={false}
                           />
@@ -128,7 +145,8 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 140"
                               keyboardType="numeric"
-                              placeholderTextColor={variables.texte}
+                              inputMode="numeric"
+                              placeholderTextColor={variables.gris}
                               defaultValue={String(animal.taille)}
                               editable={false}
                           />
@@ -141,7 +159,8 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 400"
                               keyboardType="numeric"
-                              placeholderTextColor={variables.texte}
+                              inputMode="numeric"
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.poids != null ? String(animal.poids) : undefined}
                               editable={false}
                           />
@@ -153,7 +172,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Mâle"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.sexe}
                               editable={false}
                           />
@@ -165,7 +184,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Granulés X"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.food}
                               editable={false}
                           />
@@ -177,7 +196,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : 200"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.quantity != null ? String(animal.quantity) : undefined}
                               editable={false}
                           />
@@ -189,7 +208,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Isabelle"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.couleur}
                               editable={false}
                           />
@@ -201,7 +220,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Esgard"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.nomPere}
                               editable={false}
                           />
@@ -213,7 +232,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Sherry"
-                              placeholderTextColor={variables.texte}
+                              placeholderTextColor={variables.gris}
                               defaultValue={animal.nomMere}
                               editable={false}
                           />
@@ -237,7 +256,7 @@ const styles = StyleSheet.create({
         flex: 1
       },
       title:{
-        color: variables.alezan,
+        color: variables.bai,
       },
       errorInput: {
         color: "red"
@@ -297,6 +316,7 @@ const styles = StyleSheet.create({
         zIndex: 0,
         shadowColor: "black",
         shadowOpacity: 0.1,
+        elevation: 1,
         shadowRadius:5,
         shadowOffset:{width:0, height:2}
       },

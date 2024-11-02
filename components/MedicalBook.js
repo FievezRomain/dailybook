@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image 
 import StatePicker from './StatePicker';
 import EventService from '../services/EventService';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
-import EventCard from './cards/EventCard';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import variables from './styles/Variables';
 import LoggerService from '../services/LoggerService';
+import EventCard from "./cards/EventCard";
+import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 
-const MedicalBook = ({ animal }) => {
+const MedicalBook = ({ animal, navigation }) => {
     const [typeEvent, setTypeEvent] = useState("Rendez-vous");
     const [eventsSoins, setEventsSoins] = useState([]);
     const [eventsRdv, setEventsRdv] = useState([]);
@@ -18,25 +19,36 @@ const MedicalBook = ({ animal }) => {
     useEffect(() =>{
         getEvents();
     }, [animal]);
+    useEffect(() =>{
+        const unsubscribe = navigation.addListener("focus", () => {
+            getEvents();
+        });
+        return unsubscribe;
+    }, [navigation]);
 
     const getEvents = async () =>{
         try {
             var result = await eventService.getEvents(currentUser.email);
-            result = await result.filter((event) => event.animaux.includes(animal.id));
-
-            var arrayEventsSoins = [];
-            var arrayEventsRdv = [];
-
-            arrayEventsSoins = await result.filter((event) => event.eventtype === "soins");
-            arrayEventsSoins.sort(compareDates);
-            arrayEventsRdv = await result.filter((event) => event.eventtype === "rdv");
-            arrayEventsRdv.sort(compareDates);
-
-            await setEventsRdv(arrayEventsRdv);
-            await setEventsSoins(arrayEventsSoins);
+            filter(result);
+            
           } catch (error) {
             console.error("Error fetching events:", error);
           }
+    }
+
+    const filter = async (result) => {
+        result = result.filter((event) => event.animaux.includes(animal.id));
+
+        var arrayEventsSoins = [];
+        var arrayEventsRdv = [];
+
+        arrayEventsSoins = result.filter((event) => event.eventtype === "soins");
+        arrayEventsSoins.sort(compareDates);
+        arrayEventsRdv = result.filter((event) => event.eventtype === "rdv");
+        arrayEventsRdv.sort(compareDates);
+
+        setEventsRdv(arrayEventsRdv);
+        setEventsSoins(arrayEventsSoins);
     }
 
     const compareDates = (a, b) => {
@@ -47,39 +59,15 @@ const MedicalBook = ({ animal }) => {
         setTypeEvent(typeEvent === "Soins" ? "Rendez-vous" : "Soins");
     }
 
-    const onDeleteEvent = (infosEvent) => {
-        eventService.delete(infosEvent)
-            .then((reponse) =>{
-
-                Toast.show({
-                type: "success",
-                position: "top",
-                text1: "Suppression d'un événement réussi"
-                });
-
-                getEvents();
-
-            })
-            .catch((err) =>{
-                Toast.show({
-                    type: "error",
-                    position: "top",
-                    text1: err.message
-                });
-                LoggerService.log( "Erreur lors de la suppression d'un event : " + err.message );
-            });
-    }
-
-    const onModifyEvent = (idEventModified, response) => {
+    const handleEventChange = async () => {
         getEvents();
-        
     }
 
     return(
         <>
-            <View style={{width: "95%", alignSelf: "center"}}>
-                <Text style={[{textAlign: "center", color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
-                <View style={{marginBottom: 10}}>
+            <View style={{width: "100%", alignSelf: "center", flex: 1}}>
+                <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
+                <View style={{marginBottom: 10, paddingLeft: 20, paddingRight: 20}}>
                     <StatePicker
                         firstState={"Rendez-vous"}
                         secondState={"Soins"}
@@ -88,10 +76,12 @@ const MedicalBook = ({ animal }) => {
                     />
                 </View>
                 
-                <ScrollView contentContainerStyle={{minHeight: "80%"}}>
+                <ScrollView contentContainerStyle={{ paddingBottom: 20, paddingTop:10, paddingLeft: 20, paddingRight: 20}}>
                     {typeEvent === "Rendez-vous" ? 
                         eventsRdv.length === 0 ?
-                            <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Aucun rendez-vous pour cet animal</Text>
+                            <ModalDefaultNoValue
+                                text={"Aucun rendez-vous pour cet animal"}
+                            />
                         :
                         eventsRdv.map((eventItem, index) => (
                             <View style={styles.eventContainer} key={eventItem.id}>
@@ -99,14 +89,15 @@ const MedicalBook = ({ animal }) => {
                                     eventInfos={eventItem}
                                     withSubMenu={true}
                                     withDate={true}
-                                    deleteFunction={onDeleteEvent}
-                                    updateFunction={onModifyEvent}
+                                    handleEventsChange={handleEventChange}
                                 />
                             </View>
                         ))
                     :
-                        eventsRdv.length === 0 ?
-                            <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Aucun soin pour cet animal</Text>
+                        eventsSoins.length === 0 ?
+                            <ModalDefaultNoValue
+                                text={"Aucun soin pour cet animal"}
+                            />
                         :
                         eventsSoins.map((eventItem, index) => (
                             <View style={styles.eventContainer} key={eventItem.id}>
@@ -114,8 +105,7 @@ const MedicalBook = ({ animal }) => {
                                     eventInfos={eventItem}
                                     withSubMenu={true}
                                     withDate={true}
-                                    deleteFunction={onDeleteEvent}
-                                    updateFunction={onModifyEvent}
+                                    handleEventsChange={handleEventChange}
                                 />
                             </View>
                         ))

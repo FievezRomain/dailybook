@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import { AntDesign } from '@expo/vector-icons';
 import ContactService from "../../services/ContactService";
@@ -14,6 +14,12 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
     const contactService = new ContactService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (isVisible) {
+            initValues();
+        }
+    }, [isVisible]);
 
     const closeModal = () => {
         setVisible(false);
@@ -28,6 +34,15 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         setValue("emailproprietaire", undefined);
     };
 
+    const initValues = () => {
+        setValue("id", contact.id);
+        setValue("nom", contact.nom);
+        setValue("profession", contact.profession);
+        setValue("telephone", contact.telephone);
+        setValue("email", contact.email);
+        setValue("emailproprietaire", contact.emailproprietaire);
+    };
+
     const submitRegister = async(data) =>{
         if(loading){
             return;
@@ -40,15 +55,16 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             contactService.update(data)
                 .then((reponse) =>{
 
+                    onModify(reponse);
+                    resetValues();
+                    closeModal();
+                    setLoading(false);
+
                     Toast.show({
                         type: "success",
                         position: "top",
                         text1: "Modification d'un contact réussi"
                     });
-                    onModify(reponse);
-                    resetValues();
-                    closeModal();
-                    setLoading(false);
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -63,10 +79,17 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         else{
             contactService.create(data)
                 .then((reponse) =>{
+                    
                     resetValues();
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Création d'un contact réussi"
+                    });
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -109,9 +132,9 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -126,9 +149,9 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : John Doe"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("nom", text)}
-                                            defaultValue={getValues("nom")}
+                                            defaultValue={watch("nom")}
                                             {...register("nom", { required: true })}
                                         />
                                     </View>
@@ -138,9 +161,9 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Vétérinaire"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("profession", text)}
-                                            defaultValue={getValues("profession")}
+                                            defaultValue={watch("profession")}
                                         />
                                     </View>
 
@@ -149,9 +172,9 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 0606060606"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("telephone", text)}
-                                            defaultValue={getValues("telephone")}
+                                            defaultValue={watch("telephone")}
                                         />
                                     </View>
 
@@ -160,9 +183,9 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : test@gmail.com"
-                                            placeholderTextColor={Variables.texte}
+                                            placeholderTextColor={Variables.gris}
                                             onChangeText={(text) => setValue("email", text)}
-                                            defaultValue={getValues("email")}
+                                            defaultValue={watch("email")}
                                         />
                                     </View>
                                      <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
@@ -223,7 +246,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     keyboardAvoidingContainer: {
         flex: 1,
@@ -253,7 +276,7 @@ const styles = StyleSheet.create({
         alignSelf: "baseline"
     },
     iconContainer:{
-        backgroundColor: Variables.alezan,
+        backgroundColor: Variables.bai,
         padding: 20,
         borderRadius: 60,
         height: 120,

@@ -1,9 +1,10 @@
-import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { Image } from "expo-image";
 
 const TopTab = ({message1, message2, withBackground=false}) => {
     const navigation = useNavigation();
@@ -41,11 +42,11 @@ const TopTab = ({message1, message2, withBackground=false}) => {
             height: 40,
             borderRadius: 50,
             borderWidth: 0.7,
-            borderColor: withBackground == false ? Variables.alezan : Variables.blanc,
-            backgroundColor: withBackground == false ? Variables.alezan : Variables.blanc,
+            borderColor: withBackground == false ? Variables.bai : Variables.blanc,
+            backgroundColor: withBackground == false ? Variables.bai : Variables.blanc,
         },
         text:{
-            color: withBackground == false ? Variables.alezan : Variables.blanc,
+            color: withBackground == false ? Variables.bai : Variables.blanc,
         },
         textFontRegular:{
             fontFamily: Variables.fontRegular
@@ -63,13 +64,17 @@ const TopTab = ({message1, message2, withBackground=false}) => {
             </View>
             <View style={styles.imageContainer}>
                 {/* <TouchableOpacity>
-                    <Ionicons name="notifications" size={25} color={withBackground == false ? Variables.alezan : Variables.blanc} />
+                    <Ionicons name="notifications" size={25} color={withBackground == false ? Variables.bai : Variables.blanc} />
                 </TouchableOpacity> */}
                 <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
                     {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
-                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}}/>
+                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk"/>
                     : 
-                        <FontAwesome5 size={20} color={Variables.alezan} name="user-alt" />
+                        withBackground ?
+                            <FontAwesome5 size={20} color={Variables.blanc} name="user-alt" />
+                        :
+
+                            <FontAwesome5 size={20} color={Variables.bai} name="user-alt" />
                     }
                     
                 </TouchableOpacity>

@@ -9,7 +9,7 @@ import ModalWish from "../components/Modals/ModalWish";
 import ModalContact from "../components/Modals/ModalContact";
 import ModalNote from "../components/Modals/ModalNote";
 import ModalAnimal from "../components/Modals/ModalAnimal";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 
 const ActionScreen = ({ navigation }) => {
@@ -69,6 +69,22 @@ const ActionScreen = ({ navigation }) => {
     });
   }
 
+  const handleCreateEvent = (event) =>{
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Création d'un événement réussi"
+    });
+  }
+
+  const handleCreateObjectif = (event) =>{
+    Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Création d'un objectif réussi"
+    });
+  }
+
   return (
     <>
       <ModalEvents
@@ -76,11 +92,13 @@ const ActionScreen = ({ navigation }) => {
         isVisible={isEventModalVisible}
         setVisible={setEventModalVisible}
         event={event}
+        onModify={handleCreateEvent}
       />
       <ModalObjectif
         actionType={"create"}
         isVisible={isObjectifModalVisible}
         setVisible={setObjectifModalVisible}
+        onModify={handleCreateObjectif}
       />
       <ModalWish
         actionType={"create"}
@@ -107,6 +125,9 @@ const ActionScreen = ({ navigation }) => {
         onModify={handleCreateAnimal}
       />
       <Image style={styles.image} />
+      <View style={styles.toastContainer}>
+          <Toast />
+      </View>
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <View style={styles.form}>
@@ -194,7 +215,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome6 name="check-circle" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Autre tâche</Text>
+                    <Text style={styles.textFontRegular}>Autre</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
@@ -223,33 +244,33 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setContactModalVisible(true)} disabled={true}>
+              <TouchableOpacity onPress={() => setContactModalVisible(true)}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <AntDesign name="contacts" size={20} style={styles.iconButton}/>
-                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Contact</Text>
+                    <Text style={[styles.textFontRegular]}>Contact</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setNoteModalVisible(true)} disabled={true}>
+              <TouchableOpacity onPress={() => setNoteModalVisible(true)}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <SimpleLineIcons name="note" size={20} style={styles.iconButton}/>
-                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Note</Text>
+                    <Text style={[styles.textFontRegular]}>Note</Text>
                   </View>
                   <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                 </View>
                 <View style={styles.bottomBar} />
               </TouchableOpacity>
 
-              <TouchableOpacity disabled={true}>
+              {/* <TouchableOpacity disabled={true}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="group" size={20} style={styles.iconButton}/>
-                    <Text /* style={styles.textDesactivated} */ style={[{color: Variables.rouan}, styles.textFontRegular]}>Groupe</Text>
+                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Groupe</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
@@ -263,7 +284,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <MaterialCommunityIcons name="barn" size={25} style={styles.iconButton}/>
-                    <Text /* style={styles.textDesactivated} */ style={[{color: Variables.rouan}, styles.textFontRegular]}>Structure</Text>
+                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Structure</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
@@ -271,7 +292,7 @@ const ActionScreen = ({ navigation }) => {
                   </View>
                 </View>
                 <View style={styles.bottomBar} />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </ScrollView>
         </View>
@@ -286,16 +307,16 @@ const styles = StyleSheet.create({
     color: Variables.isabelle,
   },
   iconAction:{
-    color: Variables.alezan,
+    color: Variables.bai,
   },
   iconButton:{
     marginRight: 20,
-    color: Variables.alezan,
+    color: Variables.bai,
   },
   bottomBar: {
     width: '100%',
     height: 0.7,
-    backgroundColor: Variables.alezan,
+    backgroundColor: Variables.bai,
     marginBottom: 10,
   },
   informationsButtonContainer:{
@@ -340,7 +361,8 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingTop: 10,
     shadowColor: "black",
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
+    elevation: 1,
     shadowRadius:5,
     shadowOffset:{width:0, height:2}
   },
@@ -376,7 +398,10 @@ loadingEvent: {
   },
   textFontRegular:{
     fontFamily: Variables.fontRegular
-  }
+  },
+  toastContainer: {
+    zIndex: 9999, 
+},
 });
 
 module.exports = ActionScreen;

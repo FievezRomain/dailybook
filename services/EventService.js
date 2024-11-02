@@ -99,6 +99,10 @@ export default class EventService {
         if(await this.isInCache()){
             let eventsMemory = JSON.parse(await AsyncStorage.getItem("events"));
             if(Array.isArray(events)){
+                // Supprimer les événements de eventsMemory qui ne sont pas dans le tableau events
+                const eventsIds = events.map(event => event.id);
+                eventsMemory = eventsMemory.filter(eventMemory => eventsIds.includes(eventMemory.id));
+
                 events.forEach((event) => {
                     var indice = eventsMemory.findIndex((a) => a.id == event.id);
 

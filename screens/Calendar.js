@@ -9,12 +9,16 @@ import moment from "moment";
 import EventCard from "../components/cards/EventCard";
 import EventService from "../services/EventService";
 import DateUtils from "../utils/DateUtils";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
 import LoggerService from "../services/LoggerService";
+import { LinearGradient } from "expo-linear-gradient";
+import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
+import ModalFilterCalendar from "../components/Modals/ModalFilterCalendar";
+import { CalendarFilter } from "../business/models/CalendarFilter";
 
 const CalendarScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -26,6 +30,8 @@ const CalendarScreen = ({ navigation }) => {
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [marked, setMarked] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
+  const [modalFilterVisible, setModalFilterVisible] = useState(false);
+  const [filter, setFilter] = useState(null);
 
   const INITIAL_DATE = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(INITIAL_DATE);
@@ -56,13 +62,23 @@ const CalendarScreen = ({ navigation }) => {
     changeEventsCurrentDateSelected(selectedDate);
   }, [eventArray]);
 
+  useEffect(() => {
+    applyFilter();
+  }, [filter, eventArray]);
+
+  const applyFilter = () =>{
+    if( filter ){
+      var result = filter.filter(eventArray);
+      
+      setFilteredEvents(result);
+    }
+  }
+
   const getEventsForUser = async () => {
     if (eventArray.length === 0) {
       try {
-        const result = await eventService.getEvents(currentUser.id);
-        if (result.length !== 0) {
-          setEventArray(result);
-        }
+        const result = await eventService.getEvents(currentUser.email);
+        setEventArray(result);
       } catch (error) {
         LoggerService.log( "Erreur lors de la récupération des events : " + error.message );
         console.error("Error fetching events:", error);
@@ -91,7 +107,7 @@ const CalendarScreen = ({ navigation }) => {
         newMarked[dateString] = {
           selected: false,
           disableTouchEvent: false,
-          selectedColor: variables.alezan,
+          selectedColor: variables.bai,
           selectedTextColor: variables.blanc,
           dots: [getEventTypeDot(item.eventtype)]
         };
@@ -115,15 +131,20 @@ const CalendarScreen = ({ navigation }) => {
     
     if(isInit){
       // Setup default selected date
-      const defaultDateString = getDate(0);
+      const defaultDateString = selectedDate;
+
       if (!newMarked[defaultDateString]) {
         newMarked[defaultDateString] = {
           selected: true,
           disableTouchEvent: false,
-          selectedColor: variables.alezan,
+          selectedColor: variables.bai,
           selectedTextColor: variables.blanc,
           dots: []
         };
+      } else{
+        const existingObj = newMarked[defaultDateString];
+
+        existingObj.selected = true;
       }
     }
   
@@ -135,13 +156,13 @@ const CalendarScreen = ({ navigation }) => {
   const getEventTypeDot = (eventType) => {
     switch (eventType) {
       case "balade":
-        return { color: variables.alezan };
+        return { color: variables.bai };
       case "entrainement":
         return { color: variables.aubere };
       case "concours":
         return { color: variables.bai };
       case "rdv":
-        return { color: variables.souris };
+        return { color: variables.bai_brun };
       case "soins":
         return { color: variables.isabelle };
       case "autre":
@@ -172,11 +193,13 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const onDayPress = (day) => {
+    setFilter(null);
     setSelectedDate(day);
     setSearchQuery("");
 
     Object.entries(marked).forEach(([key, value]) => value.selected = false);
     const existingObj = marked[day];
+
     if(existingObj){
       existingObj.selected = true;
       marked[day] = existingObj;
@@ -184,7 +207,7 @@ const CalendarScreen = ({ navigation }) => {
       var obj = {
         selected : true,
         disableTouchEvent : false,
-        selectedColor : variables.alezan,
+        selectedColor : variables.bai,
         selectedTextColor: variables.blanc,
         dots: []
       }
@@ -195,139 +218,96 @@ const CalendarScreen = ({ navigation }) => {
     changeEventsCurrentDateSelected(day);
   };
 
-  const onModifyEvent = (idEventModified, response) => {
-    var arrayTempArray = eventArray;
-    var index = arrayTempArray.findIndex(objet => objet.id === idEventModified);
+  const handleEventsChange = async () => {
 
-    if(index !== -1){
-      arrayTempArray[index] = response;
-    }
+    setEventArray(await eventService.getEvents(currentUser.email));
 
-    setEventArray(arrayTempArray);
-
-    setupMarkedDates(false);
-
-    onDayPress(response.dateevent);
-    
-  }
-
-  const onDeleteEvent = (infosEvent) => {
-    eventService.delete(infosEvent)
-        .then((reponse) =>{
-
-          Toast.show({
-            type: "success",
-            position: "top",
-            text1: "Suppression d'un événement réussi"
-          });
-
-          var arrayTempArray = eventArray;
-          var index = arrayTempArray.findIndex(objet => objet.id === infosEvent.id);
-
-          if(index !== -1){
-            arrayTempArray.splice(index, 1);
-          }
-
-          setEventArray(arrayTempArray);
-
-          setupMarkedDates(false);
-
-          onDayPress(infosEvent.dateevent);
-
-        })
-        .catch((err) =>{
-          Toast.show({
-              type: "error",
-              position: "top",
-              text1: err.message
-          });
-          LoggerService.log( "Erreur lors de la suppression d'un event : " + err.message );
-        });
   }
 
   const handleSearch = (query) => {
-    setSearchQuery(query);
-    if (query === '') {
-      setFilteredEvents(eventArray);
-    } else {
-      const filtered = eventArray.filter(event => {
-        const lowercaseQuery = query.toLowerCase();
-        return (
-          (event.discipline && event.discipline.toLowerCase().includes(lowercaseQuery)) ||
-          (event.epreuve && event.epreuve.toLowerCase().includes(lowercaseQuery)) ||
-          (event.eventtype && event.eventtype.toLowerCase().includes(lowercaseQuery)) ||
-          (event.lieu && event.lieu.toLowerCase().includes(lowercaseQuery)) ||
-          (event.nom && event.nom.toLowerCase().includes(lowercaseQuery)) ||
-          (event.traitement && event.traitement.toLowerCase().includes(lowercaseQuery)) 
-        );
-      });
-      setFilteredEvents(filtered);
+    if( filter )
+    {
+        setFilter(new CalendarFilter(filter.date, filter.animals, filter.eventType, query));
+    } else{
+        setFilter(new CalendarFilter(null, null, null, query));
     }
   }
 
   return (
     <>
-      <Image style={styles.image} />
-      <TopTab message1={messages.message1} message2={messages.message2} />
-      <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: variables.blanc, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
-        <View style={{flexDirection: "row", alignItems: "center"}}>
-          <AntDesign name="search1" size={16} color={variables.bai}/>
-          <TextInput
-            placeholder="Recherche"
-            style={[{marginLeft: 5, width: "80%"}, styles.textFontRegular]}
-            value={searchQuery}
-            onChangeText={handleSearch}
+      <View style={{zIndex:999}}><Toast/></View>
+      <ModalFilterCalendar
+        modalVisible={modalFilterVisible}
+        setModalVisible={setModalFilterVisible}
+        setFilter={setFilter}
+        filter={filter}
+      />
+      <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+        <TopTab message1={messages.message1} message2={messages.message2} />
+        <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: variables.blanc, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
+          <View style={{flexDirection: "row", alignItems: "center"}}>
+            <AntDesign name="search1" size={16} color={variables.bai}/>
+
+            <TextInput
+              placeholder="Recherche"
+              style={[{marginLeft: 5, width: "80%"}, styles.textFontRegular]}
+              value={filter ? filter.text : null}
+              onChangeText={handleSearch}
+            />
+          </View>
+          <View>
+            <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
+              {filter ? 
+                <MaterialCommunityIcons name="filter-variant-plus" size={21} color={variables.bai}/>
+              :
+                <Ionicons name="filter" size={20} color={variables.bai}/>
+              }
+            </TouchableOpacity>
+          </View>
+          
+        </View>
+        <View style={styles.calendarContainer}>
+          <Calendar
+            style={[styles.calendar, styles.textFontRegular]}
+            firstDay={1}
+            theme={{
+              arrowColor: variables.isabelle,
+              todayTextColor: variables.aubere,
+              selectedDayTextColor: "white",
+              selectedDayBackgroundColor: variables.bai_brun,
+              calendarBackground: variables.blanc,
+              dayTextColor: variables.bai_brun,
+              textDayHeaderTextColor: variables.bai_brun,
+              textSectionTitleColor: variables.bai_brun
+            }}
+            enableSwipeMonths={true}
+            onDayPress={(day) => onDayPress(day.dateString)}
+            markingType={'multi-dot'}
+            markedDates={marked}
           />
         </View>
-        <View>
-          <TouchableOpacity>
-            <Ionicons name="filter" size={20} color={variables.bai}/>
-          </TouchableOpacity>
+        <View style={styles.selectedDateContainer}>
+          {filter ?
+            <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats du filtre</Text>
+          : 
+            <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
+          }
         </View>
-        
-      </View>
-      <View style={styles.calendarContainer}>
-        <Calendar
-          style={[styles.calendar, styles.textFontRegular]}
-          firstDay={1}
-          theme={{
-            arrowColor: variables.isabelle,
-            todayTextColor: variables.aubere,
-            selectedDayTextColor: "white",
-            selectedDayBackgroundColor: variables.alezan,
-            calendarBackground: variables.blanc,
-            dayTextColor: variables.bai,
-            textDayHeaderTextColor: variables.alezan,
-            textSectionTitleColor: variables.alezan
-          }}
-          enableSwipeMonths={true}
-          onDayPress={(day) => onDayPress(day.dateString)}
-          markingType={'multi-dot'}
-          markedDates={marked}
+            
+          <FlatList
+            data={filter ? filteredEvents : eventArrayCurrentDateSelected}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <EventCard
+                eventInfos={item}
+                handleEventsChange={handleEventsChange}
+                withDate={filter ? true : false}
+              />
+            )}
+            ListEmptyComponent={filter ? <ModalDefaultNoValue text={"Aucun événement correspond à ce filtre"}/> : <ModalDefaultNoValue text={"Vous n'avez aucun événement pour cette date"}/>}
+            contentContainerStyle={styles.listEventContainer}
         />
-      </View>
-      <View style={styles.selectedDateContainer}>
-        {searchQuery != "" ?
-          <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats pour la recherche "{searchQuery}"</Text>
-        : 
-          <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
-        }
-      </View>
-          
-        <FlatList
-          data={searchQuery !== "" ? filteredEvents : eventArrayCurrentDateSelected}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <EventCard
-              eventInfos={item}
-              deleteFunction={onDeleteEvent}
-              updateFunction={onModifyEvent}
-              withDate={searchQuery !== ""}
-            />
-          )}
-          ListEmptyComponent={<Text style={[styles.noEventsText, styles.textFontRegular]}>Vous n'avez aucun événement pour cette date</Text>}
-          contentContainerStyle={styles.listEventContainer}
-      />
+      </LinearGradient>
     </>
   );
 }
@@ -360,7 +340,7 @@ const styles = StyleSheet.create({
   },
   selectedDateText: {
     textAlign: "center",
-    color: variables.alezan
+    color: variables.bai
   },
   infosContainer: {
     display: "flex",
@@ -380,6 +360,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     shadowColor: "black",
     shadowOpacity: 0.1,
+    elevation: 1,
     shadowRadius:5,
     shadowOffset:{width:0, height:2}
   },
