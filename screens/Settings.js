@@ -1,20 +1,23 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import React, { useContext, useEffect, useState } from 'react';
 import Back from "../components/Back";
-import ButtonLong from "../components/ButtonLong";
 import Variables from "../components/styles/Variables";
 import LogoutModal from "../components/Modals/ModalLogout";
-import Button from "../components/Button";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Constants from 'expo-constants';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { FontAwesome5 } from '@expo/vector-icons';
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import variables from "../components/styles/Variables";
+import ModalVerif from "../components/Modals/ModalVerif";
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
-    const { currentUser } = useAuth();
+    const [modalVerifDeleteAccountVisible, setModalVerifDeleteAccountVisible] = useState(false);
+    const { currentUser, deleteAccount } = useAuth();
 
     const styles = StyleSheet.create({
         card:{
@@ -27,7 +30,8 @@ const SettingsScreen = ({ }) => {
             marginLeft: "auto",
             marginRight: "auto",
             shadowColor: "black",
-            shadowOpacity: "0.3",
+            shadowOpacity: "0.1",
+            elevation: 1,
             shadowRadius: 5,
             shadowOffset: {width: 0, height: 2}
         },
@@ -91,16 +95,22 @@ const SettingsScreen = ({ }) => {
 
     return (
         <View style={{backgroundColor: Variables.default,}}>
-        <View style={styles.contentContainer}>
-            <LogoutModal
-                modalVisible={modalVisible}
-                setModalVisible={setModalVisible}
-                navigation={navigation}
-            />
-            <Back/>
+            <View style={styles.contentContainer}>
+                <LogoutModal
+                    modalVisible={modalVisible}
+                    setModalVisible={setModalVisible}
+                    navigation={navigation}
+                />
+                <ModalVerif
+                    event={() =>deleteAccount(navigation)}
+                    message={"Êtes-vous sûr de vouloir supprimer votre compte ?"}
+                    modalVisible={modalVerifDeleteAccountVisible}
+                    setModalVisible={setModalVerifDeleteAccountVisible}
+                />
+                <Back/>
                 <View style={styles.settings}>
                     {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
-                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} />
+                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk" />
                     :
                         <View style={[styles.avatar, {alignItems: "center", justifyContent: "center"}]}>
                             <FontAwesome5 size={40}  name="user-alt" />
@@ -117,23 +127,26 @@ const SettingsScreen = ({ }) => {
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Wish")} >
                             <Text style={styles.textFontMedium}>Ma whishlist</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} disabled={true}>
-                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Mes contacts</Text>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Contact")}>
+                            <Text style={[styles.textFontMedium]}>Mes contacts</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} /* onPress={() => navigation.navigate("Note")} */>
-                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Mes notes</Text>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Note")} >
+                            <Text style={[styles.textFontMedium]}>Mes notes</Text>
+                        </TouchableOpacity>
+                        {/* <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                            <Text style={[{color: Variables.rouan}, styles.textFontMedium]}>Ma structure</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Ma structure</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={[{color: "gray"}, styles.textFontMedium]}>Thèmes</Text>
+                            <Text style={[{color: Variables.rouan}, styles.textFontMedium]}>Thèmes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => navigation.navigate("DiscoverPremium")}>
                             <Text style={[{color: Variables.blanc}, styles.textFontMedium]}>Découvrir l'offre premium</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVisible(!modalVisible)}>
                             <Text style={styles.textFontMedium}>Déconnexion</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => setModalVerifDeleteAccountVisible(!modalVerifDeleteAccountVisible)}>
+                            <Text style={styles.textFontMedium}>Supprimer mon compte</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

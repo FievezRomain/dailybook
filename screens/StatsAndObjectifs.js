@@ -10,6 +10,8 @@ import ObjectifsBloc from "../components/ObjectifsBloc";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import TemporalityPicker from "../components/TemporalityPicker";
 import { SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
+import { LinearGradient } from "expo-linear-gradient";
+import Toast from "react-native-toast-message";
 
 const StatsScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
@@ -39,7 +41,7 @@ const StatsScreen = ({ navigation }) => {
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.id);
+      var result = await animalsService.getAnimals(currentUser.email);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On valorise l'animal selectionné par défaut au premier de la liste
@@ -65,50 +67,52 @@ const StatsScreen = ({ navigation }) => {
 
   return (
     <>
-      <Image style={styles.image}/>
-      <TopTab message1={messages.message1} message2={messages.message2} />
-      <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20, marginBottom: 10}}>
-          <AnimalsPicker
-            animaux={animaux}
-            setSelected={setSelectedAnimal}
-            selected={selectedAnimal}
-            mode="single"
-          />
-      </View>
-      <View style={styles.rubriqueContainer}>
-        <View style={styles.iconsContainer}>
-          <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-            <SimpleLineIcons name="target" size={30} color={activeRubrique === 0 ? Variables.alezan : "gray"}/>
-          </TouchableOpacity>
-          <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-            <FontAwesome name="pie-chart" size={25} color={activeRubrique === 1 ? Variables.alezan : "gray"}/>
-          </TouchableOpacity>
+      <View style={{zIndex:999}}><Toast/></View>
+      <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+        <TopTab message1={messages.message1} message2={messages.message2} />
+        <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
+            <AnimalsPicker
+              animaux={animaux}
+              setSelected={setSelectedAnimal}
+              selected={selectedAnimal}
+              mode="single"
+            />
         </View>
-        <View style={styles.separatorFix}></View>
-        <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1], outputRange: ['0%', '50%'] }) }]} />
-      </View>
-      <View style={styles.contentContainer}>
-
-        
-        <View style={styles.temporalityIndicator}>
-          <TemporalityPicker
-            arrayState={list}
-            handleChange={onTemporalityChange}
-            defaultState={temporality}
-          />
+        <View style={styles.rubriqueContainer}>
+          <View style={styles.iconsContainer}>
+            <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+              <SimpleLineIcons name="target" size={30} color={activeRubrique === 0 ? Variables.bai : Variables.rouan}/>
+            </TouchableOpacity>
+            <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+              <FontAwesome name="pie-chart" size={25} color={activeRubrique === 1 ? Variables.bai : Variables.rouan}/>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.separatorFix}></View>
+          <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1], outputRange: ['0%', '50%'] }) }]} />
         </View>
+        <View style={styles.contentContainer}>
 
-        {activeRubrique === 0 ?
-          <ObjectifsBloc
-            animaux={animaux}
-            selectedAnimal={selectedAnimal}
-            temporality={temporality.id}
-            navigation={navigation}
-          />
-        :
-          <StatistiquesBloc/>
-        }
-      </View>
+          
+          <View style={styles.temporalityIndicator}>
+            <TemporalityPicker
+              arrayState={list}
+              handleChange={onTemporalityChange}
+              defaultState={temporality}
+            />
+          </View>
+
+          {activeRubrique === 0 ?
+            <ObjectifsBloc
+              animaux={animaux}
+              selectedAnimal={selectedAnimal}
+              temporality={temporality.id}
+              navigation={navigation}
+            />
+          :
+            <StatistiquesBloc/>
+          }
+        </View>
+      </LinearGradient>
     </>
     );
 }
@@ -124,7 +128,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   separatorFix:{
-    borderTopColor: "gray", 
+    borderTopColor: Variables.rouan, 
     borderTopWidth: 1, 
     position: 'absolute', 
     bottom: 0, 
@@ -133,7 +137,7 @@ const styles = StyleSheet.create({
   },
   separatorAnimated:{
     height: 3, 
-    backgroundColor: Variables.alezan, 
+    backgroundColor: Variables.bai, 
     position: 'absolute', 
     bottom: 0, 
     width: '50%',
@@ -151,23 +155,26 @@ const styles = StyleSheet.create({
     backgroundColor: Variables.isabelle,
   },
   fondSelectedTouchableOpacity:{
-    backgroundColor: Variables.alezan
+    backgroundColor: Variables.bai
   },
   contentContainer:{
     flex: 1,
     display: "flex",
     alignSelf: "center",
     height: "100%",
-    width: "90%",
+    width: "100%",
     borderRadius: 10,
   },
   temporalityIndicator:{
     display: "flex",
     flexDirection: "row",
     justifyContent: "flex-end",
+    width: "100%",
+    alignSelf: "center",
+    paddingLeft: 20,
+    paddingRight: 20,
     top: 5,
     zIndex: 1,
-    marginRight: 5,
   },
   bloc:{
     flex: 1,
@@ -175,6 +182,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     shadowColor: "black",
     shadowOpacity: 0.1,
+    elevation: 1,
     shadowRadius: 5,
     shadowOffset: {width:0, height:2}
   },

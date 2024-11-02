@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
         resizeMode: "cover",
         position: "absolute",
         justifyContent: "center",
-        backgroundColor: variables.pinterest,
+        backgroundColor: variables.gris,
     },
     textFontRegular:{
         fontFamily: variables.fontRegular

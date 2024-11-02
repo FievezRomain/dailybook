@@ -16,11 +16,11 @@ const Back = ({isWithBackground=false}) => {
     return(
         <TouchableOpacity onPress={() => navigation.goBack()}>
             {isWithBackground ?
-                <View style={[{backgroundColor: variables.alezan, borderRadius: 30, width: 40, height: 40, display: "flex", justifyContent: "center", alignItems: "center"}, styles.backButton]}>
+                <View style={[{backgroundColor: variables.bai, borderRadius: 30, width: 40, height: 40, display: "flex", justifyContent: "center", alignItems: "center"}, styles.backButton]}>
                     <Ionicons name="chevron-back" size={30} color={variables.blanc} />
                 </View>
             :
-                <Ionicons name="chevron-back" style={styles.backButton} size={30} color={variables.alezan} />
+                <Ionicons name="chevron-back" style={styles.backButton} size={30} color={variables.bai} />
             }
         </TouchableOpacity>
     );

@@ -11,4 +11,8 @@ export default class DateUtils {
                 return arrayDate[2] + "/" + arrayDate[1] + "/" + arrayDate[0];
         }
     }
+
+    isDateValid(dateStr) {
+        return !isNaN(new Date(dateStr));
+      }
 }

@@ -29,9 +29,9 @@ const TabStack = () => {
                   <Ionicons
                     name="home"
                     size={20}
-                    color={focused ? variables.alezan : 'gray'}
+                    color={focused ? variables.bai : variables.bai_brun }
                   ></Ionicons>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Accueil</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Accueil</Text>
                 </View>
               </View>
             } else if(route.name === 'Statistic'){
@@ -42,9 +42,9 @@ const TabStack = () => {
                   <FontAwesome6
                     name="signal"
                     size={20}
-                    color={focused ? variables.alezan : 'gray'}
+                    color={focused ? variables.bai : variables.bai_brun }
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Performance</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Performance</Text>
                 </View>
                 
               </View>
@@ -59,7 +59,8 @@ const TabStack = () => {
                   alignItems: 'center',
                   marginBottom: Platform.OS == "android" ? 30 : 30,
                   shadowColor: "black",
-                  shadowOpacity: 0.3,
+                  shadowOpacity: 0.1,
+                  elevation: 1,
                   shadowRadius: 10,
                   shadowOffset:{width:0, height: -1}
                 }}
@@ -74,7 +75,7 @@ const TabStack = () => {
                 <Image source={plus} style={{
                   width: 45,
                   height: 45,
-                  tintColor: expanded ? Variables.souris : Variables.alezan,
+                  tintColor: expanded ? Variables.bai_brun : Variables.bai,
                   zIndex: 1
                 }}></Image>
               </MotiView>
@@ -88,9 +89,9 @@ const TabStack = () => {
                   <FontAwesome6
                     name="calendar-alt"
                     size={20}
-                    color={focused ? variables.alezan : 'gray'}
+                    color={focused ? variables.bai : variables.bai_brun }
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Calendrier</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Calendrier</Text>
                 </View>
               </View>
             } else if (route.name === 'Pets'){
@@ -101,9 +102,9 @@ const TabStack = () => {
                   <FontAwesome6
                     name="paw"
                     size={20}
-                    color={focused ? variables.alezan : 'gray'}
+                    color={focused ? variables.bai : variables.bai_brun}
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.alezan : 'gray', fontFamily: variables.fontRegular}}>Animaux</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Animaux</Text>
                 </View>
               </View>
             }
@@ -113,6 +114,7 @@ const TabStack = () => {
           tabBarStyle:{
             shadowColor: "black",
             shadowOpacity: 0.1,
+            elevation: 1,
             shadowRadius: 5,
             shadowOffset:
             {
@@ -204,7 +206,7 @@ const TabStack = () => {
         <Animated.View style={{
           width: getWidth() - 15,
           //height: 2,
-          backgroundColor: Variables.alezan,
+          backgroundColor: Variables.bai,
           position: 'absolute',
           // bottom: (667 / (Dimensions.get("window").height / 10)) *5,
           // Horizontal Padding = 20...

@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 
 // Style pour positionner les toasts au-dessus de la modal
 const styles = StyleSheet.create({

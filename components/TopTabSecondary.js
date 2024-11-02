@@ -33,11 +33,11 @@ const TopTabSecondary = ({message1, message2}) => {
             height: 40,
             borderRadius: 50,
             borderWidth: 0.7,
-            borderColor: Variables.alezan,
-            backgroundColor: Variables.alezan
+            borderColor: Variables.bai,
+            backgroundColor: Variables.bai
         },
         text:{
-            color: Variables.alezan,
+            color: Variables.bai,
         },
         textFontRegular:{
             fontFamily: Variables.fontRegular

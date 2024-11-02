@@ -1,20 +1,26 @@
 import React, { useEffect } from 'react';
-import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput, Image } from "react-native";
+import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput } from "react-native";
 import variables from "../styles/Variables";
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import Button from "../Button";
-import { getImagePath } from '../../services/Config';
 import RatingInput from '../RatingInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import EventService from '../../services/EventService';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import LoggerService from '../../services/LoggerService';
+import FileStorageService from "../../services/FileStorageService";
+import { Image } from "expo-image";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
+import DateUtils from '../../utils/DateUtils';
 
-const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, onModify }) => {
+const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
+    const { currentUser } = useAuth();
     const eventService = new EventService();
     var eventBeforeEditCommentaire;
     var eventBeforeEditRessenti;
     var eventBeforeEditState;
+    const fileStorageService = new FileStorageService();
+    const dateUtils = new DateUtils();
 
     useEffect(() => {
         eventBeforeEditCommentaire = event.commentaire;
@@ -41,13 +47,13 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return variables.rouan;
         }
         if( event.eventtype === "balade" ){
-            return variables.alezan;
+            return variables.bai;
         }
         if( event.eventtype === "soins" ){
             return variables.isabelle;
         }
         if( event.eventtype === "concours" ){
-            return variables.bai;
+            return variables.alezan;
         }
         if( event.eventtype === "entrainement" ){
             return variables.aubere;
@@ -56,7 +62,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return variables.bai_cerise;
         }
         if( event.eventtype === "rdv" ){
-            return variables.souris;
+            return variables.bai_brun;
         }
     }
 
@@ -210,10 +216,11 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         data["commentaire"] = event.commentaire;
         data["animaux"] = event.animaux;
         data["note"] = event.note;
+        data["email"] = currentUser.email;
 
         eventService.updateCommentaireNote(data)
             .then((reponse) => {
-                onModify(event.id, event);
+                handleEventsChange();
                 setVisible(false);
             })
             .catch((err) => {
@@ -259,8 +266,9 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             paddingHorizontal: 3,
             paddingVertical: 5,
             borderRadius: 15,
-            shadowColor: variables.bai,
+            shadowColor: "black",
             shadowOpacity: 0.1,
+            elevation: 1,
             shadowOffset: {
                 width: 0,
                 height: 1
@@ -276,7 +284,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         separator: {
             borderTopWidth: 0.2,
             borderTopColor: variables.default,
-            shadowColor: variables.bai,
+            shadowColor: "black",
             shadowOpacity: 1,
             elevation: 5,
             shadowOffset: {
@@ -287,13 +295,13 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             height: 10
         },
         balade: {
-            backgroundColor: variables.alezan,
+            backgroundColor: variables.bai,
         },
         autre: {
             backgroundColor: variables.bai_cerise,
         },
         rdv: {
-            backgroundColor: variables.souris,
+            backgroundColor: variables.bai_brun,
         },
         soins: {
             backgroundColor: variables.isabelle,
@@ -302,7 +310,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             backgroundColor: variables.aubere,
         },
         concours: {
-            backgroundColor: variables.bai,
+            backgroundColor: variables.alezan,
         },
         depense: {
             backgroundColor: variables.rouan,
@@ -338,9 +346,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         animauxPicturesContainer:{
             marginRight: 10,
             flexDirection: "row",
-            width: "50%",
             flexWrap: "wrap",
-            justifyContent: "flex-end"
+            justifyContent: "flex-end",
         },
         avatarText: {
             color: "white",
@@ -406,7 +413,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                                 <View key={animal.id} style={{marginRight: -3}}>
                                                     <View style={{height: 25, width: 25, backgroundColor: variables.bai, borderRadius: 15, justifyContent: "center"}}>
                                                         { animal.image !== null ? 
-                                                            <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                                                            <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                                                             :
                                                             <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                                         }
@@ -440,7 +447,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                     <Text style={styles.textFontRegular}>Lieu : {event.lieu}</Text>
                                 }
                                 {isValidString(event.datefinbalade) &&
-                                    <Text style={styles.textFontRegular}>Date de fin de balade : {event.datefinbalade}</Text>
+                                    <Text style={styles.textFontRegular}>Date de fin de balade : {event.datefinbalade.includes("-") ? dateUtils.dateFormatter(event.datefinbalade, "yyyy-mm-dd", "-") : event.datefinbalade}</Text>
                                 }
                                 {isValidString(event.heurefinbalade) &&
                                     <Text style={styles.textFontRegular}>Heure de fin de balade : {event.heurefinbalade}</Text>
@@ -464,7 +471,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                     <Text style={styles.textFontRegular}>Traitement : {event.traitement}</Text>
                                 }
                                 {isValidString(event.datefinsoins) &&
-                                    <Text style={styles.textFontRegular}>Date de fin du soin : {event.datefinsoins}</Text>
+                                    <Text style={styles.textFontRegular}>Date de fin du soin : {event.datefinsoins.includes("-") ? dateUtils.dateFormatter(event.datefinsoins, "yyyy-mm-dd", "-") : event.datefinsoins}</Text>
                                 }
                                 <View style={{width: "90%"}}>
                                     <Text style={[{marginBottom: 5}, styles.textFontRegular]}>Commentaire :</Text>

@@ -51,6 +51,9 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
                             </TouchableOpacity>
                         );
                     })}
+                    <TouchableOpacity style={[styles.item, styles.disabled]} disabled={true}>
+                      <Text style={[styles.title, styles.textFontRegular, styles.disabledText]}>Bientôt personnalisable...</Text>
+                    </TouchableOpacity>
                     {/* <FlatList
                         data={list}
                         renderItem={({item}) => <Item title={item.title} event={setChoice} />}
@@ -108,13 +111,13 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   item:{
-    backgroundColor: Variables.alezan,
+    backgroundColor: Variables.bai,
     borderRadius: 5,
     margin: 5,
     padding: 10,
   },
   selected:{
-    backgroundColor: Variables.bai,
+    backgroundColor: Variables.bai_brun,
   },
   title:{
     color: "white"
@@ -127,6 +130,12 @@ const styles = StyleSheet.create({
   },
   textFontBold:{
       fontFamily: Variables.fontBold
+  },
+  disabled:{
+    backgroundColor: Variables.default
+  },
+  disabledText:{
+    color: Variables.rouan
   }
 });
 

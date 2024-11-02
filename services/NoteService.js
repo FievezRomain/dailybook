@@ -2,6 +2,7 @@ import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
+import LoggerService from './LoggerService';
 
 export default class NoteService {
 
@@ -9,7 +10,7 @@ export default class NoteService {
         await this.updateAxiosAuthorization();
         return axios.post(`${getBaseUrl()}createNote`, body)
         .then(async(response) => {
-            await this.deleteInCache(response.data);
+            await this.putInCache(response.data);
             return response.data;
         })
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour créer une note : " + err.message )); 

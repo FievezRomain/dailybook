@@ -1,11 +1,16 @@
 import Variables from "./styles/Variables";
-import { getImagePath } from '../services/Config';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-native";
 import plus from '../assets/plus.png'
 import variables from "./styles/Variables";
 import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from "expo-image";
+import { useAuth } from "../providers/AuthenticatedUserProvider";
+import FileStorageService from "../services/FileStorageService";
 
 const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined }) => {
+    const fileStorageService = new FileStorageService();
+    const { currentUser } = useAuth();
+
 
     const changeSelectedAnimals = (animal) => {
         const found = animaux.find(e => e.id === animal.id);
@@ -80,22 +85,22 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                         <View style={styles.containerAvatar}>
                             { animal.image !== null ? 
                             <LinearGradient
-                                colors={checkSelected(animal) ? [variables.alezan, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [variables.bai, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
                                 <View style={[styles.containerAvatarWithImage, checkSelected(animal) ? {backgroundColor: variables.blanc} : {backgroundColor: "transparent"}]}>
-                                    <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
+                                    <Image style={[styles.avatar]} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                                 </View>
                             </LinearGradient>
                             :
                             <LinearGradient
-                                colors={checkSelected(animal) ? [variables.alezan, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [variables.bai, variables.isabelle, variables.aubere] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
                                 <View style={[styles.containerAvatarWithoutImage, checkSelected(animal) ? {backgroundColor: variables.blanc} : {backgroundColor: "transparent"}]}>
-                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: variables.alezan} : {backgroundColor: variables.isabelle}]}>
+                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: variables.bai} : {backgroundColor: variables.isabelle}]}>
                                         <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                     </View>
                                 </View>
@@ -156,7 +161,7 @@ const styles = StyleSheet.create({
         color: Variables.isabelle
     },
     selectedText:{
-        color: Variables.alezan
+        color: Variables.bai
     },
     containerAvatarWithoutImage:{
         height: 65, 

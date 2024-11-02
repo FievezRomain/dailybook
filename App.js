@@ -1,5 +1,4 @@
 import { NavigationContainer } from "@react-navigation/native";
-import Toast from "react-native-toast-message";
 import { AuthenticatedUserProvider } from "./providers/AuthenticatedUserProvider";
 import AuthStack from "./navigation/AuthStack";
 import * as Font from 'expo-font';
@@ -7,9 +6,12 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import * as Sentry from '@sentry/react-native';
 import { StatusBar } from 'expo-status-bar';
+import AuthService from "./services/AuthService";
+
 
 function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  const authService = new AuthService;
 
   Sentry.init({
     dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
@@ -19,6 +21,7 @@ function App() {
 
   useEffect(() => {
     loadFonts().then(() => setFontsLoaded(true));
+    authService.initTrackingActivity();
   }, []);
 
   /*const navigation = useNavigation();
@@ -46,13 +49,14 @@ function App() {
 
   return (
     fontsLoaded ?
+          <>
           <NavigationContainer>
             <AuthenticatedUserProvider>
               <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
               <AuthStack/>
-              <Toast />
             </AuthenticatedUserProvider>
           </NavigationContainer>
+          </>
       :
       <ActivityIndicator size={10} />
     

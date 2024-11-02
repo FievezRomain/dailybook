@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "row",
         justifyContent: "center",
-        backgroundColor: Variables.pinterest,
+        backgroundColor: Variables.gris,
         paddingVertical: 15
     },
     bodyCard:{
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     bottomBar: {
         width: '100%',
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     input: {
         width: "15%",

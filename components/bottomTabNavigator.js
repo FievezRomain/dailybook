@@ -96,6 +96,7 @@ const BottomTabNavigator = () => {
             // Shadow...
             shadowColor: '#000',
             shadowOpacity: 0.06,
+            elevation: 1,
             shadowOffset: {
               width: 10,
               height: 10

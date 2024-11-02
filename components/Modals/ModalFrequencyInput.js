@@ -89,6 +89,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                                 <Text style={styles.textFontRegular}>Tous les </Text>
                                 <TextInput
                                     keyboardType="numeric"
+                                    inputMode="numeric"
                                     placeholder="X"
                                     style={[styles.input, styles.textFontRegular]}
                                     value={inputValue}
@@ -102,6 +103,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                             <>
                                 <TextInput
                                     keyboardType="numeric"
+                                    inputMode="numeric"
                                     placeholder="X"
                                     style={[styles.input, styles.textFontRegular]}
                                     value={inputValue}
@@ -196,7 +198,7 @@ const styles = StyleSheet.create({
     bottomBar: {
         width: '100%',
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     input: {
         width: "15%",

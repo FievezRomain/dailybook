@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import CheckboxInput from "../CheckboxInput";
 import CompletionBar from "../CompletionBar";
@@ -51,7 +51,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                 Toast.show({
                     type: "success",
                     position: "top",
-                    text1: "Modification des sous-étapes réussi"
+                    text1: "Modification des étapes réussi"
                 });
                 handleTasksStateChange(temporaryObjectif);
                 closeModal();
@@ -100,9 +100,9 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                             <TouchableOpacity onPress={closeModal}>
                                 <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                                <Text style={[styles.textFontBold]}>Gérer les sous-étapes</Text>
+                                <Text style={[styles.textFontBold]}>Gérer les étapes</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Enregistrer</Text>
+                                <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     keyboardAvoidingContainer: {
         flex: 1,

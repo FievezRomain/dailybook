@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, TextInput, Modal, TouchableOpacity } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import Variables from "../styles/Variables";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import AvatarPicker from "../AvatarPicker";
 import { Entypo } from '@expo/vector-icons';
@@ -9,10 +9,11 @@ import variables from "../styles/Variables";
 import { FontAwesome } from '@expo/vector-icons';
 import WishService from "../../services/WishService";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
-import { getImagePath } from '../../services/Config';
+import { Image } from "expo-image";
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from "../../services/LoggerService";
+import FileStorageService from "../../services/FileStorageService";
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { currentUser } = useAuth();
@@ -20,6 +21,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
+    const fileStorageService = new FileStorageService();
 
     useEffect(() => {
         if(wish !== null){
@@ -38,7 +40,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         setValue("prix", wish.prix);
         setValue("destinataire", wish.destinataire);
         if(wish.image !== null && wish.image !== undefined){
-            setImage(`${getImagePath()}${wish.image}`);
+            setImage( fileStorageService.getFileUrl( wish.image, currentUser.uid ));
         } else{
             setImage(null);
         }
@@ -68,35 +70,38 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         }
         setLoading(true);
 
+        // Vérification de la valeur des entiers/décimal
+        if( !checkNumericFormat(data, "prix") ){
+            setLoading(false);
+            return;
+        }
+
         data["email"] =  currentUser.email;
 
-        let formData = data;
         if (data.image != undefined){
             if(actionType !== "modify" || data["previousimage"] !== data["image"]){
-                formData = new FormData();
-                if(image != null){
-                    filename = data.image.split("/");
-                    filename = filename[filename.length-1].split(".")[0] + currentUser.uid;
-                    formData.append("picture", {
-                    name: filename,
-                    type: "image/jpeg",
-                    uri: data.image
-                    });
-                } else{
-                    formData.append("files", "empty");
-                }
-                data = { ...data, image: data.image };
-                formData.append("recipe", JSON.stringify(data));
+                var filename = data.image.split("/");
+                filename = filename[filename.length-1];
+
+                await fileStorageService.uploadFile(image, filename, "image/jpeg", currentUser.uid);
+
+                data.image = filename;
             }
         }
 
         if(actionType === "modify"){
-            wishService.update(formData)
+            wishService.update(data)
                 .then((reponse) =>{
                     resetValues();
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Modification d'un souhait réussi"
+                    });
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -109,12 +114,18 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 });
         }
         else{
-            wishService.create(formData)
+            wishService.create(data)
                 .then((reponse) =>{
                     resetValues();
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
+
+                    Toast.show({
+                        type: "success",
+                        position: "top",
+                        text1: "Création d'un souhait réussi"
+                    });
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -126,6 +137,25 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                     setLoading(false);
                 });
         }
+    }
+
+    const checkNumericFormat = (data, attribute) => {
+        if( data[attribute] != undefined && data[attribute] != undefined )
+        {
+            const numericValue = parseFloat(data[attribute].replace(',', '.').replace(" ", ""));
+            if (isNaN(numericValue)) {
+                Toast.show({
+                    position: "top",
+                    type: "error",
+                    text1: "Problème de format sur l'attribut " + attribute,
+                    text2: "Seul les chiffres, virgule et point sont acceptés"
+                });
+                return false;
+            } else{
+                data[attribute] = numericValue;
+            }
+        }
+        return true;
     }
 
     return(
@@ -157,9 +187,9 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <ActivityIndicator size={10} color={Variables.bai} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: Variables.alezan}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -172,7 +202,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Selle western"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("nom", text)}
                                         defaultValue={getValues("nom")}
                                         {...register("nom", { required: true })}
@@ -184,7 +214,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : https://vascoandco.fr"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("url", text)}
                                         defaultValue={getValues("url")}
                                     />
@@ -198,9 +228,9 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     />
                                     {image &&
                                         <View style={styles.imageContainer}>
-                                            <Image source={{uri: image}} style={styles.avatar}/>
+                                            <Image source={{uri: image}} style={styles.avatar} cachePolicy="disk"/>
                                             <TouchableOpacity onPress={() => deleteImage()}>
-                                                <Entypo name="circle-with-cross" size={25} color={variables.alezan}/>
+                                                <Entypo name="circle-with-cross" size={25} color={variables.bai}/>
                                             </TouchableOpacity>
                                         </View>
                                     }
@@ -210,9 +240,10 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <Text style={[styles.textInput, styles.textFontRegular]}>Prix : </Text>
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
-                                        keyboardType="numeric"
+                                        keyboardType="decimal-pad"
+                                        inputMode="decimal"
                                         placeholder="Exemple : 20"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("prix", text)}
                                         defaultValue={getValues("prix")}
                                     />
@@ -223,7 +254,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Par défaut, pour vous"
-                                        placeholderTextColor={Variables.texte}
+                                        placeholderTextColor={Variables.gris}
                                         onChangeText={(text) => setValue("destinataire", text)}
                                         defaultValue={getValues("destinataire")}
                                     />
@@ -285,7 +316,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10,
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.souris,
+        backgroundColor: Variables.bai_brun,
     },
     keyboardAvoidingContainer: {
         flex: 1,
@@ -329,10 +360,10 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 5,
         zIndex: 1,
-        borderColor: variables.alezan,
+        borderColor: variables.bai,
     },
     iconContainer:{
-        backgroundColor: Variables.alezan,
+        backgroundColor: Variables.bai,
         padding: 10,
         borderRadius: 60,
         height: 110,

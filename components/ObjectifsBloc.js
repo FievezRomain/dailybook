@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import variables from "./styles/Variables";
@@ -8,9 +8,10 @@ import CompletionBar from './CompletionBar';
 import ObjectifService from '../services/ObjectifService';
 import ModalSubMenuObjectifActions from './Modals/ModalSubMenuObjectifActions';
 import ModalObjectif from './Modals/ModalObjectif';
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
 import ObjectifCard from './cards/ObjectifCard';
+import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 
 const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
     const { currentUser } = useAuth();
@@ -101,9 +102,11 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                 objectif={currentObjectif}
                 handleTasksStateChange={onModify}
             />
-            <View style={styles.composantContainer}>
-                <Text style={[{textAlign: "center", color: variables.alezan, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text>
-                <View>
+            <ScrollView contentContainerStyle={{paddingBottom: 30, width: "100%"}}>
+                <View style={styles.composantContainer}>
+                
+                    <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text>
+                    
                     {objectifsArrayDisplay.length !== 0 ?
                         objectifsArrayDisplay.map((objectif, index) => {
                             return(
@@ -113,21 +116,18 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                                             animaux={animaux}
                                             handleObjectifChange={onModify}
                                             handleObjectifDelete={handleDelete}
-                                        />
-                                    
+                                    />
                                 </View>
                             );
                         })
                     :
-                        <View>
-                            <Text style={[{color: "gray", textAlign: "center"}, styles.textFontRegular]}>Vous n'avez aucun objectif</Text>
-                        </View>
+                        <ModalDefaultNoValue
+                            text={"Vous n'avez aucun objectif"}
+                        />
                     }
                     
-                    
                 </View>
-                
-            </View>
+            </ScrollView>
         </>
     );
 }
@@ -149,13 +149,13 @@ const styles = StyleSheet.create({
     bottomBar: {
         width: '100%',
         height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: variables.souris,
+        backgroundColor: variables.bai_brun,
     },
     composantContainer:{
         marginTop: 10,
-        marginLeft: 10,
-        marginRight: 10,
-        height: "50%",
+        paddingLeft: 20,
+        paddingRight: 20,
+        height: "100%",
     },
     headerContainer:{
         display: "flex",
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
         color: variables.rouan,
     },
     itemIconSelected:{
-        color: variables.alezan,
+        color: variables.bai,
     },
     textFontRegular:{
         fontFamily: variables.fontRegular

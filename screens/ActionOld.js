@@ -3,7 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import Variables from "../components/styles/Variables";
 import { useForm } from "react-hook-form";
 import Button from "../components/Button";
-import { Toast } from "react-native-toast-message/lib/src/Toast";
+import Toast from "react-native-toast-message";
 import ModalAnimals from "../components/Modals/ModalAnimals";
 import AnimalsService from "../services/AnimalsService";
 import EventService from "../services/EventService";
@@ -352,7 +352,7 @@ const ActionScreen = ({ navigation }) => {
                 <TextInput
                   style={styles.input}
                   placeholder="Exemple : Rendez-vous vétérinaire"
-                  placeholderTextColor={Variables.texte}
+                  placeholderTextColor={Variables.gris}
                   onChangeText={(text) => setValue("nom", text)}
                   defaultValue={getValues("nom")}
                   {...register("nom", { required: true })}
@@ -363,7 +363,7 @@ const ActionScreen = ({ navigation }) => {
                 <TextInput
                   style={styles.input}
                   placeholder="Exemple : Écurie de la Pomme"
-                  placeholderTextColor={Variables.texte}
+                  placeholderTextColor={Variables.gris}
                   onChangeText={(text) => setValue("lieu", text)}
                   defaultValue={getValues("lieu")}
                 />
@@ -378,7 +378,7 @@ const ActionScreen = ({ navigation }) => {
                         placeholder="Exemple : 01/01/1900"
                         keyboardType="numeric"
                         maxLength={10}
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => onChangeDate("datedebutbalade", setDate, text)}
                         value={watch("datedebutbalade")}
                         defaultValue={getActualDate()}
@@ -391,7 +391,7 @@ const ActionScreen = ({ navigation }) => {
                         placeholder="Exemple : 12h45"
                         keyboardType="numeric"
                         maxLength={5}
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => onChangeTime("heuredebutbalade", setDate, text)}
                         value={watch("heuredebutbalade")}
                         defaultValue={getActualTime()}
@@ -411,7 +411,7 @@ const ActionScreen = ({ navigation }) => {
                         placeholder="Exemple : 12h45"
                         keyboardType="numeric"
                         maxLength={5}
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => onChangeTime("heurefinbalade", setDate, text)}
                         value={watch("heurefinbalade")}
                         defaultValue={getActualTime()}
@@ -428,7 +428,7 @@ const ActionScreen = ({ navigation }) => {
                       <TextInput
                         style={styles.input}
                         placeholder="Exemple : CSO"
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => setValue("discipline", text)}
                         defaultValue={getValues("discipline")}
                         {...register("discipline", { required: true })}
@@ -447,7 +447,7 @@ const ActionScreen = ({ navigation }) => {
                         style={styles.input}
                         placeholder="Exemple : 1"
                         keyboardType="numeric"
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => setValue("depense", text)}
                         defaultValue={getValues("depense")}
                       />
@@ -463,7 +463,7 @@ const ActionScreen = ({ navigation }) => {
                     <TextInput
                       style={styles.input}
                       placeholder="Exemple : CSO"
-                      placeholderTextColor={Variables.texte}
+                      placeholderTextColor={Variables.gris}
                       onChangeText={(text) => setValue("discipline", text)}
                       defaultValue={getValues("discipline")}
                       {...register("discipline", { required: true })}
@@ -474,7 +474,7 @@ const ActionScreen = ({ navigation }) => {
                     <TextInput
                       style={styles.input}
                       placeholder="Exemple : galop 1"
-                      placeholderTextColor={Variables.texte}
+                      placeholderTextColor={Variables.gris}
                       onChangeText={(text) => setValue("epreuve", text)}
                       defaultValue={getValues("epreuve")}
                     />
@@ -485,7 +485,7 @@ const ActionScreen = ({ navigation }) => {
                       style={styles.input}
                       placeholder="Exemple : 1"
                       keyboardType="numeric"
-                      placeholderTextColor={Variables.texte}
+                      placeholderTextColor={Variables.gris}
                       onChangeText={(text) => setValue("dossart", text)}
                       defaultValue={getValues("dossart")}
                     />
@@ -496,7 +496,7 @@ const ActionScreen = ({ navigation }) => {
                       style={styles.input}
                       placeholder="Exemple : 1"
                       keyboardType="numeric"
-                      placeholderTextColor={Variables.texte}
+                      placeholderTextColor={Variables.gris}
                       onChangeText={(text) => setValue("placement", text)}
                       defaultValue={getValues("placement")}
                     />
@@ -514,7 +514,7 @@ const ActionScreen = ({ navigation }) => {
                       style={styles.input}
                       placeholder="Exemple : 1"
                       keyboardType="numeric"
-                      placeholderTextColor={Variables.texte}
+                      placeholderTextColor={Variables.gris}
                       onChangeText={(text) => setValue("depense", text)}
                       defaultValue={getValues("depense")}
                     />
@@ -529,7 +529,7 @@ const ActionScreen = ({ navigation }) => {
                     <TextInput
                       style={styles.input}
                       placeholder="Exemple : Vétérinaire"
-                      placeholderTextColor={Variables.texte}
+                      placeholderTextColor={Variables.gris}
                       onChangeText={(text) => setValue("specialiste", text)}
                       defaultValue={getValues("specialiste")}
                     />
@@ -540,7 +540,7 @@ const ActionScreen = ({ navigation }) => {
                       style={styles.input}
                       placeholder="Exemple : 0 (un doux rêve)"
                       keyboardType="numeric"
-                      placeholderTextColor={Variables.texte}
+                      placeholderTextColor={Variables.gris}
                       onChangeText={(text) => setValue("depense", text)}
                       defaultValue={getValues("depense")}
                     />
@@ -556,7 +556,7 @@ const ActionScreen = ({ navigation }) => {
                     <TextInput
                       style={styles.input}
                       placeholder="Exemple : Cure de CMV"
-                      placeholderTextColor={Variables.texte}
+                      placeholderTextColor={Variables.gris}
                       onChangeText={(text) => setValue("traitement", text)}
                       defaultValue={getValues("traitement")}
                       {...register("traitement", { required: true })}
@@ -584,7 +584,7 @@ const ActionScreen = ({ navigation }) => {
                         style={styles.input}
                         placeholder="Exemple : 1"
                         keyboardType="numeric"
-                        placeholderTextColor={Variables.texte}
+                        placeholderTextColor={Variables.gris}
                         onChangeText={(text) => setValue("depense", text)}
                         defaultValue={getValues("depense")}
                       />
@@ -600,7 +600,7 @@ const ActionScreen = ({ navigation }) => {
                   numberOfLines={4}
                   maxLength={2000}
                   placeholder="Exemple : Rappel des vaccins"
-                  placeholderTextColor={Variables.texte}
+                  placeholderTextColor={Variables.gris}
                   onChangeText={(text) => setValue("commentaire", text)}
                   defaultValue={getValues("commentaire")}
                 />

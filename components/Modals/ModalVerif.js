@@ -25,17 +25,19 @@ const ModalVerif = ({ modalVisible, setModalVisible, message, event }) => {
             <Text style={[styles.message, styles.textFontRegular]}>{message}</Text>
             <View style={styles.buttonContainer}>
                 <Button
-                onPress={() => {
-                    setModalVisible(!modalVisible)
-                    eventToCall()
-                }}
+                  onPress={() => {
+                      setModalVisible(!modalVisible)
+                      eventToCall()
+                  }}
+                  size={"l"}
                 >
                   <Text style={styles.textFontMedium}>Oui</Text>
                 </Button>
                 <Button
-                onPress={() => {
-                    setModalVisible(!modalVisible)
-                }}
+                  onPress={() => {
+                      setModalVisible(!modalVisible)
+                  }}
+                  size={"l"}
                 >
                   <Text style={styles.textFontMedium}>Non</Text>
                 </Button>
@@ -49,15 +51,17 @@ const ModalVerif = ({ modalVisible, setModalVisible, message, event }) => {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: Variables.texte,
+    backgroundColor: Variables.blanc,
     padding: 30,
     height: "20%",
-    justifyContent: "center",
-    flexDirection: "row wrap"
+    flexDirection: "row wrap",
+    borderTopStartRadius: 10,
+    borderTopEndRadius: 10,
   },
   background: {
     justifyContent: "flex-end",
     height: "100%",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   emptyBackground: {
     height: "80%",
@@ -70,7 +74,7 @@ const styles = StyleSheet.create({
   },
   message:{
     alignSelf: "center",
-    color: "white"
+    color: "black"
   },
   textFontRegular:{
       fontFamily: Variables.fontRegular
