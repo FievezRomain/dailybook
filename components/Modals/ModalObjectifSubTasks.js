@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
-import Variables from "../styles/Variables";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import CheckboxInput from "../CheckboxInput";
@@ -8,8 +7,10 @@ import CompletionBar from "../CompletionBar";
 import _ from 'lodash';
 import ObjectifService from "../../services/ObjectifService";
 import LoggerService from "../../services/LoggerService";
+import { useTheme } from 'react-native-paper';
 
 const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, objectif={}}) => {
+    const { colors, fonts } = useTheme();
     const objectifService = new ObjectifService();
     const [percentageObjectif, setPercentageObjectif] = useState(0);
     const [temporaryObjectif, setTemporaryObjectif] = useState(_.cloneDeep(objectif));
@@ -82,6 +83,83 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
         setValue('sousetapes', temporaryObjectif.sousEtapes);
     }
 
+    const styles = StyleSheet.create({
+        completionBarContainer:{
+            marginTop: 10,
+            marginBottom: 10
+        },
+        headerObjectif:{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center"
+        },
+        checkBoxContainer:{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        loadingEvent: {
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000000b8",
+            paddingTop: 50
+        },
+        modalContainer: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            height: "100%",
+            justifyContent: "flex-end",
+        },
+        form: {
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            width: "100%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            borderRadius: 10,
+            height: "90%",
+            paddingBottom: 10,
+            paddingTop: 10,
+        },
+        toastContainer: {
+            zIndex: 9999, 
+        },
+        containerActionsButtons: {
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center"
+        },
+        bottomBar: {
+            width: '100%',
+            marginBottom: 10,
+            marginTop: 10,
+            height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
+            backgroundColor: colors.text,
+        },
+        keyboardAvoidingContainer: {
+            flex: 1,
+        },
+        formContainer:{
+            paddingLeft: 30,
+            paddingRight: 30,
+            paddingTop: 10,
+            paddingBottom: 10,
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    
+    })
+
     return(
         <>
             <Modal
@@ -98,11 +176,11 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
+                                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                                 <Text style={[styles.textFontBold]}>Gérer les étapes</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Enregistrer</Text>
+                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
@@ -116,7 +194,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                                         percentage={percentageObjectif}
                                     />
                                 </View>
-                                <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
+                                <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.neutral }}>
                                     {temporaryObjectif.sousEtapes && temporaryObjectif.sousEtapes.map((item, index) => {
                                         return(
                                             <View key={item.id} style={styles.checkBoxContainer}>
@@ -139,82 +217,5 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    completionBarContainer:{
-        marginTop: 10,
-        marginBottom: 10
-    },
-    headerObjectif:{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center"
-    },
-    checkBoxContainer:{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    loadingEvent: {
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#000000b8",
-        paddingTop: 50
-    },
-    modalContainer: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        height: "100%",
-        justifyContent: "flex-end",
-    },
-    form: {
-        backgroundColor: "rgba(255, 255, 255, 1)",
-        width: "100%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        borderRadius: 10,
-        height: "90%",
-        paddingBottom: 10,
-        paddingTop: 10,
-    },
-    toastContainer: {
-        zIndex: 9999, 
-    },
-    containerActionsButtons: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        alignItems: "center"
-    },
-    bottomBar: {
-        width: '100%',
-        marginBottom: 10,
-        marginTop: 10,
-        height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.bai_brun,
-    },
-    keyboardAvoidingContainer: {
-        flex: 1,
-    },
-    formContainer:{
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingTop: 10,
-        paddingBottom: 10,
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-
-})
 
 export default ModalObjectifSubTasks;

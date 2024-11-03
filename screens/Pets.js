@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated } from "react-native";
-import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect, useRef } from 'react';
 import AnimalsPicker from "../components/AnimalsPicker";
@@ -14,8 +13,10 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import DateUtils from '../utils/DateUtils';
 import LoggerService from "../services/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTheme } from 'react-native-paper';
 
 const PetsScreen = ({ navigation }) => {
+  const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "animaux"});
   const animalsService = new AnimalsService;
@@ -153,10 +154,38 @@ const PetsScreen = ({ navigation }) => {
     }).start();
   };
 
+  const styles = StyleSheet.create({
+
+    rubriqueContainer:{
+      marginTop: 10,
+      marginBottom: 10,
+    },
+    iconsContainer:{
+      display: "flex", 
+      flexDirection: "row", 
+      paddingVertical: 10
+    },
+    separatorFix:{
+      borderTopColor: colors.quaternary, 
+      borderTopWidth: 1, 
+      position: 'absolute', 
+      bottom: 0, 
+      height: 2, 
+      width: "100%"
+    },
+    separatorAnimated:{
+      height: 3, 
+      backgroundColor: colors.accent, 
+      position: 'absolute', 
+      bottom: 0, 
+      width: '33.3%',
+    }
+  });
+
   return (
     <>
     <View style={{zIndex:999}}><Toast/></View>
-      <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+      <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2}/>
         <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
           <AnimalsPicker
@@ -173,13 +202,13 @@ const PetsScreen = ({ navigation }) => {
         <View style={styles.rubriqueContainer}>
           <View style={styles.iconsContainer}>
             <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <Entypo name="info-with-circle" size={30} color={activeRubrique === 0 ? Variables.bai : Variables.rouan}/>
+              <Entypo name="info-with-circle" size={30} color={activeRubrique === 0 ? colors.accent : colors.quaternary}/>
             </TouchableOpacity>
             <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <FontAwesome6 name="utensils" size={25} color={activeRubrique === 1 ? Variables.bai : Variables.rouan}/>
+              <FontAwesome6 name="utensils" size={25} color={activeRubrique === 1 ? colors.accent : colors.quaternary}/>
             </TouchableOpacity>
             <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
-              <FontAwesome6 name="book-medical" size={25} color={activeRubrique === 2 ? Variables.bai : Variables.rouan}/>
+              <FontAwesome6 name="book-medical" size={25} color={activeRubrique === 2 ? colors.accent : colors.quaternary}/>
             </TouchableOpacity>
           </View>
           <View style={styles.separatorFix}></View>
@@ -207,33 +236,5 @@ const PetsScreen = ({ navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-
-  rubriqueContainer:{
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  iconsContainer:{
-    display: "flex", 
-    flexDirection: "row", 
-    paddingVertical: 10
-  },
-  separatorFix:{
-    borderTopColor: Variables.rouan, 
-    borderTopWidth: 1, 
-    position: 'absolute', 
-    bottom: 0, 
-    height: 2, 
-    width: "100%"
-  },
-  separatorAnimated:{
-    height: 3, 
-    backgroundColor: Variables.bai, 
-    position: 'absolute', 
-    bottom: 0, 
-    width: '33.3%',
-  }
-})
 
 module.exports = PetsScreen;

@@ -1,10 +1,85 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import Button from "../Button";
-import Variables from "../styles/Variables";
 import { useNavigation } from "@react-navigation/native";
 import AnimalsPicker from "../AnimalsPicker";
+import { useTheme } from 'react-native-paper';
 
 const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected, setValue, valueName }) => {
+  const { colors, fonts } = useTheme();
+  
+  const styles = StyleSheet.create({
+    card: {
+      backgroundColor: colors.background,
+      borderTopStartRadius: 10,
+      borderTopEndRadius: 10,
+      height: "30%",
+      justifyContent: "center",
+      //flexDirection: "row wrap"
+    },
+    background: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: "flex-end",
+      height: "100%",
+    },
+    emptyBackground: {
+      height: "80%",
+    },
+    buttonContainer:{
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-around",
+      marginTop: 5,
+      marginBottom: 20
+    },
+    message:{
+      alignSelf: "center",
+      color: "white"
+    },
+    avatar: {
+      width: 60,
+      height: 60,
+      borderRadius: 50,
+      borderWidth: 2,
+      zIndex: 1,
+      },
+      defaultAvatar:{
+          backgroundColor: "white",
+          borderColor: 'white',
+      },
+      selectedAvatar:{
+          backgroundColor: colors.accent,
+          borderColor: colors.accent,
+      },
+      containerAnimaux:{
+          display: "flex",
+          flexDirection: "row",
+          height: "100%",
+  
+      },
+      containerAvatar:{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          alignSelf: "center",
+          marginLeft: 5,
+          marginRight: 20
+      },
+      defaultText:{
+          color: "white"
+      },
+      selectedText:{
+          color: colors.accent
+      },
+      textFontRegular:{
+          fontFamily: fonts.default.fontFamily
+      },
+      textFontMedium:{
+          fontFamily: fonts.bodyMedium.fontFamily
+      },
+      textFontBold:{
+          fontFamily: fonts.bodyLarge.fontFamily
+      }
+  });
 
   return (
     <>
@@ -46,79 +121,5 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: Variables.blanc,
-    borderTopStartRadius: 10,
-    borderTopEndRadius: 10,
-    height: "30%",
-    justifyContent: "center",
-    //flexDirection: "row wrap"
-  },
-  background: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: "flex-end",
-    height: "100%",
-  },
-  emptyBackground: {
-    height: "80%",
-  },
-  buttonContainer:{
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 5,
-    marginBottom: 20
-  },
-  message:{
-    alignSelf: "center",
-    color: "white"
-  },
-  avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 50,
-    borderWidth: 2,
-    zIndex: 1,
-    },
-    defaultAvatar:{
-        backgroundColor: "white",
-        borderColor: 'white',
-    },
-    selectedAvatar:{
-        backgroundColor: Variables.bai,
-        borderColor: Variables.bai,
-    },
-    containerAnimaux:{
-        display: "flex",
-        flexDirection: "row",
-        height: "100%",
-
-    },
-    containerAvatar:{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        alignSelf: "center",
-        marginLeft: 5,
-        marginRight: 20
-    },
-    defaultText:{
-        color: "white"
-    },
-    selectedText:{
-        color: Variables.bai
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-});
 
 export default ModalAnimals;

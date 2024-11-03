@@ -1,10 +1,45 @@
 import { View } from "moti"
 import { TouchableOpacity, Text, StyleSheet } from "react-native"
-import variables from "./styles/Variables";
 import { useState } from "react";
+import { useTheme } from 'react-native-paper';
 
 const StatePicker = ({ firstState, secondState, handleChange, defaultState=undefined }) => {
     const [currentState, setCurrentState] = useState(defaultState);
+    const { colors, fonts } = useTheme();
+
+    const styles = StyleSheet.create({
+        container:{
+            with: "100%",
+            display: "flex",
+            flexDirection: "row",
+            borderBlockColor: "black",
+            borderWidth: 0.4,
+            backgroundColor: colors.onSurface,
+            borderRadius: 5
+        },
+        textContainer:{
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+            width: "50%",
+            alignItems: "center"
+        },
+        textContainerSelectedLeft:{
+            backgroundColor: colors.accent,
+            borderBottomStartRadius: 5,
+            borderTopStartRadius: 5
+        },
+        textContainerSelectedRight:{
+            backgroundColor: colors.accent,
+            borderBottomEndRadius: 5,
+            borderTopEndRadius: 5
+        },
+        textSelected:{
+            color: colors.background
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+    });
 
     return(
         <>
@@ -19,39 +54,5 @@ const StatePicker = ({ firstState, secondState, handleChange, defaultState=undef
         </>
     )
 }
-
-const styles = StyleSheet.create({
-    container:{
-        with: "100%",
-        display: "flex",
-        flexDirection: "row",
-        borderBlockColor: "black",
-        borderWidth: 0.4,
-        backgroundColor: variables.default,
-        borderRadius: 5
-    },
-    textContainer:{
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        width: "50%",
-        alignItems: "center"
-    },
-    textContainerSelectedLeft:{
-        backgroundColor: variables.bai,
-        borderBottomStartRadius: 5,
-        borderTopStartRadius: 5
-    },
-    textContainerSelectedRight:{
-        backgroundColor: variables.bai,
-        borderBottomEndRadius: 5,
-        borderTopEndRadius: 5
-    },
-    textSelected:{
-        color: variables.blanc
-    },
-    textFontRegular:{
-        fontFamily: variables.fontRegular
-    },
-});
 
 export default StatePicker;

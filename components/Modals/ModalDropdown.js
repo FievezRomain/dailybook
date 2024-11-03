@@ -1,9 +1,10 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
-import Variables from "../styles/Variables";
+import { useTheme } from 'react-native-paper';
 
 const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, setValue, valueName}) => {
-
+  const { colors, fonts } = useTheme();
+  
     const checkState = (value) =>{
       if(state !== false){
         if (value.title === state.title){
@@ -28,6 +29,66 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
       }
       
     }
+
+    const styles = StyleSheet.create({
+      card: {
+        backgroundColor: colors.background,
+        borderTopStartRadius: 10,
+        borderTopEndRadius: 10,
+        height: "30%",
+        justifyContent: "center",
+        //flexDirection: "row wrap"
+      },
+      background: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: "flex-end",
+        height: "100%",
+      },
+      emptyBackground: {
+        height: "80%",
+      },
+      buttonContainer:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginTop: 20,
+        marginBottom: 20
+      },
+      itemContainer:{
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        marginTop: 20,
+        justifyContent: "center"
+      },
+      item:{
+        backgroundColor: colors.accent,
+        borderRadius: 5,
+        margin: 5,
+        padding: 10,
+      },
+      selected:{
+        backgroundColor: colors.text,
+      },
+      title:{
+        color: "white"
+      },
+      textFontRegular:{
+          fontFamily: fonts.default.fontFamily
+      },
+      textFontMedium:{
+          fontFamily: fonts.bodyMedium.fontFamily
+      },
+      textFontBold:{
+          fontFamily: fonts.bodyLarge.fontFamily
+      },
+      disabled:{
+        backgroundColor: colors.onSurface
+      },
+      disabledText:{
+        color: colors.quaternary
+      }
+    });
 
     return (
         <>
@@ -78,65 +139,5 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
         </>
     );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: Variables.blanc,
-    borderTopStartRadius: 10,
-    borderTopEndRadius: 10,
-    height: "30%",
-    justifyContent: "center",
-    //flexDirection: "row wrap"
-  },
-  background: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: "flex-end",
-    height: "100%",
-  },
-  emptyBackground: {
-    height: "80%",
-  },
-  buttonContainer:{
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-    marginTop: 20,
-    marginBottom: 20
-  },
-  itemContainer:{
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 20,
-    justifyContent: "center"
-  },
-  item:{
-    backgroundColor: Variables.bai,
-    borderRadius: 5,
-    margin: 5,
-    padding: 10,
-  },
-  selected:{
-    backgroundColor: Variables.bai_brun,
-  },
-  title:{
-    color: "white"
-  },
-  textFontRegular:{
-      fontFamily: Variables.fontRegular
-  },
-  textFontMedium:{
-      fontFamily: Variables.fontMedium
-  },
-  textFontBold:{
-      fontFamily: Variables.fontBold
-  },
-  disabled:{
-    backgroundColor: Variables.default
-  },
-  disabledText:{
-    color: Variables.rouan
-  }
-});
 
 export default ModalDropdwn;

@@ -3,13 +3,12 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image 
 import StatePicker from './StatePicker';
 import EventService from '../services/EventService';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
-import Toast from "react-native-toast-message";
-import variables from './styles/Variables';
-import LoggerService from '../services/LoggerService';
 import EventCard from "./cards/EventCard";
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import { useTheme } from 'react-native-paper';
 
 const MedicalBook = ({ animal, navigation }) => {
+    const { colors, fonts } = useTheme();
     const [typeEvent, setTypeEvent] = useState("Rendez-vous");
     const [eventsSoins, setEventsSoins] = useState([]);
     const [eventsRdv, setEventsRdv] = useState([]);
@@ -63,10 +62,27 @@ const MedicalBook = ({ animal, navigation }) => {
         getEvents();
     }
 
+    const styles = StyleSheet.create({
+        eventContainer:{
+            display: "flex",
+            flexDirection: "row",
+            width: "100%"
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    });
+
     return(
         <>
             <View style={{width: "100%", alignSelf: "center", flex: 1}}>
-                <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
+                <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
                 <View style={{marginBottom: 10, paddingLeft: 20, paddingRight: 20}}>
                     <StatePicker
                         firstState={"Rendez-vous"}
@@ -115,22 +131,5 @@ const MedicalBook = ({ animal, navigation }) => {
         </>
     );
 };
-
-const styles = StyleSheet.create({
-    eventContainer:{
-        display: "flex",
-        flexDirection: "row",
-        width: "100%"
-    },
-    textFontRegular:{
-        fontFamily: variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: variables.fontBold
-    }
-});
 
 export default MedicalBook;

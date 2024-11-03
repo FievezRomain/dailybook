@@ -1,13 +1,14 @@
 import { View, Text, StyleSheet, TextInput, Modal, TouchableOpacity, KeyboardAvoidingView } from "react-native";
-import Variables from "../styles/Variables";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import AnimalsService from "../../services/AnimalsService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import AnimalsPicker from "../AnimalsPicker";
 import { CalendarFilter } from "../../business/models/CalendarFilter";
+import { useTheme } from 'react-native-paper';
 
 const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter}) =>{
+    const { colors, fonts } = useTheme();
     const [animaux, setAnimaux] = useState([]);
     const [selectedAnimals, setSelectedAnimals] = useState([]);
     const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch } = useForm();
@@ -84,6 +85,93 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
         }
     }
 
+    const styles = StyleSheet.create({
+        textActionButton:{
+            marginLeft: 15
+        },
+        informationsActionButton:{
+            flexDirection: "row",
+            alignItems: "center",
+            marginLeft: 10
+        },
+        bottomBar: {
+            width: '100%',
+            height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
+            backgroundColor: colors.text,
+            marginTop: 10,
+        },
+        filtersContainer:{
+            height: "70%",
+            width: "100%",
+            borderRadius: 5,
+            flexDirection: "column",
+            justifyContent: "space-evenly"
+        },
+        actionButton:{
+            padding: 10,
+        },
+        card: {
+            backgroundColor: colors.background,
+            borderTopStartRadius: 10,
+            borderTopEndRadius: 10,
+            height: "50%",
+            //flexDirection: "row wrap"
+        },
+        background: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            justifyContent: "flex-end",
+            height: "100%",
+        },
+        emptyBackground: {
+            height: "80%",
+        },
+        buttonContainer:{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+            marginTop: 35,
+            marginBottom: 20
+        },
+        item:{
+            backgroundColor: colors.neutral,
+            borderRadius: 5,
+            margin: 5,
+            padding: 10,
+        },
+        selected:{
+            backgroundColor: colors.accent,
+        },
+        title:{
+            color: "white"
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        },
+        containerActionsButtons: {
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+            width: "100%",
+            marginTop: 10,
+        },
+        contentCard:{
+            justifyContent: "space-evenly",
+            alignItems: "center"
+        },
+        itemContainer:{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "center"
+        },
+    });
+
     return(
         <>
             <Modal
@@ -100,13 +188,13 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
                     <View style={styles.card}>
                         <View style={styles.containerActionsButtons}>
                             <TouchableOpacity onPress={() => setModalVisible(false)}>
-                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
+                                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => reset()}>
-                                <Text style={[{color: Variables.isabelle}, styles.textFontRegular]}>Réinitialiser</Text>
+                                <Text style={[{color: colors.neutral}, styles.textFontRegular]}>Réinitialiser</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={sendFilter}>
-                                <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Appliquer</Text>
+                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Appliquer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
@@ -147,92 +235,5 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    textActionButton:{
-        marginLeft: 15
-    },
-    informationsActionButton:{
-        flexDirection: "row",
-        alignItems: "center",
-        marginLeft: 10
-    },
-    bottomBar: {
-        width: '100%',
-        height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.bai_brun,
-        marginTop: 10,
-    },
-    filtersContainer:{
-        height: "70%",
-        width: "100%",
-        borderRadius: 5,
-        flexDirection: "column",
-        justifyContent: "space-evenly"
-    },
-    actionButton:{
-        padding: 10,
-    },
-    card: {
-        backgroundColor: Variables.blanc,
-        borderTopStartRadius: 10,
-        borderTopEndRadius: 10,
-        height: "50%",
-        //flexDirection: "row wrap"
-    },
-    background: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: "flex-end",
-        height: "100%",
-    },
-    emptyBackground: {
-        height: "80%",
-    },
-    buttonContainer:{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginTop: 35,
-        marginBottom: 20
-    },
-    item:{
-        backgroundColor: Variables.isabelle,
-        borderRadius: 5,
-        margin: 5,
-        padding: 10,
-    },
-    selected:{
-        backgroundColor: Variables.bai,
-    },
-    title:{
-        color: "white"
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    },
-    containerActionsButtons: {
-        flexDirection: "row",
-        justifyContent: "space-around",
-        alignItems: "center",
-        width: "100%",
-        marginTop: 10,
-    },
-    contentCard:{
-        justifyContent: "space-evenly",
-        alignItems: "center"
-    },
-    itemContainer:{
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "center"
-    },
-});
 
 export default ModalFilterCalendar;

@@ -236,13 +236,13 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
     },
     textFontRegular:{
-        fontFamily: variables.fontRegular
+        fontFamily: fonts.default.fontFamily
     },
     textFontMedium:{
-        fontFamily: variables.fontMedium
+        fontFamily: fonts.bodyMedium.fontFamily
     },
     textFontBold:{
-        fontFamily: variables.fontBold
+        fontFamily: fonts.bodyLarge.fontFamily
     }
 });
 

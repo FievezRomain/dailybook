@@ -6,14 +6,15 @@ import Toast from "react-native-toast-message";
 import React, { useState, useEffect, useContext } from 'react';
 import ModalSubMenuObjectifActions from '../Modals/ModalSubMenuObjectifActions';
 import ModalObjectifSubTasks from '../Modals/ModalObjectifSubTasks';
-import variables from '../styles/Variables';
 import ModalObjectif from '../Modals/ModalObjectif';
 import LoggerService from '../../services/LoggerService';
 import FileStorageService from '../../services/FileStorageService';
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { Image } from "expo-image";
+import { useTheme } from 'react-native-paper';
 
 const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {
+    const { colors, fonts } = useTheme();
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
     const objectifService = new ObjectifService;
     const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
@@ -143,6 +144,58 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
         return annee;
     }
 
+    const styles = StyleSheet.create({
+        headerObjectif:{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center"
+        },
+        completionBarContainer:{
+            marginTop: 10,
+            marginBottom: 10,
+            borderColor: colors.accent,
+            borderWidth: 0.2,
+            borderRadius: 60,
+            overflow: "hidden"
+        },
+        objectifContainer:{
+            backgroundColor: colors.error,
+            borderRadius: 5,
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            marginBottom: 10,
+            shadowColor: "black",
+            shadowOpacity: 0.1,
+            elevation: 1,
+            shadowOffset: {
+                width: 0,
+                height: 1
+            },
+        },
+        avatarText: {
+            color: "white",
+            textAlign: "center"
+        },
+        avatar: {
+            width: 20,
+            height: 20,
+            borderRadius: 10,
+            zIndex: 1,
+            justifyContent: "center"
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    });
+
     return(
         <>
             <ModalSubMenuObjectifActions
@@ -174,7 +227,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                 var animal = getAnimalById(eventAnimal);
                                 return(
                                     <View key={animal.id} style={{marginLeft: 5}}>
-                                        <View style={{height: 20, width: 20, backgroundColor: variables.bai, borderRadius: 10, justifyContent: "center"}}>
+                                        <View style={{height: 20, width: 20, backgroundColor: colors.accent, borderRadius: 10, justifyContent: "center"}}>
                                             { animal.image !== null ? 
                                                 <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
                                                 :
@@ -196,9 +249,9 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                             <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
                                 <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                     {etape.state === true &&
-                                        <MaterialIcons name="check-box" size={30} color={variables.bai} />
+                                        <MaterialIcons name="check-box" size={30} color={colors.accent} />
                                         ||
-                                        <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                        <MaterialIcons name="check-box-outline-blank" size={30} color={colors.quaternary} />
                                     }
                                     <Text>{etape.etape}</Text>
                                 </View>
@@ -218,15 +271,15 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                 <View style={{display: "flex",flexDirection: "row"}}>
                     <View style={{flexDirection: "row",justifyContent: "space-between", width: "100%",borderTopStartRadius: 5,borderTopEndRadius: 5, padding: 10}}>
                         <View>
-                            <Text style={[{color: variables.blanc}, styles.textFontRegular]}>{objectif.title}</Text>
+                            <Text style={[{color: colors.background}, styles.textFontRegular]}>{objectif.title}</Text>
                         </View>
                         <TouchableOpacity onPress={() => onPressOptions()}>
-                            <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
+                            <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style={{display: "flex", flexDirection: "row", backgroundColor: variables.blanc, borderBottomStartRadius: 5, borderBottomEndRadius: 5}}>
-                    <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: variables.bai, alignItems: "center"}}>
+                <View style={{display: "flex", flexDirection: "row", backgroundColor: colors.background, borderBottomStartRadius: 5, borderBottomEndRadius: 5}}>
+                    <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: colors.accent, alignItems: "center"}}>
                         <Text style={styles.textFontRegular}>{getDayText(objectif.datefin)}.</Text>
                         <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(objectif.datefin)}</Text>
                         <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(objectif.datefin)}</Text>
@@ -240,9 +293,9 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                         <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
                                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                                 {etape.state === true &&
-                                                    <MaterialIcons name="check-box" size={30} color={variables.bai} />
+                                                    <MaterialIcons name="check-box" size={30} color={colors.accent} />
                                                     ||
-                                                    <MaterialIcons name="check-box-outline-blank" size={30} color={variables.rouan} />
+                                                    <MaterialIcons name="check-box-outline-blank" size={30} color={colors.quaternary} />
                                                 }
                                                 <Text style={[styles.textFontRegular, {flexShrink: 1, flexWrap: 'wrap'}]}>{etape.etape}</Text>
                                             </View>
@@ -255,7 +308,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                     var animal = getAnimalById(eventAnimal);
                                     return(
                                         <View key={animal.id} style={{marginLeft: -3}}>
-                                            <View style={{height: 20, width: 20, backgroundColor: variables.bai, borderRadius: 10, justifyContent: "center"}}>
+                                            <View style={{height: 20, width: 20, backgroundColor: colors.accent, borderRadius: 10, justifyContent: "center"}}>
                                                 { animal.image !== null ? 
                                                     <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid )}} cachePolicy="disk" />
                                                     :
@@ -282,56 +335,5 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
         
     );
 }
-const styles = StyleSheet.create({
-    headerObjectif:{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center"
-    },
-    completionBarContainer:{
-        marginTop: 10,
-        marginBottom: 10,
-        borderColor: variables.bai,
-        borderWidth: 0.2,
-        borderRadius: 60,
-        overflow: "hidden"
-    },
-    objectifContainer:{
-        backgroundColor: variables.bai_cerise,
-        borderRadius: 5,
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        marginBottom: 10,
-        shadowColor: "black",
-        shadowOpacity: 0.1,
-        elevation: 1,
-        shadowOffset: {
-            width: 0,
-            height: 1
-        },
-    },
-    avatarText: {
-        color: "white",
-        textAlign: "center"
-    },
-    avatar: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
-        zIndex: 1,
-        justifyContent: "center"
-    },
-    textFontRegular:{
-        fontFamily: variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: variables.fontBold
-    }
-});
 
 export default ObjectifCard;

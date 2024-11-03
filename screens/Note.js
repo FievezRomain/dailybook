@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, Image, FlatList, TextInput } from "react-native
 import React, { useContext, useState, useEffect } from 'react';
 import Back from "../components/Back";
 import ButtonLong from "../components/ButtonLong";
-import Variables from "../components/styles/Variables";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import LogoutModal from "../components/Modals/ModalLogout";
 import Button from "../components/Button";
@@ -12,8 +11,10 @@ import NoteService from "../services/NoteService";
 import NoteCard from "../components/cards/NoteCard";
 import { AntDesign } from '@expo/vector-icons';
 import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
+import { useTheme } from 'react-native-paper';
 
 const NoteScreen = ({ navigation }) => {
+    const { colors, fonts } = useTheme();
     const [notes, setNotes] = useState([]);
     const [filteredNotes, setFilteredNotes] = useState([]);
     const { currentUser } = useAuth();
@@ -74,6 +75,19 @@ const NoteScreen = ({ navigation }) => {
         setNotes(updatedNotes);
       }
 
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1,
+            backgroundColor: colors.onSurface,
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    });
+
     return(
         <>
             <TopTabSecondary
@@ -81,9 +95,9 @@ const NoteScreen = ({ navigation }) => {
                 message2={"notes"}
             />
             <View style={styles.container}>
-            <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: Variables.blanc, marginBottom: 10, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
+            <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, marginBottom: 10, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
                 <View style={{flexDirection: "row", alignItems: "center"}}>
-                    <AntDesign name="search1" size={16} color={Variables.bai}/>
+                    <AntDesign name="search1" size={16} color={colors.accent}/>
                     <TextInput
                         placeholder="Recherche"
                         style={[{marginLeft: 5, width: "100%"}, styles.textFontRegular]}
@@ -125,18 +139,5 @@ const NoteScreen = ({ navigation }) => {
     )
 
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: Variables.default,
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-});
 
 module.exports = NoteScreen;

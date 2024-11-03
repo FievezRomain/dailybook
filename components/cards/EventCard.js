@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import variables from "../styles/Variables";
 import { Entypo, MaterialIcons, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import BaladeCard from './eventCards/BaladeCard';
 import SoinsCard from './eventCards/SoinsCard';
@@ -17,8 +16,10 @@ import ModalEventDetails from "../Modals/ModalEventDetails";
 import EventService from "../../services/EventService";
 import LoggerService from '../../services/LoggerService';
 import Toast from "react-native-toast-message";
+import { useTheme } from 'react-native-paper';
 
 const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=false, withState=false, typeEvent=undefined}) => {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const [modalModificationVisible, setModalModificationVisible] = useState(false);
     const [modalSubMenuEventVisible, setModalSubMenuEventVisible] = useState(false);
@@ -42,7 +43,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             marginRight: 10
         },
         eventContainer:{
-            backgroundColor: variables.blanc,
+            backgroundColor: colors.background,
             borderRadius: 5,
             width: "100%",
             display: "flex",
@@ -57,25 +58,25 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             },
         },
         balade:{
-            backgroundColor: variables.bai,
+            backgroundColor: colors.accent,
         },
         autre:{
-            backgroundColor: variables.bai_cerise,
+            backgroundColor: colors.error,
         },
         rdv:{
-            backgroundColor: variables.bai_brun,
+            backgroundColor: colors.text,
         },
         soins:{
-            backgroundColor: variables.isabelle,
+            backgroundColor: colors.neutral,
         },
         entrainement:{
-            backgroundColor: variables.aubere,
+            backgroundColor: colors.tertiary,
         },
         concours:{
-            backgroundColor: variables.alezan,
+            backgroundColor: colors.primary,
         },
         depense:{
-            backgroundColor: variables.rouan,
+            backgroundColor: colors.quaternary,
         },
         typeEventIndicator:{
             width: "100%", 
@@ -118,16 +119,16 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             padding: 10, 
             marginRight: 10, 
             borderRightWidth: 0.3, 
-            borderColor: variables.bai
+            borderColor: colors.accent
         },
         textFontRegular:{
-            fontFamily: variables.fontRegular
+            fontFamily: fonts.default.fontFamily
         },
         textFontMedium:{
-            fontFamily: variables.fontMedium
+            fontFamily: fonts.bodyMedium.fontFamily
         },
         textFontBold:{
-            fontFamily: variables.fontBold
+            fontFamily: fonts.bodyLarge.fontFamily
         },
         subMenuContainer:{
             paddingVertical: 10,
@@ -273,12 +274,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.balade, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <Entypo name="compass" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Balade</Text>
+                                <Entypo name="compass" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Balade</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -287,9 +288,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange()} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
                                 }
                             </TouchableOpacity>
                         }
@@ -315,12 +316,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.rdv, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome name="stethoscope" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Rendez-vous médical</Text>
+                                <FontAwesome name="stethoscope" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Rendez-vous médical</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -329,9 +330,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
                                 }
                             </TouchableOpacity>
                         }
@@ -357,12 +358,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.soins, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome6 name="hand-holding-medical" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Soins</Text>
+                                <FontAwesome6 name="hand-holding-medical" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Soins</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -371,9 +372,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
                                 }
                             </TouchableOpacity>
                         }
@@ -399,12 +400,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.entrainement, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <Entypo name="traffic-cone" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Entrainement</Text>
+                                <Entypo name="traffic-cone" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Entrainement</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -413,9 +414,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
                                 }
                             </TouchableOpacity>
                         }
@@ -442,12 +443,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.autre, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome6 name="check-circle" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Autre</Text>
+                                <FontAwesome6 name="check-circle" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Autre</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -456,9 +457,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
                                 }
                             </TouchableOpacity>
                         }
@@ -485,12 +486,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.concours, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome name="trophy" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Concours</Text>
+                                <FontAwesome name="trophy" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Concours</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -499,9 +500,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
                                 }
                             </TouchableOpacity>
                         }
@@ -528,12 +529,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.depense, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome6 name="money-bill-wave" size={20} color={variables.blanc} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: variables.blanc, fontSize: 14}, styles.textFontBold]}>Dépense</Text>
+                                <FontAwesome6 name="money-bill-wave" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Dépense</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={variables.blanc} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -542,9 +543,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                         { withState === true &&
                             <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
                                 {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
                                     ||
-                                    <MaterialIcons name="check-box" size={32} color={variables.bai} />
+                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
                                 }
                             </TouchableOpacity>
                         }

@@ -3,7 +3,6 @@ import { View, SectionList, Text, TouchableOpacity, StyleSheet } from 'react-nat
 import TopTabSecondary from '../components/TopTabSecondary';
 import ContactService from '../services/ContactService';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import variables from '../components/styles/Variables';
 import { Entypo, Zocial } from '@expo/vector-icons';
 import { Linking } from 'react-native';
 import LoggerService from '../services/LoggerService';
@@ -11,8 +10,10 @@ import ModalSubMenuContactActions from '../components/Modals/ModalSubMenuContact
 import ModalContact from "../components/Modals/ModalContact";
 import Toast from "react-native-toast-message";
 import ModalDefaultNoValue from '../components/Modals/ModalDefaultNoValue';
+import { useTheme } from 'react-native-paper';
 
 const ContactScreen = ({ navigation }) => {
+    const { colors, fonts } = useTheme();
     const sectionListRef = useRef(null);
     const { currentUser } = useAuth();
     const contactsService = new ContactService();
@@ -130,6 +131,63 @@ const ContactScreen = ({ navigation }) => {
         setModalSubMenuVisible(true);
     }
 
+    const styles = StyleSheet.create({
+        itemContainer: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            padding: 15,
+            backgroundColor: 'white',
+        },
+        name: {
+            fontSize: 16,
+            color: colors.text,
+            fontFamily: fonts.bodyLarge.fontFamily
+        },
+        profession: {
+            fontSize: 14,
+            color: colors.accent,
+            fontFamily: fonts.default.fontFamily
+        },
+        phone: {
+            fontSize: 14,
+            color: colors.accent,
+            fontFamily: fonts.default.fontFamily
+        },
+        iconsContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginRight: 50
+        },
+        headerContainer: {
+            backgroundColor: '#f4f4f4',
+            padding: 5,
+        },
+        header: {
+            fontSize: 18,
+            fontFamily: fonts.bodyLarge.fontFamily
+        },
+        separator: {
+            height: 1,
+            backgroundColor: '#ccc',
+        },
+        sidebarContainer: {
+            position: 'absolute',
+            right: 10,
+            top: 50,
+            bottom: 50,
+            justifyContent: 'center',
+        },
+        letter: {
+            fontSize: 14,
+            paddingVertical: 2,
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        selectedLetter: {
+            color: 'red',
+            fontWeight: 'bold',
+        },
+    });
+
     return (
         <>
             <TopTabSecondary
@@ -150,7 +208,7 @@ const ContactScreen = ({ navigation }) => {
                 contact={contactFocus}
                 onModify={onModify}
             />
-            <View style={{ flex: 1, backgroundColor: variables.default }}>
+            <View style={{ flex: 1, backgroundColor: colors.onSurface }}>
                 {contacts.length === 0 ?
                     <View style={{paddingLeft: 20, paddingRight: 20}}>
                         <ModalDefaultNoValue
@@ -222,62 +280,5 @@ const ContactScreen = ({ navigation }) => {
         </>
     );
 };
-
-const styles = StyleSheet.create({
-    itemContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 15,
-        backgroundColor: 'white',
-    },
-    name: {
-        fontSize: 16,
-        color: variables.bai_brun,
-        fontFamily: variables.fontBold
-    },
-    profession: {
-        fontSize: 14,
-        color: variables.bai,
-        fontFamily: variables.fontRegular
-    },
-    phone: {
-        fontSize: 14,
-        color: variables.bai,
-        fontFamily: variables.fontRegular
-    },
-    iconsContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginRight: 50
-    },
-    headerContainer: {
-        backgroundColor: '#f4f4f4',
-        padding: 5,
-    },
-    header: {
-        fontSize: 18,
-        fontFamily: variables.fontBold
-    },
-    separator: {
-        height: 1,
-        backgroundColor: '#ccc',
-    },
-    sidebarContainer: {
-        position: 'absolute',
-        right: 10,
-        top: 50,
-        bottom: 50,
-        justifyContent: 'center',
-    },
-    letter: {
-        fontSize: 14,
-        paddingVertical: 2,
-        fontFamily: variables.fontMedium
-    },
-    selectedLetter: {
-        color: 'red',
-        fontWeight: 'bold',
-    },
-});
 
 export default ContactScreen;

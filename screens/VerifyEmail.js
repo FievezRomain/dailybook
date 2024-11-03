@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator } from "react-native";
 import wallpaper_login from "../assets/wallpaper_login.png";
-import variables from "../components/styles/Variables";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from "../components/Button";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -8,9 +7,11 @@ import { sendEmailVerification } from "firebase/auth";
 import Constants from 'expo-constants';
 import Toast from "react-native-toast-message";
 import { useState, useEffect } from "react";
+import { useTheme } from 'react-native-paper';
 
 
 const VerifyEmailScreen = ({ navigation })=> {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const [canResend, setCanResend] = useState(false);
     const [timer, setTimer] = useState(120);
@@ -44,6 +45,97 @@ const VerifyEmailScreen = ({ navigation })=> {
         setTimer(120);
     }, []);
 
+    const styles = StyleSheet.create({
+        textInput:{
+            alignSelf: "flex-start",
+            marginLeft: 35,
+            marginBottom: 10
+        },
+        image: {
+            flex: 1,
+            height: "100%",
+            width: "100%",
+            resizeMode: "cover",
+            position: "absolute",
+            justifyContent: "center",
+        },
+        register: {
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            paddingHorizontal: 10,
+            paddingVertical: 80
+        },
+        loaderRegister: {
+            width: 200,
+            height: 200
+        },
+        loadingRegister: {
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000000b8",
+            paddingTop: 50
+        },
+        form: {
+            marginTop: 100,
+            padding: 10,
+            alignItems: "center",
+            justifyContent: "center",
+            width: "90%",
+            borderRadius: 10,
+            marginLeft: "auto",
+            marginRight: "auto",
+        },
+        title: {
+            top: - (Constants.statusBarHeight + 10),
+            color: colors.secondary,
+            fontSize: 30,
+            letterSpacing: 2,
+            marginBottom:20,
+        },
+        input: {
+            height: 40,
+            width: "80%",
+            marginBottom: 15,
+            borderRadius: 5,
+            paddingLeft: 15,
+            backgroundColor: colors.quaternary,
+            color: "black",
+        },
+        account: {
+            color: "white",
+            justifyContent: "center",
+            textAlignVertical: "center",
+            alignItems: "center",
+        },
+        registerButton: {
+            marginBottom: 20,
+            marginTop: 10,
+            borderRadius: 10
+        },
+        textButton:{
+            color: "white"
+        },
+        errorInput: {
+            color: "red"
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontLight:{
+            fontFamily: fonts.bodySmall.fontFamily
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        }
+        
+    });
+
     return (
         <>
             <Image style={styles.image} source={wallpaper_login} />
@@ -59,7 +151,7 @@ const VerifyEmailScreen = ({ navigation })=> {
                                     size={"m"}
                                     type={"secondary"}
                                 >
-                                    <Text style={[styles.textFontMedium, {color:variables.bai_brun}]}>Renvoyer l'email de validation dans {timer}</Text>
+                                    <Text style={[styles.textFontMedium, {color:colors.text}]}>Renvoyer l'email de validation dans {timer}</Text>
                                 </Button>
                             :
                                 <Button
@@ -87,99 +179,6 @@ const VerifyEmailScreen = ({ navigation })=> {
         </>
     );
 };
-
-const styles = StyleSheet.create({
-    textInput:{
-        alignSelf: "flex-start",
-        marginLeft: 35,
-        marginBottom: 10
-    },
-    image: {
-        flex: 1,
-        height: "100%",
-        width: "100%",
-        resizeMode: "cover",
-        position: "absolute",
-        justifyContent: "center",
-        backgroundColor: variables.fond
-    },
-    register: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        paddingHorizontal: 10,
-        paddingVertical: 80
-    },
-    loaderRegister: {
-        width: 200,
-        height: 200
-    },
-    loadingRegister: {
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#000000b8",
-        paddingTop: 50
-    },
-    form: {
-        marginTop: 100,
-        padding: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        width: "90%",
-        borderRadius: 10,
-        marginLeft: "auto",
-        marginRight: "auto",
-    },
-    title: {
-        top: - (Constants.statusBarHeight + 10),
-        color: variables.gris,
-        fontSize: 30,
-        letterSpacing: 2,
-        marginBottom:20,
-    },
-    input: {
-        height: 40,
-        width: "80%",
-        marginBottom: 15,
-        borderRadius: 5,
-        paddingLeft: 15,
-        backgroundColor: variables.rouan,
-        color: "black",
-    },
-    account: {
-        color: "white",
-        justifyContent: "center",
-        textAlignVertical: "center",
-        alignItems: "center",
-    },
-    registerButton: {
-        marginBottom: 20,
-        marginTop: 10,
-        backgroundColor: variables.bouton,
-        borderRadius: 10
-    },
-    textButton:{
-        color: "white"
-    },
-    errorInput: {
-        color: "red"
-    },
-    textFontMedium:{
-        fontFamily: variables.fontMedium
-    },
-    textFontLight:{
-        fontFamily: variables.fontLight
-    },
-    textFontRegular:{
-        fontFamily: variables.fontRegular
-    }
-    
-});
   
 
 module.exports = VerifyEmailScreen;

@@ -6,13 +6,13 @@ import { FontAwesome6, Ionicons } from '@expo/vector-icons'
 import { useRef } from 'react';
 import { WelcomeScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen } from "../screens";
 import { MotiView } from 'moti';
-import Variables from '../components/styles/Variables';
-import variables from '../components/styles/Variables';
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
 const TabStack = () => {
+  const { colors, fonts } = useTheme();
   const tabOffsetValue = useRef(new Animated.Value(0)).current;
   const [expanded, setExpanded] = useState(false);
   const [beforeScreen, setBeforeScreen] = useState("Welcome");
@@ -29,9 +29,9 @@ const TabStack = () => {
                   <Ionicons
                     name="home"
                     size={20}
-                    color={focused ? variables.bai : variables.bai_brun }
+                    color={focused ? colors.accent : colors.text }
                   ></Ionicons>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Accueil</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? colors.accent : colors.text, fontFamily: fonts.default.fontFamily}}>Accueil</Text>
                 </View>
               </View>
             } else if(route.name === 'Statistic'){
@@ -42,9 +42,9 @@ const TabStack = () => {
                   <FontAwesome6
                     name="signal"
                     size={20}
-                    color={focused ? variables.bai : variables.bai_brun }
+                    color={focused ? colors.accent : colors.text }
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Performance</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? colors.accent : colors.text, fontFamily: fonts.default.fontFamily}}>Performance</Text>
                 </View>
                 
               </View>
@@ -75,7 +75,7 @@ const TabStack = () => {
                 <Image source={plus} style={{
                   width: 45,
                   height: 45,
-                  tintColor: expanded ? Variables.bai_brun : Variables.bai,
+                  tintColor: expanded ? colors.text : colors.accent,
                   zIndex: 1
                 }}></Image>
               </MotiView>
@@ -89,9 +89,9 @@ const TabStack = () => {
                   <FontAwesome6
                     name="calendar-alt"
                     size={20}
-                    color={focused ? variables.bai : variables.bai_brun }
+                    color={focused ? colors.accent : colors.text }
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Calendrier</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? colors.accent : colors.text, fontFamily: fonts.default.fontFamily}}>Calendrier</Text>
                 </View>
               </View>
             } else if (route.name === 'Pets'){
@@ -102,9 +102,9 @@ const TabStack = () => {
                   <FontAwesome6
                     name="paw"
                     size={20}
-                    color={focused ? variables.bai : variables.bai_brun}
+                    color={focused ? colors.accent : colors.text}
                   ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Animaux</Text>
+                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? colors.accent : colors.text, fontFamily: fonts.default.fontFamily}}>Animaux</Text>
                 </View>
               </View>
             }
@@ -206,7 +206,7 @@ const TabStack = () => {
         <Animated.View style={{
           width: getWidth() - 15,
           //height: 2,
-          backgroundColor: Variables.bai,
+          backgroundColor: colors.accent,
           position: 'absolute',
           // bottom: (667 / (Dimensions.get("window").height / 10)) *5,
           // Horizontal Padding = 20...

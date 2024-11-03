@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { Fontisto, AntDesign } from '@expo/vector-icons';
-import variables from './styles/Variables';
 import Button from './Button';
 import Toast from "react-native-toast-message";
+import { useTheme } from 'react-native-paper';
 
 const OfferInformations = ({ withMessageFunctionality=true }) => {
+  const { colors, fonts } = useTheme();
 
   const handleInscription = () =>{
     Toast.show({
@@ -31,6 +32,55 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
     { id: '13', label: "Suivi de l'évolution physique de l'animal", free: 'No', premium: 'Yes' }
   ];
 
+  const styles = StyleSheet.create({
+    container:{
+      alignItems: "center",
+    },
+    headerRow: {
+      flexDirection: 'row',
+      padding: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: '#ddd',
+    },
+    row: {
+      flexDirection: 'row',
+      padding: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: '#ddd',
+    },
+    cell: {
+      flex: 1,
+      textAlign: 'center',
+    },
+    headerCell: {
+      color: colors.accent
+    },
+    table:{
+      width: "100%",
+      alignSelf: "center",
+      marginTop: 10,
+      backgroundColor: colors.background,
+      borderRadius: 10,
+    },
+    offerButtonPrice:{
+      alignItems: "center",
+      marginTop: 10,
+      marginBottom: 30
+    },
+    price:{
+      marginTop: 5
+    },
+    textFontRegular:{
+        fontFamily: fonts.default.fontFamily
+    },
+    textFontMedium:{
+        fontFamily: fonts.bodyMedium.fontFamily
+    },
+    textFontBold:{
+        fontFamily: fonts.bodyLarge.fontFamily
+    }
+  });
+
   const Item = ({ label, free, premium }) => (
     <View style={styles.row}>
       <Text style={[styles.cell, styles.textFontRegular]}>{label}</Text>
@@ -50,7 +100,7 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
   return (
     <>
       {withMessageFunctionality &&
-        <Text style={[{textAlign: "center", color: variables.bai, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
+        <Text style={[{textAlign: "center", color: colors.accent, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
       }
         <View style={styles.table}>
           <View style={styles.headerRow}>
@@ -62,14 +112,14 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
             <View key={item.id} style={styles.row}>
               <Text style={[styles.cell, styles.textFontRegular]}>{item.label}</Text>
               { item.free === "Yes" ?
-                <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.bai} />
+                <AntDesign name="checkcircle" size={20} style={styles.cell} color={colors.accent} />
               :
-                <Fontisto name="locked" size={20} style={styles.cell} color={variables.aubere}/>
+                <Fontisto name="locked" size={20} style={styles.cell} color={colors.tertiary}/>
               }
               { item.premium === "Yes" ?
-                  <AntDesign name="checkcircle" size={20} style={styles.cell} color={variables.bai} />
+                  <AntDesign name="checkcircle" size={20} style={styles.cell} color={colors.accent} />
                 :
-                  <Fontisto name="locked" size={20} style={styles.cell} color={variables.aubere}/>
+                  <Fontisto name="locked" size={20} style={styles.cell} color={colors.tertiary}/>
               }
             </View>
           ))}
@@ -87,54 +137,5 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container:{
-    alignItems: "center",
-  },
-  headerRow: {
-    flexDirection: 'row',
-    padding: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  row: {
-    flexDirection: 'row',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  cell: {
-    flex: 1,
-    textAlign: 'center',
-  },
-  headerCell: {
-    color: variables.bai
-  },
-  table:{
-    width: "100%",
-    alignSelf: "center",
-    marginTop: 10,
-    backgroundColor: variables.blanc,
-    borderRadius: 10,
-  },
-  offerButtonPrice:{
-    alignItems: "center",
-    marginTop: 10,
-    marginBottom: 30
-  },
-  price:{
-    marginTop: 5
-  },
-  textFontRegular:{
-      fontFamily: variables.fontRegular
-  },
-  textFontMedium:{
-      fontFamily: variables.fontMedium
-  },
-  textFontBold:{
-      fontFamily: variables.fontBold
-  }
-});
 
 export default OfferInformations;

@@ -1,13 +1,13 @@
 // ...rest of the import statements remain unchanged
-import * as ImagePicker from 'expo-image-picker'; 
-import Button from './Button';
+import * as ImagePicker from 'expo-image-picker';
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
-import Variables from './styles/Variables';
 import ModalSubMenuAvatarPickerActions from './Modals/ModalSubMenuAvatarPicker';
 import { useState } from 'react';
 import ImageUtils from "../utils/ImageUtils";
+import { useTheme } from 'react-native-paper';
 
-const AvatarPicker = ({ setImage, setValue, backgroundColor=Variables.rouan }) => {
+const AvatarPicker = ({ setImage, setValue, backgroundColor=null }) => {
+  const { colors, fonts } = useTheme();
   const [modalVisibleSubMenu, setModalVisibleSubMenu] = useState(false);
   const imageUtils = new ImageUtils();
 
@@ -67,18 +67,18 @@ const AvatarPicker = ({ setImage, setValue, backgroundColor=Variables.rouan }) =
       width: "100%",
     },
     buttonContainer:{
-      backgroundColor: backgroundColor,
+      backgroundColor: backgroundColor === null ? colors.quaternary : backgroundColor,
       borderRadius: 5,
       padding: 10,
     },
     textFontRegular:{
-        fontFamily: Variables.fontRegular
+        fontFamily: fonts.default.fontFamily
     },
     textFontMedium:{
-        fontFamily: Variables.fontMedium
+        fontFamily: fonts.bodyMedium.fontFamily
     },
     textFontBold:{
-        fontFamily: Variables.fontBold
+        fontFamily: fonts.bodyLarge.fontFamily
     }
   });
 

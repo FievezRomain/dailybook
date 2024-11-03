@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, TextInput, Modal, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
-import Variables from "../styles/Variables";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import AnimalsService from "../../services/AnimalsService";
@@ -13,8 +12,10 @@ import LoggerService from "../../services/LoggerService";
 import FileStorageService from "../../services/FileStorageService";
 import { Image } from "expo-image";
 import DropdawnList from "../DropdawnList";
+import { useTheme } from 'react-native-paper';
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const animalsService = new AnimalsService();
     const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch, clearErrors } = useForm();
@@ -300,6 +301,116 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         return true;
     }
 
+    const styles = StyleSheet.create({
+        loadingEvent: {
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000000b8",
+            paddingTop: 50
+        },
+        loaderEvent: {
+            width: 200,
+            height: 200
+        },
+        modalContainer: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            height: "100%",
+            justifyContent: "flex-end",
+        },
+        form: {
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            width: "100%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            borderRadius: 10,
+            height: "90%",
+            paddingBottom: 10,
+            paddingTop: 10,
+        },
+        toastContainer: {
+            zIndex: 9999, 
+        },
+        containerActionsButtons: {
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center"
+        },
+        bottomBar: {
+            width: '100%',
+            marginBottom: 10,
+            marginTop: 10,
+            height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
+            backgroundColor: colors.text,
+        },
+        keyboardAvoidingContainer: {
+            flex: 1,
+        },
+        formContainer:{
+            paddingLeft: 30,
+            paddingRight: 30,
+            paddingTop: 10,
+            paddingBottom: 10,
+        },
+        inputContainer:{
+            width: "100%"
+        },
+        textInput:{
+            alignSelf: "flex-start",
+            marginBottom: 5
+        },
+        input: {
+            height: 40,
+            width: "100%",
+            marginBottom: 15,
+            borderRadius: 5,
+            paddingLeft: 15,
+            backgroundColor: colors.quaternary,
+            color: "black",
+            alignSelf: "baseline"
+        },
+        errorInput: {
+            color: "red"
+        },
+        containerDate:{
+            flexDirection: "column",
+            alignSelf: "flex-start",
+            width: "100%"
+        },
+        imageContainer:{
+            flexDirection: "row",
+            alignSelf: "flex-start",
+            marginTop: 5,
+        },
+        avatar: {
+            width: 60,
+            height: 60,
+            borderRadius: 50,
+            borderWidth: 2,
+            zIndex: 1,
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        },
+        separatorForm:{
+            width: '100%',
+            marginBottom: 20,
+            marginTop: 10,
+            height: 0.5, // ou la hauteur que vous souhaitez pour votre barre
+            backgroundColor: colors.text,
+        },
+        
+    })
+
     return(
         <>
             <Modal
@@ -315,7 +426,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                         </View>
                         <View style={styles.containerActionsButtons}>
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
+                                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             { actionType === "modify" && 
                                 <Text style={[styles.textFontBold]}>Modifier un animal</Text>
@@ -325,12 +436,12 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 { loading ? 
-                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                    <ActivityIndicator size={10} color={colors.accent} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -345,7 +456,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Vasco"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("nom", text)}
                                             defaultValue={getValues("nom")}
                                             {...register("nom", { required: true })}
@@ -393,7 +504,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             keyboardType="numeric"
                                             inputMode="numeric"
                                             maxLength={10}
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => onChangeDate(text)}
                                             value={date}
                                         />
@@ -403,7 +514,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="XXXXXXXXXX"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("numeroidentification", text)}
                                             value={watch("numeroidentification")}
                                         />
@@ -413,7 +524,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Fjord"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("race", text)}
                                             defaultValue={getValues("race")}
                                         />
@@ -425,7 +536,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholder="Exemple : 140"
                                             keyboardType="decimal-pad"
                                             inputMode="decimal"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("taille", text)}
                                             defaultValue={getValues("taille")}
                                         />
@@ -437,7 +548,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholder="Exemple : 400"
                                             keyboardType="decimal-pad"
                                             inputMode="decimal"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("poids", text)}
                                             defaultValue={getValues("poids")}
                                         />
@@ -447,7 +558,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Mâle"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("sexe", text)}
                                             defaultValue={getValues("sexe")}
                                         />
@@ -457,7 +568,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Granulés X"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("food", text)}
                                             defaultValue={getValues("food")}
                                         />
@@ -469,7 +580,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholder="Exemple : 200"
                                             keyboardType="decimal-pad"
                                             inputMode="decimal"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("quantity", text)}
                                             defaultValue={getValues("quantity")}
                                         />
@@ -479,7 +590,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Isabelle"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("couleur", text)}
                                             defaultValue={getValues("couleur")}
                                         />
@@ -489,7 +600,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Esgard"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("nomPere", text)}
                                             defaultValue={getValues("nomPere")}
                                         />
@@ -499,7 +610,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Sherry"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("nomMere", text)}
                                             defaultValue={getValues("nomMere")}
                                         />
@@ -514,115 +625,5 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         </>
     )
 }
-
-const styles = StyleSheet.create({
-    loadingEvent: {
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#000000b8",
-        paddingTop: 50
-    },
-    loaderEvent: {
-        width: 200,
-        height: 200
-    },
-    modalContainer: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        height: "100%",
-        justifyContent: "flex-end",
-    },
-    form: {
-        backgroundColor: "rgba(255, 255, 255, 1)",
-        width: "100%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        borderRadius: 10,
-        height: "90%",
-        paddingBottom: 10,
-        paddingTop: 10,
-    },
-    toastContainer: {
-        zIndex: 9999, 
-    },
-    containerActionsButtons: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        alignItems: "center"
-    },
-    bottomBar: {
-        width: '100%',
-        marginBottom: 10,
-        marginTop: 10,
-        height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.bai_brun,
-    },
-    keyboardAvoidingContainer: {
-        flex: 1,
-    },
-    formContainer:{
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingTop: 10,
-        paddingBottom: 10,
-    },
-    inputContainer:{
-        width: "100%"
-    },
-    textInput:{
-        alignSelf: "flex-start",
-        marginBottom: 5
-    },
-    input: {
-        height: 40,
-        width: "100%",
-        marginBottom: 15,
-        borderRadius: 5,
-        paddingLeft: 15,
-        backgroundColor: Variables.rouan,
-        color: "black",
-        alignSelf: "baseline"
-    },
-    errorInput: {
-        color: "red"
-    },
-    containerDate:{
-        flexDirection: "column",
-        alignSelf: "flex-start",
-        width: "100%"
-    },
-    imageContainer:{
-        flexDirection: "row",
-        alignSelf: "flex-start",
-        marginTop: 5,
-    },
-    avatar: {
-        width: 60,
-        height: 60,
-        borderRadius: 50,
-        borderWidth: 2,
-        zIndex: 1,
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    },
-    separatorForm:{
-        width: '100%',
-        marginBottom: 20,
-        marginTop: 10,
-        height: 0.5, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.bai_brun,
-    },
-    
-})
 
 export default ModalAnimal;

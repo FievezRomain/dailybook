@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet } from "react-native";
-import variables from "../../styles/Variables";
 import { Entypo } from '@expo/vector-icons'
 import { TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
 import { useAuth } from "../../../providers/AuthenticatedUserProvider";
 import FileStorageService from "../../../services/FileStorageService";
+import { useTheme } from 'react-native-paper';
 
 const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
+    const { colors, fonts } = useTheme();
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
 
@@ -24,7 +25,7 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
             alignItems: "flex-end",
         },
         eventContainer:{
-            backgroundColor: variables.rouan,
+            backgroundColor: colors.quaternary,
             borderRadius: 5,
             width: "100%",
             display: "flex",
@@ -63,13 +64,13 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
             flexWrap: "wrap"
         },
         textFontRegular:{
-            fontFamily: variables.fontRegular
+            fontFamily: fonts.default.fontFamily
         },
         textFontMedium:{
-            fontFamily: variables.fontMedium
+            fontFamily: fonts.bodyMedium.fontFamily
         },
         textFontBold:{
-            fontFamily: variables.fontBold
+            fontFamily: fonts.bodyLarge.fontFamily
         }
     });
 
@@ -95,7 +96,7 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
                                 var animal = getAnimalById(eventAnimal);
                                 return(
                                     <View key={animal.id} style={{marginRight: -3}}>
-                                        <View style={{height: 20, width: 20, backgroundColor: variables.bai, borderRadius: 10, justifyContent: "center"}}>
+                                        <View style={{height: 20, width: 20, backgroundColor: colors.accent, borderRadius: 10, justifyContent: "center"}}>
                                             { animal.image !== null ? 
                                                 <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                                                 :
@@ -111,17 +112,17 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
             <View style={styles.contentEventContainer}>
                 {isValidString(eventInfos.lieu) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.bai}, styles.textFontRegular]}>Lieu : </Text>{eventInfos.lieu}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.accent}, styles.textFontRegular]}>Lieu : </Text>{eventInfos.lieu}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.heurededebutbalade) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.bai}, styles.textFontRegular]}>Heure de début : </Text>{eventInfos.heurededebutbalade}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.accent}, styles.textFontRegular]}>Heure de début : </Text>{eventInfos.heurededebutbalade}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.commentaire) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: variables.bai}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.accent}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
                     </View>
                 }
             </View>

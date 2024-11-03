@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, TextInput, Image, ScrollView, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { useState, useEffect, useContext } from "react";
-import Variables from "../components/styles/Variables";
 import { useForm } from "react-hook-form";
 import Button from "../components/Button";
 import Toast from "react-native-toast-message";
@@ -15,8 +14,10 @@ import ModalNotifications from "../components/Modals/ModalNotifications";
 import DatePickerModal from "../components/Modals/ModalDatePicker";
 import RatingInput from "../components/RatingInput";
 import FrequencyInput from "../components/FrequencyInput";
+import { useTheme } from 'react-native-paper';
 
 const ActionScreen = ({ navigation }) => {
+  const { colors, fonts } = useTheme();
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "événement"})
   const animalsService = new AnimalsService;
   const eventService = new EventService;
@@ -234,6 +235,146 @@ const ActionScreen = ({ navigation }) => {
     return String(dateObject.toLocaleDateString("fr-FR", options));
   }
 
+  const styles = StyleSheet.create({
+    image: {
+      flex: 1,
+      height: "100%",
+      width: "100%",
+      resizeMode: "cover",
+      position: "absolute",
+      justifyContent: "center",
+      backgroundColor:  colors.neutral
+    },
+    inputContainer:{
+      alignItems: "center",
+      width: "100%"
+    },
+    textInput:{
+      alignSelf: "flex-start",
+      marginBottom: 5
+    },
+    textButton:{
+      color: "white"
+    },
+    registerButton: {
+      marginBottom: 20,
+      marginTop: 10,
+      backgroundColor: colors.neutral,
+      borderRadius: 10
+    },
+    title: {
+      color: colors.accent,
+      fontSize: 30,
+      letterSpacing: 2,
+      marginBottom:20,
+    },
+    errorInput: {
+      color: "red"
+    },
+    formContainer:{
+      paddingLeft: 30,
+      paddingRight: 30,
+      paddingTop: 10,
+      paddingBottom: 10,
+    },
+    form: {
+      alignItems: "center",
+      backgroundColor: "rgba(255, 255, 255, 1)",
+      justifyContent: "center",
+      width: "90%",
+      marginLeft: "auto",
+      marginRight: "auto",
+      borderRadius: 10,
+      height: "85%",
+      paddingBottom: 10,
+      paddingTop: 10,
+    },
+  loaderEvent: {
+      width: 200,
+      height: 200
+  },
+  loadingEvent: {
+      position: "absolute",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "#000000b8",
+      paddingTop: 50
+    },
+    input: {
+      height: 40,
+      width: "100%",
+      marginBottom: 15,
+      borderRadius: 5,
+      paddingLeft: 15,
+      backgroundColor: colors.quaternary,
+      color: "black",
+      alignSelf: "baseline"
+    },
+    inputTextArea: {
+      height: 100,
+      width: "100%",
+      marginBottom: 15,
+      borderRadius: 5,
+      paddingLeft: 15,
+      paddingRight: 15,
+      backgroundColor: colors.quaternary,
+      color: "black",
+    },
+    datePicker:{
+      marginBottom: 15,
+      alignSelf: "flex-start",
+      borderRadius: 5,
+    },
+    containerInput:{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      with: "100%"
+    },
+  
+    triangle: {
+      display:"flex",
+      alignSelf: "center",
+      backgroundColor: 'transparent',
+      borderStyle: 'solid',
+    },
+    arrowUp: {
+      borderTopWidth: 30,
+      borderRightWidth: 30,
+      borderBottomWidth: 0,
+      borderLeftWidth: 30,
+      borderTopColor: "rgba(255, 255, 255, 1)",
+      borderRightColor: 'transparent',
+      borderBottomColor: "transparent",
+      borderLeftColor: 'transparent',
+    },
+    containerAnimaux: {
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "wrap"
+    },
+    badgeAnimal: {
+      padding: 8,
+    },
+    containerBadgeAnimal: {
+      borderRadius: 5,
+      backgroundColor: colors.quaternary,
+      margin: 5,
+    },
+    containerDate:{
+      flexDirection: "column",
+      alignSelf: "flex-start",
+      width: "100%"
+    },
+    keyboardAvoidingContainer: {
+      flex: 1,
+    },
+  });
+
   return (
     <>
       <Image style={styles.image} source={require("../assets/wallpaper_addEvent.jpg")} />
@@ -352,7 +493,7 @@ const ActionScreen = ({ navigation }) => {
                 <TextInput
                   style={styles.input}
                   placeholder="Exemple : Rendez-vous vétérinaire"
-                  placeholderTextColor={Variables.gris}
+                  placeholderTextColor={colors.secondary}
                   onChangeText={(text) => setValue("nom", text)}
                   defaultValue={getValues("nom")}
                   {...register("nom", { required: true })}
@@ -363,7 +504,7 @@ const ActionScreen = ({ navigation }) => {
                 <TextInput
                   style={styles.input}
                   placeholder="Exemple : Écurie de la Pomme"
-                  placeholderTextColor={Variables.gris}
+                  placeholderTextColor={colors.secondary}
                   onChangeText={(text) => setValue("lieu", text)}
                   defaultValue={getValues("lieu")}
                 />
@@ -378,7 +519,7 @@ const ActionScreen = ({ navigation }) => {
                         placeholder="Exemple : 01/01/1900"
                         keyboardType="numeric"
                         maxLength={10}
-                        placeholderTextColor={Variables.gris}
+                        placeholderTextColor={colors.secondary}
                         onChangeText={(text) => onChangeDate("datedebutbalade", setDate, text)}
                         value={watch("datedebutbalade")}
                         defaultValue={getActualDate()}
@@ -391,7 +532,7 @@ const ActionScreen = ({ navigation }) => {
                         placeholder="Exemple : 12h45"
                         keyboardType="numeric"
                         maxLength={5}
-                        placeholderTextColor={Variables.gris}
+                        placeholderTextColor={colors.secondary}
                         onChangeText={(text) => onChangeTime("heuredebutbalade", setDate, text)}
                         value={watch("heuredebutbalade")}
                         defaultValue={getActualTime()}
@@ -411,7 +552,7 @@ const ActionScreen = ({ navigation }) => {
                         placeholder="Exemple : 12h45"
                         keyboardType="numeric"
                         maxLength={5}
-                        placeholderTextColor={Variables.gris}
+                        placeholderTextColor={colors.secondary}
                         onChangeText={(text) => onChangeTime("heurefinbalade", setDate, text)}
                         value={watch("heurefinbalade")}
                         defaultValue={getActualTime()}
@@ -428,7 +569,7 @@ const ActionScreen = ({ navigation }) => {
                       <TextInput
                         style={styles.input}
                         placeholder="Exemple : CSO"
-                        placeholderTextColor={Variables.gris}
+                        placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("discipline", text)}
                         defaultValue={getValues("discipline")}
                         {...register("discipline", { required: true })}
@@ -447,7 +588,7 @@ const ActionScreen = ({ navigation }) => {
                         style={styles.input}
                         placeholder="Exemple : 1"
                         keyboardType="numeric"
-                        placeholderTextColor={Variables.gris}
+                        placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("depense", text)}
                         defaultValue={getValues("depense")}
                       />
@@ -463,7 +604,7 @@ const ActionScreen = ({ navigation }) => {
                     <TextInput
                       style={styles.input}
                       placeholder="Exemple : CSO"
-                      placeholderTextColor={Variables.gris}
+                      placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("discipline", text)}
                       defaultValue={getValues("discipline")}
                       {...register("discipline", { required: true })}
@@ -474,7 +615,7 @@ const ActionScreen = ({ navigation }) => {
                     <TextInput
                       style={styles.input}
                       placeholder="Exemple : galop 1"
-                      placeholderTextColor={Variables.gris}
+                      placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("epreuve", text)}
                       defaultValue={getValues("epreuve")}
                     />
@@ -485,7 +626,7 @@ const ActionScreen = ({ navigation }) => {
                       style={styles.input}
                       placeholder="Exemple : 1"
                       keyboardType="numeric"
-                      placeholderTextColor={Variables.gris}
+                      placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("dossart", text)}
                       defaultValue={getValues("dossart")}
                     />
@@ -496,7 +637,7 @@ const ActionScreen = ({ navigation }) => {
                       style={styles.input}
                       placeholder="Exemple : 1"
                       keyboardType="numeric"
-                      placeholderTextColor={Variables.gris}
+                      placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("placement", text)}
                       defaultValue={getValues("placement")}
                     />
@@ -514,7 +655,7 @@ const ActionScreen = ({ navigation }) => {
                       style={styles.input}
                       placeholder="Exemple : 1"
                       keyboardType="numeric"
-                      placeholderTextColor={Variables.gris}
+                      placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("depense", text)}
                       defaultValue={getValues("depense")}
                     />
@@ -529,7 +670,7 @@ const ActionScreen = ({ navigation }) => {
                     <TextInput
                       style={styles.input}
                       placeholder="Exemple : Vétérinaire"
-                      placeholderTextColor={Variables.gris}
+                      placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("specialiste", text)}
                       defaultValue={getValues("specialiste")}
                     />
@@ -540,7 +681,7 @@ const ActionScreen = ({ navigation }) => {
                       style={styles.input}
                       placeholder="Exemple : 0 (un doux rêve)"
                       keyboardType="numeric"
-                      placeholderTextColor={Variables.gris}
+                      placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("depense", text)}
                       defaultValue={getValues("depense")}
                     />
@@ -556,7 +697,7 @@ const ActionScreen = ({ navigation }) => {
                     <TextInput
                       style={styles.input}
                       placeholder="Exemple : Cure de CMV"
-                      placeholderTextColor={Variables.gris}
+                      placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("traitement", text)}
                       defaultValue={getValues("traitement")}
                       {...register("traitement", { required: true })}
@@ -584,7 +725,7 @@ const ActionScreen = ({ navigation }) => {
                         style={styles.input}
                         placeholder="Exemple : 1"
                         keyboardType="numeric"
-                        placeholderTextColor={Variables.gris}
+                        placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("depense", text)}
                         defaultValue={getValues("depense")}
                       />
@@ -600,7 +741,7 @@ const ActionScreen = ({ navigation }) => {
                   numberOfLines={4}
                   maxLength={2000}
                   placeholder="Exemple : Rappel des vaccins"
-                  placeholderTextColor={Variables.gris}
+                  placeholderTextColor={colors.secondary}
                   onChangeText={(text) => setValue("commentaire", text)}
                   defaultValue={getValues("commentaire")}
                 />
@@ -673,145 +814,5 @@ const ActionScreen = ({ navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  image: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-    resizeMode: "cover",
-    position: "absolute",
-    justifyContent: "center",
-    backgroundColor:  Variables.isabelle
-  },
-  inputContainer:{
-    alignItems: "center",
-    width: "100%"
-  },
-  textInput:{
-    alignSelf: "flex-start",
-    marginBottom: 5
-  },
-  textButton:{
-    color: "white"
-  },
-  registerButton: {
-    marginBottom: 20,
-    marginTop: 10,
-    backgroundColor: Variables.isabelle,
-    borderRadius: 10
-  },
-  title: {
-    color: Variables.bai,
-    fontSize: 30,
-    letterSpacing: 2,
-    marginBottom:20,
-  },
-  errorInput: {
-    color: "red"
-  },
-  formContainer:{
-    paddingLeft: 30,
-    paddingRight: 30,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  form: {
-    alignItems: "center",
-    backgroundColor: "rgba(255, 255, 255, 1)",
-    justifyContent: "center",
-    width: "90%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    borderRadius: 10,
-    height: "85%",
-    paddingBottom: 10,
-    paddingTop: 10,
-  },
-loaderEvent: {
-    width: 200,
-    height: 200
-},
-loadingEvent: {
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 9,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#000000b8",
-    paddingTop: 50
-  },
-  input: {
-    height: 40,
-    width: "100%",
-    marginBottom: 15,
-    borderRadius: 5,
-    paddingLeft: 15,
-    backgroundColor: Variables.rouan,
-    color: "black",
-    alignSelf: "baseline"
-  },
-  inputTextArea: {
-    height: 100,
-    width: "100%",
-    marginBottom: 15,
-    borderRadius: 5,
-    paddingLeft: 15,
-    paddingRight: 15,
-    backgroundColor: Variables.rouan,
-    color: "black",
-  },
-  datePicker:{
-    marginBottom: 15,
-    alignSelf: "flex-start",
-    borderRadius: 5,
-  },
-  containerInput:{
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    with: "100%"
-  },
-
-  triangle: {
-    display:"flex",
-    alignSelf: "center",
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-  },
-  arrowUp: {
-    borderTopWidth: 30,
-    borderRightWidth: 30,
-    borderBottomWidth: 0,
-    borderLeftWidth: 30,
-    borderTopColor: "rgba(255, 255, 255, 1)",
-    borderRightColor: 'transparent',
-    borderBottomColor: "transparent",
-    borderLeftColor: 'transparent',
-  },
-  containerAnimaux: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap"
-  },
-  badgeAnimal: {
-    padding: 8,
-  },
-  containerBadgeAnimal: {
-    borderRadius: 5,
-    backgroundColor: Variables.rouan,
-    margin: 5,
-  },
-  containerDate:{
-    flexDirection: "column",
-    alignSelf: "flex-start",
-    width: "100%"
-  },
-  keyboardAvoidingContainer: {
-    flex: 1,
-  },
-});
 
 module.exports = ActionScreen;

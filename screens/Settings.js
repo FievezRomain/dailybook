@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useContext, useEffect, useState } from 'react';
 import Back from "../components/Back";
-import Variables from "../components/styles/Variables";
 import LogoutModal from "../components/Modals/ModalLogout";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -9,21 +8,23 @@ import Constants from 'expo-constants';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import variables from "../components/styles/Variables";
 import ModalVerif from "../components/Modals/ModalVerif";
+import { ThemeContext } from '../providers/ThemeProvider';
+import { useTheme } from 'react-native-paper';
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVerifDeleteAccountVisible, setModalVerifDeleteAccountVisible] = useState(false);
     const { currentUser, deleteAccount } = useAuth();
+    const { isDarkTheme, toggleTheme } = useContext(ThemeContext);
+    const { colors, fonts } = useTheme();
 
     const styles = StyleSheet.create({
         card:{
             paddingBottom: 30,
             alignItems: "center",
-            backgroundColor: Variables.blanc,
+            backgroundColor: colors.background,
             justifyContent: "center",
             width: "90%",
             borderRadius: 10,
@@ -36,7 +37,7 @@ const SettingsScreen = ({ }) => {
             shadowOffset: {width: 0, height: 2}
         },
         settings:{
-            backgroundColor: Variables.default,
+            backgroundColor: colors.onSurface,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -74,27 +75,27 @@ const SettingsScreen = ({ }) => {
             borderRadius: 5
         },
         buttonNormal: {
-            backgroundColor: Variables.default,
+            backgroundColor: colors.onSurface,
         },
         buttonPremium:{
-            backgroundColor: Variables.bai_cerise,
+            backgroundColor: colors.error,
         },
         buttonDisconnect:{
-            backgroundColor: Variables.aubere,
+            backgroundColor: colors.tertiary,
         },
         textFontMedium:{
-            fontFamily: Variables.fontMedium
+            fontFamily: fonts.bodyMedium.fontFamily
         },
         textFontRegular:{
-            fontFamily: Variables.fontRegular
+            fontFamily: fonts.default.fontFamily
         },
         textFontBold:{
-            fontFamily: Variables.fontBold
+            fontFamily: fonts.bodyLarge.fontFamily
         }
     });
 
     return (
-        <View style={{backgroundColor: Variables.default,}}>
+        <View style={{backgroundColor: colors.onSurface,}}>
             <View style={styles.contentContainer}>
                 <LogoutModal
                     modalVisible={modalVisible}
@@ -133,14 +134,17 @@ const SettingsScreen = ({ }) => {
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Note")} >
                             <Text style={[styles.textFontMedium]}>Mes notes</Text>
                         </TouchableOpacity>
+                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={toggleTheme}>
+                            <Text style={[styles.textFontMedium]}>Passer en mode {isDarkTheme ? 'clair' : 'sombre'}</Text>
+                        </TouchableOpacity>
                         {/* <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={[{color: Variables.rouan}, styles.textFontMedium]}>Ma structure</Text>
+                            <Text style={[{color: colors.quaternary}, styles.textFontMedium]}>Ma structure</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={[{color: Variables.rouan}, styles.textFontMedium]}>Thèmes</Text>
+                            <Text style={[{color: colors.quaternary}, styles.textFontMedium]}>Thèmes</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => navigation.navigate("DiscoverPremium")}>
-                            <Text style={[{color: Variables.blanc}, styles.textFontMedium]}>Découvrir l'offre premium</Text>
+                            <Text style={[{color: colors.background}, styles.textFontMedium]}>Découvrir l'offre premium</Text>
                         </TouchableOpacity> */}
                         <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVisible(!modalVisible)}>
                             <Text style={styles.textFontMedium}>Déconnexion</Text>

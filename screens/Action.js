@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useState, useContext } from "react";
-import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import ModalEvents from "../components/Modals/ModalEvents";
@@ -11,8 +10,10 @@ import ModalNote from "../components/Modals/ModalNote";
 import ModalAnimal from "../components/Modals/ModalAnimal";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useTheme } from 'react-native-paper';
 
 const ActionScreen = ({ navigation }) => {
+  const { colors, fonts } = useTheme();
   const [messages, setMessages] = useState({message1: "Ajouter un", message2: "élément"})
   const { currentUser } = useAuth();
   const [isEventModalVisible, setEventModalVisible] = useState(false);
@@ -84,6 +85,108 @@ const ActionScreen = ({ navigation }) => {
       text1: "Création d'un objectif réussi"
     });
   }
+
+  const styles = StyleSheet.create({
+    textDesactivated:{
+      color: colors.neutral,
+    },
+    iconAction:{
+      color: colors.accent,
+    },
+    iconButton:{
+      marginRight: 20,
+      color: colors.accent,
+    },
+    bottomBar: {
+      width: '100%',
+      height: 0.7,
+      backgroundColor: colors.accent,
+      marginBottom: 10,
+    },
+    informationsButtonContainer:{
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    actionButtonContainer:{
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    touchableOpacityButtonContent:{
+      display: "flex",
+      flexDirection: "row",
+      width: "100%",
+      justifyContent: "space-between",
+      marginBottom: 5,
+    },
+    image: {
+      flex: 1,
+      height: "100%",
+      width: "100%",
+      resizeMode: "cover",
+      position: "absolute",
+      justifyContent: "center",
+      backgroundColor:  colors.onSurface
+    },
+    formContainer:{
+      paddingLeft: 30,
+      paddingRight: 30,
+      paddingTop: 10,
+      paddingBottom: 10,
+    },
+    form: {
+      alignItems: "center",
+      backgroundColor: colors.background,
+      justifyContent: "center",
+      width: "90%",
+      marginLeft: "auto",
+      marginRight: "auto",
+      borderRadius: 10,
+      height: "85%",
+      paddingBottom: 10,
+      paddingTop: 10,
+      shadowColor: "black",
+      shadowOpacity: 0.1,
+      elevation: 1,
+      shadowRadius:5,
+      shadowOffset:{width:0, height:2}
+    },
+  loaderEvent: {
+      width: 200,
+      height: 200
+  },
+  loadingEvent: {
+      position: "absolute",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "#000000b8",
+      paddingTop: 50
+    },
+    triangle: {
+      display:"flex",
+      alignSelf: "center",
+      backgroundColor: 'transparent',
+      borderStyle: 'solid',
+    },
+    arrowUp: {
+      borderTopWidth: 30,
+      borderRightWidth: 30,
+      borderBottomWidth: 0,
+      borderLeftWidth: 30,
+      borderTopColor: colors.background,
+      borderRightColor: 'transparent',
+      borderBottomColor: "transparent",
+      borderLeftColor: 'transparent',
+    },
+    textFontRegular:{
+      fontFamily: fonts.default.fontFamily
+    },
+    toastContainer: {
+      zIndex: 9999, 
+  },
+  });
 
   return (
     <>
@@ -270,7 +373,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="group" size={20} style={styles.iconButton}/>
-                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Groupe</Text>
+                    <Text style={[{color: colors.quaternary}, styles.textFontRegular]}>Groupe</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
@@ -284,7 +387,7 @@ const ActionScreen = ({ navigation }) => {
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <MaterialCommunityIcons name="barn" size={25} style={styles.iconButton}/>
-                    <Text style={[{color: Variables.rouan}, styles.textFontRegular]}>Structure</Text>
+                    <Text style={[{color: colors.quaternary}, styles.textFontRegular]}>Structure</Text>
                   </View>
                   <View style={styles.actionButtonContainer}>
                     <Entypo name="lock" size={20} style={styles.iconAction}/>
@@ -301,107 +404,5 @@ const ActionScreen = ({ navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  textDesactivated:{
-    color: Variables.isabelle,
-  },
-  iconAction:{
-    color: Variables.bai,
-  },
-  iconButton:{
-    marginRight: 20,
-    color: Variables.bai,
-  },
-  bottomBar: {
-    width: '100%',
-    height: 0.7,
-    backgroundColor: Variables.bai,
-    marginBottom: 10,
-  },
-  informationsButtonContainer:{
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  actionButtonContainer:{
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  touchableOpacityButtonContent:{
-    display: "flex",
-    flexDirection: "row",
-    width: "100%",
-    justifyContent: "space-between",
-    marginBottom: 5,
-  },
-  image: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-    resizeMode: "cover",
-    position: "absolute",
-    justifyContent: "center",
-    backgroundColor:  Variables.default
-  },
-  formContainer:{
-    paddingLeft: 30,
-    paddingRight: 30,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  form: {
-    alignItems: "center",
-    backgroundColor: Variables.blanc,
-    justifyContent: "center",
-    width: "90%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    borderRadius: 10,
-    height: "85%",
-    paddingBottom: 10,
-    paddingTop: 10,
-    shadowColor: "black",
-    shadowOpacity: 0.1,
-    elevation: 1,
-    shadowRadius:5,
-    shadowOffset:{width:0, height:2}
-  },
-loaderEvent: {
-    width: 200,
-    height: 200
-},
-loadingEvent: {
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 9,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#000000b8",
-    paddingTop: 50
-  },
-  triangle: {
-    display:"flex",
-    alignSelf: "center",
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-  },
-  arrowUp: {
-    borderTopWidth: 30,
-    borderRightWidth: 30,
-    borderBottomWidth: 0,
-    borderLeftWidth: 30,
-    borderTopColor: Variables.blanc,
-    borderRightColor: 'transparent',
-    borderBottomColor: "transparent",
-    borderLeftColor: 'transparent',
-  },
-  textFontRegular:{
-    fontFamily: Variables.fontRegular
-  },
-  toastContainer: {
-    zIndex: 9999, 
-},
-});
 
 module.exports = ActionScreen;

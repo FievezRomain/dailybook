@@ -1,5 +1,4 @@
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
-import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect } from 'react';
 import EventsBloc from "../components/EventsBloc";
@@ -13,8 +12,10 @@ import LoggerService from "../services/LoggerService";
 import Constants from 'expo-constants';
 import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button";
+import { useTheme } from 'react-native-paper';
 
 const WelcomeScreen = ({ navigation })=> {
+  const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const [messages, setMessages] = useState({message1 :"Bienvenue", message2: ""});
     const eventService = new EventService();
@@ -91,11 +92,42 @@ const WelcomeScreen = ({ navigation })=> {
       setEvents(await eventService.getEvents(currentUser.email));
     }
 
+    const styles = StyleSheet.create({
+      imagePrez:{
+        height: "90%",
+        width: "100%",
+      },
+      contentContainer:{
+        display: "flex",
+        height: "90%",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center"
+      },
+      image: {
+        height: "100%",
+        backgroundColor: colors.background,
+      },
+      svgCurve:{
+        position: 'absolute',
+        width: Dimensions.get('window').width
+      },
+      summaryContainer:{
+        marginTop: 15,
+        top: -5
+      },
+      summary:{
+        color: colors.background,
+        textAlign: "center",
+        fontSize: 20,
+      },
+    });
+
     return (
       <>
         <View style={{zIndex:999}}><Toast/></View>
-        <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
+        <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.neutral }}>
             <View style={{flex: 1}}>
               <Image
                 source={require('../assets/fond_accueil.png')}
@@ -104,8 +136,8 @@ const WelcomeScreen = ({ navigation })=> {
               
               <TopTab message1={messages.message1} message2={messages.message2} withBackground={true}/>
               <View style={styles.summaryContainer}>
-                  <Text style={[styles.summary, {fontFamily: Variables.fontRegular}]}>{convertDayDateToText()}</Text>
-                  <Text style={[styles.summary, {fontFamily: Variables.fontBold}]}>{convertDateToText()}</Text>
+                  <Text style={[styles.summary, {fontFamily: fonts.default.fontFamily}]}>{convertDayDateToText()}</Text>
+                  <Text style={[styles.summary, {fontFamily: fonts.bodyLarge.fontFamily}]}>{convertDateToText()}</Text>
               </View>
               <View style={{marginTop: 60, paddingBottom: 10}}>
                     <EventsBloc 
@@ -119,9 +151,9 @@ const WelcomeScreen = ({ navigation })=> {
                     />
               </View>
               <View style={{width: "90%", marginBottom: 30, alignSelf: "center", backgroundColor: "white", shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1}, borderRadius: 5}}>
-                <LinearGradient colors={[Variables.bai_brun, Variables.bai]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 1]} style={{flex: 1, padding: 20, borderRadius: 5}}>
-                  <Text style={{fontFamily: Variables.fontBold, color: Variables.blanc, textAlign: "center", marginBottom: 5}}>Avez-vous quelque chose de prévu ?</Text>
-                  <Text style={{fontFamily: Variables.fontRegular, color: Variables.blanc, textAlign: "center", marginBottom: 15}}>Enregistrez toutes les informations ici</Text>
+                <LinearGradient colors={[colors.text, colors.accent]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 1]} style={{flex: 1, padding: 20, borderRadius: 5}}>
+                  <Text style={{fontFamily: fonts.bodyLarge.fontFamily, color: colors.background, textAlign: "center", marginBottom: 5}}>Avez-vous quelque chose de prévu ?</Text>
+                  <Text style={{fontFamily: fonts.default.fontFamily, color: colors.background, textAlign: "center", marginBottom: 15}}>Enregistrez toutes les informations ici</Text>
                   <View style={{width: "70%", alignSelf: "center"}}>
                     <Button
                       onPress={() => navigation.navigate("ActionButton")}
@@ -130,7 +162,7 @@ const WelcomeScreen = ({ navigation })=> {
                       isLong={false}
                       isUppercase={false}
                     >
-                      <Text style={{fontFamily: Variables.fontBold}}>Ajouter un élément</Text>
+                      <Text style={{fontFamily: fonts.bodyLarge.fontFamily}}>Ajouter un élément</Text>
                     </Button>
                   </View>
                 </LinearGradient>
@@ -142,36 +174,5 @@ const WelcomeScreen = ({ navigation })=> {
       </>
       );
 }
-
-const styles = StyleSheet.create({
-  imagePrez:{
-    height: "90%",
-    width: "100%",
-  },
-  contentContainer:{
-    display: "flex",
-    height: "90%",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  image: {
-    height: "100%",
-    backgroundColor: Variables.blanc,
-  },
-  svgCurve:{
-    position: 'absolute',
-    width: Dimensions.get('window').width
-  },
-  summaryContainer:{
-    marginTop: 15,
-    top: -5
-  },
-  summary:{
-    color: Variables.blanc,
-    textAlign: "center",
-    fontSize: 20,
-  },
-})
 
 module.exports = WelcomeScreen;

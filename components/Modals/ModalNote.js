@@ -13,14 +13,15 @@ import {
 } from "react-native";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
-import Variables from "../styles/Variables";
 import NoteService from "../../services/NoteService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import RichTextEditor from "../RichTextEditor";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import sanitizeHtml from 'sanitize-html';
+import { useTheme } from 'react-native-paper';
 
 const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = undefined }) => {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const noteService = new NoteService();
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
@@ -118,6 +119,68 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
         }
     };
 
+    const styles = StyleSheet.create({
+        modalContainer: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            height: "100%",
+            justifyContent: "flex-end",
+        },
+        form: {
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            width: "100%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            borderRadius: 10,
+            height: "90%",
+            paddingBottom: 10,
+            paddingTop: 10,
+        },
+        toastContainer: {
+            zIndex: 9999,
+        },
+        containerActionsButtons: {
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center",
+        },
+        bottomBar: {
+            width: '100%',
+            marginBottom: 10,
+            marginTop: 10,
+            height: 0.3,
+            backgroundColor: colors.text,
+        },
+        formContainer: {
+            paddingLeft: 30,
+            paddingRight: 30,
+            paddingTop: 10,
+            paddingBottom: 10,
+        },
+        input: {
+            height: 40,
+            width: "100%",
+            marginBottom: 15,
+            borderRadius: 5,
+            paddingLeft: 15,
+            backgroundColor: colors.quaternary,
+            color: "black",
+        },
+        inputContainer: {
+            alignItems: "center",
+            width: "100%",
+        },
+        textInput: {
+            alignSelf: "flex-start",
+            marginBottom: 5,
+        },
+        textFontRegular: {
+            fontFamily: fonts.default.fontFamily,
+        },
+        textFontBold: {
+            fontFamily: fonts.bodyLarge.fontFamily,
+        },
+    });
+
     return (
         <Modal
             animationType="slide"
@@ -134,16 +197,16 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                         </View>
                         <View style={styles.containerActionsButtons}>
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={[{ color: Variables.aubere }, styles.textFontRegular]}>Annuler</Text>
+                                <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             <Text style={styles.textFontBold}>
                                 {actionType === "modify" ? "Modifier une note" : "Créer une note"}
                             </Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 {loading ? (
-                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                    <ActivityIndicator size={10} color={colors.accent} />
                                 ) : (
-                                    <Text style={[{ color: Variables.bai }, styles.textFontRegular]}>
+                                    <Text style={[{ color: colors.accent }, styles.textFontRegular]}>
                                         {actionType === "modify" ? "Modifier" : "Créer"}
                                     </Text>
                                 )}
@@ -160,7 +223,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Titre"
-                                        placeholderTextColor={Variables.gris}
+                                        placeholderTextColor={colors.secondary}
                                         onChangeText={(text) => setValue("titre", text)}
                                         defaultValue={watch("titre")}
                                         {...register("titre", { required: true })}
@@ -179,67 +242,5 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
         </Modal>
     );
 }
-
-const styles = StyleSheet.create({
-    modalContainer: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        height: "100%",
-        justifyContent: "flex-end",
-    },
-    form: {
-        backgroundColor: "rgba(255, 255, 255, 1)",
-        width: "100%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        borderRadius: 10,
-        height: "90%",
-        paddingBottom: 10,
-        paddingTop: 10,
-    },
-    toastContainer: {
-        zIndex: 9999,
-    },
-    containerActionsButtons: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        alignItems: "center",
-    },
-    bottomBar: {
-        width: '100%',
-        marginBottom: 10,
-        marginTop: 10,
-        height: 0.3,
-        backgroundColor: Variables.bai_brun,
-    },
-    formContainer: {
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingTop: 10,
-        paddingBottom: 10,
-    },
-    input: {
-        height: 40,
-        width: "100%",
-        marginBottom: 15,
-        borderRadius: 5,
-        paddingLeft: 15,
-        backgroundColor: Variables.rouan,
-        color: "black",
-    },
-    inputContainer: {
-        alignItems: "center",
-        width: "100%",
-    },
-    textInput: {
-        alignSelf: "flex-start",
-        marginBottom: 5,
-    },
-    textFontRegular: {
-        fontFamily: Variables.fontRegular,
-    },
-    textFontBold: {
-        fontFamily: Variables.fontBold,
-    },
-});
 
 export default ModalNote;

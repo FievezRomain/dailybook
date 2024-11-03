@@ -1,11 +1,9 @@
 import { View, Text, StyleSheet, TextInput, Modal, TouchableOpacity } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
-import Variables from "../styles/Variables";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import AvatarPicker from "../AvatarPicker";
 import { Entypo } from '@expo/vector-icons';
-import variables from "../styles/Variables";
 import { FontAwesome } from '@expo/vector-icons';
 import WishService from "../../services/WishService";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
@@ -14,8 +12,10 @@ import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from "../../services/LoggerService";
 import FileStorageService from "../../services/FileStorageService";
+import { useTheme } from 'react-native-paper';
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const wishService = new WishService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
@@ -158,6 +158,115 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         return true;
     }
 
+    const styles = StyleSheet.create({
+        loadingEvent: {
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000000b8",
+            paddingTop: 50
+        },
+        loaderEvent: {
+            width: 200,
+            height: 200
+        },
+        modalContainer: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            height: "100%",
+            justifyContent: "flex-end",
+        },
+        form: {
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            width: "100%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            borderRadius: 10,
+            height: "90%",
+            paddingBottom: 10,
+            paddingTop: 10,
+        },
+        toastContainer: {
+            zIndex: 9999, 
+        },
+        containerActionsButtons: {
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center"
+        },
+        bottomBar: {
+            width: '100%',
+            marginBottom: 10,
+            marginTop: 10,
+            height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
+            backgroundColor: colors.text,
+        },
+        keyboardAvoidingContainer: {
+            flex: 1,
+        },
+        formContainer:{
+            paddingLeft: 30,
+            paddingRight: 30,
+            paddingTop: 10,
+            marginBottom: 10,
+            height: "100%"
+        },
+        inputContainer:{
+            width: "100%"
+        },
+        textInput:{
+            alignSelf: "flex-start",
+            marginBottom: 5
+        },
+        errorInput: {
+            color: "red"
+        },
+        input: {
+            height: 40,
+            width: "100%",
+            marginBottom: 15,
+            borderRadius: 5,
+            paddingLeft: 15,
+            backgroundColor: colors.quaternary,
+            color: "black",
+            alignSelf: "baseline"
+        },
+        imageContainer:{
+            flexDirection: "row",
+            alignSelf: "flex-start",
+            marginTop: 5,
+            marginBottom: 5
+        },
+        avatar: {
+            width: 200,
+            height: 200,
+            borderWidth: 0.5,
+            borderRadius: 5,
+            zIndex: 1,
+            borderColor: colors.accent,
+        },
+        iconContainer:{
+            backgroundColor: colors.accent,
+            padding: 10,
+            borderRadius: 60,
+            height: 110,
+            width: 110,
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    })
+
     return(
         <>
             <Modal
@@ -174,7 +283,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
+                                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             { actionType === "modify" && 
                                 <Text style={[styles.textFontBold]}>Modifier un souhait</Text>
@@ -184,12 +293,12 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 { loading ? 
-                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                    <ActivityIndicator size={10} color={colors.accent} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -202,7 +311,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Selle western"
-                                        placeholderTextColor={Variables.gris}
+                                        placeholderTextColor={colors.secondary}
                                         onChangeText={(text) => setValue("nom", text)}
                                         defaultValue={getValues("nom")}
                                         {...register("nom", { required: true })}
@@ -214,7 +323,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : https://vascoandco.fr"
-                                        placeholderTextColor={Variables.gris}
+                                        placeholderTextColor={colors.secondary}
                                         onChangeText={(text) => setValue("url", text)}
                                         defaultValue={getValues("url")}
                                     />
@@ -230,7 +339,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                         <View style={styles.imageContainer}>
                                             <Image source={{uri: image}} style={styles.avatar} cachePolicy="disk"/>
                                             <TouchableOpacity onPress={() => deleteImage()}>
-                                                <Entypo name="circle-with-cross" size={25} color={variables.bai}/>
+                                                <Entypo name="circle-with-cross" size={25} color={colors.accent}/>
                                             </TouchableOpacity>
                                         </View>
                                     }
@@ -243,7 +352,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                         keyboardType="decimal-pad"
                                         inputMode="decimal"
                                         placeholder="Exemple : 20"
-                                        placeholderTextColor={Variables.gris}
+                                        placeholderTextColor={colors.secondary}
                                         onChangeText={(text) => setValue("prix", text)}
                                         defaultValue={getValues("prix")}
                                     />
@@ -254,14 +363,14 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Par défaut, pour vous"
-                                        placeholderTextColor={Variables.gris}
+                                        placeholderTextColor={colors.secondary}
                                         onChangeText={(text) => setValue("destinataire", text)}
                                         defaultValue={getValues("destinataire")}
                                     />
                                 </View>
                                 <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
                                     <View style={styles.iconContainer}>
-                                        <FontAwesome name="heart" size={60} color={Variables.blanc} style={{marginTop: 5}}/>
+                                        <FontAwesome name="heart" size={60} color={colors.background} style={{marginTop: 5}}/>
                                     </View>
                                 </View>
                             </View>
@@ -272,115 +381,6 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         </>
     )
 }
-
-const styles = StyleSheet.create({
-    loadingEvent: {
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#000000b8",
-        paddingTop: 50
-    },
-    loaderEvent: {
-        width: 200,
-        height: 200
-    },
-    modalContainer: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        height: "100%",
-        justifyContent: "flex-end",
-    },
-    form: {
-        backgroundColor: "rgba(255, 255, 255, 1)",
-        width: "100%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        borderRadius: 10,
-        height: "90%",
-        paddingBottom: 10,
-        paddingTop: 10,
-    },
-    toastContainer: {
-        zIndex: 9999, 
-    },
-    containerActionsButtons: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        alignItems: "center"
-    },
-    bottomBar: {
-        width: '100%',
-        marginBottom: 10,
-        marginTop: 10,
-        height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.bai_brun,
-    },
-    keyboardAvoidingContainer: {
-        flex: 1,
-    },
-    formContainer:{
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingTop: 10,
-        marginBottom: 10,
-        height: "100%"
-    },
-    inputContainer:{
-        width: "100%"
-    },
-    textInput:{
-        alignSelf: "flex-start",
-        marginBottom: 5
-    },
-    errorInput: {
-        color: "red"
-    },
-    input: {
-        height: 40,
-        width: "100%",
-        marginBottom: 15,
-        borderRadius: 5,
-        paddingLeft: 15,
-        backgroundColor: Variables.rouan,
-        color: "black",
-        alignSelf: "baseline"
-    },
-    imageContainer:{
-        flexDirection: "row",
-        alignSelf: "flex-start",
-        marginTop: 5,
-        marginBottom: 5
-    },
-    avatar: {
-        width: 200,
-        height: 200,
-        borderWidth: 0.5,
-        borderRadius: 5,
-        zIndex: 1,
-        borderColor: variables.bai,
-    },
-    iconContainer:{
-        backgroundColor: Variables.bai,
-        padding: 10,
-        borderRadius: 60,
-        height: 110,
-        width: 110,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-})
 
 export default ModalWish;
 

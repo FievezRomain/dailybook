@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
-import Variables from "../styles/Variables";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import { AntDesign } from '@expo/vector-icons';
@@ -8,8 +7,10 @@ import ContactService from "../../services/ContactService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { ActivityIndicator } from "react-native";
 import LoggerService from "../../services/LoggerService";
+import { useTheme } from 'react-native-paper';
 
 const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=undefined}) => {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const contactService = new ContactService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
@@ -103,6 +104,98 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         }
     }
 
+    const styles = StyleSheet.create({
+        loadingEvent: {
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000000b8",
+            paddingTop: 50
+        },
+        loaderEvent: {
+            width: 200,
+            height: 200
+        },
+        modalContainer: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            height: "100%",
+            justifyContent: "flex-end",
+        },
+        form: {
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            width: "100%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            borderRadius: 10,
+            height: "90%",
+            paddingBottom: 10,
+            paddingTop: 10,
+        },
+        toastContainer: {
+            zIndex: 9999, 
+        },
+        containerActionsButtons: {
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center"
+        },
+        bottomBar: {
+            width: '100%',
+            marginBottom: 10,
+            marginTop: 10,
+            height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
+            backgroundColor: colors.text,
+        },
+        keyboardAvoidingContainer: {
+            flex: 1,
+        },
+        formContainer:{
+            paddingLeft: 30,
+            paddingRight: 30,
+            paddingTop: 10,
+            paddingBottom: 10,
+        },
+        inputContainer:{
+            alignItems: "center",
+            width: "100%"
+        },
+        textInput:{
+            alignSelf: "flex-start",
+            marginBottom: 5
+        },
+        input: {
+            height: 40,
+            width: "100%",
+            marginBottom: 15,
+            borderRadius: 5,
+            paddingLeft: 15,
+            backgroundColor: colors.quaternary,
+            color: "black",
+            alignSelf: "baseline"
+        },
+        iconContainer:{
+            backgroundColor: colors.accent,
+            padding: 20,
+            borderRadius: 60,
+            height: 120,
+            width: 120,
+            justifyContent: "center",
+            alignItems: "center"
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    })
+
     return(
         <>
             <Modal
@@ -119,7 +212,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
+                                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             { actionType === "modify" && 
                                 <Text style={styles.textFontBold}>Modifier un contact</Text>
@@ -129,18 +222,18 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 { loading ? 
-                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                    <ActivityIndicator size={10} color={colors.accent} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
                         <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="padding">
-                            <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: Variables.isabelle }}>
+                            <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.neutral }}>
                                 <View style={styles.formContainer}>
 
                                     <View style={styles.inputContainer}>
@@ -149,7 +242,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : John Doe"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("nom", text)}
                                             defaultValue={watch("nom")}
                                             {...register("nom", { required: true })}
@@ -161,7 +254,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Vétérinaire"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("profession", text)}
                                             defaultValue={watch("profession")}
                                         />
@@ -172,7 +265,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : 0606060606"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("telephone", text)}
                                             defaultValue={watch("telephone")}
                                         />
@@ -183,14 +276,14 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                         <TextInput
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : test@gmail.com"
-                                            placeholderTextColor={Variables.gris}
+                                            placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("email", text)}
                                             defaultValue={watch("email")}
                                         />
                                     </View>
                                      <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
                                         <View style={styles.iconContainer}>
-                                            <AntDesign name="contacts" size={70} color={Variables.blanc} style={{marginRight: 5}}/>
+                                            <AntDesign name="contacts" size={70} color={colors.background} style={{marginRight: 5}}/>
                                         </View>
                                      </View>
                                 </View>
@@ -202,98 +295,6 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         </>
     )
 }
-
-const styles = StyleSheet.create({
-    loadingEvent: {
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#000000b8",
-        paddingTop: 50
-    },
-    loaderEvent: {
-        width: 200,
-        height: 200
-    },
-    modalContainer: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        height: "100%",
-        justifyContent: "flex-end",
-    },
-    form: {
-        backgroundColor: "rgba(255, 255, 255, 1)",
-        width: "100%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        borderRadius: 10,
-        height: "90%",
-        paddingBottom: 10,
-        paddingTop: 10,
-    },
-    toastContainer: {
-        zIndex: 9999, 
-    },
-    containerActionsButtons: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        alignItems: "center"
-    },
-    bottomBar: {
-        width: '100%',
-        marginBottom: 10,
-        marginTop: 10,
-        height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.bai_brun,
-    },
-    keyboardAvoidingContainer: {
-        flex: 1,
-    },
-    formContainer:{
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingTop: 10,
-        paddingBottom: 10,
-    },
-    inputContainer:{
-        alignItems: "center",
-        width: "100%"
-    },
-    textInput:{
-        alignSelf: "flex-start",
-        marginBottom: 5
-    },
-    input: {
-        height: 40,
-        width: "100%",
-        marginBottom: 15,
-        borderRadius: 5,
-        paddingLeft: 15,
-        backgroundColor: Variables.rouan,
-        color: "black",
-        alignSelf: "baseline"
-    },
-    iconContainer:{
-        backgroundColor: Variables.bai,
-        padding: 20,
-        borderRadius: 60,
-        height: 120,
-        width: 120,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-})
 
 export default ModalContact;
 

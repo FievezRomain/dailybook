@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
 import Button from './Button';
-import variables from './styles/Variables';
 import { LineChart } from 'react-native-chart-kit';
 import OfferInformations from './OfferInformations';
+import { useTheme } from 'react-native-paper';
 
 const NutritionHistory = ({ animal }) => {
+    const { colors, fonts } = useTheme();
     const data = {
         labels: ['2019', '2020', '2021', '2022', '2023', '2024'],
         datasets: [
@@ -31,7 +32,7 @@ const NutritionHistory = ({ animal }) => {
         <>
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column"}}>
-                    <Text style={{textAlign: "center", color: variables.bai, fontFamily: variables.fontBold, fontSize: 16, paddingVertical: 15}}>Nutrition</Text>
+                    <Text style={{textAlign: "center", color: colors.accent, fontFamily: fonts.bodyLarge.fontFamily, fontSize: 16, paddingVertical: 15}}>Nutrition</Text>
 
                     <View style={{width: "90%", alignSelf: "center"}}>
                         <OfferInformations />
@@ -45,7 +46,7 @@ const NutritionHistory = ({ animal }) => {
                     </View>
 
                     <View style={{width: "90%", marginTop: 20, alignSelf: "center"}}>
-                        <Text style={{color: variables.bai, fontSize: 16}}>Courbe de poids :</Text>
+                        <Text style={{color: colors.accent, fontSize: 16}}>Courbe de poids :</Text>
                         <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10}}>
                             <LineChart
                                 data={data}
@@ -53,19 +54,19 @@ const NutritionHistory = ({ animal }) => {
                                 height={220}
                                 yAxisSuffix=" kg"
                                 chartConfig={{
-                                backgroundColor: variables.rouan,
-                                backgroundGradientFrom: variables.blanc,
-                                backgroundGradientTo: variables.blanc,
+                                backgroundColor: colors.quaternary,
+                                backgroundGradientFrom: colors.background,
+                                backgroundGradientTo: colors.background,
                                 decimalPlaces: 1,
-                                color: (opacity = 1) => variables.bai,
-                                labelColor: (opacity = 1) => variables.bai,
+                                color: (opacity = 1) => colors.accent,
+                                labelColor: (opacity = 1) => colors.accent,
                                 style: {
                                     borderRadius: 16,
                                 },
                                 propsForDots: {
                                     r: '6',
                                     strokeWidth: '2',
-                                    stroke: variables.rouan,
+                                    stroke: colors.quaternary,
                                 },
                                 }}
                                 onDataPointClick={({ value, dataset, getColor, x, y }) =>
@@ -88,20 +89,20 @@ const NutritionHistory = ({ animal }) => {
                                 </TouchableOpacity>
                             )}
                         </View>
-                        <Text style={{color: variables.bai, fontSize: 16}}>Alimentation :</Text>
-                        <View style={{backgroundColor: variables.blanc, borderRadius: 10, padding: 30, marginTop: 20}}>
+                        <Text style={{color: colors.accent, fontSize: 16}}>Alimentation :</Text>
+                        <View style={{backgroundColor: colors.background, borderRadius: 10, padding: 30, marginTop: 20}}>
                             <Text>Nom alimentation :</Text>
                             <TextInput
-                                style={{backgroundColor: variables.rouan, borderRadius: 5, height: 30, marginBottom: 5, marginTop: 5, padding: 10}}
-                                placeholderTextColor={variables.bai}
+                                style={{backgroundColor: colors.quaternary, borderRadius: 5, height: 30, marginBottom: 5, marginTop: 5, padding: 10}}
+                                placeholderTextColor={colors.accent}
                                 defaultValue={animal.food}
                                 placeholder='N/A'
                                 editable={false}
                             />
                             <Text>Quantité :</Text>
                             <TextInput
-                                style={{backgroundColor: variables.rouan, borderRadius: 5, height: 30, marginBottom: 5, marginTop: 5, padding: 10}}
-                                placeholderTextColor={variables.bai}
+                                style={{backgroundColor: colors.quaternary, borderRadius: 5, height: 30, marginBottom: 5, marginTop: 5, padding: 10}}
+                                placeholderTextColor={colors.accent}
                                 defaultValue={animal.quantity != null ? String(animal.quantity) : undefined}
                                 placeholder='N/A'
                                 editable={false}

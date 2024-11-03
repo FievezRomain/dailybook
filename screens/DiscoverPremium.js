@@ -2,12 +2,14 @@ import { View } from "react-native";
 import React from 'react';
 import OfferInformations from '../components/OfferInformations';
 import TopTabSecondary from "../components/TopTabSecondary";
-import variables from "../components/styles/Variables";
 import { ScrollView } from "react-native";
+import { useTheme } from 'react-native-paper';
 
 const DiscoverPremiumScreen = ({ navigation }) => {
+    const { colors, fonts } = useTheme();
+    
     return (
-        <View style={{backgroundColor: variables.default}}>
+        <View style={{backgroundColor: colors.onSurface}}>
             <View style={{height: "100%", width: "90%", alignSelf: "center", display: "flex"}}>
                 <TopTabSecondary
                     message1={"Découvrez"}

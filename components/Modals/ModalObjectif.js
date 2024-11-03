@@ -1,7 +1,6 @@
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
-import Variables from "../styles/Variables";
 import { useForm } from "react-hook-form";
 import ModalAnimals from "./ModalSelectAnimals";
 import AnimalsService from "../../services/AnimalsService";
@@ -16,8 +15,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from "../../services/LoggerService";
+import { useTheme } from 'react-native-paper';
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const animalsService = new AnimalsService;
     const objectifService = new ObjectifService;
@@ -262,6 +263,132 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setValue("datefin", dateFin.toLocaleDateString());
     }
 
+    const styles = StyleSheet.create({
+        loadingEvent: {
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000000b8",
+            paddingTop: 50
+        },
+        loaderEvent: {
+            width: 200,
+            height: 200
+        },
+        modalContainer: {
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            height: "100%",
+            justifyContent: "flex-end",
+        },
+        form: {
+            backgroundColor: "rgba(255, 255, 255, 1)",
+            width: "100%",
+            marginLeft: "auto",
+            marginRight: "auto",
+            borderRadius: 10,
+            height: "90%",
+            paddingBottom: 10,
+            paddingTop: 10,
+        },
+        containerActionsButtons: {
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+            alignItems: "center"
+        },
+        bottomBar: {
+            width: '100%',
+            marginBottom: 10,
+            marginTop: 10,
+            height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
+            backgroundColor: colors.text,
+        },
+        keyboardAvoidingContainer: {
+            flex: 1,
+        },
+        formContainer:{
+            paddingLeft: 30,
+            paddingRight: 30,
+            paddingTop: 10,
+            paddingBottom: 10,
+        },
+        inputContainer:{
+            alignItems: "center",
+            width: "100%"
+        },
+        textInput:{
+            alignSelf: "flex-start",
+            marginBottom: 5
+        },
+        containerAnimaux: {
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap"
+        },
+        badgeAnimal: {
+            padding: 8,
+        },
+        errorInput: {
+            color: "red"
+        },
+        badgeAnimal: {
+            padding: 8,
+        },
+        containerBadgeAnimal: {
+            borderRadius: 5,
+            backgroundColor: colors.quaternary,
+            marginRight: 5,
+            marginBottom: 5,
+        },
+        input: {
+            height: 40,
+            width: "100%",
+            marginBottom: 15,
+            borderRadius: 5,
+            paddingLeft: 15,
+            backgroundColor: colors.quaternary,
+            color: "black",
+            alignSelf: "baseline"
+        },
+        inputSousEtape: {
+            height: 40,
+            width: "95%",
+            borderRadius: 5,
+            paddingLeft: 15,
+            backgroundColor: colors.quaternary,
+            color: "black",
+            marginRight: 10
+        },
+        sousEtapesContainer: {
+            display: "flex",
+            flexDirection: "row",
+            marginBottom: 15,
+            width: "100%",
+            alignItems: "center"
+        },
+        toastContainer: {
+            zIndex: 9999, 
+        },
+        containerDate:{
+            flexDirection: "column",
+            alignSelf: "flex-start",
+            width: "100%",
+            marginBottom: 15,
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    
+    });
+
     return(
         <>
             <Modal
@@ -297,7 +424,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
-                                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
+                                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             { actionType === "modify" && 
                                 <Text style={[styles.textFontBold]}>Modifier un objectif</Text>
@@ -307,12 +434,12 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             }
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 { loading ? 
-                                    <ActivityIndicator size={10} color={Variables.bai} />
+                                    <ActivityIndicator size={10} color={colors.accent} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -349,7 +476,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : Rendez-vous vétérinaire"
-                                        placeholderTextColor={Variables.gris}
+                                        placeholderTextColor={colors.secondary}
                                         onChangeText={(text) => setValue("title", text)}
                                         defaultValue={getValues("title")}
                                         {...register("title", { required: true })}
@@ -403,7 +530,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                                 placeholder="Entrez une valeur"
                                             />
                                             <TouchableOpacity onPress={() => handleRemoveInput(index)}>
-                                                <AntDesign name="delete" size={20} color={Variables.bai}/>
+                                                <AntDesign name="delete" size={20} color={colors.accent}/>
                                             </TouchableOpacity>
                                         </View>
                                     ))}
@@ -425,131 +552,5 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    loadingEvent: {
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#000000b8",
-        paddingTop: 50
-    },
-    loaderEvent: {
-        width: 200,
-        height: 200
-    },
-    modalContainer: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        height: "100%",
-        justifyContent: "flex-end",
-    },
-    form: {
-        backgroundColor: "rgba(255, 255, 255, 1)",
-        width: "100%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        borderRadius: 10,
-        height: "90%",
-        paddingBottom: 10,
-        paddingTop: 10,
-    },
-    containerActionsButtons: {
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        alignItems: "center"
-    },
-    bottomBar: {
-        width: '100%',
-        marginBottom: 10,
-        marginTop: 10,
-        height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.bai_brun,
-    },
-    keyboardAvoidingContainer: {
-        flex: 1,
-    },
-    formContainer:{
-        paddingLeft: 30,
-        paddingRight: 30,
-        paddingTop: 10,
-        paddingBottom: 10,
-    },
-    inputContainer:{
-        alignItems: "center",
-        width: "100%"
-    },
-    textInput:{
-        alignSelf: "flex-start",
-        marginBottom: 5
-    },
-    containerAnimaux: {
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap"
-    },
-    badgeAnimal: {
-        padding: 8,
-    },
-    errorInput: {
-        color: "red"
-    },
-    badgeAnimal: {
-        padding: 8,
-    },
-    containerBadgeAnimal: {
-        borderRadius: 5,
-        backgroundColor: Variables.rouan,
-        marginRight: 5,
-        marginBottom: 5,
-    },
-    input: {
-        height: 40,
-        width: "100%",
-        marginBottom: 15,
-        borderRadius: 5,
-        paddingLeft: 15,
-        backgroundColor: Variables.rouan,
-        color: "black",
-        alignSelf: "baseline"
-    },
-    inputSousEtape: {
-        height: 40,
-        width: "95%",
-        borderRadius: 5,
-        paddingLeft: 15,
-        backgroundColor: Variables.rouan,
-        color: "black",
-        marginRight: 10
-    },
-    sousEtapesContainer: {
-        display: "flex",
-        flexDirection: "row",
-        marginBottom: 15,
-        width: "100%",
-        alignItems: "center"
-    },
-    toastContainer: {
-        zIndex: 9999, 
-    },
-    containerDate:{
-        flexDirection: "column",
-        alignSelf: "flex-start",
-        width: "100%",
-        marginBottom: 15,
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-
-});
 
 export default ModalObjectif;

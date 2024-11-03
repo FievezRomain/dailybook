@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput } from "react-native";
-import variables from "../styles/Variables";
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import Button from "../Button";
 import RatingInput from '../RatingInput';
@@ -12,8 +11,10 @@ import FileStorageService from "../../services/FileStorageService";
 import { Image } from "expo-image";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import DateUtils from '../../utils/DateUtils';
+import { useTheme } from 'react-native-paper';
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const eventService = new EventService();
     var eventBeforeEditCommentaire;
@@ -44,25 +45,25 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return;
         }
         if( event.eventtype === "depense" ){
-            return variables.rouan;
+            return colors.quaternary;
         }
         if( event.eventtype === "balade" ){
-            return variables.bai;
+            return colors.accent;
         }
         if( event.eventtype === "soins" ){
-            return variables.isabelle;
+            return colors.neutral;
         }
         if( event.eventtype === "concours" ){
-            return variables.alezan;
+            return colors.primary;
         }
         if( event.eventtype === "entrainement" ){
-            return variables.aubere;
+            return colors.tertiary;
         }
         if( event.eventtype === "autre" ){
-            return variables.bai_cerise;
+            return colors.error;
         }
         if( event.eventtype === "rdv" ){
-            return variables.bai_brun;
+            return colors.text;
         }
     }
 
@@ -75,7 +76,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 <>
                     <Text style={[{color: styles.colorTextBlack}, styles.textFontBold]}>Dépense</Text>
                     <Text style={[{color: styles.colorTextBlack}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.bai)}
+                    {checkOverdueEvent(event, colors.accent)}
                 </>
             
             );
@@ -85,7 +86,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 <>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Balade</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
@@ -94,7 +95,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 <>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Soins</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
@@ -103,7 +104,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 <>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Concours</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
@@ -112,7 +113,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 <>
                     <Text style={[{color: styles.colorTextBlack}, styles.textFontBold]}>Entrainement</Text>
                     <Text style={[{color: styles.colorTextBlack}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.bai)}
+                    {checkOverdueEvent(event, colors.accent)}
                 </>
             
             );
@@ -122,7 +123,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 <>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Autre</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
@@ -131,7 +132,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 <>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Rendez-vous</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
@@ -142,25 +143,25 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return;
         }
         if( event.eventtype === "depense" ){
-            return (<FontAwesome6 name="money-bill-wave" size={40} color={variables.blanc}/>);
+            return (<FontAwesome6 name="money-bill-wave" size={40} color={colors.background}/>);
         }
         if( event.eventtype === "balade" ){
-            return (<Entypo name="compass" size={40} color={variables.blanc} />);
+            return (<Entypo name="compass" size={40} color={colors.background} />);
         }
         if( event.eventtype === "soins" ){
-            return (<FontAwesome6 name="hand-holding-medical" size={40} color={variables.blanc}/>);
+            return (<FontAwesome6 name="hand-holding-medical" size={40} color={colors.background}/>);
         }
         if( event.eventtype === "concours" ){
-            return (<FontAwesome name="trophy" size={40} color={variables.blanc}/>);
+            return (<FontAwesome name="trophy" size={40} color={colors.background}/>);
         }
         if( event.eventtype === "entrainement" ){
-            return (<Entypo name="traffic-cone" size={40} color={variables.blanc}/>);
+            return (<Entypo name="traffic-cone" size={40} color={colors.background}/>);
         }
         if( event.eventtype === "autre" ){
-            return (<FontAwesome6 name="check-circle" size={40} color={variables.blanc} />);
+            return (<FontAwesome6 name="check-circle" size={40} color={colors.background} />);
         }
         if( event.eventtype === "rdv" ){
-            return (<FontAwesome name="stethoscope" size={40} color={variables.blanc}/>);
+            return (<FontAwesome name="stethoscope" size={40} color={colors.background}/>);
         }
     }
 
@@ -248,7 +249,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             height: "80%",
         },
         card: {
-            backgroundColor: variables.default,
+            backgroundColor: colors.onSurface,
             borderTopStartRadius: 10,
             borderTopEndRadius: 10,
             height: "80%",
@@ -262,7 +263,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             padding: 10
         },
         closeButton: {
-            backgroundColor: variables.default,
+            backgroundColor: colors.onSurface,
             paddingHorizontal: 3,
             paddingVertical: 5,
             borderRadius: 15,
@@ -283,7 +284,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         },
         separator: {
             borderTopWidth: 0.2,
-            borderTopColor: variables.default,
+            borderTopColor: colors.onSurface,
             shadowColor: "black",
             shadowOpacity: 1,
             elevation: 5,
@@ -295,25 +296,25 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             height: 10
         },
         balade: {
-            backgroundColor: variables.bai,
+            backgroundColor: colors.accent,
         },
         autre: {
-            backgroundColor: variables.bai_cerise,
+            backgroundColor: colors.error,
         },
         rdv: {
-            backgroundColor: variables.bai_brun,
+            backgroundColor: colors.text,
         },
         soins: {
-            backgroundColor: variables.isabelle,
+            backgroundColor: colors.neutral,
         },
         entrainement: {
-            backgroundColor: variables.aubere,
+            backgroundColor: colors.tertiary,
         },
         concours: {
-            backgroundColor: variables.alezan,
+            backgroundColor: colors.primary,
         },
         depense: {
-            backgroundColor: variables.rouan,
+            backgroundColor: colors.quaternary,
         },
         tableauIcon: {
             height: isWithRating() ? "45%" : "55%",
@@ -338,10 +339,10 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             marginLeft: 30
         },
         colorTextBlack:{
-            color: variables.bai,
+            color: colors.accent,
         },
         colorTextWhite:{
-            color: variables.blanc,
+            color: colors.background,
         },
         animauxPicturesContainer:{
             marginRight: 10,
@@ -365,13 +366,13 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             marginBottom: 15
         },
         textFontRegular:{
-            fontFamily: variables.fontRegular
+            fontFamily: fonts.default.fontFamily
         },
         textFontMedium:{
-            fontFamily: variables.fontMedium
+            fontFamily: fonts.bodyMedium.fontFamily
         },
         textFontBold:{
-            fontFamily: variables.fontBold
+            fontFamily: fonts.bodyLarge.fontFamily
         }
         
     });
@@ -411,7 +412,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                             var animal = getAnimalById(eventAnimal);
                                             return(
                                                 <View key={animal.id} style={{marginRight: -3}}>
-                                                    <View style={{height: 25, width: 25, backgroundColor: variables.bai, borderRadius: 15, justifyContent: "center"}}>
+                                                    <View style={{height: 25, width: 25, backgroundColor: colors.accent, borderRadius: 15, justifyContent: "center"}}>
                                                         { animal.image !== null ? 
                                                             <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                                                             :
@@ -476,7 +477,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                 <View style={{width: "90%"}}>
                                     <Text style={[{marginBottom: 5}, styles.textFontRegular]}>Commentaire :</Text>
                                     <TextInput
-                                        style={[{backgroundColor: variables.rouan, padding: 10, borderRadius: 5, height: 200}, styles.textFontRegular]}
+                                        style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5, height: 200}, styles.textFontRegular]}
                                         multiline={true}
                                         numberOfLines={4}
                                         maxLength={2000}

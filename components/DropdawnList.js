@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-import variables from './styles/Variables';
+import { useTheme } from 'react-native-paper';
 
   const DropdawnList = ({setValue, value, list}) => {
+    const { colors, fonts } = useTheme();
 
     const renderItem = item => {
       return (
@@ -12,6 +13,54 @@ import variables from './styles/Variables';
         </View>
       );
     };
+
+    const styles = StyleSheet.create({
+      container:{
+          alignItems: "center",
+          marginBottom: 15,
+      },
+      dropdown: {
+        width: "100%",
+        height: 40,
+        backgroundColor: colors.quaternary,
+        borderRadius: 5,
+        padding: 12,
+      },
+      icon: {
+        marginRight: 5,
+      },
+      item: {
+        padding: 17,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      },
+      textItem: {
+        flex: 1,
+        fontSize: 14,
+      },
+      placeholderStyle: {
+        fontSize: 14,
+        fontFamily: fonts.default.fontFamily
+      },
+      selectedTextStyle: {
+        fontSize: 14,
+        fontFamily: fonts.default.fontFamily
+      },
+      iconStyle: {
+        width: 20,
+        height: 20,
+      },
+      inputSearchStyle: {
+        height: 40,
+        fontSize: 14,
+        backgroundColor: colors.background,
+        borderRadius: 5
+      },
+      itemContainerStyle:{
+          backgroundColor: colors.quaternary,
+      },
+    });
 
     return (
         <View style={styles.container}>
@@ -43,51 +92,3 @@ import variables from './styles/Variables';
   };
 
   export default DropdawnList;
-
-  const styles = StyleSheet.create({
-    container:{
-        alignItems: "center",
-        marginBottom: 15,
-    },
-    dropdown: {
-      width: "100%",
-      height: 40,
-      backgroundColor: variables.rouan,
-      borderRadius: 5,
-      padding: 12,
-    },
-    icon: {
-      marginRight: 5,
-    },
-    item: {
-      padding: 17,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    textItem: {
-      flex: 1,
-      fontSize: 14,
-    },
-    placeholderStyle: {
-      fontSize: 14,
-      fontFamily: variables.fontRegular
-    },
-    selectedTextStyle: {
-      fontSize: 14,
-      fontFamily: variables.fontRegular
-    },
-    iconStyle: {
-      width: 20,
-      height: 20,
-    },
-    inputSearchStyle: {
-      height: 40,
-      fontSize: 14,
-      backgroundColor: variables.blanc,
-      borderRadius: 5
-    },
-    itemContainerStyle:{
-        backgroundColor: variables.rouan,
-    },
-  });

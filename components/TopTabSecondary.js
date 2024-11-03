@@ -1,11 +1,12 @@
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
-import Variables from "./styles/Variables";
 import Constants from 'expo-constants';
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome6, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vector-icons';
 import Back from "./Back";
+import { useTheme } from 'react-native-paper';
 
 const TopTabSecondary = ({message1, message2}) => {
+    const { colors, fonts } = useTheme();
     const navigation = useNavigation();
     const styles = StyleSheet.create({
         topTabContainer:{
@@ -15,7 +16,7 @@ const TopTabSecondary = ({message1, message2}) => {
             alignItems: "center",
             paddingRight: 30,
             paddingBottom: 10,
-            backgroundColor: Variables.default
+            backgroundColor: colors.onSurface
         },
         textContainer:{
             flex: 1,
@@ -33,17 +34,17 @@ const TopTabSecondary = ({message1, message2}) => {
             height: 40,
             borderRadius: 50,
             borderWidth: 0.7,
-            borderColor: Variables.bai,
-            backgroundColor: Variables.bai
+            borderColor: colors.accent,
+            backgroundColor: colors.accent
         },
         text:{
-            color: Variables.bai,
+            color: colors.accent,
         },
         textFontRegular:{
-            fontFamily: Variables.fontRegular
+            fontFamily: fonts.default.fontFamily
         },
         textFontBold:{
-            fontFamily: Variables.fontBold
+            fontFamily: fonts.bodyLarge.fontFamily
         }
     });
 

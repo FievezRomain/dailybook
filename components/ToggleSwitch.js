@@ -1,11 +1,39 @@
 import React from 'react';
 import { TouchableOpacity, StyleSheet, View } from 'react-native';
-import variables from './styles/Variables';
+import { useTheme } from 'react-native-paper';
 
 const ToggleSwitch = ({ isActive, onToggle }) => {
+  const { colors, fonts } = useTheme();
+  
   const toggleSwitch = () => {
     onToggle && onToggle(!isActive);
   }; 
+
+  const styles = StyleSheet.create({
+    container: {
+      width: 40,
+      height: 24,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.quaternary,
+      justifyContent: 'center',
+      marginLeft: 10
+    },
+    toggle: {
+      width: 20,
+      height: 20,
+      borderRadius: 10,
+      backgroundColor: 'white',
+    },
+    active: {
+      backgroundColor: colors.text,
+      marginLeft: 20,
+    },
+    inactive: {
+      backgroundColor: colors.quaternary,
+      marginLeft: 0,
+    },
+  });
 
   return (
     <>
@@ -13,7 +41,7 @@ const ToggleSwitch = ({ isActive, onToggle }) => {
         onPress={toggleSwitch}
         style={[
           styles.container,
-          isActive ? { backgroundColor: variables.aubere } : null
+          isActive ? { backgroundColor: colors.tertiary } : null
         ]}
       >
         <View
@@ -23,31 +51,5 @@ const ToggleSwitch = ({ isActive, onToggle }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: 40,
-    height: 24,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: variables.rouan,
-    justifyContent: 'center',
-    marginLeft: 10
-  },
-  toggle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: 'white',
-  },
-  active: {
-    backgroundColor: variables.bai_brun,
-    marginLeft: 20,
-  },
-  inactive: {
-    backgroundColor: variables.rouan,
-    marginLeft: 0,
-  },
-});
 
 export default ToggleSwitch;

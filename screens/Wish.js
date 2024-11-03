@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, FlatList, Dimensions, Linking } from "react-native";
 import React, { useContext, useState, useEffect } from 'react';
-import Variables from "../components/styles/Variables";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { Entypo } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
@@ -14,8 +13,10 @@ import { MaterialIcons } from "@expo/vector-icons";
 import LoggerService from "../services/LoggerService";
 import FileStorageService from "../services/FileStorageService";
 import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
+import { useTheme } from 'react-native-paper';
 
 const WishScreen = ({ navigation }) => {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const [wishs, setWishs] = useState([]);
     const [selectedWish, setSelectedWish] = useState(null);
@@ -95,6 +96,67 @@ const WishScreen = ({ navigation }) => {
         setSelectedWish(wish);
         setModalSubMenuWishVisible(true)
     };
+
+    const styles = StyleSheet.create({
+        loader: {
+            width: 200,
+            height: 200
+          },
+        loading: {
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000000b8",
+            paddingTop: 50
+        },
+        container: {
+            flex: 1,
+            backgroundColor: colors.onSurface,
+        },
+        itemContainer: {
+            flex: 1,
+            margin: 5,
+        },
+        itemContainerSecondColumn: {
+            marginTop: Dimensions.get('window').width * 0.05,
+        },
+        image: {
+            width: '100%',
+            aspectRatio: 1, // Garantit que les images conservent leur ratio original
+            borderRadius: 10,
+        },
+        title: {
+            fontSize: 12,
+            color: colors.accent,
+            marginTop: 5,
+        },
+        labelContainer: {
+            position: 'absolute',
+            top: 10, 
+            left: 10, 
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: 'white',
+            padding: 5,
+            borderRadius: 5,
+            zIndex: 1, 
+        },
+        price: {
+            marginLeft: 5,
+            color: colors.accent,
+            fontSize: 12
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    });
+
     return(
         <>
                 <TopTabSecondary
@@ -135,13 +197,13 @@ const WishScreen = ({ navigation }) => {
                                         <Image source={{uri: fileStorageService.getFileUrl( item.image, currentUser.uid )}} style={styles.image} cachePolicy="disk" />
                                     }
                                     {(item.image === null || item.image === undefined) &&
-                                        <View style={[{backgroundColor: Variables.rouan, alignItems: "center", justifyContent: "center"}, styles.image]}>
+                                        <View style={[{backgroundColor: colors.quaternary, alignItems: "center", justifyContent: "center"}, styles.image]}>
                                             <MaterialIcons name="no-photography" size={50} />
                                         </View>
                                     }
                                     {item.prix !== null && item.prix !== undefined &&
                                         <View style={styles.labelContainer}>
-                                            <Entypo name="price-tag" size={16} color={Variables.bai} /> 
+                                            <Entypo name="price-tag" size={16} color={colors.accent} /> 
                                             <Text style={[styles.price, styles.textFontRegular]}>{item.prix} €</Text> 
                                         </View>
                                     }
@@ -159,65 +221,5 @@ const WishScreen = ({ navigation }) => {
     )
 
 }
-
-const styles = StyleSheet.create({
-    loader: {
-        width: 200,
-        height: 200
-      },
-    loading: {
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#000000b8",
-        paddingTop: 50
-    },
-    container: {
-        flex: 1,
-        backgroundColor: Variables.default,
-    },
-    itemContainer: {
-        flex: 1,
-        margin: 5,
-    },
-    itemContainerSecondColumn: {
-        marginTop: Dimensions.get('window').width * 0.05,
-    },
-    image: {
-        width: '100%',
-        aspectRatio: 1, // Garantit que les images conservent leur ratio original
-        borderRadius: 10,
-    },
-    title: {
-        fontSize: 12,
-        color: Variables.bai,
-        marginTop: 5,
-    },
-    labelContainer: {
-        position: 'absolute',
-        top: 10, 
-        left: 10, 
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'white',
-        padding: 5,
-        borderRadius: 5,
-        zIndex: 1, 
-    },
-    price: {
-        marginLeft: 5,
-        color: Variables.bai,
-        fontSize: 12
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-});
 
 module.exports = WishScreen;

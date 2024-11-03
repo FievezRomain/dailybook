@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Button, Text } from 'react-native';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import variables from './styles/Variables';
 import { TouchableOpacity } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
+  const { colors, fonts } = useTheme();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [selectedDate, setSelectedDate] = useState(defaultValue);
 
@@ -24,11 +25,11 @@ const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
 
   return (
     <>
-      <TouchableOpacity onPress={showDatePicker} style={{backgroundColor: variables.rouan, alignSelf: "flex-start", padding: 10, borderRadius: 5, width: "100%"}}>
+      <TouchableOpacity onPress={showDatePicker} style={{backgroundColor: colors.quaternary, alignSelf: "flex-start", padding: 10, borderRadius: 5, width: "100%"}}>
         {selectedDate ?
-            <Text style={{fontFamily: variables.fontRegular}}>{selectedDate.getHours()}h{selectedDate.getMinutes()}</Text>
+            <Text style={{fontFamily: fonts.default.fontFamily}}>{selectedDate.getHours()}h{selectedDate.getMinutes()}</Text>
           :
-            <Text style={{fontFamily: variables.fontRegular}}>Sélectionner une heure</Text>
+            <Text style={{fontFamily: fonts.default.fontFamily}}>Sélectionner une heure</Text>
         }
       </TouchableOpacity>
       <DateTimePickerModal
@@ -39,7 +40,7 @@ const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
         locale="fr"
         confirmTextIOS='Valider'
         cancelTextIOS='Annuler'
-        buttonTextColorIOS={variables.bai}
+        buttonTextColorIOS={colors.accent}
         themeVariant="light"
       />
     </>

@@ -1,10 +1,11 @@
 import React, { useImperativeHandle, forwardRef }from 'react';
 import { View, Text } from 'react-native';
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
-import variables from './styles/Variables';
 import sanitizeHtml from 'sanitize-html';
+import { useTheme } from 'react-native-paper';
 
 const RichTextEditor = forwardRef(({ defaultValue, onChange }, ref) => {
+  const { colors, fonts } = useTheme();
   const richText = React.useRef();
 
   // Expose the dismissKeyboard method to the parent via ref
@@ -26,7 +27,7 @@ const RichTextEditor = forwardRef(({ defaultValue, onChange }, ref) => {
       <View style={{flex: 1, borderRadius: 5, overflow: 'hidden'}}>
         <RichEditor
           ref={richText}
-          editorStyle={{backgroundColor: variables.rouan, borderRadius: 5}}
+          editorStyle={{backgroundColor: colors.quaternary, borderRadius: 5}}
           initialContentHTML={defaultValue}
           onChange={handleChange}
           placeholder='Votre texte ici'
@@ -45,7 +46,7 @@ const RichTextEditor = forwardRef(({ defaultValue, onChange }, ref) => {
             actions.undo,
             actions.redo
           ]}
-          selectedIconTint={variables.aubere}
+          selectedIconTint={colors.tertiary}
         />
       </View>
     </View>

@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { useState, useEffect } from "react";
-import Variables from "../styles/Variables";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 import ModalAnimals from "./ModalSelectAnimals";
@@ -20,8 +19,10 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { AntDesign } from '@expo/vector-icons';
 import LoggerService from "../../services/LoggerService";
 import DateUtils from "../../utils/DateUtils";
+import { useTheme } from 'react-native-paper';
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
+  const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const animalsService = new AnimalsService;
   const eventService = new EventService;
@@ -437,6 +438,181 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     return true;
   }
 
+  const styles = StyleSheet.create({
+    inputToggleContainer:{
+      display: "flex", 
+      flexDirection: "row", 
+      width: "100%",
+      marginBottom: 15
+    },
+    modalContainer: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      height: "100%",
+      justifyContent: "flex-end",
+    },
+    image: {
+      flex: 1,
+      height: "100%",
+      width: "100%",
+      resizeMode: "cover",
+      position: "absolute",
+      justifyContent: "center",
+      backgroundColor:  colors.neutral
+    },
+    inputContainer:{
+      alignItems: "center",
+      width: "100%"
+    },
+    textInput:{
+      alignSelf: "flex-start",
+      marginBottom: 5
+    },
+    textButton:{
+      color: "white"
+    },
+    containerActionsButtons: {
+      flexDirection: "row",
+      justifyContent: "space-evenly",
+      alignItems: "center"
+    },
+    title: {
+      color: colors.accent,
+      fontSize: 30,
+      letterSpacing: 2,
+      marginBottom:20,
+    },
+    errorInput: {
+      color: "red"
+    },
+    formContainer:{
+      paddingLeft: 30,
+      paddingRight: 30,
+      paddingTop: 10,
+      paddingBottom: 10,
+    },
+    form: {
+      backgroundColor: "rgba(255, 255, 255, 1)",
+      width: "100%",
+      marginLeft: "auto",
+      marginRight: "auto",
+      borderRadius: 10,
+      height: "90%",
+      paddingBottom: 10,
+      paddingTop: 10,
+    },
+  loaderEvent: {
+      width: 200,
+      height: 200
+  },
+  loadingEvent: {
+      position: "absolute",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "#000000b8",
+      paddingTop: 50
+    },
+    input: {
+      height: 40,
+      width: "100%",
+      marginBottom: 15,
+      borderRadius: 5,
+      paddingLeft: 15,
+      backgroundColor: colors.quaternary,
+      color: "black",
+      alignSelf: "baseline"
+    },
+    inputTextArea: {
+      height: 100,
+      width: "100%",
+      marginBottom: 15,
+      borderRadius: 5,
+      paddingLeft: 15,
+      paddingRight: 15,
+      backgroundColor: colors.quaternary,
+      color: "black",
+    },
+    datePicker:{
+      marginBottom: 15,
+      alignSelf: "flex-start",
+      borderRadius: 5,
+    },
+    containerInput:{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      with: "100%"
+    },
+  
+    triangle: {
+      display:"flex",
+      alignSelf: "center",
+      backgroundColor: 'transparent',
+      borderStyle: 'solid',
+    },
+    arrowUp: {
+      borderTopWidth: 30,
+      borderRightWidth: 30,
+      borderBottomWidth: 0,
+      borderLeftWidth: 30,
+      borderTopColor: "rgba(255, 255, 255, 1)",
+      borderRightColor: 'transparent',
+      borderBottomColor: "transparent",
+      borderLeftColor: 'transparent',
+    },
+    containerAnimaux: {
+      display: "flex",
+      flexDirection: "row",
+      flexWrap: "wrap"
+    },
+    badgeAnimal: {
+      padding: 10,
+    },
+    containerBadgeAnimal: {
+      borderRadius: 5,
+      backgroundColor: colors.quaternary,
+      marginRight: 5,
+      marginBottom: 5
+    },
+    containerDate:{
+      flexDirection: "column",
+      alignSelf: "flex-start",
+      width: "100%",
+      marginBottom: 15,
+    },
+    bottomBar: {
+      width: '100%',
+      marginBottom: 10,
+      marginTop: 10,
+      height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
+      backgroundColor: colors.text,
+    },
+    keyboardAvoidingContainer: {
+      flex: 1,
+    },
+    textFontRegular:{
+        fontFamily: fonts.default.fontFamily
+    },
+    textFontMedium:{
+        fontFamily: fonts.bodyMedium.fontFamily
+    },
+    textFontBold:{
+        fontFamily: fonts.bodyLarge.fontFamily
+    },
+    toastContainer: {
+      zIndex: 9999, 
+    },
+    disabled:{
+      backgroundColor: colors.onSurface
+    },
+    disabledText:{
+      color: colors.quaternary
+    }
+  });
+
   return (
     <>
       <Modal
@@ -512,7 +688,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
             <View style={styles.containerActionsButtons}>
 
               <TouchableOpacity onPress={closeModal}>
-                <Text style={[{color: Variables.aubere}, styles.textFontRegular]}>Annuler</Text>
+                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
               </TouchableOpacity>
               { actionType === "modify" && 
                 <Text style={styles.textFontBold}>Modifier un événement</Text>
@@ -522,12 +698,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
               }
               <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                 { loading ? 
-                    <ActivityIndicator size={10} color={Variables.bai} />
+                    <ActivityIndicator size={10} color={colors.accent} />
                   :
                     actionType === "modify" ?
-                      <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Modifier</Text>
+                      <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
                     :
-                      <Text style={[{color: Variables.bai}, styles.textFontRegular]}>Créer</Text>
+                      <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
                 }
               </TouchableOpacity>
             </View>
@@ -546,11 +722,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     </View>
                     {actionType === "modify" && (eventType.id === "soins" || eventType.id === "balade") ?
                       <View style={styles.inputContainer}>
-                        <Text style={[styles.textInput, styles.textFontRegular]}>Date : {actionType === "modify" && (eventType.id === "soins" || eventType.id === "balade") && <Text style={{color: Variables.bai_cerise}}>(Non modifiable)</Text>}</Text>
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Date : {actionType === "modify" && (eventType.id === "soins" || eventType.id === "balade") && <Text style={{color: colors.error}}>(Non modifiable)</Text>}</Text>
                         <TextInput
                           style={[styles.input, styles.textFontRegular, styles.disabledText, styles.disabled]}
                           placeholder="Exemple : 01/01/2024"
-                          placeholderTextColor={Variables.gris}
+                          placeholderTextColor={colors.secondary}
                           defaultValue={convertDateToText("dateevent")}
                           editable={false}
                         />
@@ -614,7 +790,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       <TextInput
                         style={[styles.input, styles.textFontRegular]}
                         placeholder="Exemple : Rendez-vous vétérinaire"
-                        placeholderTextColor={Variables.gris}
+                        placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("nom", text)}
                         defaultValue={getValues("nom")}
                         {...register("nom", { required: true })}
@@ -636,7 +812,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       <TextInput
                         style={[styles.input, styles.textFontRegular]}
                         placeholder="Exemple : Écurie de la Pomme"
-                        placeholderTextColor={Variables.gris}
+                        placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("lieu", text)}
                         defaultValue={getValues("lieu")}
                       />
@@ -651,7 +827,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               placeholder="Exemple : 12h45"
                               keyboardType="numeric"
                               maxLength={5}
-                              placeholderTextColor={Variables.gris}
+                              placeholderTextColor={colors.secondary}
                               onChangeText={(text) => onChangeTime("heuredebutbalade", setDate, text)}
                               value={watch("heuredebutbalade")}
                               defaultValue={getActualTime()}
@@ -673,7 +849,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               placeholder="Exemple : 1"
                               keyboardType="decimal-pad"
                               inputMode="decimal"
-                              placeholderTextColor={Variables.gris}
+                              placeholderTextColor={colors.secondary}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
                             />
@@ -686,7 +862,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               placeholder="Exemple : 12h45"
                               keyboardType="numeric"
                               maxLength={5}
-                              placeholderTextColor={Variables.gris}
+                              placeholderTextColor={colors.secondary}
                               onChangeText={(text) => onChangeTime("heurefinbalade", setDate, text)}
                               value={watch("heurefinbalade")}
                               defaultValue={getActualTime()}
@@ -709,7 +885,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : CSO"
-                              placeholderTextColor={Variables.gris}
+                              placeholderTextColor={colors.secondary}
                               onChangeText={(text) => setValue("discipline", text)}
                               defaultValue={getValues("discipline")}
                             />
@@ -722,7 +898,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               placeholder="Exemple : 1"
                               keyboardType="decimal-pad"
                               inputMode="decimal"
-                              placeholderTextColor={Variables.gris}
+                              placeholderTextColor={colors.secondary}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
                             />
@@ -747,7 +923,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : CSO"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("discipline", text)}
                             defaultValue={getValues("discipline")}
                             {...register("discipline", { required: true })}
@@ -758,7 +934,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Club 1"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("epreuve", text)}
                             defaultValue={getValues("epreuve")}
                           />
@@ -770,7 +946,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             placeholder="Exemple : 1"
                             keyboardType="decimal-pad"
                             inputMode="decimal"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("dossart", text)}
                             defaultValue={getValues("dossart")}
                           />
@@ -782,7 +958,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             placeholder="Exemple : 1"
                             keyboardType="decimal-pad"
                             inputMode="decimal"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("placement", text)}
                             defaultValue={getValues("placement")}
                           />
@@ -794,7 +970,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             placeholder="Exemple : 1"
                             keyboardType="decimal-pad"
                             inputMode="decimal"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
                           />
@@ -816,7 +992,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Vétérinaire"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("specialiste", text)}
                             defaultValue={getValues("specialiste")}
                           />
@@ -828,7 +1004,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             placeholder="Exemple : 0 (un doux rêve)"
                             keyboardType="decimal-pad"
                             inputMode="decimal"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
                           />
@@ -843,7 +1019,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Cure de CMV"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("traitement", text)}
                             defaultValue={getValues("traitement")}
                           />
@@ -857,7 +1033,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           />
                         </View>
                         <View style={styles.inputContainer}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence : {actionType === "modify" && eventType.id === "soins" && <Text style={{color: Variables.bai_cerise}}>(Non modifiable)</Text>}</Text>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence : {actionType === "modify" && eventType.id === "soins" && <Text style={{color: colors.error}}>(Non modifiable)</Text>}</Text>
                           <TouchableOpacity 
                             style={styles.textInput} 
                             onPress={()=>{setModalFrequence(true)}} 
@@ -881,7 +1057,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                               placeholder="Exemple : 1"
                               keyboardType="decimal-pad"
                               inputMode="decimal"
-                              placeholderTextColor={Variables.gris}
+                              placeholderTextColor={colors.secondary}
                               onChangeText={(text) => setValue("depense", text)}
                               defaultValue={getValues("depense")}
                             />
@@ -898,7 +1074,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             placeholder="Exemple : 1"
                             keyboardType="decimal-pad"
                             inputMode="decimal"
-                            placeholderTextColor={Variables.gris}
+                            placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("depense", text)}
                             defaultValue={getValues("depense")}
                           />
@@ -932,7 +1108,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         numberOfLines={4}
                         maxLength={2000}
                         placeholder="Exemple : Ça s'est très bien passé"
-                        placeholderTextColor={Variables.gris}
+                        placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("commentaire", text)}
                         defaultValue={getValues("commentaire")}
                       />
@@ -1011,180 +1187,5 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       </>
     );
 };
-
-const styles = StyleSheet.create({
-  inputToggleContainer:{
-    display: "flex", 
-    flexDirection: "row", 
-    width: "100%",
-    marginBottom: 15
-  },
-  modalContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    height: "100%",
-    justifyContent: "flex-end",
-  },
-  image: {
-    flex: 1,
-    height: "100%",
-    width: "100%",
-    resizeMode: "cover",
-    position: "absolute",
-    justifyContent: "center",
-    backgroundColor:  Variables.isabelle
-  },
-  inputContainer:{
-    alignItems: "center",
-    width: "100%"
-  },
-  textInput:{
-    alignSelf: "flex-start",
-    marginBottom: 5
-  },
-  textButton:{
-    color: "white"
-  },
-  containerActionsButtons: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "center"
-  },
-  title: {
-    color: Variables.bai,
-    fontSize: 30,
-    letterSpacing: 2,
-    marginBottom:20,
-  },
-  errorInput: {
-    color: "red"
-  },
-  formContainer:{
-    paddingLeft: 30,
-    paddingRight: 30,
-    paddingTop: 10,
-    paddingBottom: 10,
-  },
-  form: {
-    backgroundColor: "rgba(255, 255, 255, 1)",
-    width: "100%",
-    marginLeft: "auto",
-    marginRight: "auto",
-    borderRadius: 10,
-    height: "90%",
-    paddingBottom: 10,
-    paddingTop: 10,
-  },
-loaderEvent: {
-    width: 200,
-    height: 200
-},
-loadingEvent: {
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    zIndex: 9,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "#000000b8",
-    paddingTop: 50
-  },
-  input: {
-    height: 40,
-    width: "100%",
-    marginBottom: 15,
-    borderRadius: 5,
-    paddingLeft: 15,
-    backgroundColor: Variables.rouan,
-    color: "black",
-    alignSelf: "baseline"
-  },
-  inputTextArea: {
-    height: 100,
-    width: "100%",
-    marginBottom: 15,
-    borderRadius: 5,
-    paddingLeft: 15,
-    paddingRight: 15,
-    backgroundColor: Variables.rouan,
-    color: "black",
-  },
-  datePicker:{
-    marginBottom: 15,
-    alignSelf: "flex-start",
-    borderRadius: 5,
-  },
-  containerInput:{
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    with: "100%"
-  },
-
-  triangle: {
-    display:"flex",
-    alignSelf: "center",
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-  },
-  arrowUp: {
-    borderTopWidth: 30,
-    borderRightWidth: 30,
-    borderBottomWidth: 0,
-    borderLeftWidth: 30,
-    borderTopColor: "rgba(255, 255, 255, 1)",
-    borderRightColor: 'transparent',
-    borderBottomColor: "transparent",
-    borderLeftColor: 'transparent',
-  },
-  containerAnimaux: {
-    display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap"
-  },
-  badgeAnimal: {
-    padding: 10,
-  },
-  containerBadgeAnimal: {
-    borderRadius: 5,
-    backgroundColor: Variables.rouan,
-    marginRight: 5,
-    marginBottom: 5
-  },
-  containerDate:{
-    flexDirection: "column",
-    alignSelf: "flex-start",
-    width: "100%",
-    marginBottom: 15,
-  },
-  bottomBar: {
-    width: '100%',
-    marginBottom: 10,
-    marginTop: 10,
-    height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-    backgroundColor: Variables.bai_brun,
-  },
-  keyboardAvoidingContainer: {
-    flex: 1,
-  },
-  textFontRegular:{
-      fontFamily: Variables.fontRegular
-  },
-  textFontMedium:{
-      fontFamily: Variables.fontMedium
-  },
-  textFontBold:{
-      fontFamily: Variables.fontBold
-  },
-  toastContainer: {
-    zIndex: 9999, 
-  },
-  disabled:{
-    backgroundColor: Variables.default
-  },
-  disabledText:{
-    color: Variables.rouan
-  }
-});
 
 export default ModalEvents;
