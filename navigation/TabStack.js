@@ -53,7 +53,7 @@ const TabStack = () => {
                 style={{
                   width: 45,
                   height: 45,
-                  backgroundColor: 'white',
+                  backgroundColor: colors.background,
                   borderRadius: 30,
                   justifyContent: 'center',
                   alignItems: 'center',

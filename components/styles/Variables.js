@@ -14,7 +14,9 @@ const variables = {
     fontRegular: "Quicksand-Regular",
     fontMedium: "Quicksand-Medium",
     fontSemiBold: "Quicksand-SemiBold",
-    fontBold: "Quicksand-Bold"
+    fontBold: "Quicksand-Bold",
+    default_dark: "#121212",
+    noir: "#1E1E1E"
   };
   
   export default variables;

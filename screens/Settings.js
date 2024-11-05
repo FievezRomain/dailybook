@@ -126,7 +126,7 @@ const SettingsScreen = ({ }) => {
                             <Text style={styles.textFontMedium}>Mon compte</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Wish")} >
-                            <Text style={styles.textFontMedium}>Ma whishlist</Text>
+                            <Text style={styles.textFontMedium}>Ma wishlist</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Contact")}>
                             <Text style={[styles.textFontMedium]}>Mes contacts</Text>

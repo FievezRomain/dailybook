@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
 import { useState, useContext } from "react";
 import TopTab from '../components/TopTab';
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -10,7 +11,7 @@ import ModalNote from "../components/Modals/ModalNote";
 import ModalAnimal from "../components/Modals/ModalAnimal";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import { useTheme } from 'react-native-paper';
+import { useTheme, Divider } from 'react-native-paper';
 
 const ActionScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -92,20 +93,16 @@ const ActionScreen = ({ navigation }) => {
     },
     iconAction:{
       color: colors.accent,
+      paddingRight: 10
     },
     iconButton:{
       marginRight: 20,
       color: colors.accent,
     },
-    bottomBar: {
-      width: '100%',
-      height: 0.7,
-      backgroundColor: colors.accent,
-      marginBottom: 10,
-    },
     informationsButtonContainer:{
       flexDirection: "row",
       alignItems: "center",
+      paddingLeft: 30
     },
     actionButtonContainer:{
       flexDirection: "row",
@@ -116,33 +113,19 @@ const ActionScreen = ({ navigation }) => {
       flexDirection: "row",
       width: "100%",
       justifyContent: "space-between",
-      marginBottom: 5,
-    },
-    image: {
-      flex: 1,
-      height: "100%",
-      width: "100%",
-      resizeMode: "cover",
-      position: "absolute",
-      justifyContent: "center",
-      backgroundColor:  colors.onSurface
+      paddingBottom: 10,
+      paddingTop: 10
     },
     formContainer:{
-      paddingLeft: 30,
-      paddingRight: 30,
       paddingTop: 10,
       paddingBottom: 10,
     },
     form: {
       alignItems: "center",
-      backgroundColor: colors.background,
       justifyContent: "center",
-      width: "90%",
       marginLeft: "auto",
       marginRight: "auto",
       borderRadius: 10,
-      height: "85%",
-      paddingBottom: 10,
       paddingTop: 10,
       shadowColor: "black",
       shadowOpacity: 0.1,
@@ -185,7 +168,11 @@ const ActionScreen = ({ navigation }) => {
     },
     toastContainer: {
       zIndex: 9999, 
-  },
+    },
+    groupButton:{
+      backgroundColor: colors.background,
+      marginBottom: 10,
+    },
   });
 
   return (
@@ -227,149 +214,181 @@ const ActionScreen = ({ navigation }) => {
         setVisible={setAnimalModalVisible}
         onModify={handleCreateAnimal}
       />
-      <Image style={styles.image} />
       <View style={styles.toastContainer}>
           <Toast />
       </View>
+      <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <View style={styles.form}>
           <ScrollView style={{width:"100%"}} persistentScrollbar={true}>
             <View style={styles.formContainer}>
 
-              <TouchableOpacity onPress={() => setAnimalModalVisible(true)}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <FontAwesome name="paw" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Animal</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+              <View style={styles.groupButton}>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => setAnimalModalVisible(true)}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <FontAwesome name="paw" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Animal</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
+              </View>
 
-              <TouchableOpacity onPress={() => openModalEvent("balade")}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <Entypo name="compass" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Balade</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+              <View style={styles.groupButton}>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => openModalEvent("balade")}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <Entypo name="compass" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Balade</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => openModalEvent("entrainement")}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <Entypo name="traffic-cone" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Entraînement</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => openModalEvent("entrainement")}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <Entypo name="traffic-cone" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Entraînement</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => openModalEvent("concours")}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <FontAwesome name="trophy" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Concours</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => openModalEvent("concours")}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <FontAwesome name="trophy" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Concours</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => openModalEvent("rdv")}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <FontAwesome name="stethoscope" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Rendez-vous médical</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => openModalEvent("rdv")}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <FontAwesome name="stethoscope" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Rendez-vous médical</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => openModalEvent("soins")}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Soin</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => openModalEvent("soins")}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Soin</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => openModalEvent("depense")}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Dépense</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => openModalEvent("depense")}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Dépense</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => openModalEvent("autre")}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <FontAwesome6 name="check-circle" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Autre</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => openModalEvent("autre")}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <FontAwesome6 name="check-circle" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Autre</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
+              </View>
 
-              <TouchableOpacity onPress={() => setObjectifModalVisible(true)}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <SimpleLineIcons name="target" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Objectif</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+              <View style={styles.groupButton}>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => setObjectifModalVisible(true)}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <SimpleLineIcons name="target" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Objectif</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
+              </View>
 
-              <TouchableOpacity onPress={() => setWishModalVisible(true)}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <FontAwesome name="heart" size={20} style={styles.iconButton}/>
-                    <Text style={styles.textFontRegular}>Souhait</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+              <View style={styles.groupButton}>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => setWishModalVisible(true)}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <FontAwesome name="heart" size={20} style={styles.iconButton}/>
+                        <Text style={styles.textFontRegular}>Souhait</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setContactModalVisible(true)}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <AntDesign name="contacts" size={20} style={styles.iconButton}/>
-                    <Text style={[styles.textFontRegular]}>Contact</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => setContactModalVisible(true)}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <AntDesign name="contacts" size={20} style={styles.iconButton}/>
+                        <Text style={[styles.textFontRegular]}>Contact</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => setNoteModalVisible(true)}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <SimpleLineIcons name="note" size={20} style={styles.iconButton}/>
-                    <Text style={[styles.textFontRegular]}>Note</Text>
-                  </View>
-                  <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={() => setNoteModalVisible(true)}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <SimpleLineIcons name="note" size={20} style={styles.iconButton}/>
+                        <Text style={[styles.textFontRegular]}>Note</Text>
+                      </View>
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <View style={styles.bottomBar} />
-              </TouchableOpacity>
+              </View>
 
-              {/* <TouchableOpacity disabled={true}>
+              {/* <TouchableOpacity disabled={true} style={styles.button}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <FontAwesome name="group" size={20} style={styles.iconButton}/>
@@ -380,10 +399,10 @@ const ActionScreen = ({ navigation }) => {
                     <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                   </View>
                 </View>
-                <View style={styles.bottomBar} />
+                <Divider />
               </TouchableOpacity>
 
-              <TouchableOpacity disabled={true}>
+              <TouchableOpacity disabled={true} style={styles.button}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <MaterialCommunityIcons name="barn" size={25} style={styles.iconButton}/>
@@ -394,13 +413,13 @@ const ActionScreen = ({ navigation }) => {
                     <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                   </View>
                 </View>
-                <View style={styles.bottomBar} />
+                <Divider />
               </TouchableOpacity> */}
             </View>
           </ScrollView>
         </View>
-        <View style={[styles.triangle,styles.arrowUp]}/>
       </View>
+      </LinearGradient>
     </>
   );
 };

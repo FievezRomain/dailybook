@@ -32,6 +32,7 @@ const lightTheme = {
     bodyMedium: { fontFamily: variables.fontMedium },
     bodySmall: { fontFamily: variables.fontLight },
     bodyLarge: { fontFamily: variables.fontBold },
+    labelMedium: { fontFamily: variables.fontMedium },
   },
 };
 
@@ -45,9 +46,9 @@ const darkTheme = {
     neutral: variables.isabelle,
     minor: variables.palomino,
     accent: variables.bai,
-    background: variables.blanc,
+    background: variables.noir,
     text: variables.bai_brun,
-    onSurface: variables.default,
+    onSurface: variables.default_dark,
     error: variables.bai_cerise,
     quaternary: variables.rouan,
   },
@@ -56,6 +57,7 @@ const darkTheme = {
     bodyMedium: { fontFamily: variables.fontMedium },
     bodySmall: { fontFamily: variables.fontLight },
     bodyLarge: { fontFamily: variables.fontBold },
+    labelMedium: { fontFamily: variables.fontMedium },
   },
 };
 
@@ -79,7 +81,7 @@ function App() {
   const authService = new AuthService;
 
   Sentry.init({
-    dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
+    //dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
     enableInExpoDevelopment: false,
     debug: true, // Passez à false en production
   });
