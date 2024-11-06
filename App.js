@@ -26,12 +26,15 @@ const lightTheme = {
     onSurface: variables.default,
     error: variables.bai_cerise,
     quaternary: variables.rouan,
+    secondaryContainer: variables.bai,
+    outline: variables.rouan,
   },
   fonts: {
     default: { fontFamily: variables.fontRegular },
     bodyMedium: { fontFamily: variables.fontMedium },
     bodySmall: { fontFamily: variables.fontLight },
     bodyLarge: { fontFamily: variables.fontBold },
+    labelLarge: { fontFamily: variables.fontBold },
   },
 };
 
@@ -50,12 +53,14 @@ const darkTheme = {
     onSurface: variables.default,
     error: variables.bai_cerise,
     quaternary: variables.rouan,
+    secondaryContainer: variables.bai,
   },
   fonts: {
     default: { fontFamily: variables.fontRegular },
     bodyMedium: { fontFamily: variables.fontMedium },
     bodySmall: { fontFamily: variables.fontLight },
     bodyLarge: { fontFamily: variables.fontBold },
+    labelLarge: { fontFamily: variables.fontBold },
   },
 };
 
@@ -81,7 +86,7 @@ function App() {
   Sentry.init({
     dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
     enableInExpoDevelopment: false,
-    debug: true, // Passez à false en production
+    debug: false, // Passez à false en production
   });
 
   useEffect(() => {

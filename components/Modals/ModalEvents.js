@@ -72,7 +72,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Toutes les semaines", id: "tls"},
     {title: "Toutes les 2 semaines", id:"tl2s"},
     {title: "Tous les mois", id:"tlm"}
-  ]
+  ];
+  const arrayState = [
+    {value: 'À faire', label: 'À faire', checkedColor: colors.background, uncheckedColor: colors.text},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text},
+  ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -394,16 +398,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("state", value);
 }
 
-  const getActualTime = ()=>{
-    today = new Date();
-    hour = today.getHours();
-    minutes = today.getMinutes();
-    if ( String(minutes).length == 1 ){
-      minutes = "0" + String(minutes);
-    }
-    return String(hour + "h" + minutes);
-  }
-
   const convertDateToText = (fieldname) =>{
     var date = watch(fieldname);
     if(date == undefined){
@@ -714,8 +708,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <Text style={[styles.textInput, styles.textFontRegular]}>Status de l'événement :</Text>
                     <View style={styles.inputToggleContainer}>
                       <StatePicker
-                        firstState={"À faire"}
-                        secondState={"Terminé"}
+                        arrayState={arrayState}
                         handleChange={handleStateChange}
                         defaultState={watch("state") === undefined ? "À faire" : watch("state")}
                       />

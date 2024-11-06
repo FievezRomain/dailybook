@@ -26,7 +26,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const [animaux, setAnimaux] = useState([]);
     const [selected, setSelected] = useState([]);
-    const [modalDropdownTemporalityVisible, setModalDropdownTemporalityVisible] = useState(false);
     const [temporalityObjectif, setTemporalityObjectif] = useState(false);
     const [inputs, setInputs] = useState(['']);
     const dateUtils = new DateUtils();
@@ -48,10 +47,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         initValuesEvent();
     }, [animaux]);
 
-    useEffect(() => {
-        changeObjectifEndDate();
-    }, [modalDropdownTemporalityVisible])
-
     const getAnimals = async () => {
   
         // Si aucun animal est déjà présent dans la liste, alors
@@ -71,7 +66,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
     const initValuesEvent = () => {
         setValue("id", objectif.id);
         setValue("datedebut", objectif.datedebut === undefined ? new Date().toISOString().split('T')[0] : objectif.datedebut.split('T')[0]);
-        setValue("datefin", objectif.datefin === undefined ? dateUtils.dateFormatter(new Date().toISOString().split('T')[0], "yyyy-mm-dd", "-") : dateUtils.dateFormatter(objectif.datefin.split('T')[0], "yyyy-mm-dd", "-"));
+        setValue("datefin", objectif.datefin === undefined ? new Date().toISOString().split('T')[0] : objectif.datefin.split('T')[0]);
         setValue("title", objectif.title);
         setValue("animaux", objectif.animaux);
         if(objectif.animaux != undefined){
@@ -80,10 +75,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
               setSelected(animaux.filter((item) => objectif.animaux.includes(item.id)));
             }
         }
-        setValue("temporalityobjectif", objectif.temporalityobjectif);
-        if(objectif.temporalityobjectif != undefined){
-            setTemporalityObjectif(list.filter((item) => item.id == objectif.temporalityobjectif)[0]);
-        }
+        setValue("temporalityobjectif", "tobedelete");
         setValue("sousetapes", objectif.sousEtapes);
         if(objectif.sousEtapes != undefined){
             setInputs(objectif.sousEtapes);
@@ -127,20 +119,20 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         } else{
             setValue("animaux", selected.map(function(item) { return item["id"] }));
         }
-        if(temporalityObjectif === false){
-            complete = false;
-            Toast.show({
-                type: "error",
-                position: "top",
-                text1: "Veuillez saisir une temporalité"
-            });
-        }
         if(data.datedebut === undefined){
             complete = false;
             Toast.show({
               type: "error",
               position: "top",
               text1: "Veuillez saisir une date de début pour l'objectif"
+            });
+        }
+        if(data.datefin === undefined){
+            complete = false;
+            Toast.show({
+              type: "error",
+              position: "top",
+              text1: "Veuillez saisir une date de fin pour l'objectif"
             });
         }
         const isNotEmpty = inputs.some(str => str.etape !== undefined && str.etape.trim().length > 0);
@@ -243,25 +235,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
 
     const onChangeDate = (propertyName, selectedDate) => {
         setValue(propertyName, selectedDate);
-        changeObjectifEndDate();
     };
-
-    const changeObjectifEndDate = () => {
-        if(temporalityObjectif === false || temporalityObjectif === undefined || getValues("datedebut") === undefined){
-            return;
-        }
-        var dateFin = new Date(getValues("datedebut"));
-        if(temporalityObjectif.id === "week"){
-            dateFin.setDate(dateFin.getDate() + 7);
-        }
-        if(temporalityObjectif.id === "month"){
-            dateFin.setMonth(dateFin.getMonth() + 1);
-        }
-        if(temporalityObjectif.id === "year"){
-            dateFin.setFullYear(dateFin.getFullYear() + 1);
-        }
-        setValue("datefin", dateFin.toLocaleDateString());
-    }
 
     const styles = StyleSheet.create({
         loadingEvent: {
@@ -407,15 +381,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                     setValue={setValue}
                     valueName={"animaux"}
                 />
-                <ModalDropdwn
-                    list={list}
-                    modalVisible={modalDropdownTemporalityVisible}
-                    setModalVisible={setModalDropdownTemporalityVisible}
-                    setState={setTemporalityObjectif}
-                    state={temporalityObjectif}
-                    setValue={setValue}
-                    valueName={"temporalityobjectif"}
-                />
                 <View style={styles.modalContainer}>
                     <View style={styles.form}>
                         <View style={styles.toastContainer}>
@@ -446,7 +411,24 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                         <View style={styles.bottomBar} />
                         <KeyboardAwareScrollView>
                             <View style={styles.formContainer}>
-                            
+                                <View style={styles.containerDate}>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Date de début : {convertDateToText("datedebut")} <Text style={{color: "red"}}>*</Text></Text>
+                                    <DatePickerModal
+                                        onDayChange={onChangeDate}
+                                        propertyName={"datedebut"}
+                                        defaultDate={getValues("datedebut")}
+                                    />
+                                </View>
+
+                                <View style={styles.containerDate}>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefin")} <Text style={{color: "red"}}>*</Text> </Text>
+                                    <DatePickerModal
+                                        onDayChange={onChangeDate}
+                                        propertyName={"datefin"}
+                                        defaultDate={getValues("datefin")}
+                                    />
+                                </View>
+
                                 <View style={styles.inputContainer}>
                                     <Text style={[styles.textInput, styles.textFontRegular]}>Animal : <Text style={{color: "red"}}>*</Text></Text>
                                     <TouchableOpacity 
@@ -480,42 +462,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                         onChangeText={(text) => setValue("title", text)}
                                         defaultValue={getValues("title")}
                                         {...register("title", { required: true })}
-                                    />
-                                </View>
-
-                                <View style={styles.inputContainer}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Temporalité : <Text style={{color: "red"}}>*</Text></Text>
-                                    <TouchableOpacity 
-                                    style={styles.textInput} 
-                                    onPress={()=>{setModalDropdownTemporalityVisible(true)}} 
-                                    >
-                                    <View style={styles.containerAnimaux}>
-                                        {temporalityObjectif == false &&
-                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Sélectionner une temporalité</Text></View>
-                                        }
-                                        {
-                                        temporalityObjectif != false &&
-                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{temporalityObjectif.title}</Text></View>
-                                        }
-                                    </View>
-                                    </TouchableOpacity>
-                                </View>
-
-                                <View style={styles.containerDate}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Date de début : {convertDateToText("datedebut")} <Text style={{color: "red"}}>*</Text></Text>
-                                    <DatePickerModal
-                                        onDayChange={onChangeDate}
-                                        propertyName={"datedebut"}
-                                        defaultDate={getValues("datedebut")}
-                                    />
-                                </View>
-
-                                <View style={styles.containerDate}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefin")} </Text>
-                                    <TextInput
-                                        value={getValues("datefin")}
-                                        style={styles.input}
-                                        editable={false}
                                     />
                                 </View>
 

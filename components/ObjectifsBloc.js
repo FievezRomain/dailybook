@@ -42,8 +42,14 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
 
     const changeObjectifsDisplay = () => {
         var filteredObjectifs = []
+        if(temporality === "En cours"){
+            filteredObjectifs = objectifsArray.filter((item) =>  item.sousEtapes.some(etape => etape.state === false) 
+                                    && item.animaux.includes(selectedAnimal[0].id) );
+        } else{
+            filteredObjectifs = objectifsArray.filter((item) => item.sousEtapes.every(etape => etape.state === true) 
+                                    && item.animaux.includes(selectedAnimal[0].id) );
+        }
         
-        filteredObjectifs = objectifsArray.filter((item) => item.temporalityobjectif === temporality && item.animaux.includes(selectedAnimal[0].id));
 
         setObjectifsArrayDisplay(filteredObjectifs);
     }
