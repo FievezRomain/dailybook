@@ -12,6 +12,7 @@ import FileStorageService from '../../services/FileStorageService';
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { Image } from "expo-image";
 import { useTheme } from 'react-native-paper';
+import ModalValidation from "../Modals/ModalValidation";
 
 const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {
     const { colors, fonts } = useTheme();
@@ -22,6 +23,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
     const [currentObjectif, setCurrentObjectif] = useState(objectif);
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
+    const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
     useEffect(() =>{
         if(objectif !== undefined){
@@ -52,7 +54,11 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
         handleObjectifChange(objectif);
     }
 
-    const handleDelete = () => {
+    const handleDelete = () =>{
+        setModalValidationDeleteVisible(true);
+    }
+
+    const confirmDelete = () => {
         let data = {};
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
         data["id"] = currentObjectif.id;
@@ -217,6 +223,13 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                 setVisible={setModalObjectifVisible}
                 objectif={currentObjectif}
                 onModify={onModify}
+            />
+            <ModalValidation
+                displayedText={"Êtes-vous sûr de vouloir supprimer l'objectif ?"}
+                onConfirm={confirmDelete}
+                setVisible={setModalValidationDeleteVisible}
+                visible={modalValidationDeleteVisible}
+                title={"Suppression d'un objectif"}
             />
             {/* <View style={styles.objectifContainer} key={objectif.id}>
                 <View style={styles.headerObjectif}>

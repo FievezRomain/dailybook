@@ -8,6 +8,7 @@ import NoteService from '../../services/NoteService';
 import LoggerService from '../../services/LoggerService';
 import HTMLView from 'react-native-htmlview';
 import { useTheme } from 'react-native-paper';
+import ModalValidation from '../Modals/ModalValidation';
 
 const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     const { colors, fonts } = useTheme();
@@ -15,8 +16,13 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     const [modalSubMenuNoteVisible, setModalSubMenuNoteVisible] = useState(false);
     const [modalNote, setModaleNote] = useState(false);
     const noteService = new NoteService();
+    const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
-    const handleDelete = () => {
+    const handleDelete = () =>{
+        setModalValidationDeleteVisible(true);
+    }
+
+    const confirmDelete = () => {
         let data = {};
         data["id"] = note.id;
         noteService.delete(data)
@@ -123,6 +129,13 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
                 setVisible={setModaleNote}
                 note={note}
                 onModify={onModify}
+            />
+            <ModalValidation
+                displayedText={"Êtes-vous sûr de vouloir supprimer la note ?"}
+                onConfirm={confirmDelete}
+                setVisible={setModalValidationDeleteVisible}
+                visible={modalValidationDeleteVisible}
+                title={"Suppression d'une note"}
             />
             <TouchableOpacity style={styles.card} onPress={() => setFocus(!focus)}>
                 <View style={styles.header}>

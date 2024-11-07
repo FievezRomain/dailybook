@@ -14,6 +14,7 @@ import DateUtils from '../utils/DateUtils';
 import LoggerService from "../services/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from 'react-native-paper';
+import ModalValidation from "../components/Modals/ModalValidation";
 
 const PetsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -31,6 +32,7 @@ const PetsScreen = ({ navigation }) => {
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
   const dateUtils = new DateUtils();
+  const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
   
 
   useEffect(() => {
@@ -76,6 +78,10 @@ const PetsScreen = ({ navigation }) => {
   };
 
   const handleDeletePet = async() =>{
+    setModalValidationDeleteVisible(true);
+  }
+
+  const confirmDeletePet = async() =>{
     let data = {};
     // Récupération de l'identifiant de l'utilisateur (propriétaire)
     data["email"] =  currentUser.email;
@@ -185,6 +191,13 @@ const PetsScreen = ({ navigation }) => {
   return (
     <>
     <View style={{zIndex:999}}><Toast/></View>
+      <ModalValidation
+          displayedText={"Êtes-vous sûr de vouloir supprimer l'animal ?"}
+          onConfirm={confirmDeletePet}
+          setVisible={setModalValidationDeleteVisible}
+          visible={modalValidationDeleteVisible}
+          title={"Suppression d'un animal"}
+      />
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2}/>
         <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
