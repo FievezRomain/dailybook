@@ -7,6 +7,7 @@ import Constants from 'expo-constants';
 import { getAuth, signOut } from 'firebase/auth';
 import LoggerService from './LoggerService';
 import { Platform } from 'react-native';
+import * as Localization from 'expo-localization';
 
 export default class AuthService {
 
@@ -156,14 +157,23 @@ export default class AuthService {
     return expoToken;
   }
 
-  async initNotifications() {
+  async getUserInformations() {
     const expoToken = await this.registerForPushNotificationsAsync();
-    if (expoToken) {
-      var data = {};
-      data.expotoken = expoToken;
-      AsyncStorage.setItem("userExpoToken", JSON.stringify(expoToken));
-      return this.loginUser(data);
+    const calendars = await Localization.getCalendars();
+    var userTimezone = "Europe/Warsaw";
+    var data = {};
+
+    if (calendars.length > 0) {
+      userTimezone = calendars[0].timeZone;
+      AsyncStorage.setItem("userTimezone", JSON.stringify(userTimezone));
     }
+    if(expoToken){
+      AsyncStorage.setItem("userExpoToken", JSON.stringify(expoToken));
+    }
+
+    data.timezone = userTimezone;
+    data.expotoken = expoToken;
+    return this.loginUser(data);
   }
 
   async initTrackingActivity() {
