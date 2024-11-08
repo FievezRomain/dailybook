@@ -11,6 +11,7 @@ import ModalContact from "../components/Modals/ModalContact";
 import Toast from "react-native-toast-message";
 import ModalDefaultNoValue from '../components/Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
+import ModalValidation from "../components/Modals/ModalValidation";
 
 const ContactScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
@@ -21,6 +22,7 @@ const ContactScreen = ({ navigation }) => {
     const [modalSubMenuVisible, setModalSubMenuVisible] = useState(false);
     const [contactFocus, setContactFocus] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
     const getContacts = async () => {
         const result = await contactsService.getContacts(currentUser.email);
@@ -99,6 +101,10 @@ const ContactScreen = ({ navigation }) => {
     }
 
     const handleDelete = () =>{
+        setModalValidationDeleteVisible(true);
+    }
+
+    const confirmDelete = () =>{
         let data = {};
         data["id"] = contactFocus.id;
         contactsService.delete(data)
@@ -207,6 +213,13 @@ const ContactScreen = ({ navigation }) => {
                 setVisible={setModalVisible}
                 contact={contactFocus}
                 onModify={onModify}
+            />
+            <ModalValidation
+                displayedText={"Êtes-vous sûr de vouloir supprimer le contact ?"}
+                onConfirm={confirmDelete}
+                setVisible={setModalValidationDeleteVisible}
+                visible={modalValidationDeleteVisible}
+                title={"Suppression d'un contact"}
             />
             <View style={{ flex: 1, backgroundColor: colors.onSurface }}>
                 {contacts.length === 0 ?

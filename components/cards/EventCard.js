@@ -17,6 +17,7 @@ import EventService from "../../services/EventService";
 import LoggerService from '../../services/LoggerService';
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
+import ModalValidation from "../Modals/ModalValidation";
 
 const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=false, withState=false, typeEvent=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -24,6 +25,8 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
     const [modalModificationVisible, setModalModificationVisible] = useState(false);
     const [modalSubMenuEventVisible, setModalSubMenuEventVisible] = useState(false);
     const [modalEventDetailsVisible, setModalEventDetailsVisible] = useState(false);
+    const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
+    const [modalValidationDeleteAllVisible, setModalValidationDeleteAllVisible] = useState(false);
     const animalsService = new AnimalsService;
     const [animaux, setAnimaux] = useState([]);
     const eventService = new EventService();
@@ -138,6 +141,10 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
     });
 
     const handleDelete = () =>{
+        setModalValidationDeleteVisible(true);
+    }
+
+    const confirmDelete = () =>{
         eventInfos.email = currentUser.email;
         
         eventService.delete(eventInfos)
@@ -163,6 +170,10 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
     }
 
     const handleDeleteAll = () =>{
+        setModalValidationDeleteAllVisible(true);
+    }
+
+    const confirmDeleteAll = () =>{
         eventInfos.email = currentUser.email;
         eventInfos.id = eventInfos.idparent === null ? eventInfos.id : eventInfos.idparent;
 
@@ -268,6 +279,20 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                 event={eventInfos}
                 animaux={animaux}
                 handleEventsChange={handleEventsChange}
+            />
+            <ModalValidation
+                displayedText={"Êtes-vous sûr de vouloir supprimer l'événement ?"}
+                onConfirm={confirmDelete}
+                setVisible={setModalValidationDeleteVisible}
+                visible={modalValidationDeleteVisible}
+                title={"Suppression d'un événement"}
+            />
+            <ModalValidation
+                displayedText={"Êtes-vous sûr de vouloir supprimer l'événement ?"}
+                onConfirm={confirmDeleteAll}
+                setVisible={setModalValidationDeleteAllVisible}
+                visible={modalValidationDeleteAllVisible}
+                title={"Suppression d'un événement"}
             />
             {eventInfos.eventtype == "balade" &&
                 <View style={[styles.eventContainer]}>

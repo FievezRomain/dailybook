@@ -233,6 +233,14 @@ const CalendarScreen = ({ navigation }) => {
     }
   }
 
+  const deleteSearchText = () => {
+    if( !filter.date && !filter.animals && !filter.eventType ){
+      setFilter(null);
+    } else{
+      setFilter(new CalendarFilter(filter.date, filter.animals, filter.eventType, null));
+    }
+  }
+
   const styles = StyleSheet.create({
     loaderEvent: {
       width: 200,
@@ -338,8 +346,17 @@ const CalendarScreen = ({ navigation }) => {
               value={filter ? filter.text : null}
               onChangeText={handleSearch}
             />
+            {filter && filter.text && 
+              <TouchableOpacity
+                onPress={() => deleteSearchText()}
+              >
+                <AntDesign name="close" size={16} color={colors.accent}/>
+              </TouchableOpacity>
+            }
+            
           </View>
-          <View>
+          <View style={{flexDirection: "row", alignItems: "center"}}>
+            
             <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
               {filter ? 
                 <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.accent}/>

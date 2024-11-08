@@ -14,6 +14,7 @@ import LoggerService from "../services/LoggerService";
 import FileStorageService from "../services/FileStorageService";
 import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
 import { useTheme } from 'react-native-paper';
+import ModalValidation from "../components/Modals/ModalValidation";
 
 const WishScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
@@ -24,6 +25,7 @@ const WishScreen = ({ navigation }) => {
     const [modalSubMenuWishVisible, setModalSubMenuWishVisible] = useState(false);
     const [modalWishVisible, setModalWishVisible] = useState(false);
     const fileStorageService = new FileStorageService();
+    const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
@@ -63,6 +65,10 @@ const WishScreen = ({ navigation }) => {
     };
 
     const handleDelete = () => {
+        setModalValidationDeleteVisible(true);
+    }
+
+    const confirmDelete = () => {
 
         let data = {};
         data["id"] = selectedWish.id;
@@ -178,6 +184,13 @@ const WishScreen = ({ navigation }) => {
                     setVisible={setModalWishVisible}
                     wish={selectedWish}
                     onModify={onModify}
+                />
+                <ModalValidation
+                    displayedText={"Êtes-vous sûr de vouloir supprimer le souhait ?"}
+                    onConfirm={confirmDelete}
+                    setVisible={setModalValidationDeleteVisible}
+                    visible={modalValidationDeleteVisible}
+                    title={"Suppression d'un souhait"}
                 />
                 <View style={styles.container}>
                     {wishs.length === 0 ?
