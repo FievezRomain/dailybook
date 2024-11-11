@@ -190,7 +190,6 @@ const PetsScreen = ({ navigation }) => {
 
   return (
     <>
-    <View style={{zIndex:999}}><Toast/></View>
       <ModalValidation
           displayedText={"Êtes-vous sûr de vouloir supprimer l'animal ?"}
           onConfirm={confirmDeletePet}

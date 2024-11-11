@@ -104,7 +104,6 @@ const AccountScreen = ({ navigation }) => {
 
     return(
         <>
-        <View style={{zIndex:999}}><Toast/></View>
         <View style={{backgroundColor: colors.onSurface, height: "100%", justifyContent: "space-between"}}>
             <View>
                 <KeyboardAwareScrollView>

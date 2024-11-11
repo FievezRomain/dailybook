@@ -10,6 +10,7 @@ import AuthService from "./services/AuthService";
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import variables from './components/styles/Variables';
 import { ThemeProvider, ThemeContext } from './providers/ThemeProvider';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const lightTheme = {
   ...DefaultTheme,
@@ -122,9 +123,11 @@ function App() {
   return (
     fontsLoaded ?
           <>
-            <ThemeProvider>
-              <ThemedApp />
-            </ThemeProvider>
+            <GestureHandlerRootView>
+              <ThemeProvider>
+                <ThemedApp />
+              </ThemeProvider>
+            </GestureHandlerRootView>
           </>
       :
       <ActivityIndicator size={10} />

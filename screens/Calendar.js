@@ -327,7 +327,6 @@ const CalendarScreen = ({ navigation }) => {
 
   return (
     <>
-      <View style={{zIndex:999}}><Toast/></View>
       <ModalFilterCalendar
         modalVisible={modalFilterVisible}
         setModalVisible={setModalFilterVisible}
