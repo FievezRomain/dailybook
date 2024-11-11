@@ -678,10 +678,10 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
               <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
             </TouchableOpacity>
             { actionType === "modify" && 
-              <Text style={styles.textFontBold}>Modifier un événement</Text>
+              <Text style={styles.textFontBold}>Modifier {eventType && eventType.title.toLowerCase()}</Text>
             }
             { actionType === "create" && 
-              <Text style={styles.textFontBold}>Créer un événement</Text>
+              <Text style={styles.textFontBold}>Créer {eventType && eventType.title.toLowerCase()}</Text>
             }
             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
               { loading ? 
@@ -748,24 +748,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <View key={animal.id} style={styles.containerBadgeAnimal}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{animal.nom}</Text></View>
                           );
                         })}
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-
-                  <View style={styles.inputContainer}>
-                    <Text style={[styles.textInput, styles.textFontRegular]}>Événement : <Text style={{color: "red"}}>*</Text></Text>
-                    <TouchableOpacity 
-                      style={styles.textInput} 
-                      //onPress={()=>{setModalDropdownVisible(true)}} 
-                    >
-                      <View style={styles.containerAnimaux}>
-                        {eventType == false &&
-                          <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Sélectionner un type</Text></View>
-                        }
-                        {
-                          eventType != false &&
-                          <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{eventType.title}</Text></View>
-                        }
                       </View>
                     </TouchableOpacity>
                   </View>

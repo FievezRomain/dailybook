@@ -7,9 +7,19 @@ const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible })
     // variables
     const { colors, fonts } = useTheme();
     const bottomSheet = useRef(null);
+    const [isOpen, setOpen] = useState(false);
+
+    useEffect(() => {
+        if(!isVisible){
+            handlePressOverModal();
+        } else{
+            setOpen(true);
+        }
+    }, [isVisible])
 
     const handlePressOverModal = useCallback(() =>{
         bottomSheet?.current?.close();
+        setTimeout(() => setOpen(false), 250);
     }, [])
 
     const styles = StyleSheet.create({
@@ -19,7 +29,7 @@ const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible })
     });
 
     return(
-        isVisible &&
+        (isVisible || isOpen) &&
             <Portal>
                 <View style={{height: "100%", width: "100%",backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
                     <TouchableOpacity 
