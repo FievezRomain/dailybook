@@ -24,6 +24,7 @@ const StatePicker = ({ arrayState, handleChange, defaultState=undefined }) => {
                     onValueChange={handleChange}
                     buttons={arrayState}
                     style={styles.input}
+                    theme={{colors:{secondaryContainer: colors.quaternary}}}
                 />
             </SafeAreaView>
         </>

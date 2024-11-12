@@ -6,6 +6,7 @@ import { AntDesign } from '@expo/vector-icons';
 import ContactService from "../../services/ContactService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -43,14 +44,8 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undef
             justifyContent: "flex-end",
         },
         form: {
-            backgroundColor: "rgba(255, 255, 255, 1)",
             width: "100%",
-            marginLeft: "auto",
-            marginRight: "auto",
-            borderRadius: 10,
-            height: "90%",
-            paddingBottom: 10,
-            paddingTop: 10,
+            paddingBottom: 40
         },
         toastContainer: {
             zIndex: 9999, 
@@ -107,13 +102,11 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undef
 
     return(
         <>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isVisible}
-                onRequestClose={closeModal}
+            <ModalEditGeneric
+                isVisible={isVisible}
+                setVisible={setVisible}
+                arrayHeight={["90%"]}
             >
-                <View style={styles.modalContainer}>
                     <View style={styles.form}>
                         <View style={styles.containerActionsButtons}>
 
@@ -134,8 +127,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undef
                             </View>
                         </KeyboardAvoidingView>
                     </View>
-                </View>
-            </Modal>
+            </ModalEditGeneric>
         </>
     )
 }

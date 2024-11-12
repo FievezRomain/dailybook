@@ -74,8 +74,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Tous les mois", id:"tlm"}
   ];
   const arrayState = [
-    {value: 'À faire', label: 'À faire', checkedColor: colors.background, uncheckedColor: colors.text},
-    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text},
+    {value: 'À faire', label: 'À faire', checkedColor: colors.background, uncheckedColor: colors.default_dark},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.default_dark},
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
@@ -432,6 +432,33 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     return true;
   }
 
+  const getColorByEventType = (type) => {
+      if( type === undefined ){
+        return;
+      }
+      if( type === "depense" ){
+          return colors.quaternary;
+      }
+      if( type === "balade" ){
+          return colors.accent;
+      }
+      if( type === "soins" ){
+          return colors.neutral;
+      }
+      if( type === "concours" ){
+          return colors.primary;
+      }
+      if( type === "entrainement" ){
+          return colors.tertiary;
+      }
+      if( type === "autre" ){
+          return colors.error;
+      }
+      if( type === "rdv" ){
+          return colors.text;
+      }
+  }
+
   const styles = StyleSheet.create({
     inputToggleContainer:{
       display: "flex", 
@@ -466,9 +493,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     },
     containerActionsButtons: {
       flexDirection: "row",
-      justifyContent: "space-evenly",
-      alignItems: "center",
-      paddingBottom: 15
+      paddingBottom: 15,
+      backgroundColor: eventType ? getColorByEventType(eventType.id) : colors.background
     },
     title: {
       color: colors.accent,
@@ -599,6 +625,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     },
     disabledText:{
       color: colors.quaternary
+    },
+    handleStyleModal:{
+      backgroundColor: eventType ? getColorByEventType(eventType.id) : colors.background,
+      borderTopEndRadius: 15,
+      borderTopStartRadius: 15
+    },
+    handleIndicatorStyle:{
+      backgroundColor: colors.background
     }
   });
 
@@ -608,6 +642,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         isVisible={isVisible}
         setVisible={setVisible}
         arrayHeight={["90%"]}
+        handleStyle={styles.handleStyleModal}
+        handleIndicatorStyle={styles.handleIndicatorStyle}
       >
         <ModalAnimals
         modalVisible={modalVisible}
@@ -674,23 +710,25 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         <View style={styles.form}>
           <View style={styles.containerActionsButtons}>
 
-            <TouchableOpacity onPress={closeModal}>
-              <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
+            <TouchableOpacity onPress={closeModal} style={{width:"33,33%", alignItems: "center"}}>
+              <Text style={[{color: colors.background}, styles.textFontRegular]}>Annuler</Text>
             </TouchableOpacity>
-            { actionType === "modify" && 
-              <Text style={styles.textFontBold}>Modifier {eventType && eventType.title.toLowerCase()}</Text>
-            }
-            { actionType === "create" && 
-              <Text style={styles.textFontBold}>Créer {eventType && eventType.title.toLowerCase()}</Text>
-            }
-            <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+            <View style={{width:"33,33%", alignItems: "center"}}>
+              { actionType === "modify" && 
+                <Text style={styles.textFontBold}>{eventType && eventType.title}</Text>
+              }
+              { actionType === "create" && 
+                <Text style={[styles.textFontBold, {color: colors.background}]}>{eventType && eventType.title}</Text>
+              }
+            </View>
+            <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33,33%", alignItems: "center"}}>
               { loading ? 
                   <ActivityIndicator size={10} color={colors.accent} />
                 :
                   actionType === "modify" ?
-                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                    <Text style={[{color: colors.background}, styles.textFontRegular]}>Modifier</Text>
                   :
-                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                    <Text style={[{color: colors.background}, styles.textFontRegular]}>Créer</Text>
               }
             </TouchableOpacity>
           </View>
@@ -704,6 +742,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       arrayState={arrayState}
                       handleChange={handleStateChange}
                       defaultState={watch("state") === undefined ? "À faire" : watch("state")}
+                      color={colors.quaternary}
                     />
                   </View>
                   {actionType === "modify" && (eventType.id === "soins" || eventType.id === "balade") ?

@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect, useRef, useCallback, useMemo } 
 import { useTheme, Portal } from 'react-native-paper';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 
-const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible }) => {
+const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible, handleStyle = undefined, handleIndicatorStyle = undefined }) => {
     // variables
     const { colors, fonts } = useTheme();
     const bottomSheet = useRef(null);
@@ -19,7 +19,7 @@ const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible })
 
     const handlePressOverModal = useCallback(() =>{
         bottomSheet?.current?.close();
-        setTimeout(() => setOpen(false), 250);
+        setTimeout(() => setOpen(false), 150);
     }, [])
 
     const styles = StyleSheet.create({
@@ -43,6 +43,8 @@ const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible })
                         enableDynamicSizing={false}
                         enablePanDownToClose={true}
                         onClose={() => setVisible(false)}
+                        handleStyle={handleStyle ? handleStyle : null}
+                        handleIndicatorStyle={handleIndicatorStyle ? handleIndicatorStyle : null}
                     >
                         <BottomSheetView style={styles.contentContainer}>
                             {children}

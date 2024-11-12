@@ -10,6 +10,7 @@ const variables = {
     default: "#f4f4f4",
     bai_cerise: "#b07165",
     palomino: "#f6e6ce",
+    default_dark: "black",
     fontLight: "Quicksand-Light",
     fontRegular: "Quicksand-Regular",
     fontMedium: "Quicksand-Medium",

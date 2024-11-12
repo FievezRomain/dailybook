@@ -29,6 +29,7 @@ const lightTheme = {
     quaternary: variables.rouan,
     secondaryContainer: variables.bai,
     outline: variables.rouan,
+    default_dark: variables.default_dark,
   },
   fonts: {
     default: { fontFamily: variables.fontRegular },
@@ -56,6 +57,7 @@ const darkTheme = {
     error: variables.bai_cerise,
     quaternary: variables.rouan,
     secondaryContainer: variables.bai,
+    default_dark: variables.default_dark,
   },
   fonts: {
     default: { fontFamily: variables.fontRegular },
@@ -73,10 +75,8 @@ function ThemedApp() {
   return (
     <PaperProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <NavigationContainer>
-        <AuthenticatedUserProvider>
           <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
           <AuthStack />
-        </AuthenticatedUserProvider>
       </NavigationContainer>
     </PaperProvider>
   );
@@ -123,11 +123,13 @@ function App() {
   return (
     fontsLoaded ?
           <>
-            <GestureHandlerRootView>
-              <ThemeProvider>
-                <ThemedApp />
-              </ThemeProvider>
-            </GestureHandlerRootView>
+            <AuthenticatedUserProvider>
+              <GestureHandlerRootView>
+                <ThemeProvider>
+                  <ThemedApp />
+                </ThemeProvider>
+              </GestureHandlerRootView>
+            </AuthenticatedUserProvider>
           </>
       :
       <ActivityIndicator size={10} />

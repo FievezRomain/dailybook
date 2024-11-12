@@ -12,6 +12,7 @@ import { Image } from "expo-image";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import DateUtils from '../../utils/DateUtils';
 import { useTheme } from 'react-native-paper';
+import ModalEditGeneric from './ModalEditGeneric';
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
     const { colors, fonts } = useTheme();
@@ -378,19 +379,11 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     });
 
     return (
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={isVisible}
-            onRequestClose={closeModal}
+        <ModalEditGeneric
+            isVisible={isVisible}
+            setVisible={setVisible}
+            arrayHeight={["90%"]}
         >
-            <View style={styles.background}>
-                <TouchableOpacity
-                    style={styles.emptyBackground}
-                    onPress={() => closeModal()}
-                ></TouchableOpacity>
-                
-                <View style={styles.card}>
                     <KeyboardAwareScrollView>
                         <View style={{height: 500}}>
                             
@@ -510,9 +503,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                             </Button>
                         </View>
                     </View>
-                </View>
-            </View>
-        </Modal>
+        </ModalEditGeneric>
     );
 };
 

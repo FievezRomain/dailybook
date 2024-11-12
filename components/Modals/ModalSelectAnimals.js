@@ -1,8 +1,8 @@
-import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import Button from "../Button";
-import { useNavigation } from "@react-navigation/native";
 import AnimalsPicker from "../AnimalsPicker";
 import { useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected, setValue, valueName }) => {
   const { colors, fonts } = useTheme();
@@ -83,41 +83,33 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
 
   return (
     <>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
+      <ModalEditGeneric
+        isVisible={modalVisible}
+        setVisible={setModalVisible}
+        arrayHeight={["25%"]}
       >
-        <View style={styles.background}>
-          <TouchableOpacity
-            style={styles.emptyBackground}
-          ></TouchableOpacity>
-          <View style={styles.card}>
-            <AnimalsPicker
-                setAnimaux={setAnimaux}
-                animaux={animaux}
-                mode="multiple"
-                selected={selected}
-                setSelected={setSelected}
-                setValue={setValue}
-                valueName={valueName}
-            />
-            <View style={styles.buttonContainer}>
-                <Button
-                disabled={false}
-                size={"l"}
-                type={"primary"}
-                onPress={() => {
-                    setModalVisible(!modalVisible)
-                }}
-                >
-                <Text style={styles.textFontMedium}>OK</Text>
-                </Button>
-            </View>
+          <AnimalsPicker
+              setAnimaux={setAnimaux}
+              animaux={animaux}
+              mode="multiple"
+              selected={selected}
+              setSelected={setSelected}
+              setValue={setValue}
+              valueName={valueName}
+          />
+          <View style={styles.buttonContainer}>
+              <Button
+              disabled={false}
+              size={"l"}
+              type={"primary"}
+              onPress={() => {
+                  setModalVisible(!modalVisible)
+              }}
+              >
+              <Text style={styles.textFontMedium}>OK</Text>
+              </Button>
           </View>
-        </View>
-      </Modal>
+      </ModalEditGeneric>
     </>
   );
 };
