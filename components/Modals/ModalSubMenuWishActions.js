@@ -1,7 +1,8 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import { FontAwesome6, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleModify, handleDelete, handleShare, handleRedirect }) => {
     const { colors, fonts } = useTheme();
@@ -27,6 +28,7 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
         actionButtonContainer:{
             width: "90%",
             borderRadius: 10,
+            marginTop: 5,
             backgroundColor: colors.quaternary,
             flexDirection: "column",
             justifyContent: "space-evenly",
@@ -36,10 +38,6 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
             padding: 10,
         },
         card: {
-            backgroundColor: colors.background,
-            borderTopStartRadius: 10,
-            borderTopEndRadius: 10,
-            height: "30%",
             justifyContent: "space-evenly",
             alignItems: "center"
             //flexDirection: "row wrap"
@@ -99,17 +97,11 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
 
     return (
         <>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(!modalVisible)}
+        <ModalEditGeneric
+            isVisible={modalVisible}
+            setVisible={setModalVisible}
+            arrayHeight={["30%"]}
         >
-            <View style={styles.background}>
-                <TouchableOpacity
-                    style={styles.emptyBackground}
-                    onPress={() => setModalVisible(false)}
-                ></TouchableOpacity>
                 <View style={styles.card}>
                     <Text style={styles.textFontRegular}>Gérer le souhait</Text>
                     {wish !== null &&
@@ -124,7 +116,7 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        <Divider style={{height: 1}} />
                         <TouchableOpacity style={[styles.actionButton, styles.disabledButton]} onPress={() => onAction(handleShare)} disabled={true}>
                             <View style={styles.informationsActionButton}>
                                 <Feather name="share-2" size={20} style={styles.disabledText}/>
@@ -133,7 +125,7 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        <Divider style={{height: 1}} />
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
@@ -142,7 +134,7 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        <Divider style={{height: 1}} />
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
                             <View style={styles.informationsActionButton}>
                                 <AntDesign name="delete" size={20}/>
@@ -153,8 +145,7 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
-        </Modal>
+        </ModalEditGeneric>
         </>
     );
 };

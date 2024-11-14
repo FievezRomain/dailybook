@@ -228,9 +228,6 @@ const ActionScreen = ({ navigation }) => {
         onModify={handleCreateAnimal}
       />
       <Image style={styles.image} />
-      <View style={styles.toastContainer}>
-          <Toast />
-      </View>
       <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <View style={styles.form}>

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Modal, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import AnimalsService from "../../services/AnimalsService";
@@ -6,6 +6,7 @@ import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import AnimalsPicker from "../AnimalsPicker";
 import { CalendarFilter } from "../../business/models/CalendarFilter";
 import { useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter}) =>{
     const { colors, fonts } = useTheme();
@@ -174,64 +175,54 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
 
     return(
         <>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}
-                onRequestClose={() => setModalVisible(!modalVisible)}
+            <ModalEditGeneric
+                isVisible={modalVisible}
+                setVisible={setModalVisible}
+                arrayHeight={["50%"]}
             >
-                <View style={styles.background}>
-                    <TouchableOpacity
-                        style={styles.emptyBackground}
-                        onPress={() => setModalVisible(false)}
-                    ></TouchableOpacity>
-                    <View style={styles.card}>
-                        <View style={styles.containerActionsButtons}>
-                            <TouchableOpacity onPress={() => setModalVisible(false)}>
-                                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => reset()}>
-                                <Text style={[{color: colors.neutral}, styles.textFontRegular]}>Réinitialiser</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={sendFilter}>
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Appliquer</Text>
-                            </TouchableOpacity>
+                <View style={styles.containerActionsButtons}>
+                    <TouchableOpacity onPress={() => setModalVisible(false)}>
+                        <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => reset()}>
+                        <Text style={[{color: colors.neutral}, styles.textFontRegular]}>Réinitialiser</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={sendFilter}>
+                        <Text style={[{color: colors.accent}, styles.textFontRegular]}>Appliquer</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.bottomBar} />
+                <View style={styles.contentCard}>
+                    <Text style={styles.textFontBold}>Filtrer les événements</Text>
+                    <View style={styles.filtersContainer}>
+                        <View>
+                            <Text style={[styles.textFontRegular, {paddingLeft: 10}]}>Animaux :</Text>
+                            <AnimalsPicker
+                                setAnimaux={setAnimaux}
+                                animaux={animaux}
+                                mode="multiple"
+                                selected={selectedAnimals}
+                                setSelected={setSelectedAnimals}
+                                setValue={setValue}
+                                valueName={"animaux"}
+                            />
                         </View>
-                        <View style={styles.bottomBar} />
-                        <View style={styles.contentCard}>
-                            <Text style={styles.textFontBold}>Filtrer les événements</Text>
-                            <View style={styles.filtersContainer}>
-                                <View>
-                                    <Text style={[styles.textFontRegular, {paddingLeft: 10}]}>Animaux :</Text>
-                                    <AnimalsPicker
-                                        setAnimaux={setAnimaux}
-                                        animaux={animaux}
-                                        mode="multiple"
-                                        selected={selectedAnimals}
-                                        setSelected={setSelectedAnimals}
-                                        setValue={setValue}
-                                        valueName={"animaux"}
-                                    />
-                                </View>
 
-                                <View>
-                                    <Text style={[styles.textFontRegular, {paddingLeft: 10, marginTop: 20}]}>Types d'événement :</Text>
-                                    <View style={styles.itemContainer}>
-                                        {list.map((item, index) => {
-                                            return(
-                                                <TouchableOpacity key={item.id} onPress={() => { handleSelected(item) }} style={[styles.item, checkState(item) ? styles.selected : null]}>
-                                                    <Text style={[styles.title, styles.textFontRegular]}>{item.title}</Text>
-                                                </TouchableOpacity>
-                                            );
-                                        })}
-                                    </View>
-                                </View>
+                        <View>
+                            <Text style={[styles.textFontRegular, {paddingLeft: 10, marginTop: 20}]}>Types d'événement :</Text>
+                            <View style={styles.itemContainer}>
+                                {list.map((item, index) => {
+                                    return(
+                                        <TouchableOpacity key={item.id} onPress={() => { handleSelected(item) }} style={[styles.item, checkState(item) ? styles.selected : null]}>
+                                            <Text style={[styles.title, styles.textFontRegular]}>{item.title}</Text>
+                                        </TouchableOpacity>
+                                    );
+                                })}
                             </View>
                         </View>
-                        
                     </View>
                 </View>
-            </Modal>
+            </ModalEditGeneric>
         </>
     );
 }

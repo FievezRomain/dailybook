@@ -1,7 +1,8 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import { FontAwesome6, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handleModify, handleDelete, handleDeleteAll, handleShare }) => {
     const { colors, fonts } = useTheme();
@@ -27,6 +28,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
         actionButtonContainer:{
             width: "90%",
             borderRadius: 10,
+            marginTop: 15,
             backgroundColor: colors.quaternary,
             flexDirection: "column",
             justifyContent: "space-evenly",
@@ -36,10 +38,6 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
             padding: 15,
         },
         card: {
-            backgroundColor: colors.background,
-            borderTopStartRadius: 10,
-            borderTopEndRadius: 10,
-            height: "30%",
             justifyContent: "space-evenly",
             alignItems: "center"
             //flexDirection: "row wrap"
@@ -99,17 +97,11 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
 
     return (
         <>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(!modalVisible)}
+        <ModalEditGeneric
+            isVisible={modalVisible}
+            setVisible={setModalVisible}
+            arrayHeight={["30%"]}
         >
-            <View style={styles.background}>
-                <TouchableOpacity
-                    style={styles.emptyBackground}
-                    onPress={() => setModalVisible(false)}
-                ></TouchableOpacity>
                 <View style={styles.card}>
                     <Text style={styles.textFontRegular}>Gérer l'événement</Text>
                     <View style={styles.actionButtonContainer}>
@@ -121,7 +113,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        <Divider style={{height: 1}}/>
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
@@ -133,7 +125,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                         { ((event.eventtype !== "soins" && event.eventtype !== "balade") || 
                             ((event.eventtype === "soins" || event.eventtype === "balade") && event.idparent !== null && event.idparent !== undefined)) &&
                             <>
-                                <View style={styles.bottomBar} />
+                                <Divider style={{height: 1}}/>
                                 <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
                                     <View style={styles.informationsActionButton}>
                                         <AntDesign name="delete" size={20}/>
@@ -146,7 +138,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                         }
                         {(event.eventtype === "soins" || event.eventtype === "balade") && 
                             <>
-                                <View style={styles.bottomBar} />
+                                <Divider style={{height: 1}}/>
                                 <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDeleteAll)}>
                                     <View style={styles.informationsActionButton}>
                                         <AntDesign name="delete" size={20}/>
@@ -159,8 +151,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
                         }
                     </View>
                 </View>
-            </View>
-        </Modal>
+        </ModalEditGeneric>
         </>
     );
 };

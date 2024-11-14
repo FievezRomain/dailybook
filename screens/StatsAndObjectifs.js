@@ -21,7 +21,7 @@ const StatsScreen = ({ navigation }) => {
     {value: 'En cours', label: 'En cours', checkedColor: colors.background, uncheckedColor: colors.text},
     {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text},
   ];
-  const [temporality, setTemporality] = useState(arrayState[0]);
+  const [temporality, setTemporality] = useState('En cours');
   const [animaux, setAnimaux] = useState([]);
   const [selectedAnimal, setSelectedAnimal] = useState([]);
   const animalsService = new AnimalsService;
@@ -162,7 +162,6 @@ const StatsScreen = ({ navigation }) => {
 
   return (
     <>
-      <View style={{zIndex:999}}><Toast/></View>
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2} />
         <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
@@ -193,6 +192,7 @@ const StatsScreen = ({ navigation }) => {
               arrayState={arrayState}
               handleChange={onTemporalityChange}
               defaultState={temporality}
+              color={colors.secondaryContainer}
             />
           </View>
 

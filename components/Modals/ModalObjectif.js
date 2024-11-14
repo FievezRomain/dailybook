@@ -15,7 +15,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from "../../services/LoggerService";
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -258,19 +259,14 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             justifyContent: "flex-end",
         },
         form: {
-            backgroundColor: "rgba(255, 255, 255, 1)",
             width: "100%",
-            marginLeft: "auto",
-            marginRight: "auto",
-            borderRadius: 10,
-            height: "90%",
-            paddingBottom: 10,
-            paddingTop: 10,
+            paddingBottom: 40
         },
         containerActionsButtons: {
             flexDirection: "row",
             justifyContent: "space-evenly",
-            alignItems: "center"
+            alignItems: "center",
+            paddingBottom: 15
         },
         bottomBar: {
             width: '100%',
@@ -365,11 +361,10 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
 
     return(
         <>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isVisible}
-                onRequestClose={closeModal}
+            <ModalEditGeneric
+                isVisible={isVisible}
+                setVisible={setVisible}
+                arrayHeight={["90%"]}
             >
                 <ModalAnimals
                     modalVisible={modalAnimalVisible}
@@ -381,11 +376,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                     setValue={setValue}
                     valueName={"animaux"}
                 />
-                <View style={styles.modalContainer}>
                     <View style={styles.form}>
-                        <View style={styles.toastContainer}>
-                            <Toast />
-                        </View>
                         <View style={styles.containerActionsButtons}>
 
                             <TouchableOpacity onPress={closeModal}>
@@ -408,7 +399,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 }
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.bottomBar} />
+                        <Divider />
                         <KeyboardAwareScrollView>
                             <View style={styles.formContainer}>
                                 <View style={styles.containerDate}>
@@ -493,8 +484,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             </View>
                         </KeyboardAwareScrollView>
                     </View>
-                </View>
-            </Modal>
+            </ModalEditGeneric>
         </>
     );
 }

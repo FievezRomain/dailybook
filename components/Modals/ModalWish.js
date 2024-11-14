@@ -12,7 +12,8 @@ import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from "../../services/LoggerService";
 import FileStorageService from "../../services/FileStorageService";
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -179,14 +180,8 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
             justifyContent: "flex-end",
         },
         form: {
-            backgroundColor: "rgba(255, 255, 255, 1)",
             width: "100%",
-            marginLeft: "auto",
-            marginRight: "auto",
-            borderRadius: 10,
-            height: "90%",
-            paddingBottom: 10,
-            paddingTop: 10,
+            paddingBottom: 40
         },
         toastContainer: {
             zIndex: 9999, 
@@ -194,7 +189,8 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         containerActionsButtons: {
             flexDirection: "row",
             justifyContent: "space-evenly",
-            alignItems: "center"
+            alignItems: "center",
+            paddingBottom: 10
         },
         bottomBar: {
             width: '100%',
@@ -269,115 +265,109 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
 
     return(
         <>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isVisible}
-                onRequestClose={closeModal}
+            <ModalEditGeneric
+                isVisible={isVisible}
+                setVisible={setVisible}
+                arrayHeight={["90%"]}
             >
-                <View style={styles.modalContainer}>
-                    <View style={styles.form}>
-                        <View style={styles.toastContainer}>
-                            <Toast />
-                        </View>
-                        <View style={styles.containerActionsButtons}>
+                <View style={styles.form}>
+                    <View style={styles.containerActionsButtons}>
 
-                            <TouchableOpacity onPress={closeModal}>
-                                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
-                            </TouchableOpacity>
-                            { actionType === "modify" && 
-                                <Text style={[styles.textFontBold]}>Modifier un souhait</Text>
-                            }
-                            { actionType === "create" && 
-                                <Text style={[styles.textFontBold]}>Créer un souhait</Text>
-                            }
-                            <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                { loading ? 
-                                    <ActivityIndicator size={10} color={colors.accent} />
+                        <TouchableOpacity onPress={closeModal}>
+                            <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
+                        </TouchableOpacity>
+                        { actionType === "modify" && 
+                            <Text style={[styles.textFontBold]}>Modifier un souhait</Text>
+                        }
+                        { actionType === "create" && 
+                            <Text style={[styles.textFontBold]}>Créer un souhait</Text>
+                        }
+                        <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                            { loading ? 
+                                <ActivityIndicator size={10} color={colors.accent} />
+                            :
+                                actionType === "modify" ?
+                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
                                 :
-                                    actionType === "modify" ?
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
-                                    :
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
-                                }
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.bottomBar} />
-                        <KeyboardAwareScrollView>
-                            <View style={styles.formContainer}>
-                                <View style={styles.inputContainer}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{color: "red"}}>*</Text></Text>
-                                    {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Nom obligatoire</Text>}
-                                    <TextInput
-                                        style={[styles.input, styles.textFontRegular]}
-                                        placeholder="Exemple : Selle western"
-                                        placeholderTextColor={colors.secondary}
-                                        onChangeText={(text) => setValue("nom", text)}
-                                        defaultValue={getValues("nom")}
-                                        {...register("nom", { required: true })}
-                                    />
-                                </View>
+                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                            }
+                        </TouchableOpacity>
+                    </View>
+                    <Divider />
+                    <KeyboardAwareScrollView>
+                        <View style={styles.formContainer}>
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{color: "red"}}>*</Text></Text>
+                                {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Nom obligatoire</Text>}
+                                <TextInput
+                                    style={[styles.input, styles.textFontRegular]}
+                                    placeholder="Exemple : Selle western"
+                                    placeholderTextColor={colors.secondary}
+                                    onChangeText={(text) => setValue("nom", text)}
+                                    defaultValue={getValues("nom")}
+                                    {...register("nom", { required: true })}
+                                />
+                            </View>
 
-                                <View style={styles.inputContainer}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>URL : </Text>
-                                    <TextInput
-                                        style={[styles.input, styles.textFontRegular]}
-                                        placeholder="Exemple : https://vascoandco.fr"
-                                        placeholderTextColor={colors.secondary}
-                                        onChangeText={(text) => setValue("url", text)}
-                                        defaultValue={getValues("url")}
-                                    />
-                                </View>
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.textInput, styles.textFontRegular]}>URL : </Text>
+                                <TextInput
+                                    style={[styles.input, styles.textFontRegular]}
+                                    placeholder="Exemple : https://vascoandco.fr"
+                                    placeholderTextColor={colors.secondary}
+                                    onChangeText={(text) => setValue("url", text)}
+                                    defaultValue={getValues("url")}
+                                />
+                            </View>
 
-                                <View style={styles.inputContainer}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Image :</Text>
-                                    <AvatarPicker
-                                        setImage={setImage}
-                                        setValue={setValue}
-                                    />
-                                    {image &&
-                                        <View style={styles.imageContainer}>
-                                            <Image source={{uri: image}} style={styles.avatar} cachePolicy="disk"/>
-                                            <TouchableOpacity onPress={() => deleteImage()}>
-                                                <Entypo name="circle-with-cross" size={25} color={colors.accent}/>
-                                            </TouchableOpacity>
-                                        </View>
-                                    }
-                                </View>
-
-                                <View style={styles.inputContainer}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Prix : </Text>
-                                    <TextInput
-                                        style={[styles.input, styles.textFontRegular]}
-                                        keyboardType="decimal-pad"
-                                        inputMode="decimal"
-                                        placeholder="Exemple : 20"
-                                        placeholderTextColor={colors.secondary}
-                                        onChangeText={(text) => setValue("prix", text)}
-                                        defaultValue={getValues("prix")}
-                                    />
-                                </View>
-
-                                <View style={styles.inputContainer}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Destinataire : </Text>
-                                    <TextInput
-                                        style={[styles.input, styles.textFontRegular]}
-                                        placeholder="Par défaut, pour vous"
-                                        placeholderTextColor={colors.secondary}
-                                        onChangeText={(text) => setValue("destinataire", text)}
-                                        defaultValue={getValues("destinataire")}
-                                    />
-                                </View>
-                                <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
-                                    <View style={styles.iconContainer}>
-                                        <FontAwesome name="heart" size={60} color={colors.background} style={{marginTop: 5}}/>
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.textInput, styles.textFontRegular]}>Image :</Text>
+                                <AvatarPicker
+                                    setImage={setImage}
+                                    setValue={setValue}
+                                />
+                                {image &&
+                                    <View style={styles.imageContainer}>
+                                        <Image source={{uri: image}} style={styles.avatar} cachePolicy="disk"/>
+                                        <TouchableOpacity onPress={() => deleteImage()}>
+                                            <Entypo name="circle-with-cross" size={25} color={colors.accent}/>
+                                        </TouchableOpacity>
                                     </View>
+                                }
+                            </View>
+
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.textInput, styles.textFontRegular]}>Prix : </Text>
+                                <TextInput
+                                    style={[styles.input, styles.textFontRegular]}
+                                    keyboardType="decimal-pad"
+                                    inputMode="decimal"
+                                    placeholder="Exemple : 20"
+                                    placeholderTextColor={colors.secondary}
+                                    onChangeText={(text) => setValue("prix", text)}
+                                    defaultValue={getValues("prix")}
+                                />
+                            </View>
+
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.textInput, styles.textFontRegular]}>Destinataire : </Text>
+                                <TextInput
+                                    style={[styles.input, styles.textFontRegular]}
+                                    placeholder="Par défaut, pour vous"
+                                    placeholderTextColor={colors.secondary}
+                                    onChangeText={(text) => setValue("destinataire", text)}
+                                    defaultValue={getValues("destinataire")}
+                                />
+                            </View>
+                            <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                                <View style={styles.iconContainer}>
+                                    <FontAwesome name="heart" size={60} color={colors.background} style={{marginTop: 5}}/>
                                 </View>
                             </View>
-                        </KeyboardAwareScrollView>
-                    </View>
+                        </View>
+                    </KeyboardAwareScrollView>
                 </View>
-            </Modal>
+            </ModalEditGeneric>
         </>
     )
 }

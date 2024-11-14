@@ -2,6 +2,7 @@ import { StyleSheet, Modal, View, Text, TouchableOpacity } from "react-native";
 import Button from "../Button";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 
 const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
@@ -54,18 +55,11 @@ const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
 
   return (
     <>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
+      <ModalEditGeneric
+        isVisible={modalVisible}
+        setVisible={setModalVisible}
+        arrayHeight={["20%"]}
       >
-        <View style={styles.background}>
-          <TouchableOpacity
-            style={styles.emptyBackground}
-            onPress={() => setModalVisible(!modalVisible)}
-          ></TouchableOpacity>
-          <View style={styles.card}>
             <Text style={[styles.message, styles.textFontRegular]}>Êtes-vous sûr de vouloir vous déconnecter ?</Text>
             <View style={styles.buttonContainer}>
                 <Button
@@ -86,9 +80,7 @@ const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
                   <Text style={styles.textFontMedium}>Non</Text>
                 </Button>
             </View>
-          </View>
-        </View>
-      </Modal>
+      </ModalEditGeneric>
     </>
   );
 };

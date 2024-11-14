@@ -1,6 +1,7 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import { useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, setValue, valueName}) => {
   const { colors, fonts } = useTheme();
@@ -92,50 +93,41 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
 
     return (
         <>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(!modalVisible)}
-        >
-            <View style={styles.background}>
-            <TouchableOpacity
-                style={styles.emptyBackground}
-                onPress={() => setModalVisible(false)}
-            ></TouchableOpacity>
-            <View style={styles.card}>
-                <View style={styles.itemContainer}>
-                    {list.map((item, index) => {
-                        return(
-                            <TouchableOpacity key={item.id} onPress={() => { handleSelected(item) }} style={[styles.item, checkState(item) ? styles.selected : null]}>
-                                <Text style={[styles.title, styles.textFontRegular]}>{item.title}</Text>
-                            </TouchableOpacity>
-                        );
-                    })}
-                    <TouchableOpacity style={[styles.item, styles.disabled]} disabled={true}>
-                      <Text style={[styles.title, styles.textFontRegular, styles.disabledText]}>Bientôt personnalisable...</Text>
-                    </TouchableOpacity>
-                    {/* <FlatList
-                        data={list}
-                        renderItem={({item}) => <Item title={item.title} event={setChoice} />}
-                        keyExtractor={item => item.id}
-                    /> */}
-                </View>
-                <View style={styles.buttonContainer}>
-                    <Button
-                    disabled={false}
-                    size={"l"}
-                    type={"primary"}
-                    onPress={() => {
-                        setModalVisible(!modalVisible)
-                    }}
-                    >
-                    <Text style={styles.textFontMedium}>OK</Text>
-                    </Button>
-                </View>
-            </View>
-            </View>
-        </Modal>
+          <ModalEditGeneric
+              isVisible={modalVisible}
+              setVisible={setModalVisible}
+              arrayHeight={["40%"]}
+          >
+              <View style={styles.itemContainer}>
+                  {list.map((item, index) => {
+                      return(
+                          <TouchableOpacity key={item.id} onPress={() => { handleSelected(item) }} style={[styles.item, checkState(item) ? styles.selected : null]}>
+                              <Text style={[styles.title, styles.textFontRegular]}>{item.title}</Text>
+                          </TouchableOpacity>
+                      );
+                  })}
+                  <TouchableOpacity style={[styles.item, styles.disabled]} disabled={true}>
+                    <Text style={[styles.title, styles.textFontRegular, styles.disabledText]}>Bientôt personnalisable...</Text>
+                  </TouchableOpacity>
+                  {/* <FlatList
+                      data={list}
+                      renderItem={({item}) => <Item title={item.title} event={setChoice} />}
+                      keyExtractor={item => item.id}
+                  /> */}
+              </View>
+              <View style={styles.buttonContainer}>
+                  <Button
+                  disabled={false}
+                  size={"l"}
+                  type={"primary"}
+                  onPress={() => {
+                      setModalVisible(!modalVisible)
+                  }}
+                  >
+                  <Text style={styles.textFontMedium}>OK</Text>
+                  </Button>
+              </View>
+          </ModalEditGeneric>
         </>
     );
 };

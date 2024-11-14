@@ -10,6 +10,7 @@ import AuthService from "./services/AuthService";
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import variables from './components/styles/Variables';
 import { ThemeProvider, ThemeContext } from './providers/ThemeProvider';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const lightTheme = {
   ...DefaultTheme,
@@ -28,6 +29,7 @@ const lightTheme = {
     quaternary: variables.rouan,
     secondaryContainer: variables.bai,
     outline: variables.rouan,
+    default_dark: variables.default_dark,
   },
   fonts: {
     default: { fontFamily: variables.fontRegular },
@@ -55,6 +57,7 @@ const darkTheme = {
     error: variables.bai_cerise,
     quaternary: variables.rouan,
     secondaryContainer: variables.bai,
+    default_dark: variables.default_dark,
   },
   fonts: {
     default: { fontFamily: variables.fontRegular },
@@ -72,10 +75,8 @@ function ThemedApp() {
   return (
     <PaperProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <NavigationContainer>
-        <AuthenticatedUserProvider>
           <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
           <AuthStack />
-        </AuthenticatedUserProvider>
       </NavigationContainer>
     </PaperProvider>
   );
@@ -122,9 +123,13 @@ function App() {
   return (
     fontsLoaded ?
           <>
-            <ThemeProvider>
-              <ThemedApp />
-            </ThemeProvider>
+            <AuthenticatedUserProvider>
+              <GestureHandlerRootView>
+                <ThemeProvider>
+                  <ThemedApp />
+                </ThemeProvider>
+              </GestureHandlerRootView>
+            </AuthenticatedUserProvider>
           </>
       :
       <ActivityIndicator size={10} />
