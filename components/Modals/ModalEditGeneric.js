@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity,
 import React, { useState, useContext, useEffect, useRef, useCallback, useMemo } from "react";
 import { useTheme, Portal } from 'react-native-paper';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import Toast from "react-native-toast-message";
 
 const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible, handleStyle = undefined, handleIndicatorStyle = undefined }) => {
     // variables
@@ -31,6 +32,7 @@ const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible, h
     return(
         (isVisible || isOpen) &&
             <Portal>
+                <Portal><Toast/></Portal>
                 <View style={{height: "100%", width: "100%",backgroundColor: 'rgba(0, 0, 0, 0.5)'}}>
                     <TouchableOpacity 
                         style={{flex: 1}}

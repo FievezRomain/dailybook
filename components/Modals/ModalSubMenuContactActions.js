@@ -1,7 +1,8 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import { FontAwesome6, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalSubMenuContactActions = ({ modalVisible, setModalVisible, contact, handleModify, handleDelete }) => {
     const { colors, fonts } = useTheme();
@@ -36,10 +37,6 @@ const ModalSubMenuContactActions = ({ modalVisible, setModalVisible, contact, ha
             padding: 20,
         },
         card: {
-            backgroundColor: colors.background,
-            borderTopStartRadius: 10,
-            borderTopEndRadius: 10,
-            height: "30%",
             justifyContent: "space-evenly",
             alignItems: "center"
             //flexDirection: "row wrap"
@@ -99,17 +96,11 @@ const ModalSubMenuContactActions = ({ modalVisible, setModalVisible, contact, ha
 
     return (
         <>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(!modalVisible)}
+        <ModalEditGeneric
+            isVisible={modalVisible}
+            setVisible={setModalVisible}
+            arrayHeight={["25%"]}
         >
-            <View style={styles.background}>
-                <TouchableOpacity
-                    style={styles.emptyBackground}
-                    onPress={() => setModalVisible(false)}
-                ></TouchableOpacity>
                 <View style={styles.card}>
                     <View style={{alignItems: "center"}}>
                         <Text style={styles.textFontRegular}>Gérer le contact</Text>
@@ -127,7 +118,7 @@ const ModalSubMenuContactActions = ({ modalVisible, setModalVisible, contact, ha
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        <Divider style={{height: 1}} />
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
                             <View style={styles.informationsActionButton}>
                                 <AntDesign name="delete" size={20}/>
@@ -138,8 +129,7 @@ const ModalSubMenuContactActions = ({ modalVisible, setModalVisible, contact, ha
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
-        </Modal>
+        </ModalEditGeneric>
         </>
     );
 };

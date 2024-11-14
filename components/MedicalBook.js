@@ -14,6 +14,10 @@ const MedicalBook = ({ animal, navigation }) => {
     const [eventsRdv, setEventsRdv] = useState([]);
     const { currentUser } = useAuth();
     const eventService = new EventService();
+    const arrayState = [
+        {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.background, uncheckedColor: colors.text},
+        {value: 'Soins', label: 'Soins', checkedColor: colors.background, uncheckedColor: colors.text},
+      ];
 
     useEffect(() =>{
         getEvents();
@@ -83,12 +87,12 @@ const MedicalBook = ({ animal, navigation }) => {
         <>
             <View style={{width: "100%", alignSelf: "center", flex: 1}}>
                 <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
-                <View style={{marginBottom: 10, paddingLeft: 20, paddingRight: 20}}>
+                <View style={{marginBottom: 10, paddingLeft: 20, paddingRight: 20, display: "flex", flexDirection: "row"}}>
                     <StatePicker
-                        firstState={"Rendez-vous"}
-                        secondState={"Soins"}
+                        arrayState={arrayState}
                         handleChange={handleStateChange}
                         defaultState={typeEvent === undefined ? "Rendez-vous" : typeEvent}
+                        color={colors.secondaryContainer}
                     />
                 </View>
                 

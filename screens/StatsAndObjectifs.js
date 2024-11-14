@@ -21,7 +21,7 @@ const StatsScreen = ({ navigation }) => {
     {value: 'En cours', label: 'En cours', checkedColor: colors.background, uncheckedColor: colors.text},
     {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text},
   ];
-  const [temporality, setTemporality] = useState(arrayState[0]);
+  const [temporality, setTemporality] = useState('En cours');
   const [animaux, setAnimaux] = useState([]);
   const [selectedAnimal, setSelectedAnimal] = useState([]);
   const animalsService = new AnimalsService;
@@ -192,6 +192,7 @@ const StatsScreen = ({ navigation }) => {
               arrayState={arrayState}
               handleChange={onTemporalityChange}
               defaultState={temporality}
+              color={colors.secondaryContainer}
             />
           </View>
 

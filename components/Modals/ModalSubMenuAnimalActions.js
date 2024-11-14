@@ -1,7 +1,8 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import { FontAwesome6, Octicons, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleManageBody }) => {
     const { colors, fonts } = useTheme();
@@ -26,21 +27,17 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
             backgroundColor: colors.text,
         },
         actionButtonContainer:{
-            height: "60%",
             width: "90%",
+            marginTop: 15,
             borderRadius: 5,
             backgroundColor: colors.quaternary,
             flexDirection: "column",
             justifyContent: "space-evenly"
         },
         actionButton:{
-            padding: 10,
+            padding: 15,
         },
         card: {
-            backgroundColor: colors.background,
-            borderTopStartRadius: 10,
-            borderTopEndRadius: 10,
-            height: "30%",
             justifyContent: "space-evenly",
             alignItems: "center"
             //flexDirection: "row wrap"
@@ -92,17 +89,11 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
 
     return (
         <>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(!modalVisible)}
+        <ModalEditGeneric
+            isVisible={modalVisible}
+            setVisible={setModalVisible}
+            arrayHeight={["30%"]}
         >
-            <View style={styles.background}>
-                <TouchableOpacity
-                    style={styles.emptyBackground}
-                    onPress={() => setModalVisible(false)}
-                ></TouchableOpacity>
                 <View style={styles.card}>
                     <Text style={styles.textFontRegular}>Gérer les informations</Text>
                     <View style={styles.actionButtonContainer}>
@@ -114,7 +105,7 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        <Divider style={{height: 1}}/>
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
@@ -123,7 +114,7 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        <Divider style={{height: 1}}/>
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
                             <View style={styles.informationsActionButton}>
                                 <AntDesign name="delete" size={20}/>
@@ -134,8 +125,7 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
-        </Modal>
+        </ModalEditGeneric>
         </>
     );
 };
