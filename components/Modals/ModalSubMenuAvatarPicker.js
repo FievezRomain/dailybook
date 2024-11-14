@@ -1,7 +1,8 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import { FontAwesome6, Octicons, SimpleLineIcons, Entypo } from '@expo/vector-icons';
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handleLibraryPick, handleCameraPick }) => {
     const { colors, fonts } = useTheme();
@@ -24,21 +25,17 @@ const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handle
             backgroundColor: colors.text,
         },
         actionButtonContainer:{
-            height: "60%",
             width: "90%",
             borderRadius: 5,
+            marginTop: 15,
             backgroundColor: colors.quaternary,
             flexDirection: "column",
             justifyContent: "space-evenly"
         },
         actionButton:{
-            padding: 10,
+            padding: 20,
         },
         card: {
-            backgroundColor: colors.background,
-            borderTopStartRadius: 10,
-            borderTopEndRadius: 10,
-            height: "30%",
             justifyContent: "space-evenly",
             alignItems: "center"
             //flexDirection: "row wrap"
@@ -90,17 +87,11 @@ const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handle
 
     return (
         <>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(!modalVisible)}
+        <ModalEditGeneric
+            isVisible={modalVisible}
+            setVisible={setModalVisible}
+            arrayHeight={["25%"]}
         >
-            <View style={styles.background}>
-                <TouchableOpacity
-                    style={styles.emptyBackground}
-                    onPress={() => setModalVisible(false)}
-                ></TouchableOpacity>
                 <View style={styles.card}>
                     <Text style={styles.textFontRegular}>Mode de sélection d'image</Text>
                     <View style={styles.actionButtonContainer}>
@@ -112,7 +103,7 @@ const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handle
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        <Divider style={{height: 1}}/>
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleCameraPick)}>
                             <View style={styles.informationsActionButton}>
                                 <Entypo name="camera" size={20}/>
@@ -123,8 +114,7 @@ const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handle
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
-        </Modal>
+        </ModalEditGeneric>
         </>
     );
 }

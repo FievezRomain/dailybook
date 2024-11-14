@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
@@ -7,7 +7,9 @@ import ContactService from "../../services/ContactService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { ActivityIndicator } from "react-native";
 import LoggerService from "../../services/LoggerService";
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -125,14 +127,8 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             justifyContent: "flex-end",
         },
         form: {
-            backgroundColor: "rgba(255, 255, 255, 1)",
             width: "100%",
-            marginLeft: "auto",
-            marginRight: "auto",
-            borderRadius: 10,
-            height: "90%",
-            paddingBottom: 10,
-            paddingTop: 10,
+            paddingBottom: 40
         },
         toastContainer: {
             zIndex: 9999, 
@@ -140,7 +136,8 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         containerActionsButtons: {
             flexDirection: "row",
             justifyContent: "space-evenly",
-            alignItems: "center"
+            alignItems: "center",
+            paddingBottom: 15
         },
         bottomBar: {
             width: '100%',
@@ -157,6 +154,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             paddingRight: 30,
             paddingTop: 10,
             paddingBottom: 10,
+            height: "100%"
         },
         inputContainer:{
             alignItems: "center",
@@ -198,100 +196,92 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
 
     return(
         <>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isVisible}
-                onRequestClose={closeModal}
+            <ModalEditGeneric
+                isVisible={isVisible}
+                setVisible={setVisible}
+                arrayHeight={["90%"]}
             >
-                <View style={styles.modalContainer}>
-                    <View style={styles.form}>
-                        <View style={styles.toastContainer}>
-                            <Toast />
-                        </View>
-                        <View style={styles.containerActionsButtons}>
+                <View style={styles.form}>
+                    <View style={styles.containerActionsButtons}>
 
-                            <TouchableOpacity onPress={closeModal}>
-                                <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
-                            </TouchableOpacity>
-                            { actionType === "modify" && 
-                                <Text style={styles.textFontBold}>Modifier un contact</Text>
-                            }
-                            { actionType === "create" && 
-                                <Text style={styles.textFontBold}>Créer un contact</Text>
-                            }
-                            <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                { loading ? 
-                                    <ActivityIndicator size={10} color={colors.accent} />
+                        <TouchableOpacity onPress={closeModal}>
+                            <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
+                        </TouchableOpacity>
+                        { actionType === "modify" && 
+                            <Text style={styles.textFontBold}>Modifier un contact</Text>
+                        }
+                        { actionType === "create" && 
+                            <Text style={styles.textFontBold}>Créer un contact</Text>
+                        }
+                        <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                            { loading ? 
+                                <ActivityIndicator size={10} color={colors.accent} />
+                            :
+                                actionType === "modify" ?
+                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
                                 :
-                                    actionType === "modify" ?
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
-                                    :
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
-                                }
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.bottomBar} />
-                        <KeyboardAvoidingView style={styles.keyboardAvoidingContainer} behavior="padding">
-                            <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.neutral }}>
-                                <View style={styles.formContainer}>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{color: "red"}}>*</Text></Text>
-                                        {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Nom obligatoire</Text>}
-                                        <TextInput
-                                            style={[styles.input, styles.textFontRegular]}
-                                            placeholder="Exemple : John Doe"
-                                            placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("nom", text)}
-                                            defaultValue={watch("nom")}
-                                            {...register("nom", { required: true })}
-                                        />
-                                    </View>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={[styles.textInput, styles.textFontRegular]}>Profession : </Text>
-                                        <TextInput
-                                            style={[styles.input, styles.textFontRegular]}
-                                            placeholder="Exemple : Vétérinaire"
-                                            placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("profession", text)}
-                                            defaultValue={watch("profession")}
-                                        />
-                                    </View>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={[styles.textInput, styles.textFontRegular]}>Numéro de téléphone : </Text>
-                                        <TextInput
-                                            style={[styles.input, styles.textFontRegular]}
-                                            placeholder="Exemple : 0606060606"
-                                            placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("telephone", text)}
-                                            defaultValue={watch("telephone")}
-                                        />
-                                    </View>
-
-                                    <View style={styles.inputContainer}>
-                                        <Text style={[styles.textInput, styles.textFontRegular]}>Email : </Text>
-                                        <TextInput
-                                            style={[styles.input, styles.textFontRegular]}
-                                            placeholder="Exemple : test@gmail.com"
-                                            placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("email", text)}
-                                            defaultValue={watch("email")}
-                                        />
-                                    </View>
-                                     <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
-                                        <View style={styles.iconContainer}>
-                                            <AntDesign name="contacts" size={70} color={colors.background} style={{marginRight: 5}}/>
-                                        </View>
-                                     </View>
-                                </View>
-                            </ScrollView>
-                        </KeyboardAvoidingView>
+                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                            }
+                        </TouchableOpacity>
                     </View>
+                    <Divider />
+                    <KeyboardAwareScrollView>
+                        <View style={styles.formContainer}>
+
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{color: "red"}}>*</Text></Text>
+                                {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Nom obligatoire</Text>}
+                                <TextInput
+                                    style={[styles.input, styles.textFontRegular]}
+                                    placeholder="Exemple : John Doe"
+                                    placeholderTextColor={colors.secondary}
+                                    onChangeText={(text) => setValue("nom", text)}
+                                    defaultValue={watch("nom")}
+                                    {...register("nom", { required: true })}
+                                />
+                            </View>
+
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.textInput, styles.textFontRegular]}>Profession : </Text>
+                                <TextInput
+                                    style={[styles.input, styles.textFontRegular]}
+                                    placeholder="Exemple : Vétérinaire"
+                                    placeholderTextColor={colors.secondary}
+                                    onChangeText={(text) => setValue("profession", text)}
+                                    defaultValue={watch("profession")}
+                                />
+                            </View>
+
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.textInput, styles.textFontRegular]}>Numéro de téléphone : </Text>
+                                <TextInput
+                                    style={[styles.input, styles.textFontRegular]}
+                                    placeholder="Exemple : 0606060606"
+                                    placeholderTextColor={colors.secondary}
+                                    onChangeText={(text) => setValue("telephone", text)}
+                                    defaultValue={watch("telephone")}
+                                />
+                            </View>
+
+                            <View style={styles.inputContainer}>
+                                <Text style={[styles.textInput, styles.textFontRegular]}>Email : </Text>
+                                <TextInput
+                                    style={[styles.input, styles.textFontRegular]}
+                                    placeholder="Exemple : test@gmail.com"
+                                    placeholderTextColor={colors.secondary}
+                                    onChangeText={(text) => setValue("email", text)}
+                                    defaultValue={watch("email")}
+                                />
+                            </View>
+                                <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                                <View style={styles.iconContainer}>
+                                    <AntDesign name="contacts" size={70} color={colors.background} style={{marginRight: 5}}/>
+                                </View>
+                                </View>
+                        </View>
+                    </KeyboardAwareScrollView>
                 </View>
-            </Modal>
+            </ModalEditGeneric>
         </>
     )
 }

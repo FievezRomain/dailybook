@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, Modal, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
@@ -12,7 +12,8 @@ import LoggerService from "../../services/LoggerService";
 import FileStorageService from "../../services/FileStorageService";
 import { Image } from "expo-image";
 import DropdawnList from "../DropdawnList";
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -322,14 +323,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             justifyContent: "flex-end",
         },
         form: {
-            backgroundColor: "rgba(255, 255, 255, 1)",
             width: "100%",
-            marginLeft: "auto",
-            marginRight: "auto",
-            borderRadius: 10,
-            height: "90%",
-            paddingBottom: 10,
-            paddingTop: 10,
+            paddingBottom: 40
         },
         toastContainer: {
             zIndex: 9999, 
@@ -337,7 +332,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         containerActionsButtons: {
             flexDirection: "row",
             justifyContent: "space-evenly",
-            alignItems: "center"
+            alignItems: "center",
+            paddingBottom: 15
         },
         bottomBar: {
             width: '100%',
@@ -413,17 +409,12 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
 
     return(
         <>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isVisible}
-                onRequestClose={closeModal}
+            <ModalEditGeneric
+                isVisible={isVisible}
+                setVisible={setVisible}
+                arrayHeight={["90%"]}
             >
-                <View style={styles.modalContainer}>
                     <View style={styles.form}>
-                        <View style={styles.toastContainer}>
-                            <Toast />
-                        </View>
                         <View style={styles.containerActionsButtons}>
                             <TouchableOpacity onPress={closeModal}>
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
@@ -445,7 +436,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                 }
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.bottomBar} />
+                        <Divider/>
                         <KeyboardAwareScrollView>
                             <View style={styles.formContainer}>
 
@@ -478,9 +469,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     </View>
                                 </View>
 
-                                <View style={styles.separatorForm} />
+                                <Divider/>
 
-                                <View>
+                                <View style={{paddingTop: 10}}>
                                     <View style={[styles.inputContainer, {marginBottom: 10}]}>
                                         <Text style={[styles.textInput, styles.textFontRegular]}>Image :</Text>
                                         <AvatarPicker
@@ -620,8 +611,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                             </View>
                         </KeyboardAwareScrollView>
                     </View>
-                </View>
-            </Modal>
+            </ModalEditGeneric>
         </>
     )
 }

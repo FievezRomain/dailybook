@@ -7,7 +7,7 @@ import AnimalsService from "../services/AnimalsService";
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import TemporalityPicker from "../components/TemporalityPicker";
+import StatePicker from "../components/StatePicker"
 import { SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
@@ -17,12 +17,11 @@ const StatsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "performances"})
-  const list = [
-    {title: "Semaine", id: "week"},
-    {title: "Mois", id: "month"},
-    {title: "Année", id: "year"}
+  const arrayState = [
+    {value: 'En cours', label: 'En cours', checkedColor: colors.background, uncheckedColor: colors.text},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text},
   ];
-  const [temporality, setTemporality] = useState(list[0]);
+  const [temporality, setTemporality] = useState('En cours');
   const [animaux, setAnimaux] = useState([]);
   const [selectedAnimal, setSelectedAnimal] = useState([]);
   const animalsService = new AnimalsService;
@@ -163,7 +162,6 @@ const StatsScreen = ({ navigation }) => {
 
   return (
     <>
-      <View style={{zIndex:999}}><Toast/></View>
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2} />
         <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
@@ -190,10 +188,11 @@ const StatsScreen = ({ navigation }) => {
 
           
           <View style={styles.temporalityIndicator}>
-            <TemporalityPicker
-              arrayState={list}
+            <StatePicker
+              arrayState={arrayState}
               handleChange={onTemporalityChange}
               defaultState={temporality}
+              color={colors.secondaryContainer}
             />
           </View>
 
@@ -201,7 +200,7 @@ const StatsScreen = ({ navigation }) => {
             <ObjectifsBloc
               animaux={animaux}
               selectedAnimal={selectedAnimal}
-              temporality={temporality.id}
+              temporality={temporality}
               navigation={navigation}
             />
           :

@@ -10,6 +10,7 @@ import AuthService from "./services/AuthService";
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import variables from './components/styles/Variables';
 import { ThemeProvider, ThemeContext } from './providers/ThemeProvider';
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const lightTheme = {
   ...DefaultTheme,
@@ -26,6 +27,9 @@ const lightTheme = {
     onSurface: variables.default,
     error: variables.bai_cerise,
     quaternary: variables.rouan,
+    secondaryContainer: variables.bai,
+    outline: variables.rouan,
+    default_dark: variables.default_dark,
   },
   fonts: {
     default: { fontFamily: variables.fontRegular },
@@ -33,6 +37,8 @@ const lightTheme = {
     bodySmall: { fontFamily: variables.fontLight },
     bodyLarge: { fontFamily: variables.fontBold },
     labelMedium: { fontFamily: variables.fontMedium },
+    labelLarge: { fontFamily: variables.fontBold },
+    headlineSmall: { fontFamily: variables.fontRegular },
   },
 };
 
@@ -51,6 +57,8 @@ const darkTheme = {
     onSurface: variables.default_dark,
     error: variables.bai_cerise,
     quaternary: variables.rouan,
+    secondaryContainer: variables.bai,
+    default_dark: variables.default_dark,
   },
   fonts: {
     default: { fontFamily: variables.fontRegular },
@@ -58,6 +66,8 @@ const darkTheme = {
     bodySmall: { fontFamily: variables.fontLight },
     bodyLarge: { fontFamily: variables.fontBold },
     labelMedium: { fontFamily: variables.fontMedium },
+    labelLarge: { fontFamily: variables.fontBold },
+    headlineSmall: { fontFamily: variables.fontRegular },
   },
 };
 
@@ -67,10 +77,8 @@ function ThemedApp() {
   return (
     <PaperProvider theme={isDarkTheme ? darkTheme : lightTheme}>
       <NavigationContainer>
-        <AuthenticatedUserProvider>
           <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
           <AuthStack />
-        </AuthenticatedUserProvider>
       </NavigationContainer>
     </PaperProvider>
   );
@@ -83,7 +91,7 @@ function App() {
   Sentry.init({
     //dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
     enableInExpoDevelopment: false,
-    debug: true, // Passez à false en production
+    debug: false, // Passez à false en production
   });
 
   useEffect(() => {
@@ -117,9 +125,13 @@ function App() {
   return (
     fontsLoaded ?
           <>
-            <ThemeProvider>
-              <ThemedApp />
-            </ThemeProvider>
+            <AuthenticatedUserProvider>
+              <GestureHandlerRootView>
+                <ThemeProvider>
+                  <ThemedApp />
+                </ThemeProvider>
+              </GestureHandlerRootView>
+            </AuthenticatedUserProvider>
           </>
       :
       <ActivityIndicator size={10} />

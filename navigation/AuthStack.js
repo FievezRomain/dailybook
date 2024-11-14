@@ -3,6 +3,7 @@ import { HomeScreen, SignInScreen, SignUpScreen, LoadingScreen, VerifyEmailScree
 import AppStack from './AppStack';
 import { View } from "react-native";
 import Toast from "react-native-toast-message";
+import { Portal } from "react-native-paper";
 
 const Stack = createNativeStackNavigator();
 
@@ -10,7 +11,7 @@ const AuthStack = () => {
 
   return (
     <>
-    <View style={{zIndex:999}}><Toast/></View>
+    <Portal><Toast/></Portal>
     <Stack.Navigator initialRouteName="Loading">
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} options={{ headerShown: false }}/>

@@ -1,7 +1,8 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
 import { FontAwesome6, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
+import ModalEditGeneric from "./ModalEditGeneric";
 
 const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleModify, handleDelete }) => {
     const { colors, fonts } = useTheme();
@@ -27,6 +28,7 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
         actionButtonContainer:{
             width: "90%",
             borderRadius: 10,
+            marginTop: 5,
             backgroundColor: colors.quaternary,
             flexDirection: "column",
             justifyContent: "space-evenly",
@@ -36,10 +38,6 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
             padding: 20,
         },
         card: {
-            backgroundColor: colors.background,
-            borderTopStartRadius: 10,
-            borderTopEndRadius: 10,
-            height: "30%",
             justifyContent: "space-evenly",
             alignItems: "center"
             //flexDirection: "row wrap"
@@ -99,17 +97,11 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
 
     return (
         <>
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(!modalVisible)}
+        <ModalEditGeneric
+            isVisible={modalVisible}
+            setVisible={setModalVisible}
+            arrayHeight={["25%"]}
         >
-            <View style={styles.background}>
-                <TouchableOpacity
-                    style={styles.emptyBackground}
-                    onPress={() => setModalVisible(false)}
-                ></TouchableOpacity>
                 <View style={styles.card}>
                     <View style={{alignItems: "center"}}>
                         <Text style={styles.textFontRegular}>Gérer la note</Text>
@@ -127,7 +119,7 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <View style={styles.bottomBar} />
+                        <Divider style={{height: 1}} />
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
                             <View style={styles.informationsActionButton}>
                                 <AntDesign name="delete" size={20}/>
@@ -138,8 +130,7 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
                         </TouchableOpacity>
                     </View>
                 </View>
-            </View>
-        </Modal>
+        </ModalEditGeneric>
         </>
     );
 };
