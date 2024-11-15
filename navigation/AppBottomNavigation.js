@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { BottomNavigation, useTheme, Icon } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { BottomNavigation, useTheme, Text as PaperText, IconButton } from 'react-native-paper';
 import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, SettingsScreen } from "../screens";
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 
 const AppBottomNavigation = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -25,6 +25,20 @@ const AppBottomNavigation = ({ navigation }) => {
     profil: () => <SettingsScreen navigation={navigation} />,
   });
 
+  const renderLabel = ({ route, focused, color }) => (
+    <Text style={[{fontSize: 10, justifyContent: "center", alignItems: "center", alignSelf: "center", marginTop: -5}, { color }]}>{route.title}</Text>
+  );
+
+  const renderIcon = ({ route, focused }) => (
+    <View style={{alignItems: "center", justifyContent: "center", alignSelf: "center", alignContent: "center", marginBottom: 30, marginTop: 10}}>
+      <IconButton
+        icon={route.focusedIcon}
+        size={focused ? 28 : 24} // Taille de l'icône (plus grande si l'onglet est actif)
+        iconColor={focused ? colors.secondaryContainer : colors.text}
+      />
+    </View>
+  );
+
   return (
     <>
     
@@ -33,7 +47,7 @@ const AppBottomNavigation = ({ navigation }) => {
         onIndexChange={setIndex}
         renderScene={renderScene}
         barStyle={{
-          height: 90,
+          height: 80,
           backgroundColor: colors.background,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: -2 },
@@ -48,6 +62,8 @@ const AppBottomNavigation = ({ navigation }) => {
           height: 2,
           marginBottom: 55
         }}
+        renderLabel={renderLabel}
+        renderIcon={renderIcon}
       />
     </>
   );

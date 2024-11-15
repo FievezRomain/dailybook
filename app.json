@@ -3,8 +3,9 @@
     "name": "Vasco",
     "slug": "dailybook",
     "version": "1.0.11",
-    "sdkVersion": "51.0.0",
+    "sdkVersion": "52.0.0",
     "orientation": "portrait",
+    "newArchEnabled": true,
     "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
@@ -76,7 +77,7 @@
         {
           "ios": {
             "useFrameworks": "static",
-            "deploymentTarget": "13.4",
+            "deploymentTarget": "15.1",
             "modularHeaders": true
           }
         }

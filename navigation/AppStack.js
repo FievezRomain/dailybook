@@ -17,7 +17,7 @@ const AppStack = ({ navigation }) => {
     fab: {
       position: 'absolute',
       right: 16,
-      bottom: 100,
+      bottom: 90,
       backgroundColor: colors.primary,
       borderRadius: 50,
     },
@@ -51,6 +51,7 @@ const AppStack = ({ navigation }) => {
         icon={isActionScreenOpen ? "close" : "plus"}
         style={styles.fab}
         onPress={handleFabPress}
+        size="medium"
       />
     </>
   );

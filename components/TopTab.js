@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { Image } from "expo-image";
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
 
 const TopTab = ({message1, message2, withBackground=false}) => {
     const { colors, fonts } = useTheme();
@@ -58,28 +58,23 @@ const TopTab = ({message1, message2, withBackground=false}) => {
     });
 
     return(
-        <View style={styles.topTabContainer}>
-            <View style={styles.textContainer}>
-                <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text>
-                <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
-            </View>
-            <View style={styles.imageContainer}>
-                {/* <TouchableOpacity>
-                    <Ionicons name="notifications" size={25} color={withBackground == false ? colors.accent : colors.background} />
-                </TouchableOpacity> */}
-                <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
-                    {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
-                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk"/>
-                    : 
-                        withBackground ?
-                            <FontAwesome5 size={20} color={colors.background} name="user-alt" />
-                        :
-
-                            <FontAwesome5 size={20} color={colors.accent} name="user-alt" />
+        <View>
+            <View style={styles.topTabContainer}>
+                <View style={styles.textContainer}>
+                    {withBackground ?
+                        <View>
+                            <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text>
+                            <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
+                        </View>
+                    :
+                        <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
                     }
                     
-                </TouchableOpacity>
+                </View>
             </View>
+            {!withBackground &&
+                <Divider />
+            }
         </View>
     );
 }

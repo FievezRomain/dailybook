@@ -64,7 +64,6 @@ const SettingsScreen = ({ }) => {
             backgroundColor: "white"
         },
         contentContainer: {
-            height: "100%",
             marginTop: Constants.statusBarHeight + 10,
         },
         button: {

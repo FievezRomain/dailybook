@@ -129,6 +129,7 @@ const ActionScreen = ({ navigation }) => {
       paddingTop: 10,
       shadowColor: "black",
       shadowOpacity: 0.1,
+      marginTop: 50,
       elevation: 1,
       shadowRadius:5,
       shadowOffset:{width:0, height:2}
@@ -218,7 +219,6 @@ const ActionScreen = ({ navigation }) => {
           <Toast />
       </View>
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-      <TopTab message1={messages.message1} message2={messages.message2}/>
       <View style={{display: "flex", alignContent: "center", justifyContent: "center", alignItems: "center"}}>
         <View style={styles.form}>
           <ScrollView style={{width:"100%"}} persistentScrollbar={true}>
