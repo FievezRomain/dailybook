@@ -11,7 +11,6 @@ const AuthStack = () => {
 
   return (
     <>
-    <Portal><Toast/></Portal>
     <Stack.Navigator initialRouteName="Loading">
         <Stack.Screen name="Loading" component={LoadingScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="VerifyEmail" component={VerifyEmailScreen} options={{ headerShown: false }}/>
@@ -21,6 +20,7 @@ const AuthStack = () => {
         <Stack.Screen name="Register" component={SignUpScreen} options={{ headerShown: false }}/>
         <Stack.Screen name="FirstPageAddAnimal" component={FirstPageAddAnimalScreen} options={{ headerShown: false }}/>
     </Stack.Navigator>
+    <Portal><Toast/></Portal>
     </>
   );
 };

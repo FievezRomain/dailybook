@@ -6,6 +6,13 @@ import { View, StyleSheet, Text } from 'react-native';
 const AppBottomNavigation = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const [index, setIndex] = useState(0);
+  const [scenes, setScenes] = useState({
+    welcome: <WelcomeScreen navigation={navigation} />,
+    stats: <StatsScreen navigation={navigation} />,
+    calendar: <CalendarScreen navigation={navigation} />,
+    pets: <PetsScreen navigation={navigation} />,
+    profil: <SettingsScreen navigation={navigation} />,
+  });
 
   // Définis les routes pour chaque onglet
   const [routes] = useState([
@@ -17,13 +24,7 @@ const AppBottomNavigation = ({ navigation }) => {
   ]);
 
   // Définis une fonction pour rendre les scènes en fonction de la route active
-  const renderScene = BottomNavigation.SceneMap({
-    welcome: () => <WelcomeScreen navigation={navigation} />,
-    stats: () => <StatsScreen navigation={navigation} />,
-    calendar: () => <CalendarScreen navigation={navigation} />,
-    pets: () => <PetsScreen navigation={navigation} />,
-    profil: () => <SettingsScreen navigation={navigation} />,
-  });
+  const renderScene = ({ route }) => scenes[route.key];
 
   const renderLabel = ({ route, focused, color }) => (
     <Text style={[{fontSize: 10, justifyContent: "center", alignItems: "center", alignSelf: "center", marginTop: -5}, { color }]}>{route.title}</Text>

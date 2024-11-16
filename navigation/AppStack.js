@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TabStack from "./TabStack";
 import { SettingsScreen, NoteScreen, WishScreen, DiscoverPremiumScreen, AccountScreen, ContactScreen, ActionScreen } from "../screens";
-import AppBottomNavigation from "./AppBottomNavigation";
 import { FAB, useTheme } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import React, { useState } from 'react';
@@ -37,7 +36,7 @@ const AppStack = ({ navigation }) => {
   return (
     <>
       <Stack.Navigator>
-          <Stack.Screen name="Tab" component={AppBottomNavigation} options={{ headerShown: false }}/>
+          <Stack.Screen name="Tab" component={TabStack} options={{ headerShown: false }}/>
           <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="Note" component={NoteScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: false }}/>
@@ -50,6 +49,7 @@ const AppStack = ({ navigation }) => {
       <FAB
         icon={isActionScreenOpen ? "close" : "plus"}
         style={styles.fab}
+        color={colors.background}
         onPress={handleFabPress}
         size="medium"
       />
