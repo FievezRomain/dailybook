@@ -18,6 +18,7 @@ import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
 import ModalFilterCalendar from "../components/Modals/ModalFilterCalendar";
 import { CalendarFilter } from "../business/models/CalendarFilter";
 import { useTheme } from 'react-native-paper';
+import { useFocusEffect } from "@react-navigation/native";
 
 const CalendarScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -49,13 +50,12 @@ const CalendarScreen = ({ navigation }) => {
   };
   LocaleConfig.defaultLocale = 'fr';
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      setMessages({ message1: "Mon", message2: "calendrier" });
+  useFocusEffect(
+    useCallback(() => {
+      setMessages({ message1: "Mon", message2: "Calendrier" });
       getEventsForUser();
-    });
-    return unsubscribe;
-  }, [navigation]);
+    }, [])
+  );
 
   useEffect(() => {
     setupMarkedDates(true);
@@ -220,6 +220,12 @@ const CalendarScreen = ({ navigation }) => {
 
   const handleEventsChange = async () => {
 
+    setTimeout(() => Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Modification d'un événement"
+    }), 300);
+
     setEventArray(await eventService.getEvents(currentUser.email));
 
   }
@@ -335,7 +341,7 @@ const CalendarScreen = ({ navigation }) => {
       />
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2} />
-        <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
+        <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
           <View style={{flexDirection: "row", alignItems: "center"}}>
             <AntDesign name="search1" size={16} color={colors.accent}/>
 

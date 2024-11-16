@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated } from "react-native";
 import TopTab from '../components/TopTab';
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import AnimalsPicker from "../components/AnimalsPicker";
 import { useForm } from "react-hook-form";
 import AnimalsService from "../services/AnimalsService";
@@ -15,6 +15,7 @@ import LoggerService from "../services/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../components/Modals/ModalValidation";
+import { useFocusEffect } from "@react-navigation/native";
 
 const PetsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -33,18 +34,15 @@ const PetsScreen = ({ navigation }) => {
   const separatorPosition = useRef(new Animated.Value(0)).current;
   const dateUtils = new DateUtils();
   const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
-  
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      setMessages({message1: "Mes", message2: "animaux"});
+  useFocusEffect(
+    useCallback(() => {
+      if(animaux.length === 0){
+      setMessages({message1: "Mes", message2: "Animaux"});
       
-      getAnimals();
-      
-      
-    });
-    return unsubscribe;
-  }, [navigation]);
+      getAnimals();}
+    }, [animaux])
+  );
 
 
   const getAnimals = async () => {
@@ -140,11 +138,12 @@ const PetsScreen = ({ navigation }) => {
   }
 
   const onModify = (animal) => {
-    Toast.show({
+    setTimeout(() => Toast.show({
       type: "success",
       position: "top",
       text1: "Modification de l'animal"
-    }); 
+    }), 300);
+    
 
     var indice = animaux.findIndex((a) => a.id == animal.id);
     animaux[indice] = animal;

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
 import TopTab from '../components/TopTab';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import EventsBloc from "../components/EventsBloc";
 import WavyHeader from "../components/WavyHeader";
 import EventService from "../services/EventService";
@@ -13,6 +13,7 @@ import Constants from 'expo-constants';
 import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button";
 import { useTheme } from 'react-native-paper';
+import { useFocusEffect } from "@react-navigation/native";
 
 const WelcomeScreen = ({ navigation })=> {
   const { colors, fonts } = useTheme();
@@ -23,14 +24,13 @@ const WelcomeScreen = ({ navigation })=> {
     const [events, setEvents] = useState([]);
     const [objectifs, setObjectifs] = useState([]);
 
-    useEffect(() => {
-      const unsubscribe = navigation.addListener("focus", () => {
-        setMessages({message1: "Bienvenue", message2: currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName});
-        getEventsForUser();
-        getObjectifsForUser();
-      });
-      return unsubscribe;
-    }, [navigation]);
+    useFocusEffect(
+      useCallback(() => {
+          setMessages({message1: "Bienvenue", message2: currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName});
+          getEventsForUser();
+          getObjectifsForUser();
+      }, [])
+    );
 
     const getEventsForUser = async () => {
       try {
@@ -77,6 +77,12 @@ const WelcomeScreen = ({ navigation })=> {
       var index = updatedObjectifs.findIndex((a) => a.id == objectif.id);
       updatedObjectifs[index] = objectif;
       setObjectifs(updatedObjectifs);
+
+      setTimeout(() => Toast.show({
+        type: "success",
+        position: "top",
+        text1: "Modification d'un objectif"
+      }), 300);
     }
 
     const handleObjectifDelete = (objectif) => {
@@ -90,6 +96,12 @@ const WelcomeScreen = ({ navigation })=> {
 
     const handleEventChange = async () => {
       setEvents(await eventService.getEvents(currentUser.email));
+
+      setTimeout(() => Toast.show({
+        type: "success",
+        position: "top",
+        text1: "Modification d'un événement"
+      }), 300);
     }
 
     const styles = StyleSheet.create({

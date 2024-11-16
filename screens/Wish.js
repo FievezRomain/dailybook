@@ -48,11 +48,12 @@ const WishScreen = ({ navigation }) => {
     };
 
     const onModify = (wish) => {
-        Toast.show({
+        setTimeout(() => Toast.show({
             type: "success",
             position: "top",
-            text1: "Modification d'un souhait réussi"
-        });
+            text1: "Modification d'un souhait"
+          }), 300);
+
         var indice = wishs.findIndex((a) => a.id == selectedWish.id);
         wishs[indice] = wish;
 

@@ -290,11 +290,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           onModify();
           setLoading(false);
 
-          Toast.show({
-            type:"success",
-            position:"top",
-            text1: "Modification d'un événement réussi"
-          });
         })
         .catch((err) =>{
           Toast.show({
@@ -309,13 +304,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         eventService.create(data)
         .then((reponse) =>{
           closeModal();
+          onModify();
           setLoading(false);
-
-          Toast.show({
-            type:"success",
-            position:"top",
-            text1: "Création d'un événement réussi"
-          });
         })
         .catch((err) =>{
           Toast.show({
@@ -629,7 +619,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     handleStyleModal:{
       backgroundColor: eventType ? getColorByEventType(eventType.id) : colors.background,
       borderTopEndRadius: 15,
-      borderTopStartRadius: 15
+      borderTopStartRadius: 15,
+      marginBottom: -1
     },
     handleIndicatorStyle:{
       backgroundColor: colors.background
@@ -710,10 +701,10 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         <View style={styles.form}>
           <View style={styles.containerActionsButtons}>
 
-            <TouchableOpacity onPress={closeModal} style={{width:"33,33%", alignItems: "center"}}>
+            <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
               <Text style={[{color: colors.background}, styles.textFontRegular]}>Annuler</Text>
             </TouchableOpacity>
-            <View style={{width:"33,33%", alignItems: "center"}}>
+            <View style={{width:"33.33%", alignItems: "center"}}>
               { actionType === "modify" && 
                 <Text style={styles.textFontBold}>{eventType && eventType.title}</Text>
               }
@@ -721,7 +712,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                 <Text style={[styles.textFontBold, {color: colors.background}]}>{eventType && eventType.title}</Text>
               }
             </View>
-            <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33,33%", alignItems: "center"}}>
+            <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
               { loading ? 
                   <ActivityIndicator size={10} color={colors.accent} />
                 :

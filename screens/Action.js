@@ -39,52 +39,52 @@ const ActionScreen = ({ navigation }) => {
     setEventModalVisible(true);
   }
 
-  const handleCreateContact = (contact) =>{
-    Toast.show({
+  const handleCreateContact = () =>{
+    setTimeout(() => Toast.show({
       type: "success",
       position: "top",
       text1: "Création d'un contact réussi"
-    });
+    }), 300);
   }
 
-  const handleCreateNote = (contact) =>{
-    Toast.show({
+  const handleCreateNote = () =>{
+    setTimeout(() => Toast.show({
       type: "success",
       position: "top",
       text1: "Création d'une note réussi"
-    });
+    }), 300);
   }
 
-  const handleCreateWish = (wish) =>{
-    Toast.show({
+  const handleCreateWish = () =>{
+    setTimeout(() => Toast.show({
       type: "success",
       position: "top",
       text1: "Création d'un souhait réussi"
-    });
+    }), 300);
   }
 
-  const handleCreateAnimal = (animal) =>{
-    Toast.show({
+  const handleCreateAnimal = () =>{
+    setTimeout(() => Toast.show({
       type: "success",
       position: "top",
       text1: "Création d'un animal réussi"
-    });
+    }), 300);
   }
 
-  const handleCreateEvent = (event) =>{
-    Toast.show({
+  const handleCreateEvent = () =>{
+    setTimeout(() => Toast.show({
       type: "success",
       position: "top",
       text1: "Création d'un événement réussi"
-    });
+    }), 300);
   }
 
-  const handleCreateObjectif = (event) =>{
-    Toast.show({
+  const handleCreateObjectif = () =>{
+    setTimeout(() => Toast.show({
       type: "success",
       position: "top",
       text1: "Création d'un objectif réussi"
-    });
+    }), 300);
   }
 
   const styles = StyleSheet.create({

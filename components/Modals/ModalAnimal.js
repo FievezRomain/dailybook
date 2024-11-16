@@ -195,12 +195,6 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                 closeModal();
                 onModify(response);
                 setLoading(false);
-
-                Toast.show({
-                    type: "success",
-                    position: "top",
-                    text1: "Modification de l'animal"
-                }); 
             })
             .catch((err) =>{
                 Toast.show({
@@ -218,14 +212,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                 
                 resetValues();
                 closeModal();
-                onModify(response);
+                onModify();
                 setLoading(false);
-
-                Toast.show({
-                    type: "success",
-                    position: "top",
-                    text1: "Création de l'animal"
-                }); 
             })
             .catch((err) =>{
                 Toast.show({

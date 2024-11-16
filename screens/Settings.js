@@ -107,7 +107,6 @@ const SettingsScreen = ({ }) => {
                     modalVisible={modalVerifDeleteAccountVisible}
                     setModalVisible={setModalVerifDeleteAccountVisible}
                 />
-                <Back/>
                 <View style={styles.settings}>
                     {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
                         <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk" />

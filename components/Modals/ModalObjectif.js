@@ -156,12 +156,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                         onModify(reponse);
                         closeModal();
                         setLoading(false);
-
-                        Toast.show({
-                            type: "success",
-                            position: "top",
-                            text1: "Modification d'un objectif réussi"
-                        });
                     })
                     .catch((err) =>{
                         Toast.show({
@@ -178,13 +172,8 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                     .then((reponse) =>{
 
                         closeModal();
+                        onModify();
                         setLoading(false);
-
-                        Toast.show({
-                            type: "success",
-                            position: "top",
-                            text1: "Création d'un objectif réussi"
-                        });
                     })
                     .catch((err) =>{
                         Toast.show({

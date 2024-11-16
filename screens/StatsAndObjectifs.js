@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Image, Animated } from "react-native";
 import TopTab from '../components/TopTab';
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { TouchableOpacity } from "react-native";
 import AnimalsPicker from "../components/AnimalsPicker";
 import AnimalsService from "../services/AnimalsService";
@@ -12,6 +12,7 @@ import { SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
+import { useFocusEffect } from "@react-navigation/native";
 
 const StatsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -27,15 +28,13 @@ const StatsScreen = ({ navigation }) => {
   const animalsService = new AnimalsService;
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
-  
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      setMessages({message1: "Mes", message2: "performances"});
+  useFocusEffect(
+    useCallback(() => {
+      setMessages({message1: "Mes", message2: "Performances"});
       getAnimals();
-    });
-    return unsubscribe;
-  }, [navigation]);
+    }, [])
+  );
 
   const getAnimals = async () => {
     // Si aucun animal est déjà présent dans la liste, alors

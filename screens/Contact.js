@@ -87,7 +87,12 @@ const ContactScreen = ({ navigation }) => {
     }
 
     const onModify = (contact) =>{
-        console.log(contact);
+        setTimeout(() => Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Modification d'un contact"
+          }), 300);
+          
         var tempArray = contacts;
 
         var index = tempArray.findIndex(objet => objet.id === contact.id);
