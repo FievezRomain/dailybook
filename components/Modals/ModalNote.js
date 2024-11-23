@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
-import NoteService from "../../services/NoteService";
+import notesServiceInstance from "../../services/NoteService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import RichTextEditor from "../RichTextEditor";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -24,7 +24,6 @@ import ModalEditGeneric from "./ModalEditGeneric";
 const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = undefined }) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const noteService = new NoteService();
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
     const [loading, setLoading] = useState(false);
     const richText = useRef();  // Reference to RichTextEditor
@@ -66,7 +65,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
         data["note"] = await sanitizeHtml(richTextValue);
         
         if (actionType === "modify") {
-            noteService.update(data)
+            notesServiceInstance.update(data)
                 .then((reponse) => {
                     
                     resetValues();
@@ -83,7 +82,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                     setLoading(false);
                 });
         } else {
-            noteService.create(data)
+            notesServiceInstance.create(data)
                 .then((reponse) => {
                     resetValues();
                     closeModal();

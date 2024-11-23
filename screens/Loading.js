@@ -1,7 +1,7 @@
 import { View, Image, StyleSheet, Text } from "react-native";
 import { useEffect, useState } from "react";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import AnimalsService from "../services/AnimalsService";
+import { useAnimaux } from "../providers/AnimauxProvider";
 import * as Font from 'expo-font';
 import LoggerService from "../services/LoggerService";
 import Constants from 'expo-constants';
@@ -10,7 +10,7 @@ import { useTheme } from 'react-native-paper';
 const LoadingScreen = ({ navigation })=> {
   const { colors, fonts } = useTheme();
     const { cacheUpdated, currentUser, loading, emailVerified, reloadUser } = useAuth();
-    const animalService = new AnimalsService();
+    const { animaux } = useAnimaux();
 
     useEffect(() => {
 
@@ -22,7 +22,7 @@ const LoadingScreen = ({ navigation })=> {
             if(currentUser && !emailVerified){
               navigation.navigate("VerifyEmail");
             }else if(currentUser && cacheUpdated){
-              var animaux = await animalService.getAnimals(currentUser.email);
+              //var animaux = await animalsServiceInstance.getAnimals(currentUser.email);
               if(Array.isArray(animaux) && animaux.length > 0){
                 LoggerService.log("Connexion réussie");
                 navigation.navigate("App");

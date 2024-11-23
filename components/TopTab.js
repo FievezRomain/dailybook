@@ -41,10 +41,6 @@ const TopTab = ({message1, message2, withBackground=false}) => {
         avatar: {
             width: 40,
             height: 40,
-            borderRadius: 50,
-            borderWidth: 0.7,
-            borderColor: withBackground == false ? colors.accent : colors.background,
-            backgroundColor: withBackground == false ? colors.accent : colors.background,
         },
         text:{
             color: withBackground == false ? colors.accent : colors.background,
@@ -71,6 +67,11 @@ const TopTab = ({message1, message2, withBackground=false}) => {
                     }
                     
                 </View>
+                {withBackground &&
+                    <View style={styles.imageContainer}>
+                        <Image style={styles.avatar} source={require("../assets/logo.png")} cachePolicy="disk"/>
+                    </View>
+                }
             </View>
             {!withBackground &&
                 <Divider />

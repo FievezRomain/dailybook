@@ -3,7 +3,6 @@ import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { TouchableOpacity } from "react-native";
 import AnimalsPicker from "../components/AnimalsPicker";
-import AnimalsService from "../services/AnimalsService";
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -13,6 +12,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
+import { useAnimaux } from "../providers/AnimauxProvider";
 
 const StatsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -23,9 +23,8 @@ const StatsScreen = ({ navigation }) => {
     {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text},
   ];
   const [temporality, setTemporality] = useState('En cours');
-  const [animaux, setAnimaux] = useState([]);
+  const { animaux } = useAnimaux();
   const [selectedAnimal, setSelectedAnimal] = useState([]);
-  const animalsService = new AnimalsService;
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
 
@@ -37,18 +36,9 @@ const StatsScreen = ({ navigation }) => {
   );
 
   const getAnimals = async () => {
-    // Si aucun animal est déjà présent dans la liste, alors
-    if(animaux.length == 0){
-      // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.email);
-      // Si l'utilisateur a des animaux, alors
-      if(result.length !== 0){
-        // On valorise l'animal selectionné par défaut au premier de la liste
-        setSelectedAnimal([result[0]]);
-
-        // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
-        setAnimaux(result);
-      }
+    if(animaux.length !== 0){
+      // On valorise l'animal selectionné par défaut au premier de la liste
+      setSelectedAnimal([animaux[0]]);
     }
   };
 

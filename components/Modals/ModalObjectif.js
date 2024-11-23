@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity,
 import React, { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import ModalAnimals from "./ModalSelectAnimals";
-import AnimalsService from "../../services/AnimalsService";
-import ObjectifService from "../../services/ObjectifService";
+import { useAnimaux } from "../../providers/AnimauxProvider";
+import objectifsServiceInstance from "../../services/ObjectifService";
 import ModalDropdwn from "./ModalDropdown";
 import Button from "../Button";
 import { AntDesign } from '@expo/vector-icons';
@@ -21,11 +21,9 @@ import ModalEditGeneric from "./ModalEditGeneric";
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const animalsService = new AnimalsService;
-    const objectifService = new ObjectifService;
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
-    const [animaux, setAnimaux] = useState([]);
+    const { animaux, setAnimaux } = useAnimaux();
     const [selected, setSelected] = useState([]);
     const [temporalityObjectif, setTemporalityObjectif] = useState(false);
     const [inputs, setInputs] = useState(['']);
@@ -39,21 +37,21 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
 
     useEffect(() => {
         if(isVisible){
-          getAnimals();
+          //getAnimals();
           initValuesEvent();
         }
     }, [isVisible]);
     
-    useEffect(() => {
+/*     useEffect(() => {
         initValuesEvent();
-    }, [animaux]);
+    }, [animaux]); */
 
-    const getAnimals = async () => {
+/*     const getAnimals = async () => {
   
         // Si aucun animal est déjà présent dans la liste, alors
         if(animaux.length == 0){
             // On récupère les animaux de l'utilisateur courant
-            var result = await animalsService.getAnimals(currentUser.email);
+            var result = await animalsServiceInstance.getAnimals(currentUser.email);
             // Si l'utilisateur a des animaux, alors
             if(result.length !== 0){
             // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
@@ -62,7 +60,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             }
         }
       
-    };
+    }; */
 
     const initValuesEvent = () => {
         setValue("id", objectif.id);
@@ -99,7 +97,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setValue("sousetapes", []);
         setValue("datedebut", new Date().toISOString().split('T')[0]);
         setValue("datefin", new Date().toISOString().split('T')[0]);
-        setAnimaux([]);
+        //setAnimaux([]);
     };
 
     const submitRegister = async(data) =>{
@@ -150,7 +148,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         if(complete === true){
             data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
             if(actionType === "modify"){
-                objectifService.update(data)
+                objectifsServiceInstance.update(data)
                     .then((reponse) =>{
 
                         onModify(reponse);
@@ -168,7 +166,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                     });
             }
             else{
-                objectifService.create(data)
+                objectifsServiceInstance.create(data)
                     .then((reponse) =>{
 
                         closeModal();

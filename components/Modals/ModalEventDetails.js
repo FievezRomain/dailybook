@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput, ActivityIndicator } from "react-native";
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import RatingInput from '../RatingInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import EventService from '../../services/EventService';
+import eventsServiceInstance from '../../services/EventService';
 import Toast from "react-native-toast-message";
 import LoggerService from '../../services/LoggerService';
 import FileStorageService from "../../services/FileStorageService";
@@ -16,7 +16,6 @@ import ModalEditGeneric from './ModalEditGeneric';
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const eventService = new EventService();
     var eventBeforeEditCommentaire;
     var eventBeforeEditRessenti;
     var eventBeforeEditState;
@@ -24,6 +23,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     const fileStorageService = new FileStorageService();
     const dateUtils = new DateUtils();
     const [loading, setLoading] = useState(false);
+    const scrollRef = useRef(null);
 
     useEffect(() => {
         eventBeforeEditCommentaire = event.commentaire;
@@ -209,8 +209,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if(date == undefined){
           return "";
         }
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateObject  = new Date(date);
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var dateObject  = new Date(date);
         let dateString = dateObject.toLocaleDateString("fr-FR", options);
         dateString = dateString.charAt(0).toUpperCase() + dateString.slice(1);
         return dateString;
@@ -256,7 +256,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         data["note"] = event.note;
         data["email"] = currentUser.email;
 
-        eventService.updateCommentaireNote(data)
+        eventsServiceInstance.updateCommentaireNote(data)
             .then((reponse) => {
                 handleEventsChange();
                 setVisible(false);
@@ -438,7 +438,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         handleStyleModal:{
             backgroundColor: getColorEventType(),
             borderTopEndRadius: 15,
-            borderTopStartRadius: 15
+            borderTopStartRadius: 15,
+            marginBottom: -1
           },
           handleIndicatorStyle:{
             backgroundColor: colors.background
@@ -453,16 +454,14 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             handleStyle={styles.handleStyleModal}
             handleIndicatorStyle={styles.handleIndicatorStyle}
         >
-                    
-                            
             <View style={styles.containerActionsButtons}>
-                <TouchableOpacity onPress={closeModal} style={{width:"33,33%", alignItems: "center"}}>
+                <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                     <Text style={[{color: colors.background}, styles.textFontRegular]}>Annuler</Text>
                 </TouchableOpacity>
-                <View style={{width:"33,33%", alignItems: "center"}}>
+                <View style={{width:"33.33%", alignItems: "center"}}>
                         <Text style={[styles.textFontBold, {color: colors.background}]}>{getTitleEventType()}</Text>
                 </View>
-                <TouchableOpacity onPress={() => handleModifyEvent()} style={{width:"33,33%", alignItems: "center"}}>
+                <TouchableOpacity onPress={() => handleModifyEvent()} style={{width:"33.33%", alignItems: "center"}}>
                     { loading ? 
                             <ActivityIndicator size={10} color={colors.accent} />
                         :
@@ -504,7 +503,11 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                     />
                 </View>
             }
-            <KeyboardAwareScrollView>
+            <KeyboardAwareScrollView
+                ref={scrollRef}
+                keyboardShouldPersistTaps="handled"
+                enableOnAndroid={true}
+            >
                 <View style={styles.tableauInfos}>
                     {isValidString(event.heuredebutevent) &&
                         <View style={{marginBottom: 5}}>
@@ -580,6 +583,13 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                             numberOfLines={4}
                             maxLength={2000}
                             placeholder="Exemple : Ça s'est très bien passé"
+                            onFocus={(e) => {
+                                // Scrolle vers l'élément lorsqu'il est cliqué
+                                e.target?.measure((x, y, width, height, pageX, pageY) => {
+                                    const scrollOffset = Math.max(pageY - 100, 0); // Ajuste dynamiquement sans descendre trop
+                                    scrollRef.current?.scrollToPosition(0, scrollOffset, true);
+                                });
+                            }}
                             onChangeText={(text) => event.commentaire = text}
                             defaultValue={event.commentaire}
                         />

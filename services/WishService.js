@@ -4,7 +4,15 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
 
-export default class WishService {
+class WishService {
+
+    constructor() {
+        this.setWishs = null;
+    }
+
+    initialize(setWishs) {
+        this.setWishs = setWishs;
+    }
 
     async createWithoutPicture(body) {
         return axios.post(`${getBaseUrl()}createWish`, body)
@@ -138,6 +146,11 @@ export default class WishService {
         } else {
             await AsyncStorage.setItem("wishs", Array.isArray(wishs) ? JSON.stringify(wishs) : JSON.stringify([wishs]));
         }
+
+        if (this.setWishs) {
+            
+            this.setWishs(await this.getCache());
+        }
     }
 
     async deleteInCache(wish) {
@@ -157,3 +170,7 @@ export default class WishService {
         await this.getWishs(email);
     }
 }
+
+const wishsServiceInstance = new WishService( );
+
+export default wishsServiceInstance;

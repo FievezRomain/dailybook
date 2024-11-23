@@ -4,7 +4,15 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
 
-export default class ContactService {
+class ContactService {
+
+    constructor() {
+        this.setContacts = null;
+    }
+
+    initialize(setContacts) {
+        this.setContacts = setContacts;
+    }
 
     async create(body) {
         await this.updateAxiosAuthorization();
@@ -102,6 +110,11 @@ export default class ContactService {
         } else {
             await AsyncStorage.setItem("contacts", Array.isArray(contacts) ? JSON.stringify(contacts) : JSON.stringify([contacts]));
         }
+
+        if (this.setContacts) {
+            
+            this.setContacts(await this.getCache());
+        }
     }
 
     async deleteInCache(contact) {
@@ -121,3 +134,7 @@ export default class ContactService {
         await this.getContacts(email);
     }
 }
+
+const contactsServiceInstance = new ContactService( );
+
+export default contactsServiceInstance;

@@ -4,7 +4,7 @@ import { Ionicons, Entypo } from '@expo/vector-icons';
 import ModalSubMenuNoteActions from '../Modals/ModalSubMenuNoteActions';
 import ModalNote from "../Modals/ModalNote";
 import Toast from "react-native-toast-message";
-import NoteService from '../../services/NoteService';
+import notesServiceInstance from '../../services/NoteService';
 import LoggerService from '../../services/LoggerService';
 import HTMLView from 'react-native-htmlview';
 import { useTheme } from 'react-native-paper';
@@ -15,7 +15,6 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     const [focus, setFocus] = useState(false);
     const [modalSubMenuNoteVisible, setModalSubMenuNoteVisible] = useState(false);
     const [modalNote, setModaleNote] = useState(false);
-    const noteService = new NoteService();
     const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
     const handleDelete = () =>{
@@ -25,7 +24,7 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     const confirmDelete = () => {
         let data = {};
         data["id"] = note.id;
-        noteService.delete(data)
+        notesServiceInstance.delete(data)
             .then((reponse) => {
                 Toast.show({
                     type: "success",

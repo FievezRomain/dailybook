@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import { AntDesign } from '@expo/vector-icons';
-import ContactService from "../../services/ContactService";
+import contactsServiceInstance from "../../services/ContactService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { ActivityIndicator } from "react-native";
 import LoggerService from "../../services/LoggerService";
@@ -14,7 +14,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const contactService = new ContactService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [loading, setLoading] = useState(false);
 
@@ -55,7 +54,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         data["emailproprietaire"] = currentUser.email;
         
         if(actionType === "modify"){
-            contactService.update(data)
+            contactsServiceInstance.update(data)
                 .then((reponse) =>{
 
                     onModify(reponse);
@@ -75,7 +74,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                 });
         }
         else{
-            contactService.create(data)
+            contactsServiceInstance.create(data)
                 .then((reponse) =>{
                     
                     resetValues();

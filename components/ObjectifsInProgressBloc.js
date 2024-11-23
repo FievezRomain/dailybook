@@ -2,27 +2,26 @@ import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ObjectifCard from './cards/ObjectifCard';
-import AnimalsService from "../services/AnimalsService";
+import { useAnimaux } from '../providers/AnimauxProvider';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import { useTheme } from 'react-native-paper';
 
 const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObjectifDelete }) => {
     const { currentUser } = useAuth();
-    const animalsService = new AnimalsService;
-    const [animaux, setAnimaux] = useState([]);
+    const { animaux } = useAnimaux();
     const { colors, fonts } = useTheme();
 
-    useEffect(() => {
+/*     useEffect(() => {
         if(animaux.length == 0){
             getAnimaux();
         }
     }, [objectifs]);
 
     const getAnimaux = async () => {
-        var result = await animalsService.getAnimals(currentUser.email);
+        var result = await animalsServiceInstance.getAnimals(currentUser.email);
 
         setAnimaux(result);
-    }
+    } */
 
     const styles = StyleSheet.create({
         objectifsInProgressContainer:{

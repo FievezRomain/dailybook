@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, SectionList, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import TopTabSecondary from '../components/TopTabSecondary';
-import ContactService from '../services/ContactService';
+import contactsServiceInstance from '../services/ContactService';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { Entypo, Zocial } from '@expo/vector-icons';
 import { Linking } from 'react-native';
@@ -12,19 +12,19 @@ import Toast from "react-native-toast-message";
 import ModalDefaultNoValue from '../components/Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../components/Modals/ModalValidation";
+import { useContacts } from '../providers/ContactsProvider';
 
 const ContactScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
     const sectionListRef = useRef(null);
     const { currentUser } = useAuth();
-    const contactsService = new ContactService();
-    const [contacts, setContacts] = useState([]);
+    const { contacts, setContacts } = useContacts();
     const [modalSubMenuVisible, setModalSubMenuVisible] = useState(false);
     const [contactFocus, setContactFocus] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
     const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
-    const getContacts = async () => {
+/*     const getContacts = async () => {
         const result = await contactsService.getContacts(currentUser.email);
         if (result && result.length > 0) {
             setContacts(result);
@@ -36,7 +36,7 @@ const ContactScreen = ({ navigation }) => {
             getContacts();
         });
         return unsubscribe;
-    }, [navigation]);
+    }, [navigation]); */
 
     const groupedContacts = contacts.reduce((acc, contact) => {
         if (contact && contact.nom) {
@@ -112,7 +112,7 @@ const ContactScreen = ({ navigation }) => {
     const confirmDelete = () =>{
         let data = {};
         data["id"] = contactFocus.id;
-        contactsService.delete(data)
+        contactsServiceInstance.delete(data)
             .then((reponse) => {
                 Toast.show({
                     type: "success",

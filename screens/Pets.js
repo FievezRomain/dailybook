@@ -3,7 +3,7 @@ import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import AnimalsPicker from "../components/AnimalsPicker";
 import { useForm } from "react-hook-form";
-import AnimalsService from "../services/AnimalsService";
+import animalsServiceInstance from "../services/AnimalsService";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import InformationsAnimals from "../components/InformationsAnimals";
 import Toast from "react-native-toast-message";
@@ -16,19 +16,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../components/Modals/ModalValidation";
 import { useFocusEffect } from "@react-navigation/native";
+import { useAnimaux } from "../providers/AnimauxProvider";
 
 const PetsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "animaux"});
-  const animalsService = new AnimalsService;
-  const [animaux, setAnimaux] = useState([]);
-  const [selected, setSelected] = useState([{}]);
+  const { animaux, setAnimaux } = useAnimaux();
+  const [selected, setSelected] = useState([]);
   const { setValue } = useForm();
-  today = new Date();
-  jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
-  mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
-  annee = today.getFullYear();
+  var today = new Date();
+  var jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
+  var mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
+  var annee = today.getFullYear();
   const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
@@ -37,42 +37,30 @@ const PetsScreen = ({ navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      if(animaux.length === 0){
-      setMessages({message1: "Mes", message2: "Animaux"});
-      
-      getAnimals();}
-    }, [animaux])
+      if(selected.length === 0){
+        initDisplay();
+      }
+    }, [navigation])
   );
 
 
-  const getAnimals = async () => {
-    // Si aucun animal est déjà présent dans la liste, alors
-    if(animaux.length == 0){
-      // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.email);
-      // Si l'utilisateur a des animaux, alors
-      if(result.length !== 0){
-        // On valorise l'animal selectionné par défaut au premier de la liste
-        setSelected([result[0]]);
-        if(result[0].id !== null ? setValue("id", result[0].id) : null);
-        if(result[0].nom !== null ? setValue("nom", result[0].nom) : null);
-        if(result[0].espace !== null ? setValue("espece", result[0].espece) : null);
-        if(result[0].datenaissance !== null ? setValue("datenaissance", result[0].datenaissance) : null);
-        if(result[0].race !== null ? setValue("race", result[0].race) : null );
-        if(result[0].taille !== null ? setValue("taille", String(result[0].taille)) : null);
-        if(result[0].poids !== null ? setValue("poids", String(result[0].poids)) : null);
-        if(result[0].sexe !== null ? setValue("sexe", result[0].sexe) : null);
-        if(result[0].food !== null ? setValue("food", result[0].food) : null);
-        if(result[0].quantity !== null ? setValue("quantity", String(result[0].quantity)) : null);
-        if(result[0].couleur !== null ? setValue("couleur", result[0].couleur) : null);
-        if(result[0].nomPere !== null ? setValue("nomPere", result[0].nomPere) : null);
-        if(result[0].nomMere !== null ? setValue("nomMere", result[0].nomMere) : null);
-        if(result[0].datenaissance !== null ? setDate(result[0].datenaissance) : setDate(null));
-
-        // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
-        setAnimaux(result);
-      }
-    }
+  const initDisplay = async () => {
+      // On valorise l'animal selectionné par défaut au premier de la liste
+      setSelected([animaux[0]]);
+      if(animaux[0].id !== null ? setValue("id", animaux[0].id) : null);
+      if(animaux[0].nom !== null ? setValue("nom", animaux[0].nom) : null);
+      if(animaux[0].espace !== null ? setValue("espece", animaux[0].espece) : null);
+      if(animaux[0].datenaissance !== null ? setValue("datenaissance", animaux[0].datenaissance) : null);
+      if(animaux[0].race !== null ? setValue("race", animaux[0].race) : null );
+      if(animaux[0].taille !== null ? setValue("taille", String(animaux[0].taille)) : null);
+      if(animaux[0].poids !== null ? setValue("poids", String(animaux[0].poids)) : null);
+      if(animaux[0].sexe !== null ? setValue("sexe", animaux[0].sexe) : null);
+      if(animaux[0].food !== null ? setValue("food", animaux[0].food) : null);
+      if(animaux[0].quantity !== null ? setValue("quantity", String(animaux[0].quantity)) : null);
+      if(animaux[0].couleur !== null ? setValue("couleur", animaux[0].couleur) : null);
+      if(animaux[0].nomPere !== null ? setValue("nomPere", animaux[0].nomPere) : null);
+      if(animaux[0].nomMere !== null ? setValue("nomMere", animaux[0].nomMere) : null);
+      if(animaux[0].datenaissance !== null ? setDate(animaux[0].datenaissance) : setDate(null));
   };
 
   const handleDeletePet = async() =>{
@@ -87,7 +75,7 @@ const PetsScreen = ({ navigation }) => {
     // Récupération de l'identifiant de l'animal
     data["id"] = selected[0].id;
 
-    animalsService.delete(data)
+    animalsServiceInstance.delete(data)
     .then((response) =>{
 
       // Une fois la suppression terminée, on valorise le hook avec l'animal en moins

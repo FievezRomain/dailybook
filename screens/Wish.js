@@ -4,7 +4,7 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { Entypo } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
 import TopTabSecondary from "../components/TopTabSecondary";
-import WishService from "../services/WishService";
+import wishsServiceInstance from "../services/WishService";
 import { Image } from "expo-image";
 import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishActions";
 import Toast from "react-native-toast-message";
@@ -15,13 +15,13 @@ import FileStorageService from "../services/FileStorageService";
 import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../components/Modals/ModalValidation";
+import { useWishs } from "../providers/WishProvider";
 
 const WishScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const [wishs, setWishs] = useState([]);
+    const { wishs, setWishs } = useWishs();
     const [selectedWish, setSelectedWish] = useState(null);
-    const wishService = new WishService();
     const [modalSubMenuWishVisible, setModalSubMenuWishVisible] = useState(false);
     const [modalWishVisible, setModalWishVisible] = useState(false);
     const fileStorageService = new FileStorageService();
@@ -30,18 +30,18 @@ const WishScreen = ({ navigation }) => {
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
           
-          getWishs();
+          //getWishs();
           
         });
         return unsubscribe;
     }, [navigation]);
 
-    const getWishs = async () => {
+/*     const getWishs = async () => {
         var result = await wishService.getWishs(currentUser.email);
         if(result.length != 0){
             setWishs(result);
         }
-    }
+    } */
 
     const handleModify = () => {
         setModalWishVisible(true);
@@ -73,7 +73,7 @@ const WishScreen = ({ navigation }) => {
 
         let data = {};
         data["id"] = selectedWish.id;
-        wishService.delete(data)
+        wishsServiceInstance.delete(data)
             .then((response) =>{
 
                 var filteredArray = wishs.filter((item) => item.id != selectedWish.id);

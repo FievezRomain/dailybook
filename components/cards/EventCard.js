@@ -10,10 +10,10 @@ import ModalEvents from "../Modals/ModalEvents";
 import DepenseCard from "./eventCards/DepenseCard";
 import React, { useEffect, useState, useContext } from 'react';
 import ModalSubMenuEventActions from "../Modals/ModalSubMenuEventActions";
-import AnimalsService from "../../services/AnimalsService";
+import { useAnimaux } from "../../providers/AnimauxProvider";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import ModalEventDetails from "../Modals/ModalEventDetails";
-import EventService from "../../services/EventService";
+import eventsServiceInstance from "../../services/EventService";
 import LoggerService from '../../services/LoggerService';
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
@@ -27,19 +27,17 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
     const [modalEventDetailsVisible, setModalEventDetailsVisible] = useState(false);
     const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
     const [modalValidationDeleteAllVisible, setModalValidationDeleteAllVisible] = useState(false);
-    const animalsService = new AnimalsService;
-    const [animaux, setAnimaux] = useState([]);
-    const eventService = new EventService();
+    const { animaux } = useAnimaux();
 
-    useEffect(() => {
+/*     useEffect(() => {
         getAnimaux();
     }, [eventInfos])
 
     const getAnimaux = async () => {
-        var result = await animalsService.getAnimals(currentUser.email);
+        var result = await animalsServiceInstance.getAnimals(currentUser.email);
 
         setAnimaux(result);
-    }
+    } */
 
     const styles = StyleSheet.create({
         actionEventContainer:{
@@ -147,7 +145,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
     const confirmDelete = () =>{
         eventInfos.email = currentUser.email;
         
-        eventService.delete(eventInfos)
+        eventsServiceInstance.delete(eventInfos)
             .then((reponse) =>{
     
               Toast.show({
@@ -177,7 +175,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
         eventInfos.email = currentUser.email;
         eventInfos.id = eventInfos.idparent === null ? eventInfos.id : eventInfos.idparent;
 
-        eventService.delete(eventInfos)
+        eventsServiceInstance.delete(eventInfos)
             .then((reponse) =>{
     
               Toast.show({
@@ -215,7 +213,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
         data["animaux"] = eventInfos.animaux;
         data["email"] = currentUser.email;
 
-        eventService.updateState(data)
+        eventsServiceInstance.updateState(data)
             .then((reponse) => {
 
                 handleEventsChange();
@@ -249,9 +247,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
     }
 
     const getDayText = (date) =>{
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateObject  = new Date(date);
-        dateText = String(dateObject.toLocaleDateString("fr-FR", options));
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var dateObject  = new Date(date);
+        var dateText = String(dateObject.toLocaleDateString("fr-FR", options));
         dateText = dateText.charAt(0).toUpperCase() + dateText.slice(1);
         return dateText.slice(0,3);
     }

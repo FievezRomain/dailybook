@@ -11,6 +11,12 @@ import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import variables from './components/styles/Variables';
 import { ThemeProvider, ThemeContext } from './providers/ThemeProvider';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AnimauxProvider } from "./providers/AnimauxProvider";
+import { EventsProvider } from "./providers/EventsProvider";
+import { ObjectifsProvider } from "./providers/ObjectifsProvider";
+import { NotesProvider } from "./providers/NotesProvider";
+import { ContactsProvider } from "./providers/ContactsProvider";
+import { WishProvider } from "./providers/WishProvider";
 
 const lightTheme = {
   ...DefaultTheme,
@@ -125,13 +131,26 @@ function App() {
   return (
     fontsLoaded ?
           <>
-            <AuthenticatedUserProvider>
-              <GestureHandlerRootView>
-                <ThemeProvider>
-                  <ThemedApp />
-                </ThemeProvider>
-              </GestureHandlerRootView>
-            </AuthenticatedUserProvider>
+          
+            <AnimauxProvider>
+              <EventsProvider>
+                <ObjectifsProvider>
+                  <NotesProvider>
+                    <ContactsProvider>
+                      <WishProvider>
+                        <AuthenticatedUserProvider>
+                          <GestureHandlerRootView>
+                            <ThemeProvider>
+                              <ThemedApp />
+                            </ThemeProvider>
+                          </GestureHandlerRootView>
+                        </AuthenticatedUserProvider>
+                      </WishProvider>
+                    </ContactsProvider>
+                  </NotesProvider>
+                </ObjectifsProvider>
+              </EventsProvider>
+            </AnimauxProvider>
           </>
       :
       <ActivityIndicator size={10} />

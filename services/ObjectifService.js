@@ -4,7 +4,15 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
 
-export default class ObjectifService {
+class ObjectifService {
+
+    constructor() {
+        this.setObjectifs = null;
+    }
+
+    initialize(setObjectifs) {
+        this.setObjectifs = setObjectifs;
+    }
 
     async create(body) {
         await this.updateAxiosAuthorization();
@@ -112,6 +120,11 @@ export default class ObjectifService {
         } else {
             await AsyncStorage.setItem("objectifs", Array.isArray(objectifs) ? JSON.stringify(objectifs) : JSON.stringify([objectifs]));
         }
+
+        if (this.setObjectifs) {
+            
+            this.setObjectifs(await this.getCache());
+        }
     }
 
     async deleteInCache(objectif) {
@@ -131,3 +144,7 @@ export default class ObjectifService {
         await this.getObjectifs(email);
     }
 }
+
+const objectifsServiceInstance = new ObjectifService( );
+
+export default objectifsServiceInstance;

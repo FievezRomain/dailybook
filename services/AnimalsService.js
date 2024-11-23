@@ -4,7 +4,16 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
 
-export default class AnimalsService {
+class AnimalsService {
+
+    constructor() {
+        this.setAnimaux = null;
+    }
+
+    initialize(setAnimaux) {
+        this.setAnimaux = setAnimaux;
+    }
+
     async createWithPicture(body){
         return axios.post(`${getBaseUrl()}createEquide`, body, {
             headers: {'Content-Type': 'multipart/form-data'},
@@ -147,6 +156,11 @@ export default class AnimalsService {
         } else {
             await AsyncStorage.setItem("animals", Array.isArray(animals) ? JSON.stringify(animals) : JSON.stringify([animals]));
         }
+
+        if (this.setAnimaux) {
+            
+            this.setAnimaux(await this.getCache());
+        }
     }
 
     async deleteInCache(animal) {
@@ -166,3 +180,7 @@ export default class AnimalsService {
         await this.getAnimals(email);
     }
 }
+
+const animalsServiceInstance = new AnimalsService( );
+
+export default animalsServiceInstance;

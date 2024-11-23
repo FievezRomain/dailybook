@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingVi
 import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
-import AnimalsService from "../../services/AnimalsService";
+import animalsServiceInstance from "../../services/AnimalsService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import AvatarPicker from "../AvatarPicker";
 import DateUtils from "../../utils/DateUtils";
@@ -18,14 +18,13 @@ import ModalEditGeneric from "./ModalEditGeneric";
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const animalsService = new AnimalsService();
     const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch, clearErrors } = useForm();
     const [image, setImage] = useState(null);
     const dateUtils = new DateUtils();
-    today = new Date();
-    jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
-    mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
-    annee = today.getFullYear();
+    var today = new Date();
+    var jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
+    var mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
+    var annee = today.getFullYear();
     const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
     const [loading, setLoading] = useState(false);
     const fileStorageService = new FileStorageService();
@@ -188,7 +187,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         // Si un animal est selectionné, cela veut dire qu'on doit le modifier, sinon le créer
         if(actionType === "modify"){
             // Modification de l'animal dans le back (BDD)
-            animalsService.modify(data)
+            animalsServiceInstance.modify(data)
             .then((response) =>{
                 
                 resetValues();
@@ -207,7 +206,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             });
         } else{
             // Création de l'animal dans le back (BDD)
-            animalsService.create(data)
+            animalsServiceInstance.create(data)
             .then((response) =>{
                 
                 resetValues();

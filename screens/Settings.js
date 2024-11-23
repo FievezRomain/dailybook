@@ -11,9 +11,12 @@ import { Image } from "expo-image";
 import ModalVerif from "../components/Modals/ModalVerif";
 import { ThemeContext } from '../providers/ThemeProvider';
 import { useTheme } from 'react-native-paper';
+import TopTab from "../components/TopTab";
+import { LinearGradient } from "expo-linear-gradient";
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
+    const [messages, setMessages] = useState({message1: "Mon", message2: "Profil"});
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVerifDeleteAccountVisible, setModalVerifDeleteAccountVisible] = useState(false);
     const { currentUser, deleteAccount } = useAuth();
@@ -37,7 +40,6 @@ const SettingsScreen = ({ }) => {
             shadowOffset: {width: 0, height: 2}
         },
         settings:{
-            backgroundColor: colors.onSurface,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -62,9 +64,6 @@ const SettingsScreen = ({ }) => {
             top: 25,
             zIndex: 1,
             backgroundColor: "white"
-        },
-        contentContainer: {
-            marginTop: Constants.statusBarHeight + 10,
         },
         button: {
             width: "70%",
@@ -94,8 +93,9 @@ const SettingsScreen = ({ }) => {
     });
 
     return (
-        <View style={{backgroundColor: colors.onSurface,}}>
-            <View style={styles.contentContainer}>
+        <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+            <TopTab message1={messages.message1} message2={messages.message2}/>
+            <View>
                 <LogoutModal
                     modalVisible={modalVisible}
                     setModalVisible={setModalVisible}
@@ -107,6 +107,7 @@ const SettingsScreen = ({ }) => {
                     modalVisible={modalVerifDeleteAccountVisible}
                     setModalVisible={setModalVerifDeleteAccountVisible}
                 />
+                
                 <View style={styles.settings}>
                     {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
                         <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk" />
@@ -153,7 +154,7 @@ const SettingsScreen = ({ }) => {
                     </View>
                 </View>
             </View>
-        </View>
+        </LinearGradient>
       );
 };
 

@@ -3,55 +3,56 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import CompletionBar from './CompletionBar';
-import ObjectifService from '../services/ObjectifService';
 import ModalSubMenuObjectifActions from './Modals/ModalSubMenuObjectifActions';
 import ModalObjectif from './Modals/ModalObjectif';
 import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
 import ObjectifCard from './cards/ObjectifCard';
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
+import { useObjectifs } from '../providers/ObjectifsProvider'; 
 
 const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const [objectifsArray, setObjectifsArray] = useState([]);
-    const [objectifsArrayDisplay, setObjectifsArrayDisplay] = useState([]);
+    const { objectifs, setObjectifs } = useObjectifs();
+    const [objectifsDisplay, setObjectifsDisplay] = useState([]);
     const [currentObjectif, setCurrentObjectif] = useState({});
-    const objectifService = new ObjectifService;
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
     const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
     const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
 
-    useEffect(() => {
+/*     useEffect(() => {
         if(animaux.length !== 0){
             getObjectifs();
         }
-    }, [animaux, navigation]);
+    }, [animaux, navigation]); */
 
     useEffect(() => {
-        changeObjectifsDisplay();
-    }, [objectifsArray, temporality, selectedAnimal]);
+        if(selectedAnimal.length !== 0){
+            changeObjectifsDisplay();
+        }
+    }, [objectifs, temporality, selectedAnimal]);
 
-    const getObjectifs = async () => {
+/*     const getObjectifs = async () => {
         var result = await objectifService.getObjectifs(currentUser.email);
 
         if(result.length != 0){
-            setObjectifsArray(result);
+            setObjectifs(result);
         }
-    }
+    } */
 
     const changeObjectifsDisplay = () => {
         var filteredObjectifs = []
         if(temporality === "En cours"){
-            filteredObjectifs = objectifsArray.filter((item) =>  item.sousEtapes.some(etape => etape.state === false) 
+            filteredObjectifs = objectifs.filter((item) =>  item.sousEtapes.some(etape => etape.state === false) 
                                     && item.animaux.includes(selectedAnimal[0].id) );
         } else{
-            filteredObjectifs = objectifsArray.filter((item) => item.sousEtapes.every(etape => etape.state === true) 
+            filteredObjectifs = objectifs.filter((item) => item.sousEtapes.every(etape => etape.state === true) 
                                     && item.animaux.includes(selectedAnimal[0].id) );
         }
         
 
-        setObjectifsArrayDisplay(filteredObjectifs);
+        setObjectifsDisplay(filteredObjectifs);
     }
 
     const handleModify = () => {
@@ -59,7 +60,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
     }
 
     const onModify = (objectif) => {
-        var tempArray = objectifsArray;
+        var tempArray = objectifs;
 
         var index = tempArray.findIndex(objet => objet.id === objectif.id);
 
@@ -67,17 +68,17 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
             tempArray[index] = objectif;
         }
 
-        setObjectifsArray(tempArray);
+        setObjectifs(tempArray);
         changeObjectifsDisplay();
     }
     const handleDelete = (objectif) => {
         let updatedObjectifs = [];
-        updatedObjectifs = [... objectifsArray];
+        updatedObjectifs = [... objectifs];
 
         var index = updatedObjectifs.findIndex((a) => a.id == objectif.id);
         updatedObjectifs.splice(index, 1);
 
-        setObjectifsArray(updatedObjectifs);
+        setObjectifs(updatedObjectifs);
         changeObjectifsDisplay();
     }
 
@@ -176,8 +177,8 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                 
                     <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text>
                     
-                    {objectifsArrayDisplay.length !== 0 ?
-                        objectifsArrayDisplay.map((objectif, index) => {
+                    {objectifsDisplay.length !== 0 ?
+                        objectifsDisplay.map((objectif, index) => {
                             return(
                                 <View style={styles.objectifContainer} key={objectif.id}>
                                     <ObjectifCard

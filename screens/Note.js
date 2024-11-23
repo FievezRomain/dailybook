@@ -7,21 +7,21 @@ import LogoutModal from "../components/Modals/ModalLogout";
 import Button from "../components/Button";
 import { TouchableOpacity } from "react-native";
 import TopTabSecondary from "../components/TopTabSecondary";
-import NoteService from "../services/NoteService";
+import notesServiceInstance from "../services/NoteService";
 import NoteCard from "../components/cards/NoteCard";
 import { AntDesign } from '@expo/vector-icons';
 import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
 import { useTheme } from 'react-native-paper';
+import { useNotes } from "../providers/NotesProvider";
 
 const NoteScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
-    const [notes, setNotes] = useState([]);
+    const { notes, setNotes } = useNotes();
     const [filteredNotes, setFilteredNotes] = useState([]);
     const { currentUser } = useAuth();
-    const noteService = new NoteService();
     const [searchQuery, setSearchQuery] = useState('');
 
-    useEffect(() => {
+   /*  useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
           
           getNotes();
@@ -35,7 +35,7 @@ const NoteScreen = ({ navigation }) => {
         if(result.length != 0){
             setNotes(result);
         }
-    }
+    } */
 
     const handleSearch = (query) => {
         setSearchQuery(query);

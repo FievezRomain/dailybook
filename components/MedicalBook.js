@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
 import StatePicker from './StatePicker';
-import EventService from '../services/EventService';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import EventCard from "./cards/EventCard";
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
+import { useEvents } from '../providers/EventsProvider';
 
 const MedicalBook = ({ animal, navigation }) => {
     const { colors, fonts } = useTheme();
@@ -13,11 +13,11 @@ const MedicalBook = ({ animal, navigation }) => {
     const [eventsSoins, setEventsSoins] = useState([]);
     const [eventsRdv, setEventsRdv] = useState([]);
     const { currentUser } = useAuth();
-    const eventService = new EventService();
     const arrayState = [
         {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.background, uncheckedColor: colors.text},
         {value: 'Soins', label: 'Soins', checkedColor: colors.background, uncheckedColor: colors.text},
       ];
+    const { events } = useEvents();
 
     useEffect(() =>{
         getEvents();
@@ -31,16 +31,16 @@ const MedicalBook = ({ animal, navigation }) => {
 
     const getEvents = async () =>{
         try {
-            var result = await eventService.getEvents(currentUser.email);
-            filter(result);
+            //var result = await eventService.getEvents(currentUser.email);
+            filter();
             
           } catch (error) {
             console.error("Error fetching events:", error);
           }
     }
 
-    const filter = async (result) => {
-        result = result.filter((event) => event.animaux.includes(animal.id));
+    const filter = async () => {
+        var result = events.filter((event) => event.animaux.includes(animal.id));
 
         var arrayEventsSoins = [];
         var arrayEventsRdv = [];

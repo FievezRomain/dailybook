@@ -3,8 +3,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 import ModalAnimals from "./ModalSelectAnimals";
-import AnimalsService from "../../services/AnimalsService";
-import EventService from "../../services/EventService";
+import eventsServiceInstance from "../../services/EventService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import ModalDropdwn from "./ModalDropdown";
 import ModalNotifications from "./ModalNotifications";
@@ -20,12 +19,12 @@ import LoggerService from "../../services/LoggerService";
 import DateUtils from "../../utils/DateUtils";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
+import { useAnimaux } from "../../providers/AnimauxProvider";
+import { useEvents } from "../../providers/EventsProvider";
 
-const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
+const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined, date=null}) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
-  const animalsService = new AnimalsService;
-  const eventService = new EventService;
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDropdownVisible, setModalDropdownVisible] = useState(false);
   const [modalDropdownNotifVisible, setModalDropdownNotifVisible] = useState(false);
@@ -33,7 +32,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [modalOptionNotifications, setModalOptionNotifications] = useState(false);
   const [modalCategorieDepense, setModalCategorieDepense] = useState(false);
   const [modalFrequence, setModalFrequence] = useState(false);
-  const [animaux, setAnimaux] = useState([]);
+  const { animaux, setAnimaux } = useAnimaux();
   const [selected, setSelected] = useState([]);
   const [eventType, setEventType] = useState(false);
   const [notifType, setNotifType] = useState(false);
@@ -80,7 +79,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [events, setEvents] = useState([]);
+  const { events } = useEvents();
   const dateUtils = new DateUtils();
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
@@ -88,10 +87,10 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
   useEffect(() => {
     if(isVisible){
-      getAnimals();
+      //getAnimals();
       initValuesEvent(event);
       if( event.idparent != null && event.idparent != undefined){
-        getEvents();
+        //getEvents();
       }
     }
   }, [isVisible]);
@@ -99,16 +98,16 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   useEffect(() => {
     initValuesEvent(event);
     if( event.idparent != null && event.idparent != undefined){
-      getEvents();
+      //getEvents();
     }
   }, [animaux]);
 
-  const getAnimals = async () => {
+  /* const getAnimals = async () => {
   
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.email);
+      var result = await animalsServiceInstance.getAnimals(currentUser.email);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
@@ -117,11 +116,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
     }
   
-  };
+  }; */
 
-  const getEvents = async () => {
+  /* const getEvents = async () => {
     // Récupération des events
-    var result = await eventService.getEvents(currentUser.email);
+    var result = await eventsServiceInstance.getEvents(currentUser.email);
     setEvents(result);
 
     // Si idParent non null, modification de l'event
@@ -132,7 +131,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     })
 
     //await initValuesEvent(eventParent);
-  }
+  } */
 
   const initValuesEvent = (event) => {
     setValue("id", event.id);
@@ -185,6 +184,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("state", event.state === undefined ? "À faire" : event.state);
     setValue("todisplay", event.todisplay === undefined ? true : event.todisplay);
     setValue("idparent", event.idparent);
+
+    // Si on vient de la page calendrier et qu'on a select une date avant d'ajouter un event
+    if(actionType === "create" && date !== null){
+      setValue("dateevent", new Date(date).toISOString().split('T')[0]);
+      onChangeDate("dateevent", date);
+    }
   }
 
   const submitRegister = async(data) =>{
@@ -282,7 +287,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       data.email = currentUser.email;
 
       if(actionType === "modify"){
-        eventService.update(data)
+        eventsServiceInstance.update(data)
         .then((reponse) =>{
 
           resetValues();
@@ -301,7 +306,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           setLoading(false);
         });
       } else {
-        eventService.create(data)
+        eventsServiceInstance.create(data)
         .then((reponse) =>{
           closeModal();
           onModify();
@@ -356,7 +361,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setSelected([]);
     setNotifType(false);
     setOptionNotifType(false);
-    setAnimaux([]);
+    //setAnimaux([]);
   }
 
   const onChangeDate = (propertyName, selectedDate) => {
@@ -371,8 +376,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   };
 
   const onChangeTime = (fieldname, text) =>{
-    today = new Date();
-    jour = today.getHours();
+    var today = new Date();
+    var jour = today.getHours();
   }
 
   const handleRatingChange = (value) => {
@@ -393,8 +398,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     if(date == undefined){
       return "";
     }
-    options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    dateObject  = new Date(date);
+    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    var dateObject  = new Date(date);
     return String(dateObject.toLocaleDateString("fr-FR", options));
   }
 
@@ -706,7 +711,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
             </TouchableOpacity>
             <View style={{width:"33.33%", alignItems: "center"}}>
               { actionType === "modify" && 
-                <Text style={styles.textFontBold}>{eventType && eventType.title}</Text>
+                <Text style={[styles.textFontBold, {color: colors.background}]}>{eventType && eventType.title}</Text>
               }
               { actionType === "create" && 
                 <Text style={[styles.textFontBold, {color: colors.background}]}>{eventType && eventType.title}</Text>

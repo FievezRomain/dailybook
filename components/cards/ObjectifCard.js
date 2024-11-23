@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import CompletionBar from '../CompletionBar';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
-import ObjectifService from '../../services/ObjectifService';
+import objectifsServiceInstance from '../../services/ObjectifService';
 import Toast from "react-native-toast-message";
 import React, { useState, useEffect, useContext } from 'react';
 import ModalSubMenuObjectifActions from '../Modals/ModalSubMenuObjectifActions';
@@ -17,7 +17,6 @@ import ModalValidation from "../Modals/ModalValidation";
 const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {
     const { colors, fonts } = useTheme();
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
-    const objectifService = new ObjectifService;
     const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
     const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
     const [currentObjectif, setCurrentObjectif] = useState(objectif);
@@ -62,7 +61,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
         let data = {};
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
         data["id"] = currentObjectif.id;
-        objectifService.delete(data)
+        objectifsServiceInstance.delete(data)
             .then((reponse) =>{
 
                 Toast.show({
@@ -114,7 +113,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
         data["animaux"] = currentObjectif.animaux;
         data["temporalityobjectif"] = currentObjectif.temporalityobjectif;
         data["sousetapes"] = currentObjectif.sousEtapes;
-        objectifService.updateTasks(data)
+        objectifsServiceInstance.updateTasks(data)
             .then((reponse) =>{
                 handleObjectifChange(currentObjectif);
             })
@@ -129,9 +128,9 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
     }
 
     const getDayText = (date) =>{
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateObject  = new Date(date);
-        dateText = String(dateObject.toLocaleDateString("fr-FR", options));
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var dateObject  = new Date(date);
+        var dateText = String(dateObject.toLocaleDateString("fr-FR", options));
         dateText = dateText.charAt(0).toUpperCase() + dateText.slice(1);
         return dateText.slice(0,3);
     }

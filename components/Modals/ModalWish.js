@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import AvatarPicker from "../AvatarPicker";
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import WishService from "../../services/WishService";
+import wishsServiceInstance from "../../services/WishService";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { Image } from "expo-image";
 import { ActivityIndicator } from "react-native";
@@ -18,7 +18,6 @@ import ModalEditGeneric from "./ModalEditGeneric";
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const wishService = new WishService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -91,7 +90,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         }
 
         if(actionType === "modify"){
-            wishService.update(data)
+            wishsServiceInstance.update(data)
                 .then((reponse) =>{
                     resetValues();
                     closeModal();
@@ -110,7 +109,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 });
         }
         else{
-            wishService.create(data)
+            wishsServiceInstance.create(data)
                 .then((reponse) =>{
                     resetValues();
                     closeModal();

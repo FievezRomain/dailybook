@@ -5,7 +5,6 @@ import { Calendar, CalendarUtils, LocaleConfig } from 'react-native-calendars';
 import { ScrollView } from "react-native";
 import moment from "moment";
 import EventCard from "../components/cards/EventCard";
-import EventService from "../services/EventService";
 import DateUtils from "../utils/DateUtils";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -19,20 +18,22 @@ import ModalFilterCalendar from "../components/Modals/ModalFilterCalendar";
 import { CalendarFilter } from "../business/models/CalendarFilter";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
+import { useCalendar } from "../providers/CalendarProvider";
+import { useEvents } from "../providers/EventsProvider";
 
 const CalendarScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({ message1: "Mon", message2: "calendrier" });
-  const eventService = new EventService();
   const dateUtils = new DateUtils();
-  const [eventArray, setEventArray] = useState([]);
-  const [eventArrayCurrentDateSelected, setEventArrayCurrentDateSelected] = useState([]);
+  const { events, setEvents } = useEvents();
+  const [eventsCurrentDateSelected, setEventsCurrentDateSelected] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [marked, setMarked] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
   const [modalFilterVisible, setModalFilterVisible] = useState(false);
   const [filter, setFilter] = useState(null);
+  const { setDate } = useCalendar();
 
   const INITIAL_DATE = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(INITIAL_DATE);
@@ -53,38 +54,46 @@ const CalendarScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       setMessages({ message1: "Mon", message2: "Calendrier" });
-      getEventsForUser();
+      //getEventsForUser();
     }, [])
   );
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setDate(null);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     setupMarkedDates(true);
     changeEventsCurrentDateSelected(selectedDate);
-  }, [eventArray]);
+  }, [events]);
 
   useEffect(() => {
     applyFilter();
-  }, [filter, eventArray]);
+  }, [filter, events]);
 
   const applyFilter = () =>{
     if( filter ){
-      var result = filter.filter(eventArray);
+      var result = filter.filter(events);
       
       setFilteredEvents(result);
     }
   }
 
-  const getEventsForUser = async () => {
-    if (eventArray.length === 0) {
+  /* const getEventsForUser = async () => {
+    if (events.length === 0) {
       try {
         const result = await eventService.getEvents(currentUser.email);
-        setEventArray(result);
+        setEvents(result);
       } catch (error) {
         LoggerService.log( "Erreur lors de la récupération des events : " + error.message );
         console.error("Error fetching events:", error);
       }
     }
-  }
+  } */
 
   const setupMarkedDates = (isInit) => {
     //const newMarked = { ...marked };
@@ -114,7 +123,7 @@ const CalendarScreen = ({ navigation }) => {
       }
     };
     
-    eventArray.forEach((item) => {
+    events.forEach((item) => {
       const dateString = item.dateevent;
       treatmentItem(item, dateString);
 
@@ -175,8 +184,8 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const changeEventsCurrentDateSelected = (date) => {
-    const arrayFiltered = eventArray.filter(item => item.dateevent === date /* || (item.datefinsoins !== null && new Date(date) >= new Date(item.dateevent) && new Date(date) <= new Date(dateUtils.dateFormatter(item.datefinsoins, "dd/MM/yyyy", "/"))) */);
-    setEventArrayCurrentDateSelected(arrayFiltered);
+    const arrayFiltered = events.filter(item => item.dateevent === date /* || (item.datefinsoins !== null && new Date(date) >= new Date(item.dateevent) && new Date(date) <= new Date(dateUtils.dateFormatter(item.datefinsoins, "dd/MM/yyyy", "/"))) */);
+    setEventsCurrentDateSelected(arrayFiltered);
   }
 
   const convertDateToText = (date) => {
@@ -193,9 +202,13 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const onDayPress = (day) => {
+    // Mise à jour des hooks de l'écran
     setFilter(null);
     setSelectedDate(day);
     setSearchQuery("");
+
+    // Mise à jour du context de l'application
+    setDate(day);
 
     Object.entries(marked).forEach(([key, value]) => value.selected = false);
     const existingObj = marked[day];
@@ -226,7 +239,7 @@ const CalendarScreen = ({ navigation }) => {
       text1: "Modification d'un événement"
     }), 300);
 
-    setEventArray(await eventService.getEvents(currentUser.email));
+    //setEvents(await eventService.getEvents(currentUser.email));
 
   }
 
@@ -401,7 +414,7 @@ const CalendarScreen = ({ navigation }) => {
         </View>
             
           <FlatList
-            data={filter ? filteredEvents : eventArrayCurrentDateSelected}
+            data={filter ? filteredEvents : eventsCurrentDateSelected}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <EventCard

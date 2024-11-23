@@ -2,9 +2,6 @@ import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from "react-nat
 import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import EventsBloc from "../components/EventsBloc";
-import WavyHeader from "../components/WavyHeader";
-import EventService from "../services/EventService";
-import ObjectifService from "../services/ObjectifService";
 import ObjectifsInProgressBloc from "../components/ObjectifsInProgressBloc";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -14,27 +11,27 @@ import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
+import { useEvents } from "../providers/EventsProvider";
+import { useObjectifs } from "../providers/ObjectifsProvider";
 
 const WelcomeScreen = ({ navigation })=> {
   const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const [messages, setMessages] = useState({message1 :"Bienvenue", message2: ""});
-    const eventService = new EventService();
-    const objectifService = new ObjectifService();
-    const [events, setEvents] = useState([]);
-    const [objectifs, setObjectifs] = useState([]);
+    const { events } = useEvents();
+    const { objectifs, setObjectifs } = useObjectifs();
 
     useFocusEffect(
       useCallback(() => {
           setMessages({message1: "Bienvenue", message2: currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName});
-          getEventsForUser();
-          getObjectifsForUser();
+          //getEventsForUser();
+          //getObjectifsForUser();
       }, [])
     );
 
-    const getEventsForUser = async () => {
+    /* const getEventsForUser = async () => {
       try {
-        const result = await eventService.getEvents(currentUser.email);
+        const result = await eventsServiceInstance.getEvents(currentUser.email);
         setEvents(result);
       } catch (error) {
         LoggerService.log( "Erreur lors de la récupération des events : " + error.message );
@@ -52,7 +49,7 @@ const WelcomeScreen = ({ navigation })=> {
         LoggerService.log( "Erreur lors de la récupération des objectifs : " + error.message );
         console.error("Error fetching objectifs:", error);
       }
-    }
+    } */
 
     const convertDateToText = () => {
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -63,9 +60,9 @@ const WelcomeScreen = ({ navigation })=> {
     };
 
     const convertDayDateToText = () => {
-      options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      dateObject  = new Date();
-      dateText = String(dateObject.toLocaleDateString("fr-FR", options));
+      var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      var dateObject  = new Date();
+      var dateText = String(dateObject.toLocaleDateString("fr-FR", options));
       dateText = String(dateText.split(" ", 1));
       return dateText.charAt(0).toUpperCase() + dateText.slice(1);;
     };
@@ -76,13 +73,8 @@ const WelcomeScreen = ({ navigation })=> {
 
       var index = updatedObjectifs.findIndex((a) => a.id == objectif.id);
       updatedObjectifs[index] = objectif;
-      setObjectifs(updatedObjectifs);
+      //setObjectifs(updatedObjectifs);
 
-      setTimeout(() => Toast.show({
-        type: "success",
-        position: "top",
-        text1: "Modification d'un objectif"
-      }), 300);
     }
 
     const handleObjectifDelete = (objectif) => {
@@ -91,17 +83,12 @@ const WelcomeScreen = ({ navigation })=> {
 
       var index = updatedObjectifs.findIndex((a) => a.id == objectif.id);
       updatedObjectifs.splice(index, 1);
-      setObjectifs(updatedObjectifs);
+      //setObjectifs(updatedObjectifs);
     }
 
     const handleEventChange = async () => {
-      setEvents(await eventService.getEvents(currentUser.email));
+      //setEvents(await eventService.getEvents(currentUser.email));
 
-      setTimeout(() => Toast.show({
-        type: "success",
-        position: "top",
-        text1: "Modification d'un événement"
-      }), 300);
     }
 
     const styles = StyleSheet.create({
