@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 import ModalAnimals from "./ModalSelectAnimals";
@@ -81,6 +81,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [loading, setLoading] = useState(false);
   const { events } = useEvents();
   const dateUtils = new DateUtils();
+  const scrollRef = useRef(null);
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
   //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
@@ -90,7 +91,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       //getAnimals();
       initValuesEvent(event);
       if( event.idparent != null && event.idparent != undefined){
-        //getEvents();
+        getEvents();
       }
     }
   }, [isVisible]);
@@ -98,7 +99,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   useEffect(() => {
     initValuesEvent(event);
     if( event.idparent != null && event.idparent != undefined){
-      //getEvents();
+      getEvents();
     }
   }, [animaux]);
 
@@ -118,10 +119,10 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   
   }; */
 
-  /* const getEvents = async () => {
-    // Récupération des events
+  const getEvents = async () => {
+/*     // Récupération des events
     var result = await eventsServiceInstance.getEvents(currentUser.email);
-    setEvents(result);
+    setEvents(result); */
 
     // Si idParent non null, modification de l'event
     var eventParent = await events.filter(element => {
@@ -130,8 +131,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
     })
 
-    //await initValuesEvent(eventParent);
-  } */
+    await initValuesEvent(eventParent);
+  } 
 
   const initValuesEvent = (event) => {
     setValue("id", event.id);
@@ -729,7 +730,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
             </TouchableOpacity>
           </View>
           <Divider />
-            <KeyboardAwareScrollView>
+            <KeyboardAwareScrollView
+              ref={scrollRef}
+              keyboardShouldPersistTaps="handled"
+              enableOnAndroid={true}
+              extraScrollHeight={10}
+              enableResetScrollToCoords={false}
+            >
                 <View style={styles.formContainer}>
 
                   <Text style={[styles.textInput, styles.textFontRegular]}>Status de l'événement :</Text>
@@ -1114,6 +1121,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("commentaire", text)}
                       defaultValue={getValues("commentaire")}
+                      onFocus={(e) => {
+                        setTimeout(() => {
+                          scrollRef.current?.scrollToEnd({ animated: true });
+                        }, 100);
+                      }}
                     />
                   </View>
 

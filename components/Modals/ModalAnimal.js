@@ -424,7 +424,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                             </TouchableOpacity>
                         </View>
                         <Divider/>
-                        <KeyboardAwareScrollView>
+                        <KeyboardAwareScrollView
+                            enableResetScrollToCoords={false}
+                        >
                             <View style={styles.formContainer}>
 
                                 <View>

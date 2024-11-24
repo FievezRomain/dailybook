@@ -387,7 +387,9 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             </TouchableOpacity>
                         </View>
                         <Divider />
-                        <KeyboardAwareScrollView>
+                        <KeyboardAwareScrollView
+                            enableResetScrollToCoords={false}
+                        >
                             <View style={styles.formContainer}>
                                 <View style={styles.containerDate}>
                                     <Text style={[styles.textInput, styles.textFontRegular]}>Date de début : {convertDateToText("datedebut")} <Text style={{color: "red"}}>*</Text></Text>

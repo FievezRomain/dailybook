@@ -16,32 +16,22 @@ import ModalEditGeneric from './ModalEditGeneric';
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    var eventBeforeEditCommentaire;
-    var eventBeforeEditRessenti;
-    var eventBeforeEditState;
-    var eventBeforeEditDepense;
     const fileStorageService = new FileStorageService();
     const dateUtils = new DateUtils();
     const [loading, setLoading] = useState(false);
     const scrollRef = useRef(null);
+    const [localEvent, setLocalEvent] = useState({ ...event });
 
     useEffect(() => {
-        eventBeforeEditCommentaire = event.commentaire;
-        eventBeforeEditRessenti = event.note;
-        eventBeforeEditState = event.state;
-        eventBeforeEditDepense = event.depense;
+        setLocalEvent({ ...event });
     }, [isVisible])
 
     const closeModal = () => {
-        event.commentaire = eventBeforeEditCommentaire;
-        event.note = eventBeforeEditRessenti;
-        event.state = eventBeforeEditState;
-        event.depense = eventBeforeEditDepense;
         setVisible(false);
     };
 
     const handleRatingChange = (value) =>{
-        event.note = value;
+        handleInputChange('note', value);
     }
 
     const getColorEventType = () =>{
@@ -249,11 +239,11 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         setLoading(true);
 
         let data = {};
-        data["id"] = event.id;
-        data["commentaire"] = event.commentaire;
-        data["depense"] = event.depense;
-        data["animaux"] = event.animaux;
-        data["note"] = event.note;
+        data["id"] = localEvent.id;
+        data["commentaire"] = localEvent.commentaire;
+        data["depense"] = localEvent.depense;
+        data["animaux"] = localEvent.animaux;
+        data["note"] = localEvent.note;
         data["email"] = currentUser.email;
 
         eventsServiceInstance.updateCommentaireNote(data)
@@ -295,7 +285,14 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             }
         }
         return true;
-      }
+    }
+
+    const handleInputChange = (key, value) => {
+        setLocalEvent((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
 
     const styles = StyleSheet.create({
         background: {
@@ -496,7 +493,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 <View style={[styles.tableauSecondaryInfo, {backgroundColor: hexToRgba(getColorEventType(), 0.2)}]}>
                     <RatingInput
                         onRatingChange={handleRatingChange}
-                        defaultRating={event.note !== undefined && event.note !== null ? event.note : 0}
+                        defaultRating={localEvent.note !== undefined && localEvent.note !== null ? localEvent.note : 0}
                         margin={0}
                         size={25}
                         color={getColorEventType()}
@@ -507,72 +504,73 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 ref={scrollRef}
                 keyboardShouldPersistTaps="handled"
                 enableOnAndroid={true}
+                extraScrollHeight={10}
             >
                 <View style={styles.tableauInfos}>
-                    {isValidString(event.heuredebutevent) &&
+                    {isValidString(localEvent.heuredebutevent) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Heure : {event.heuredebutevent}</Text>
+                            <Text style={styles.textFontRegular}>Heure : {localEvent.heuredebutevent}</Text>
                         </View>
                     }
-                    {isValidString(event.discipline) &&
+                    {isValidString(localEvent.discipline) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Discipline : {event.discipline}</Text>
+                            <Text style={styles.textFontRegular}>Discipline : {localEvent.discipline}</Text>
                         </View>
                     }
-                    {isValidString(event.lieu) &&
+                    {isValidString(localEvent.lieu) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Lieu : {event.lieu}</Text>
+                            <Text style={styles.textFontRegular}>Lieu : {localEvent.lieu}</Text>
                         </View>
                     }
-                    {isValidString(event.datefinbalade) &&
+                    {isValidString(localEvent.datefinbalade) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Date de fin de balade : {event.datefinbalade.includes("-") ? dateUtils.dateFormatter(event.datefinbalade, "yyyy-mm-dd", "-") : event.datefinbalade}</Text>
+                            <Text style={styles.textFontRegular}>Date de fin de balade : {localEvent.datefinbalade.includes("-") ? dateUtils.dateFormatter(localEvent.datefinbalade, "yyyy-mm-dd", "-") : localEvent.datefinbalade}</Text>
                         </View>
                     }
-                    {isValidString(event.heurefinbalade) &&
+                    {isValidString(localEvent.heurefinbalade) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Heure de fin de balade : {event.heurefinbalade}</Text>
+                            <Text style={styles.textFontRegular}>Heure de fin de balade : {localEvent.heurefinbalade}</Text>
                         </View>
                     }
-                    {isValidString(event.epreuve) &&
+                    {isValidString(localEvent.epreuve) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Épreuve : {event.epreuve}</Text>
+                            <Text style={styles.textFontRegular}>Épreuve : {localEvent.epreuve}</Text>
                         </View>
                     }
-                    {isValidString(event.dossart) &&
+                    {isValidString(localEvent.dossart) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Dossart : {event.dossart}</Text>
+                            <Text style={styles.textFontRegular}>Dossart : {localEvent.dossart}</Text>
                         </View>
                     }
-                    {event.placement != null && event.placement != undefined &&
+                    {localEvent.placement != null && localEvent.placement != undefined &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Classement : {event.placement}</Text>
+                            <Text style={styles.textFontRegular}>Classement : {localEvent.placement}</Text>
                         </View>
                     }
-                    {isValidString(event.specialiste) &&
+                    {isValidString(localEvent.specialiste) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Spécialiste : {event.specialiste}</Text>
+                            <Text style={styles.textFontRegular}>Spécialiste : {localEvent.specialiste}</Text>
                         </View>
                     }
                     <View style={{marginBottom: 5, width: "90%"}}>
-                        <Text style={[styles.textFontRegular, {marginBottom: 5}]}>Dépense : {event.depense}</Text>
+                        <Text style={[styles.textFontRegular, {marginBottom: 5}]}>Dépense : {localEvent.depense}</Text>
                         <TextInput
                             style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5,}, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="decimal-pad"
                             inputMode="decimal"
-                            onChangeText={(text) => event.depense = text}
-                            defaultValue={event.depense}
+                            onChangeText={(text) => handleInputChange('depense', text)}
+                            defaultValue={localEvent.depense}
                         />
                     </View>
-                    {isValidString(event.traitement) &&
+                    {isValidString(localEvent.traitement) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Traitement : {event.traitement}</Text>
+                            <Text style={styles.textFontRegular}>Traitement : {localEvent.traitement}</Text>
                         </View>
                     }
-                    {isValidString(event.datefinsoins) &&
+                    {isValidString(localEvent.datefinsoins) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Date de fin du soin : {event.datefinsoins.includes("-") ? dateUtils.dateFormatter(event.datefinsoins, "yyyy-mm-dd", "-") : event.datefinsoins}</Text>
+                            <Text style={styles.textFontRegular}>Date de fin du soin : {localEvent.datefinsoins.includes("-") ? dateUtils.dateFormatter(localEvent.datefinsoins, "yyyy-mm-dd", "-") : localEvent.datefinsoins}</Text>
                         </View>
                     }
                     <View style={{width: "90%"}}>
@@ -586,12 +584,12 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                             onFocus={(e) => {
                                 // Scrolle vers l'élément lorsqu'il est cliqué
                                 e.target?.measure((x, y, width, height, pageX, pageY) => {
-                                    const scrollOffset = Math.max(pageY - 100, 0); // Ajuste dynamiquement sans descendre trop
+                                    const scrollOffset = Math.max(pageY - 100, 0);
                                     scrollRef.current?.scrollToPosition(0, scrollOffset, true);
                                 });
                             }}
-                            onChangeText={(text) => event.commentaire = text}
-                            defaultValue={event.commentaire}
+                            onChangeText={(text) => handleInputChange('commentaire', text)}
+                            defaultValue={localEvent.commentaire}
                         />
                     </View>
                 </View>
