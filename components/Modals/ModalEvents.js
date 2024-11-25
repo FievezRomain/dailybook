@@ -68,6 +68,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Assurance", id: "assurance"},
   ];
   const listFrequency = [
+    {title: "Le jour J", id: "tlj"},
     {title: "Tous les jours", id: "tlj"},
     {title: "Toutes les semaines", id: "tls"},
     {title: "Toutes les 2 semaines", id:"tl2s"},
@@ -1039,7 +1040,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         >
                           <View style={styles.containerAnimaux}>
                             {frequence == false &&
-                              <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText]}>Par défaut, le soin sera tous les jours</Text></View>
+                              <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText]}>Par défaut, le soin sera le jour J</Text></View>
                             }
                             {
                               frequence != false &&
