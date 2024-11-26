@@ -166,7 +166,8 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
       borderLeftColor: 'transparent',
     },
     textFontRegular:{
-      fontFamily: fonts.default.fontFamily
+      fontFamily: fonts.labelMedium.fontFamily,
+      fontSize: 16
     },
     toastContainer: {
       zIndex: 9999, 
