@@ -21,7 +21,7 @@ import { useAnimaux } from "../providers/AnimauxProvider";
 const PetsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
-  const [messages, setMessages] = useState({message1: "Mes", message2: "animaux"});
+  const [messages, setMessages] = useState({message1: "Mes", message2: "Animaux"});
   const { animaux, setAnimaux } = useAnimaux();
   const [selected, setSelected] = useState([]);
   const { setValue } = useForm();

@@ -246,7 +246,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         }
       }
       if(eventType.id === "soins"){
-        if(data.datefinsoins !== undefined && new Date(data.dateevent) > new Date(data.datefinsoins)){
+        if(data.datefinsoins !== undefined && ( new Date(data.dateevent) > new Date(data.datefinsoins) && new Date(data.dateevent).toISOString().split('T')[0] !== new Date(data.datefinsoins).toISOString().split('T')[0] )){
           complete = false;
           Toast.show({
             type: "error",
@@ -256,7 +256,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         }
       }
       if(eventType.id === "balade"){
-        if(data.datefinbalade !== undefined && new Date(data.dateevent) > new Date(data.datefinbalade)){
+        if(data.datefinbalade !== undefined && ( new Date(data.dateevent) > new Date(data.datefinbalade) &&  new Date(data.dateevent).toISOString().split('T')[0] !== new Date(data.datefinbalade).toISOString().split('T')[0] )){
           complete = false;
           Toast.show({
             type: "error",
