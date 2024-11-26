@@ -89,12 +89,17 @@ const SettingsScreen = ({ }) => {
         },
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
-        }
+        },
+        contentContainer: {
+            height: "100%",
+            marginTop: Constants.statusBarHeight + 10,
+        },
     });
 
     return (
         <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-            <TopTab message1={messages.message1} message2={messages.message2}/>
+            <View style={styles.contentContainer}>
+            <Back/>
             <View>
                 <LogoutModal
                     modalVisible={modalVisible}
@@ -153,6 +158,7 @@ const SettingsScreen = ({ }) => {
                         </TouchableOpacity>
                     </View>
                 </View>
+            </View>
             </View>
         </LinearGradient>
       );

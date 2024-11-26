@@ -28,7 +28,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
             gap: 20,
             direction: "ltr",
             justifyContent: "flex-end",
-            alignItems: "center",
+            alignSelf: "flex-start",
             flexDirection: "row"
         },
         image:{
@@ -58,7 +58,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
             <View style={styles.topTabContainer}>
                 <View style={styles.textContainer}>
                     {withBackground ?
-                        <View>
+                        <View style={{marginTop: -5}}>
                             <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text>
                             <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
                         </View>
@@ -67,11 +67,23 @@ const TopTab = ({message1, message2, withBackground=false}) => {
                     }
                     
                 </View>
-                {withBackground &&
-                    <View style={styles.imageContainer}>
-                        <Image style={styles.avatar} source={require("../assets/logo.png")} cachePolicy="disk"/>
-                    </View>
-                }
+                <View style={styles.imageContainer}>
+                    {/* <TouchableOpacity>
+                        <Ionicons name="notifications" size={25} color={withBackground == false ? Variables.bai : Variables.blanc} />
+                    </TouchableOpacity> */}
+                    <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
+                        {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
+                            <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk"/>
+                        : 
+                            withBackground ?
+                                <FontAwesome5 size={20} color={colors.background} name="user-alt" />
+                            :
+
+                                <FontAwesome5 size={20} color={colors.secondaryContainer} name="user-alt" />
+                        }
+                        
+                    </TouchableOpacity>
+                </View>
             </View>
             {!withBackground &&
                 <Divider />

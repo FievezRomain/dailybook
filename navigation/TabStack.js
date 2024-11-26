@@ -2,7 +2,7 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
 import { BottomNavigation, IconButton, useTheme, Text as PaperText } from 'react-native-paper';
-import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, SettingsScreen } from "../screens";
+import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, OtherScreen } from "../screens";
 import { View, StyleSheet, Text } from 'react-native';
 
 const Tab = createBottomTabNavigator();
@@ -127,13 +127,13 @@ export default function TabStack() {
           }}
         />
         <Tab.Screen
-          name="Profil"
-          component={SettingsScreen}
+          name="Autre"
+          component={OtherScreen}
           options={{
-            tabBarLabel: 'Profil',
+            tabBarLabel: 'Autre',
             tabBarIcon: ({ color, size }) => (
               <View style={styles.iconContainer}>
-                <IconButton icon="account" iconColor={color} size={size} />
+                <IconButton icon="menu" iconColor={color} size={size} />
               </View>
             ),
           }}
