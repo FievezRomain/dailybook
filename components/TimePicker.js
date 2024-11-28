@@ -19,7 +19,7 @@ const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
-    setValue(valueName, date.getHours() + "h" + date.getMinutes());
+    setValue(valueName, String(date.getHours()).padStart(2, '0') + "h" + String(date.getMinutes()).padStart(2, '0'));
     hideDatePicker();
   };
 
@@ -27,7 +27,7 @@ const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
     <>
       <TouchableOpacity onPress={showDatePicker} style={{backgroundColor: colors.quaternary, alignSelf: "flex-start", padding: 10, borderRadius: 5, width: "100%"}}>
         {selectedDate ?
-            <Text style={{fontFamily: fonts.default.fontFamily}}>{selectedDate.getHours()}h{selectedDate.getMinutes()}</Text>
+            <Text style={{fontFamily: fonts.default.fontFamily}}>{String(selectedDate.getHours()).padStart(2, '0')}h{String(selectedDate.getMinutes()).padStart(2, '0')}</Text>
           :
             <Text style={{fontFamily: fonts.default.fontFamily}}>Sélectionner une heure</Text>
         }

@@ -269,9 +269,9 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     }
 
     const checkNumericFormat = () => {
-        if( event.depense != undefined )
+        if( localEvent.depense != undefined )
         {
-            const numericValue = parseFloat(event.depense.replace(',', '.').replace(" ", ""));
+            const numericValue = parseFloat(localEvent.depense.replace(',', '.').replace(" ", ""));
             if (isNaN(numericValue)) {
                 Toast.show({
                     position: "top",
@@ -281,7 +281,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 });
                 return false;
             } else{
-                event.depense = numericValue;
+                localEvent.depense = numericValue;
             }
         }
         return true;
@@ -553,14 +553,14 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                         </View>
                     }
                     <View style={{marginBottom: 5, width: "90%"}}>
-                        <Text style={[styles.textFontRegular, {marginBottom: 5}]}>Dépense : {localEvent.depense}</Text>
+                        <Text style={[styles.textFontRegular, {marginBottom: 5}]}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
                         <TextInput
                             style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5,}, styles.textFontRegular]}
                             placeholder="Exemple : 1"
                             keyboardType="decimal-pad"
                             inputMode="decimal"
                             onChangeText={(text) => handleInputChange('depense', text)}
-                            defaultValue={localEvent.depense}
+                            defaultValue={localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}
                         />
                     </View>
                     {isValidString(localEvent.traitement) &&

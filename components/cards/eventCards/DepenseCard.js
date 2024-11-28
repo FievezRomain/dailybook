@@ -117,7 +117,7 @@ const DepenseCard = ({eventInfos, animaux, setSubMenu}) => {
                 }
                 {eventInfos.depense != null && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.accent}, styles.textFontRegular]}>Dépense : </Text>{eventInfos.depense} euros</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.accent}, styles.textFontRegular]}>Dépense : </Text>{eventInfos.depense ? parseFloat(eventInfos.depense).toFixed(2) : eventInfos.depense} euros</Text>
                     </View>
                 }
                 {isValidString(eventInfos.commentaire) && 
