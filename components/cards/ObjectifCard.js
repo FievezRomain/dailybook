@@ -11,7 +11,7 @@ import LoggerService from '../../services/LoggerService';
 import FileStorageService from '../../services/FileStorageService';
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { Image } from "expo-image";
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
 import ModalValidation from "../Modals/ModalValidation";
 
 const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {
@@ -165,7 +165,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
             overflow: "hidden"
         },
         objectifContainer:{
-            backgroundColor: colors.error,
+            backgroundColor: colors.background,
             borderRadius: 5,
             width: "100%",
             display: "flex",
@@ -283,13 +283,15 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                 <View style={{display: "flex",flexDirection: "row"}}>
                     <View style={{flexDirection: "row",justifyContent: "space-between", width: "100%",borderTopStartRadius: 5,borderTopEndRadius: 5, padding: 10}}>
                         <View>
-                            <Text style={[{color: colors.background}, styles.textFontRegular]}>{objectif.title}</Text>
+                            <Text style={[styles.textFontBold]}>{objectif.title}</Text>
                         </View>
                         <TouchableOpacity onPress={() => onPressOptions()}>
-                            <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
+                            <Entypo name='dots-three-horizontal' size={20} />
                         </TouchableOpacity>
                     </View>
+                    
                 </View>
+                <Divider/>
                 <View style={{display: "flex", flexDirection: "row", backgroundColor: colors.background, borderBottomStartRadius: 5, borderBottomEndRadius: 5}}>
                     <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: colors.accent, alignItems: "center"}}>
                         <Text style={styles.textFontRegular}>{getDayText(objectif.datefin)}.</Text>

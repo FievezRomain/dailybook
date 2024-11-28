@@ -39,6 +39,33 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
         setAnimaux(result);
     } */
 
+    const getColorEventType = () =>{
+        if( eventInfos === undefined ){
+            return;
+        }
+        if( eventInfos.eventtype === "depense" ){
+            return colors.quaternary;
+        }
+        if( eventInfos.eventtype === "balade" ){
+            return colors.accent;
+        }
+        if( eventInfos.eventtype === "soins" ){
+            return colors.neutral;
+        }
+        if( eventInfos.eventtype === "concours" ){
+            return colors.primary;
+        }
+        if( eventInfos.eventtype === "entrainement" ){
+            return colors.tertiary;
+        }
+        if( eventInfos.eventtype === "autre" ){
+            return colors.error;
+        }
+        if( eventInfos.eventtype === "rdv" ){
+            return colors.text;
+        }
+    }
+
     const styles = StyleSheet.create({
         actionEventContainer:{
             marginRight: 10
@@ -59,25 +86,25 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             },
         },
         balade:{
-            backgroundColor: colors.accent,
+            backgroundColor: hexToRgba(getColorEventType(), 0.3),
         },
         autre:{
-            backgroundColor: colors.error,
+            backgroundColor: hexToRgba(getColorEventType(), 0.3),
         },
         rdv:{
-            backgroundColor: colors.text,
+            backgroundColor: hexToRgba(getColorEventType(), 0.3),
         },
         soins:{
-            backgroundColor: colors.neutral,
+            backgroundColor: hexToRgba(getColorEventType(), 0.3),
         },
         entrainement:{
-            backgroundColor: colors.tertiary,
+            backgroundColor: hexToRgba(getColorEventType(), 0.3),
         },
         concours:{
-            backgroundColor: colors.primary,
+            backgroundColor: hexToRgba(getColorEventType(), 0.3),
         },
         depense:{
-            backgroundColor: colors.quaternary,
+            backgroundColor: hexToRgba(getColorEventType(), 0.3),
         },
         typeEventIndicator:{
             width: "100%", 
@@ -137,6 +164,16 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             paddingRight: 10
         }
     });
+
+    
+
+    function hexToRgba(hex, opacity) {
+        const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+    
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
+    }
 
     const handleDelete = () =>{
         setModalValidationDeleteVisible(true);
@@ -297,12 +334,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.balade, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <Entypo name="compass" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Balade</Text>
+                                <Entypo name="compass" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Balade</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -339,12 +376,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.rdv, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome name="stethoscope" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Rendez-vous médical</Text>
+                                <FontAwesome name="stethoscope" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Rendez-vous médical</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -381,12 +418,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.soins, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome6 name="hand-holding-medical" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Soins</Text>
+                                <FontAwesome6 name="hand-holding-medical" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Soins</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -423,12 +460,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.entrainement, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <Entypo name="traffic-cone" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Entrainement</Text>
+                                <Entypo name="traffic-cone" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Entrainement</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -466,12 +503,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.autre, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome6 name="check-circle" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Autre</Text>
+                                <FontAwesome6 name="check-circle" size={20} color={colors.error} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: colors.error, fontSize: 14}, styles.textFontBold]}>Autre</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={colors.error} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -509,12 +546,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.concours, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome name="trophy" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Concours</Text>
+                                <FontAwesome name="trophy" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Concours</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
@@ -552,12 +589,12 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     <View style={styles.headerEventContainer}>
                         <TouchableOpacity style={[styles.depense, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome6 name="money-bill-wave" size={20} color={colors.background} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: colors.background, fontSize: 14}, styles.textFontBold]}>Dépense</Text>
+                                <FontAwesome6 name="money-bill-wave" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
+                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Dépense</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
+                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
                                 </TouchableOpacity>
                             </View>
                         </TouchableOpacity>
