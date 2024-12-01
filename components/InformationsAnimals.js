@@ -10,10 +10,12 @@ import { Image } from "expo-image";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import FileStorageService from "../services/FileStorageService";
 import { useTheme } from 'react-native-paper';
+import ModalReportDeath from './Modals/ModalReportDeath';
 
 const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
+    const [modalReportDeathVisible, setModalReportDeathVisible] = useState(false);
     const dateUtils = new DateUtils();
     const [modalManageBodyAnimalVisible, setModalBodyAnimalVisible] = useState(false);
     const fileStorageService = new FileStorageService();
@@ -30,6 +32,10 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
   
     const handleManageBodyAnimal = () => {
       setModalBodyAnimalVisible(true);
+    }
+
+    const handleReportDeath = () => {
+      setModalReportDeathVisible(true);
     }
   
     const onModifyBodyAnimalHistory = (animal) =>{
@@ -172,6 +178,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                 handleDelete={onDelete}
                 handleModify={handleModify}
                 handleManageBody={handleManageBodyAnimal}
+                handleReportDeath={handleReportDeath}
             />
             <ModalAnimal
                 actionType={"modify"}
@@ -185,6 +192,13 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                 setVisible={setModalBodyAnimalVisible}
                 animal={animal}
                 onModify={onModifyBodyAnimalHistory}
+            />
+            <ModalReportDeath
+              isVisible={modalReportDeathVisible}
+              setVisible={setModalReportDeathVisible}
+              actionType={"modify"}
+              animal={animal}
+              onModify={onModify}
             />
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
@@ -240,6 +254,21 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               maxLength={10}
                               placeholderTextColor={colors.secondary}
                               defaultValue={(animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance)}
+                              editable={false}
+                          />
+                        </View>
+                      }
+                      {isValidString(animal.datedeces) && 
+                        <View style={styles.inputContainer}>
+                          <Text style={[styles.textInput, styles.textFontRegular]}>Date de décès :</Text>
+                          <TextInput
+                              style={[styles.input, styles.textFontRegular]}
+                              placeholder="Exemple : 01/01/1900"
+                              keyboardType="numeric"
+                              inputMode="numeric"
+                              maxLength={10}
+                              placeholderTextColor={colors.secondary}
+                              defaultValue={(animal.datedeces.includes("-") ?  dateUtils.dateFormatter( animal.datedeces, "yyyy-mm-dd", "-") : animal.datedeces)}
                               editable={false}
                           />
                         </View>

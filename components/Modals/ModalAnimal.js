@@ -77,6 +77,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("espece", animal.espece);
         setEspece(animal.espece);
         setValue("datenaissance", animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : undefined);
+        setValue("datedeces", animal.datedeces !== null ? animal.datedeces : undefined);
         setValue("race", animal.race !== null ? animal.race : undefined);
         setValue("taille", animal.taille !== null ? animal.taille.toString() : undefined);
         setValue("poids", animal.poids !== null ? animal.poids.toString() : undefined);
@@ -101,6 +102,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nom", undefined);
         setValue("espece", undefined);
         setValue("datenaissance", undefined);
+        setValue("datedeces", undefined);
         setValue("race", undefined);
         setValue("taille", undefined);
         setValue("poids", undefined);

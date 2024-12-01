@@ -1,10 +1,10 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
-import { FontAwesome6, Octicons, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
+import { FontAwesome6, Octicons, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
 
-const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleManageBody }) => {
+const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleReportDeath, handleManageBody }) => {
     const { colors, fonts } = useTheme();
     
     const onAction = (event) =>{
@@ -97,20 +97,29 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
                 <View style={styles.card}>
                     <Text style={styles.textFontRegular}>Gérer les informations</Text>
                     <View style={styles.actionButtonContainer}>
-                        <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleManageBody)}>
+                        {/* <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleManageBody)}>
                             <View style={styles.informationsActionButton}>
                                 <Octicons name="history" size={20}/>
                                 <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Gestion de l'évolution du physique
                                 </Text>
                             </View>
-                        </TouchableOpacity>
-                        <Divider style={{height: 1}}/>
+                        </TouchableOpacity> 
+                        <Divider style={{height: 1}}/>*/}
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
                                 <Text style={[styles.textActionButton, styles.textFontMedium]}>
                                     Modifier
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
+                        <Divider style={{height: 1}}/>
+                        <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleReportDeath)}>
+                            <View style={styles.informationsActionButton}>
+                                <MaterialCommunityIcons name="weather-night" size={20}/>
+                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
+                                    Signaler le décès
                                 </Text>
                             </View>
                         </TouchableOpacity>
