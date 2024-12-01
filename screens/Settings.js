@@ -129,15 +129,6 @@ const SettingsScreen = ({ }) => {
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Account")}>
                             <Text style={styles.textFontMedium}>Mon compte</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Wish")} >
-                            <Text style={styles.textFontMedium}>Ma wishlist</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Contact")}>
-                            <Text style={[styles.textFontMedium]}>Mes contacts</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Note")} >
-                            <Text style={[styles.textFontMedium]}>Mes notes</Text>
-                        </TouchableOpacity>
                         <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={toggleTheme}>
                             <Text style={[styles.textFontMedium]}>Passer en mode {isDarkTheme ? 'clair' : 'sombre'}</Text>
                         </TouchableOpacity>
