@@ -177,6 +177,22 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       setEventType(list.filter((item) =>item.id === event.eventtype)[0]);
     }
     setValue("frequencevalue", event.frequencevalue);
+    if(event.frequencevalue){
+      switch(event.frequencevalue){
+        case "tlj":
+          setFrequence(listFrequency[0]);
+          break;
+        case "tls":
+          setFrequence(listFrequency[1]);
+          break;
+        case "tl2s":
+          setFrequence(listFrequency[2]);
+          break;
+        case "tlm":
+          setFrequence(listFrequency[3]);
+          break;
+      }
+    }
     setValue("depense", event.depense);
     setValue("categoriedepense", event.categoriedepense);
     setValue("frequencetype", event.frequencetype);
@@ -362,6 +378,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setSelected([]);
     setNotifType(false);
     setOptionNotifType(false);
+    setFrequence(false);
     //setAnimaux([]);
   }
 
