@@ -22,7 +22,7 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
         {title: "Rendez-vous", id: "rdv"},
         {title: "Soins", id: "soins"},
         {title: "Autre", id: "autre"},
-        {title: "Depense", id: "depense"},
+        {title: "Dépense", id: "depense"},
     ];
 
     useEffect(() => {
