@@ -73,8 +73,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Tous les mois", id:"tlm"}
   ];
   const arrayState = [
-    {value: 'À faire', label: 'À faire', checkedColor: colors.background, uncheckedColor: colors.default_dark},
-    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.default_dark},
+    {value: 'À faire', label: 'À faire', checkedColor: colors.background, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
@@ -251,16 +251,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         text1: "Veuillez saisir un type d'événement"
       });
     } else{
-      if(eventType.id === "concours"){
-        if(data.discipline === undefined){
-          complete = false;
-          Toast.show({
-            type: "error",
-            position: "top",
-            text1: "Veuillez saisir une discipline"
-          });
-        }
-      }
       if(eventType.id === "soins"){
         if(data.datefinsoins !== undefined && ( new Date(data.dateevent) > new Date(data.datefinsoins) && new Date(data.dateevent).toISOString().split('T')[0] !== new Date(data.datefinsoins).toISOString().split('T')[0] )){
           complete = false;
@@ -385,11 +375,15 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const onChangeDate = (propertyName, selectedDate) => {
     setValue(propertyName, selectedDate);
     var currentDate = new Date();
-    currentDate.setHours(2, 0, 0, 0);
+    currentDate.setHours(1, 0, 0, 0);
     if(currentDate > new Date(selectedDate)){
       handleStateChange("Terminé");
       setNotifType({title: "Aucune notification", id: "None"});
       setValue("notif", "None");
+    } else{
+      handleStateChange("À faire");
+      setNotifType({title: "Notification le jour J", id: "JourJ"});
+      setValue("notif", "JourJ");
     }
   };
 
@@ -945,15 +939,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                   {eventType.id === "concours" && (
                     <>
                       <View style={styles.inputContainer}>
-                        <Text style={[styles.textInput, styles.textFontRegular]}>Discipline : <Text style={{color: "red"}}>*</Text></Text>
-                        {errors.discipline && <Text style={[styles.errorInput, styles.textFontRegular]}>Discipline obligatoire</Text>}
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Discipline : </Text>
                         <TextInput
                           style={[styles.input, styles.textFontRegular]}
                           placeholder="Exemple : CSO"
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("discipline", text)}
                           defaultValue={getValues("discipline")}
-                          {...register("discipline", { required: true })}
                         />
                       </View>
                       <View style={styles.inputContainer}>

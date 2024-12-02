@@ -14,8 +14,8 @@ const MedicalBook = ({ animal, navigation }) => {
     const [eventsRdv, setEventsRdv] = useState([]);
     const { currentUser } = useAuth();
     const arrayState = [
-        {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.background, uncheckedColor: colors.text},
-        {value: 'Soins', label: 'Soins', checkedColor: colors.background, uncheckedColor: colors.text},
+        {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.background, uncheckedColor: colors.text, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'Soins', label: 'Soins', checkedColor: colors.background, uncheckedColor: colors.text, style: {borderRadius: 5}, rippleColor: "transparent"},
       ];
     const { events } = useEvents();
 

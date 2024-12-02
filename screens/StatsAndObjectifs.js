@@ -19,8 +19,8 @@ const StatsScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "performances"})
   const arrayState = [
-    {value: 'En cours', label: 'En cours', checkedColor: colors.background, uncheckedColor: colors.text},
-    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text},
+    {value: 'En cours', label: 'En cours', checkedColor: colors.background, uncheckedColor: colors.text, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text, style: {borderRadius: 5}, rippleColor: "transparent"},
   ];
   const [temporality, setTemporality] = useState('En cours');
   const { animaux } = useAnimaux();
