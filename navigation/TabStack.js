@@ -38,15 +38,17 @@ export default function TabStack() {
             renderIcon={({ route, focused }) => {
               const { options } = descriptors[route.key];
               if (options.tabBarIcon) {
-                return options.tabBarIcon({
-                  focused,
-                  color: focused ? colors.secondaryContainer : colors.text,
-                  size: focused ? 28 : 24,
-                });
+                return (
+                  <View style={{marginTop: -5}}>
+                    {options.tabBarIcon && options.tabBarIcon({ focused,
+                      color: focused ? colors.secondaryContainer : colors.text,
+                      size: focused ? 28 : 24, })}
+                  </View>
+                )
               }
               return null;
             }}
-            getLabelText={({ route }) => {
+            renderLabel={({ route, focused }) => {
               const { options } = descriptors[route.key];
               const label =
                 options.tabBarLabel !== undefined
@@ -54,7 +56,7 @@ export default function TabStack() {
                   : options.title || route.name;
   
               return (
-                <Text style={[styles.label, { color: colors.text }]}>
+                <Text style={[styles.label, { color: colors.text, marginTop: -10 }]}>
                   {label}
                 </Text>
               );
