@@ -41,6 +41,9 @@ const TopTab = ({message1, message2, withBackground=false}) => {
         avatar: {
             width: 40,
             height: 40,
+            borderRadius: 30,
+            borderColor: colors.background,
+            borderWidth: 0.3
         },
         text:{
             color: withBackground == false ? colors.accent : colors.background,
