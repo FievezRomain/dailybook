@@ -100,7 +100,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
         <ModalEditGeneric
             isVisible={modalVisible}
             setVisible={setModalVisible}
-            arrayHeight={["30%"]}
+            arrayHeight={((event.eventtype === "soins" || event.eventtype === "balade") && event.idparent !== null && event.idparent !== undefined) ? ["35%"] : ["30%"]}
         >
                 <View style={styles.card}>
                     <Text style={styles.textFontRegular}>Gérer l'événement</Text>

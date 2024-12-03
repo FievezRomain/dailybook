@@ -179,7 +179,8 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
-            paddingBottom: 10
+            paddingBottom: 15,
+            paddingTop: 5
         },
         bottomBar: {
             width: '100%',
@@ -262,16 +263,18 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 <View style={styles.form}>
                     <View style={styles.containerActionsButtons}>
 
-                        <TouchableOpacity onPress={closeModal}>
+                        <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
-                        { actionType === "modify" && 
-                            <Text style={[styles.textFontBold]}>Modifier un souhait</Text>
-                        }
-                        { actionType === "create" && 
-                            <Text style={[styles.textFontBold]}>Créer un souhait</Text>
-                        }
-                        <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                        <View style={{width:"33.33%", alignItems: "center"}}>
+                            { actionType === "modify" && 
+                                <Text style={[styles.textFontBold]}>Modifier un souhait</Text>
+                            }
+                            { actionType === "create" && 
+                                <Text style={[styles.textFontBold]}>Créer un souhait</Text>
+                            }
+                        </View>
+                        <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
                                 <ActivityIndicator size={10} color={colors.accent} />
                             :

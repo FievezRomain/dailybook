@@ -89,7 +89,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
                 </View>
             </View>
             {!withBackground &&
-                <Divider />
+                <Divider style={{height: 0.4, backgroundColor: colors.quaternary}}/>
             }
         </View>
     );

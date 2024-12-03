@@ -322,7 +322,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
-            paddingBottom: 15
+            paddingBottom: 15,
+            paddingTop: 5
         },
         bottomBar: {
             width: '100%',
@@ -405,16 +406,18 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             >
                     <View style={styles.form}>
                         <View style={styles.containerActionsButtons}>
-                            <TouchableOpacity onPress={closeModal}>
+                            <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                            { actionType === "modify" && 
-                                <Text style={[styles.textFontBold]}>Modifier un animal</Text>
-                            }
-                            { actionType === "create" && 
-                                <Text style={[styles.textFontBold]}>Créer un animal</Text>
-                            }
-                            <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                            <View style={{width:"33.33%", alignItems: "center"}}>
+                                { actionType === "modify" && 
+                                    <Text style={[styles.textFontBold]}>Modifier un animal</Text>
+                                }
+                                { actionType === "create" && 
+                                    <Text style={[styles.textFontBold]}>Créer un animal</Text>
+                                }
+                            </View>
+                            <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 
                                     <ActivityIndicator size={10} color={colors.accent} />
                                 :

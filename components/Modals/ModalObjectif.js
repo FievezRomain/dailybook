@@ -253,6 +253,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
+            paddingTop: 5,
             paddingBottom: 15
         },
         bottomBar: {
@@ -366,16 +367,18 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                     <View style={styles.form}>
                         <View style={styles.containerActionsButtons}>
 
-                            <TouchableOpacity onPress={closeModal}>
+                            <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                            { actionType === "modify" && 
-                                <Text style={[styles.textFontBold]}>Modifier un objectif</Text>
-                            }
-                            { actionType === "create" && 
-                                <Text style={[styles.textFontBold]}>Créer un objectif</Text>
-                            }
-                            <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                            <View style={{width:"33.33%", alignItems: "center"}}>
+                                { actionType === "modify" && 
+                                    <Text style={[styles.textFontBold]}>Modifier un objectif</Text>
+                                }
+                                { actionType === "create" && 
+                                    <Text style={[styles.textFontBold]}>Créer un objectif</Text>
+                                }
+                            </View>
+                            <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 
                                     <ActivityIndicator size={10} color={colors.accent} />
                                 :

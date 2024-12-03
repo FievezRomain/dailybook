@@ -73,8 +73,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Tous les mois", id:"tlm"}
   ];
   const arrayState = [
-    {value: 'À faire', label: 'À faire', checkedColor: colors.background, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
-    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'À faire', label: 'À faire', checkedColor: colors.default_dark, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
@@ -131,7 +131,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
     })
 
-    await initValuesEvent(eventParent);
+    if(eventParent.length > 0){
+      await initValuesEvent(eventParent[0]);
+    }
   } 
 
   const initValuesEvent = (event) => {
@@ -501,6 +503,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     containerActionsButtons: {
       flexDirection: "row",
       paddingBottom: 15,
+      paddingTop: 5,
       backgroundColor: eventType ? getColorByEventType(eventType.id) : colors.background
     },
     title: {
@@ -731,7 +734,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
             </View>
             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
               { loading ? 
-                  <ActivityIndicator size={10} color={colors.accent} />
+                  <ActivityIndicator size={16} color={colors.background}  />
                 :
                   actionType === "modify" ?
                     <Text style={[{color: colors.background}, styles.textFontRegular]}>Modifier</Text>

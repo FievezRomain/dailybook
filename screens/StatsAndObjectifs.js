@@ -66,7 +66,7 @@ const StatsScreen = ({ navigation }) => {
     },
     separatorFix:{
       borderTopColor: colors.quaternary, 
-      borderTopWidth: 1, 
+      borderTopWidth: 0.4, 
       position: 'absolute', 
       bottom: 0, 
       height: 2, 

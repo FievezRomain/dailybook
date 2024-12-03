@@ -237,7 +237,7 @@ const CalendarScreen = ({ navigation }) => {
       type: "success",
       position: "top",
       text1: "Modification d'un événement"
-    }), 300);
+    }), 350);
 
     //setEvents(await eventService.getEvents(currentUser.email));
 

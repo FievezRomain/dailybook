@@ -126,7 +126,8 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
-            paddingBottom: 15
+            paddingBottom: 15,
+            paddingTop: 5
         },
         bottomBar: {
             width: '100%',
@@ -193,16 +194,18 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                 <View style={styles.form}>
                     <View style={styles.containerActionsButtons}>
 
-                        <TouchableOpacity onPress={closeModal}>
+                        <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
-                        { actionType === "modify" && 
-                            <Text style={styles.textFontBold}>Modifier un contact</Text>
-                        }
-                        { actionType === "create" && 
-                            <Text style={styles.textFontBold}>Créer un contact</Text>
-                        }
-                        <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                        <View style={{width:"33.33%", alignItems: "center"}}>
+                            { actionType === "modify" && 
+                                <Text style={styles.textFontBold}>Modifier un contact</Text>
+                            }
+                            { actionType === "create" && 
+                                <Text style={styles.textFontBold}>Créer un contact</Text>
+                            }
+                        </View>
+                        <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
                                 <ActivityIndicator size={10} color={colors.accent} />
                             :

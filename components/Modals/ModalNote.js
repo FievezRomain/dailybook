@@ -125,7 +125,8 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
-            paddingBottom: 15
+            paddingBottom: 15,
+            paddingTop: 5
         },
         bottomBar: {
             width: '100%',
@@ -175,13 +176,15 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
             <TouchableWithoutFeedback onPress={dismissRichTextKeyboard} accessible={false}>
                 <View style={styles.form}>
                     <View style={styles.containerActionsButtons}>
-                        <TouchableOpacity onPress={closeModal}>
+                        <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
-                        <Text style={styles.textFontBold}>
-                            {actionType === "modify" ? "Modifier une note" : "Créer une note"}
-                        </Text>
-                        <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                        <View style={{width:"33.33%", alignItems: "center"}}>
+                            <Text style={styles.textFontBold}>
+                                {actionType === "modify" ? "Modifier une note" : "Créer une note"}
+                            </Text>
+                        </View>
+                        <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             {loading ? (
                                 <ActivityIndicator size={10} color={colors.accent} />
                             ) : (
