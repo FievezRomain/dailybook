@@ -268,7 +268,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               inputMode="numeric"
                               maxLength={10}
                               placeholderTextColor={colors.secondary}
-                              defaultValue={(animal.datedeces.includes("-") ?  dateUtils.dateFormatter( animal.datedeces, "yyyy-mm-dd", "-") : animal.datedeces)}
+                              defaultValue={new Date(animal.datedeces).toLocaleDateString()}
                               editable={false}
                           />
                         </View>
