@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
+import eventsServiceInstance from "./EventService";
 
 class AnimalsService {
 
@@ -165,6 +166,10 @@ class AnimalsService {
 
     async deleteInCache(animal) {
         if(await this.isInCache()){
+
+            // Mise à jour des events suite à la potentielle suppression en cascade
+            await eventsServiceInstance.refreshCache(animal.email);
+
             let animals = JSON.parse(await AsyncStorage.getItem("animals"));
 
             var indice = animals.findIndex((a) => a.id == animal.id);
@@ -172,6 +177,11 @@ class AnimalsService {
             animals.splice(indice, 1);
 
             await AsyncStorage.setItem("animals",  JSON.stringify(animals));
+
+            if (this.setAnimaux) {
+            
+                this.setAnimaux(await this.getCache());
+            }
         }
     }
 

@@ -68,6 +68,7 @@ const PetsScreen = ({ navigation }) => {
   }
 
   const confirmDeletePet = async() =>{
+    setModalValidationDeleteVisible(false);
     let data = {};
     // Récupération de l'identifiant de l'utilisateur (propriétaire)
     data["email"] =  currentUser.email;

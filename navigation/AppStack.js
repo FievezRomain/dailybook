@@ -39,7 +39,7 @@ const AppStack = ({ navigation }) => {
             <Stack.Screen name="Account" component={AccountScreen} options={{ headerShown: false }}/>
         </Stack.Navigator>
         
-        {currentRouteName !== "Settings" && <AddingButton navigation={navigation}/>}
+        {currentRouteName !== "Settings" && currentRouteName !== "Account" && <AddingButton navigation={navigation}/>}
       </CalendarProvider>
     </>
   );

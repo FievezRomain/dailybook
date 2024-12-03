@@ -126,6 +126,11 @@ class ContactService {
             contacts.splice(indice, 1);
 
             await AsyncStorage.setItem("contacts",  JSON.stringify(contacts));
+
+            if (this.setContacts) {
+            
+                this.setContacts(await this.getCache());
+            }
         }
     }
 

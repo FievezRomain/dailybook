@@ -162,6 +162,11 @@ class WishService {
             wishs.splice(indice, 1);
 
             await AsyncStorage.setItem("wishs",  JSON.stringify(wishs));
+
+            if (this.setWishs) {
+            
+                this.setWishs(await this.getCache());
+            }
         }
     }
 

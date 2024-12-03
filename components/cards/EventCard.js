@@ -191,7 +191,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                 text1: "Suppression d'un événement réussi"
               });
     
-              handleEventsChange();
+              //handleEventsChange();
     
             })
             .catch((err) =>{

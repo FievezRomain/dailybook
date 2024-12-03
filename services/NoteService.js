@@ -125,6 +125,11 @@ class NoteService {
             notes.splice(indice, 1);
 
             await AsyncStorage.setItem("notes",  JSON.stringify(notes));
+
+            if (this.setNotes) {
+            
+                this.setNotes(await this.getCache());
+            }
         }
     }
 

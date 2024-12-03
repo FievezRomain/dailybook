@@ -167,6 +167,11 @@ class EventService {
             events.splice(indice, 1);
 
             await AsyncStorage.setItem("events",  JSON.stringify(events));
+
+            if (this.setEvents) {
+            
+                this.setEvents(await this.getCache());
+            }
         }
     }
 

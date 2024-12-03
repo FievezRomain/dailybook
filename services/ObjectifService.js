@@ -136,6 +136,11 @@ class ObjectifService {
             objectifs.splice(indice, 1);
 
             await AsyncStorage.setItem("objectifs",  JSON.stringify(objectifs));
+
+            if (this.setObjectifs) {
+            
+                this.setObjectifs(await this.getCache());
+            }
         }
     }
 
