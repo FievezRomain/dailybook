@@ -78,7 +78,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return "Concours";
         }
         if( event.eventtype === "entrainement" ){
-            return "Entrainement";
+            return "Entraînement";
         }
         if( event.eventtype === "autre" ){
             return "Autre";
@@ -552,17 +552,13 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                             <Text style={styles.textFontRegular}>Spécialiste : {localEvent.specialiste}</Text>
                         </View>
                     }
-                    <View style={{marginBottom: 5, width: "90%"}}>
-                        <Text style={[styles.textFontRegular, {marginBottom: 5}]}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
-                        <TextInput
-                            style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5,}, styles.textFontRegular]}
-                            placeholder="Exemple : 1"
-                            keyboardType="decimal-pad"
-                            inputMode="decimal"
-                            onChangeText={(text) => handleInputChange('depense', text)}
-                            defaultValue={localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}
-                        />
-                    </View>
+                    {event.eventtype !== "depense" &&
+                        isValidString(localEvent.depense) &&
+                            <View style={{marginBottom: 5}}>
+                                <Text style={styles.textFontRegular}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
+                            </View>
+                        
+                    }
                     {isValidString(localEvent.traitement) &&
                         <View style={{marginBottom: 5}}>
                             <Text style={styles.textFontRegular}>Traitement : {localEvent.traitement}</Text>
@@ -573,25 +569,39 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                             <Text style={styles.textFontRegular}>Date de fin du soin : {localEvent.datefinsoins.includes("-") ? dateUtils.dateFormatter(localEvent.datefinsoins, "yyyy-mm-dd", "-") : localEvent.datefinsoins}</Text>
                         </View>
                     }
-                    <View style={{width: "90%"}}>
-                        <Text style={[{marginBottom: 5}, styles.textFontRegular]}>Commentaire :</Text>
-                        <TextInput
-                            style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5, height: 200}, styles.textFontRegular]}
-                            multiline={true}
-                            numberOfLines={4}
-                            maxLength={2000}
-                            placeholder="Exemple : Ça s'est très bien passé"
-                            onFocus={(e) => {
-                                // Scrolle vers l'élément lorsqu'il est cliqué
-                                e.target?.measure((x, y, width, height, pageX, pageY) => {
-                                    const scrollOffset = Math.max(pageY - 100, 0);
-                                    scrollRef.current?.scrollToPosition(0, scrollOffset, true);
-                                });
-                            }}
-                            onChangeText={(text) => handleInputChange('commentaire', text)}
-                            defaultValue={localEvent.commentaire}
-                        />
-                    </View>
+                    {event.eventtype !== "depense" ?
+                        <View style={{width: "90%"}}>
+                            <Text style={[{marginBottom: 5}, styles.textFontRegular]}>Commentaire :</Text>
+                            <TextInput
+                                style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5, height: 200}, styles.textFontRegular]}
+                                multiline={true}
+                                numberOfLines={4}
+                                maxLength={2000}
+                                placeholder="Exemple : Ça s'est très bien passé"
+                                onFocus={(e) => {
+                                    // Scrolle vers l'élément lorsqu'il est cliqué
+                                    e.target?.measure((x, y, width, height, pageX, pageY) => {
+                                        const scrollOffset = Math.max(pageY - 100, 0);
+                                        scrollRef.current?.scrollToPosition(0, scrollOffset, true);
+                                    });
+                                }}
+                                onChangeText={(text) => handleInputChange('commentaire', text)}
+                                defaultValue={localEvent.commentaire}
+                            />
+                        </View>
+                        :
+                        <View style={{marginBottom: 5, width: "90%"}}>
+                            <Text style={[styles.textFontRegular, {marginBottom: 5}]}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
+                            <TextInput
+                                style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5,}, styles.textFontRegular]}
+                                placeholder="Exemple : 1"
+                                keyboardType="decimal-pad"
+                                inputMode="decimal"
+                                onChangeText={(text) => handleInputChange('depense', text)}
+                                defaultValue={event.depense ? parseFloat(event.depense).toFixed(2) : event.depense}
+                            />
+                        </View>
+                    }
                 </View>
             </KeyboardAwareScrollView>
         </ModalEditGeneric>
