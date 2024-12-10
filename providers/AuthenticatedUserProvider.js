@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signOut, updateEmail, updatePassword, updateProfile, getAuth, reload } from 'firebase/auth';
+import { onAuthStateChanged, signOut, updateEmail, updatePassword, updateProfile, getAuth, reload, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import React, { useState, createContext, useEffect, useContext } from 'react';
 import animalsServiceInstance from "../services/AnimalsService";
 import eventsServiceInstance from '../services/EventService';
@@ -207,8 +207,29 @@ export const AuthenticatedUserProvider =  ({ children }) => {
     }
   }
 
+  const reAuthUser = async (password) => {
+    const updatedUser = await getAuth().currentUser;
+
+    try{
+      const credential = EmailAuthProvider.credential(updatedUser.email, password);
+      await reauthenticateWithCredential(updatedUser, credential);
+
+      return true;
+    } catch(error){
+      if (error.code === "auth/wrong-password") {
+        LoggerService.log("Le mot de passe actuel saisie lors de la tentative de modification est incorrect :" + error.message);
+        console.error("Le mot de passe actuel saisie lors de la tentative de modification est incorrect :", error.message);
+        return false;
+      } else {
+          LoggerService.log("Erreur lors de la mise à jour du mot de passe :" + error.message);
+          console.error("Erreur lors de la mise à jour du mot de passe :", error.message);
+          return false;
+      }
+    }
+  }
+
   return (
-    <AuthenticatedUserContext.Provider value={{ currentUser, cacheUpdated, loading, emailVerified, logout, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL, reloadUser, deleteAccount }}>
+    <AuthenticatedUserContext.Provider value={{ currentUser, cacheUpdated, loading, emailVerified, logout, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL, reloadUser, deleteAccount, reAuthUser }}>
       {children}
     </AuthenticatedUserContext.Provider>
   );
