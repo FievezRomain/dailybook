@@ -213,7 +213,6 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     }
 
     function isValidString(str) {
-        console.log(str);
         return str !== null && str !== undefined && str.trim() !== "";
     }
 
