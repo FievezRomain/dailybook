@@ -461,7 +461,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                         <TouchableOpacity style={[styles.entrainement, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
                             <View style={styles.titleTypeEventContainer}>
                                 <Entypo name="traffic-cone" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Entrainement</Text>
+                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Entraînement</Text>
                             </View>
                             <View>
                                 <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>

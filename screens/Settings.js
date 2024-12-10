@@ -139,7 +139,7 @@ const SettingsScreen = ({ }) => {
         setTimeout(() =>Toast.show({
             type: "success",
             position: "top",
-            text1: "Modification de l'utilisateur"
+            text1: "Modification de vos informations réussie"
         }), 350); 
     }
 

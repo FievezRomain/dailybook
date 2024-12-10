@@ -56,6 +56,14 @@ const ModalModificationPassword = ({isVisible, setVisible, onModify=undefined}) 
     }
 
     const checkPasswordValidity = () => {
+        if(currentPassword === ""){
+            Toast.show({
+                type: "error",
+                position: "top",
+                text1: "Veuillez saisir votre mot de passe actuel"
+            });
+            return false;
+        }
         if(password === ""){
             Toast.show({
                 type: "error",

@@ -213,6 +213,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     }
 
     function isValidString(str) {
+        console.log(str);
         return str !== null && str !== undefined && str.trim() !== "";
     }
 
@@ -553,7 +554,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                         </View>
                     }
                     {event.eventtype !== "depense" &&
-                        isValidString(localEvent.depense) &&
+                        localEvent.depense !== null && localEvent.depense !== undefined &&
                             <View style={{marginBottom: 5}}>
                                 <Text style={styles.textFontRegular}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
                             </View>

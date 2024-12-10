@@ -218,11 +218,16 @@ export const AuthenticatedUserProvider =  ({ children }) => {
     } catch(error){
       if (error.code === "auth/wrong-password") {
         LoggerService.log("Le mot de passe actuel saisie lors de la tentative de modification est incorrect :" + error.message);
-        console.error("Le mot de passe actuel saisie lors de la tentative de modification est incorrect :", error.message);
+        Toast.show({
+          type: "error",
+          position: "top",
+          text1: "Mot de passe actuel incorrect"
+        });
+        //console.error("Le mot de passe actuel saisie lors de la tentative de modification est incorrect :", error.message);
         return false;
       } else {
           LoggerService.log("Erreur lors de la mise à jour du mot de passe :" + error.message);
-          console.error("Erreur lors de la mise à jour du mot de passe :", error.message);
+          //console.error("Erreur lors de la mise à jour du mot de passe :", error.message);
           return false;
       }
     }
