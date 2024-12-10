@@ -77,6 +77,23 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
         setDate(String(jour + "/" + mois + "/" + annee));
     }
 
+    const truncateAnimalName = (name) => {
+        if (name.length <= 15) {
+            return name; // Le nom est déjà court
+        }
+    
+        // Tronquer à 10 caractères
+        const truncated = name.slice(0, 15);
+    
+        // Vérifier s'il y a un espace dans les 10 premiers caractères
+        const lastSpaceIndex = truncated.indexOf(" ");
+        if (lastSpaceIndex !== -1) {
+            return truncated.slice(0, lastSpaceIndex); // Tronquer au dernier espace
+        }
+    
+        return truncated + "..."; // Ajouter "..." après 10 caractères
+    };
+
     const styles = StyleSheet.create({
         add:{
             width: 60,
@@ -185,7 +202,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                                 </View>
                             </LinearGradient>
                             }
-                            <Text style={[(checkSelected(animal) ? styles.selectedText : styles.defaultText), styles.textFontRegular]}>{animal.nom}</Text>
+                            <Text style={[(checkSelected(animal) ? styles.selectedText : styles.defaultText), styles.textFontRegular]}>{truncateAnimalName(animal.nom)}</Text>
                         </View>
                     </TouchableOpacity>
                 );
