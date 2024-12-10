@@ -410,12 +410,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             <View style={{width:"33.33%", alignItems: "center"}}>
-                                { actionType === "modify" && 
-                                    <Text style={[styles.textFontBold]}>Modifier un animal</Text>
-                                }
-                                { actionType === "create" && 
-                                    <Text style={[styles.textFontBold]}>Créer un animal</Text>
-                                }
+                                <Text style={[styles.textFontBold]}>Animal</Text>
                             </View>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 

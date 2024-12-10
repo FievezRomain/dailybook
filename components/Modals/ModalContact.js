@@ -198,12 +198,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            { actionType === "modify" && 
-                                <Text style={styles.textFontBold}>Modifier un contact</Text>
-                            }
-                            { actionType === "create" && 
-                                <Text style={styles.textFontBold}>Créer un contact</Text>
-                            }
+                            <Text style={styles.textFontBold}>Contact</Text>
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 

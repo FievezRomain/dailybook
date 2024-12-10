@@ -371,12 +371,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             <View style={{width:"33.33%", alignItems: "center"}}>
-                                { actionType === "modify" && 
-                                    <Text style={[styles.textFontBold]}>Modifier un objectif</Text>
-                                }
-                                { actionType === "create" && 
-                                    <Text style={[styles.textFontBold]}>Créer un objectif</Text>
-                                }
+                                <Text style={[styles.textFontBold]}>Objectif</Text>
                             </View>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 

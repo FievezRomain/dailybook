@@ -267,12 +267,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            { actionType === "modify" && 
-                                <Text style={[styles.textFontBold]}>Modifier un souhait</Text>
-                            }
-                            { actionType === "create" && 
-                                <Text style={[styles.textFontBold]}>Créer un souhait</Text>
-                            }
+                            <Text style={[styles.textFontBold]}>Souhait</Text>
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
