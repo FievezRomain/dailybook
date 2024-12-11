@@ -113,8 +113,8 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
             fontSize: 30
         },
         defaultAvatar:{
-            backgroundColor: colors.neutral,
-            borderColor: colors.neutral,
+            backgroundColor: colors.quaternary,
+            borderColor: colors.quaternary,
             borderWidth: 0.5,
         },
         selectedAvatar:{
@@ -136,7 +136,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
             marginLeft: 5,
         },
         defaultText:{
-            color: colors.neutral
+            color: colors.quaternary
         },
         selectedText:{
             color: colors.accent
@@ -181,7 +181,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                         <View style={styles.containerAvatar}>
                             { animal.image !== null ? 
                             <LinearGradient
-                                colors={checkSelected(animal) ? [colors.accent, colors.neutral, colors.tertiary] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [colors.accent, colors.quaternary, colors.tertiary] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
@@ -191,12 +191,12 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                             </LinearGradient>
                             :
                             <LinearGradient
-                                colors={checkSelected(animal) ? [colors.accent, colors.neutral, colors.tertiary] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [colors.accent, colors.quaternary, colors.tertiary] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
                                 <View style={[styles.containerAvatarWithoutImage, checkSelected(animal) ? {backgroundColor: colors.background} : {backgroundColor: "transparent"}]}>
-                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: colors.accent} : {backgroundColor: colors.neutral}]}>
+                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: colors.accent} : {backgroundColor: colors.quaternary}]}>
                                         <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                     </View>
                                 </View>

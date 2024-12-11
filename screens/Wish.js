@@ -10,6 +10,7 @@ import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishAction
 import Toast from "react-native-toast-message";
 import ModalWish from "../components/Modals/ModalWish";
 import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import LoggerService from "../services/LoggerService";
 import FileStorageService from "../services/FileStorageService";
 import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
@@ -121,7 +122,7 @@ const WishScreen = ({ navigation }) => {
         },
         container: {
             flex: 1,
-            backgroundColor: colors.onSurface,
+            marginTop: 20
         },
         itemContainer: {
             flex: 1,
@@ -136,8 +137,7 @@ const WishScreen = ({ navigation }) => {
             borderRadius: 10,
         },
         title: {
-            fontSize: 12,
-            color: colors.accent,
+            color: colors.default_dark,
             marginTop: 5,
         },
         labelContainer: {
@@ -157,18 +157,20 @@ const WishScreen = ({ navigation }) => {
             fontSize: 12
         },
         textFontRegular:{
-            fontFamily: fonts.default.fontFamily
+            fontFamily: fonts.default.fontFamily,
+            color: colors.accent,
         },
         textFontBold:{
-            fontFamily: fonts.bodyLarge.fontFamily
+            fontFamily: fonts.bodyLarge.fontFamily,
         }
     });
 
     return(
         <>
+        <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
                 <TopTabSecondary
                     message1={"Vos"}
-                    message2={"souhaits"}
+                    message2={"Souhaits"}
                 />
                 <ModalSubMenuWishActions
                     modalVisible={modalSubMenuWishVisible}
@@ -230,7 +232,7 @@ const WishScreen = ({ navigation }) => {
                     }
                 </View>
                 <Text>  </Text>
-            
+                </LinearGradient>
         </>
     )
 

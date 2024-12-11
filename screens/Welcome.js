@@ -125,7 +125,7 @@ const WelcomeScreen = ({ navigation })=> {
     return (
       <>
         <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.neutral }}>
+          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.quaternary }}>
             <View style={{flex: 1}}>
               <Image
                 source={require('../assets/fond_accueil.png')}

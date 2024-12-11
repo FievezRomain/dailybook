@@ -209,10 +209,11 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
     }
 
     const confirmDeleteAll = () =>{
-        eventInfos.email = currentUser.email;
-        eventInfos.id = eventInfos.idparent === null ? eventInfos.id : eventInfos.idparent;
+        let data = {};
+        data.id = eventInfos.idparent === null ? eventInfos.id : eventInfos.idparent;
+        data.email = currentUser.email;
 
-        eventsServiceInstance.delete(eventInfos)
+        eventsServiceInstance.delete(data)
             .then((reponse) =>{
     
               Toast.show({

@@ -29,7 +29,7 @@ const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
         {selectedDate ?
             <Text style={{fontFamily: fonts.default.fontFamily}}>{String(selectedDate.getHours()).padStart(2, '0')}h{String(selectedDate.getMinutes()).padStart(2, '0')}</Text>
           :
-            <Text style={{fontFamily: fonts.default.fontFamily}}>Sélectionner une heure</Text>
+            <Text style={[{fontFamily: fonts.default.fontFamily}, {color: colors.secondary}]}>Sélectionner une heure</Text>
         }
       </TouchableOpacity>
       <DateTimePickerModal

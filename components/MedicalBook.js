@@ -86,7 +86,7 @@ const MedicalBook = ({ animal, navigation }) => {
     return(
         <>
             <View style={{width: "100%", alignSelf: "center", flex: 1}}>
-                <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
+                {/* <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text> */}
                 <View style={{marginBottom: 10, paddingLeft: 20, paddingRight: 20, display: "flex", flexDirection: "row"}}>
                     <StatePicker
                         arrayState={arrayState}

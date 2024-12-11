@@ -152,7 +152,7 @@ const PetsScreen = ({ navigation }) => {
 
     rubriqueContainer:{
       marginTop: 10,
-      marginBottom: 10,
+      marginBottom: 25,
     },
     iconsContainer:{
       display: "flex", 
@@ -201,14 +201,17 @@ const PetsScreen = ({ navigation }) => {
         </View>
         <View style={styles.rubriqueContainer}>
           <View style={styles.iconsContainer}>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <Entypo name="info-with-circle" size={30} color={activeRubrique === 0 ? colors.accent : colors.quaternary}/>
+            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+              <Entypo name="info-with-circle" size={20} color={activeRubrique === 0 ? colors.accent : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 0 ? colors.accent : colors.quaternary}, styles.textFontMedium]}>Informations</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <FontAwesome6 name="utensils" size={25} color={activeRubrique === 1 ? colors.accent : colors.quaternary}/>
+            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+              <FontAwesome6 name="utensils" size={20} color={activeRubrique === 1 ? colors.accent : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 1 ? colors.accent : colors.quaternary}, styles.textFontMedium]}>Nutrition</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
-              <FontAwesome6 name="book-medical" size={25} color={activeRubrique === 2 ? colors.accent : colors.quaternary}/>
+            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
+              <FontAwesome6 name="book-medical" size={20} color={activeRubrique === 2 ? colors.accent : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 2 ? colors.accent : colors.quaternary}, styles.textFontMedium]}>Santé</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.separatorFix}></View>

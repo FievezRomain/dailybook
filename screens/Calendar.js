@@ -169,7 +169,7 @@ const CalendarScreen = ({ navigation }) => {
       case "entrainement":
         return { color: colors.tertiary };
       case "concours":
-        return { color: colors.accent };
+        return { color: colors.primary };
       case "rdv":
         return { color: colors.text };
       case "soins":
@@ -341,6 +341,9 @@ const CalendarScreen = ({ navigation }) => {
     },
     textFontMedium: {
       fontFamily: fonts.bodyMedium.fontFamily,
+    },
+    textFontBold:{
+      fontFamily: fonts.bodyLarge.fontFamily,
     }
   });
 
@@ -390,7 +393,7 @@ const CalendarScreen = ({ navigation }) => {
             style={[styles.calendar, styles.textFontRegular]}
             firstDay={1}
             theme={{
-              arrowColor: colors.neutral,
+              arrowColor: colors.quaternary,
               todayTextColor: colors.tertiary,
               selectedDayTextColor: "white",
               selectedDayBackgroundColor: colors.text,

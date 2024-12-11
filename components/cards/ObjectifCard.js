@@ -309,7 +309,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                                 {etape.state === true &&
                                                     <MaterialIcons name="check-box" size={30} color={colors.accent} />
                                                     ||
-                                                    <MaterialIcons name="check-box-outline-blank" size={30} color={colors.quaternary} />
+                                                    <MaterialIcons name="check-box-outline-blank" size={30} color={colors.accent} />
                                                 }
                                                 <Text style={[styles.textFontRegular, {flexShrink: 1, flexWrap: 'wrap'}]}>{etape.etape}</Text>
                                             </View>

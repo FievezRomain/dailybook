@@ -25,7 +25,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     var jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
     var mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
     var annee = today.getFullYear();
-    const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
+    const [date, setDate] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const fileStorageService = new FileStorageService();
     const especeList = [

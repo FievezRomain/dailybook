@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
 import TimePickerCustom from "../TimePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import LoggerService from "../../services/LoggerService";
 import DateUtils from "../../utils/DateUtils";
 import { Divider, useTheme } from 'react-native-paper';
@@ -47,7 +47,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Rendez-vous", id: "rdv"},
     {title: "Soins", id: "soins"},
     {title: "Autre", id: "autre"},
-    {title: "Depense", id: "depense"},
+    {title: "Dépense", id: "depense"},
   ];
   const listNotif = [
     {title: "Aucune notification", id: "None"},
@@ -487,7 +487,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       resizeMode: "cover",
       position: "absolute",
       justifyContent: "center",
-      backgroundColor:  colors.neutral
+      backgroundColor:  colors.quaternary
     },
     inputContainer:{
       alignItems: "center",
@@ -797,7 +797,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           <View><Text style={[styles.badgeAnimal, styles.errorInput, styles.textFontRegular]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
                         }
                         {selected.length == 0 && animaux.length > 0 &&
-                          <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Sélectionner un ou plusieurs animaux</Text></View>
+                          <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Sélectionner un ou plusieurs animaux</Text></View>
                         }
                         {selected.map((animal, index) => {
                           return (
@@ -820,12 +820,32 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       {...register("nom", { required: true })}
                     />
                   </View>
-
-                  <View style={[styles.inputContainer, {marginBottom: 15}]}>
+                  {eventType.id === "soins" &&
+                    <View style={styles.containerDate}>
+                      <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinsoins")} <Text style={{color: "red"}}>*</Text></Text>
+                      <DatePickerModal
+                          onDayChange={onChangeDate}
+                          propertyName={"datefinsoins"}
+                          defaultDate={watch("datefinsoins")}
+                      />
+                    </View>
+                  }
+                  {eventType.id === "balade" &&
+                    <View style={styles.containerDate}>
+                      <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinbalade")} <Text style={{color: "red"}}>*</Text></Text>
+                      <DatePickerModal
+                        onDayChange={onChangeDate}
+                        propertyName={"datefinbalade"}
+                      />
+                    </View>
+                  }
+                  <Divider/>
+                  <View style={[styles.inputContainer, {marginBottom: 15}, {marginTop: 15}]}>
                     <Text style={[styles.textInput, styles.textFontRegular]}>Heure de début : </Text>
                     <TimePickerCustom
                       setValue={setValue}
                       valueName={"heuredebutevent"}
+                      placeholderTextColor={colors.secondary}
                       defaultValue={dateEvent}
                     />
                   </View>
@@ -857,14 +877,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             defaultValue={getActualTime()}
                           />
                         </View> */}
-
-                        <View style={styles.containerDate}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinbalade")} </Text>
-                          <DatePickerModal
-                            onDayChange={onChangeDate}
-                            propertyName={"datefinbalade"}
-                          />
-                        </View>
 
                         <View style={styles.inputContainer}>
                           <Text style={[styles.textInput, styles.textFontRegular]}>Dépense :</Text>
@@ -1046,14 +1058,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           defaultValue={getValues("traitement")}
                         />
                       </View>
-                      <View style={styles.containerDate}>
-                        <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinsoins")} </Text>
-                        <DatePickerModal
-                            onDayChange={onChangeDate}
-                            propertyName={"datefinsoins"}
-                            defaultDate={watch("datefinsoins")}
-                        />
-                      </View>
                       <View style={styles.inputContainer}>
                         <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence : {actionType === "modify" && eventType.id === "soins" && <Text style={{color: colors.error}}>(Non modifiable)</Text>}</Text>
                         <TouchableOpacity 
@@ -1063,7 +1067,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         >
                           <View style={styles.containerAnimaux}>
                             {frequence == false &&
-                              <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText]}>Par défaut, le soin sera tous les jours</Text></View>
+                              <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText, {color: colors.secondary}]}>Par défaut, le soin sera tous les jours</Text></View>
                             }
                             {
                               frequence != false &&
@@ -1110,7 +1114,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         >
                           <View style={styles.containerAnimaux}>
                             {categorieDepense == false &&
-                              <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Par défaut, la dépense n'est dans aucune catégorie</Text></View>
+                              <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Par défaut, la dépense n'est dans aucune catégorie</Text></View>
                             }
                             {
                               categorieDepense != false &&
@@ -1151,9 +1155,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         {notifType == false &&
                           <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
                               <View style={{width: "90%"}}>
-                                <Text style={[styles.badgeAnimal, styles.textFontRegular]}>Par défaut, vous recevrez une notification le jour J</Text>
+                                <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Par défaut, vous recevrez une notification le jour J</Text>
                               </View>
-                              <AntDesign name="caretdown" size={20}/>
+                              <Ionicons name="chevron-down" size={20}/>
                             
                           </View>
                         }
@@ -1163,7 +1167,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <View style={{width: "90%"}}>
                               <Text style={[styles.badgeAnimal, styles.textFontRegular]}>{notifType.title}</Text>
                             </View>
-                            <AntDesign name="caretdown" size={20}/>
+                            <Ionicons name="chevron-down" size={20}/>
                           </View>
                         }
                       </View>
@@ -1180,9 +1184,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         {optionNotifType == false &&
                           <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
                             <View style={{width: "90%"}}>
-                              <Text style={[styles.badgeAnimal, styles.textFontRegular]}>Aucune option</Text>
+                              <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Aucune option</Text>
                             </View>
-                            <AntDesign name="caretdown" size={20}/>
+                            <Ionicons name="chevron-down" size={20}/>
                           </View>
                         }
                         {
@@ -1191,7 +1195,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <View style={{width: "90%"}}>
                               <Text style={[styles.badgeAnimal, styles.textFontRegular]}>{optionNotifType.title}</Text>
                             </View>
-                            <AntDesign name="caretdown" size={20}/>
+                            <Ionicons name="chevron-down" size={20}/>
                           </View>
                         }
                       </View>

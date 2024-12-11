@@ -59,7 +59,7 @@ class EventService {
         await this.updateAxiosAuthorization();
         return axios.delete(`${getBaseUrl()}deleteEvent`, {data: body})
         .then(async (response) => {
-            await this.deleteInCache(body);
+            await this.refreshCache(body.email);
             return response.data;
         })
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un event : " + err.message ));

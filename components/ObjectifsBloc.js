@@ -119,7 +119,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
             marginBottom: 10,
         },
         title:{
-            color: colors.neutral,
+            color: colors.quaternary,
             marginLeft: 10,
         },
         statistiqueIndicatorContainer:{
@@ -175,7 +175,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
             <ScrollView contentContainerStyle={{paddingBottom: 30, width: "100%"}}>
                 <View style={styles.composantContainer}>
                 
-                    <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text>
+                    {/* <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text> */}
                     
                     {objectifsDisplay.length !== 0 ?
                         objectifsDisplay.map((objectif, index) => {

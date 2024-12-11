@@ -202,7 +202,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
             />
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
-                    <Text style={[{color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text>
+                    {/* <Text style={[{color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text> */}
                     {animal.image !== null ?
                         <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: colors.accent}} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                     :

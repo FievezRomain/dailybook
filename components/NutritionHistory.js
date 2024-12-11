@@ -32,7 +32,7 @@ const NutritionHistory = ({ animal }) => {
         <>
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column"}}>
-                    <Text style={{textAlign: "center", color: colors.accent, fontFamily: fonts.bodyLarge.fontFamily, fontSize: 16, paddingVertical: 15}}>Nutrition</Text>
+                    {/* <Text style={{textAlign: "center", color: colors.accent, fontFamily: fonts.bodyLarge.fontFamily, fontSize: 16, paddingVertical: 15}}>Nutrition</Text> */}
 
                     <View style={{width: "90%", alignSelf: "center"}}>
                         <OfferInformations />

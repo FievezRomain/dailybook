@@ -9,6 +9,7 @@ import LoggerService from '../services/LoggerService';
 import ModalSubMenuContactActions from '../components/Modals/ModalSubMenuContactActions';
 import ModalContact from "../components/Modals/ModalContact";
 import Toast from "react-native-toast-message";
+import { LinearGradient } from "expo-linear-gradient";
 import ModalDefaultNoValue from '../components/Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../components/Modals/ModalValidation";
@@ -147,11 +148,9 @@ const ContactScreen = ({ navigation }) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             padding: 15,
-            backgroundColor: 'white',
         },
         name: {
             fontSize: 16,
-            color: colors.text,
             fontFamily: fonts.bodyLarge.fontFamily
         },
         profession: {
@@ -201,9 +200,10 @@ const ContactScreen = ({ navigation }) => {
 
     return (
         <>
+        <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
             <TopTabSecondary
                 message1={"Vos"}
-                message2={"contacts"}
+                message2={"Contacts"}
             />
             <ModalSubMenuContactActions
                 contact={contactFocus}
@@ -226,7 +226,7 @@ const ContactScreen = ({ navigation }) => {
                 visible={modalValidationDeleteVisible}
                 title={"Suppression d'un contact"}
             />
-            <View style={{ flex: 1, backgroundColor: colors.onSurface }}>
+            <View style={{ flex: 1, }}>
                 {contacts.length === 0 ?
                     <View style={{paddingLeft: 20, paddingRight: 20}}>
                         <ModalDefaultNoValue
@@ -251,16 +251,16 @@ const ContactScreen = ({ navigation }) => {
                                         {item.telephone != null && item.telephone != undefined &&
                                             <>
                                                 <TouchableOpacity style={{marginRight: 5}} onPress={() => makePhoneCall(item.telephone)}>
-                                                    <Entypo name='phone' size={25}/>
+                                                    <Entypo name='phone' size={25} color={colors.accent}/>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={{marginRight: 5}} onPress={() => sendSMS(item.telephone)}>
-                                                    <Entypo name='message' size={25}/>
+                                                    <Entypo name='message' size={25} color={colors.accent}/>
                                                 </TouchableOpacity>
                                             </>
                                         }
                                         {item.email != null && item.email != undefined &&
                                             <TouchableOpacity onPress={() => sendEmail(item.email)}>
-                                                <Zocial name='email' size={25}/>
+                                                <Zocial name='email' size={25} color={colors.accent}/>
                                             </TouchableOpacity>
                                         }
                                     </View>
@@ -295,6 +295,7 @@ const ContactScreen = ({ navigation }) => {
                     </>
                 }
             </View>
+            </LinearGradient>
         </>
     );
 };

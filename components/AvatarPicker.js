@@ -96,7 +96,7 @@ const AvatarPicker = ({ setImage, setValue, backgroundColor=null }) => {
           onPress={() => setModalVisibleSubMenu(true)} 
         >
           <View style={styles.buttonContainer}>
-            <Text style={styles.textFontRegular}>Sélectionner une image</Text>
+            <Text style={[styles.textFontRegular, {color: colors.secondary}]}>Sélectionner une image</Text>
           </View>
         </TouchableOpacity>
     </View>

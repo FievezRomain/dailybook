@@ -41,7 +41,7 @@ export default function TabStack() {
                 return (
                   <View style={{marginTop: -5}}>
                     {options.tabBarIcon && options.tabBarIcon({ focused,
-                      color: focused ? colors.secondaryContainer : colors.text,
+                      color: focused ? colors.secondaryContainer : colors.default_dark,
                       size: focused ? 28 : 24, })}
                   </View>
                 )
@@ -56,7 +56,7 @@ export default function TabStack() {
                   : options.title || route.name;
   
               return (
-                <Text style={[styles.label, { color: colors.text, marginTop: -10 }]}>
+                <Text style={[styles.label, { color: focused ? colors.accent : colors.default_dark, marginTop: -10 }]}>
                   {label}
                 </Text>
               );

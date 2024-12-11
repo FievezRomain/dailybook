@@ -23,6 +23,7 @@ import Toast from "react-native-toast-message";
 import FileStorageService from "../services/FileStorageService";
 import ModalModificationName from "../components/Modals/User/ModalModificationName";
 import ModalModificationPassword from "../components/Modals/User/ModalModificationPassword";
+import TopTabSecondary from "../components/TopTabSecondary";
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
@@ -43,9 +44,8 @@ const SettingsScreen = ({ }) => {
     const getExitIcon = () => {
         return (
             <IconButton
-                onPress={() => setModalVisible(!modalVisible)}
                 icon="logout"
-                iconColor={colors.background}
+                iconColor={colors.accent}
                 size={30}
             />
         )
@@ -233,12 +233,10 @@ const SettingsScreen = ({ }) => {
 
     return (
         <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-            <View style={{height: Constants.statusBarHeight + 40, justifyContent:"flex-end", backgroundColor: colors.accent}}>
-                <Back 
-                    arrowColor={colors.background}
-                    buttonOptional={getExitIcon()}
-                />
-            </View>
+            <TopTabSecondary
+                message1={"Mon"}
+                message2={"Compte"}
+            />
             <View style={styles.contentContainer}>
                 <View>
                     <ModalValidation
@@ -298,11 +296,11 @@ const SettingsScreen = ({ }) => {
                             <View style={{backgroundColor: colors.background}}>
                                 <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => setModalModificationPasswordVisible(!modalModificationPasswordVisible)}>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="key" iconColor={colors.defaultDark} size={20} />
-                                        <Text>Changer mon mot de passe</Text>
+                                        <IconButton icon="key" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Changer mon mot de passe</Text>
                                     </View>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="chevron-right" iconColor={colors.defaultDark} size={20} />
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
                                     </View>
                                 </TouchableOpacity>
                                 <Divider />
@@ -318,11 +316,11 @@ const SettingsScreen = ({ }) => {
                                 <Divider /> */}
                                 <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => setModalModificationNameVisible(!modalModificationNameVisible)}>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="card-account-details" iconColor={colors.defaultDark} size={20} />
-                                        <Text>Changer mon nom</Text>
+                                        <IconButton icon="card-account-details" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Changer mon nom</Text>
                                     </View>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="chevron-right" iconColor={colors.defaultDark} size={20} />
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
                                     </View>
                                 </TouchableOpacity>
                             </View>
@@ -332,31 +330,41 @@ const SettingsScreen = ({ }) => {
                             <View style={{backgroundColor: colors.background}}>
                                 <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => navigation.navigate("DiscoverPremium")}>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="cellphone" iconColor={colors.defaultDark} size={20} />
-                                        <Text>Gérer mon abonnement</Text>
+                                        <IconButton icon="cellphone" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Gérer mon abonnement</Text>
                                     </View>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="chevron-right" iconColor={colors.defaultDark} size={20} />
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
                                     </View>
                                 </TouchableOpacity>
                                 <Divider />
                                 <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => sendEmail()}>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="help-circle" iconColor={colors.defaultDark} size={20} />
-                                        <Text>Support utilisateur</Text>
+                                        <IconButton icon="help-circle" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Support utilisateur</Text>
                                     </View>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="chevron-right" iconColor={colors.defaultDark} size={20} />
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
                                     </View>
                                 </TouchableOpacity>
                                 <Divider />
                                 <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => setModalVerifDeleteAccountVisible(!modalVerifDeleteAccountVisible)}>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="account-remove" iconColor={colors.defaultDark} size={20} />
-                                        <Text>Supprimer mon compte</Text>
+                                        <IconButton icon="account-remove" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Supprimer mon compte</Text>
                                     </View>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                                        <IconButton icon="chevron-right" iconColor={colors.defaultDark} size={20} />
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
+                                    </View>
+                                </TouchableOpacity>
+                                <Divider />
+                                <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => setModalVisible(!modalVisible)}>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="logout" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Déconnexion</Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
                                     </View>
                                 </TouchableOpacity>
                             </View>

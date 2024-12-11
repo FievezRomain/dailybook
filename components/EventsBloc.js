@@ -100,30 +100,31 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             paddingRight: 20,
             paddingTop: 20,
             borderRadius: 5,
+            paddingBottom: 20
         },
         eventUpcomingContainer:{
             width: "100%",
             paddingLeft: 20,
             paddingRight: 20,
-            paddingTop: 20,
+            paddingTop: 10,
             borderRadius: 5,
+            paddingBottom: 20
         },
         headerContainer:{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: 10
+            marginBottom: 20
         },
         title:{
             color: colors.accent,
-            fontSize: 15
+            fontSize: 16,
         },
         icon:{
             marginRight: 10,
         },
         containerCompletionBar:{
-            paddingBottom: 20,
-            paddingTop: 10
+            paddingBottom: 30,
         },
         eventContainer:{
             display: "flex",
@@ -219,23 +220,25 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
                             }
                         </View>
                         <View>
-                            {eventsExceeded.map((eventItem, index) => (
-                                <TouchableOpacity key={eventItem.id}>
-                                    <View style={styles.eventContainer}>
-                                        <EventCard
-                                            eventInfos={eventItem}
-                                            withSubMenu={true}
-                                            withState={true}
-                                            handleEventsChange={handleEventsChange}
-                                            typeEvent={"exceeded"}
-                                        />
-                                    </View>
-                                    <View style={styles.overdueIndicatorContainer}>
-                                        <Text style={[styles.overdueIndicator, styles.textFontRegular]}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
-                                    </View>
-                                </TouchableOpacity>
-                                
-                            ))}
+                            <View style={{marginBottom: -20}}>
+                                {eventsExceeded.map((eventItem, index) => (
+                                    <TouchableOpacity key={eventItem.id}>
+                                        <View style={styles.eventContainer}>
+                                            <EventCard
+                                                eventInfos={eventItem}
+                                                withSubMenu={true}
+                                                withState={true}
+                                                handleEventsChange={handleEventsChange}
+                                                typeEvent={"exceeded"}
+                                            />
+                                        </View>
+                                        <View style={styles.overdueIndicatorContainer}>
+                                            <Text style={[styles.overdueIndicator, styles.textFontRegular]}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                    
+                                ))}
+                            </View>
                             {eventsToday.map((eventItem, index) => (
                                 <TouchableOpacity key={eventItem.id}>
                                     <View style={styles.eventContainer}>

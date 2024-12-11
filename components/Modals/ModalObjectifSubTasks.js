@@ -193,7 +193,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                                         percentage={percentageObjectif}
                                     />
                                 </View>
-                                <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.neutral }}>
+                                <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.quaternary }}>
                                     {temporaryObjectif.sousEtapes && temporaryObjectif.sousEtapes.map((item, index) => {
                                         return(
                                             <View key={item.id} style={styles.checkBoxContainer}>

@@ -72,6 +72,15 @@ const StatsScreen = ({ navigation }) => {
       height: 2, 
       width: "100%"
     },
+    textFontBold:{
+      fontFamily: fonts.labelLarge.fontFamily
+    },
+    textFontRegular:{
+      fontFamily: fonts.default.fontFamily
+    },
+    textFontMedium:{
+      fontFamily: fonts.labelMedium.fontFamily
+    },
     separatorAnimated:{
       height: 3, 
       backgroundColor: colors.accent, 
@@ -110,6 +119,7 @@ const StatsScreen = ({ navigation }) => {
       alignSelf: "center",
       paddingLeft: 20,
       paddingRight: 20,
+      paddingBottom: 15,
       top: 5,
       zIndex: 1,
     },
@@ -163,11 +173,13 @@ const StatsScreen = ({ navigation }) => {
         </View>
         <View style={styles.rubriqueContainer}>
           <View style={styles.iconsContainer}>
-            <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <SimpleLineIcons name="target" size={30} color={activeRubrique === 0 ? colors.accent : colors.quaternary}/>
+            <TouchableOpacity style={{width: "50%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+              <SimpleLineIcons name="target" size={20} color={activeRubrique === 0 ? colors.accent : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color :activeRubrique === 0 ? colors.accent : colors.quaternary}, styles.textFontMedium]}>Objectifs</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <FontAwesome name="pie-chart" size={25} color={activeRubrique === 1 ? colors.accent : colors.quaternary}/>
+            <TouchableOpacity style={{width: "50%", alignItems: "center", flexDirection: "row", justifyContent: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+              <FontAwesome name="pie-chart" size={20} color={activeRubrique === 1 ? colors.accent : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 1 ? colors.accent : colors.quaternary}, styles.textFontMedium]}>Statistiques</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.separatorFix}></View>

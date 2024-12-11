@@ -38,7 +38,7 @@ const StatistiquesBloc = () =>{
             marginBottom: 10,
         },
         title:{
-            color: colors.neutral,
+            color: colors.quaternary,
             marginLeft: 10,
         },
         statistiqueIndicatorContainer:{
@@ -73,7 +73,7 @@ const StatistiquesBloc = () =>{
         <>
             <View style={styles.composantContainer}>
                 <ScrollView contentContainerStyle={{paddingBottom: 30}}>
-                <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text>
+                {/* <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text> */}
                 
 
                 {/* <View style={styles.statistiqueIndicatorContainer}>

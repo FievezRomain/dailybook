@@ -28,17 +28,18 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
             width: "100%",
             paddingLeft: 20,
             paddingRight: 20,
-            paddingTop: 20,
+            paddingTop: 10,
             borderRadius: 5,
         },
         headerContainer:{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: 10
+            marginBottom: 20
         },
         title:{
             color: colors.accent,
+            fontSize : 16,
         },
         icon:{
             marginRight: 10,
@@ -71,7 +72,7 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
                 </View>
                 <View>
                     {objectifs.length === 0 &&
-                        <View style={{backgroundColor: colors.background, marginBottom: 20, width: "100%", padding: 20, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1},}}>
+                        <View style={{backgroundColor: colors.background, marginBottom: 20, width: "100%", paddingHorizontal: 20, paddingVertical: 25, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1},}}>
                             <Text style={[styles.textFontRegular]}>Vous n'avez aucun objectif en cours</Text>
                         </View>
                     }
