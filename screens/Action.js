@@ -92,12 +92,12 @@ const ActionScreen = ({ navigation }) => {
       color: colors.neutral,
     },
     iconAction:{
-      color: colors.accent,
+      color: colors.default_dark,
       paddingRight: 10
     },
     iconButton:{
       marginRight: 20,
-      color: colors.accent,
+      color: colors.default_dark,
     },
     informationsButtonContainer:{
       flexDirection: "row",

@@ -104,7 +104,7 @@ const NoteScreen = ({ navigation }) => {
             <View style={styles.container}>
                 <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, marginBottom: 10, marginTop: 20, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black", elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                        <AntDesign name="search1" size={16} color={colors.accent}/>
+                        <AntDesign name="search1" size={16} color={colors.default_dark}/>
                         <TextInput
                             placeholder="Recherche"
                             style={[{marginLeft: 5, width: "100%"}, styles.textFontRegular]}

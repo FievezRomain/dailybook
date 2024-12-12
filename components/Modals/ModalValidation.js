@@ -12,11 +12,11 @@ const ModalValidation = ({ visible, setVisible, displayedText, title, onConfirm}
                 <Dialog style={{backgroundColor: colors.background}} visible={visible} dismissable={false}>
                     <Dialog.Title style={{color: colors.bai}}>{title}</Dialog.Title>
                     <Dialog.Content>
-                        <Text style={{color: colors.bai}} variant="bodyMedium">{displayedText}</Text>
+                        <Text style={{color: colors.default_dark}} variant="bodyMedium">{displayedText}</Text>
                     </Dialog.Content>
                     <Dialog.Actions>
-                        <Button onPress={hideDialog} labelStyle={{color: colors.accent}}>Annuler</Button>
-                        <Button onPress={() => onConfirm()}>Confirmer</Button>
+                        <Button onPress={hideDialog} labelStyle={{color: colors.default_dark}}>Annuler</Button>
+                        <Button onPress={() => onConfirm()} labelStyle={{color: colors.accent}}>Confirmer</Button>
                     </Dialog.Actions>
                 </Dialog>
             </Portal>

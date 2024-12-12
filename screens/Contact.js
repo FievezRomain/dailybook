@@ -155,12 +155,12 @@ const ContactScreen = ({ navigation }) => {
         },
         profession: {
             fontSize: 14,
-            color: colors.accent,
+            color: colors.default_dark,
             fontFamily: fonts.default.fontFamily
         },
         phone: {
             fontSize: 14,
-            color: colors.accent,
+            color: colors.default_dark,
             fontFamily: fonts.default.fontFamily
         },
         iconsContainer: {
@@ -251,16 +251,16 @@ const ContactScreen = ({ navigation }) => {
                                         {item.telephone != null && item.telephone != undefined &&
                                             <>
                                                 <TouchableOpacity style={{marginRight: 5}} onPress={() => makePhoneCall(item.telephone)}>
-                                                    <Entypo name='phone' size={25} color={colors.accent}/>
+                                                    <Entypo name='phone' size={25} color={colors.default_dark}/>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={{marginRight: 5}} onPress={() => sendSMS(item.telephone)}>
-                                                    <Entypo name='message' size={25} color={colors.accent}/>
+                                                    <Entypo name='message' size={25} color={colors.default_dark}/>
                                                 </TouchableOpacity>
                                             </>
                                         }
                                         {item.email != null && item.email != undefined &&
                                             <TouchableOpacity onPress={() => sendEmail(item.email)}>
-                                                <Zocial name='email' size={25} color={colors.accent}/>
+                                                <Zocial name='email' size={25} color={colors.default_dark}/>
                                             </TouchableOpacity>
                                         }
                                     </View>

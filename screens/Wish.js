@@ -158,7 +158,7 @@ const WishScreen = ({ navigation }) => {
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily,
-            color: colors.accent,
+            color: colors.default_dark,
         },
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily,

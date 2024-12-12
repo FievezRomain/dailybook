@@ -56,10 +56,10 @@ const AppBottomNavigation = ({ navigation }) => {
           shadowRadius: 4,
           elevation: 8,
         }}
-        activeColor={colors.accent}
+        activeColor={colors.default_dark}
         inactiveColor={colors.text}
         activeIndicatorStyle={{
-          backgroundColor: colors.accent,
+          backgroundColor: colors.default_dark,
           height: 2,
           marginBottom: 55
         }}

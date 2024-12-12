@@ -117,7 +117,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             marginBottom: 20
         },
         title:{
-            color: colors.accent,
+            color: colors.default_dark,
             fontSize: 16,
         },
         icon:{
@@ -143,7 +143,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             width: 25, 
             height: 25,  
             borderRadius: 60, 
-            borderBlockColor: colors.accent, 
+            borderBlockColor: colors.default_dark, 
             borderWidth: 0.2
         },
         dateContainer:{
@@ -167,7 +167,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             padding: 5, 
             borderRadius: 60, 
             marginRight: 10, 
-            borderColor: colors.accent,
+            borderColor: colors.default_dark,
             borderWidth: 0.2,
             alignItems: "center",
             shadowColor: "black",
@@ -184,7 +184,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             backgroundColor: colors.background,
         },
         inputStateContainerSelected:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -203,7 +203,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
         <View style={styles.container}>
             <View style={styles.eventTodayContainer}>
                 <View style={styles.headerContainer}>
-                    <FontAwesome name='check-circle' size={20} color={colors.accent} style={styles.icon} />
+                    <FontAwesome name='check-circle' size={20} color={colors.default_dark} style={styles.icon} />
                     <Text style={[styles.title, styles.textFontBold]}>Tâches</Text>
                 </View>
                 {eventsExceeded.length !== 0 || eventsToday.length !== 0 ?
@@ -220,7 +220,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
                             }
                         </View>
                         <View>
-                            <View style={{marginBottom: -20}}>
+                            <View>
                                 {eventsExceeded.map((eventItem, index) => (
                                     <TouchableOpacity key={eventItem.id}>
                                         <View style={styles.eventContainer}>
@@ -265,7 +265,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
 
             <View style={styles.eventUpcomingContainer}>
                 <View style={styles.headerContainer}>
-                    <FontAwesome name='calendar' size={20} color={colors.accent} style={styles.icon}/>
+                    <FontAwesome name='calendar' size={20} color={colors.default_dark} style={styles.icon}/>
                     <Text style={[styles.title, styles.textFontBold]}>Événements à venir</Text>
                 </View>
                 <View>

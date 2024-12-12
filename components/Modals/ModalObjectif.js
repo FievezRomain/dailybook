@@ -375,12 +375,12 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                             </View>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 
-                                    <ActivityIndicator size={10} color={colors.accent} />
+                                    <ActivityIndicator size={10} color={colors.default_dark} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
@@ -454,7 +454,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                                 placeholder="Entrez une valeur"
                                             />
                                             <TouchableOpacity onPress={() => handleRemoveInput(index)}>
-                                                <AntDesign name="delete" size={20} color={colors.accent}/>
+                                                <AntDesign name="delete" size={20} color={colors.default_dark}/>
                                             </TouchableOpacity>
                                         </View>
                                     ))}

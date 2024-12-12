@@ -137,7 +137,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
             color: colors.quaternary,
         },
         itemIconSelected:{
-            color: colors.accent,
+            color: colors.default_dark,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -175,7 +175,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
             <ScrollView contentContainerStyle={{paddingBottom: 30, width: "100%"}}>
                 <View style={styles.composantContainer}>
                 
-                    {/* <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text> */}
+                    {/* <Text style={[{textAlign: "center", color: colors.default_dark, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text> */}
                     
                     {objectifsDisplay.length !== 0 ?
                         objectifsDisplay.map((objectif, index) => {

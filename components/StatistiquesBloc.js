@@ -56,7 +56,7 @@ const StatistiquesBloc = () =>{
             color: colors.quaternary,
         },
         itemIconSelected:{
-            color: colors.accent,
+            color: colors.default_dark,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -73,7 +73,7 @@ const StatistiquesBloc = () =>{
         <>
             <View style={styles.composantContainer}>
                 <ScrollView contentContainerStyle={{paddingBottom: 30}}>
-                {/* <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text> */}
+                {/* <Text style={[{textAlign: "center", color: colors.default_dark, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text> */}
                 
 
                 {/* <View style={styles.statistiqueIndicatorContainer}>

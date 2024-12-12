@@ -19,8 +19,8 @@ const StatsScreen = ({ navigation }) => {
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "performances"})
   const arrayState = [
-    {value: 'En cours', label: 'En cours', checkedColor: colors.background, uncheckedColor: colors.text, style: {borderRadius: 5}, rippleColor: "transparent"},
-    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'En cours', label: 'En cours', checkedColor: colors.background, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
   ];
   const [temporality, setTemporality] = useState('En cours');
   const { animaux } = useAnimaux();
@@ -54,6 +54,14 @@ const StatsScreen = ({ navigation }) => {
     }).start();
   };
 
+  function hexToRgba(hex, opacity) {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
+  }
+
   const styles = StyleSheet.create({
     iconsContainer:{
       display: "flex", 
@@ -65,7 +73,7 @@ const StatsScreen = ({ navigation }) => {
       marginBottom: 10,
     },
     separatorFix:{
-      borderTopColor: colors.quaternary, 
+      borderTopColor: colors.default_dark, 
       borderTopWidth: 0.4, 
       position: 'absolute', 
       bottom: 0, 
@@ -83,7 +91,7 @@ const StatsScreen = ({ navigation }) => {
     },
     separatorAnimated:{
       height: 3, 
-      backgroundColor: colors.accent, 
+      backgroundColor: colors.default_dark, 
       position: 'absolute', 
       bottom: 0, 
       width: '50%',
@@ -98,10 +106,10 @@ const StatsScreen = ({ navigation }) => {
       marginRight: 5,
     },
     fondDefaultTouchableOpacity:{
-      backgroundColor: colors.neutral,
+      backgroundColor: colors.default_dark,
     },
     fondSelectedTouchableOpacity:{
-      backgroundColor: colors.accent
+      backgroundColor: colors.default_dark
     },
     contentContainer:{
       flex: 1,
@@ -174,12 +182,12 @@ const StatsScreen = ({ navigation }) => {
         <View style={styles.rubriqueContainer}>
           <View style={styles.iconsContainer}>
             <TouchableOpacity style={{width: "50%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <SimpleLineIcons name="target" size={20} color={activeRubrique === 0 ? colors.accent : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color :activeRubrique === 0 ? colors.accent : colors.quaternary}, styles.textFontMedium]}>Objectifs</Text>
+              <SimpleLineIcons name="target" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color :activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Objectifs</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{width: "50%", alignItems: "center", flexDirection: "row", justifyContent: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <FontAwesome name="pie-chart" size={20} color={activeRubrique === 1 ? colors.accent : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color: activeRubrique === 1 ? colors.accent : colors.quaternary}, styles.textFontMedium]}>Statistiques</Text>
+              <FontAwesome name="pie-chart" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Statistiques</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.separatorFix}></View>
@@ -193,7 +201,7 @@ const StatsScreen = ({ navigation }) => {
               arrayState={arrayState}
               handleChange={onTemporalityChange}
               defaultState={temporality}
-              color={colors.secondaryContainer}
+              color={hexToRgba(colors.quaternary, 1)}
             />
           </View>
 

@@ -25,7 +25,7 @@ const Back = ({ isWithBackground=false, arrowColor=undefined, buttonOptional=und
                     arrowColor ?
                         <Ionicons name="chevron-back" style={styles.backButton} size={30} color={arrowColor} />
                         :
-                        <Ionicons name="chevron-back" style={styles.backButton} size={30} color={colors.accent} />
+                        <Ionicons name="chevron-back" style={styles.backButton} size={30} color={colors.default_dark} />
                 }
             </TouchableOpacity>
             {buttonOptional &&

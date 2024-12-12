@@ -118,8 +118,8 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
             borderWidth: 0.5,
         },
         selectedAvatar:{
-            backgroundColor: colors.accent,
-            borderColor: colors.accent,
+            backgroundColor: colors.default_dark,
+            borderColor: colors.default_dark,
             borderWidth: 3,
         },
         containerAnimaux:{
@@ -196,7 +196,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
                                 <View style={[styles.containerAvatarWithoutImage, checkSelected(animal) ? {backgroundColor: colors.background} : {backgroundColor: "transparent"}]}>
-                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: colors.accent} : {backgroundColor: colors.quaternary}]}>
+                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: colors.default_dark} : {backgroundColor: colors.quaternary}]}>
                                         <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                     </View>
                                 </View>

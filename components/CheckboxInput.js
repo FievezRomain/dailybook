@@ -27,7 +27,7 @@ const CheckboxInput = ({ isChecked, onChange, objet }) => {
       <MaterialIcons
         name={checked ? 'check-box' : 'check-box-outline-blank'}
         size={24}
-        color={checked ? colors.accent : colors.text }
+        color={checked ? colors.default_dark : colors.text }
       />
     </TouchableOpacity>
   );

@@ -231,10 +231,10 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
             borderWidth: 0.5,
             borderRadius: 5,
             zIndex: 1,
-            borderColor: colors.accent,
+            borderColor: colors.default_dark,
         },
         iconContainer:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
             padding: 10,
             borderRadius: 60,
             height: 110,
@@ -271,12 +271,12 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
-                                <ActivityIndicator size={10} color={colors.accent} />
+                                <ActivityIndicator size={10} color={colors.default_dark} />
                             :
                                 actionType === "modify" ?
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                                 :
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
                             }
                         </TouchableOpacity>
                     </View>
@@ -317,7 +317,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <View style={styles.imageContainer}>
                                         <Image source={{uri: image}} style={styles.avatar} cachePolicy="disk"/>
                                         <TouchableOpacity onPress={() => deleteImage()}>
-                                            <Entypo name="circle-with-cross" size={25} color={colors.accent}/>
+                                            <Entypo name="circle-with-cross" size={25} color={colors.default_dark}/>
                                         </TouchableOpacity>
                                     </View>
                                 }

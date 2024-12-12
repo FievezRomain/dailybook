@@ -186,9 +186,9 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             {loading ? (
-                                <ActivityIndicator size={10} color={colors.accent} />
+                                <ActivityIndicator size={10} color={colors.default_dark} />
                             ) : (
-                                <Text style={[{ color: colors.accent }, styles.textFontRegular]}>
+                                <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>
                                     {actionType === "modify" ? "Modifier" : "Créer"}
                                 </Text>
                             )}

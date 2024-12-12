@@ -65,13 +65,13 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
             justifyContent: "center"
         },
         item:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
             borderRadius: 5,
             margin: 5,
             padding: 10,
         },
         selected:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
         },
         title:{
             color: "white"

@@ -165,7 +165,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             alignSelf: "baseline"
         },
         iconContainer:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
             padding: 20,
             borderRadius: 60,
             height: 120,
@@ -202,12 +202,12 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
-                                <ActivityIndicator size={10} color={colors.accent} />
+                                <ActivityIndicator size={10} color={colors.default_dark} />
                             :
                                 actionType === "modify" ?
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                                 :
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
                             }
                         </TouchableOpacity>
                     </View>

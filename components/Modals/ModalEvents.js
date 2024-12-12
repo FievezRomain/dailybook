@@ -507,7 +507,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       backgroundColor: eventType ? getColorByEventType(eventType.id) : colors.background
     },
     title: {
-      color: colors.accent,
+      color: colors.default_dark,
       fontSize: 30,
       letterSpacing: 2,
       marginBottom:20,

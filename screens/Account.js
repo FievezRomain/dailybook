@@ -166,7 +166,7 @@ const AccountScreen = ({ navigation }) => {
 
             <View style={{width: "70%", alignSelf: "center", marginBottom: 50}}>
                 { loading ? 
-                    <ActivityIndicator size={30} color={colors.accent} />
+                    <ActivityIndicator size={30} color={colors.default_dark} />
                 :
                     <Button
                         isLong={true}

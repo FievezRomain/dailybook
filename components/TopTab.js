@@ -42,11 +42,11 @@ const TopTab = ({message1, message2, withBackground=false}) => {
             width: 40,
             height: 40,
             borderRadius: 30,
-            borderColor: withBackground == false ? colors.accent : colors.background,
+            borderColor: withBackground == false ? colors.default_dark : colors.background,
             borderWidth: 0.5
         },
         text:{
-            color: withBackground == false ? colors.accent : colors.background,
+            color: withBackground == false ? colors.default_dark : colors.background,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily

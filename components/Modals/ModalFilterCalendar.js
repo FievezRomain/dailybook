@@ -187,7 +187,7 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
                         <Text style={[{color: colors.quaternary}, styles.textFontRegular]}>Réinitialiser</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={sendFilter}>
-                        <Text style={[{color: colors.accent}, styles.textFontRegular]}>Appliquer</Text>
+                        <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Appliquer</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.bottomBar} />
