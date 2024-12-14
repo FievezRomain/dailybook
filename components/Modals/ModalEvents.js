@@ -73,8 +73,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Tous les mois", id:"tlm"}
   ];
   const arrayState = [
-    {value: 'À faire', label: 'À faire', checkedColor: colors.default_dark, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
-    {value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.default_dark, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'À faire', label: 'À faire', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
@@ -468,6 +468,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
   }
 
+  function hexToRgba(hex, opacity) {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
+  }
+
   const styles = StyleSheet.create({
     inputToggleContainer:{
       display: "flex", 
@@ -502,9 +510,10 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     },
     containerActionsButtons: {
       flexDirection: "row",
+      alignItems: "center",
       paddingBottom: 15,
       paddingTop: 5,
-      backgroundColor: eventType ? getColorByEventType(eventType.id) : colors.background
+      backgroundColor: eventType ? hexToRgba(getColorByEventType(eventType.id), 0.3) : colors.background
     },
     title: {
       color: colors.default_dark,
@@ -637,13 +646,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       color: colors.quaternary
     },
     handleStyleModal:{
-      backgroundColor: eventType ? getColorByEventType(eventType.id) : colors.background,
+      backgroundColor: eventType ? hexToRgba(getColorByEventType(eventType.id), 0.3) : colors.background,
       borderTopEndRadius: 15,
       borderTopStartRadius: 15,
-      marginBottom: -1
     },
     handleIndicatorStyle:{
-      backgroundColor: colors.background
+      backgroundColor: getColorByEventType(eventType.id)
     }
   });
 
@@ -722,24 +730,24 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           <View style={styles.containerActionsButtons}>
 
             <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
-              <Text style={[{color: colors.background}, styles.textFontRegular]}>Annuler</Text>
+              <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Annuler</Text>
             </TouchableOpacity>
             <View style={{width:"33.33%", alignItems: "center"}}>
               { actionType === "modify" && 
-                <Text style={[styles.textFontBold, {color: colors.background}]}>{eventType && eventType.title}</Text>
+                <Text style={[styles.textFontBold, {color: getColorByEventType(eventType.id), fontSize: 16}]}>{eventType && eventType.title}</Text>
               }
               { actionType === "create" && 
-                <Text style={[styles.textFontBold, {color: colors.background}]}>{eventType && eventType.title}</Text>
+                <Text style={[styles.textFontBold, {color: getColorByEventType(eventType.id), fontSize: 16}]}>{eventType && eventType.title}</Text>
               }
             </View>
             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
               { loading ? 
-                  <ActivityIndicator size={16} color={colors.background}  />
+                  <ActivityIndicator size={16} color={colors.default_dark}  />
                 :
                   actionType === "modify" ?
-                    <Text style={[{color: colors.background}, styles.textFontRegular]}>Modifier</Text>
+                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                   :
-                    <Text style={[{color: colors.background}, styles.textFontRegular]}>Créer</Text>
+                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
               }
             </TouchableOpacity>
           </View>

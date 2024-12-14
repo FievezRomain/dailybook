@@ -18,6 +18,8 @@ import LoggerService from '../../services/LoggerService';
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../Modals/ModalValidation";
+import Feather from '@expo/vector-icons/Feather';
+import SvgComponent from "../SvgComponent";
 
 const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=false, withState=false, typeEvent=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -194,27 +196,6 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
               height: 1
             },
         },
-        balade:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        autre:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        rdv:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        soins:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        entrainement:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        concours:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        depense:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
         eventTypeContainer:{
             backgroundColor: hexToRgba(getColorEventType(), 0.3),
         },
@@ -276,8 +257,6 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             paddingRight: 10
         }
     });
-
-    
 
     function hexToRgba(hex, opacity) {
         const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -460,9 +439,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     { withState === true &&
                         <TouchableOpacity onPress={()=>handleStateChange()} style={styles.indicatorEventContainer}>
                             {eventInfos.state === "À faire" && 
-                                <MaterialIcons name="check-box-outline-blank" size={32} color={colors.default_dark} />
+                                <Feather name="square" size={25} color={colors.default_dark} />
                                 ||
-                                <MaterialIcons name="check-box" size={32} color={colors.default_dark} />
+                                <Feather name="x-square" size={25} color={colors.default_dark} />
                             }
                         </TouchableOpacity>
                     }

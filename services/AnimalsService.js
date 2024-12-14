@@ -4,6 +4,7 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
 import eventsServiceInstance from "./EventService";
+import objectifsServiceInstance from './ObjectifService';
 
 class AnimalsService {
 
@@ -169,6 +170,7 @@ class AnimalsService {
 
             // Mise à jour des events suite à la potentielle suppression en cascade
             await eventsServiceInstance.refreshCache(animal.email);
+            await objectifsServiceInstance.refreshCache(animal.email);
 
             let animals = JSON.parse(await AsyncStorage.getItem("animals"));
 

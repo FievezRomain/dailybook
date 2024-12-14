@@ -198,7 +198,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={styles.textFontBold}>Contact</Text>
+                            <Text style={[styles.textFontBold, {fontSize: 16}]}>Contact</Text>
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
@@ -260,11 +260,11 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                     defaultValue={watch("email")}
                                 />
                             </View>
-                                <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                                {/* <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
                                 <View style={styles.iconContainer}>
                                     <AntDesign name="contacts" size={70} color={colors.background} style={{marginRight: 5}}/>
                                 </View>
-                                </View>
+                                </View> */}
                         </View>
                     </KeyboardAwareScrollView>
                 </View>

@@ -6,7 +6,7 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { Image } from "expo-image";
 import { Divider, useTheme } from 'react-native-paper';
 
-const TopTab = ({message1, message2, withBackground=false}) => {
+const TopTab = ({message1, message2, withBackground=false, withLogo=false}) => {
     const { colors, fonts } = useTheme();
     const navigation = useNavigation();
     const { currentUser } = useAuth();
@@ -16,7 +16,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            paddingLeft: 30,
+            paddingLeft: withLogo ? 10 : 30,
             paddingRight: 30,
             paddingBottom: 10,
         },
@@ -28,7 +28,7 @@ const TopTab = ({message1, message2, withBackground=false}) => {
             gap: 20,
             direction: "ltr",
             justifyContent: "flex-end",
-            alignSelf: "flex-start",
+            alignSelf: "center",
             flexDirection: "row"
         },
         image:{
@@ -42,17 +42,20 @@ const TopTab = ({message1, message2, withBackground=false}) => {
             width: 40,
             height: 40,
             borderRadius: 30,
-            borderColor: withBackground == false ? colors.default_dark : colors.background,
+            borderColor: colors.accent,
             borderWidth: 0.5
         },
         text:{
-            color: withBackground == false ? colors.default_dark : colors.background,
+            color: withBackground || withLogo == false ? colors.default_dark : colors.background,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
         },
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
         }
     });
 
@@ -60,11 +63,17 @@ const TopTab = ({message1, message2, withBackground=false}) => {
         <View>
             <View style={styles.topTabContainer}>
                 <View style={styles.textContainer}>
-                    {withBackground ?
-                        <View style={{marginTop: -5}}>
-                            <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text>
-                            <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
-                        </View>
+                    {withBackground || withLogo ?
+                        withBackground ?
+                            <View style={{marginTop: -5}}>
+                                <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text>
+                                <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
+                            </View>
+                        :
+                            <View style={{flexDirection: "row", alignItems: "center", marginTop: -5}}>
+                                <Image source={require("../assets/logo.png")} style={{height: 45, width: 45}}/>
+                                <Text style={[styles.textFontMedium, {color: colors.accent, fontSize: 25}]}>VASCO</Text>
+                            </View>
                     :
                         <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
                     }
@@ -78,17 +87,21 @@ const TopTab = ({message1, message2, withBackground=false}) => {
                         {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
                             <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk"/>
                         : 
-                            withBackground ?
-                                <FontAwesome5 size={20} color={colors.background} name="user-alt" />
+                            withBackground || withLogo ?
+                                <View style={{paddingVertical: 10}}>
+                                    <FontAwesome5 size={20} color={colors.default_dark} name="user-alt" />
+                                </View>
                             :
 
-                                <FontAwesome5 size={20} color={colors.secondaryContainer} name="user-alt" />
+                            <View style={{paddingVertical: 10}}>
+                            <FontAwesome5 size={20} color={colors.default_dark} name="user-alt" />
+                        </View>
                         }
                         
                     </TouchableOpacity>
                 </View>
             </View>
-            {!withBackground &&
+            {!withBackground && 
                 <Divider style={{height: 0.4, backgroundColor: colors.quaternary}}/>
             }
         </View>

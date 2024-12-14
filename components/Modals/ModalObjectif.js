@@ -216,8 +216,8 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         if(date.includes("/")){
             date = dateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
         }
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateObject  = new Date(date);
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var dateObject  = new Date(date);
         return String(dateObject.toLocaleDateString("fr-FR", options));
     };
 
@@ -371,7 +371,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             <View style={{width:"33.33%", alignItems: "center"}}>
-                                <Text style={[styles.textFontBold]}>Objectif</Text>
+                                <Text style={[styles.textFontBold, {fontSize: 16}]}>Objectif</Text>
                             </View>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 

@@ -228,7 +228,7 @@ const ContactScreen = ({ navigation }) => {
             />
             <View style={{ flex: 1, }}>
                 {contacts.length === 0 ?
-                    <View style={{paddingLeft: 20, paddingRight: 20}}>
+                    <View style={{paddingLeft: 20, paddingRight: 20, paddingTop: 20}}>
                         <ModalDefaultNoValue
                             text={"Aucun contact enregistré"}
                         />

@@ -181,7 +181,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                         <View style={styles.containerAvatar}>
                             { animal.image !== null ? 
                             <LinearGradient
-                                colors={checkSelected(animal) ? [colors.accent, colors.quaternary, colors.tertiary] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [colors.accent, colors.tertiary] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
@@ -191,7 +191,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                             </LinearGradient>
                             :
                             <LinearGradient
-                                colors={checkSelected(animal) ? [colors.accent, colors.quaternary, colors.tertiary] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [colors.accent, colors.quaternary] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >

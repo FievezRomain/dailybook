@@ -113,12 +113,11 @@ const WelcomeScreen = ({ navigation })=> {
       },
       summaryContainer:{
         marginTop: 15,
-        top: -5
+        marginLeft: 20
       },
       summary:{
-        color: colors.background,
-        textAlign: "center",
         fontSize: 20,
+        color: colors.default_dark
       },
     });
 
@@ -127,17 +126,12 @@ const WelcomeScreen = ({ navigation })=> {
         <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
           <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.quaternary }}>
             <View style={{flex: 1}}>
-              <Image
-                source={require('../assets/fond_accueil.png')}
-                style={{width: "100%", height: 700, position: "absolute"}}
-              />
-              
-              <TopTab message1={messages.message1} message2={messages.message2} withBackground={true}/>
+              <TopTab withBackground={false} withLogo={true}/>
               <View style={styles.summaryContainer}>
-                  <Text style={[styles.summary, {fontFamily: fonts.default.fontFamily}]}>{convertDayDateToText()}</Text>
-                  <Text style={[styles.summary, {fontFamily: fonts.bodyLarge.fontFamily}]}>{convertDateToText()}</Text>
+                  <Text style={[styles.summary, , {fontFamily: fonts.bodyMedium.fontFamily, marginBottom: 2}]}>{messages.message1} {messages.message2}</Text>
+                  <Text style={[styles.summary, {fontFamily: fonts.bodySmall.fontFamily}]}>{convertDayDateToText()} {convertDateToText()}</Text>
               </View>
-              <View style={{marginTop: 60, paddingBottom: 10}}>
+              <View style={{marginTop: 10, paddingBottom: 10}}>
                     <EventsBloc 
                       events={events}
                       handleEventsChange={handleEventChange}

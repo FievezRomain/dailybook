@@ -267,7 +267,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={[styles.textFontBold]}>Souhait</Text>
+                            <Text style={[styles.textFontBold, {fontSize: 16}]}>Souhait</Text>
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
@@ -346,11 +346,11 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     defaultValue={getValues("destinataire")}
                                 />
                             </View>
-                            <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                           {/*  <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
                                 <View style={styles.iconContainer}>
                                     <FontAwesome name="heart" size={60} color={colors.background} style={{marginTop: 5}}/>
                                 </View>
-                            </View>
+                            </View> */}
                         </View>
                     </KeyboardAwareScrollView>
                 </View>
