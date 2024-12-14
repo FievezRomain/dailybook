@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
 import StatePicker from './StatePicker';
-import EventService from '../services/EventService';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import EventCard from "./cards/EventCard";
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
+import { useEvents } from '../providers/EventsProvider';
 
 const MedicalBook = ({ animal, navigation }) => {
     const { colors, fonts } = useTheme();
@@ -13,11 +13,11 @@ const MedicalBook = ({ animal, navigation }) => {
     const [eventsSoins, setEventsSoins] = useState([]);
     const [eventsRdv, setEventsRdv] = useState([]);
     const { currentUser } = useAuth();
-    const eventService = new EventService();
     const arrayState = [
-        {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.background, uncheckedColor: colors.text},
-        {value: 'Soins', label: 'Soins', checkedColor: colors.background, uncheckedColor: colors.text},
+        {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'Soins', label: 'Soins', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
       ];
+    const { events } = useEvents();
 
     useEffect(() =>{
         getEvents();
@@ -31,16 +31,16 @@ const MedicalBook = ({ animal, navigation }) => {
 
     const getEvents = async () =>{
         try {
-            var result = await eventService.getEvents(currentUser.email);
-            filter(result);
+            //var result = await eventService.getEvents(currentUser.email);
+            filter();
             
           } catch (error) {
             console.error("Error fetching events:", error);
           }
     }
 
-    const filter = async (result) => {
-        result = result.filter((event) => event.animaux.includes(animal.id));
+    const filter = async () => {
+        var result = events.filter((event) => event.animaux.includes(animal.id));
 
         var arrayEventsSoins = [];
         var arrayEventsRdv = [];
@@ -86,13 +86,13 @@ const MedicalBook = ({ animal, navigation }) => {
     return(
         <>
             <View style={{width: "100%", alignSelf: "center", flex: 1}}>
-                <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
+                {/* <Text style={[{textAlign: "center", color: colors.default_dark, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text> */}
                 <View style={{marginBottom: 10, paddingLeft: 20, paddingRight: 20, display: "flex", flexDirection: "row"}}>
                     <StatePicker
                         arrayState={arrayState}
                         handleChange={handleStateChange}
                         defaultState={typeEvent === undefined ? "Rendez-vous" : typeEvent}
-                        color={colors.secondaryContainer}
+                        color={colors.quantenary}
                     />
                 </View>
                 

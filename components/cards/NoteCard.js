@@ -4,7 +4,7 @@ import { Ionicons, Entypo } from '@expo/vector-icons';
 import ModalSubMenuNoteActions from '../Modals/ModalSubMenuNoteActions';
 import ModalNote from "../Modals/ModalNote";
 import Toast from "react-native-toast-message";
-import NoteService from '../../services/NoteService';
+import notesServiceInstance from '../../services/NoteService';
 import LoggerService from '../../services/LoggerService';
 import HTMLView from 'react-native-htmlview';
 import { useTheme } from 'react-native-paper';
@@ -15,7 +15,6 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     const [focus, setFocus] = useState(false);
     const [modalSubMenuNoteVisible, setModalSubMenuNoteVisible] = useState(false);
     const [modalNote, setModaleNote] = useState(false);
-    const noteService = new NoteService();
     const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
     const handleDelete = () =>{
@@ -25,7 +24,7 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     const confirmDelete = () => {
         let data = {};
         data["id"] = note.id;
-        noteService.delete(data)
+        notesServiceInstance.delete(data)
             .then((reponse) => {
                 Toast.show({
                     type: "success",
@@ -142,12 +141,12 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
                     <Text style={styles.textFontBold}>{note.titre}</Text>
                     <View style={styles.icons}>
                         {focus ? (
-                            <Ionicons name='chevron-up-circle' size={20} color={colors.tertiary} />
+                            <Ionicons name='chevron-up' size={20} color={colors.default_dark} />
                         ) : (
-                            <Ionicons name='chevron-down-circle' size={20} color={colors.accent} />
+                            <Ionicons name='chevron-down' size={20} color={colors.default_dark} />
                         )}
                         <TouchableOpacity onPress={onPressOptions}>
-                            <Entypo name='dots-three-horizontal' size={20} color={focus ? colors.tertiary : colors.accent} style={{ marginLeft: 10 }} />
+                            <Entypo name='dots-three-horizontal' size={20} color={focus ? colors.default_dark : colors.default_dark} style={{ marginLeft: 10 }} />
                         </TouchableOpacity>
                     </View>
                 </View>

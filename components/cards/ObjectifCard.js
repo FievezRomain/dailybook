@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import CompletionBar from '../CompletionBar';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
-import ObjectifService from '../../services/ObjectifService';
+import objectifsServiceInstance from '../../services/ObjectifService';
 import Toast from "react-native-toast-message";
 import React, { useState, useEffect, useContext } from 'react';
 import ModalSubMenuObjectifActions from '../Modals/ModalSubMenuObjectifActions';
@@ -11,13 +11,13 @@ import LoggerService from '../../services/LoggerService';
 import FileStorageService from '../../services/FileStorageService';
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { Image } from "expo-image";
-import { useTheme } from 'react-native-paper';
+import { Divider, useTheme } from 'react-native-paper';
 import ModalValidation from "../Modals/ModalValidation";
+import Feather from '@expo/vector-icons/Feather';
 
 const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {
     const { colors, fonts } = useTheme();
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
-    const objectifService = new ObjectifService;
     const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
     const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
     const [currentObjectif, setCurrentObjectif] = useState(objectif);
@@ -62,7 +62,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
         let data = {};
         // Récupération de l'identifiant de l'utilisateur (propriétaire)
         data["id"] = currentObjectif.id;
-        objectifService.delete(data)
+        objectifsServiceInstance.delete(data)
             .then((reponse) =>{
 
                 Toast.show({
@@ -114,7 +114,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
         data["animaux"] = currentObjectif.animaux;
         data["temporalityobjectif"] = currentObjectif.temporalityobjectif;
         data["sousetapes"] = currentObjectif.sousEtapes;
-        objectifService.updateTasks(data)
+        objectifsServiceInstance.updateTasks(data)
             .then((reponse) =>{
                 handleObjectifChange(currentObjectif);
             })
@@ -129,9 +129,9 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
     }
 
     const getDayText = (date) =>{
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateObject  = new Date(date);
-        dateText = String(dateObject.toLocaleDateString("fr-FR", options));
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var dateObject  = new Date(date);
+        var dateText = String(dateObject.toLocaleDateString("fr-FR", options));
         dateText = dateText.charAt(0).toUpperCase() + dateText.slice(1);
         return dateText.slice(0,3);
     }
@@ -160,13 +160,13 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
         completionBarContainer:{
             marginTop: 10,
             marginBottom: 10,
-            borderColor: colors.accent,
+            borderColor: colors.default_dark,
             borderWidth: 0.2,
             borderRadius: 60,
             overflow: "hidden"
         },
         objectifContainer:{
-            backgroundColor: colors.error,
+            backgroundColor: colors.background,
             borderRadius: 5,
             width: "100%",
             display: "flex",
@@ -240,7 +240,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                 var animal = getAnimalById(eventAnimal);
                                 return(
                                     <View key={animal.id} style={{marginLeft: 5}}>
-                                        <View style={{height: 20, width: 20, backgroundColor: colors.accent, borderRadius: 10, justifyContent: "center"}}>
+                                        <View style={{height: 20, width: 20, backgroundColor: colors.default_dark, borderRadius: 10, justifyContent: "center"}}>
                                             { animal.image !== null ? 
                                                 <Image style={[styles.avatar]} source={{uri: `${getImagePath()}${animal.image}`}} />
                                                 :
@@ -262,7 +262,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                             <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
                                 <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                     {etape.state === true &&
-                                        <MaterialIcons name="check-box" size={30} color={colors.accent} />
+                                        <MaterialIcons name="check-box" size={30} color={colors.default_dark} />
                                         ||
                                         <MaterialIcons name="check-box-outline-blank" size={30} color={colors.quaternary} />
                                     }
@@ -284,15 +284,17 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                 <View style={{display: "flex",flexDirection: "row"}}>
                     <View style={{flexDirection: "row",justifyContent: "space-between", width: "100%",borderTopStartRadius: 5,borderTopEndRadius: 5, padding: 10}}>
                         <View>
-                            <Text style={[{color: colors.background}, styles.textFontRegular]}>{objectif.title}</Text>
+                            <Text style={[styles.textFontBold]}>{objectif.title}</Text>
                         </View>
                         <TouchableOpacity onPress={() => onPressOptions()}>
-                            <Entypo name='dots-three-horizontal' size={20} color={colors.background} />
+                            <Entypo name='dots-three-horizontal' size={20} />
                         </TouchableOpacity>
                     </View>
+                    
                 </View>
+                <Divider style={{backgroundColor: colors.default_dark}}/>
                 <View style={{display: "flex", flexDirection: "row", backgroundColor: colors.background, borderBottomStartRadius: 5, borderBottomEndRadius: 5}}>
-                    <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: colors.accent, alignItems: "center"}}>
+                    <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: colors.default_dark, alignItems: "center"}}>
                         <Text style={styles.textFontRegular}>{getDayText(objectif.datefin)}.</Text>
                         <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(objectif.datefin)}</Text>
                         <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(objectif.datefin)}</Text>
@@ -306,11 +308,11 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                         <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
                                             <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                                                 {etape.state === true &&
-                                                    <MaterialIcons name="check-box" size={30} color={colors.accent} />
+                                                    <Feather name="x-square" size={25} color={colors.default_dark} />
                                                     ||
-                                                    <MaterialIcons name="check-box-outline-blank" size={30} color={colors.quaternary} />
+                                                    <Feather name="square" size={25} color={colors.default_dark} />
                                                 }
-                                                <Text style={[styles.textFontRegular, {flexShrink: 1, flexWrap: 'wrap'}]}>{etape.etape}</Text>
+                                                <Text style={[styles.textFontRegular, {flexShrink: 1, flexWrap: 'wrap', marginLeft: 5}]}>{etape.etape}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     )
@@ -321,7 +323,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                     var animal = getAnimalById(eventAnimal);
                                     return(
                                         <View key={animal.id} style={{marginLeft: -3}}>
-                                            <View style={{height: 20, width: 20, backgroundColor: colors.accent, borderRadius: 10, justifyContent: "center"}}>
+                                            <View style={{height: 20, width: 20, backgroundColor: colors.default_dark, borderRadius: 10, justifyContent: "center"}}>
                                                 { animal.image !== null ? 
                                                     <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid )}} cachePolicy="disk" />
                                                     :

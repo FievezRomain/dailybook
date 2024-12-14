@@ -11,6 +11,12 @@ import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
 import variables from './components/styles/Variables';
 import { ThemeProvider, ThemeContext } from './providers/ThemeProvider';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AnimauxProvider } from "./providers/AnimauxProvider";
+import { EventsProvider } from "./providers/EventsProvider";
+import { ObjectifsProvider } from "./providers/ObjectifsProvider";
+import { NotesProvider } from "./providers/NotesProvider";
+import { ContactsProvider } from "./providers/ContactsProvider";
+import { WishProvider } from "./providers/WishProvider";
 
 const lightTheme = {
   ...DefaultTheme,
@@ -36,6 +42,7 @@ const lightTheme = {
     bodyMedium: { fontFamily: variables.fontMedium },
     bodySmall: { fontFamily: variables.fontLight },
     bodyLarge: { fontFamily: variables.fontBold },
+    labelMedium: { fontFamily: variables.fontMedium },
     labelLarge: { fontFamily: variables.fontBold },
     headlineSmall: { fontFamily: variables.fontRegular },
   },
@@ -47,13 +54,13 @@ const darkTheme = {
     ...DefaultTheme.colors,
     primary: variables.alezan,
     secondary: variables.gris,
-    tertiary: variables.aubere,
+    accent: variables.aubere,
     neutral: variables.isabelle,
     minor: variables.palomino,
-    accent: variables.bai,
-    background: variables.blanc,
+    tertiary: variables.bai,
+    background: variables.noir,
     text: variables.bai_brun,
-    onSurface: variables.default,
+    onSurface: variables.default_dark,
     error: variables.bai_cerise,
     quaternary: variables.rouan,
     secondaryContainer: variables.bai,
@@ -64,6 +71,7 @@ const darkTheme = {
     bodyMedium: { fontFamily: variables.fontMedium },
     bodySmall: { fontFamily: variables.fontLight },
     bodyLarge: { fontFamily: variables.fontBold },
+    labelMedium: { fontFamily: variables.fontMedium },
     labelLarge: { fontFamily: variables.fontBold },
     headlineSmall: { fontFamily: variables.fontRegular },
   },
@@ -123,13 +131,26 @@ function App() {
   return (
     fontsLoaded ?
           <>
-            <AuthenticatedUserProvider>
-              <GestureHandlerRootView>
-                <ThemeProvider>
-                  <ThemedApp />
-                </ThemeProvider>
-              </GestureHandlerRootView>
-            </AuthenticatedUserProvider>
+          
+            <AnimauxProvider>
+              <EventsProvider>
+                <ObjectifsProvider>
+                  <NotesProvider>
+                    <ContactsProvider>
+                      <WishProvider>
+                        <AuthenticatedUserProvider>
+                          <GestureHandlerRootView>
+                            <ThemeProvider>
+                              <ThemedApp />
+                            </ThemeProvider>
+                          </GestureHandlerRootView>
+                        </AuthenticatedUserProvider>
+                      </WishProvider>
+                    </ContactsProvider>
+                  </NotesProvider>
+                </ObjectifsProvider>
+              </EventsProvider>
+            </AnimauxProvider>
           </>
       :
       <ActivityIndicator size={10} />

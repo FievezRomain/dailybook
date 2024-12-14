@@ -41,7 +41,8 @@ import { useTheme } from 'react-native-paper';
       },
       placeholderStyle: {
         fontSize: 14,
-        fontFamily: fonts.default.fontFamily
+        fontFamily: fonts.default.fontFamily,
+        color: colors.secondary
       },
       selectedTextStyle: {
         fontSize: 14,
@@ -73,6 +74,7 @@ import { useTheme } from 'react-native-paper';
                 itemTextStyle={styles.itemContainerStyle}
                 containerStyle={styles.itemContainerStyle}
                 iconStyle={styles.iconStyle}
+                iconColor={colors.default_dark}
                 data={list}
                 search
                 maxHeight={300}

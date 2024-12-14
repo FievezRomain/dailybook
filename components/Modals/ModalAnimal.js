@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingVi
 import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
-import AnimalsService from "../../services/AnimalsService";
+import animalsServiceInstance from "../../services/AnimalsService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import AvatarPicker from "../AvatarPicker";
 import DateUtils from "../../utils/DateUtils";
@@ -18,15 +18,14 @@ import ModalEditGeneric from "./ModalEditGeneric";
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const animalsService = new AnimalsService();
     const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch, clearErrors } = useForm();
     const [image, setImage] = useState(null);
     const dateUtils = new DateUtils();
-    today = new Date();
-    jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
-    mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
-    annee = today.getFullYear();
-    const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
+    var today = new Date();
+    var jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
+    var mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
+    var annee = today.getFullYear();
+    const [date, setDate] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const fileStorageService = new FileStorageService();
     const especeList = [
@@ -78,6 +77,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("espece", animal.espece);
         setEspece(animal.espece);
         setValue("datenaissance", animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : undefined);
+        setValue("datedeces", animal.datedeces !== null ? animal.datedeces : undefined);
         setValue("race", animal.race !== null ? animal.race : undefined);
         setValue("taille", animal.taille !== null ? animal.taille.toString() : undefined);
         setValue("poids", animal.poids !== null ? animal.poids.toString() : undefined);
@@ -102,6 +102,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nom", undefined);
         setValue("espece", undefined);
         setValue("datenaissance", undefined);
+        setValue("datedeces", undefined);
         setValue("race", undefined);
         setValue("taille", undefined);
         setValue("poids", undefined);
@@ -188,19 +189,13 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         // Si un animal est selectionné, cela veut dire qu'on doit le modifier, sinon le créer
         if(actionType === "modify"){
             // Modification de l'animal dans le back (BDD)
-            animalsService.modify(data)
+            animalsServiceInstance.modify(data)
             .then((response) =>{
                 
                 resetValues();
                 closeModal();
                 onModify(response);
                 setLoading(false);
-
-                Toast.show({
-                    type: "success",
-                    position: "top",
-                    text1: "Modification de l'animal"
-                }); 
             })
             .catch((err) =>{
                 Toast.show({
@@ -213,19 +208,13 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             });
         } else{
             // Création de l'animal dans le back (BDD)
-            animalsService.create(data)
+            animalsServiceInstance.create(data)
             .then((response) =>{
                 
                 resetValues();
                 closeModal();
-                onModify(response);
+                onModify();
                 setLoading(false);
-
-                Toast.show({
-                    type: "success",
-                    position: "top",
-                    text1: "Création de l'animal"
-                }); 
             })
             .catch((err) =>{
                 Toast.show({
@@ -333,7 +322,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
-            paddingBottom: 15
+            paddingBottom: 15,
+            paddingTop: 5
         },
         bottomBar: {
             width: '100%',
@@ -416,28 +406,27 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             >
                     <View style={styles.form}>
                         <View style={styles.containerActionsButtons}>
-                            <TouchableOpacity onPress={closeModal}>
+                            <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                            { actionType === "modify" && 
-                                <Text style={[styles.textFontBold]}>Modifier un animal</Text>
-                            }
-                            { actionType === "create" && 
-                                <Text style={[styles.textFontBold]}>Créer un animal</Text>
-                            }
-                            <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                            <View style={{width:"33.33%", alignItems: "center"}}>
+                                <Text style={[styles.textFontBold, {fontSize: 16}]}>Animal</Text>
+                            </View>
+                            <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 
-                                    <ActivityIndicator size={10} color={colors.accent} />
+                                    <ActivityIndicator size={10} color={colors.default_dark} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
                         <Divider/>
-                        <KeyboardAwareScrollView>
+                        <KeyboardAwareScrollView
+                            enableResetScrollToCoords={false}
+                        >
                             <View style={styles.formContainer}>
 
                                 <View>

@@ -2,44 +2,44 @@ import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ObjectifCard from './cards/ObjectifCard';
-import AnimalsService from "../services/AnimalsService";
+import { useAnimaux } from '../providers/AnimauxProvider';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import { useTheme } from 'react-native-paper';
 
 const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObjectifDelete }) => {
     const { currentUser } = useAuth();
-    const animalsService = new AnimalsService;
-    const [animaux, setAnimaux] = useState([]);
+    const { animaux } = useAnimaux();
     const { colors, fonts } = useTheme();
 
-    useEffect(() => {
+/*     useEffect(() => {
         if(animaux.length == 0){
             getAnimaux();
         }
     }, [objectifs]);
 
     const getAnimaux = async () => {
-        var result = await animalsService.getAnimals(currentUser.email);
+        var result = await animalsServiceInstance.getAnimals(currentUser.email);
 
         setAnimaux(result);
-    }
+    } */
 
     const styles = StyleSheet.create({
         objectifsInProgressContainer:{
             width: "100%",
             paddingLeft: 20,
             paddingRight: 20,
-            paddingTop: 20,
+            paddingTop: 10,
             borderRadius: 5,
         },
         headerContainer:{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: 10
+            marginBottom: 20
         },
         title:{
-            color: colors.accent,
+            color: colors.default_dark,
+            fontSize : 16,
         },
         icon:{
             marginRight: 10,
@@ -67,12 +67,12 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
         <>
             <View style={styles.objectifsInProgressContainer}>
                 <View style={styles.headerContainer}>
-                    <SimpleLineIcons name="target" size={20} color={colors.accent} style={styles.icon}/>
+                    <SimpleLineIcons name="target" size={20} color={colors.default_dark} style={styles.icon}/>
                     <Text style={[styles.title, styles.textFontBold]}>Objectifs en cours</Text>
                 </View>
                 <View>
                     {objectifs.length === 0 &&
-                        <View style={{backgroundColor: colors.background, marginBottom: 20, width: "100%", padding: 20, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1},}}>
+                        <View style={{backgroundColor: colors.background, marginBottom: 20, width: "100%", paddingHorizontal: 20, paddingVertical: 25, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1},}}>
                             <Text style={[styles.textFontRegular]}>Vous n'avez aucun objectif en cours</Text>
                         </View>
                     }

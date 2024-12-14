@@ -4,7 +4,15 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
 
-export default class EventService {
+class EventService {
+
+    constructor() {
+        this.setEvents = null;
+    }
+
+    initialize(setEvents) {
+        this.setEvents = setEvents;
+    }
 
     async create(body) {
         await this.updateAxiosAuthorization();
@@ -51,7 +59,7 @@ export default class EventService {
         await this.updateAxiosAuthorization();
         return axios.delete(`${getBaseUrl()}deleteEvent`, {data: body})
         .then(async (response) => {
-            await this.deleteInCache(body);
+            await this.refreshCache(body.email);
             return response.data;
         })
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un event : " + err.message ));
@@ -125,6 +133,11 @@ export default class EventService {
         } else {
             await AsyncStorage.setItem("events", Array.isArray(events) ? JSON.stringify(events) : JSON.stringify([events]));
         }
+
+        if (this.setEvents) {
+            
+            this.setEvents(await this.getCache());
+        }
     }
 
     async deleteInCache(event) {
@@ -154,6 +167,11 @@ export default class EventService {
             events.splice(indice, 1);
 
             await AsyncStorage.setItem("events",  JSON.stringify(events));
+
+            if (this.setEvents) {
+            
+                this.setEvents(await this.getCache());
+            }
         }
     }
 
@@ -162,3 +180,7 @@ export default class EventService {
         await this.getEvents(email);
     }
 }
+
+const eventsServiceInstance = new EventService( );
+
+export default eventsServiceInstance;

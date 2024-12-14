@@ -263,7 +263,7 @@ const ActionScreen = ({ navigation }) => {
       borderRadius: 10
     },
     title: {
-      color: colors.accent,
+      color: colors.default_dark,
       fontSize: 30,
       letterSpacing: 2,
       marginBottom:20,
@@ -440,7 +440,7 @@ const ActionScreen = ({ navigation }) => {
                     mode="date"
                     is24Hour={true}
                     onChange={onChangeDate}
-                    accentColor={Variables.bouton}
+                    default_darkColor={Variables.bouton}
                     style={styles.datePicker}
                     display="default"
                 /> */}

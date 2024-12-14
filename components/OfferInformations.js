@@ -53,7 +53,7 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
       textAlign: 'center',
     },
     headerCell: {
-      color: colors.accent
+      color: colors.default_dark
     },
     table:{
       width: "100%",
@@ -100,7 +100,7 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
   return (
     <>
       {withMessageFunctionality &&
-        <Text style={[{textAlign: "center", color: colors.accent, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
+        <Text style={[{textAlign: "center", color: colors.default_dark, marginHorizontal: 50, marginBottom: 5, fontSize: 14}, styles.textFontMedium]}>Cette fonctionnalité est disponible avec la version premium</Text>
       }
         <View style={styles.table}>
           <View style={styles.headerRow}>
@@ -112,12 +112,12 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
             <View key={item.id} style={styles.row}>
               <Text style={[styles.cell, styles.textFontRegular]}>{item.label}</Text>
               { item.free === "Yes" ?
-                <AntDesign name="checkcircle" size={20} style={styles.cell} color={colors.accent} />
+                <AntDesign name="checkcircle" size={20} style={styles.cell} color={colors.default_dark} />
               :
-                <Fontisto name="locked" size={20} style={styles.cell} color={colors.tertiary}/>
+                <Fontisto name="locked" size={20} style={styles.cell} color={colors.quaternary}/>
               }
               { item.premium === "Yes" ?
-                  <AntDesign name="checkcircle" size={20} style={styles.cell} color={colors.accent} />
+                  <AntDesign name="checkcircle" size={20} style={styles.cell} color={colors.default_dark} />
                 :
                   <Fontisto name="locked" size={20} style={styles.cell} color={colors.tertiary}/>
               }
@@ -127,7 +127,7 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
         <View style={styles.offerButtonPrice}>
           <Button
             size={"m"}
-            type={"tertiary"}
+            type={"quaternary"}
             onPress={() => handleInscription()}
           >
             <Text style={styles.textFontMedium}>S'inscrire pour être averti de la sortie de la version premium</Text>

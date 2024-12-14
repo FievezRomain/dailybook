@@ -94,7 +94,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
         justifyContent: "center",
     },
     typeSelected:{
-        backgroundColor: colors.neutral,
+        backgroundColor: colors.quaternary,
     },
     textTypeButton:{
         textAlign: "center",

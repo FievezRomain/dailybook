@@ -32,7 +32,7 @@ const NutritionHistory = ({ animal }) => {
         <>
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column"}}>
-                    <Text style={{textAlign: "center", color: colors.accent, fontFamily: fonts.bodyLarge.fontFamily, fontSize: 16, paddingVertical: 15}}>Nutrition</Text>
+                    {/* <Text style={{textAlign: "center", color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily, fontSize: 16, paddingVertical: 15}}>Nutrition</Text> */}
 
                     <View style={{width: "90%", alignSelf: "center"}}>
                         <OfferInformations />
@@ -46,7 +46,7 @@ const NutritionHistory = ({ animal }) => {
                     </View>
 
                     <View style={{width: "90%", marginTop: 20, alignSelf: "center"}}>
-                        <Text style={{color: colors.accent, fontSize: 16}}>Courbe de poids :</Text>
+                        <Text style={{color: colors.default_dark, fontSize: 16}}>Courbe de poids :</Text>
                         <View style={{justifyContent: 'center', alignItems: 'center', marginTop: 10, marginBottom: 10}}>
                             <LineChart
                                 data={data}
@@ -58,8 +58,8 @@ const NutritionHistory = ({ animal }) => {
                                 backgroundGradientFrom: colors.background,
                                 backgroundGradientTo: colors.background,
                                 decimalPlaces: 1,
-                                color: (opacity = 1) => colors.accent,
-                                labelColor: (opacity = 1) => colors.accent,
+                                color: (opacity = 1) => colors.default_dark,
+                                labelColor: (opacity = 1) => colors.default_dark,
                                 style: {
                                     borderRadius: 16,
                                 },
@@ -89,12 +89,12 @@ const NutritionHistory = ({ animal }) => {
                                 </TouchableOpacity>
                             )}
                         </View>
-                        <Text style={{color: colors.accent, fontSize: 16}}>Alimentation :</Text>
+                        <Text style={{color: colors.default_dark, fontSize: 16}}>Alimentation :</Text>
                         <View style={{backgroundColor: colors.background, borderRadius: 10, padding: 30, marginTop: 20}}>
                             <Text>Nom alimentation :</Text>
                             <TextInput
                                 style={{backgroundColor: colors.quaternary, borderRadius: 5, height: 30, marginBottom: 5, marginTop: 5, padding: 10}}
-                                placeholderTextColor={colors.accent}
+                                placeholderTextColor={colors.default_dark}
                                 defaultValue={animal.food}
                                 placeholder='N/A'
                                 editable={false}
@@ -102,7 +102,7 @@ const NutritionHistory = ({ animal }) => {
                             <Text>Quantité :</Text>
                             <TextInput
                                 style={{backgroundColor: colors.quaternary, borderRadius: 5, height: 30, marginBottom: 5, marginTop: 5, padding: 10}}
-                                placeholderTextColor={colors.accent}
+                                placeholderTextColor={colors.default_dark}
                                 defaultValue={animal.quantity != null ? String(animal.quantity) : undefined}
                                 placeholder='N/A'
                                 editable={false}

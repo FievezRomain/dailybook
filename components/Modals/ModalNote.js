@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
-import NoteService from "../../services/NoteService";
+import notesServiceInstance from "../../services/NoteService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import RichTextEditor from "../RichTextEditor";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -24,7 +24,6 @@ import ModalEditGeneric from "./ModalEditGeneric";
 const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = undefined }) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const noteService = new NoteService();
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
     const [loading, setLoading] = useState(false);
     const richText = useRef();  // Reference to RichTextEditor
@@ -66,19 +65,13 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
         data["note"] = await sanitizeHtml(richTextValue);
         
         if (actionType === "modify") {
-            noteService.update(data)
+            notesServiceInstance.update(data)
                 .then((reponse) => {
                     
                     resetValues();
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
-
-                    Toast.show({
-                        type: "success",
-                        position: "top",
-                        text1: "Modification d'une note réussie"
-                    });
                 })
                 .catch((err) => {
                     Toast.show({
@@ -89,18 +82,13 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                     setLoading(false);
                 });
         } else {
-            noteService.create(data)
+            notesServiceInstance.create(data)
                 .then((reponse) => {
                     resetValues();
                     closeModal();
-                    onModify(reponse);
+                    onModify();
                     setLoading(false);
 
-                    Toast.show({
-                        type: "success",
-                        position: "top",
-                        text1: "Création d'une note réussie"
-                    });
                 })
                 .catch((err) => {
                     Toast.show({
@@ -137,7 +125,8 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
-            paddingBottom: 15
+            paddingBottom: 15,
+            paddingTop: 5
         },
         bottomBar: {
             width: '100%',
@@ -187,17 +176,19 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
             <TouchableWithoutFeedback onPress={dismissRichTextKeyboard} accessible={false}>
                 <View style={styles.form}>
                     <View style={styles.containerActionsButtons}>
-                        <TouchableOpacity onPress={closeModal}>
+                        <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
-                        <Text style={styles.textFontBold}>
-                            {actionType === "modify" ? "Modifier une note" : "Créer une note"}
-                        </Text>
-                        <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                        <View style={{width:"33.33%", alignItems: "center"}}>
+                            <Text style={[styles.textFontBold, {fontSize: 16}]}>
+                                {actionType === "modify" ? "Note" : "Note"}
+                            </Text>
+                        </View>
+                        <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             {loading ? (
-                                <ActivityIndicator size={10} color={colors.accent} />
+                                <ActivityIndicator size={10} color={colors.default_dark} />
                             ) : (
-                                <Text style={[{ color: colors.accent }, styles.textFontRegular]}>
+                                <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>
                                     {actionType === "modify" ? "Modifier" : "Créer"}
                                 </Text>
                             )}

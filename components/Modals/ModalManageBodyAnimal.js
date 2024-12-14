@@ -3,7 +3,6 @@ import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import { AntDesign } from '@expo/vector-icons';
-import ContactService from "../../services/ContactService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
@@ -11,7 +10,6 @@ import ModalEditGeneric from "./ModalEditGeneric";
 const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const contactService = new ContactService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
 
     const closeModal = () => {
@@ -115,7 +113,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undef
                             </TouchableOpacity>
                             <Text style={styles.textFontBold}>Historique du physique</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Enregistrer</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />

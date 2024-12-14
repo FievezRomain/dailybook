@@ -3,7 +3,7 @@ import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import { AntDesign } from '@expo/vector-icons';
-import ContactService from "../../services/ContactService";
+import contactsServiceInstance from "../../services/ContactService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { ActivityIndicator } from "react-native";
 import LoggerService from "../../services/LoggerService";
@@ -14,7 +14,6 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const contactService = new ContactService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [loading, setLoading] = useState(false);
 
@@ -55,7 +54,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
         data["emailproprietaire"] = currentUser.email;
         
         if(actionType === "modify"){
-            contactService.update(data)
+            contactsServiceInstance.update(data)
                 .then((reponse) =>{
 
                     onModify(reponse);
@@ -63,11 +62,6 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                     closeModal();
                     setLoading(false);
 
-                    Toast.show({
-                        type: "success",
-                        position: "top",
-                        text1: "Modification d'un contact réussi"
-                    });
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -80,19 +74,14 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                 });
         }
         else{
-            contactService.create(data)
+            contactsServiceInstance.create(data)
                 .then((reponse) =>{
                     
                     resetValues();
                     closeModal();
-                    onModify(reponse);
+                    onModify();
                     setLoading(false);
 
-                    Toast.show({
-                        type: "success",
-                        position: "top",
-                        text1: "Création d'un contact réussi"
-                    });
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -137,7 +126,8 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
-            paddingBottom: 15
+            paddingBottom: 15,
+            paddingTop: 5
         },
         bottomBar: {
             width: '100%',
@@ -175,7 +165,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             alignSelf: "baseline"
         },
         iconContainer:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
             padding: 20,
             borderRadius: 60,
             height: 120,
@@ -204,23 +194,20 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                 <View style={styles.form}>
                     <View style={styles.containerActionsButtons}>
 
-                        <TouchableOpacity onPress={closeModal}>
+                        <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
-                        { actionType === "modify" && 
-                            <Text style={styles.textFontBold}>Modifier un contact</Text>
-                        }
-                        { actionType === "create" && 
-                            <Text style={styles.textFontBold}>Créer un contact</Text>
-                        }
-                        <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                        <View style={{width:"33.33%", alignItems: "center"}}>
+                            <Text style={[styles.textFontBold, {fontSize: 16}]}>Contact</Text>
+                        </View>
+                        <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
-                                <ActivityIndicator size={10} color={colors.accent} />
+                                <ActivityIndicator size={10} color={colors.default_dark} />
                             :
                                 actionType === "modify" ?
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                                 :
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
                             }
                         </TouchableOpacity>
                     </View>
@@ -273,11 +260,11 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                     defaultValue={watch("email")}
                                 />
                             </View>
-                                <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                                {/* <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
                                 <View style={styles.iconContainer}>
                                     <AntDesign name="contacts" size={70} color={colors.background} style={{marginRight: 5}}/>
                                 </View>
-                                </View>
+                                </View> */}
                         </View>
                     </KeyboardAwareScrollView>
                 </View>

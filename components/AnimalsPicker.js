@@ -77,6 +77,23 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
         setDate(String(jour + "/" + mois + "/" + annee));
     }
 
+    const truncateAnimalName = (name) => {
+        if (name.length <= 15) {
+            return name; // Le nom est déjà court
+        }
+    
+        // Tronquer à 10 caractères
+        const truncated = name.slice(0, 15);
+    
+        // Vérifier s'il y a un espace dans les 10 premiers caractères
+        const lastSpaceIndex = truncated.indexOf(" ");
+        if (lastSpaceIndex !== -1) {
+            return truncated.slice(0, lastSpaceIndex); // Tronquer au dernier espace
+        }
+    
+        return truncated + "..."; // Ajouter "..." après 10 caractères
+    };
+
     const styles = StyleSheet.create({
         add:{
             width: 60,
@@ -96,13 +113,13 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
             fontSize: 30
         },
         defaultAvatar:{
-            backgroundColor: colors.neutral,
-            borderColor: colors.neutral,
+            backgroundColor: colors.quaternary,
+            borderColor: colors.quaternary,
             borderWidth: 0.5,
         },
         selectedAvatar:{
-            backgroundColor: colors.accent,
-            borderColor: colors.accent,
+            backgroundColor: colors.default_dark,
+            borderColor: colors.default_dark,
             borderWidth: 3,
         },
         containerAnimaux:{
@@ -119,7 +136,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
             marginLeft: 5,
         },
         defaultText:{
-            color: colors.neutral
+            color: colors.quaternary
         },
         selectedText:{
             color: colors.accent
@@ -164,7 +181,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                         <View style={styles.containerAvatar}>
                             { animal.image !== null ? 
                             <LinearGradient
-                                colors={checkSelected(animal) ? [colors.accent, colors.neutral, colors.tertiary] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [colors.accent, colors.tertiary] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
@@ -174,18 +191,18 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                             </LinearGradient>
                             :
                             <LinearGradient
-                                colors={checkSelected(animal) ? [colors.accent, colors.neutral, colors.tertiary] : ['transparent', 'transparent']}
+                                colors={checkSelected(animal) ? [colors.accent, colors.quaternary] : ['transparent', 'transparent']}
                                 style={styles.containerWithGradient}
                                 start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
                             >
                                 <View style={[styles.containerAvatarWithoutImage, checkSelected(animal) ? {backgroundColor: colors.background} : {backgroundColor: "transparent"}]}>
-                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: colors.accent} : {backgroundColor: colors.neutral}]}>
+                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: colors.default_dark} : {backgroundColor: colors.quaternary}]}>
                                         <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
                                     </View>
                                 </View>
                             </LinearGradient>
                             }
-                            <Text style={[(checkSelected(animal) ? styles.selectedText : styles.defaultText), styles.textFontRegular]}>{animal.nom}</Text>
+                            <Text style={[(checkSelected(animal) ? styles.selectedText : styles.defaultText), styles.textFontRegular]}>{truncateAnimalName(animal.nom)}</Text>
                         </View>
                     </TouchableOpacity>
                 );

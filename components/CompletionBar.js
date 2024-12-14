@@ -58,11 +58,11 @@ const CompletionBar = ({ percentage=0 }) => {
               inputRange: [0, 100],
               outputRange: ['0%', '100%']
             }),
-            backgroundColor: isCompleted ? colors.accent : colors.accent
+            backgroundColor: isCompleted ? colors.quaternary : colors.quaternary
           }
         ]}
       />
-      <Text style={[styles.percentageText, styles.textFontRegular, { color: isCompleted ? colors.background : colors.quaternary }]}>
+      <Text style={[styles.percentageText, styles.textFontRegular, { color: isCompleted ? colors.default_dark : colors.default_dark }]}>
         {percentage}%
       </Text>
     </View>

@@ -18,17 +18,17 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress, isUppe
       backgroundColor = colors.neutral
       color = colors.background;
     } else if (type === "secondary") {
-      backgroundColor = colors.tertiary;
+      backgroundColor = colors.secondary;
       color = colors.neutral
     } else if (type === "tertiary") {
-      backgroundColor = colors.accent
+      backgroundColor = colors.tertiary;
       color = colors.background;
     } else if (type === "quaternary"){
-      backgroundColor = colors.text;
+      backgroundColor = colors.accent;
       color = colors.background;
     } else if (type === "quinary"){
       backgroundColor = colors.background;
-      color = colors.accent;
+      color = colors.default_dark;
     }
 
     if(disabled === true){
