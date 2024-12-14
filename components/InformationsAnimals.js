@@ -53,7 +53,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
           flex: 1
         },
         title:{
-          color: colors.accent,
+          color: colors.default_dark,
         },
         errorInput: {
           color: "red"
@@ -202,11 +202,11 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
             />
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
-                    {/* <Text style={[{color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text> */}
+                    {/* <Text style={[{color: colors.default_dark, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text> */}
                     {animal.image !== null ?
-                        <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: colors.accent}} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
+                        <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: colors.default_dark}} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                     :
-                        <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: colors.accent, borderColor: colors.accent, justifyContent: "center", alignItems: "center"}}>
+                        <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: colors.default_dark, borderColor: colors.default_dark, justifyContent: "center", alignItems: "center"}}>
                             <Text style={[{color: colors.background, fontSize: 50}, styles.textFontBold]}>{animal.nom[0]}</Text>
                         </View>
                     }

@@ -18,6 +18,8 @@ import LoggerService from '../../services/LoggerService';
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../Modals/ModalValidation";
+import Feather from '@expo/vector-icons/Feather';
+import SvgComponent from "../SvgComponent";
 
 const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=false, withState=false, typeEvent=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -66,6 +68,115 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
         }
     }
 
+    const getIconEventType = () => {
+        if( eventInfos === undefined ){
+            return;
+        }
+        if( eventInfos.eventtype === "depense" ){
+            return <FontAwesome6 name="money-bill-wave" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>;
+        }
+        if( eventInfos.eventtype === "balade" ){
+            return <Entypo name="compass" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>;
+        }
+        if( eventInfos.eventtype === "soins" ){
+            return <FontAwesome6 name="hand-holding-medical" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>;
+        }
+        if( eventInfos.eventtype === "concours" ){
+            return <FontAwesome name="trophy" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>;
+        }
+        if( eventInfos.eventtype === "entrainement" ){
+            return <Entypo name="traffic-cone" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>;
+        }
+        if( eventInfos.eventtype === "autre" ){
+            return <FontAwesome6 name="check-circle" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>;
+        }
+        if( eventInfos.eventtype === "rdv" ){
+            return <FontAwesome name="stethoscope" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>;
+        }
+    }
+
+    const getTitleEventType = () => {
+        if( eventInfos === undefined ){
+            return;
+        }
+        if( eventInfos.eventtype === "depense" ){
+            return "Dépense";
+        }
+        if( eventInfos.eventtype === "balade" ){
+            return "Balade";
+        }
+        if( eventInfos.eventtype === "soins" ){
+            return "Soins";
+        }
+        if( eventInfos.eventtype === "concours" ){
+            return "Concours";
+        }
+        if( eventInfos.eventtype === "entrainement" ){
+            return "Entraînement";
+        }
+        if( eventInfos.eventtype === "autre" ){
+            return "Autre";
+        }
+        if( eventInfos.eventtype === "rdv" ){
+            return "Rendez-vous médical";
+        }
+    }
+
+    const getCardComponentEventType = () => {
+        if( eventInfos === undefined ){
+            return;
+        }
+        if( eventInfos.eventtype === "depense" ){
+            return <DepenseCard
+                        eventInfos={eventInfos}
+                        animaux={animaux}
+                        setSubMenu={setModalSubMenuEventVisible}
+                    />;
+        }
+        if( eventInfos.eventtype === "balade" ){
+            return <BaladeCard
+                        eventInfos={eventInfos}
+                        animaux={animaux}
+                        setSubMenu={setModalSubMenuEventVisible}
+                    />;
+        }
+        if( eventInfos.eventtype === "soins" ){
+            return <SoinsCard
+                        eventInfos={eventInfos}
+                        animaux={animaux}
+                        setSubMenu={setModalSubMenuEventVisible}
+                    />;
+        }
+        if( eventInfos.eventtype === "concours" ){
+            return <ConcoursCard
+                        eventInfos={eventInfos}
+                        animaux={animaux}
+                        setSubMenu={setModalSubMenuEventVisible}
+                    />;
+        }
+        if( eventInfos.eventtype === "entrainement" ){
+            return <EntrainementCard
+                        eventInfos={eventInfos}
+                        animaux={animaux}
+                        setSubMenu={setModalSubMenuEventVisible}
+                    />;
+        }
+        if( eventInfos.eventtype === "autre" ){
+            return <AutreCard
+                        eventInfos={eventInfos}
+                        animaux={animaux}
+                        setSubMenu={setModalSubMenuEventVisible}
+                    />;
+        }
+        if( eventInfos.eventtype === "rdv" ){
+            return <RdvCard
+                        eventInfos={eventInfos}
+                        animaux={animaux}
+                        setSubMenu={setModalSubMenuEventVisible}
+                    />;
+        }
+    }
+
     const styles = StyleSheet.create({
         actionEventContainer:{
             marginRight: 10
@@ -85,25 +196,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
               height: 1
             },
         },
-        balade:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        autre:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        rdv:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        soins:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        entrainement:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        concours:{
-            backgroundColor: hexToRgba(getColorEventType(), 0.3),
-        },
-        depense:{
+        eventTypeContainer:{
             backgroundColor: hexToRgba(getColorEventType(), 0.3),
         },
         typeEventIndicator:{
@@ -147,7 +240,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             padding: 10, 
             marginRight: 10, 
             borderRightWidth: 0.3, 
-            borderColor: colors.accent
+            borderColor: colors.default_dark
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -164,8 +257,6 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             paddingRight: 10
         }
     });
-
-    
 
     function hexToRgba(hex, opacity) {
         const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -330,305 +421,42 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                 visible={modalValidationDeleteAllVisible}
                 title={"Suppression d'un événement"}
             />
-            {eventInfos.eventtype == "balade" &&
-                <View style={[styles.eventContainer]}>
-                    <View style={styles.headerEventContainer}>
-                        <TouchableOpacity style={[styles.balade, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <View style={styles.titleTypeEventContainer}>
-                                <Entypo name="compass" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Balade</Text>
-                            </View>
-                            <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.contentEventContainer}>
-                        { withState === true &&
-                            <TouchableOpacity onPress={()=>handleStateChange()} style={styles.indicatorEventContainer}>
-                                {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
-                                    ||
-                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
-                                }
+            <View style={[styles.eventContainer]}>
+                <View style={styles.headerEventContainer}>
+                    <TouchableOpacity style={[styles.eventTypeContainer, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
+                        <View style={styles.titleTypeEventContainer}>
+                            {getIconEventType()}
+                            <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>{getTitleEventType()}</Text>
+                        </View>
+                        <View>
+                            <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
+                                <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
                             </TouchableOpacity>
-                        }
-                        { withDate === true &&
-                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
-                            </View>
-                        }
-                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <BaladeCard
-                                eventInfos={eventInfos}
-                                animaux={animaux}
-                                setSubMenu={setModalSubMenuEventVisible}
-                            />
-                        </TouchableOpacity>
-                    </View>
+                        </View>
+                    </TouchableOpacity>
                 </View>
-            }
-            {eventInfos.eventtype == "rdv" &&
-                <View style={[styles.eventContainer]}>
-                    <View style={styles.headerEventContainer}>
-                        <TouchableOpacity style={[styles.rdv, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome name="stethoscope" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Rendez-vous médical</Text>
-                            </View>
-                            <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
-                                </TouchableOpacity>
-                            </View>
+                <View style={styles.contentEventContainer}>
+                    { withState === true &&
+                        <TouchableOpacity onPress={()=>handleStateChange()} style={styles.indicatorEventContainer}>
+                            {eventInfos.state === "À faire" && 
+                                <Feather name="square" size={25} color={colors.default_dark} />
+                                ||
+                                <Feather name="x-square" size={25} color={colors.default_dark} />
+                            }
                         </TouchableOpacity>
-                    </View>
-                    <View style={styles.contentEventContainer}>
-                        { withState === true &&
-                            <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
-                                {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
-                                    ||
-                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
-                                }
-                            </TouchableOpacity>
-                        }
-                        { withDate === true &&
-                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
-                            </View>
-                        }
-                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <RdvCard
-                                eventInfos={eventInfos}
-                                animaux={animaux}
-                                setSubMenu={setModalSubMenuEventVisible}
-                            />
-                        </TouchableOpacity>
-                    </View>
+                    }
+                    { withDate === true &&
+                        <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
+                            <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
+                            <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
+                            <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
+                        </View>
+                    }
+                    <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
+                        {getCardComponentEventType()}
+                    </TouchableOpacity>
                 </View>
-            }
-            {eventInfos.eventtype == "soins" &&
-                <View style={[styles.eventContainer]}>
-                    <View style={styles.headerEventContainer}>
-                        <TouchableOpacity style={[styles.soins, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome6 name="hand-holding-medical" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Soins</Text>
-                            </View>
-                            <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.contentEventContainer}>
-                        { withState === true &&
-                            <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
-                                {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
-                                    ||
-                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
-                                }
-                            </TouchableOpacity>
-                        }
-                        { withDate === true &&
-                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
-                            </View>
-                        }
-                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <SoinsCard
-                                eventInfos={eventInfos}
-                                animaux={animaux}
-                                setSubMenu={setModalSubMenuEventVisible}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            }
-            {eventInfos.eventtype == "entrainement" &&
-                <View style={[styles.eventContainer]}>
-                    <View style={styles.headerEventContainer}>
-                        <TouchableOpacity style={[styles.entrainement, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <View style={styles.titleTypeEventContainer}>
-                                <Entypo name="traffic-cone" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Entraînement</Text>
-                            </View>
-                            <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.contentEventContainer}>
-                        { withState === true &&
-                            <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
-                                {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
-                                    ||
-                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
-                                }
-                            </TouchableOpacity>
-                        }
-                        { withDate === true &&
-                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
-                            </View>
-                        }
-                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <EntrainementCard
-                                eventInfos={eventInfos}
-                                animaux={animaux}
-                                setSubMenu={setModalSubMenuEventVisible}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    
-                </View>
-            }
-            {eventInfos.eventtype == "autre" &&
-                <View style={[styles.eventContainer]}>
-                    <View style={styles.headerEventContainer}>
-                        <TouchableOpacity style={[styles.autre, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome6 name="check-circle" size={20} color={colors.error} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: colors.error, fontSize: 14}, styles.textFontBold]}>Autre</Text>
-                            </View>
-                            <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={colors.error} />
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.contentEventContainer}>
-                        { withState === true &&
-                            <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
-                                {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
-                                    ||
-                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
-                                }
-                            </TouchableOpacity>
-                        }
-                        { withDate === true &&
-                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
-                            </View>
-                        }
-                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <AutreCard
-                                eventInfos={eventInfos}
-                                animaux={animaux}
-                                setSubMenu={setModalSubMenuEventVisible}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    
-                </View>
-            }
-            {eventInfos.eventtype == "concours" &&
-                <View style={[styles.eventContainer]}>
-                    <View style={styles.headerEventContainer}>
-                        <TouchableOpacity style={[styles.concours, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome name="trophy" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Concours</Text>
-                            </View>
-                            <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.contentEventContainer}>
-                        { withState === true &&
-                            <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
-                                {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
-                                    ||
-                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
-                                }
-                            </TouchableOpacity>
-                        }
-                        { withDate === true &&
-                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
-                            </View>
-                        }
-                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <ConcoursCard
-                                eventInfos={eventInfos}
-                                animaux={animaux}
-                                setSubMenu={setModalSubMenuEventVisible}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    
-                </View>
-            }
-            {eventInfos.eventtype == "depense" &&
-                <View style={styles.eventContainer}>
-                    <View style={styles.headerEventContainer}>
-                        <TouchableOpacity style={[styles.depense, styles.typeEventIndicator, styles.headerEvent]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <View style={styles.titleTypeEventContainer}>
-                                <FontAwesome6 name="money-bill-wave" size={20} color={getColorEventType()} style={{marginRight: 10, marginLeft: 5}}/>
-                                <Text style={[{color: getColorEventType(), fontSize: 14}, styles.textFontBold]}>Dépense</Text>
-                            </View>
-                            <View>
-                                <TouchableOpacity onPress={() => setModalSubMenuEventVisible(true)} style={styles.subMenuContainer}>
-                                    <Entypo name='dots-three-horizontal' size={20} color={getColorEventType()} />
-                                </TouchableOpacity>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.contentEventContainer}>
-                        { withState === true &&
-                            <TouchableOpacity onPress={()=>handleStateChange(eventInfos, typeEvent)} style={styles.indicatorEventContainer}>
-                                {eventInfos.state === "À faire" && 
-                                    <MaterialIcons name="check-box-outline-blank" size={32} color={colors.accent} />
-                                    ||
-                                    <MaterialIcons name="check-box" size={32} color={colors.accent} />
-                                }
-                            </TouchableOpacity>
-                        }
-                        { withDate === true &&
-                            <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                                <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
-                                <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
-                                <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
-                            </View>
-                        }
-                        <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>
-                            <DepenseCard
-                                eventInfos={eventInfos}
-                                animaux={animaux}
-                                setSubMenu={setModalSubMenuEventVisible}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    
-                    
-                </View>
-            }
+            </View>
         </>
     );
 }

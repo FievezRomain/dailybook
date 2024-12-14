@@ -393,7 +393,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             marginTop: 10
         },
         colorTextBlack:{
-            color: colors.accent,
+            color: colors.default_dark,
         },
         colorTextWhite:{
             color: colors.background,
@@ -460,7 +460,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 </View>
                 <TouchableOpacity onPress={() => handleModifyEvent()} style={{width:"33.33%", alignItems: "center"}}>
                     { loading ? 
-                            <ActivityIndicator size={10} color={colors.accent} />
+                            <ActivityIndicator size={10} color={colors.default_dark} />
                         :
                             <Text style={[{color: colors.background}, styles.textFontRegular]}>Enregistrer</Text>
                     }
@@ -476,7 +476,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                         var animal = getAnimalById(eventAnimal);
                         return(
                             <View key={animal.id} style={{marginRight: -3}}>
-                                <View style={{height: 25, width: 25, backgroundColor: colors.accent, borderRadius: 15, justifyContent: "center"}}>
+                                <View style={{height: 25, width: 25, backgroundColor: colors.default_dark, borderRadius: 15, justifyContent: "center"}}>
                                     { animal.image !== null ? 
                                         <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
                                         :

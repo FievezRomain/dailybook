@@ -32,7 +32,7 @@ const HomeScreen = ({ navigation })=> {
       fontFamily: fonts.bodyMedium.fontFamily
     },
     text: {
-      color: colors.accent,
+      color: colors.default_dark,
       textAlign: "center",
       fontSize: 16
     },
@@ -62,7 +62,7 @@ const HomeScreen = ({ navigation })=> {
               <Image source={logo} style={{height: 120, width: 120, marginTop: 100}} />
 
               <View style={{width: "60%", alignItems: "center"}}>
-                <Text style={[styles.textFontMedium, {color: colors.accent, textAlign: "center", marginBottom: 15, fontSize: 12}]}>MOINS DE CHARGE MENTALE, PLUS DE MOMENTS INESTIMABLES !</Text>
+                <Text style={[styles.textFontMedium, {color: colors.default_dark, textAlign: "center", marginBottom: 15, fontSize: 12}]}>MOINS DE CHARGE MENTALE, PLUS DE MOMENTS INESTIMABLES !</Text>
                 <TouchableOpacity onPress={()=>navigation.navigate("Login")} style={[styles.button, {justifyContent: "flex-end"}]}>
                     <Text style={[styles.text, styles.textFontMedium]}>Vivre l'aventure</Text>
                 </TouchableOpacity>

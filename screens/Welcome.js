@@ -20,7 +20,7 @@ const WelcomeScreen = ({ navigation })=> {
     const [messages, setMessages] = useState({message1 :"Bienvenue", message2: ""});
     const { events } = useEvents();
     const { objectifs, setObjectifs } = useObjectifs();
-
+          
     useFocusEffect(
       useCallback(() => {
           setMessages({message1: "Bienvenue", message2: currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName});
@@ -113,12 +113,11 @@ const WelcomeScreen = ({ navigation })=> {
       },
       summaryContainer:{
         marginTop: 15,
-        top: -5
+        marginLeft: 20
       },
       summary:{
-        color: colors.background,
-        textAlign: "center",
         fontSize: 20,
+        color: colors.default_dark
       },
     });
 
@@ -127,17 +126,12 @@ const WelcomeScreen = ({ navigation })=> {
         <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
           <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.quaternary }}>
             <View style={{flex: 1}}>
-              <Image
-                source={require('../assets/fond_accueil.png')}
-                style={{width: "100%", height: 700, position: "absolute"}}
-              />
-              
-              <TopTab message1={messages.message1} message2={messages.message2} withBackground={true}/>
+              <TopTab withBackground={false} withLogo={true}/>
               <View style={styles.summaryContainer}>
-                  <Text style={[styles.summary, {fontFamily: fonts.default.fontFamily}]}>{convertDayDateToText()}</Text>
-                  <Text style={[styles.summary, {fontFamily: fonts.bodyLarge.fontFamily}]}>{convertDateToText()}</Text>
+                  <Text style={[styles.summary, , {fontFamily: fonts.bodyMedium.fontFamily, marginBottom: 2}]}>{messages.message1} {messages.message2}</Text>
+                  <Text style={[styles.summary, {fontFamily: fonts.bodySmall.fontFamily}]}>{convertDayDateToText()} {convertDateToText()}</Text>
               </View>
-              <View style={{marginTop: 60, paddingBottom: 10}}>
+              <View style={{marginTop: 10, paddingBottom: 10}}>
                     <EventsBloc 
                       events={events}
                       handleEventsChange={handleEventChange}
@@ -149,7 +143,7 @@ const WelcomeScreen = ({ navigation })=> {
                     />
               </View>
               {/* <View style={{width: "90%", marginBottom: 30, alignSelf: "center", backgroundColor: "white", shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1}, borderRadius: 5}}>
-                <LinearGradient colors={[colors.text, colors.accent]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 1]} style={{flex: 1, padding: 20, borderRadius: 5}}>
+                <LinearGradient colors={[colors.text, colors.default_dark]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 1]} style={{flex: 1, padding: 20, borderRadius: 5}}>
                   <Text style={{fontFamily: fonts.bodyLarge.fontFamily, color: colors.background, textAlign: "center", marginBottom: 5}}>Avez-vous quelque chose de prévu ?</Text>
                   <Text style={{fontFamily: fonts.default.fontFamily, color: colors.background, textAlign: "center", marginBottom: 15}}>Enregistrez toutes les informations ici</Text>
                   <View style={{width: "70%", alignSelf: "center"}}>

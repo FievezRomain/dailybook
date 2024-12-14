@@ -160,7 +160,7 @@ const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModif
                             </TouchableOpacity>
                             <Text style={[styles.textFontBold, {width: "33.33%", alignSelf: "center", textAlign: "center"}]}>Signaler le décès</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width: "33.33%", alignItems: "center"}}>
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Enregistrer</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />

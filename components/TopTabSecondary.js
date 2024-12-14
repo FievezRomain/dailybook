@@ -33,11 +33,11 @@ const TopTabSecondary = ({message1, message2}) => {
             height: 40,
             borderRadius: 50,
             borderWidth: 0.7,
-            borderColor: colors.accent,
-            backgroundColor: colors.accent
+            borderColor: colors.default_dark,
+            backgroundColor: colors.default_dark
         },
         text:{
-            color: colors.accent,
+            color: colors.default_dark,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily

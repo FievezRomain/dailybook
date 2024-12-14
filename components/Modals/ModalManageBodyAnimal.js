@@ -113,7 +113,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undef
                             </TouchableOpacity>
                             <Text style={styles.textFontBold}>Historique du physique</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Enregistrer</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />

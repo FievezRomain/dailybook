@@ -16,7 +16,7 @@ const OtherScreen = ({ navigation }) => {
     const renderButton = ({ item }) => {
         return (
             <TouchableOpacity onPress={() => navigation.navigate(item.screen)} style={styles.button}>
-                <IconButton icon={item.icon} iconColor={colors.accent} size={30}/>
+                <IconButton icon={item.icon} iconColor={colors.default_dark} size={30}/>
                 <Text style={styles.label}>{item.label}</Text>
             </TouchableOpacity>
         );

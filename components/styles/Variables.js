@@ -16,7 +16,7 @@ const variables = {
     fontMedium: "Quicksand-Medium",
     fontSemiBold: "Quicksand-SemiBold",
     fontBold: "Quicksand-Bold",
-    default_dark: "#121212",
+    default_dark: "#333333",
     noir: "#1E1E1E"
   };
   

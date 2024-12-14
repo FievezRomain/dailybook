@@ -165,7 +165,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             alignSelf: "baseline"
         },
         iconContainer:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
             padding: 20,
             borderRadius: 60,
             height: 120,
@@ -198,16 +198,16 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={styles.textFontBold}>Contact</Text>
+                            <Text style={[styles.textFontBold, {fontSize: 16}]}>Contact</Text>
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
-                                <ActivityIndicator size={10} color={colors.accent} />
+                                <ActivityIndicator size={10} color={colors.default_dark} />
                             :
                                 actionType === "modify" ?
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                                 :
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
                             }
                         </TouchableOpacity>
                     </View>
@@ -260,11 +260,11 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                                     defaultValue={watch("email")}
                                 />
                             </View>
-                                <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                                {/* <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
                                 <View style={styles.iconContainer}>
                                     <AntDesign name="contacts" size={70} color={colors.background} style={{marginRight: 5}}/>
                                 </View>
-                                </View>
+                                </View> */}
                         </View>
                     </KeyboardAwareScrollView>
                 </View>

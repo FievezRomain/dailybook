@@ -32,7 +32,7 @@ const TemporalityPicker = ({ arrayState, handleChange, defaultState=undefined })
             borderLeftWidth: 0.2
         },
         textContainerSelect:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
         },
         textSelected:{
             color: colors.background

@@ -161,7 +161,7 @@ const ModalModificationPassword = ({isVisible, setVisible, onModify=undefined}) 
             alignSelf: "baseline"
         },
         iconContainer:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
             padding: 20,
             borderRadius: 60,
             height: 120,
@@ -198,9 +198,9 @@ const ModalModificationPassword = ({isVisible, setVisible, onModify=undefined}) 
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
-                                <ActivityIndicator size={10} color={colors.accent} />
+                                <ActivityIndicator size={10} color={colors.default_dark} />
                             :
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                             }
                         </TouchableOpacity>
                     </View>

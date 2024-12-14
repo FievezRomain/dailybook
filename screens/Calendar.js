@@ -288,7 +288,7 @@ const CalendarScreen = ({ navigation }) => {
     },
     selectedDateText: {
       textAlign: "center",
-      color: colors.accent
+      color: colors.default_dark
     },
     infosContainer: {
       display: "flex",
@@ -359,7 +359,7 @@ const CalendarScreen = ({ navigation }) => {
         <TopTab message1={messages.message1} message2={messages.message2} />
         <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
           <View style={{flexDirection: "row", alignItems: "center"}}>
-            <AntDesign name="search1" size={16} color={colors.accent}/>
+            <AntDesign name="search1" size={16} color={colors.default_dark}/>
 
             <TextInput
               placeholder="Recherche"
@@ -371,7 +371,7 @@ const CalendarScreen = ({ navigation }) => {
               <TouchableOpacity
                 onPress={() => deleteSearchText()}
               >
-                <AntDesign name="close" size={16} color={colors.accent}/>
+                <AntDesign name="close" size={16} color={colors.default_dark}/>
               </TouchableOpacity>
             }
             
@@ -380,9 +380,9 @@ const CalendarScreen = ({ navigation }) => {
             
             <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
               {filter ? 
-                <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.accent}/>
+                <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.default_dark}/>
               :
-                <Ionicons name="filter" size={20} color={colors.accent}/>
+                <Ionicons name="filter" size={20} color={colors.default_dark}/>
               }
             </TouchableOpacity>
           </View>
@@ -394,7 +394,7 @@ const CalendarScreen = ({ navigation }) => {
             firstDay={1}
             theme={{
               arrowColor: colors.quaternary,
-              todayTextColor: colors.tertiary,
+              todayTextColor: colors.accent,
               selectedDayTextColor: "white",
               selectedDayBackgroundColor: colors.text,
               calendarBackground: colors.background,

@@ -38,7 +38,7 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
             marginBottom: 20
         },
         title:{
-            color: colors.accent,
+            color: colors.default_dark,
             fontSize : 16,
         },
         icon:{
@@ -67,7 +67,7 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
         <>
             <View style={styles.objectifsInProgressContainer}>
                 <View style={styles.headerContainer}>
-                    <SimpleLineIcons name="target" size={20} color={colors.accent} style={styles.icon}/>
+                    <SimpleLineIcons name="target" size={20} color={colors.default_dark} style={styles.icon}/>
                     <Text style={[styles.title, styles.textFontBold]}>Objectifs en cours</Text>
                 </View>
                 <View>

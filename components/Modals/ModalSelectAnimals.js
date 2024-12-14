@@ -47,8 +47,8 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
           borderColor: 'white',
       },
       selectedAvatar:{
-          backgroundColor: colors.accent,
-          borderColor: colors.accent,
+          backgroundColor: colors.default_dark,
+          borderColor: colors.default_dark,
       },
       containerAnimaux:{
           display: "flex",
@@ -68,7 +68,7 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
           color: "white"
       },
       selectedText:{
-          color: colors.accent
+          color: colors.default_dark
       },
       textFontRegular:{
           fontFamily: fonts.default.fontFamily

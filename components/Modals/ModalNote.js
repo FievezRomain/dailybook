@@ -180,15 +180,15 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={styles.textFontBold}>
-                                {actionType === "modify" ? "Modifier une note" : "Créer une note"}
+                            <Text style={[styles.textFontBold, {fontSize: 16}]}>
+                                {actionType === "modify" ? "Note" : "Note"}
                             </Text>
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             {loading ? (
-                                <ActivityIndicator size={10} color={colors.accent} />
+                                <ActivityIndicator size={10} color={colors.default_dark} />
                             ) : (
-                                <Text style={[{ color: colors.accent }, styles.textFontRegular]}>
+                                <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>
                                     {actionType === "modify" ? "Modifier" : "Créer"}
                                 </Text>
                             )}
