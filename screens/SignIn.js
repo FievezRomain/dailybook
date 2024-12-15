@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useForm } from "react-hook-form";
 import wallpaper_login from "../assets/wallpaper_login.png";
-import variables from "../components/styles/Variables";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from "../components/Button";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
@@ -11,8 +10,10 @@ import { useState } from "react";
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from "react-native-toast-message";
 import LoggerService from "../services/LoggerService";
+import { useTheme } from 'react-native-paper';
 
 const SignInScreen = ({ navigation })=> {
+    const { colors, fonts } = useTheme();
     const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm();
     const auth = getFirebaseAuth();
     const { currentUser, reloadUser } = useAuth();
@@ -86,6 +87,111 @@ const SignInScreen = ({ navigation })=> {
         setIsPasswordVisible(!isPasswordVisible);
     };
 
+    const styles = StyleSheet.create({
+        textInput:{
+            alignSelf: "flex-start",
+            marginLeft: 35,
+            marginBottom: 10
+        },
+        image: {
+            flex: 1,
+            height: "100%",
+            width: "100%",
+            resizeMode: "cover",
+            position: "absolute",
+            justifyContent: "center",
+            backgroundColor: colors.onSurface
+        },
+        login: {
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center"
+        },
+        loaderLogin: {
+            width: 200,
+            height: 200
+        },
+        loadingLogin: {
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "#000000b8",
+            paddingTop: 50
+        },
+        form: {
+            paddingTop: 50,
+            alignItems: "center",
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+            justifyContent: "center",
+            width: "90%",
+            borderRadius: 10,
+            marginLeft: "auto",
+            marginRight: "auto",
+        },
+        title: {
+            fontSize: 30,
+            letterSpacing: 2,
+            marginBottom:20,
+        },
+        input: {
+            height: 40,
+            width: "80%",
+            marginBottom: 15,
+            borderRadius: 5,
+            paddingLeft: 15,
+            backgroundColor: colors.quaternary,
+            color: "black",
+        },
+        clickableText: {
+            marginLeft: 5,
+            color: colors.text,
+            alignSelf: "flex-end",
+            justifyContent: "flex-end",
+        },
+        forgetPassword: {
+            flexDirection: "row",
+            marginBottom: 50
+        },
+        account: {
+            color: "white",
+            justifyContent: "center",
+            textAlignVertical: "center",
+            alignItems: "center",
+        },
+        loginButton: {
+            marginBottom: 20,
+            marginTop: 10,
+            backgroundColor: colors.secondary,
+            borderRadius: 10
+        },
+        registerButton: {
+            marginBottom: 30,
+            marginTop: 10,
+            borderRadius: 10
+        },
+        textButton:{
+            color: "white"
+        },
+        errorInput: {
+            color: "red"
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontLight:{
+            fontFamily: fonts.bodySmall.fontFamily
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        }
+        
+    });
+
     return (
         <>
         <Image style={styles.image} source={wallpaper_login} />
@@ -97,7 +203,7 @@ const SignInScreen = ({ navigation })=> {
                 <TextInput
                     style={[styles.input, styles.textFontRegular]}
                     placeholder="Email"
-                    placeholderTextColor={variables.gris}
+                    placeholderTextColor={colors.secondary}
                     onChangeText={(text) => setValue("email", text)}
                     {...register("email", { 
                         required: true,
@@ -113,7 +219,7 @@ const SignInScreen = ({ navigation })=> {
                     <TextInput
                         style={[styles.textFontRegular, {width: "90%"}]}
                         placeholder="Mot de passe"
-                        placeholderTextColor={variables.gris}
+                        placeholderTextColor={colors.secondary}
                         secureTextEntry={!isPasswordVisible}
                         onChangeText={(text) => setValue("password", text)}
                         defaultValue={getValues("password")}
@@ -138,7 +244,7 @@ const SignInScreen = ({ navigation })=> {
                             type="quaternary"
                             size={"m"}
                         >
-                            <ActivityIndicator size="large" color={variables.blanc} />
+                            <ActivityIndicator size="large" color={colors.background} />
                         </Button>
                     }
                     
@@ -165,111 +271,5 @@ const SignInScreen = ({ navigation })=> {
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    textInput:{
-        alignSelf: "flex-start",
-        marginLeft: 35,
-        marginBottom: 10
-    },
-    image: {
-        flex: 1,
-        height: "100%",
-        width: "100%",
-        resizeMode: "cover",
-        position: "absolute",
-        justifyContent: "center",
-        backgroundColor: variables.default
-    },
-    login: {
-        flex: 1,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    loaderLogin: {
-        width: 200,
-        height: 200
-    },
-    loadingLogin: {
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 9,
-        width: "100%",
-        height: "100%",
-        backgroundColor: "#000000b8",
-        paddingTop: 50
-    },
-    form: {
-        paddingTop: 50,
-        alignItems: "center",
-        backgroundColor: "rgba(255, 255, 255, 0.9)",
-        justifyContent: "center",
-        width: "90%",
-        borderRadius: 10,
-        marginLeft: "auto",
-        marginRight: "auto",
-    },
-    title: {
-        fontSize: 30,
-        letterSpacing: 2,
-        marginBottom:20,
-    },
-    input: {
-        height: 40,
-        width: "80%",
-        marginBottom: 15,
-        borderRadius: 5,
-        paddingLeft: 15,
-        backgroundColor: variables.rouan,
-        color: "black",
-    },
-    clickableText: {
-        marginLeft: 5,
-        color: variables.bai_brun,
-        alignSelf: "flex-end",
-        justifyContent: "flex-end",
-    },
-    forgetPassword: {
-        flexDirection: "row",
-        marginBottom: 50
-    },
-    account: {
-        color: "white",
-        justifyContent: "center",
-        textAlignVertical: "center",
-        alignItems: "center",
-    },
-    loginButton: {
-        marginBottom: 20,
-        marginTop: 10,
-        backgroundColor: variables.gris,
-        borderRadius: 10
-    },
-    registerButton: {
-        marginBottom: 30,
-        marginTop: 10,
-        backgroundColor: variables.bouton,
-        borderRadius: 10
-    },
-    textButton:{
-        color: "white"
-    },
-    errorInput: {
-        color: "red"
-    },
-    textFontMedium:{
-        fontFamily: variables.fontMedium
-    },
-    textFontLight:{
-        fontFamily: variables.fontLight
-    },
-    textFontRegular:{
-        fontFamily: variables.fontRegular
-    }
-    
-});
 
 module.exports = SignInScreen;

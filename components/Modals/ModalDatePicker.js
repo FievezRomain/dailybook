@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import DateUtils from "../../utils/DateUtils";
-import variables from "../styles/Variables";
 import Button from "../Button";
+import { useTheme } from 'react-native-paper';
 
 const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) => {
+  const { colors, fonts } = useTheme();
   const [selectedDate, setSelectedDate] = useState(defaultDate == undefined ? new Date().toISOString().split('T')[0] : defaultDate);
   const [modalVisible, setModalVisible] = useState(false);
   const dateUtils = new DateUtils();
@@ -36,6 +37,40 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
     }
   };
 
+  const styles = StyleSheet.create({
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      backgroundColor: 'white',
+      padding: 20,
+      borderRadius: 10,
+      width: '80%',
+    },
+    dateContainer: {
+      borderRadius: 5,
+      backgroundColor: colors.quaternary,
+    },
+    date:{
+      padding: 10,
+    },
+    closeButtonContainer:{
+      marginTop: 20,
+    },
+    textFontRegular:{
+        fontFamily: fonts.default.fontFamily
+    },
+    textFontMedium:{
+        fontFamily: fonts.bodyMedium.fontFamily
+    },
+    textFontBold:{
+        fontFamily: fonts.bodyLarge.fontFamily
+    }
+  });
+
   return (
     <View>
       <TouchableOpacity onPress={() => setModalVisible(true)} >
@@ -58,10 +93,10 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
                   firstDay={1}
                   markedDates={selectedDate ? { [selectedDate]: { selected: true } } : {}}
                   theme={{
-                    arrowColor: variables.isabelle,
-                    todayTextColor: variables.aubere,
+                    arrowColor: colors.neutral,
+                    todayTextColor: colors.tertiary,
                     selectedDayTextColor: "white",
-                    selectedDayBackgroundColor: variables.bai
+                    selectedDayBackgroundColor: colors.accent
                   }}
                   enableSwipeMonths={false} // Active le swipe de mois
                 />
@@ -78,39 +113,5 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-  },
-  dateContainer: {
-    borderRadius: 5,
-    backgroundColor: variables.rouan,
-  },
-  date:{
-    padding: 10,
-  },
-  closeButtonContainer:{
-    marginTop: 20,
-  },
-  textFontRegular:{
-      fontFamily: variables.fontRegular
-  },
-  textFontMedium:{
-      fontFamily: variables.fontMedium
-  },
-  textFontBold:{
-      fontFamily: variables.fontBold
-  }
-});
 
 export default CalendarPicker;

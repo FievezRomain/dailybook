@@ -1,42 +1,37 @@
-import React, { useEffect } from 'react';
-import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput } from "react-native";
-import variables from "../styles/Variables";
+import React, { useEffect, useRef, useState } from 'react';
+import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput, ActivityIndicator } from "react-native";
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
-import Button from "../Button";
 import RatingInput from '../RatingInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import EventService from '../../services/EventService';
+import eventsServiceInstance from '../../services/EventService';
 import Toast from "react-native-toast-message";
 import LoggerService from '../../services/LoggerService';
 import FileStorageService from "../../services/FileStorageService";
 import { Image } from "expo-image";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import DateUtils from '../../utils/DateUtils';
+import { useTheme } from 'react-native-paper';
+import ModalEditGeneric from './ModalEditGeneric';
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
+    const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const eventService = new EventService();
-    var eventBeforeEditCommentaire;
-    var eventBeforeEditRessenti;
-    var eventBeforeEditState;
     const fileStorageService = new FileStorageService();
     const dateUtils = new DateUtils();
+    const [loading, setLoading] = useState(false);
+    const scrollRef = useRef(null);
+    const [localEvent, setLocalEvent] = useState({ ...event });
 
     useEffect(() => {
-        eventBeforeEditCommentaire = event.commentaire;
-        eventBeforeEditRessenti = event.note;
-        eventBeforeEditState = event.state;
+        setLocalEvent({ ...event });
     }, [isVisible])
 
     const closeModal = () => {
-        event.commentaire = eventBeforeEditCommentaire;
-        event.note = eventBeforeEditRessenti;
-        event.state = eventBeforeEditState;
         setVisible(false);
     };
 
     const handleRatingChange = (value) =>{
-        event.note = value;
+        handleInputChange('note', value);
     }
 
     const getColorEventType = () =>{
@@ -44,25 +39,52 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return;
         }
         if( event.eventtype === "depense" ){
-            return variables.rouan;
+            return colors.quaternary;
         }
         if( event.eventtype === "balade" ){
-            return variables.bai;
+            return colors.accent;
         }
         if( event.eventtype === "soins" ){
-            return variables.isabelle;
+            return colors.neutral;
         }
         if( event.eventtype === "concours" ){
-            return variables.alezan;
+            return colors.primary;
         }
         if( event.eventtype === "entrainement" ){
-            return variables.aubere;
+            return colors.tertiary;
         }
         if( event.eventtype === "autre" ){
-            return variables.bai_cerise;
+            return colors.error;
         }
         if( event.eventtype === "rdv" ){
-            return variables.bai_brun;
+            return colors.text;
+        }
+    }
+
+    const getTitleEventType = () =>{
+        if( event === undefined ){
+            return;
+        }
+        if( event.eventtype === "depense" ){
+            return "Dépense";
+        }
+        if( event.eventtype === "balade" ){
+            return "Balade";
+        }
+        if( event.eventtype === "soins" ){
+            return "Soin";
+        }
+        if( event.eventtype === "concours" ){
+            return "Concours";
+        }
+        if( event.eventtype === "entrainement" ){
+            return "Entraînement";
+        }
+        if( event.eventtype === "autre" ){
+            return "Autre";
+        }
+        if( event.eventtype === "rdv" ){
+            return "Rendez-vous";
         }
     }
 
@@ -73,9 +95,9 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "depense" ){
             return (
                 <>
-                    <Text style={[{color: styles.colorTextBlack}, styles.textFontBold]}>Dépense</Text>
+                    <Text style={[{color: styles.colorTextBlack}, styles.textFontBold]}>{event.nom}</Text>
                     <Text style={[{color: styles.colorTextBlack}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.bai)}
+                    {checkOverdueEvent(event, colors.accent)}
                 </>
             
             );
@@ -83,36 +105,36 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "balade" ){
             return (
                 <>
-                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Balade</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>{event.nom}</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
         if( event.eventtype === "soins" ){
             return (
                 <>
-                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Soins</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>{event.nom}</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
         if( event.eventtype === "concours" ){
             return (
                 <>
-                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Concours</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>{event.nom}</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
         if( event.eventtype === "entrainement" ){
             return (
                 <>
-                    <Text style={[{color: styles.colorTextBlack}, styles.textFontBold]}>Entrainement</Text>
+                    <Text style={[{color: styles.colorTextBlack}, styles.textFontBold]}>{event.nom}</Text>
                     <Text style={[{color: styles.colorTextBlack}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.bai)}
+                    {checkOverdueEvent(event, colors.accent)}
                 </>
             
             );
@@ -120,18 +142,18 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if( event.eventtype === "autre" ){
             return (
                 <>
-                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Autre</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>{event.nom}</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
         if( event.eventtype === "rdv" ){
             return (
                 <>
-                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>Rendez-vous</Text>
+                    <Text style={[{color: styles.colorTextWhite}, styles.textFontBold]}>{event.nom}</Text>
                     <Text style={[{color: styles.colorTextWhite}, styles.textFontRegular]}>{convertDateToText(event.dateevent)}</Text>
-                    {checkOverdueEvent(event, variables.blanc)}
+                    {checkOverdueEvent(event, colors.background)}
                 </>
             );
         }
@@ -142,25 +164,25 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             return;
         }
         if( event.eventtype === "depense" ){
-            return (<FontAwesome6 name="money-bill-wave" size={40} color={variables.blanc}/>);
+            return (<FontAwesome6 name="money-bill-wave" size={40} color={colors.background}/>);
         }
         if( event.eventtype === "balade" ){
-            return (<Entypo name="compass" size={40} color={variables.blanc} />);
+            return (<Entypo name="compass" size={40} color={colors.background} />);
         }
         if( event.eventtype === "soins" ){
-            return (<FontAwesome6 name="hand-holding-medical" size={40} color={variables.blanc}/>);
+            return (<FontAwesome6 name="hand-holding-medical" size={40} color={colors.background}/>);
         }
         if( event.eventtype === "concours" ){
-            return (<FontAwesome name="trophy" size={40} color={variables.blanc}/>);
+            return (<FontAwesome name="trophy" size={40} color={colors.background}/>);
         }
         if( event.eventtype === "entrainement" ){
-            return (<Entypo name="traffic-cone" size={40} color={variables.blanc}/>);
+            return (<Entypo name="traffic-cone" size={40} color={colors.background}/>);
         }
         if( event.eventtype === "autre" ){
-            return (<FontAwesome6 name="check-circle" size={40} color={variables.blanc} />);
+            return (<FontAwesome6 name="check-circle" size={40} color={colors.background} />);
         }
         if( event.eventtype === "rdv" ){
-            return (<FontAwesome name="stethoscope" size={40} color={variables.blanc}/>);
+            return (<FontAwesome name="stethoscope" size={40} color={colors.background}/>);
         }
     }
 
@@ -177,8 +199,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         if(date == undefined){
           return "";
         }
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateObject  = new Date(date);
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var dateObject  = new Date(date);
         let dateString = dateObject.toLocaleDateString("fr-FR", options);
         dateString = dateString.charAt(0).toUpperCase() + dateString.slice(1);
         return dateString;
@@ -211,17 +233,24 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     }
 
     const handleModifyEvent = () =>{
+        if(loading || !checkNumericFormat()){
+            return;
+        }
+        setLoading(true);
+
         let data = {};
-        data["id"] = event.id;
-        data["commentaire"] = event.commentaire;
-        data["animaux"] = event.animaux;
-        data["note"] = event.note;
+        data["id"] = localEvent.id;
+        data["commentaire"] = localEvent.commentaire;
+        data["depense"] = localEvent.depense;
+        data["animaux"] = localEvent.animaux;
+        data["note"] = localEvent.note;
         data["email"] = currentUser.email;
 
-        eventService.updateCommentaireNote(data)
+        eventsServiceInstance.updateCommentaireNote(data)
             .then((reponse) => {
                 handleEventsChange();
                 setVisible(false);
+                setLoading(false);
             })
             .catch((err) => {
                 Toast.show({
@@ -230,6 +259,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                     text1: err.message
                 });
                 LoggerService.log( "Erreur lors de la MAJ du commentaire et la note d'un event : " + err.message );
+                setLoading(false);
             })
 
     }
@@ -237,6 +267,32 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     const isWithRating = () => {
         return event.eventtype != "depense" && event.eventtype != "rdv" && event.eventtype != "soins";
     }
+
+    const checkNumericFormat = () => {
+        if( localEvent.depense != undefined )
+        {
+            const numericValue = parseFloat(localEvent.depense.replace(',', '.').replace(" ", ""));
+            if (isNaN(numericValue)) {
+                Toast.show({
+                    position: "top",
+                    type: "error",
+                    text1: "Problème de format sur la valeur de dépense",
+                    text2: "Seul les chiffres, virgule et point sont acceptés"
+                });
+                return false;
+            } else{
+                localEvent.depense = numericValue;
+            }
+        }
+        return true;
+    }
+
+    const handleInputChange = (key, value) => {
+        setLocalEvent((prev) => ({
+            ...prev,
+            [key]: value,
+        }));
+    };
 
     const styles = StyleSheet.create({
         background: {
@@ -248,7 +304,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             height: "80%",
         },
         card: {
-            backgroundColor: variables.default,
+            backgroundColor: colors.onSurface,
             borderTopStartRadius: 10,
             borderTopEndRadius: 10,
             height: "80%",
@@ -262,7 +318,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             padding: 10
         },
         closeButton: {
-            backgroundColor: variables.default,
+            backgroundColor: colors.onSurface,
             paddingHorizontal: 3,
             paddingVertical: 5,
             borderRadius: 15,
@@ -283,7 +339,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         },
         separator: {
             borderTopWidth: 0.2,
-            borderTopColor: variables.default,
+            borderTopColor: colors.onSurface,
             shadowColor: "black",
             shadowOpacity: 1,
             elevation: 5,
@@ -295,53 +351,52 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             height: 10
         },
         balade: {
-            backgroundColor: variables.bai,
+            backgroundColor: colors.accent,
         },
         autre: {
-            backgroundColor: variables.bai_cerise,
+            backgroundColor: colors.error,
         },
         rdv: {
-            backgroundColor: variables.bai_brun,
+            backgroundColor: colors.text,
         },
         soins: {
-            backgroundColor: variables.isabelle,
+            backgroundColor: colors.neutral,
         },
         entrainement: {
-            backgroundColor: variables.aubere,
+            backgroundColor: colors.tertiary,
         },
         concours: {
-            backgroundColor: variables.alezan,
+            backgroundColor: colors.primary,
         },
         depense: {
-            backgroundColor: variables.rouan,
+            backgroundColor: colors.quaternary,
         },
         tableauIcon: {
-            height: isWithRating() ? "45%" : "55%",
             justifyContent: "center",
             borderTopStartRadius: 10,
             borderTopEndRadius: 10,
         },
         tableauPrimaryInfos: {
-            height: isWithRating() ? "35%" : "45%",
+            paddingVertical: 15,
             flexDirection: "row",
             alignItems: "center",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
         },
         tableauSecondaryInfo:{
-            height: "20%",
+            paddingVertical: 10,
             justifyContent: "center",
             alignItems: "center",
             width: "100%",
-            marginBottom: 15
         },
         tableauInfos:{
-            marginLeft: 30
+            marginLeft: 30,
+            marginTop: 10
         },
         colorTextBlack:{
-            color: variables.bai,
+            color: colors.default_dark,
         },
         colorTextWhite:{
-            color: variables.blanc,
+            color: colors.background,
         },
         animauxPicturesContainer:{
             marginRight: 10,
@@ -361,157 +416,195 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             justifyContent: "center"
         },
         tableauxContainer:{
-            height: isWithRating() ? "40%" : "30%",
             marginBottom: 15
         },
         textFontRegular:{
-            fontFamily: variables.fontRegular
+            fontFamily: fonts.default.fontFamily
         },
         textFontMedium:{
-            fontFamily: variables.fontMedium
+            fontFamily: fonts.bodyMedium.fontFamily
         },
         textFontBold:{
-            fontFamily: variables.fontBold
-        }
-        
+            fontFamily: fonts.bodyLarge.fontFamily
+        },
+        containerActionsButtons: {
+            flexDirection: "row",
+            paddingBottom: 15,
+            backgroundColor: getColorEventType()
+        },
+        handleStyleModal:{
+            backgroundColor: getColorEventType(),
+            borderTopEndRadius: 15,
+            borderTopStartRadius: 15,
+            marginBottom: -1
+          },
+          handleIndicatorStyle:{
+            backgroundColor: colors.background
+          }
     });
 
     return (
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={isVisible}
-            onRequestClose={closeModal}
+        <ModalEditGeneric
+            isVisible={isVisible}
+            setVisible={setVisible}
+            arrayHeight={["90%"]}
+            handleStyle={styles.handleStyleModal}
+            handleIndicatorStyle={styles.handleIndicatorStyle}
         >
-            <View style={styles.background}>
-                <TouchableOpacity
-                    style={styles.emptyBackground}
-                    onPress={() => closeModal()}
-                ></TouchableOpacity>
-                
-                <View style={styles.card}>
-                    <KeyboardAwareScrollView>
-                        <View style={{height: 500}}>
-                            
-                            <View style={styles.tableauxContainer}>
-                                <View style={[styles.tableauIcon, {backgroundColor: hexToRgba(getColorEventType(), 1)}]}>
-                                    
-                                    <View style={{ alignItems: "center", opacity: 0.6}}>
-                                        {getIconEventType()}
-                                    </View>
-
-                                </View>
-                                <View style={[styles.tableauPrimaryInfos, {backgroundColor: hexToRgba(getColorEventType(), 0.5)}]}>
-                                    
-                                    <View style={{ justifyContent: "center", marginLeft: 20}}>
-                                        {getTextEventType()}
-                                    </View>
-                                    <View style={styles.animauxPicturesContainer}>
-                                        {event !== undefined && animaux.length !== 0 && event.animaux.map((eventAnimal, index) => {
-                                            var animal = getAnimalById(eventAnimal);
-                                            return(
-                                                <View key={animal.id} style={{marginRight: -3}}>
-                                                    <View style={{height: 25, width: 25, backgroundColor: variables.bai, borderRadius: 15, justifyContent: "center"}}>
-                                                        { animal.image !== null ? 
-                                                            <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
-                                                            :
-                                                            <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
-                                                        }
-                                                    </View>
-                                                </View>
-                                            )
-                                        })}
-                                    </View>
-
-                                </View>
-                                {isWithRating() &&
-                                    <View style={[styles.tableauSecondaryInfo, {backgroundColor: hexToRgba(getColorEventType(), 0.2)}]}>
-                                        <RatingInput
-                                            onRatingChange={handleRatingChange}
-                                            defaultRating={event.note !== undefined && event.note !== null ? event.note : 0}
-                                            margin={0}
-                                            size={25}
-                                        />
-                                    </View>
-                                }
-                            </View>
-                            <View style={styles.tableauInfos}>
-                                <Text style={[{marginBottom: 10}, styles.textFontBold]}>{event.nom}</Text>
-                                {isValidString(event.heuredebutevent) &&
-                                    <Text style={styles.textFontRegular}>Heure : {event.heuredebutevent}</Text>
-                                }
-                                {isValidString(event.discipline) &&
-                                    <Text style={styles.textFontRegular}>Discipline : {event.discipline}</Text>
-                                }
-                                {isValidString(event.lieu) &&
-                                    <Text style={styles.textFontRegular}>Lieu : {event.lieu}</Text>
-                                }
-                                {isValidString(event.datefinbalade) &&
-                                    <Text style={styles.textFontRegular}>Date de fin de balade : {event.datefinbalade.includes("-") ? dateUtils.dateFormatter(event.datefinbalade, "yyyy-mm-dd", "-") : event.datefinbalade}</Text>
-                                }
-                                {isValidString(event.heurefinbalade) &&
-                                    <Text style={styles.textFontRegular}>Heure de fin de balade : {event.heurefinbalade}</Text>
-                                }
-                                {isValidString(event.epreuve) &&
-                                    <Text style={styles.textFontRegular}>Note : {event.epreuve}</Text>
-                                }
-                                {isValidString(event.dossart) &&
-                                    <Text style={styles.textFontRegular}>Dossart : {event.dossart}</Text>
-                                }
-                                {event.placement != null && event.placement != undefined &&
-                                    <Text style={styles.textFontRegular}>Classement : {event.placement}</Text>
-                                }
-                                {isValidString(event.specialiste) &&
-                                    <Text style={styles.textFontRegular}>Spécialiste : {event.specialiste}</Text>
-                                }
-                                {isValidString(event.depense) &&
-                                    <Text style={styles.textFontRegular}>Dépense : {event.depense}</Text>
-                                }
-                                {isValidString(event.traitement) &&
-                                    <Text style={styles.textFontRegular}>Traitement : {event.traitement}</Text>
-                                }
-                                {isValidString(event.datefinsoins) &&
-                                    <Text style={styles.textFontRegular}>Date de fin du soin : {event.datefinsoins.includes("-") ? dateUtils.dateFormatter(event.datefinsoins, "yyyy-mm-dd", "-") : event.datefinsoins}</Text>
-                                }
-                                <View style={{width: "90%"}}>
-                                    <Text style={[{marginBottom: 5}, styles.textFontRegular]}>Commentaire :</Text>
-                                    <TextInput
-                                        style={[{backgroundColor: variables.rouan, padding: 10, borderRadius: 5, height: 200}, styles.textFontRegular]}
-                                        multiline={true}
-                                        numberOfLines={4}
-                                        maxLength={2000}
-                                        placeholder="Exemple : Ça s'est très bien passé"
-                                        onChangeText={(text) => event.commentaire = text}
-                                        defaultValue={event.commentaire}
-                                    />
-                                </View>
-                            </View>
-                        </View>
-                    </KeyboardAwareScrollView>
-                    <View style={styles.footer}>
-                        <View style={styles.footerActions}>
-                            <Button
-                                size={"m"}
-                                type={"primary"}
-                                isLong={true}
-                                onPress={() => closeModal()}
-                            >
-                                <Text style={styles.textFontMedium}>Annuler</Text>
-                            </Button>
-
-                            <Button
-                                size={"m"}
-                                type={"tertiary"}
-                                isLong={true}
-                                onPress={() => handleModifyEvent()}
-                            >
-                                <Text style={styles.textFontMedium}>Enregistrer</Text>
-                            </Button>
-                        </View>
-                    </View>
+            <View style={styles.containerActionsButtons}>
+                <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
+                    <Text style={[{color: colors.background}, styles.textFontRegular]}>Annuler</Text>
+                </TouchableOpacity>
+                <View style={{width:"33.33%", alignItems: "center"}}>
+                        <Text style={[styles.textFontBold, {color: colors.background}]}>{getTitleEventType()}</Text>
                 </View>
+                <TouchableOpacity onPress={() => handleModifyEvent()} style={{width:"33.33%", alignItems: "center"}}>
+                    { loading ? 
+                            <ActivityIndicator size={10} color={colors.default_dark} />
+                        :
+                            <Text style={[{color: colors.background}, styles.textFontRegular]}>Enregistrer</Text>
+                    }
+                </TouchableOpacity>
             </View>
-        </Modal>
+            <View style={[styles.tableauPrimaryInfos, {backgroundColor: hexToRgba(getColorEventType(), 0.5)}]}>
+                            
+                <View style={{ justifyContent: "center", marginLeft: 20}}>
+                    {getTextEventType()}
+                </View>
+                <View style={styles.animauxPicturesContainer}>
+                    {event !== undefined && animaux.length !== 0 && event.animaux.map((eventAnimal, index) => {
+                        var animal = getAnimalById(eventAnimal);
+                        return(
+                            <View key={animal.id} style={{marginRight: -3}}>
+                                <View style={{height: 25, width: 25, backgroundColor: colors.default_dark, borderRadius: 15, justifyContent: "center"}}>
+                                    { animal.image !== null ? 
+                                        <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
+                                        :
+                                        <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
+                                    }
+                                </View>
+                            </View>
+                        )
+                    })}
+                </View>
+
+            </View>
+            {isWithRating() &&
+                <View style={[styles.tableauSecondaryInfo, {backgroundColor: hexToRgba(getColorEventType(), 0.2)}]}>
+                    <RatingInput
+                        onRatingChange={handleRatingChange}
+                        defaultRating={localEvent.note !== undefined && localEvent.note !== null ? localEvent.note : 0}
+                        margin={0}
+                        size={25}
+                        color={getColorEventType()}
+                    />
+                </View>
+            }
+            <KeyboardAwareScrollView
+                ref={scrollRef}
+                keyboardShouldPersistTaps="handled"
+                enableOnAndroid={true}
+                extraScrollHeight={10}
+            >
+                <View style={styles.tableauInfos}>
+                    {isValidString(localEvent.heuredebutevent) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Heure : {localEvent.heuredebutevent}</Text>
+                        </View>
+                    }
+                    {isValidString(localEvent.discipline) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Discipline : {localEvent.discipline}</Text>
+                        </View>
+                    }
+                    {isValidString(localEvent.lieu) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Lieu : {localEvent.lieu}</Text>
+                        </View>
+                    }
+                    {isValidString(localEvent.datefinbalade) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Date de fin de balade : {localEvent.datefinbalade.includes("-") ? dateUtils.dateFormatter(localEvent.datefinbalade, "yyyy-mm-dd", "-") : localEvent.datefinbalade}</Text>
+                        </View>
+                    }
+                    {isValidString(localEvent.heurefinbalade) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Heure de fin de balade : {localEvent.heurefinbalade}</Text>
+                        </View>
+                    }
+                    {isValidString(localEvent.epreuve) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Épreuve : {localEvent.epreuve}</Text>
+                        </View>
+                    }
+                    {isValidString(localEvent.dossart) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Dossart : {localEvent.dossart}</Text>
+                        </View>
+                    }
+                    {localEvent.placement != null && localEvent.placement != undefined &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Classement : {localEvent.placement}</Text>
+                        </View>
+                    }
+                    {isValidString(localEvent.specialiste) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Spécialiste : {localEvent.specialiste}</Text>
+                        </View>
+                    }
+                    {event.eventtype !== "depense" &&
+                        localEvent.depense !== null && localEvent.depense !== undefined &&
+                            <View style={{marginBottom: 5}}>
+                                <Text style={styles.textFontRegular}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
+                            </View>
+                        
+                    }
+                    {isValidString(localEvent.traitement) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Traitement : {localEvent.traitement}</Text>
+                        </View>
+                    }
+                    {isValidString(localEvent.datefinsoins) &&
+                        <View style={{marginBottom: 5}}>
+                            <Text style={styles.textFontRegular}>Date de fin du soin : {localEvent.datefinsoins.includes("-") ? dateUtils.dateFormatter(localEvent.datefinsoins, "yyyy-mm-dd", "-") : localEvent.datefinsoins}</Text>
+                        </View>
+                    }
+                    {event.eventtype !== "depense" ?
+                        <View style={{width: "90%"}}>
+                            <Text style={[{marginBottom: 5}, styles.textFontRegular]}>Commentaire :</Text>
+                            <TextInput
+                                style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5, height: 200}, styles.textFontRegular]}
+                                multiline={true}
+                                numberOfLines={4}
+                                maxLength={2000}
+                                placeholder="Exemple : Ça s'est très bien passé"
+                                onFocus={(e) => {
+                                    // Scrolle vers l'élément lorsqu'il est cliqué
+                                    e.target?.measure((x, y, width, height, pageX, pageY) => {
+                                        const scrollOffset = Math.max(pageY - 100, 0);
+                                        scrollRef.current?.scrollToPosition(0, scrollOffset, true);
+                                    });
+                                }}
+                                onChangeText={(text) => handleInputChange('commentaire', text)}
+                                defaultValue={localEvent.commentaire}
+                            />
+                        </View>
+                        :
+                        <View style={{marginBottom: 5, width: "90%"}}>
+                            <Text style={[styles.textFontRegular, {marginBottom: 5}]}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
+                            <TextInput
+                                style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5,}, styles.textFontRegular]}
+                                placeholder="Exemple : 1"
+                                keyboardType="decimal-pad"
+                                inputMode="decimal"
+                                onChangeText={(text) => handleInputChange('depense', text)}
+                                defaultValue={event.depense ? parseFloat(event.depense).toFixed(2) : event.depense}
+                            />
+                        </View>
+                    }
+                </View>
+            </KeyboardAwareScrollView>
+        </ModalEditGeneric>
     );
 };
 

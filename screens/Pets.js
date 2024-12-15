@@ -1,10 +1,9 @@
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated } from "react-native";
-import Variables from "../components/styles/Variables";
 import TopTab from '../components/TopTab';
-import React, { useState, useContext, useEffect, useRef } from 'react';
+import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import AnimalsPicker from "../components/AnimalsPicker";
 import { useForm } from "react-hook-form";
-import AnimalsService from "../services/AnimalsService";
+import animalsServiceInstance from "../services/AnimalsService";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import InformationsAnimals from "../components/InformationsAnimals";
 import Toast from "react-native-toast-message";
@@ -14,67 +13,62 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import DateUtils from '../utils/DateUtils';
 import LoggerService from "../services/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
+import { useTheme } from 'react-native-paper';
+import ModalValidation from "../components/Modals/ModalValidation";
+import { useFocusEffect } from "@react-navigation/native";
+import { useAnimaux } from "../providers/AnimauxProvider";
 
 const PetsScreen = ({ navigation }) => {
+  const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
-  const [messages, setMessages] = useState({message1: "Mes", message2: "animaux"});
-  const animalsService = new AnimalsService;
-  const [animaux, setAnimaux] = useState([]);
-  const [selected, setSelected] = useState([{}]);
+  const [messages, setMessages] = useState({message1: "Mes", message2: "Animaux"});
+  const { animaux, setAnimaux } = useAnimaux();
+  const [selected, setSelected] = useState([]);
   const { setValue } = useForm();
-  today = new Date();
-  jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
-  mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
-  annee = today.getFullYear();
+  var today = new Date();
+  var jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
+  var mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
+  var annee = today.getFullYear();
   const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
   const dateUtils = new DateUtils();
-  
+  const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      setMessages({message1: "Mes", message2: "animaux"});
-      
-      getAnimals();
-      
-      
-    });
-    return unsubscribe;
-  }, [navigation]);
-
-
-  const getAnimals = async () => {
-    // Si aucun animal est déjà présent dans la liste, alors
-    if(animaux.length == 0){
-      // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.email);
-      // Si l'utilisateur a des animaux, alors
-      if(result.length !== 0){
-        // On valorise l'animal selectionné par défaut au premier de la liste
-        setSelected([result[0]]);
-        if(result[0].id !== null ? setValue("id", result[0].id) : null);
-        if(result[0].nom !== null ? setValue("nom", result[0].nom) : null);
-        if(result[0].espace !== null ? setValue("espece", result[0].espece) : null);
-        if(result[0].datenaissance !== null ? setValue("datenaissance", result[0].datenaissance) : null);
-        if(result[0].race !== null ? setValue("race", result[0].race) : null );
-        if(result[0].taille !== null ? setValue("taille", String(result[0].taille)) : null);
-        if(result[0].poids !== null ? setValue("poids", String(result[0].poids)) : null);
-        if(result[0].sexe !== null ? setValue("sexe", result[0].sexe) : null);
-        if(result[0].food !== null ? setValue("food", result[0].food) : null);
-        if(result[0].quantity !== null ? setValue("quantity", String(result[0].quantity)) : null);
-        if(result[0].couleur !== null ? setValue("couleur", result[0].couleur) : null);
-        if(result[0].nomPere !== null ? setValue("nomPere", result[0].nomPere) : null);
-        if(result[0].nomMere !== null ? setValue("nomMere", result[0].nomMere) : null);
-        if(result[0].datenaissance !== null ? setDate(result[0].datenaissance) : setDate(null));
-
-        // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
-        setAnimaux(result);
+  useFocusEffect(
+    useCallback(() => {
+      if(selected.length === 0){
+        initDisplay();
       }
-    }
+    }, [navigation])
+  );
+
+
+  const initDisplay = async () => {
+      // On valorise l'animal selectionné par défaut au premier de la liste
+      setSelected([animaux[0]]);
+      if(animaux[0].id !== null ? setValue("id", animaux[0].id) : null);
+      if(animaux[0].nom !== null ? setValue("nom", animaux[0].nom) : null);
+      if(animaux[0].espace !== null ? setValue("espece", animaux[0].espece) : null);
+      if(animaux[0].datenaissance !== null ? setValue("datenaissance", animaux[0].datenaissance) : null);
+      if(animaux[0].race !== null ? setValue("race", animaux[0].race) : null );
+      if(animaux[0].taille !== null ? setValue("taille", String(animaux[0].taille)) : null);
+      if(animaux[0].poids !== null ? setValue("poids", String(animaux[0].poids)) : null);
+      if(animaux[0].sexe !== null ? setValue("sexe", animaux[0].sexe) : null);
+      if(animaux[0].food !== null ? setValue("food", animaux[0].food) : null);
+      if(animaux[0].quantity !== null ? setValue("quantity", String(animaux[0].quantity)) : null);
+      if(animaux[0].couleur !== null ? setValue("couleur", animaux[0].couleur) : null);
+      if(animaux[0].nomPere !== null ? setValue("nomPere", animaux[0].nomPere) : null);
+      if(animaux[0].nomMere !== null ? setValue("nomMere", animaux[0].nomMere) : null);
+      if(animaux[0].datenaissance !== null ? setDate(animaux[0].datenaissance) : setDate(null));
   };
 
   const handleDeletePet = async() =>{
+    setModalValidationDeleteVisible(true);
+  }
+
+  const confirmDeletePet = async() =>{
+    setModalValidationDeleteVisible(false);
     let data = {};
     // Récupération de l'identifiant de l'utilisateur (propriétaire)
     data["email"] =  currentUser.email;
@@ -82,7 +76,7 @@ const PetsScreen = ({ navigation }) => {
     // Récupération de l'identifiant de l'animal
     data["id"] = selected[0].id;
 
-    animalsService.delete(data)
+    animalsServiceInstance.delete(data)
     .then((response) =>{
 
       // Une fois la suppression terminée, on valorise le hook avec l'animal en moins
@@ -133,11 +127,12 @@ const PetsScreen = ({ navigation }) => {
   }
 
   const onModify = (animal) => {
-    Toast.show({
+    setTimeout(() => Toast.show({
       type: "success",
       position: "top",
       text1: "Modification de l'animal"
-    }); 
+    }), 300);
+    
 
     var indice = animaux.findIndex((a) => a.id == animal.id);
     animaux[indice] = animal;
@@ -153,10 +148,44 @@ const PetsScreen = ({ navigation }) => {
     }).start();
   };
 
+  const styles = StyleSheet.create({
+
+    rubriqueContainer:{
+      marginTop: 10,
+      marginBottom: 25,
+    },
+    iconsContainer:{
+      display: "flex", 
+      flexDirection: "row", 
+      paddingVertical: 10
+    },
+    separatorFix:{
+      borderTopColor: colors.quaternary, 
+      borderTopWidth: 0.4, 
+      position: 'absolute', 
+      bottom: 0, 
+      height: 2, 
+      width: "100%"
+    },
+    separatorAnimated:{
+      height: 3, 
+      backgroundColor: colors.default_dark, 
+      position: 'absolute', 
+      bottom: 0, 
+      width: '33.3%',
+    }
+  });
+
   return (
     <>
-    <View style={{zIndex:999}}><Toast/></View>
-      <LinearGradient colors={[Variables.blanc, Variables.default]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+      <ModalValidation
+          displayedText={"Êtes-vous sûr de vouloir supprimer l'animal ?"}
+          onConfirm={confirmDeletePet}
+          setVisible={setModalValidationDeleteVisible}
+          visible={modalValidationDeleteVisible}
+          title={"Suppression d'un animal"}
+      />
+      <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2}/>
         <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
           <AnimalsPicker
@@ -172,14 +201,17 @@ const PetsScreen = ({ navigation }) => {
         </View>
         <View style={styles.rubriqueContainer}>
           <View style={styles.iconsContainer}>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <Entypo name="info-with-circle" size={30} color={activeRubrique === 0 ? Variables.bai : Variables.rouan}/>
+            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+              <Entypo name="info-with-circle" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Informations</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <FontAwesome6 name="utensils" size={25} color={activeRubrique === 1 ? Variables.bai : Variables.rouan}/>
+            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+              <FontAwesome6 name="utensils" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Nutrition</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
-              <FontAwesome6 name="book-medical" size={25} color={activeRubrique === 2 ? Variables.bai : Variables.rouan}/>
+            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
+              <FontAwesome6 name="book-medical" size={20} color={activeRubrique === 2 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 2 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Santé</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.separatorFix}></View>
@@ -207,33 +239,5 @@ const PetsScreen = ({ navigation }) => {
     </>
   );
 };
-
-const styles = StyleSheet.create({
-
-  rubriqueContainer:{
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  iconsContainer:{
-    display: "flex", 
-    flexDirection: "row", 
-    paddingVertical: 10
-  },
-  separatorFix:{
-    borderTopColor: Variables.rouan, 
-    borderTopWidth: 1, 
-    position: 'absolute', 
-    bottom: 0, 
-    height: 2, 
-    width: "100%"
-  },
-  separatorAnimated:{
-    height: 3, 
-    backgroundColor: Variables.bai, 
-    position: 'absolute', 
-    bottom: 0, 
-    width: '33.3%',
-  }
-})
 
 module.exports = PetsScreen;

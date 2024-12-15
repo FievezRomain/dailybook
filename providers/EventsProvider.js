@@ -1,13 +1,16 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 
-export const EventsContext = createContext();
+const EventsContext = createContext();
 
-export default function EventsProvider ({ children }) {
-  const [eventsCache, setEventsCache] = useState({nom: "Sirius"});
+export const EventsProvider = ({ children }) => {
+  const [events, setEvents] = useState([]);
 
   return (
-    <EventsContext.Provider value={{ eventsCache, setEventsCache }}>
+    <EventsContext.Provider value={{ events, setEvents }}>
       {children}
     </EventsContext.Provider>
   );
 };
+
+// Hook pour accéder au contexte
+export const useEvents = () => useContext(EventsContext);

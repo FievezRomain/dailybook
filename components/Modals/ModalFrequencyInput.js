@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import Variables from '../styles/Variables';
 import Button from '../Button';
+import { useTheme } from 'react-native-paper';
 
 const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInputValue }) => {
+    const { colors, fonts } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [frequencyValue, setFrequencyValue] = useState('');
   const [inputValue, setInputValue] = useState(defaultInputValue == undefined || defaultInputValue == null ? '' : defaultInputValue);
@@ -42,6 +43,97 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
     setFrequencyType(type);
     setInputValue('');
   };
+
+  const styles = StyleSheet.create({
+    frequencyButton:{
+        backgroundColor: colors.quaternary,
+        padding: 10,
+        borderRadius: 5,
+        marginBottom: 10,
+        width: "100%",
+        alignSelf: "flex-start"
+    },
+    card: {
+        borderTopStartRadius: 10,
+        borderTopEndRadius: 10,
+        height: "30%",
+        //flexDirection: "row wrap"
+    },
+    background: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: "flex-end",
+        height: "100%",
+    },
+    emptyBackground: {
+        height: "80%",
+    },
+    buttonContainer:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-around",
+        marginTop: 5,
+        marginBottom: 20
+    },
+    headerCard:{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        backgroundColor: 'rgba(0, 0, 0, 0)',
+    },
+    bodyCard:{
+        justifyContent: "center",
+        backgroundColor: colors.background,
+        justifyContent: "space-evenly",
+        height: "100%",
+    },
+    headerButtonContainer:{
+        borderTopStartRadius: 5,
+        borderTopEndRadius: 5,
+        backgroundColor: colors.quaternary,
+        width: "50%",
+        justifyContent: "center",
+    },
+    typeSelected:{
+        backgroundColor: colors.quaternary,
+    },
+    textTypeButton:{
+        textAlign: "center",
+    },
+    textSelectedTypeButton:{
+        color: colors.background,
+    },
+    bottomBar: {
+        width: '100%',
+        height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
+        backgroundColor: colors.text,
+    },
+    input: {
+        width: "15%",
+        borderRadius: 5,
+        backgroundColor: colors.quaternary,
+        color: "black",
+        textAlign: "center",
+        paddingVertical: 2
+      },
+    informationInputContainer:{
+        display: "flex",
+        flexDirection: "row",
+        textAlign: "center",
+        justifyContent: "center"
+    },
+    keyboardAvoidingContainer: {
+        flex: 1,
+    },
+    textFontRegular:{
+        fontFamily: fonts.default.fontFamily
+    },
+    textFontMedium:{
+        fontFamily: fonts.bodyMedium.fontFamily
+    },
+    textFontBold:{
+        fontFamily: fonts.bodyLarge.fontFamily
+    }
+    });
 
   return (
     <>
@@ -136,96 +228,5 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
     </>
   );
 };
-
-const styles = StyleSheet.create({
-    frequencyButton:{
-        backgroundColor: Variables.rouan,
-        padding: 10,
-        borderRadius: 5,
-        marginBottom: 10,
-        width: "100%",
-        alignSelf: "flex-start"
-    },
-    card: {
-        borderTopStartRadius: 10,
-        borderTopEndRadius: 10,
-        height: "30%",
-        //flexDirection: "row wrap"
-    },
-    background: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        justifyContent: "flex-end",
-        height: "100%",
-    },
-    emptyBackground: {
-        height: "80%",
-    },
-    buttonContainer:{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-around",
-        marginTop: 5,
-        marginBottom: 20
-    },
-    headerCard:{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        backgroundColor: 'rgba(0, 0, 0, 0)',
-    },
-    bodyCard:{
-        justifyContent: "center",
-        backgroundColor: Variables.blanc,
-        justifyContent: "space-evenly",
-        height: "100%",
-    },
-    headerButtonContainer:{
-        borderTopStartRadius: 5,
-        borderTopEndRadius: 5,
-        backgroundColor: Variables.rouan,
-        width: "50%",
-        justifyContent: "center",
-    },
-    typeSelected:{
-        backgroundColor: Variables.isabelle,
-    },
-    textTypeButton:{
-        textAlign: "center",
-    },
-    textSelectedTypeButton:{
-        color: Variables.blanc,
-    },
-    bottomBar: {
-        width: '100%',
-        height: 0.3, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: Variables.bai_brun,
-    },
-    input: {
-        width: "15%",
-        borderRadius: 5,
-        backgroundColor: Variables.rouan,
-        color: "black",
-        textAlign: "center",
-        paddingVertical: 2
-      },
-    informationInputContainer:{
-        display: "flex",
-        flexDirection: "row",
-        textAlign: "center",
-        justifyContent: "center"
-    },
-    keyboardAvoidingContainer: {
-        flex: 1,
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-});
 
 export default ModalFrequencyInput;

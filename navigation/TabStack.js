@@ -1,235 +1,162 @@
-import { Animated, Dimensions, Image, Platform, Text, View } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import plus from '../assets/plus.png'
-import { FontAwesome6, Ionicons } from '@expo/vector-icons'
-import { useRef } from 'react';
-import { WelcomeScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen } from "../screens";
-import { MotiView } from 'moti';
-import Variables from '../components/styles/Variables';
-import variables from '../components/styles/Variables';
-import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CommonActions } from '@react-navigation/native';
+import { BottomNavigation, IconButton, useTheme, Text as PaperText } from 'react-native-paper';
+import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, OtherScreen } from "../screens";
+import { View, StyleSheet, Text } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
-const TabStack = () => {
-  const tabOffsetValue = useRef(new Animated.Value(0)).current;
-  const [expanded, setExpanded] = useState(false);
-  const [beforeScreen, setBeforeScreen] = useState("Welcome");
-  const insets = useSafeAreaInsets();
+export default function TabStack() {
+  const { colors } = useTheme();
+
   return (
-        <View style={{flex: 1}}>
-      <Tab.Navigator screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            if (route.name === 'Welcome'){
-              return <View style={{
-                // centring Tab Button...
-              }}>
-                <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
-                  <Ionicons
-                    name="home"
-                    size={20}
-                    color={focused ? variables.bai : variables.bai_brun }
-                  ></Ionicons>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Accueil</Text>
-                </View>
-              </View>
-            } else if(route.name === 'Statistic'){
-              return <View style={{
-                // centring Tab Button...
-              }}>
-                <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
-                  <FontAwesome6
-                    name="signal"
-                    size={20}
-                    color={focused ? variables.bai : variables.bai_brun }
-                  ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Performance</Text>
-                </View>
-                
-              </View>
-            } else if(route.name === 'ActionButton'){
-              return <><MotiView
-                style={{
-                  width: 45,
-                  height: 45,
-                  backgroundColor: 'white',
-                  borderRadius: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginBottom: Platform.OS == "android" ? 30 : 30,
-                  shadowColor: "black",
-                  shadowOpacity: 0.1,
-                  elevation: 1,
-                  shadowRadius: 10,
-                  shadowOffset:{width:0, height: -1}
-                }}
-                animate={{
-                  scale: expanded ? 1.2 : 1,
-                  rotate: expanded ? '135deg' : '0deg',
-                }}
-                transition={{
-                  duration: 200,
-                  type: 'timing',
-                }}>
-                <Image source={plus} style={{
-                  width: 45,
-                  height: 45,
-                  tintColor: expanded ? Variables.bai_brun : Variables.bai,
-                  zIndex: 1
-                }}></Image>
-              </MotiView>
-                </>
-            } else if (route.name === 'Calendar'){
-              return <View style={{
-                // centring Tab Button...
-                
-              }}>
-                <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
-                  <FontAwesome6
-                    name="calendar-alt"
-                    size={20}
-                    color={focused ? variables.bai : variables.bai_brun }
-                  ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Calendrier</Text>
-                </View>
-              </View>
-            } else if (route.name === 'Pets'){
-              return <View style={{
-                // centring Tab Button...
-              }}>
-                <View style={{display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", alignItems: "center"}}>
-                  <FontAwesome6
-                    name="paw"
-                    size={20}
-                    color={focused ? variables.bai : variables.bai_brun}
-                  ></FontAwesome6>
-                  <Text style={{fontSize: 11, paddingTop: 5, color: focused ? variables.bai : variables.bai_brun, fontFamily: variables.fontRegular}}>Animaux</Text>
-                </View>
-              </View>
-            }
-          },
-          tabBarShowLabel: false,
-          headerShown: false,
-          tabBarStyle:{
-            shadowColor: "black",
-            shadowOpacity: 0.1,
-            elevation: 1,
-            shadowRadius: 5,
-            shadowOffset:
-            {
-              width: 0,
-              height:-1
-            },
-          }
-        })}>
-  
-          <Tab.Screen name={"Welcome"} component={WelcomeScreen} listeners={({ navigation, route }) => ({
-            // Onpress Update....
-            focus: e => {
-              setExpanded(false);
-              setBeforeScreen(route.name);
-              Animated.spring(tabOffsetValue, {
-                toValue: 0,
-                useNativeDriver: true
-              }).start();
-            }
-          })}/>
-  
-          <Tab.Screen name={"Statistic"} component={StatsScreen} listeners={({ navigation, route }) => ({
-            // Onpress Update....
-            focus: e => {
-              setExpanded(false);
-              setBeforeScreen(route.name);
-              Animated.spring(tabOffsetValue, {
-                toValue: getWidth(),
-                useNativeDriver: true
-              }).start();
-            }
-          })}/>
-  
-          <Tab.Screen name={"ActionButton"} component={ActionScreen} listeners={({ navigation, route }) => ({
-            // Onpress Update....
-            tabPress: e => {
-              if (expanded){
-                navigation.navigate(beforeScreen);
+      <Tab.Navigator
+        screenOptions={{
+          headerShown: false, // Cacher les en-têtes
+        }}
+        tabBar={({ navigation, state, descriptors, insets }) => (
+          <BottomNavigation.Bar
+            navigationState={state}
+            safeAreaInsets={insets}
+            onTabPress={({ route, preventDefault }) => {
+              const event = navigation.emit({
+                type: 'tabPress',
+                target: route.key,
+                canPreventDefault: true,
+              });
+
+              if (event.defaultPrevented) {
+                preventDefault();
+              } else {
+                navigation.dispatch({
+                  ...CommonActions.navigate(route.name, route.params),
+                  target: state.key,
+                });
               }
-              setExpanded(!expanded);
-              Animated.spring(tabOffsetValue, {
-                toValue: -100,
-                useNativeDriver: true
-              }).start();
-            }
-          })}/>
-  
-          <Tab.Screen name={"Calendar"} component={CalendarScreen} listeners={({ navigation, route }) => ({
-            // Onpress Update....
-            focus: e => {
-              setExpanded(false);
-              setBeforeScreen(route.name);
-              Animated.spring(tabOffsetValue, {
-                toValue: getWidth() * 3,
-                useNativeDriver: true
-              }).start();
-            }
-          })}/>
-  
-          <Tab.Screen name={"Pets"} component={PetsScreen} listeners={({ navigation, route }) => ({
-            // Onpress Update....
-            focus: e => {
-              setExpanded(false);
-              setBeforeScreen(route.name);
-              Animated.spring(tabOffsetValue, {
-                toValue: getWidth() * 4,
-                useNativeDriver: true
-              }).start();
-            }
-          })}/>
-
-        {/* <Tab.Screen name={"Settings"} component={SettingsScreen} 
-            options={{
-                tabBarItemStyle:{display: "none"}
             }}
-            listeners={({ navigation, route }) =>({
-                tabPress: e => {
-                    setMessages({message1: "Mes", message2: "animaux"});
-                    Animated.spring(tabOffsetValue, {
-                        toValue: -100,
-                        useNativeDriver: true
-                    }).start();
-                }
-            })}
-        /> */}
+            renderIcon={({ route, focused }) => {
+              const { options } = descriptors[route.key];
+              if (options.tabBarIcon) {
+                return (
+                  <View style={{marginTop: -5}}>
+                    {options.tabBarIcon && options.tabBarIcon({ focused,
+                      color: focused ? colors.secondaryContainer : colors.default_dark,
+                      size: focused ? 28 : 24, })}
+                  </View>
+                )
+              }
+              return null;
+            }}
+            renderLabel={({ route, focused }) => {
+              const { options } = descriptors[route.key];
+              const label =
+                options.tabBarLabel !== undefined
+                  ? options.tabBarLabel
+                  : options.title || route.name;
   
-        </Tab.Navigator>
-  
-        <Animated.View style={{
-          width: getWidth() - 15,
-          //height: 2,
-          backgroundColor: Variables.bai,
-          position: 'absolute',
-          // bottom: (667 / (Dimensions.get("window").height / 10)) *5,
-          // Horizontal Padding = 20...
-          left: 10,
-          borderRadius: 20,
-          transform: [
-            { translateX: tabOffsetValue }
-          ]
-        }}>
-  
-        </Animated.View>
-        </View>
+              return (
+                <Text style={[styles.label, { color: focused ? colors.accent : colors.default_dark, marginTop: -10 }]}>
+                  {label}
+                </Text>
+              );
+            }}
+            style={{
+              height: 80,
+              backgroundColor: colors.background,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: -2 },
+              shadowOpacity: 0.1,
+              shadowRadius: 4,
+              elevation: 8,
+            }}
+            activeColor={colors.accent}
+            inactiveColor={colors.text}
+            activeIndicatorStyle={{
+              backgroundColor: colors.accent,
+              height: 2,
+              marginBottom: 55,
+            }}
+          />
+        )}
+      >
+        <Tab.Screen
+          name="Accueil"
+          component={WelcomeScreen}
+          options={{
+            tabBarLabel: 'Accueil',
+            tabBarIcon: ({ color, size }) => (
+              <View style={styles.iconContainer}>
+                <IconButton icon="home" iconColor={color} size={size} />
+              </View>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Performance"
+          component={StatsScreen}
+          options={{
+            tabBarLabel: 'Performance',
+            tabBarIcon: ({ color, size }) => (
+              <View style={styles.iconContainer}>
+                <IconButton icon="chart-bar" iconColor={color} size={size} />
+              </View>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Calendrier"
+          component={CalendarScreen}
+          options={{
+            tabBarLabel: 'Calendrier',
+            tabBarIcon: ({ color, size }) => (
+              <View style={styles.iconContainer}>
+                <IconButton icon="calendar" iconColor={color} size={size} />
+              </View>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Animaux"
+          component={PetsScreen}
+          options={{
+            tabBarLabel: 'Animaux',
+            tabBarIcon: ({ color, size }) => (
+              <View style={styles.iconContainer}>
+                <IconButton icon="paw" iconColor={color} size={size} />
+              </View>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Autre"
+          component={OtherScreen}
+          options={{
+            tabBarLabel: 'Autre',
+            tabBarIcon: ({ color, size }) => (
+              <View style={styles.iconContainer}>
+                <IconButton icon="menu" iconColor={color} size={size} />
+              </View>
+            ),
+          }}
+        />
+      </Tab.Navigator>
   );
-};
-
-function getWidth() {
-  let width = Dimensions.get("window").width
-
-  // Horizontal Padding = 20...
-  width = width - 5
-
-  // Total five Tabs...
-  return width / 5
 }
 
-export default TabStack;
+const styles = StyleSheet.create({
+  iconContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    alignContent: "center",
+    marginBottom: 30,
+    marginTop: 10,
+  },
+  label: {
+    fontSize: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+  },
+});

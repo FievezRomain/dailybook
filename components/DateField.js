@@ -1,8 +1,9 @@
 import { TextInput } from "react-native";
 import React, { useEffect, useState } from 'react';
-import Variables from "./styles/Variables";
+import { useTheme } from 'react-native-paper';
 
 const DateField = ({ setValue, date, setDate, valueName, style, defaultValue }) => {
+    const { colors, fonts } = useTheme();
     //const [date, setDate] = useState(defaultValue(valueName));
 
     const onChangeDate = (selectedDate) => {
@@ -40,7 +41,7 @@ const DateField = ({ setValue, date, setDate, valueName, style, defaultValue }) 
             keyboardType="numeric"
             inputMode="numeric"
             maxLength={10}
-            placeholderTextColor={Variables.gris}
+            placeholderTextColor={colors.secondary}
             onChangeText={(text) => onChangeDate(text)}
             value={date}
         />

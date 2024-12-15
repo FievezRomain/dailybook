@@ -1,11 +1,12 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
-import Variables from "../styles/Variables";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import React, { useState } from 'react';
 import { AntDesign } from '@expo/vector-icons';
+import { useTheme } from 'react-native-paper';
 
 const ModalNotifications = ({notifications, setNotifications, modalVisible, setModalVisible, eventType}) =>{
+    const { colors, fonts } = useTheme();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [currentKey, setCurrentKey] = useState();
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -43,7 +44,7 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                         <TouchableOpacity onPress={() => {
                             handleDeleteNotif(notification);
                         }}>
-                            <AntDesign name="delete" size={22} color={Variables.bai}/>
+                            <AntDesign name="delete" size={22} color={colors.default_dark}/>
                         </TouchableOpacity>
                         
                     </View>
@@ -77,6 +78,70 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
         setNotifications([]);
     }
 
+    const styles = StyleSheet.create({
+        card: {
+          backgroundColor: "whitesmoke",
+          height: "90%",
+          //flexDirection: "row wrap"
+        },
+        background: {
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          justifyContent: "flex-end",
+          height: "100%",
+        },
+        buttonContainer:{
+          display: "flex",
+          flexDirection: "column",
+          alignSelf: "center",
+          width: "70%",
+          justifyContent: "space-around",
+          marginTop: 5,
+          marginBottom: 10
+        },
+        titleContainer:{
+            marginLeft: 20,
+            width: "100%"
+        },
+        title:{
+            fontSize: 18,
+            paddingBottom: 5,
+            color: colors.default_dark,
+        },
+        closeButton:{
+            paddingTop: 5,
+            paddingRight: 10,
+            textAlign: "right"
+        },
+        badgeNotif: {
+            padding: 8,
+            textAlign: "center",
+            paddingLeft: 40,
+            paddingRight: 40,
+            borderRadius: 5,
+            backgroundColor: colors.quaternary,
+        },
+        containerBadgeNotif: {
+            width: "50%",
+            margin: 5,
+            alignSelf: "center",
+        },
+        containerNotifIcon: {
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around"
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    });
+
     return (
         <>
             <DateTimePicker
@@ -99,7 +164,7 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                         <TouchableOpacity onPress={() => {
                                     setModalVisible(!modalVisible)
                                 }}>
-                            <AntDesign name="close" size={22} color={Variables.bai} style={styles.closeButton}/>
+                            <AntDesign name="close" size={22} color={colors.default_dark} style={styles.closeButton}/>
                         </TouchableOpacity>
                         <View style={styles.titleContainer}>
                             <Text style={[styles.title, styles.textFontBold]}>Notifications</Text>
@@ -150,68 +215,5 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
         </>
     );
 };
-const styles = StyleSheet.create({
-    card: {
-      backgroundColor: "whitesmoke",
-      height: "90%",
-      //flexDirection: "row wrap"
-    },
-    background: {
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-      justifyContent: "flex-end",
-      height: "100%",
-    },
-    buttonContainer:{
-      display: "flex",
-      flexDirection: "column",
-      alignSelf: "center",
-      width: "70%",
-      justifyContent: "space-around",
-      marginTop: 5,
-      marginBottom: 10
-    },
-    titleContainer:{
-        marginLeft: 20,
-        width: "100%"
-    },
-    title:{
-        fontSize: 18,
-        paddingBottom: 5,
-        color: Variables.bai,
-    },
-    closeButton:{
-        paddingTop: 5,
-        paddingRight: 10,
-        textAlign: "right"
-    },
-    badgeNotif: {
-        padding: 8,
-        textAlign: "center",
-        paddingLeft: 40,
-        paddingRight: 40,
-        borderRadius: 5,
-        backgroundColor: Variables.rouan,
-    },
-    containerBadgeNotif: {
-        width: "50%",
-        margin: 5,
-        alignSelf: "center",
-    },
-    containerNotifIcon: {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-around"
-    },
-    textFontRegular:{
-        fontFamily: Variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: Variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: Variables.fontBold
-    }
-});
 
 export default ModalNotifications;

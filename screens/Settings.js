@@ -1,7 +1,6 @@
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Linking } from "react-native";
 import React, { useContext, useEffect, useState } from 'react';
 import Back from "../components/Back";
-import Variables from "../components/styles/Variables";
 import LogoutModal from "../components/Modals/ModalLogout";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -9,21 +8,147 @@ import Constants from 'expo-constants';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
-import variables from "../components/styles/Variables";
 import ModalVerif from "../components/Modals/ModalVerif";
+import { ThemeContext } from '../providers/ThemeProvider';
+import { Divider, IconButton, useTheme } from 'react-native-paper';
+import TopTab from "../components/TopTab";
+import { LinearGradient } from "expo-linear-gradient";
+import ModalValidation from "../components/Modals/ModalValidation";
+import ModalSubMenuAvatarPickerActions from "../components/Modals/ModalSubMenuAvatarPicker";
+import * as ImagePicker from 'expo-image-picker';
+import ImageUtils from "../utils/ImageUtils";
+import AuthService from "../services/AuthService";
+import LoggerService from "../services/LoggerService";
+import Toast from "react-native-toast-message";
+import FileStorageService from "../services/FileStorageService";
+import ModalModificationName from "../components/Modals/User/ModalModificationName";
+import ModalModificationPassword from "../components/Modals/User/ModalModificationPassword";
+import TopTabSecondary from "../components/TopTabSecondary";
 
 const SettingsScreen = ({ }) => {
     const navigation = useNavigation();
+    const [messages, setMessages] = useState({message1: "Mon", message2: "Profil"});
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVerifDeleteAccountVisible, setModalVerifDeleteAccountVisible] = useState(false);
-    const { currentUser, deleteAccount } = useAuth();
+    const [modalSubMenuAvatarPickerVisible, setModalSubMenuAvatarPickerVisible] = useState(false);
+    const [modalModificationPasswordVisible, setModalModificationPasswordVisible] = useState(false);
+    const [modalModificationNameVisible, setModalModificationNameVisible] = useState(false);
+    const { currentUser, deleteAccount, logout, updatePhotoURL } = useAuth();
+    const { isDarkTheme, toggleTheme } = useContext(ThemeContext);
+    const { colors, fonts } = useTheme();
+    const imageUtils = new ImageUtils();
+    var previousImage = currentUser.photoURL;
+    const authService = new AuthService();
+    const fileStorageService = new FileStorageService();
+
+    const getExitIcon = () => {
+        return (
+            <IconButton
+                icon="logout"
+                iconColor={colors.accent}
+                size={30}
+            />
+        )
+    }
+
+    const sendEmail = () => {
+        const url = `mailto:contact.vascoandco@gmail.com`;
+        Linking.openURL(url).catch(err => LoggerService.log('Error opening email app', err.message));
+    };
+
+    const disconnect = async () => {
+        navigation.navigate("Loading");
+        await logout();
+    };
+
+    // Fonction pour ouvrir l'appareil photo
+    const takePhotoAsync = async () => {
+        // Demande la permission d'utiliser l'appareil photo
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Désolé, nous avons besoin des permissions de caméra pour faire cela!');
+            return;
+        }
+
+        let result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            quality: 1,
+            base64: true
+        });
+
+        Toast.show({
+            type: "info",
+            position: "top",
+            text1: "Modification en cours..."
+        });
+
+        if (!result.canceled) {
+            var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
+
+            if( uriImageCompressed !== previousImage ){
+                await saveNewPhoto(uriImageCompressed);
+                handleUserModified();
+            }
+            
+        }
+
+        setModalSubMenuAvatarPickerVisible(false);
+    };
+
+    const pickImageAsync = async () => {
+        // Demande la permission d'utiliser la lib photo
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert("Désolé, nous avons besoin des permissions d'accès à la librairie photo!");
+          return;
+        }
+    
+        let result = await ImagePicker.launchImageLibraryAsync({
+          allowsEditing: true,
+          quality: 1,
+          base64: true
+        });
+
+        Toast.show({
+            type: "info",
+            position: "top",
+            text1: "Modification en cours..."
+        });
+
+        if (!result.canceled) {
+            var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
+
+            if( uriImageCompressed !== previousImage ){
+                await saveNewPhoto(uriImageCompressed);
+                handleUserModified();
+            }
+        }
+
+        setModalSubMenuAvatarPickerVisible(false);
+    };
+
+    const saveNewPhoto = async (uriImage) => {
+        var filename = uriImage.split("/");
+        filename = filename[filename.length-1];
+        var fileURL = await fileStorageService.uploadFile(uriImage, filename, "image/jpeg", currentUser.uid);
+
+        await updatePhotoURL(fileURL);
+    }
+
+    const handleUserModified = () => {
+        setTimeout(() =>Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Modification de vos informations réussie"
+        }), 350); 
+    }
+
 
     const styles = StyleSheet.create({
         card:{
             paddingBottom: 30,
             alignItems: "center",
-            backgroundColor: Variables.blanc,
+            backgroundColor: colors.background,
             justifyContent: "center",
             width: "90%",
             borderRadius: 10,
@@ -36,14 +161,11 @@ const SettingsScreen = ({ }) => {
             shadowOffset: {width: 0, height: 2}
         },
         settings:{
-            backgroundColor: Variables.default,
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
         },
         title:{
             fontSize: 25,
-            marginTop: 30,
         },
         email:{
             marginBottom: 20
@@ -62,10 +184,6 @@ const SettingsScreen = ({ }) => {
             zIndex: 1,
             backgroundColor: "white"
         },
-        contentContainer: {
-            height: "100%",
-            marginTop: Constants.statusBarHeight + 10,
-        },
         button: {
             width: "70%",
             alignItems: "center",
@@ -74,84 +192,213 @@ const SettingsScreen = ({ }) => {
             borderRadius: 5
         },
         buttonNormal: {
-            backgroundColor: Variables.default,
+            backgroundColor: colors.onSurface,
         },
         buttonPremium:{
-            backgroundColor: Variables.bai_cerise,
+            backgroundColor: colors.error,
         },
         buttonDisconnect:{
-            backgroundColor: Variables.aubere,
+            backgroundColor: colors.tertiary,
         },
         textFontMedium:{
-            fontFamily: Variables.fontMedium
+            fontFamily: fonts.bodyMedium.fontFamily
         },
         textFontRegular:{
-            fontFamily: Variables.fontRegular
+            fontFamily: fonts.default.fontFamily
         },
         textFontBold:{
-            fontFamily: Variables.fontBold
+            fontFamily: fonts.bodyLarge.fontFamily
+        },
+        informationsUserContainer:{
+            alignItems: "center"
+        },
+        buttonEditUserImage:{
+            height: 30, 
+            width: 30, 
+            backgroundColor: colors.accent, 
+            zIndex:1, 
+            alignItems: "center", 
+            justifyContent: "center", 
+            borderRadius: 30, 
+            marginLeft: 70
+        },
+        titleContainer:{
+            color: colors.quaternary,
+            marginLeft: 20, 
+            fontFamily: fonts.labelMedium.fontFamily, 
+            fontSize: 16, 
+            paddingVertical: 10
         }
     });
 
     return (
-        <View style={{backgroundColor: Variables.default,}}>
+        <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
+            <TopTabSecondary
+                message1={"Mon"}
+                message2={"Compte"}
+            />
             <View style={styles.contentContainer}>
-                <LogoutModal
-                    modalVisible={modalVisible}
-                    setModalVisible={setModalVisible}
-                    navigation={navigation}
-                />
-                <ModalVerif
-                    event={() =>deleteAccount(navigation)}
-                    message={"Êtes-vous sûr de vouloir supprimer votre compte ?"}
-                    modalVisible={modalVerifDeleteAccountVisible}
-                    setModalVisible={setModalVerifDeleteAccountVisible}
-                />
-                <Back/>
-                <View style={styles.settings}>
-                    {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
-                        <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk" />
-                    :
-                        <View style={[styles.avatar, {alignItems: "center", justifyContent: "center"}]}>
-                            <FontAwesome5 size={40}  name="user-alt" />
+                <View>
+                    <ModalValidation
+                        displayedText={"Êtes-vous sûr de vouloir vous déconnecter ?"}
+                        title={"Demande de déconnexion"}
+                        visible={modalVisible}
+                        setVisible={setModalVisible}
+                        onConfirm={disconnect}
+                    />
+                    <ModalValidation
+                        displayedText={"Êtes-vous sûr de vouloir supprimer votre compte ?"}
+                        title={"Demande de suppression de compte"}
+                        visible={modalVerifDeleteAccountVisible}
+                        onConfirm={() => deleteAccount(navigation)}
+                        setVisible={setModalVerifDeleteAccountVisible}
+                    />
+                   <ModalSubMenuAvatarPickerActions
+                        modalVisible={modalSubMenuAvatarPickerVisible}
+                        setModalVisible={setModalSubMenuAvatarPickerVisible}
+                        handleCameraPick={takePhotoAsync}
+                        handleLibraryPick={pickImageAsync}
+                   />
+                   <ModalModificationName
+                        isVisible={modalModificationNameVisible}
+                        setVisible={setModalModificationNameVisible}
+                        onModify={handleUserModified}
+                   />
+                   <ModalModificationPassword
+                        isVisible={modalModificationPasswordVisible}
+                        setVisible={setModalModificationPasswordVisible}
+                        onModify={handleUserModified}
+                   />
+                    <View style={styles.settings}>
+                        <View style={styles.informationsUserContainer}>
+                            {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
+                                <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk" />
+                            :
+                                <View style={[styles.avatar, {alignItems: "center", justifyContent: "center"}]}>
+                                    <FontAwesome5 size={40}  name="user-alt" />
+                                </View>
+                                
+                            }
+                            <TouchableOpacity style={styles.buttonEditUserImage} onPress={() => setModalSubMenuAvatarPickerVisible(!modalSubMenuAvatarPickerVisible)}>
+                                <IconButton
+                                    icon="pencil"
+                                    size={20}
+                                    iconColor={colors.background}
+                                />
+                            </TouchableOpacity>
+                            
+                            <Text style={[styles.title, styles.textFontBold]}>{currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName}</Text>
+                            <Text style={[styles.email, styles.textFontRegular]}>{currentUser.email}</Text>
                         </View>
                         
-                    }
-                    
-                    <View style={styles.card}>
-                        <Text style={[styles.title, styles.textFontBold]}>{currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName}</Text>
-                        <Text style={[styles.email, styles.textFontRegular]}>{currentUser.email}</Text>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Account")}>
-                            <Text style={styles.textFontMedium}>Mon compte</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Wish")} >
-                            <Text style={styles.textFontMedium}>Ma whishlist</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Contact")}>
-                            <Text style={[styles.textFontMedium]}>Mes contacts</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Note")} >
-                            <Text style={[styles.textFontMedium]}>Mes notes</Text>
-                        </TouchableOpacity>
-                        {/* <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={[{color: Variables.rouan}, styles.textFontMedium]}>Ma structure</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
-                            <Text style={[{color: Variables.rouan}, styles.textFontMedium]}>Thèmes</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => navigation.navigate("DiscoverPremium")}>
-                            <Text style={[{color: Variables.blanc}, styles.textFontMedium]}>Découvrir l'offre premium</Text>
-                        </TouchableOpacity> */}
-                        <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVisible(!modalVisible)}>
-                            <Text style={styles.textFontMedium}>Déconnexion</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => setModalVerifDeleteAccountVisible(!modalVerifDeleteAccountVisible)}>
-                            <Text style={styles.textFontMedium}>Supprimer mon compte</Text>
-                        </TouchableOpacity>
+                        <View>
+                            <Text style={styles.titleContainer}>Paramètres</Text>
+                            <View style={{backgroundColor: colors.background}}>
+                                <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => setModalModificationPasswordVisible(!modalModificationPasswordVisible)}>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="key" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Changer mon mot de passe</Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
+                                    </View>
+                                </TouchableOpacity>
+                                <Divider />
+                                {/* <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}}>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="email" iconColor={colors.defaultDark} size={20} />
+                                        <Text>Changer mon mail</Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="chevron-right" iconColor={colors.defaultDark} size={20} />
+                                    </View>
+                                </TouchableOpacity>
+                                <Divider /> */}
+                                <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => setModalModificationNameVisible(!modalModificationNameVisible)}>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="card-account-details" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Changer mon nom</Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View>
+                            <Text style={styles.titleContainer}>Informations</Text>
+                            <View style={{backgroundColor: colors.background}}>
+                                <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => navigation.navigate("DiscoverPremium")}>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="cellphone" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Gérer mon abonnement</Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
+                                    </View>
+                                </TouchableOpacity>
+                                <Divider />
+                                <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => sendEmail()}>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="help-circle" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Support utilisateur</Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
+                                    </View>
+                                </TouchableOpacity>
+                                <Divider />
+                                <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => setModalVerifDeleteAccountVisible(!modalVerifDeleteAccountVisible)}>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="account-remove" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Supprimer mon compte</Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
+                                    </View>
+                                </TouchableOpacity>
+                                <Divider />
+                                <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => setModalVisible(!modalVisible)}>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="logout" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16}]}>Déconnexion</Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+
+                        {/* <View style={styles.card}>
+                            
+                            
+                            <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={() => navigation.navigate("Account")}>
+                                <Text style={styles.textFontMedium}>Mon compte</Text>
+                            </TouchableOpacity>
+                            {/* <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={toggleTheme}>
+                                <Text style={[styles.textFontMedium]}>Passer en mode {isDarkTheme ? 'clair' : 'sombre'}</Text>
+                            </TouchableOpacity> 
+                             <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                                <Text style={[{color: colors.quaternary}, styles.textFontMedium]}>Ma structure</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.button, styles.buttonNormal]}>
+                                <Text style={[{color: colors.quaternary}, styles.textFontMedium]}>Thèmes</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => navigation.navigate("DiscoverPremium")}>
+                                <Text style={[{color: colors.background}, styles.textFontMedium]}>Découvrir l'offre premium</Text>
+                            </TouchableOpacity> 
+                            <TouchableOpacity style={[styles.button, styles.buttonDisconnect]} onPress={() => setModalVisible(!modalVisible)}>
+                                <Text style={styles.textFontMedium}>Déconnexion</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.button, styles.buttonPremium]} onPress={() => setModalVerifDeleteAccountVisible(!modalVerifDeleteAccountVisible)}>
+                                <Text style={styles.textFontMedium}>Supprimer mon compte</Text>
+                            </TouchableOpacity>
+                        </View> */}
                     </View>
                 </View>
             </View>
-        </View>
+        </LinearGradient>
       );
 };
 

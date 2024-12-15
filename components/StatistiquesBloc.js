@@ -1,22 +1,79 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather } from '@expo/vector-icons';
-import variables from "./styles/Variables";
 import { TouchableOpacity } from "react-native";
 import OfferInformations from './OfferInformations';
+import { useTheme } from 'react-native-paper';
 
 const StatistiquesBloc = () =>{
+    const { colors, fonts } = useTheme();
     const [itemStatistique, setItemStatistique] = useState("depense");
 
     const onItemStatistiqueChange = (value) => {
         setItemStatistique(value);
     }
 
+    const styles = StyleSheet.create({
+        statistiquesContainer:{
+            marginTop: 10,
+            justifyContent: "center",
+        },
+        bottomBar: {
+            width: '100%',
+            height: 0.4, // ou la hauteur que vous souhaitez pour votre barre
+            backgroundColor: colors.text,
+        },
+        composantContainer:{
+            marginTop: 10,
+            marginLeft: 10,
+            marginRight: 10,
+            width: "90%",
+            alignSelf: "center"
+        },
+        headerContainer:{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            marginLeft: 20,
+            marginBottom: 10,
+        },
+        title:{
+            color: colors.quaternary,
+            marginLeft: 10,
+        },
+        statistiqueIndicatorContainer:{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-around",
+        },
+        itemIndicatorStatistique:{
+            padding: 5,
+            borderTopRightRadius: 10,
+            borderTopLeftRadius: 10,
+            paddingHorizontal: 10,
+        },
+        itemIconDefault:{
+            color: colors.quaternary,
+        },
+        itemIconSelected:{
+            color: colors.default_dark,
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        textFontBold:{
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    });
+
     return (
         <>
             <View style={styles.composantContainer}>
                 <ScrollView contentContainerStyle={{paddingBottom: 30}}>
-                <Text style={[{textAlign: "center", color: variables.bai, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text>
+                {/* <Text style={[{textAlign: "center", color: colors.default_dark, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Statistiques</Text> */}
                 
 
                 {/* <View style={styles.statistiqueIndicatorContainer}>
@@ -53,61 +110,5 @@ const StatistiquesBloc = () =>{
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    statistiquesContainer:{
-        marginTop: 10,
-        justifyContent: "center",
-    },
-    bottomBar: {
-        width: '100%',
-        height: 0.4, // ou la hauteur que vous souhaitez pour votre barre
-        backgroundColor: variables.bai_brun,
-    },
-    composantContainer:{
-        marginTop: 10,
-        marginLeft: 10,
-        marginRight: 10,
-        width: "90%",
-        alignSelf: "center"
-    },
-    headerContainer:{
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        marginLeft: 20,
-        marginBottom: 10,
-    },
-    title:{
-        color: variables.isabelle,
-        marginLeft: 10,
-    },
-    statistiqueIndicatorContainer:{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-around",
-    },
-    itemIndicatorStatistique:{
-        padding: 5,
-        borderTopRightRadius: 10,
-        borderTopLeftRadius: 10,
-        paddingHorizontal: 10,
-    },
-    itemIconDefault:{
-        color: variables.rouan,
-    },
-    itemIconSelected:{
-        color: variables.bai,
-    },
-    textFontRegular:{
-        fontFamily: variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: variables.fontMedium
-    },
-    textFontBold:{
-        fontFamily: variables.fontBold
-    }
-});
 
 export default StatistiquesBloc;

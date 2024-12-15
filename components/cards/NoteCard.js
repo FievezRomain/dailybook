@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import variables from '../styles/Variables';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 import ModalSubMenuNoteActions from '../Modals/ModalSubMenuNoteActions';
 import ModalNote from "../Modals/ModalNote";
 import Toast from "react-native-toast-message";
-import NoteService from '../../services/NoteService';
+import notesServiceInstance from '../../services/NoteService';
 import LoggerService from '../../services/LoggerService';
 import HTMLView from 'react-native-htmlview';
+import { useTheme } from 'react-native-paper';
+import ModalValidation from '../Modals/ModalValidation';
 
 const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
+    const { colors, fonts } = useTheme();
     const [focus, setFocus] = useState(false);
     const [modalSubMenuNoteVisible, setModalSubMenuNoteVisible] = useState(false);
     const [modalNote, setModaleNote] = useState(false);
-    const noteService = new NoteService();
+    const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
-    const handleDelete = () => {
+    const handleDelete = () =>{
+        setModalValidationDeleteVisible(true);
+    }
+
+    const confirmDelete = () => {
         let data = {};
         data["id"] = note.id;
-        noteService.delete(data)
+        notesServiceInstance.delete(data)
             .then((reponse) => {
                 Toast.show({
                     type: "success",
@@ -61,6 +67,52 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
         return trimmedText.length >= length ? `${trimmedText}...` : trimmedText;
     };
 
+    const htmlStyles = StyleSheet.create({
+        p: {
+            fontSize: 14,
+            color: '#333',
+        },
+        a: {
+            fontWeight: 'bold',
+            color: '#00f',
+        },
+    });
+    
+    const styles = StyleSheet.create({
+        card: {
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            marginBottom: 10,
+            shadowColor: "black",
+            shadowOpacity: 0.1,
+            elevation: 1,
+            shadowOffset: { width: 0, height: 1 },
+            padding: 5
+        },
+        header: {
+            flexDirection: "row",
+            backgroundColor: colors.quaternary,
+            padding: 10,
+            justifyContent: "space-between",
+            borderTopEndRadius: 5,
+            borderTopStartRadius: 5
+        },
+        icons: {
+            flexDirection: "row"
+        },
+        content: {
+            flexDirection: "row",
+            backgroundColor: colors.background,
+            padding: 5,
+            borderBottomEndRadius: 5,
+            borderBottomStartRadius: 5
+        },
+        textFontBold: {
+            fontFamily: fonts.bodyLarge.fontFamily
+        }
+    });
+
     return (
         <>
             <ModalSubMenuNoteActions
@@ -77,17 +129,24 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
                 note={note}
                 onModify={onModify}
             />
+            <ModalValidation
+                displayedText={"Êtes-vous sûr de vouloir supprimer la note ?"}
+                onConfirm={confirmDelete}
+                setVisible={setModalValidationDeleteVisible}
+                visible={modalValidationDeleteVisible}
+                title={"Suppression d'une note"}
+            />
             <TouchableOpacity style={styles.card} onPress={() => setFocus(!focus)}>
                 <View style={styles.header}>
                     <Text style={styles.textFontBold}>{note.titre}</Text>
                     <View style={styles.icons}>
                         {focus ? (
-                            <Ionicons name='chevron-up-circle' size={20} color={variables.aubere} />
+                            <Ionicons name='chevron-up' size={20} color={colors.default_dark} />
                         ) : (
-                            <Ionicons name='chevron-down-circle' size={20} color={variables.bai} />
+                            <Ionicons name='chevron-down' size={20} color={colors.default_dark} />
                         )}
                         <TouchableOpacity onPress={onPressOptions}>
-                            <Entypo name='dots-three-horizontal' size={20} color={focus ? variables.aubere : variables.bai} style={{ marginLeft: 10 }} />
+                            <Entypo name='dots-three-horizontal' size={20} color={focus ? colors.default_dark : colors.default_dark} style={{ marginLeft: 10 }} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -110,51 +169,5 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
         </>
     );
 };
-
-const htmlStyles = StyleSheet.create({
-    p: {
-        fontSize: 14,
-        color: '#333',
-    },
-    a: {
-        fontWeight: 'bold',
-        color: '#00f',
-    },
-});
-
-const styles = StyleSheet.create({
-    card: {
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        marginBottom: 10,
-        shadowColor: "black",
-        shadowOpacity: 0.1,
-        elevation: 1,
-        shadowOffset: { width: 0, height: 1 },
-        padding: 5
-    },
-    header: {
-        flexDirection: "row",
-        backgroundColor: variables.rouan,
-        padding: 10,
-        justifyContent: "space-between",
-        borderTopEndRadius: 5,
-        borderTopStartRadius: 5
-    },
-    icons: {
-        flexDirection: "row"
-    },
-    content: {
-        flexDirection: "row",
-        backgroundColor: variables.blanc,
-        padding: 5,
-        borderBottomEndRadius: 5,
-        borderBottomStartRadius: 5
-    },
-    textFontBold: {
-        fontFamily: variables.fontBold
-    }
-});
 
 export default NoteCard;

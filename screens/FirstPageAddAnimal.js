@@ -1,18 +1,37 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
-import variables from '../components/styles/Variables';
 import Button from '../components/Button';
 import ModalAnimal from '../components/Modals/ModalAnimal';
 import wallpaper_first_add from "../assets/wallpaper_first_add_animal.jpg";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useTheme } from 'react-native-paper';
 
 const FirstPageAddAnimalScreen = ({ navigation })=> {
+    const { colors, fonts } = useTheme();
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const { currentUser } = useAuth();
 
     const handleCreatedAnimal = () =>{
         navigation.navigate("App");
     }
+
+    const styles = StyleSheet.create({
+        image: {
+            flex: 1,
+            height: "100%",
+            width: "100%",
+            resizeMode: "cover",
+            position: "absolute",
+            justifyContent: "center",
+            backgroundColor: colors.secondary,
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        },
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        }
+    });
 
     return(
         <>
@@ -41,23 +60,5 @@ const FirstPageAddAnimalScreen = ({ navigation })=> {
         </>
     )
 };
-
-const styles = StyleSheet.create({
-    image: {
-        flex: 1,
-        height: "100%",
-        width: "100%",
-        resizeMode: "cover",
-        position: "absolute",
-        justifyContent: "center",
-        backgroundColor: variables.gris,
-    },
-    textFontRegular:{
-        fontFamily: variables.fontRegular
-    },
-    textFontMedium:{
-        fontFamily: variables.fontMedium
-    }
-});
 
 module.exports = FirstPageAddAnimalScreen;
