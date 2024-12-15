@@ -64,7 +64,8 @@
     "react-native-swiper": "^1.6.0",
     "react-native-toast-message": "^2.1.6",
     "react-native-webview": "13.12.2",
-    "sanitize-html": "^2.13.0"
+    "sanitize-html": "^2.13.0",
+    "expo-localization": "~16.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0"
