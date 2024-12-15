@@ -83,7 +83,8 @@
           }
         }
       ],
-      "expo-tracking-transparency"
+      "expo-tracking-transparency",
+      "expo-localization"
     ]
   }
 }

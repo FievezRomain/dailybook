@@ -292,7 +292,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
 
       // Récupération du expo token pour gérer les notifications
-      data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
+      var expoToken = await AsyncStorage.getItem("userExpoToken");
+      var timezone = await AsyncStorage.getItem("userTimezone");
+      if(expoToken){
+        data.expotoken = JSON.parse(expoToken);
+      }
+      if(timezone){
+        data.timezone = JSON.parse(timezone);
+      }
       data.email = currentUser.email;
 
       if(actionType === "modify"){
