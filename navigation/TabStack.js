@@ -4,6 +4,7 @@ import { CommonActions } from '@react-navigation/native';
 import { BottomNavigation, IconButton, useTheme, Text as PaperText } from 'react-native-paper';
 import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, OtherScreen } from "../screens";
 import { View, StyleSheet, Text } from 'react-native';
+import Constants from 'expo-constants';
 
 const Tab = createBottomTabNavigator();
 
@@ -62,7 +63,7 @@ export default function TabStack() {
               );
             }}
             style={{
-              height: 80,
+              height: Constants.platform.ios ? 80 : 70,
               backgroundColor: colors.background,
               shadowColor: "#000",
               shadowOffset: { width: 0, height: -2 },
