@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image, FlatList } from 'react-native';
 import StatePicker from './StatePicker';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import EventCard from "./cards/EventCard";
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 import { useEvents } from '../providers/EventsProvider';
+import Toast from "react-native-toast-message";
 
 const MedicalBook = ({ animal, navigation }) => {
     const { colors, fonts } = useTheme();
@@ -21,7 +22,7 @@ const MedicalBook = ({ animal, navigation }) => {
 
     useEffect(() =>{
         getEvents();
-    }, [animal]);
+    }, [animal, events]);
     useEffect(() =>{
         const unsubscribe = navigation.addListener("focus", () => {
             getEvents();
@@ -64,6 +65,11 @@ const MedicalBook = ({ animal, navigation }) => {
 
     const handleEventChange = async () => {
         getEvents();
+        setTimeout(() => Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Modification d'un événement"
+        }), 350);
     }
 
     const styles = StyleSheet.create({
@@ -96,41 +102,26 @@ const MedicalBook = ({ animal, navigation }) => {
                     />
                 </View>
                 
-                <ScrollView contentContainerStyle={{ paddingBottom: 20, paddingTop:10, paddingLeft: 20, paddingRight: 20}}>
-                    {typeEvent === "Rendez-vous" ? 
-                        eventsRdv.length === 0 ?
-                            <ModalDefaultNoValue
-                                text={"Aucun rendez-vous pour cet animal"}
-                            />
-                        :
-                        eventsRdv.map((eventItem, index) => (
-                            <View style={styles.eventContainer} key={eventItem.id}>
-                                <EventCard
-                                    eventInfos={eventItem}
-                                    withSubMenu={true}
-                                    withDate={true}
-                                    handleEventsChange={handleEventChange}
-                                />
-                            </View>
-                        ))
-                    :
-                        eventsSoins.length === 0 ?
-                            <ModalDefaultNoValue
-                                text={"Aucun soin pour cet animal"}
-                            />
-                        :
-                        eventsSoins.map((eventItem, index) => (
-                            <View style={styles.eventContainer} key={eventItem.id}>
-                                <EventCard
-                                    eventInfos={eventItem}
-                                    withSubMenu={true}
-                                    withDate={true}
-                                    handleEventsChange={handleEventChange}
-                                />
-                            </View>
-                        ))
+                <FlatList
+                    data={typeEvent === "Rendez-vous" ? eventsRdv : eventsSoins}
+                    keyExtractor={(item) => item.id.toString()}
+                    ListEmptyComponent={
+                        <ModalDefaultNoValue
+                            text={typeEvent === "Rendez-vous" ? "Aucun rendez-vous pour cet animal" : "Aucun soin pour cet animal"}
+                        />
                     }
-                </ScrollView>
+                    renderItem={({ item }) => (
+                        <View style={styles.eventContainer}>
+                            <EventCard
+                                eventInfos={item}
+                                withSubMenu={true}
+                                withDate={true}
+                                handleEventsChange={handleEventChange}
+                            />
+                        </View>
+                    )}
+                    contentContainerStyle={{ paddingBottom: 20, paddingTop:10, paddingLeft: 20, paddingRight: 20 }}
+                />
             </View>
         </>
     );
