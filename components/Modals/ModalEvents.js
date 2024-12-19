@@ -21,6 +21,7 @@ import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
 import { useAnimaux } from "../../providers/AnimauxProvider";
 import { useEvents } from "../../providers/EventsProvider";
+import Constants from 'expo-constants';
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined, date=null}) => {
   const { colors, fonts } = useTheme();
@@ -1153,9 +1154,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       onChangeText={(text) => setValue("commentaire", text)}
                       defaultValue={getValues("commentaire")}
                       onFocus={(e) => {
-                        setTimeout(() => {
-                          scrollRef.current?.scrollToEnd({ animated: true });
-                        }, 100);
+                        if(Constants.platform.ios){
+                          setTimeout(() => {
+                            scrollRef.current?.scrollToEnd({ animated: true });
+                          }, 100);
+                        }
                       }}
                     />
                   </View>
