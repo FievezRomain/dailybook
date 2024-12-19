@@ -12,6 +12,7 @@ import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import DateUtils from '../../utils/DateUtils';
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from './ModalEditGeneric';
+import Constants from 'expo-constants';
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
     const { colors, fonts } = useTheme();
@@ -579,11 +580,13 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                 maxLength={2000}
                                 placeholder="Exemple : Ça s'est très bien passé"
                                 onFocus={(e) => {
-                                    // Scrolle vers l'élément lorsqu'il est cliqué
-                                    e.target?.measure((x, y, width, height, pageX, pageY) => {
-                                        const scrollOffset = Math.max(pageY - 100, 0);
-                                        scrollRef.current?.scrollToPosition(0, scrollOffset, true);
-                                    });
+                                    if(Constants.platform.ios){
+                                        // Scrolle vers l'élément lorsqu'il est cliqué
+                                        e.target?.measure((x, y, width, height, pageX, pageY) => {
+                                            const scrollOffset = Math.max(pageY - 100, 0);
+                                            scrollRef.current?.scrollToPosition(0, scrollOffset, true);
+                                        });
+                                    }
                                 }}
                                 onChangeText={(text) => handleInputChange('commentaire', text)}
                                 defaultValue={localEvent.commentaire}
