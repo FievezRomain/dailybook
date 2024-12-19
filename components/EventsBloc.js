@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import CompletionBar from './CompletionBar';
 import EventCard from './cards/EventCard';
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
@@ -206,60 +206,65 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
                     <FontAwesome name='check-circle' size={20} color={colors.default_dark} style={styles.icon} />
                     <Text style={[styles.title, styles.textFontBold]}>Tâches</Text>
                 </View>
-                {eventsExceeded.length !== 0 || eventsToday.length !== 0 ?
-                    <>
-                        <View>
-                            {(eventsExceeded.length !== 0 || eventsToday !== 0) &&
-                                <>
-                                    <View style={styles.containerCompletionBar}>
-                                        <CompletionBar
-                                            percentage={percentEventsDone}
-                                        />
-                                    </View>
-                                </>
-                            }
-                        </View>
-                        <View>
-                            <View>
-                                {eventsExceeded.map((eventItem, index) => (
-                                    <TouchableOpacity key={eventItem.id}>
-                                        <View style={styles.eventContainer}>
-                                            <EventCard
-                                                eventInfos={eventItem}
-                                                withSubMenu={true}
-                                                withState={true}
-                                                handleEventsChange={handleEventsChange}
-                                                typeEvent={"exceeded"}
-                                            />
-                                        </View>
-                                        <View style={styles.overdueIndicatorContainer}>
-                                            <Text style={[styles.overdueIndicator, styles.textFontRegular]}>{calculateOverdueDays(eventItem)} jour(s) retard</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                    
-                                ))}
+                <View>
+                    {(eventsExceeded.length !== 0 || eventsToday !== 0) &&
+                        <>
+                            <View style={styles.containerCompletionBar}>
+                                <CompletionBar
+                                    percentage={percentEventsDone}
+                                />
                             </View>
-                            {eventsToday.map((eventItem, index) => (
-                                <TouchableOpacity key={eventItem.id}>
+                        </>
+                    }
+                </View>
+                <View>
+                    <View>
+                        <FlatList
+                            data={eventsExceeded}
+                            keyExtractor={(item) => item.id.toString()}
+                            scrollEnabled={false}
+                            renderItem={({ item }) => (
+                                <TouchableOpacity>
                                     <View style={styles.eventContainer}>
                                         <EventCard
-                                            eventInfos={eventItem}
+                                            eventInfos={item}
                                             withSubMenu={true}
                                             withState={true}
-                                            typeEvent={"today"}
                                             handleEventsChange={handleEventsChange}
+                                            typeEvent={"exceeded"}
                                         />
                                     </View>
+                                    <View style={styles.overdueIndicatorContainer}>
+                                        <Text style={[styles.overdueIndicator, styles.textFontRegular]}>{calculateOverdueDays(item)} jour(s) retard</Text>
+                                    </View>
                                 </TouchableOpacity>
-                                
-                            ))}
-                        </View>
-                    </>
-                :
-                    <ModalDefaultNoValue
-                        text={"Vous n'avez aucun événement aujourd'hui"}
+                            )}
+                        />
+                    </View>
+                    <FlatList
+                        data={eventsToday}
+                        keyExtractor={(item) => item.id.toString()}
+                        scrollEnabled={false}
+                        ListEmptyComponent={
+                            <ModalDefaultNoValue
+                                text={"Vous n'avez aucun événement aujourd'hui"}
+                            />
+                        }
+                        renderItem={({ item }) => (
+                            <TouchableOpacity>
+                                <View style={styles.eventContainer}>
+                                    <EventCard
+                                        eventInfos={item}
+                                        withSubMenu={true}
+                                        withState={true}
+                                        typeEvent={"today"}
+                                        handleEventsChange={handleEventsChange}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        )}
                     />
-                }
+                </View>
                 
             </View>
 
@@ -269,24 +274,28 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
                     <Text style={[styles.title, styles.textFontBold]}>Événements à venir</Text>
                 </View>
                 <View>
-                    {eventsUpcoming.length !== 0 ?
-                        eventsUpcoming.map((eventItem, index) => (
-                            <View style={styles.eventContainer} key={eventItem.id}>
+                    <FlatList
+                        data={eventsUpcoming}
+                        keyExtractor={(item) => item.id.toString()}
+                        scrollEnabled={false}
+                        ListEmptyComponent={
+                            <ModalDefaultNoValue
+                                text={"Vous n'avez aucun événement à venir"}
+                            />
+                        }
+                        renderItem={({ item }) => (
+                            <View style={styles.eventContainer}>
                                 <View style={[styles.cardEventContainer]}>
                                     <EventCard
-                                        eventInfos={eventItem}
+                                        eventInfos={item}
                                         withSubMenu={true}
                                         withDate={true}
                                         handleEventsChange={handleEventsChange}
                                     />
                                 </View>
                             </View>
-                        ))
-                    :    
-                        <ModalDefaultNoValue
-                            text={"Vous n'avez aucun événement à venir"}
-                        />
-                    }
+                        )}
+                    />
                     
                 </View>
             </View>
