@@ -1,14 +1,17 @@
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from "expo-image";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import FileStorageService from "../services/FileStorageService";
 import { useTheme } from 'react-native-paper';
+import { PanGestureHandler } from "react-native-gesture-handler";
+import React, { useRef } from "react";
 
 const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined }) => {
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
     const { colors, fonts } = useTheme();
+    const flatListRef = useRef();
 
 
     const changeSelectedAnimals = (animal) => {
@@ -174,40 +177,46 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
     });
 
     return(
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} indicatorStyle="white" contentContainerStyle={styles.containerAnimaux}>
-            {animaux.map((animal, index) => {
-                return (
-                    <TouchableOpacity style={styles.containerAvatar} onPress={()=>changeSelectedAnimals(animal)} key={animal.id}>
-                        <View style={styles.containerAvatar}>
-                            { animal.image !== null ? 
-                            <LinearGradient
-                                colors={checkSelected(animal) ? [colors.accent, colors.tertiary] : ['transparent', 'transparent']}
-                                style={styles.containerWithGradient}
-                                start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
-                            >
-                                <View style={[styles.containerAvatarWithImage, checkSelected(animal) ? {backgroundColor: colors.background} : {backgroundColor: "transparent"}]}>
-                                    <Image style={[styles.avatar]} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
+        <FlatList
+            data={animaux}
+            ref={flatListRef}
+            key={(item) => item.id.toString()}
+            horizontal
+            nestedScrollEnabled={true} // Permet le scroll imbriqué
+    showsHorizontalScrollIndicator={false} // Masque la barre de scroll
+    keyboardShouldPersistTaps="handled" // Gère les taps quand le clavier est actif
+    contentContainerStyle={{ flexGrow: 1 }}
+            renderItem={({ item }) => (
+                <TouchableOpacity style={styles.containerAvatar} onPress={()=>changeSelectedAnimals(item)} key={item.id} onTouchStart={(e) => e.stopPropagation()}>
+                    <View style={styles.containerAvatar}>
+                        { item.image !== null ? 
+                        <LinearGradient
+                            colors={checkSelected(item) ? [colors.accent, colors.tertiary] : ['transparent', 'transparent']}
+                            style={styles.containerWithGradient}
+                            start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
+                        >
+                            <View style={[styles.containerAvatarWithImage, checkSelected(item) ? {backgroundColor: colors.background} : {backgroundColor: "transparent"}]}>
+                                <Image style={[styles.avatar]} source={{uri:  fileStorageService.getFileUrl( item.image, currentUser.uid ) }} cachePolicy="disk" />
+                            </View>
+                        </LinearGradient>
+                        :
+                        <LinearGradient
+                            colors={checkSelected(item) ? [colors.accent, colors.quaternary] : ['transparent', 'transparent']}
+                            style={styles.containerWithGradient}
+                            start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
+                        >
+                            <View style={[styles.containerAvatarWithoutImage, checkSelected(item) ? {backgroundColor: colors.background} : {backgroundColor: "transparent"}]}>
+                                <View style={[styles.avatar, checkSelected(item) ? {backgroundColor: colors.default_dark} : {backgroundColor: colors.quaternary}]}>
+                                    <Text style={[styles.avatarText, styles.textFontRegular]}>{item.nom[0]}</Text>
                                 </View>
-                            </LinearGradient>
-                            :
-                            <LinearGradient
-                                colors={checkSelected(animal) ? [colors.accent, colors.quaternary] : ['transparent', 'transparent']}
-                                style={styles.containerWithGradient}
-                                start={{ x: 0.2, y: 0 }} // Dégradé commence à gauche
-                            >
-                                <View style={[styles.containerAvatarWithoutImage, checkSelected(animal) ? {backgroundColor: colors.background} : {backgroundColor: "transparent"}]}>
-                                    <View style={[styles.avatar, checkSelected(animal) ? {backgroundColor: colors.default_dark} : {backgroundColor: colors.quaternary}]}>
-                                        <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>
-                                    </View>
-                                </View>
-                            </LinearGradient>
-                            }
-                            <Text style={[(checkSelected(animal) ? styles.selectedText : styles.defaultText), styles.textFontRegular]}>{truncateAnimalName(animal.nom)}</Text>
-                        </View>
-                    </TouchableOpacity>
-                );
-            })}
-        </ScrollView>
+                            </View>
+                        </LinearGradient>
+                        }
+                        <Text style={[(checkSelected(item) ? styles.selectedText : styles.defaultText), styles.textFontRegular]}>{truncateAnimalName(item.nom)}</Text>
+                    </View>
+                </TouchableOpacity>
+            )}
+        />
     );
     
 }
