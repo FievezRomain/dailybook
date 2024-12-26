@@ -2,8 +2,9 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
 import { BottomNavigation, IconButton, useTheme, Text as PaperText } from 'react-native-paper';
-import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, SettingsScreen } from "../screens";
+import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, OtherScreen } from "../screens";
 import { View, StyleSheet, Text } from 'react-native';
+import Constants from 'expo-constants';
 
 const Tab = createBottomTabNavigator();
 
@@ -38,15 +39,17 @@ export default function TabStack() {
             renderIcon={({ route, focused }) => {
               const { options } = descriptors[route.key];
               if (options.tabBarIcon) {
-                return options.tabBarIcon({
-                  focused,
-                  color: focused ? colors.secondaryContainer : colors.text,
-                  size: focused ? 28 : 24,
-                });
+                return (
+                  <View style={{marginTop: -5}}>
+                    {options.tabBarIcon && options.tabBarIcon({ focused,
+                      color: focused ? colors.secondaryContainer : colors.default_dark,
+                      size: focused ? 28 : 24, })}
+                  </View>
+                )
               }
               return null;
             }}
-            getLabelText={({ route }) => {
+            renderLabel={({ route, focused }) => {
               const { options } = descriptors[route.key];
               const label =
                 options.tabBarLabel !== undefined
@@ -54,13 +57,13 @@ export default function TabStack() {
                   : options.title || route.name;
   
               return (
-                <Text style={[styles.label, { color: colors.text }]}>
+                <Text style={[styles.label, { color: focused ? colors.accent : colors.default_dark, marginTop: -10 }]}>
                   {label}
                 </Text>
               );
             }}
             style={{
-              height: 80,
+              height: Constants.platform.ios ? 80 : 70,
               backgroundColor: colors.background,
               shadowColor: "#000",
               shadowOffset: { width: 0, height: -2 },
@@ -127,13 +130,13 @@ export default function TabStack() {
           }}
         />
         <Tab.Screen
-          name="Profil"
-          component={SettingsScreen}
+          name="Autre"
+          component={OtherScreen}
           options={{
-            tabBarLabel: 'Profil',
+            tabBarLabel: 'Autre',
             tabBarIcon: ({ color, size }) => (
               <View style={styles.iconContainer}>
-                <IconButton icon="account" iconColor={color} size={size} />
+                <IconButton icon="menu" iconColor={color} size={size} />
               </View>
             ),
           }}

@@ -13,7 +13,7 @@ const DiscoverPremiumScreen = ({ navigation }) => {
             <View style={{height: "100%", width: "90%", alignSelf: "center", display: "flex"}}>
                 <TopTabSecondary
                     message1={"Découvrez"}
-                    message2={"l'offre"}
+                    message2={"L'offre premium"}
                 />
                 <ScrollView contentContainerStyle={{paddingBottom: 30}}>
                     <OfferInformations

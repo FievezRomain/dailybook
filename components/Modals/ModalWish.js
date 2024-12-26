@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import AvatarPicker from "../AvatarPicker";
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import WishService from "../../services/WishService";
+import wishsServiceInstance from "../../services/WishService";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { Image } from "expo-image";
 import { ActivityIndicator } from "react-native";
@@ -18,7 +18,6 @@ import ModalEditGeneric from "./ModalEditGeneric";
 const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const wishService = new WishService();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [image, setImage] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -91,7 +90,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         }
 
         if(actionType === "modify"){
-            wishService.update(data)
+            wishsServiceInstance.update(data)
                 .then((reponse) =>{
                     resetValues();
                     closeModal();
@@ -110,7 +109,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 });
         }
         else{
-            wishService.create(data)
+            wishsServiceInstance.create(data)
                 .then((reponse) =>{
                     resetValues();
                     closeModal();
@@ -180,7 +179,8 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
-            paddingBottom: 10
+            paddingBottom: 15,
+            paddingTop: 5
         },
         bottomBar: {
             width: '100%',
@@ -231,10 +231,10 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
             borderWidth: 0.5,
             borderRadius: 5,
             zIndex: 1,
-            borderColor: colors.accent,
+            borderColor: colors.default_dark,
         },
         iconContainer:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
             padding: 10,
             borderRadius: 60,
             height: 110,
@@ -263,23 +263,20 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 <View style={styles.form}>
                     <View style={styles.containerActionsButtons}>
 
-                        <TouchableOpacity onPress={closeModal}>
+                        <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
-                        { actionType === "modify" && 
-                            <Text style={[styles.textFontBold]}>Modifier un souhait</Text>
-                        }
-                        { actionType === "create" && 
-                            <Text style={[styles.textFontBold]}>Créer un souhait</Text>
-                        }
-                        <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                        <View style={{width:"33.33%", alignItems: "center"}}>
+                            <Text style={[styles.textFontBold, {fontSize: 16}]}>Souhait</Text>
+                        </View>
+                        <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
-                                <ActivityIndicator size={10} color={colors.accent} />
+                                <ActivityIndicator size={10} color={colors.default_dark} />
                             :
                                 actionType === "modify" ?
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                                 :
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
                             }
                         </TouchableOpacity>
                     </View>
@@ -320,7 +317,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     <View style={styles.imageContainer}>
                                         <Image source={{uri: image}} style={styles.avatar} cachePolicy="disk"/>
                                         <TouchableOpacity onPress={() => deleteImage()}>
-                                            <Entypo name="circle-with-cross" size={25} color={colors.accent}/>
+                                            <Entypo name="circle-with-cross" size={25} color={colors.default_dark}/>
                                         </TouchableOpacity>
                                     </View>
                                 }
@@ -349,11 +346,11 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                                     defaultValue={getValues("destinataire")}
                                 />
                             </View>
-                            <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
+                           {/*  <View  style={{flexDirection:"row", justifyContent:"flex-end", marginTop: 150, alignItems: "flex-end"}}  >
                                 <View style={styles.iconContainer}>
                                     <FontAwesome name="heart" size={60} color={colors.background} style={{marginTop: 5}}/>
                                 </View>
-                            </View>
+                            </View> */}
                         </View>
                     </KeyboardAwareScrollView>
                 </View>

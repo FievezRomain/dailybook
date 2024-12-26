@@ -3,8 +3,8 @@ import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity,
 import React, { useState, useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import ModalAnimals from "./ModalSelectAnimals";
-import AnimalsService from "../../services/AnimalsService";
-import ObjectifService from "../../services/ObjectifService";
+import { useAnimaux } from "../../providers/AnimauxProvider";
+import objectifsServiceInstance from "../../services/ObjectifService";
 import ModalDropdwn from "./ModalDropdown";
 import Button from "../Button";
 import { AntDesign } from '@expo/vector-icons';
@@ -21,11 +21,9 @@ import ModalEditGeneric from "./ModalEditGeneric";
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const animalsService = new AnimalsService;
-    const objectifService = new ObjectifService;
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
-    const [animaux, setAnimaux] = useState([]);
+    const { animaux, setAnimaux } = useAnimaux();
     const [selected, setSelected] = useState([]);
     const [temporalityObjectif, setTemporalityObjectif] = useState(false);
     const [inputs, setInputs] = useState(['']);
@@ -39,21 +37,21 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
 
     useEffect(() => {
         if(isVisible){
-          getAnimals();
+          //getAnimals();
           initValuesEvent();
         }
     }, [isVisible]);
     
-    useEffect(() => {
+/*     useEffect(() => {
         initValuesEvent();
-    }, [animaux]);
+    }, [animaux]); */
 
-    const getAnimals = async () => {
+/*     const getAnimals = async () => {
   
         // Si aucun animal est déjà présent dans la liste, alors
         if(animaux.length == 0){
             // On récupère les animaux de l'utilisateur courant
-            var result = await animalsService.getAnimals(currentUser.email);
+            var result = await animalsServiceInstance.getAnimals(currentUser.email);
             // Si l'utilisateur a des animaux, alors
             if(result.length !== 0){
             // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
@@ -62,7 +60,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             }
         }
       
-    };
+    }; */
 
     const initValuesEvent = () => {
         setValue("id", objectif.id);
@@ -99,7 +97,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setValue("sousetapes", []);
         setValue("datedebut", new Date().toISOString().split('T')[0]);
         setValue("datefin", new Date().toISOString().split('T')[0]);
-        setAnimaux([]);
+        //setAnimaux([]);
     };
 
     const submitRegister = async(data) =>{
@@ -150,7 +148,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         if(complete === true){
             data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
             if(actionType === "modify"){
-                objectifService.update(data)
+                objectifsServiceInstance.update(data)
                     .then((reponse) =>{
 
                         onModify(reponse);
@@ -168,7 +166,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                     });
             }
             else{
-                objectifService.create(data)
+                objectifsServiceInstance.create(data)
                     .then((reponse) =>{
 
                         closeModal();
@@ -218,8 +216,8 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         if(date.includes("/")){
             date = dateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
         }
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateObject  = new Date(date);
+        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        var dateObject  = new Date(date);
         return String(dateObject.toLocaleDateString("fr-FR", options));
     };
 
@@ -255,6 +253,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             flexDirection: "row",
             justifyContent: "space-evenly",
             alignItems: "center",
+            paddingTop: 5,
             paddingBottom: 15
         },
         bottomBar: {
@@ -354,6 +353,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                 isVisible={isVisible}
                 setVisible={setVisible}
                 arrayHeight={["90%"]}
+                scrollInside={false}
             >
                 <ModalAnimals
                     modalVisible={modalAnimalVisible}
@@ -368,28 +368,27 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                     <View style={styles.form}>
                         <View style={styles.containerActionsButtons}>
 
-                            <TouchableOpacity onPress={closeModal}>
+                            <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                            { actionType === "modify" && 
-                                <Text style={[styles.textFontBold]}>Modifier un objectif</Text>
-                            }
-                            { actionType === "create" && 
-                                <Text style={[styles.textFontBold]}>Créer un objectif</Text>
-                            }
-                            <TouchableOpacity onPress={handleSubmit(submitRegister)}>
+                            <View style={{width:"33.33%", alignItems: "center"}}>
+                                <Text style={[styles.textFontBold, {fontSize: 16}]}>Objectif</Text>
+                            </View>
+                            <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 
-                                    <ActivityIndicator size={10} color={colors.accent} />
+                                    <ActivityIndicator size={10} color={colors.default_dark} />
                                 :
                                     actionType === "modify" ?
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Modifier</Text>
+                                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                                     :
-                                    <Text style={[{color: colors.accent}, styles.textFontRegular]}>Créer</Text>
+                                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
                                 }
                             </TouchableOpacity>
                         </View>
                         <Divider />
-                        <KeyboardAwareScrollView>
+                        <KeyboardAwareScrollView
+                            enableResetScrollToCoords={false}
+                        >
                             <View style={styles.formContainer}>
                                 <View style={styles.containerDate}>
                                     <Text style={[styles.textInput, styles.textFontRegular]}>Date de début : {convertDateToText("datedebut")} <Text style={{color: "red"}}>*</Text></Text>
@@ -456,7 +455,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                                 placeholder="Entrez une valeur"
                                             />
                                             <TouchableOpacity onPress={() => handleRemoveInput(index)}>
-                                                <AntDesign name="delete" size={20} color={colors.accent}/>
+                                                <AntDesign name="delete" size={20} color={colors.default_dark}/>
                                             </TouchableOpacity>
                                         </View>
                                     ))}

@@ -47,8 +47,8 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
           borderColor: 'white',
       },
       selectedAvatar:{
-          backgroundColor: colors.accent,
-          borderColor: colors.accent,
+          backgroundColor: colors.default_dark,
+          borderColor: colors.default_dark,
       },
       containerAnimaux:{
           display: "flex",
@@ -68,7 +68,7 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
           color: "white"
       },
       selectedText:{
-          color: colors.accent
+          color: colors.default_dark
       },
       textFontRegular:{
           fontFamily: fonts.default.fontFamily
@@ -86,17 +86,21 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
       <ModalEditGeneric
         isVisible={modalVisible}
         setVisible={setModalVisible}
+        scrollInside={false}
         arrayHeight={["25%"]}
       >
+        <View style={{paddingVertical: 5}}>
           <AnimalsPicker
-              setAnimaux={setAnimaux}
-              animaux={animaux}
-              mode="multiple"
-              selected={selected}
-              setSelected={setSelected}
-              setValue={setValue}
-              valueName={valueName}
+            setAnimaux={setAnimaux}
+            animaux={animaux}
+            mode="multiple"
+            selected={selected}
+            setSelected={setSelected}
+            setValue={setValue}
+            valueName={valueName}
           />
+        </View>
+          
           <View style={styles.buttonContainer}>
               <Button
               disabled={false}

@@ -5,7 +5,6 @@ import { Calendar, CalendarUtils, LocaleConfig } from 'react-native-calendars';
 import { ScrollView } from "react-native";
 import moment from "moment";
 import EventCard from "../components/cards/EventCard";
-import EventService from "../services/EventService";
 import DateUtils from "../utils/DateUtils";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -19,20 +18,22 @@ import ModalFilterCalendar from "../components/Modals/ModalFilterCalendar";
 import { CalendarFilter } from "../business/models/CalendarFilter";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
+import { useCalendar } from "../providers/CalendarProvider";
+import { useEvents } from "../providers/EventsProvider";
 
 const CalendarScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({ message1: "Mon", message2: "calendrier" });
-  const eventService = new EventService();
   const dateUtils = new DateUtils();
-  const [eventArray, setEventArray] = useState([]);
-  const [eventArrayCurrentDateSelected, setEventArrayCurrentDateSelected] = useState([]);
+  const { events, setEvents } = useEvents();
+  const [eventsCurrentDateSelected, setEventsCurrentDateSelected] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
   const [marked, setMarked] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
   const [modalFilterVisible, setModalFilterVisible] = useState(false);
   const [filter, setFilter] = useState(null);
+  const { setDate } = useCalendar();
 
   const INITIAL_DATE = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(INITIAL_DATE);
@@ -53,38 +54,46 @@ const CalendarScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       setMessages({ message1: "Mon", message2: "Calendrier" });
-      getEventsForUser();
+      //getEventsForUser();
     }, [])
   );
 
   useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setDate(null);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     setupMarkedDates(true);
     changeEventsCurrentDateSelected(selectedDate);
-  }, [eventArray]);
+  }, [events]);
 
   useEffect(() => {
     applyFilter();
-  }, [filter, eventArray]);
+  }, [filter, events]);
 
   const applyFilter = () =>{
     if( filter ){
-      var result = filter.filter(eventArray);
+      var result = filter.filter(events);
       
       setFilteredEvents(result);
     }
   }
 
-  const getEventsForUser = async () => {
-    if (eventArray.length === 0) {
+  /* const getEventsForUser = async () => {
+    if (events.length === 0) {
       try {
         const result = await eventService.getEvents(currentUser.email);
-        setEventArray(result);
+        setEvents(result);
       } catch (error) {
         LoggerService.log( "Erreur lors de la récupération des events : " + error.message );
         console.error("Error fetching events:", error);
       }
     }
-  }
+  } */
 
   const setupMarkedDates = (isInit) => {
     //const newMarked = { ...marked };
@@ -114,7 +123,7 @@ const CalendarScreen = ({ navigation }) => {
       }
     };
     
-    eventArray.forEach((item) => {
+    events.forEach((item) => {
       const dateString = item.dateevent;
       treatmentItem(item, dateString);
 
@@ -160,7 +169,7 @@ const CalendarScreen = ({ navigation }) => {
       case "entrainement":
         return { color: colors.tertiary };
       case "concours":
-        return { color: colors.accent };
+        return { color: colors.primary };
       case "rdv":
         return { color: colors.text };
       case "soins":
@@ -175,8 +184,8 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const changeEventsCurrentDateSelected = (date) => {
-    const arrayFiltered = eventArray.filter(item => item.dateevent === date /* || (item.datefinsoins !== null && new Date(date) >= new Date(item.dateevent) && new Date(date) <= new Date(dateUtils.dateFormatter(item.datefinsoins, "dd/MM/yyyy", "/"))) */);
-    setEventArrayCurrentDateSelected(arrayFiltered);
+    const arrayFiltered = events.filter(item => item.dateevent === date /* || (item.datefinsoins !== null && new Date(date) >= new Date(item.dateevent) && new Date(date) <= new Date(dateUtils.dateFormatter(item.datefinsoins, "dd/MM/yyyy", "/"))) */);
+    setEventsCurrentDateSelected(arrayFiltered);
   }
 
   const convertDateToText = (date) => {
@@ -193,9 +202,13 @@ const CalendarScreen = ({ navigation }) => {
   }
 
   const onDayPress = (day) => {
+    // Mise à jour des hooks de l'écran
     setFilter(null);
     setSelectedDate(day);
     setSearchQuery("");
+
+    // Mise à jour du context de l'application
+    setDate(day);
 
     Object.entries(marked).forEach(([key, value]) => value.selected = false);
     const existingObj = marked[day];
@@ -224,9 +237,9 @@ const CalendarScreen = ({ navigation }) => {
       type: "success",
       position: "top",
       text1: "Modification d'un événement"
-    }), 300);
+    }), 350);
 
-    setEventArray(await eventService.getEvents(currentUser.email));
+    //setEvents(await eventService.getEvents(currentUser.email));
 
   }
 
@@ -275,7 +288,7 @@ const CalendarScreen = ({ navigation }) => {
     },
     selectedDateText: {
       textAlign: "center",
-      color: colors.accent
+      color: colors.default_dark
     },
     infosContainer: {
       display: "flex",
@@ -328,6 +341,9 @@ const CalendarScreen = ({ navigation }) => {
     },
     textFontMedium: {
       fontFamily: fonts.bodyMedium.fontFamily,
+    },
+    textFontBold:{
+      fontFamily: fonts.bodyLarge.fontFamily,
     }
   });
 
@@ -343,7 +359,7 @@ const CalendarScreen = ({ navigation }) => {
         <TopTab message1={messages.message1} message2={messages.message2} />
         <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
           <View style={{flexDirection: "row", alignItems: "center"}}>
-            <AntDesign name="search1" size={16} color={colors.accent}/>
+            <AntDesign name="search1" size={16} color={colors.default_dark}/>
 
             <TextInput
               placeholder="Recherche"
@@ -355,7 +371,7 @@ const CalendarScreen = ({ navigation }) => {
               <TouchableOpacity
                 onPress={() => deleteSearchText()}
               >
-                <AntDesign name="close" size={16} color={colors.accent}/>
+                <AntDesign name="close" size={16} color={colors.default_dark}/>
               </TouchableOpacity>
             }
             
@@ -364,9 +380,9 @@ const CalendarScreen = ({ navigation }) => {
             
             <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
               {filter ? 
-                <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.accent}/>
+                <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.default_dark}/>
               :
-                <Ionicons name="filter" size={20} color={colors.accent}/>
+                <Ionicons name="filter" size={20} color={colors.default_dark}/>
               }
             </TouchableOpacity>
           </View>
@@ -377,8 +393,8 @@ const CalendarScreen = ({ navigation }) => {
             style={[styles.calendar, styles.textFontRegular]}
             firstDay={1}
             theme={{
-              arrowColor: colors.neutral,
-              todayTextColor: colors.tertiary,
+              arrowColor: colors.quaternary,
+              todayTextColor: colors.accent,
               selectedDayTextColor: "white",
               selectedDayBackgroundColor: colors.text,
               calendarBackground: colors.background,
@@ -401,7 +417,7 @@ const CalendarScreen = ({ navigation }) => {
         </View>
             
           <FlatList
-            data={filter ? filteredEvents : eventArrayCurrentDateSelected}
+            data={filter ? filteredEvents : eventsCurrentDateSelected}
             keyExtractor={(item) => item.id.toString()}
             renderItem={({ item }) => (
               <EventCard

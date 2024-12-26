@@ -96,7 +96,7 @@ const RdvCard = ({eventInfos, animaux, setSubMenu}) => {
                                 var animal = getAnimalById(eventAnimal);
                                 return(
                                     <View key={animal.id} style={{marginRight: -3}}>
-                                        <View style={{height: 20, width: 20, backgroundColor: colors.accent, borderRadius: 10, justifyContent: "center"}}>
+                                        <View style={{height: 20, width: 20, backgroundColor: colors.default_dark, borderRadius: 10, justifyContent: "center"}}>
                                             { animal.image !== null ? 
                                                 <Image style={[styles.avatar]} source={{uri: fileStorageService.getFileUrl( animal.image, currentUser.uid )}} cachePolicy="disk" />
                                                 :
@@ -112,22 +112,22 @@ const RdvCard = ({eventInfos, animaux, setSubMenu}) => {
             <View style={styles.contentEventContainer}>
                 {isValidString(eventInfos.lieu) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.accent}, styles.textFontRegular]}>Lieu : </Text>{eventInfos.lieu}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Lieu : </Text>{eventInfos.lieu}</Text>
                     </View>
                 }
                 {isValidString(eventInfos.specialiste) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.accent}, styles.textFontRegular]}>Spécialiste : </Text>{eventInfos.specialiste}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Spécialiste : </Text>{eventInfos.specialiste}</Text>
                     </View>
                 }
                 {eventInfos.depense != null && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.accent}, styles.textFontRegular]}>Dépense : </Text>{eventInfos.depense} euros</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Dépense : </Text>{eventInfos.depense ? parseFloat(eventInfos.depense).toFixed(2) : eventInfos.depense} euros</Text>
                     </View>
                 }
                 {isValidString(eventInfos.commentaire) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.accent}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
                     </View>
                 }
             </View>

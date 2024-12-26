@@ -65,13 +65,13 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
             justifyContent: "center"
         },
         item:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
             borderRadius: 5,
             margin: 5,
             padding: 10,
         },
         selected:{
-            backgroundColor: colors.accent,
+            backgroundColor: colors.default_dark,
         },
         title:{
             color: "white"
@@ -100,7 +100,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
         <ModalEditGeneric
             isVisible={modalVisible}
             setVisible={setModalVisible}
-            arrayHeight={["30%"]}
+            arrayHeight={((event.eventtype === "soins" || event.eventtype === "balade") && event.idparent !== null && event.idparent !== undefined) ? ["35%"] : ["30%"]}
         >
                 <View style={styles.card}>
                     <Text style={styles.textFontRegular}>Gérer l'événement</Text>

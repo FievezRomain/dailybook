@@ -63,13 +63,13 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
         justifyContent: "center"
       },
       item:{
-        backgroundColor: colors.accent,
+        backgroundColor: colors.quaternary,
         borderRadius: 5,
         margin: 5,
         padding: 10,
       },
       selected:{
-        backgroundColor: colors.text,
+        backgroundColor: colors.accent,
       },
       title:{
         color: "white"

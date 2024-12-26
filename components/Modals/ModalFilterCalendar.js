@@ -1,19 +1,18 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import AnimalsService from "../../services/AnimalsService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import AnimalsPicker from "../AnimalsPicker";
 import { CalendarFilter } from "../../business/models/CalendarFilter";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
+import { useAnimaux } from "../../providers/AnimauxProvider";
 
 const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter}) =>{
     const { colors, fonts } = useTheme();
-    const [animaux, setAnimaux] = useState([]);
+    const { animaux } = useAnimaux();
     const [selectedAnimals, setSelectedAnimals] = useState([]);
     const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch } = useForm();
-    const animalsService = new AnimalsService;
     const { currentUser } = useAuth();
     const [selectedType, setSelectedType] = useState([]);
     const list = [
@@ -23,16 +22,16 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
         {title: "Rendez-vous", id: "rdv"},
         {title: "Soins", id: "soins"},
         {title: "Autre", id: "autre"},
-        {title: "Depense", id: "depense"},
+        {title: "Dépense", id: "depense"},
     ];
 
     useEffect(() => {
         if(modalVisible){
-          getAnimals();
+          //getAnimals();
         }
     }, [modalVisible]);
 
-    const getAnimals = async () => {
+    /* const getAnimals = async () => {
   
         // Si aucun animal est déjà présent dans la liste, alors
         if(animaux.length == 0){
@@ -46,7 +45,7 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
           }
         }
       
-    };
+    }; */
 
     const sendFilter = () => {
         if( selectedAnimals.length > 0 || selectedType.length > 0 ){
@@ -134,7 +133,7 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
             marginBottom: 20
         },
         item:{
-            backgroundColor: colors.neutral,
+            backgroundColor: colors.quaternary,
             borderRadius: 5,
             margin: 5,
             padding: 10,
@@ -181,14 +180,14 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
                 arrayHeight={["50%"]}
             >
                 <View style={styles.containerActionsButtons}>
-                    <TouchableOpacity onPress={() => setModalVisible(false)}>
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={{width:"33.33%", alignItems: "center"}}>
                         <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => reset()}>
-                        <Text style={[{color: colors.neutral}, styles.textFontRegular]}>Réinitialiser</Text>
+                    <TouchableOpacity onPress={() => reset()} style={{width:"33.33%", alignItems: "center"}}>
+                        <Text style={[{color: colors.quaternary}, styles.textFontRegular]}>Réinitialiser</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={sendFilter}>
-                        <Text style={[{color: colors.accent}, styles.textFontRegular]}>Appliquer</Text>
+                    <TouchableOpacity onPress={sendFilter} style={{width:"33.33%", alignItems: "center"}}>
+                        <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Appliquer</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={styles.bottomBar} />
@@ -198,7 +197,6 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
                         <View>
                             <Text style={[styles.textFontRegular, {paddingLeft: 10}]}>Animaux :</Text>
                             <AnimalsPicker
-                                setAnimaux={setAnimaux}
                                 animaux={animaux}
                                 mode="multiple"
                                 selected={selectedAnimals}

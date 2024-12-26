@@ -209,7 +209,7 @@ const SignUpScreen = ({ navigation })=> {
                                 },
                             })}
                         />
-                        {errors.prenom && <Text style={[styles.errorInput, styles.textFontRegular]}>Prenom obligatoire</Text>}
+                        {errors.prenom && <Text style={[styles.errorInput, styles.textFontRegular]}>Prénom obligatoire</Text>}
                         <Text style={[styles.textInput, styles.textFontRegular]}>Prénom :</Text>
                         <TextInput
                             style={[styles.input, , styles.textFontRegular]}

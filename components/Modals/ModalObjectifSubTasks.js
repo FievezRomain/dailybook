@@ -5,13 +5,12 @@ import { useForm } from "react-hook-form";
 import CheckboxInput from "../CheckboxInput";
 import CompletionBar from "../CompletionBar";
 import _ from 'lodash';
-import ObjectifService from "../../services/ObjectifService";
+import objectifsServiceInstance from "../../services/ObjectifService";
 import LoggerService from "../../services/LoggerService";
 import { useTheme } from 'react-native-paper';
 
 const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, objectif={}}) => {
     const { colors, fonts } = useTheme();
-    const objectifService = new ObjectifService();
     const [percentageObjectif, setPercentageObjectif] = useState(0);
     const [temporaryObjectif, setTemporaryObjectif] = useState(_.cloneDeep(objectif));
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
@@ -46,7 +45,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
 
     const submitRegister = async (data) => {
 
-        objectifService.updateTasks(data)
+        objectifsServiceInstance.updateTasks(data)
             .then((reponse) =>{
 
                 Toast.show({
@@ -180,7 +179,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                             </TouchableOpacity>
                                 <Text style={[styles.textFontBold]}>Gérer les étapes</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
-                                <Text style={[{color: colors.accent}, styles.textFontRegular]}>Enregistrer</Text>
+                                <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={styles.bottomBar} />
@@ -194,7 +193,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                                         percentage={percentageObjectif}
                                     />
                                 </View>
-                                <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.neutral }}>
+                                <ScrollView style={{ width: "100%" }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.quaternary }}>
                                     {temporaryObjectif.sousEtapes && temporaryObjectif.sousEtapes.map((item, index) => {
                                         return(
                                             <View key={item.id} style={styles.checkBoxContainer}>

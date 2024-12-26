@@ -2,9 +2,6 @@ import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from "react-nat
 import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import EventsBloc from "../components/EventsBloc";
-import WavyHeader from "../components/WavyHeader";
-import EventService from "../services/EventService";
-import ObjectifService from "../services/ObjectifService";
 import ObjectifsInProgressBloc from "../components/ObjectifsInProgressBloc";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -14,27 +11,27 @@ import { LinearGradient } from "expo-linear-gradient";
 import Button from "../components/Button";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
+import { useEvents } from "../providers/EventsProvider";
+import { useObjectifs } from "../providers/ObjectifsProvider";
 
 const WelcomeScreen = ({ navigation })=> {
   const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const [messages, setMessages] = useState({message1 :"Bienvenue", message2: ""});
-    const eventService = new EventService();
-    const objectifService = new ObjectifService();
-    const [events, setEvents] = useState([]);
-    const [objectifs, setObjectifs] = useState([]);
-
+    const { events } = useEvents();
+    const { objectifs, setObjectifs } = useObjectifs();
+          
     useFocusEffect(
       useCallback(() => {
           setMessages({message1: "Bienvenue", message2: currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName});
-          getEventsForUser();
-          getObjectifsForUser();
+          //getEventsForUser();
+          //getObjectifsForUser();
       }, [])
     );
 
-    const getEventsForUser = async () => {
+    /* const getEventsForUser = async () => {
       try {
-        const result = await eventService.getEvents(currentUser.email);
+        const result = await eventsServiceInstance.getEvents(currentUser.email);
         setEvents(result);
       } catch (error) {
         LoggerService.log( "Erreur lors de la récupération des events : " + error.message );
@@ -52,7 +49,7 @@ const WelcomeScreen = ({ navigation })=> {
         LoggerService.log( "Erreur lors de la récupération des objectifs : " + error.message );
         console.error("Error fetching objectifs:", error);
       }
-    }
+    } */
 
     const convertDateToText = () => {
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -63,9 +60,9 @@ const WelcomeScreen = ({ navigation })=> {
     };
 
     const convertDayDateToText = () => {
-      options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-      dateObject  = new Date();
-      dateText = String(dateObject.toLocaleDateString("fr-FR", options));
+      var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      var dateObject  = new Date();
+      var dateText = String(dateObject.toLocaleDateString("fr-FR", options));
       dateText = String(dateText.split(" ", 1));
       return dateText.charAt(0).toUpperCase() + dateText.slice(1);;
     };
@@ -76,13 +73,8 @@ const WelcomeScreen = ({ navigation })=> {
 
       var index = updatedObjectifs.findIndex((a) => a.id == objectif.id);
       updatedObjectifs[index] = objectif;
-      setObjectifs(updatedObjectifs);
+      //setObjectifs(updatedObjectifs);
 
-      setTimeout(() => Toast.show({
-        type: "success",
-        position: "top",
-        text1: "Modification d'un objectif"
-      }), 300);
     }
 
     const handleObjectifDelete = (objectif) => {
@@ -91,17 +83,12 @@ const WelcomeScreen = ({ navigation })=> {
 
       var index = updatedObjectifs.findIndex((a) => a.id == objectif.id);
       updatedObjectifs.splice(index, 1);
-      setObjectifs(updatedObjectifs);
+      //setObjectifs(updatedObjectifs);
     }
 
     const handleEventChange = async () => {
-      setEvents(await eventService.getEvents(currentUser.email));
+      //setEvents(await eventService.getEvents(currentUser.email));
 
-      setTimeout(() => Toast.show({
-        type: "success",
-        position: "top",
-        text1: "Modification d'un événement"
-      }), 300);
     }
 
     const styles = StyleSheet.create({
@@ -126,31 +113,25 @@ const WelcomeScreen = ({ navigation })=> {
       },
       summaryContainer:{
         marginTop: 15,
-        top: -5
+        marginLeft: 20
       },
       summary:{
-        color: colors.background,
-        textAlign: "center",
         fontSize: 20,
+        color: colors.default_dark
       },
     });
 
     return (
       <>
         <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.neutral }}>
+          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.quaternary }}>
             <View style={{flex: 1}}>
-              <Image
-                source={require('../assets/fond_accueil.png')}
-                style={{width: "100%", height: 700, position: "absolute"}}
-              />
-              
-              <TopTab message1={messages.message1} message2={messages.message2} withBackground={true}/>
+              <TopTab withBackground={false} withLogo={true}/>
               <View style={styles.summaryContainer}>
-                  <Text style={[styles.summary, {fontFamily: fonts.default.fontFamily}]}>{convertDayDateToText()}</Text>
-                  <Text style={[styles.summary, {fontFamily: fonts.bodyLarge.fontFamily}]}>{convertDateToText()}</Text>
+                  <Text style={[styles.summary, , {fontFamily: fonts.bodyMedium.fontFamily, marginBottom: 2}]}>{messages.message1} {messages.message2}</Text>
+                  <Text style={[styles.summary, {fontFamily: fonts.bodySmall.fontFamily}]}>{convertDayDateToText()} {convertDateToText()}</Text>
               </View>
-              <View style={{marginTop: 60, paddingBottom: 10}}>
+              <View style={{marginTop: 10, paddingBottom: 10}}>
                     <EventsBloc 
                       events={events}
                       handleEventsChange={handleEventChange}
@@ -161,8 +142,8 @@ const WelcomeScreen = ({ navigation })=> {
                       handleObjectifDelete={handleObjectifDelete}
                     />
               </View>
-              <View style={{width: "90%", marginBottom: 30, alignSelf: "center", backgroundColor: "white", shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1}, borderRadius: 5}}>
-                <LinearGradient colors={[colors.text, colors.accent]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 1]} style={{flex: 1, padding: 20, borderRadius: 5}}>
+              {/* <View style={{width: "90%", marginBottom: 30, alignSelf: "center", backgroundColor: "white", shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1}, borderRadius: 5}}>
+                <LinearGradient colors={[colors.text, colors.default_dark]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} locations={[0, 1]} style={{flex: 1, padding: 20, borderRadius: 5}}>
                   <Text style={{fontFamily: fonts.bodyLarge.fontFamily, color: colors.background, textAlign: "center", marginBottom: 5}}>Avez-vous quelque chose de prévu ?</Text>
                   <Text style={{fontFamily: fonts.default.fontFamily, color: colors.background, textAlign: "center", marginBottom: 15}}>Enregistrez toutes les informations ici</Text>
                   <View style={{width: "70%", alignSelf: "center"}}>
@@ -177,7 +158,7 @@ const WelcomeScreen = ({ navigation })=> {
                     </Button>
                   </View>
                 </LinearGradient>
-              </View>
+              </View> */}
               
             </View>
           </ScrollView>

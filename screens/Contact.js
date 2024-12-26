@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, SectionList, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import TopTabSecondary from '../components/TopTabSecondary';
-import ContactService from '../services/ContactService';
+import contactsServiceInstance from '../services/ContactService';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { Entypo, Zocial } from '@expo/vector-icons';
 import { Linking } from 'react-native';
@@ -9,22 +9,23 @@ import LoggerService from '../services/LoggerService';
 import ModalSubMenuContactActions from '../components/Modals/ModalSubMenuContactActions';
 import ModalContact from "../components/Modals/ModalContact";
 import Toast from "react-native-toast-message";
+import { LinearGradient } from "expo-linear-gradient";
 import ModalDefaultNoValue from '../components/Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../components/Modals/ModalValidation";
+import { useContacts } from '../providers/ContactsProvider';
 
 const ContactScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
     const sectionListRef = useRef(null);
     const { currentUser } = useAuth();
-    const contactsService = new ContactService();
-    const [contacts, setContacts] = useState([]);
+    const { contacts, setContacts } = useContacts();
     const [modalSubMenuVisible, setModalSubMenuVisible] = useState(false);
     const [contactFocus, setContactFocus] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
     const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
-    const getContacts = async () => {
+/*     const getContacts = async () => {
         const result = await contactsService.getContacts(currentUser.email);
         if (result && result.length > 0) {
             setContacts(result);
@@ -36,7 +37,7 @@ const ContactScreen = ({ navigation }) => {
             getContacts();
         });
         return unsubscribe;
-    }, [navigation]);
+    }, [navigation]); */
 
     const groupedContacts = contacts.reduce((acc, contact) => {
         if (contact && contact.nom) {
@@ -112,7 +113,7 @@ const ContactScreen = ({ navigation }) => {
     const confirmDelete = () =>{
         let data = {};
         data["id"] = contactFocus.id;
-        contactsService.delete(data)
+        contactsServiceInstance.delete(data)
             .then((reponse) => {
                 Toast.show({
                     type: "success",
@@ -147,21 +148,19 @@ const ContactScreen = ({ navigation }) => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             padding: 15,
-            backgroundColor: 'white',
         },
         name: {
             fontSize: 16,
-            color: colors.text,
             fontFamily: fonts.bodyLarge.fontFamily
         },
         profession: {
             fontSize: 14,
-            color: colors.accent,
+            color: colors.default_dark,
             fontFamily: fonts.default.fontFamily
         },
         phone: {
             fontSize: 14,
-            color: colors.accent,
+            color: colors.default_dark,
             fontFamily: fonts.default.fontFamily
         },
         iconsContainer: {
@@ -201,9 +200,10 @@ const ContactScreen = ({ navigation }) => {
 
     return (
         <>
+        <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
             <TopTabSecondary
                 message1={"Vos"}
-                message2={"contacts"}
+                message2={"Contacts"}
             />
             <ModalSubMenuContactActions
                 contact={contactFocus}
@@ -226,9 +226,9 @@ const ContactScreen = ({ navigation }) => {
                 visible={modalValidationDeleteVisible}
                 title={"Suppression d'un contact"}
             />
-            <View style={{ flex: 1, backgroundColor: colors.onSurface }}>
+            <View style={{ flex: 1, }}>
                 {contacts.length === 0 ?
-                    <View style={{paddingLeft: 20, paddingRight: 20}}>
+                    <View style={{paddingLeft: 20, paddingRight: 20, paddingTop: 20}}>
                         <ModalDefaultNoValue
                             text={"Aucun contact enregistré"}
                         />
@@ -241,7 +241,7 @@ const ContactScreen = ({ navigation }) => {
                             keyExtractor={(item, index) => item.nom + index}
                             renderItem={({ item }) => (
                                 <TouchableOpacity style={styles.itemContainer} onPress={() => focusContact(item)}>
-                                    <View>
+                                    <View style={{width: "70%"}}>
                                         <Text style={styles.name}>{item.nom}</Text>
                                         {item.profession && <Text style={styles.profession}>{item.profession}</Text>}
                                         <Text style={styles.phone}>{item.telephone}</Text>
@@ -251,16 +251,16 @@ const ContactScreen = ({ navigation }) => {
                                         {item.telephone != null && item.telephone != undefined &&
                                             <>
                                                 <TouchableOpacity style={{marginRight: 5}} onPress={() => makePhoneCall(item.telephone)}>
-                                                    <Entypo name='phone' size={25}/>
+                                                    <Entypo name='phone' size={25} color={colors.default_dark}/>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={{marginRight: 5}} onPress={() => sendSMS(item.telephone)}>
-                                                    <Entypo name='message' size={25}/>
+                                                    <Entypo name='message' size={25} color={colors.default_dark}/>
                                                 </TouchableOpacity>
                                             </>
                                         }
                                         {item.email != null && item.email != undefined &&
                                             <TouchableOpacity onPress={() => sendEmail(item.email)}>
-                                                <Zocial name='email' size={25}/>
+                                                <Zocial name='email' size={25} color={colors.default_dark}/>
                                             </TouchableOpacity>
                                         }
                                     </View>
@@ -295,6 +295,7 @@ const ContactScreen = ({ navigation }) => {
                     </>
                 }
             </View>
+            </LinearGradient>
         </>
     );
 };

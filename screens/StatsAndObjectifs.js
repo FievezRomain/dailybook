@@ -3,7 +3,6 @@ import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { TouchableOpacity } from "react-native";
 import AnimalsPicker from "../components/AnimalsPicker";
-import AnimalsService from "../services/AnimalsService";
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -13,19 +12,19 @@ import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
+import { useAnimaux } from "../providers/AnimauxProvider";
 
 const StatsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "performances"})
   const arrayState = [
-    {value: 'En cours', label: 'En cours', checkedColor: colors.background, uncheckedColor: colors.text},
-    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.text},
+    {value: 'En cours', label: 'En cours', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
   ];
   const [temporality, setTemporality] = useState('En cours');
-  const [animaux, setAnimaux] = useState([]);
+  const { animaux } = useAnimaux();
   const [selectedAnimal, setSelectedAnimal] = useState([]);
-  const animalsService = new AnimalsService;
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
 
@@ -37,18 +36,9 @@ const StatsScreen = ({ navigation }) => {
   );
 
   const getAnimals = async () => {
-    // Si aucun animal est déjà présent dans la liste, alors
-    if(animaux.length == 0){
-      // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.email);
-      // Si l'utilisateur a des animaux, alors
-      if(result.length !== 0){
-        // On valorise l'animal selectionné par défaut au premier de la liste
-        setSelectedAnimal([result[0]]);
-
-        // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
-        setAnimaux(result);
-      }
+    if(animaux.length !== 0){
+      // On valorise l'animal selectionné par défaut au premier de la liste
+      setSelectedAnimal([animaux[0]]);
     }
   };
 
@@ -64,6 +54,14 @@ const StatsScreen = ({ navigation }) => {
     }).start();
   };
 
+  function hexToRgba(hex, opacity) {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
+  }
+
   const styles = StyleSheet.create({
     iconsContainer:{
       display: "flex", 
@@ -76,15 +74,24 @@ const StatsScreen = ({ navigation }) => {
     },
     separatorFix:{
       borderTopColor: colors.quaternary, 
-      borderTopWidth: 1, 
+      borderTopWidth: 0.4, 
       position: 'absolute', 
       bottom: 0, 
       height: 2, 
       width: "100%"
     },
+    textFontBold:{
+      fontFamily: fonts.labelLarge.fontFamily
+    },
+    textFontRegular:{
+      fontFamily: fonts.default.fontFamily
+    },
+    textFontMedium:{
+      fontFamily: fonts.labelMedium.fontFamily
+    },
     separatorAnimated:{
       height: 3, 
-      backgroundColor: colors.accent, 
+      backgroundColor: colors.default_dark, 
       position: 'absolute', 
       bottom: 0, 
       width: '50%',
@@ -99,10 +106,10 @@ const StatsScreen = ({ navigation }) => {
       marginRight: 5,
     },
     fondDefaultTouchableOpacity:{
-      backgroundColor: colors.neutral,
+      backgroundColor: colors.default_dark,
     },
     fondSelectedTouchableOpacity:{
-      backgroundColor: colors.accent
+      backgroundColor: colors.default_dark
     },
     contentContainer:{
       flex: 1,
@@ -120,6 +127,7 @@ const StatsScreen = ({ navigation }) => {
       alignSelf: "center",
       paddingLeft: 20,
       paddingRight: 20,
+      paddingBottom: 15,
       top: 5,
       zIndex: 1,
     },
@@ -173,11 +181,13 @@ const StatsScreen = ({ navigation }) => {
         </View>
         <View style={styles.rubriqueContainer}>
           <View style={styles.iconsContainer}>
-            <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <SimpleLineIcons name="target" size={30} color={activeRubrique === 0 ? colors.accent : colors.quaternary}/>
+            <TouchableOpacity style={{width: "50%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+              <SimpleLineIcons name="target" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color :activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Objectifs</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{width: "50%", alignItems: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <FontAwesome name="pie-chart" size={25} color={activeRubrique === 1 ? colors.accent : colors.quaternary}/>
+            <TouchableOpacity style={{width: "50%", alignItems: "center", flexDirection: "row", justifyContent: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+              <FontAwesome name="pie-chart" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Statistiques</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.separatorFix}></View>
@@ -191,7 +201,7 @@ const StatsScreen = ({ navigation }) => {
               arrayState={arrayState}
               handleChange={onTemporalityChange}
               defaultState={temporality}
-              color={colors.secondaryContainer}
+              color={hexToRgba(colors.quaternary, 1)}
             />
           </View>
 

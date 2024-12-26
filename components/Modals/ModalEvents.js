@@ -1,10 +1,9 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
-import { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Keyboard } from "react-native";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 import ModalAnimals from "./ModalSelectAnimals";
-import AnimalsService from "../../services/AnimalsService";
-import EventService from "../../services/EventService";
+import eventsServiceInstance from "../../services/EventService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import ModalDropdwn from "./ModalDropdown";
 import ModalNotifications from "./ModalNotifications";
@@ -15,17 +14,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
 import TimePickerCustom from "../TimePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import LoggerService from "../../services/LoggerService";
 import DateUtils from "../../utils/DateUtils";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
+import { useAnimaux } from "../../providers/AnimauxProvider";
+import { useEvents } from "../../providers/EventsProvider";
+import Constants from 'expo-constants';
 
-const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined}) => {
+const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined, date=null}) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
-  const animalsService = new AnimalsService;
-  const eventService = new EventService;
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDropdownVisible, setModalDropdownVisible] = useState(false);
   const [modalDropdownNotifVisible, setModalDropdownNotifVisible] = useState(false);
@@ -33,7 +33,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [modalOptionNotifications, setModalOptionNotifications] = useState(false);
   const [modalCategorieDepense, setModalCategorieDepense] = useState(false);
   const [modalFrequence, setModalFrequence] = useState(false);
-  const [animaux, setAnimaux] = useState([]);
+  const { animaux, setAnimaux } = useAnimaux();
   const [selected, setSelected] = useState([]);
   const [eventType, setEventType] = useState(false);
   const [notifType, setNotifType] = useState(false);
@@ -48,7 +48,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Rendez-vous", id: "rdv"},
     {title: "Soins", id: "soins"},
     {title: "Autre", id: "autre"},
-    {title: "Depense", id: "depense"},
+    {title: "Dépense", id: "depense"},
   ];
   const listNotif = [
     {title: "Aucune notification", id: "None"},
@@ -75,21 +75,22 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Tous les mois", id:"tlm"}
   ];
   const arrayState = [
-    {value: 'À faire', label: 'À faire', checkedColor: colors.background, uncheckedColor: colors.default_dark},
-    {value: 'Terminé', label: 'Terminé', checkedColor: colors.background, uncheckedColor: colors.default_dark},
+    {value: 'À faire', label: 'À faire', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+    {value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
   ];
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [events, setEvents] = useState([]);
+  const { events } = useEvents();
   const dateUtils = new DateUtils();
+  const scrollRef = useRef(null);
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
   //const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
 
   useEffect(() => {
     if(isVisible){
-      getAnimals();
+      //getAnimals();
       initValuesEvent(event);
       if( event.idparent != null && event.idparent != undefined){
         getEvents();
@@ -104,12 +105,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     }
   }, [animaux]);
 
-  const getAnimals = async () => {
+  /* const getAnimals = async () => {
   
     // Si aucun animal est déjà présent dans la liste, alors
     if(animaux.length == 0){
       // On récupère les animaux de l'utilisateur courant
-      var result = await animalsService.getAnimals(currentUser.email);
+      var result = await animalsServiceInstance.getAnimals(currentUser.email);
       // Si l'utilisateur a des animaux, alors
       if(result.length !== 0){
         // On renseigne toute la liste dans le hook (permet de switcher entre des animaux)
@@ -118,12 +119,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
     }
   
-  };
+  }; */
 
   const getEvents = async () => {
-    // Récupération des events
-    var result = await eventService.getEvents(currentUser.email);
-    setEvents(result);
+/*     // Récupération des events
+    var result = await eventsServiceInstance.getEvents(currentUser.email);
+    setEvents(result); */
 
     // Si idParent non null, modification de l'event
     var eventParent = await events.filter(element => {
@@ -132,7 +133,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
     })
 
-    //await initValuesEvent(eventParent);
+    if(eventParent.length > 0){
+      await initValuesEvent(eventParent[0]);
+    }
   }
 
   const initValuesEvent = (event) => {
@@ -178,6 +181,22 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       setEventType(list.filter((item) =>item.id === event.eventtype)[0]);
     }
     setValue("frequencevalue", event.frequencevalue);
+    if(event.frequencevalue){
+      switch(event.frequencevalue){
+        case "tlj":
+          setFrequence(listFrequency[0]);
+          break;
+        case "tls":
+          setFrequence(listFrequency[1]);
+          break;
+        case "tl2s":
+          setFrequence(listFrequency[2]);
+          break;
+        case "tlm":
+          setFrequence(listFrequency[3]);
+          break;
+      }
+    }
     setValue("depense", event.depense);
     setValue("categoriedepense", event.categoriedepense);
     setValue("frequencetype", event.frequencetype);
@@ -186,6 +205,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("state", event.state === undefined ? "À faire" : event.state);
     setValue("todisplay", event.todisplay === undefined ? true : event.todisplay);
     setValue("idparent", event.idparent);
+
+    // Si on vient de la page calendrier et qu'on a select une date avant d'ajouter un event
+    if(actionType === "create" && date !== null){
+      setValue("dateevent", new Date(date).toISOString().split('T')[0]);
+      onChangeDate("dateevent", date);
+    }
   }
 
   const submitRegister = async(data) =>{
@@ -230,18 +255,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         text1: "Veuillez saisir un type d'événement"
       });
     } else{
-      if(eventType.id === "concours"){
-        if(data.discipline === undefined){
-          complete = false;
-          Toast.show({
-            type: "error",
-            position: "top",
-            text1: "Veuillez saisir une discipline"
-          });
-        }
-      }
       if(eventType.id === "soins"){
-        if(data.datefinsoins !== undefined && new Date(data.dateevent) > new Date(data.datefinsoins)){
+        if(data.datefinsoins !== undefined && ( new Date(data.dateevent) > new Date(data.datefinsoins) && new Date(data.dateevent).toISOString().split('T')[0] !== new Date(data.datefinsoins).toISOString().split('T')[0] )){
           complete = false;
           Toast.show({
             type: "error",
@@ -251,7 +266,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         }
       }
       if(eventType.id === "balade"){
-        if(data.datefinbalade !== undefined && new Date(data.dateevent) > new Date(data.datefinbalade)){
+        if(data.datefinbalade !== undefined && ( new Date(data.dateevent) > new Date(data.datefinbalade) &&  new Date(data.dateevent).toISOString().split('T')[0] !== new Date(data.datefinbalade).toISOString().split('T')[0] )){
           complete = false;
           Toast.show({
             type: "error",
@@ -279,11 +294,18 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
 
       // Récupération du expo token pour gérer les notifications
-      data.expotoken = JSON.parse(await AsyncStorage.getItem("userExpoToken"));
+      var expoToken = await AsyncStorage.getItem("userExpoToken");
+      var timezone = await AsyncStorage.getItem("userTimezone");
+      if(expoToken){
+        data.expotoken = JSON.parse(expoToken);
+      }
+      if(timezone){
+        data.timezone = JSON.parse(timezone);
+      }
       data.email = currentUser.email;
 
       if(actionType === "modify"){
-        eventService.update(data)
+        eventsServiceInstance.update(data)
         .then((reponse) =>{
 
           resetValues();
@@ -302,7 +324,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           setLoading(false);
         });
       } else {
-        eventService.create(data)
+        eventsServiceInstance.create(data)
         .then((reponse) =>{
           closeModal();
           onModify();
@@ -357,23 +379,28 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setSelected([]);
     setNotifType(false);
     setOptionNotifType(false);
-    setAnimaux([]);
+    setFrequence(false);
+    //setAnimaux([]);
   }
 
   const onChangeDate = (propertyName, selectedDate) => {
     setValue(propertyName, selectedDate);
     var currentDate = new Date();
-    currentDate.setHours(2, 0, 0, 0);
+    currentDate.setHours(1, 0, 0, 0);
     if(currentDate > new Date(selectedDate)){
       handleStateChange("Terminé");
       setNotifType({title: "Aucune notification", id: "None"});
       setValue("notif", "None");
+    } else{
+      handleStateChange("À faire");
+      setNotifType({title: "Notification le jour J", id: "JourJ"});
+      setValue("notif", "JourJ");
     }
   };
 
   const onChangeTime = (fieldname, text) =>{
-    today = new Date();
-    jour = today.getHours();
+    var today = new Date();
+    var jour = today.getHours();
   }
 
   const handleRatingChange = (value) => {
@@ -394,8 +421,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     if(date == undefined){
       return "";
     }
-    options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    dateObject  = new Date(date);
+    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    var dateObject  = new Date(date);
     return String(dateObject.toLocaleDateString("fr-FR", options));
   }
 
@@ -450,6 +477,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       }
   }
 
+  function hexToRgba(hex, opacity) {
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
+  }
+
   const styles = StyleSheet.create({
     inputToggleContainer:{
       display: "flex", 
@@ -469,7 +504,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       resizeMode: "cover",
       position: "absolute",
       justifyContent: "center",
-      backgroundColor:  colors.neutral
+      backgroundColor:  colors.quaternary
     },
     inputContainer:{
       alignItems: "center",
@@ -484,11 +519,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     },
     containerActionsButtons: {
       flexDirection: "row",
+      alignItems: "center",
       paddingBottom: 15,
-      backgroundColor: eventType ? getColorByEventType(eventType.id) : colors.background
+      paddingTop: 5,
+      backgroundColor: eventType ? hexToRgba(getColorByEventType(eventType.id), 0.3) : colors.background
     },
     title: {
-      color: colors.accent,
+      color: colors.default_dark,
       fontSize: 30,
       letterSpacing: 2,
       marginBottom:20,
@@ -618,13 +655,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       color: colors.quaternary
     },
     handleStyleModal:{
-      backgroundColor: eventType ? getColorByEventType(eventType.id) : colors.background,
+      backgroundColor: eventType ? hexToRgba(getColorByEventType(eventType.id), 0.3) : colors.background,
       borderTopEndRadius: 15,
       borderTopStartRadius: 15,
-      marginBottom: -1
     },
     handleIndicatorStyle:{
-      backgroundColor: colors.background
+      backgroundColor: getColorByEventType(eventType.id)
     }
   });
 
@@ -636,6 +672,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         arrayHeight={["90%"]}
         handleStyle={styles.handleStyleModal}
         handleIndicatorStyle={styles.handleIndicatorStyle}
+        scrollInside={false}
       >
         <ModalAnimals
         modalVisible={modalVisible}
@@ -703,29 +740,35 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           <View style={styles.containerActionsButtons}>
 
             <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
-              <Text style={[{color: colors.background}, styles.textFontRegular]}>Annuler</Text>
+              <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Annuler</Text>
             </TouchableOpacity>
             <View style={{width:"33.33%", alignItems: "center"}}>
               { actionType === "modify" && 
-                <Text style={styles.textFontBold}>{eventType && eventType.title}</Text>
+                <Text style={[styles.textFontBold, {color: getColorByEventType(eventType.id), fontSize: 16}]}>{eventType && eventType.title}</Text>
               }
               { actionType === "create" && 
-                <Text style={[styles.textFontBold, {color: colors.background}]}>{eventType && eventType.title}</Text>
+                <Text style={[styles.textFontBold, {color: getColorByEventType(eventType.id), fontSize: 16}]}>{eventType && eventType.title}</Text>
               }
             </View>
             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
               { loading ? 
-                  <ActivityIndicator size={10} color={colors.accent} />
+                  <ActivityIndicator size={16} color={colors.default_dark}  />
                 :
                   actionType === "modify" ?
-                    <Text style={[{color: colors.background}, styles.textFontRegular]}>Modifier</Text>
+                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Modifier</Text>
                   :
-                    <Text style={[{color: colors.background}, styles.textFontRegular]}>Créer</Text>
+                    <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Créer</Text>
               }
             </TouchableOpacity>
           </View>
           <Divider />
-            <KeyboardAwareScrollView>
+            <KeyboardAwareScrollView
+              ref={scrollRef}
+              keyboardShouldPersistTaps="handled"
+              enableOnAndroid={true}
+              extraScrollHeight={10}
+              enableResetScrollToCoords={false}
+            >
                 <View style={styles.formContainer}>
 
                   <Text style={[styles.textInput, styles.textFontRegular]}>Status de l'événement :</Text>
@@ -765,14 +808,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <TouchableOpacity 
                       style={styles.textInput}
                       disabled={animaux.length > 0 ? false : true}
-                      onPress={()=>{setModalVisible(true)}} 
+                      onPress={()=>{ Keyboard.dismiss(); setModalVisible(true)}}
                     >
                       <View style={styles.containerAnimaux}>
                         {animaux.length === 0 &&
                           <View><Text style={[styles.badgeAnimal, styles.errorInput, styles.textFontRegular]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>
                         }
                         {selected.length == 0 && animaux.length > 0 &&
-                          <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Sélectionner un ou plusieurs animaux</Text></View>
+                          <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Sélectionner un ou plusieurs animaux</Text></View>
                         }
                         {selected.map((animal, index) => {
                           return (
@@ -795,12 +838,32 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       {...register("nom", { required: true })}
                     />
                   </View>
-
-                  <View style={[styles.inputContainer, {marginBottom: 15}]}>
+                  {eventType.id === "soins" &&
+                    <View style={styles.containerDate}>
+                      <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinsoins")} <Text style={{color: "red"}}>*</Text></Text>
+                      <DatePickerModal
+                          onDayChange={onChangeDate}
+                          propertyName={"datefinsoins"}
+                          defaultDate={watch("datefinsoins")}
+                      />
+                    </View>
+                  }
+                  {eventType.id === "balade" &&
+                    <View style={styles.containerDate}>
+                      <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinbalade")} <Text style={{color: "red"}}>*</Text></Text>
+                      <DatePickerModal
+                        onDayChange={onChangeDate}
+                        propertyName={"datefinbalade"}
+                      />
+                    </View>
+                  }
+                  <Divider/>
+                  <View style={[styles.inputContainer, {marginBottom: 15}, {marginTop: 15}]}>
                     <Text style={[styles.textInput, styles.textFontRegular]}>Heure de début : </Text>
                     <TimePickerCustom
                       setValue={setValue}
                       valueName={"heuredebutevent"}
+                      placeholderTextColor={colors.secondary}
                       defaultValue={dateEvent}
                     />
                   </View>
@@ -833,14 +896,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           />
                         </View> */}
 
-                        <View style={styles.containerDate}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinbalade")} </Text>
-                          <DatePickerModal
-                            onDayChange={onChangeDate}
-                            propertyName={"datefinbalade"}
-                          />
-                        </View>
-
                         <View style={styles.inputContainer}>
                           <Text style={[styles.textInput, styles.textFontRegular]}>Dépense :</Text>
                           <TextInput
@@ -850,7 +905,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             inputMode="decimal"
                             placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("depense", text)}
-                            defaultValue={getValues("depense")}
+                            defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
                           />
                         </View>
 
@@ -899,7 +954,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             inputMode="decimal"
                             placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("depense", text)}
-                            defaultValue={getValues("depense")}
+                            defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
                           />
                         </View>
 
@@ -917,15 +972,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                   {eventType.id === "concours" && (
                     <>
                       <View style={styles.inputContainer}>
-                        <Text style={[styles.textInput, styles.textFontRegular]}>Discipline : <Text style={{color: "red"}}>*</Text></Text>
-                        {errors.discipline && <Text style={[styles.errorInput, styles.textFontRegular]}>Discipline obligatoire</Text>}
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Discipline : </Text>
                         <TextInput
                           style={[styles.input, styles.textFontRegular]}
                           placeholder="Exemple : CSO"
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("discipline", text)}
                           defaultValue={getValues("discipline")}
-                          {...register("discipline", { required: true })}
                         />
                       </View>
                       <View style={styles.inputContainer}>
@@ -971,7 +1024,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           inputMode="decimal"
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("depense", text)}
-                          defaultValue={getValues("depense")}
+                          defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
                         />
                       </View>
                       <View style={styles.inputContainer}>
@@ -1005,7 +1058,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           inputMode="decimal"
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("depense", text)}
-                          defaultValue={getValues("depense")}
+                          defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
                         />
                       </View>
                     </>
@@ -1023,24 +1076,16 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           defaultValue={getValues("traitement")}
                         />
                       </View>
-                      <View style={styles.containerDate}>
-                        <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinsoins")} </Text>
-                        <DatePickerModal
-                            onDayChange={onChangeDate}
-                            propertyName={"datefinsoins"}
-                            defaultDate={watch("datefinsoins")}
-                        />
-                      </View>
                       <View style={styles.inputContainer}>
                         <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence : {actionType === "modify" && eventType.id === "soins" && <Text style={{color: colors.error}}>(Non modifiable)</Text>}</Text>
                         <TouchableOpacity 
                           style={styles.textInput} 
-                          onPress={()=>{setModalFrequence(true)}} 
+                          onPress={()=>{Keyboard.dismiss();setModalFrequence(true)}}
                           disabled={actionType === "modify" && eventType.id === "soins"}
                         >
                           <View style={styles.containerAnimaux}>
                             {frequence == false &&
-                              <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText]}>Par défaut, le soin sera le jour J</Text></View>
+                              <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText, {color: colors.secondary}]}>Par défaut, le soin sera le jour J</Text></View>
                             }
                             {
                               frequence != false &&
@@ -1058,7 +1103,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             inputMode="decimal"
                             placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("depense", text)}
-                            defaultValue={getValues("depense")}
+                            defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
                           />
                       </View>
                     </>
@@ -1075,7 +1120,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           inputMode="decimal"
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("depense", text)}
-                          defaultValue={getValues("depense")}
+                          defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
                         />
                       </View>
 
@@ -1083,11 +1128,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         <Text style={[styles.textInput, styles.textFontRegular]}>Catégorie :</Text>
                         <TouchableOpacity 
                           style={styles.textInput} 
-                          onPress={()=>{setModalCategorieDepense(true)}} 
+                          onPress={()=>{Keyboard.dismiss();setModalCategorieDepense(true)}}
                         >
                           <View style={styles.containerAnimaux}>
                             {categorieDepense == false &&
-                              <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>Par défaut, la dépense n'est dans aucune catégorie</Text></View>
+                              <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Par défaut, la dépense n'est dans aucune catégorie</Text></View>
                             }
                             {
                               categorieDepense != false &&
@@ -1110,6 +1155,13 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       placeholderTextColor={colors.secondary}
                       onChangeText={(text) => setValue("commentaire", text)}
                       defaultValue={getValues("commentaire")}
+                      onFocus={(e) => {
+                        if(Constants.platform.ios){
+                          setTimeout(() => {
+                            scrollRef.current?.scrollToEnd({ animated: true });
+                          }, 100);
+                        }
+                      }}
                     />
                   </View>
 
@@ -1117,15 +1169,15 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <Text style={[styles.textInput, styles.textFontRegular]}>Notifications :</Text>
                     <TouchableOpacity 
                       style={styles.textInput} 
-                      onPress={()=>{setModalDropdownNotifVisible(true)}} 
+                      onPress={()=>{Keyboard.dismiss();setModalDropdownNotifVisible(true)}}
                     >
                       <View style={styles.containerAnimaux}>
                         {notifType == false &&
                           <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
                               <View style={{width: "90%"}}>
-                                <Text style={[styles.badgeAnimal, styles.textFontRegular]}>Par défaut, vous recevrez une notification le jour J</Text>
+                                <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Par défaut, vous recevrez une notification le jour J</Text>
                               </View>
-                              <AntDesign name="caretdown" size={20}/>
+                              <Ionicons name="chevron-down" size={20}/>
                             
                           </View>
                         }
@@ -1135,7 +1187,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <View style={{width: "90%"}}>
                               <Text style={[styles.badgeAnimal, styles.textFontRegular]}>{notifType.title}</Text>
                             </View>
-                            <AntDesign name="caretdown" size={20}/>
+                            <Ionicons name="chevron-down" size={20}/>
                           </View>
                         }
                       </View>
@@ -1146,15 +1198,15 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <Text style={[styles.textInput, styles.textFontRegular]}>Option notifications :</Text>
                     <TouchableOpacity 
                       style={styles.textInput} 
-                      onPress={()=>{setModalOptionNotifications(true)}} 
+                      onPress={()=>{Keyboard.dismiss();setModalOptionNotifications(true)}}
                     >
                       <View style={styles.containerAnimaux}>
                         {optionNotifType == false &&
                           <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
                             <View style={{width: "90%"}}>
-                              <Text style={[styles.badgeAnimal, styles.textFontRegular]}>Aucune option</Text>
+                              <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Aucune option</Text>
                             </View>
-                            <AntDesign name="caretdown" size={20}/>
+                            <Ionicons name="chevron-down" size={20}/>
                           </View>
                         }
                         {
@@ -1163,7 +1215,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             <View style={{width: "90%"}}>
                               <Text style={[styles.badgeAnimal, styles.textFontRegular]}>{optionNotifType.title}</Text>
                             </View>
-                            <AntDesign name="caretdown" size={20}/>
+                            <Ionicons name="chevron-down" size={20}/>
                           </View>
                         }
                       </View>

@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image, FlatList } from 'react-native';
 import StatePicker from './StatePicker';
-import EventService from '../services/EventService';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import EventCard from "./cards/EventCard";
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
+import { useEvents } from '../providers/EventsProvider';
+import Toast from "react-native-toast-message";
 
 const MedicalBook = ({ animal, navigation }) => {
     const { colors, fonts } = useTheme();
@@ -13,15 +14,15 @@ const MedicalBook = ({ animal, navigation }) => {
     const [eventsSoins, setEventsSoins] = useState([]);
     const [eventsRdv, setEventsRdv] = useState([]);
     const { currentUser } = useAuth();
-    const eventService = new EventService();
     const arrayState = [
-        {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.background, uncheckedColor: colors.text},
-        {value: 'Soins', label: 'Soins', checkedColor: colors.background, uncheckedColor: colors.text},
+        {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'Soins', label: 'Soins', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
       ];
+    const { events } = useEvents();
 
     useEffect(() =>{
         getEvents();
-    }, [animal]);
+    }, [animal, events]);
     useEffect(() =>{
         const unsubscribe = navigation.addListener("focus", () => {
             getEvents();
@@ -31,16 +32,16 @@ const MedicalBook = ({ animal, navigation }) => {
 
     const getEvents = async () =>{
         try {
-            var result = await eventService.getEvents(currentUser.email);
-            filter(result);
+            //var result = await eventService.getEvents(currentUser.email);
+            filter();
             
           } catch (error) {
             console.error("Error fetching events:", error);
           }
     }
 
-    const filter = async (result) => {
-        result = result.filter((event) => event.animaux.includes(animal.id));
+    const filter = async () => {
+        var result = events.filter((event) => event.animaux.includes(animal.id));
 
         var arrayEventsSoins = [];
         var arrayEventsRdv = [];
@@ -64,6 +65,11 @@ const MedicalBook = ({ animal, navigation }) => {
 
     const handleEventChange = async () => {
         getEvents();
+        setTimeout(() => Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Modification d'un événement"
+        }), 350);
     }
 
     const styles = StyleSheet.create({
@@ -86,51 +92,36 @@ const MedicalBook = ({ animal, navigation }) => {
     return(
         <>
             <View style={{width: "100%", alignSelf: "center", flex: 1}}>
-                <Text style={[{textAlign: "center", color: colors.accent, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text>
+                {/* <Text style={[{textAlign: "center", color: colors.default_dark, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Dossier médical</Text> */}
                 <View style={{marginBottom: 10, paddingLeft: 20, paddingRight: 20, display: "flex", flexDirection: "row"}}>
                     <StatePicker
                         arrayState={arrayState}
                         handleChange={handleStateChange}
                         defaultState={typeEvent === undefined ? "Rendez-vous" : typeEvent}
-                        color={colors.secondaryContainer}
+                        color={colors.quantenary}
                     />
                 </View>
                 
-                <ScrollView contentContainerStyle={{ paddingBottom: 20, paddingTop:10, paddingLeft: 20, paddingRight: 20}}>
-                    {typeEvent === "Rendez-vous" ? 
-                        eventsRdv.length === 0 ?
-                            <ModalDefaultNoValue
-                                text={"Aucun rendez-vous pour cet animal"}
-                            />
-                        :
-                        eventsRdv.map((eventItem, index) => (
-                            <View style={styles.eventContainer} key={eventItem.id}>
-                                <EventCard
-                                    eventInfos={eventItem}
-                                    withSubMenu={true}
-                                    withDate={true}
-                                    handleEventsChange={handleEventChange}
-                                />
-                            </View>
-                        ))
-                    :
-                        eventsSoins.length === 0 ?
-                            <ModalDefaultNoValue
-                                text={"Aucun soin pour cet animal"}
-                            />
-                        :
-                        eventsSoins.map((eventItem, index) => (
-                            <View style={styles.eventContainer} key={eventItem.id}>
-                                <EventCard
-                                    eventInfos={eventItem}
-                                    withSubMenu={true}
-                                    withDate={true}
-                                    handleEventsChange={handleEventChange}
-                                />
-                            </View>
-                        ))
+                <FlatList
+                    data={typeEvent === "Rendez-vous" ? eventsRdv : eventsSoins}
+                    keyExtractor={(item) => item.id.toString()}
+                    ListEmptyComponent={
+                        <ModalDefaultNoValue
+                            text={typeEvent === "Rendez-vous" ? "Aucun rendez-vous pour cet animal" : "Aucun soin pour cet animal"}
+                        />
                     }
-                </ScrollView>
+                    renderItem={({ item }) => (
+                        <View style={styles.eventContainer}>
+                            <EventCard
+                                eventInfos={item}
+                                withSubMenu={true}
+                                withDate={true}
+                                handleEventsChange={handleEventChange}
+                            />
+                        </View>
+                    )}
+                    contentContainerStyle={{ paddingBottom: 20, paddingTop:10, paddingLeft: 20, paddingRight: 20 }}
+                />
             </View>
         </>
     );
