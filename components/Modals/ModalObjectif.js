@@ -353,6 +353,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                 isVisible={isVisible}
                 setVisible={setVisible}
                 arrayHeight={["90%"]}
+                scrollInside={false}
             >
                 <ModalAnimals
                     modalVisible={modalAnimalVisible}

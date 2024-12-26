@@ -671,6 +671,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         arrayHeight={["90%"]}
         handleStyle={styles.handleStyleModal}
         handleIndicatorStyle={styles.handleIndicatorStyle}
+        scrollInside={false}
       >
         <ModalAnimals
         modalVisible={modalVisible}
