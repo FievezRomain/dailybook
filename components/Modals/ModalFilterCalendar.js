@@ -180,13 +180,13 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
                 arrayHeight={["50%"]}
             >
                 <View style={styles.containerActionsButtons}>
-                    <TouchableOpacity onPress={() => setModalVisible(false)}>
+                    <TouchableOpacity onPress={() => setModalVisible(false)} style={{width:"33.33%", alignItems: "center"}}>
                         <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => reset()}>
+                    <TouchableOpacity onPress={() => reset()} style={{width:"33.33%", alignItems: "center"}}>
                         <Text style={[{color: colors.quaternary}, styles.textFontRegular]}>Réinitialiser</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={sendFilter}>
+                    <TouchableOpacity onPress={sendFilter} style={{width:"33.33%", alignItems: "center"}}>
                         <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Appliquer</Text>
                     </TouchableOpacity>
                 </View>

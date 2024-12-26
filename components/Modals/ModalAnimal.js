@@ -403,6 +403,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                 isVisible={isVisible}
                 setVisible={setVisible}
                 arrayHeight={["90%"]}
+                scrollInside={false}
             >
                     <View style={styles.form}>
                         <View style={styles.containerActionsButtons}>

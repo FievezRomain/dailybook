@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Keyboard } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
@@ -671,6 +671,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         arrayHeight={["90%"]}
         handleStyle={styles.handleStyleModal}
         handleIndicatorStyle={styles.handleIndicatorStyle}
+        scrollInside={false}
       >
         <ModalAnimals
         modalVisible={modalVisible}
@@ -806,7 +807,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <TouchableOpacity 
                       style={styles.textInput}
                       disabled={animaux.length > 0 ? false : true}
-                      onPress={()=>{setModalVisible(true)}} 
+                      onPress={()=>{ Keyboard.dismiss(); setModalVisible(true)}} 
                     >
                       <View style={styles.containerAnimaux}>
                         {animaux.length === 0 &&
@@ -1078,7 +1079,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence : {actionType === "modify" && eventType.id === "soins" && <Text style={{color: colors.error}}>(Non modifiable)</Text>}</Text>
                         <TouchableOpacity 
                           style={styles.textInput} 
-                          onPress={()=>{setModalFrequence(true)}} 
+                          onPress={()=>{Keyboard.dismiss();setModalFrequence(true)}} 
                           disabled={actionType === "modify" && eventType.id === "soins"}
                         >
                           <View style={styles.containerAnimaux}>
@@ -1126,7 +1127,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         <Text style={[styles.textInput, styles.textFontRegular]}>Catégorie :</Text>
                         <TouchableOpacity 
                           style={styles.textInput} 
-                          onPress={()=>{setModalCategorieDepense(true)}} 
+                          onPress={()=>{Keyboard.dismiss();setModalCategorieDepense(true)}} 
                         >
                           <View style={styles.containerAnimaux}>
                             {categorieDepense == false &&
@@ -1167,7 +1168,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <Text style={[styles.textInput, styles.textFontRegular]}>Notifications :</Text>
                     <TouchableOpacity 
                       style={styles.textInput} 
-                      onPress={()=>{setModalDropdownNotifVisible(true)}} 
+                      onPress={()=>{Keyboard.dismiss();setModalDropdownNotifVisible(true)}} 
                     >
                       <View style={styles.containerAnimaux}>
                         {notifType == false &&
@@ -1196,7 +1197,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <Text style={[styles.textInput, styles.textFontRegular]}>Option notifications :</Text>
                     <TouchableOpacity 
                       style={styles.textInput} 
-                      onPress={()=>{setModalOptionNotifications(true)}} 
+                      onPress={()=>{Keyboard.dismiss();setModalOptionNotifications(true)}} 
                     >
                       <View style={styles.containerAnimaux}>
                         {optionNotifType == false &&

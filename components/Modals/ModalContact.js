@@ -144,7 +144,6 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
             paddingRight: 30,
             paddingTop: 10,
             paddingBottom: 10,
-            height: "100%"
         },
         inputContainer:{
             alignItems: "center",
@@ -212,7 +211,7 @@ const ModalContact = ({isVisible, setVisible, actionType, contact={}, onModify=u
                         </TouchableOpacity>
                     </View>
                     <Divider />
-                    <KeyboardAwareScrollView>
+                    <KeyboardAwareScrollView style={{height:"100%"}}>
                         <View style={styles.formContainer}>
 
                             <View style={styles.inputContainer}>

@@ -195,7 +195,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                         </TouchableOpacity>
                     </View>
                     <Divider />
-                    <KeyboardAwareScrollView>
+                    <KeyboardAwareScrollView style={{height: "100%"}}>
                         <View style={styles.formContainer}>
                             <View style={styles.inputContainer}>
                                 <Text style={[styles.textInput, styles.textFontRegular]}>

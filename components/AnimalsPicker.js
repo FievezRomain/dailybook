@@ -6,8 +6,9 @@ import FileStorageService from "../services/FileStorageService";
 import { useTheme } from 'react-native-paper';
 import { PanGestureHandler } from "react-native-gesture-handler";
 import React, { useRef } from "react";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 
-const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined }) => {
+const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined, inModal=false }) => {
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
     const { colors, fonts } = useTheme();
@@ -176,16 +177,18 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
         }
     });
 
+    const ListComponent = inModal ? BottomSheetFlatList : FlatList;
+
     return(
-        <FlatList
+        <ListComponent
             data={animaux}
             ref={flatListRef}
             key={(item) => item.id.toString()}
             horizontal
             nestedScrollEnabled={true} // Permet le scroll imbriqué
-    showsHorizontalScrollIndicator={false} // Masque la barre de scroll
-    keyboardShouldPersistTaps="handled" // Gère les taps quand le clavier est actif
-    contentContainerStyle={{ flexGrow: 1 }}
+            showsHorizontalScrollIndicator={false} // Masque la barre de scroll
+            keyboardShouldPersistTaps="handled" // Gère les taps quand le clavier est actif
+            contentContainerStyle={{ flexGrow: 1 }}
             renderItem={({ item }) => (
                 <TouchableOpacity style={styles.containerAvatar} onPress={()=>changeSelectedAnimals(item)} key={item.id} onTouchStart={(e) => e.stopPropagation()}>
                     <View style={styles.containerAvatar}>
