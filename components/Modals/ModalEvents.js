@@ -68,7 +68,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Assurance", id: "assurance"},
   ];
   const listFrequency = [
-    {title: "Le jour J", id: "tlj"},
+    {title: "Le jour J", id: "tlj2"},
     {title: "Tous les jours", id: "tlj"},
     {title: "Toutes les semaines", id: "tls"},
     {title: "Toutes les 2 semaines", id:"tl2s"},
