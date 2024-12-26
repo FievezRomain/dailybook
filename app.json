@@ -2,7 +2,7 @@
   "expo": {
     "name": "Vasco",
     "slug": "dailybook",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "sdkVersion": "52.0.0",
     "orientation": "portrait",
     "newArchEnabled": true,
@@ -20,7 +20,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.vascoandco.vasco.ios",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "1.1.0",
+      "buildNumber": "1.1.1",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
         "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
@@ -39,7 +39,7 @@
       },
       "package": "com.vascoandco.vasco.android",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 12,
+      "versionCode": 13,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
