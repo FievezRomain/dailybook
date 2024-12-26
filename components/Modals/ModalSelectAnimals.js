@@ -86,17 +86,21 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
       <ModalEditGeneric
         isVisible={modalVisible}
         setVisible={setModalVisible}
+        scrollInside={false}
         arrayHeight={["25%"]}
       >
+        <View style={{paddingVertical: 5}}>
           <AnimalsPicker
-              setAnimaux={setAnimaux}
-              animaux={animaux}
-              mode="multiple"
-              selected={selected}
-              setSelected={setSelected}
-              setValue={setValue}
-              valueName={valueName}
+            setAnimaux={setAnimaux}
+            animaux={animaux}
+            mode="multiple"
+            selected={selected}
+            setSelected={setSelected}
+            setValue={setValue}
+            valueName={valueName}
           />
+        </View>
+          
           <View style={styles.buttonContainer}>
               <Button
               disabled={false}
