@@ -68,6 +68,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Assurance", id: "assurance"},
   ];
   const listFrequency = [
+    {title: "Le jour J", id: "tlj"},
     {title: "Tous les jours", id: "tlj"},
     {title: "Toutes les semaines", id: "tls"},
     {title: "Toutes les 2 semaines", id:"tl2s"},
@@ -135,7 +136,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     if(eventParent.length > 0){
       await initValuesEvent(eventParent[0]);
     }
-  } 
+  }
 
   const initValuesEvent = (event) => {
     setValue("id", event.id);
@@ -807,7 +808,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <TouchableOpacity 
                       style={styles.textInput}
                       disabled={animaux.length > 0 ? false : true}
-                      onPress={()=>{ Keyboard.dismiss(); setModalVisible(true)}} 
+                      onPress={()=>{ Keyboard.dismiss(); setModalVisible(true)}}
                     >
                       <View style={styles.containerAnimaux}>
                         {animaux.length === 0 &&
@@ -1079,12 +1080,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         <Text style={[styles.textInput, styles.textFontRegular]}>Fréquence : {actionType === "modify" && eventType.id === "soins" && <Text style={{color: colors.error}}>(Non modifiable)</Text>}</Text>
                         <TouchableOpacity 
                           style={styles.textInput} 
-                          onPress={()=>{Keyboard.dismiss();setModalFrequence(true)}} 
+                          onPress={()=>{Keyboard.dismiss();setModalFrequence(true)}}
                           disabled={actionType === "modify" && eventType.id === "soins"}
                         >
                           <View style={styles.containerAnimaux}>
                             {frequence == false &&
-                              <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText, {color: colors.secondary}]}>Par défaut, le soin sera tous les jours</Text></View>
+                              <View style={[styles.containerBadgeAnimal, actionType === "modify" && eventType.id === "soins" && styles.disabled, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, actionType === "modify" && eventType.id === "soins" && styles.disabledText, {color: colors.secondary}]}>Par défaut, le soin sera le jour J</Text></View>
                             }
                             {
                               frequence != false &&
@@ -1127,7 +1128,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         <Text style={[styles.textInput, styles.textFontRegular]}>Catégorie :</Text>
                         <TouchableOpacity 
                           style={styles.textInput} 
-                          onPress={()=>{Keyboard.dismiss();setModalCategorieDepense(true)}} 
+                          onPress={()=>{Keyboard.dismiss();setModalCategorieDepense(true)}}
                         >
                           <View style={styles.containerAnimaux}>
                             {categorieDepense == false &&
@@ -1168,7 +1169,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <Text style={[styles.textInput, styles.textFontRegular]}>Notifications :</Text>
                     <TouchableOpacity 
                       style={styles.textInput} 
-                      onPress={()=>{Keyboard.dismiss();setModalDropdownNotifVisible(true)}} 
+                      onPress={()=>{Keyboard.dismiss();setModalDropdownNotifVisible(true)}}
                     >
                       <View style={styles.containerAnimaux}>
                         {notifType == false &&
@@ -1197,7 +1198,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <Text style={[styles.textInput, styles.textFontRegular]}>Option notifications :</Text>
                     <TouchableOpacity 
                       style={styles.textInput} 
-                      onPress={()=>{Keyboard.dismiss();setModalOptionNotifications(true)}} 
+                      onPress={()=>{Keyboard.dismiss();setModalOptionNotifications(true)}}
                     >
                       <View style={styles.containerAnimaux}>
                         {optionNotifType == false &&

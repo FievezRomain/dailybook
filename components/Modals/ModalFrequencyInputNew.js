@@ -166,7 +166,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
                     <View>
 
                         <View>
-                            <Text style={styles.textFontRegular}>Jamais</Text>
+                            <Text style={styles.textFontRegular}>Le jour J</Text>
                         </View>
 
                         <View>
