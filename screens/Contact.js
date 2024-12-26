@@ -241,7 +241,7 @@ const ContactScreen = ({ navigation }) => {
                             keyExtractor={(item, index) => item.nom + index}
                             renderItem={({ item }) => (
                                 <TouchableOpacity style={styles.itemContainer} onPress={() => focusContact(item)}>
-                                    <View>
+                                    <View style={{width: "70%"}}>
                                         <Text style={styles.name}>{item.nom}</Text>
                                         {item.profession && <Text style={styles.profession}>{item.profession}</Text>}
                                         <Text style={styles.phone}>{item.telephone}</Text>
