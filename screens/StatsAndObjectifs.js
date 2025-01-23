@@ -18,11 +18,6 @@ const StatsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({message1: "Mes", message2: "performances"})
-  const arrayState = [
-    {value: 'En cours', label: 'En cours', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
-    {value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
-  ];
-  const [temporality, setTemporality] = useState('En cours');
   const { animaux } = useAnimaux();
   const [selectedAnimal, setSelectedAnimal] = useState([]);
   const [activeRubrique, setActiveRubrique] = useState(0);
@@ -35,15 +30,17 @@ const StatsScreen = ({ navigation }) => {
     }, [])
   );
 
+  useEffect(() => {
+    if( activeRubrique === 0 && selectedAnimal.length > 1 ){
+      setSelectedAnimal([selectedAnimal[selectedAnimal.length-1]]);
+    }
+  }, [activeRubrique])
+
   const getAnimals = async () => {
     if(animaux.length !== 0){
       // On valorise l'animal selectionné par défaut au premier de la liste
       setSelectedAnimal([animaux[0]]);
     }
-  };
-
-  const onTemporalityChange = (value) => {
-    setTemporality(value);
   };
 
   const moveSeparator = (index) => {
@@ -53,14 +50,6 @@ const StatsScreen = ({ navigation }) => {
       useNativeDriver: false,
     }).start();
   };
-
-  function hexToRgba(hex, opacity) {
-    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
-
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
-  }
 
   const styles = StyleSheet.create({
     iconsContainer:{
@@ -176,7 +165,8 @@ const StatsScreen = ({ navigation }) => {
               animaux={animaux}
               setSelected={setSelectedAnimal}
               selected={selectedAnimal}
-              mode="single"
+              mode={activeRubrique === 0 ? "multiple" : "multiple"}
+              setValue={activeRubrique === 0 ? undefined : () => {}}
             />
         </View>
         <View style={styles.rubriqueContainer}>
@@ -195,25 +185,17 @@ const StatsScreen = ({ navigation }) => {
         </View>
         <View style={styles.contentContainer}>
 
-          
-          <View style={styles.temporalityIndicator}>
-            <StatePicker
-              arrayState={arrayState}
-              handleChange={onTemporalityChange}
-              defaultState={temporality}
-              color={hexToRgba(colors.quaternary, 1)}
-            />
-          </View>
-
           {activeRubrique === 0 ?
             <ObjectifsBloc
               animaux={animaux}
               selectedAnimal={selectedAnimal}
-              temporality={temporality}
               navigation={navigation}
             />
           :
-            <StatistiquesBloc/>
+            <StatistiquesBloc
+              animaux={animaux}
+              selectedAnimal={selectedAnimal}
+            />
           }
         </View>
       </LinearGradient>
