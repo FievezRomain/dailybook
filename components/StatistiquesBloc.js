@@ -9,13 +9,14 @@ import StatePicker from './StatePicker';
 import ChartWithLoader from './ChartWithLoader';
 import DepenseComponent from './statistics/DepenseComponent';
 import LineChartComponent from './charts/LineChartComponent';
+import EntrainementComponent from './statistics/EntrainementComponent';
 
 const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const [itemStatistique, setItemStatistique] = useState("depense");
     const chartComponents = {
-        line: LineChartComponent,
+        entrainement: EntrainementComponent,
         depense: DepenseComponent,
     };
     const [statistiqueComponent, setStatisticComponent] = useState("depense");
@@ -27,11 +28,21 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
       ];
     const [temporality, setTemporality] = useState('Mois');
     const chartConfig = {
-        backgroundGradientFrom: "#1E2923",
-        backgroundGradientTo: "#08130D",
-        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        depense: {
+            backgroundGradientFrom: "#1E2923",
+            backgroundGradientTo: "#08130D",
+            color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        },
+        entrainement: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            
+        }
     };
+    const ChartConfig = chartConfig[statistiqueComponent];
     const now = new Date();
     const [parameters, setParameters] = useState({ animaux: selectedAnimal.map(function(item) { return item["id"] }), email: currentUser.email, dateDebut: new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString() });
 
@@ -215,7 +226,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                             <View style={styles.statistiquesContainer}>
                                 <ChartWithLoader
                                     ChartComponent={ChartComponent}
-                                    chartConfig={chartConfig}
+                                    chartConfig={ChartConfig}
                                     chartType={itemStatistique}
                                     chartParameters={parameters}
                                 />
