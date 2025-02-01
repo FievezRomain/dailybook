@@ -10,8 +10,9 @@ import ObjectifCard from './cards/ObjectifCard';
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 import { useObjectifs } from '../providers/ObjectifsProvider'; 
+import StatePicker from './StatePicker';
 
-const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
+const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }) =>{
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const { objectifs, setObjectifs } = useObjectifs();
@@ -20,6 +21,11 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
     const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
     const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
     const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
+    const arrayState = [
+        {value: 'En cours', label: 'En cours', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+    ];
+    const [temporality, setTemporality] = useState('En cours');
 
 /*     useEffect(() => {
         if(animaux.length !== 0){
@@ -86,6 +92,18 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
         setModalManageTasksVisible(true);
     }
 
+    function hexToRgba(hex, opacity) {
+        const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+    
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
+    }
+
+    const onTemporalityChange = (value) => {
+        setTemporality(value);
+    };
+
     const styles = StyleSheet.create({
         headerObjectif:{
             display: "flex",
@@ -133,6 +151,18 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
             borderTopLeftRadius: 10,
             paddingHorizontal: 10,
         },
+        temporalityIndicator:{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            width: "100%",
+            alignSelf: "center",
+            paddingLeft: 20,
+            paddingRight: 20,
+            paddingBottom: 15,
+            top: 5,
+            zIndex: 1,
+        },
         itemIconDefault:{
             color: colors.quaternary,
         },
@@ -172,6 +202,14 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, temporality, navigation }) =>{
                 objectif={currentObjectif}
                 handleTasksStateChange={onModify}
             />
+            <View style={styles.temporalityIndicator}>
+                <StatePicker
+                arrayState={arrayState}
+                handleChange={onTemporalityChange}
+                defaultState={temporality}
+                color={hexToRgba(colors.quaternary, 1)}
+                />
+            </View>
             <ScrollView contentContainerStyle={{paddingBottom: 30, width: "100%"}}>
                 <View style={styles.composantContainer}>
                 
