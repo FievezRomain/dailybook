@@ -24,6 +24,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
   const [cacheUpdated, setCacheUpdated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [emailVerified, setEmailVerified] = useState(false);
+  const [abonnement, setAbonnement] = useState(false);
   const authService = new AuthService;
   const auth = getFirebaseAuth();
   const { setAnimaux } = useAnimaux();
@@ -144,13 +145,14 @@ export const AuthenticatedUserProvider =  ({ children }) => {
     try {
       const tempUser = user;
       await reload(tempUser);
-      await authService.getUserInformations();
+      const user_abonnement = await authService.getUserInformations();
       //await authService.initTrackingActivity();
       // Récupération de l'image de profil
       /* var result = await authService.getUser(user.email);
       if(result.filename != undefined){
         user.photoURL = getImagePath() + result.filename;
       } */
+      setAbonnement(user_abonnement);
       setCurrentUser(tempUser);
       if (tempUser.emailVerified) {
         await updateCache(tempUser.email);
@@ -234,7 +236,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
   }
 
   return (
-    <AuthenticatedUserContext.Provider value={{ currentUser, cacheUpdated, loading, emailVerified, logout, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL, reloadUser, deleteAccount, reAuthUser }}>
+    <AuthenticatedUserContext.Provider value={{ currentUser, abonnement, cacheUpdated, loading, emailVerified, logout, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL, reloadUser, deleteAccount, reAuthUser }}>
       {children}
     </AuthenticatedUserContext.Provider>
   );

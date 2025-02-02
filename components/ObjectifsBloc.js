@@ -51,10 +51,10 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }) =>{
         var filteredObjectifs = []
         if(temporality === "En cours"){
             filteredObjectifs = objectifs.filter((item) =>  item.sousEtapes.some(etape => etape.state === false) 
-                                    && item.animaux.includes(selectedAnimal[0].id) );
+                                    && selectedAnimal.some(animal => item.animaux.includes(animal.id)) );
         } else{
             filteredObjectifs = objectifs.filter((item) => item.sousEtapes.every(etape => etape.state === true) 
-                                    && item.animaux.includes(selectedAnimal[0].id) );
+                                    && selectedAnimal.some(animal => item.animaux.includes(animal.id)) );
         }
         
 

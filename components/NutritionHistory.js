@@ -4,8 +4,11 @@ import Button from './Button';
 import { LineChart } from 'react-native-chart-kit';
 import OfferInformations from './OfferInformations';
 import { useTheme } from 'react-native-paper';
+import { useAuth } from '../providers/AuthenticatedUserProvider';
+import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 
 const NutritionHistory = ({ animal }) => {
+    const { abonnement } = useAuth();
     const { colors, fonts } = useTheme();
     const data = {
         labels: ['2019', '2020', '2021', '2022', '2023', '2024'],
@@ -35,7 +38,14 @@ const NutritionHistory = ({ animal }) => {
                     {/* <Text style={{textAlign: "center", color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily, fontSize: 16, paddingVertical: 15}}>Nutrition</Text> */}
 
                     <View style={{width: "90%", alignSelf: "center"}}>
-                        <OfferInformations />
+                        {abonnement.libelle === "Premium" ?
+                                <ModalDefaultNoValue
+                                    text={"À venir..."}
+                                />
+                            :
+                                <OfferInformations />
+                        }
+                        
                     </View>
                     
 
