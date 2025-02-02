@@ -33,7 +33,7 @@ const SettingsScreen = ({ }) => {
     const [modalSubMenuAvatarPickerVisible, setModalSubMenuAvatarPickerVisible] = useState(false);
     const [modalModificationPasswordVisible, setModalModificationPasswordVisible] = useState(false);
     const [modalModificationNameVisible, setModalModificationNameVisible] = useState(false);
-    const { currentUser, deleteAccount, logout, updatePhotoURL } = useAuth();
+    const { currentUser, abonnement, deleteAccount, logout, updatePhotoURL } = useAuth();
     const { isDarkTheme, toggleTheme } = useContext(ThemeContext);
     const { colors, fonts } = useTheme();
     const imageUtils = new ImageUtils();
@@ -167,9 +167,6 @@ const SettingsScreen = ({ }) => {
         title:{
             fontSize: 25,
         },
-        email:{
-            marginBottom: 20
-        },
         button2:{
             marginTop: 10,
         },
@@ -228,6 +225,14 @@ const SettingsScreen = ({ }) => {
             fontFamily: fonts.labelMedium.fontFamily, 
             fontSize: 16, 
             paddingVertical: 10
+        },
+        abonnementContainer:{
+            paddingHorizontal: 15,
+            paddingVertical: 5,
+            borderRadius: 15,
+            backgroundColor: colors.accent,
+            marginTop: 10,
+            marginBottom: 20
         }
     });
 
@@ -289,6 +294,9 @@ const SettingsScreen = ({ }) => {
                             
                             <Text style={[styles.title, styles.textFontBold]}>{currentUser.displayName != null && currentUser.displayName != undefined ? currentUser.displayName.slice(0,17) : currentUser.displayName}</Text>
                             <Text style={[styles.email, styles.textFontRegular]}>{currentUser.email}</Text>
+                            <View style={styles.abonnementContainer}>
+                                <Text style={[styles.textFontRegular, {color: colors.background}]}>{abonnement.libelle}</Text>
+                            </View>
                         </View>
                         
                         <View>
