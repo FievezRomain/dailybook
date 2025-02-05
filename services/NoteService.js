@@ -4,7 +4,15 @@ import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
 
-export default class NoteService {
+class NoteService {
+
+    constructor() {
+        this.setNotes = null;
+    }
+
+    initialize(setNotes) {
+        this.setNotes = setNotes;
+    }
 
     async create(body) {
         await this.updateAxiosAuthorization();
@@ -101,6 +109,11 @@ export default class NoteService {
         } else {
             await AsyncStorage.setItem("notes", Array.isArray(notes) ? JSON.stringify(notes) : JSON.stringify([notes]));
         }
+
+        if (this.setNotes) {
+            
+            this.setNotes(await this.getCache());
+        }
     }
 
     async deleteInCache(note) {
@@ -112,6 +125,11 @@ export default class NoteService {
             notes.splice(indice, 1);
 
             await AsyncStorage.setItem("notes",  JSON.stringify(notes));
+
+            if (this.setNotes) {
+            
+                this.setNotes(await this.getCache());
+            }
         }
     }
 
@@ -120,3 +138,7 @@ export default class NoteService {
         await this.getNotes(email);
     }
 }
+
+const notesServiceInstance = new NoteService( );
+
+export default notesServiceInstance;

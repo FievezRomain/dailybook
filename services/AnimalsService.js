@@ -3,8 +3,19 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
+import eventsServiceInstance from "./EventService";
+import objectifsServiceInstance from './ObjectifService';
 
-export default class AnimalsService {
+class AnimalsService {
+
+    constructor() {
+        this.setAnimaux = null;
+    }
+
+    initialize(setAnimaux) {
+        this.setAnimaux = setAnimaux;
+    }
+
     async createWithPicture(body){
         return axios.post(`${getBaseUrl()}createEquide`, body, {
             headers: {'Content-Type': 'multipart/form-data'},
@@ -147,10 +158,20 @@ export default class AnimalsService {
         } else {
             await AsyncStorage.setItem("animals", Array.isArray(animals) ? JSON.stringify(animals) : JSON.stringify([animals]));
         }
+
+        if (this.setAnimaux) {
+            
+            this.setAnimaux(await this.getCache());
+        }
     }
 
     async deleteInCache(animal) {
         if(await this.isInCache()){
+
+            // Mise à jour des events suite à la potentielle suppression en cascade
+            await eventsServiceInstance.refreshCache(animal.email);
+            await objectifsServiceInstance.refreshCache(animal.email);
+
             let animals = JSON.parse(await AsyncStorage.getItem("animals"));
 
             var indice = animals.findIndex((a) => a.id == animal.id);
@@ -158,6 +179,11 @@ export default class AnimalsService {
             animals.splice(indice, 1);
 
             await AsyncStorage.setItem("animals",  JSON.stringify(animals));
+
+            if (this.setAnimaux) {
+            
+                this.setAnimaux(await this.getCache());
+            }
         }
     }
 
@@ -166,3 +192,7 @@ export default class AnimalsService {
         await this.getAnimals(email);
     }
 }
+
+const animalsServiceInstance = new AnimalsService( );
+
+export default animalsServiceInstance;

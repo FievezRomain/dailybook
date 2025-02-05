@@ -1,10 +1,12 @@
 import { Text, View, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
-import Variables from "./styles/Variables";
+import { useTheme } from 'react-native-paper';
 
 const Button = ({ children, type, size, optionalStyle, disabled, onPress, isUppercase=true, isLong=false }) => {
-    let backgroundColor = Variables.isabelle;
-    let color = Variables.blanc;
+    const { colors, fonts } = useTheme();
+  
+    let backgroundColor = colors.neutral;
+    let color = colors.background;
     let paddingLeft = 5;
     let paddingRight = 5;
     let paddingBottom = 10;
@@ -13,25 +15,25 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress, isUppe
     let textTransform = "uppercase";
   
     if (type === "primary") {
-      backgroundColor = Variables.isabelle
-      color = Variables.blanc;
+      backgroundColor = colors.neutral
+      color = colors.background;
     } else if (type === "secondary") {
-      backgroundColor = Variables.aubere;
-      color = Variables.isabelle
+      backgroundColor = colors.secondary;
+      color = colors.neutral
     } else if (type === "tertiary") {
-      backgroundColor = Variables.bai
-      color = Variables.blanc;
+      backgroundColor = colors.tertiary;
+      color = colors.background;
     } else if (type === "quaternary"){
-      backgroundColor = Variables.bai_brun;
-      color = Variables.blanc;
+      backgroundColor = colors.accent;
+      color = colors.background;
     } else if (type === "quinary"){
-      backgroundColor = Variables.blanc;
-      color = Variables.bai;
+      backgroundColor = colors.background;
+      color = colors.default_dark;
     }
 
     if(disabled === true){
-      backgroundColor = Variables.rouan
-      color = Variables.isabelle
+      backgroundColor = colors.quaternary
+      color = colors.neutral
     }
 
     if(size === "m"){

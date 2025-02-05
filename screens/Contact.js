@@ -1,27 +1,31 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, SectionList, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import TopTabSecondary from '../components/TopTabSecondary';
-import ContactService from '../services/ContactService';
+import contactsServiceInstance from '../services/ContactService';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import variables from '../components/styles/Variables';
 import { Entypo, Zocial } from '@expo/vector-icons';
 import { Linking } from 'react-native';
 import LoggerService from '../services/LoggerService';
 import ModalSubMenuContactActions from '../components/Modals/ModalSubMenuContactActions';
 import ModalContact from "../components/Modals/ModalContact";
 import Toast from "react-native-toast-message";
+import { LinearGradient } from "expo-linear-gradient";
 import ModalDefaultNoValue from '../components/Modals/ModalDefaultNoValue';
+import { useTheme } from 'react-native-paper';
+import ModalValidation from "../components/Modals/ModalValidation";
+import { useContacts } from '../providers/ContactsProvider';
 
 const ContactScreen = ({ navigation }) => {
+    const { colors, fonts } = useTheme();
     const sectionListRef = useRef(null);
     const { currentUser } = useAuth();
-    const contactsService = new ContactService();
-    const [contacts, setContacts] = useState([]);
+    const { contacts, setContacts } = useContacts();
     const [modalSubMenuVisible, setModalSubMenuVisible] = useState(false);
     const [contactFocus, setContactFocus] = useState({});
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
-    const getContacts = async () => {
+/*     const getContacts = async () => {
         const result = await contactsService.getContacts(currentUser.email);
         if (result && result.length > 0) {
             setContacts(result);
@@ -33,7 +37,7 @@ const ContactScreen = ({ navigation }) => {
             getContacts();
         });
         return unsubscribe;
-    }, [navigation]);
+    }, [navigation]); */
 
     const groupedContacts = contacts.reduce((acc, contact) => {
         if (contact && contact.nom) {
@@ -84,7 +88,12 @@ const ContactScreen = ({ navigation }) => {
     }
 
     const onModify = (contact) =>{
-        console.log(contact);
+        setTimeout(() => Toast.show({
+            type: "success",
+            position: "top",
+            text1: "Modification d'un contact"
+          }), 300);
+          
         var tempArray = contacts;
 
         var index = tempArray.findIndex(objet => objet.id === contact.id);
@@ -98,9 +107,13 @@ const ContactScreen = ({ navigation }) => {
     }
 
     const handleDelete = () =>{
+        setModalValidationDeleteVisible(true);
+    }
+
+    const confirmDelete = () =>{
         let data = {};
         data["id"] = contactFocus.id;
-        contactsService.delete(data)
+        contactsServiceInstance.delete(data)
             .then((reponse) => {
                 Toast.show({
                     type: "success",
@@ -130,11 +143,67 @@ const ContactScreen = ({ navigation }) => {
         setModalSubMenuVisible(true);
     }
 
+    const styles = StyleSheet.create({
+        itemContainer: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            padding: 15,
+        },
+        name: {
+            fontSize: 16,
+            fontFamily: fonts.bodyLarge.fontFamily
+        },
+        profession: {
+            fontSize: 14,
+            color: colors.default_dark,
+            fontFamily: fonts.default.fontFamily
+        },
+        phone: {
+            fontSize: 14,
+            color: colors.default_dark,
+            fontFamily: fonts.default.fontFamily
+        },
+        iconsContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginRight: 50
+        },
+        headerContainer: {
+            backgroundColor: '#f4f4f4',
+            padding: 5,
+        },
+        header: {
+            fontSize: 18,
+            fontFamily: fonts.bodyLarge.fontFamily
+        },
+        separator: {
+            height: 1,
+            backgroundColor: '#ccc',
+        },
+        sidebarContainer: {
+            position: 'absolute',
+            right: 10,
+            top: 50,
+            bottom: 50,
+            justifyContent: 'center',
+        },
+        letter: {
+            fontSize: 14,
+            paddingVertical: 2,
+            fontFamily: fonts.bodyMedium.fontFamily
+        },
+        selectedLetter: {
+            color: 'red',
+            fontWeight: 'bold',
+        },
+    });
+
     return (
         <>
+        <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
             <TopTabSecondary
                 message1={"Vos"}
-                message2={"contacts"}
+                message2={"Contacts"}
             />
             <ModalSubMenuContactActions
                 contact={contactFocus}
@@ -150,9 +219,16 @@ const ContactScreen = ({ navigation }) => {
                 contact={contactFocus}
                 onModify={onModify}
             />
-            <View style={{ flex: 1, backgroundColor: variables.default }}>
+            <ModalValidation
+                displayedText={"Êtes-vous sûr de vouloir supprimer le contact ?"}
+                onConfirm={confirmDelete}
+                setVisible={setModalValidationDeleteVisible}
+                visible={modalValidationDeleteVisible}
+                title={"Suppression d'un contact"}
+            />
+            <View style={{ flex: 1, }}>
                 {contacts.length === 0 ?
-                    <View style={{paddingLeft: 20, paddingRight: 20}}>
+                    <View style={{paddingLeft: 20, paddingRight: 20, paddingTop: 20}}>
                         <ModalDefaultNoValue
                             text={"Aucun contact enregistré"}
                         />
@@ -165,7 +241,7 @@ const ContactScreen = ({ navigation }) => {
                             keyExtractor={(item, index) => item.nom + index}
                             renderItem={({ item }) => (
                                 <TouchableOpacity style={styles.itemContainer} onPress={() => focusContact(item)}>
-                                    <View>
+                                    <View style={{width: "70%"}}>
                                         <Text style={styles.name}>{item.nom}</Text>
                                         {item.profession && <Text style={styles.profession}>{item.profession}</Text>}
                                         <Text style={styles.phone}>{item.telephone}</Text>
@@ -175,16 +251,16 @@ const ContactScreen = ({ navigation }) => {
                                         {item.telephone != null && item.telephone != undefined &&
                                             <>
                                                 <TouchableOpacity style={{marginRight: 5}} onPress={() => makePhoneCall(item.telephone)}>
-                                                    <Entypo name='phone' size={25}/>
+                                                    <Entypo name='phone' size={25} color={colors.default_dark}/>
                                                 </TouchableOpacity>
                                                 <TouchableOpacity style={{marginRight: 5}} onPress={() => sendSMS(item.telephone)}>
-                                                    <Entypo name='message' size={25}/>
+                                                    <Entypo name='message' size={25} color={colors.default_dark}/>
                                                 </TouchableOpacity>
                                             </>
                                         }
                                         {item.email != null && item.email != undefined &&
                                             <TouchableOpacity onPress={() => sendEmail(item.email)}>
-                                                <Zocial name='email' size={25}/>
+                                                <Zocial name='email' size={25} color={colors.default_dark}/>
                                             </TouchableOpacity>
                                         }
                                     </View>
@@ -219,65 +295,9 @@ const ContactScreen = ({ navigation }) => {
                     </>
                 }
             </View>
+            </LinearGradient>
         </>
     );
 };
-
-const styles = StyleSheet.create({
-    itemContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        padding: 15,
-        backgroundColor: 'white',
-    },
-    name: {
-        fontSize: 16,
-        color: variables.bai_brun,
-        fontFamily: variables.fontBold
-    },
-    profession: {
-        fontSize: 14,
-        color: variables.bai,
-        fontFamily: variables.fontRegular
-    },
-    phone: {
-        fontSize: 14,
-        color: variables.bai,
-        fontFamily: variables.fontRegular
-    },
-    iconsContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginRight: 50
-    },
-    headerContainer: {
-        backgroundColor: '#f4f4f4',
-        padding: 5,
-    },
-    header: {
-        fontSize: 18,
-        fontFamily: variables.fontBold
-    },
-    separator: {
-        height: 1,
-        backgroundColor: '#ccc',
-    },
-    sidebarContainer: {
-        position: 'absolute',
-        right: 10,
-        top: 50,
-        bottom: 50,
-        justifyContent: 'center',
-    },
-    letter: {
-        fontSize: 14,
-        paddingVertical: 2,
-        fontFamily: variables.fontMedium
-    },
-    selectedLetter: {
-        color: 'red',
-        fontWeight: 'bold',
-    },
-});
 
 export default ContactScreen;

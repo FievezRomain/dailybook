@@ -1,6 +1,5 @@
 import { View, Text, Image, ActivityIndicator, StyleSheet } from "react-native";
 import React from 'react';
-import variables from "../components/styles/Variables";
 import TopTabSecondary from "../components/TopTabSecondary";
 import InputTextInLine from "../components/InputTextInLine";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -12,8 +11,10 @@ import Toast from "react-native-toast-message";
 import LoggerService from "../services/LoggerService";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FileStorageService from "../services/FileStorageService";
+import { useTheme } from 'react-native-paper';
 
 const AccountScreen = ({ navigation }) => {
+    const { colors, fonts } = useTheme();
     const { currentUser, updateDisplayName, updateEmailForUser, updatePasswordForUser, updatePhotoURL } = useAuth();
     const [password, setPassword] = useState("");
     const [passwordRepeat, setPasswordRepeat] = useState("");
@@ -95,10 +96,15 @@ const AccountScreen = ({ navigation }) => {
     const setValue = (key, value) => {
     }
 
+    const styles = StyleSheet.create({
+        textFontMedium:{
+            fontFamily: fonts.bodyMedium.fontFamily
+        }
+    })
+
     return(
         <>
-        <View style={{zIndex:999}}><Toast/></View>
-        <View style={{backgroundColor: variables.default, height: "100%", justifyContent: "space-between"}}>
+        <View style={{backgroundColor: colors.onSurface, height: "100%", justifyContent: "space-between"}}>
             <View>
                 <KeyboardAwareScrollView>
                     <TopTabSecondary
@@ -116,7 +122,7 @@ const AccountScreen = ({ navigation }) => {
                     
                     <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 20}}>
                         <AvatarPicker
-                            backgroundColor={variables.blanc}
+                            backgroundColor={colors.background}
                             setImage={setImage}
                             setValue={setValue}
                         />
@@ -160,7 +166,7 @@ const AccountScreen = ({ navigation }) => {
 
             <View style={{width: "70%", alignSelf: "center", marginBottom: 50}}>
                 { loading ? 
-                    <ActivityIndicator size={30} color={variables.bai} />
+                    <ActivityIndicator size={30} color={colors.default_dark} />
                 :
                     <Button
                         isLong={true}
@@ -178,11 +184,5 @@ const AccountScreen = ({ navigation }) => {
         </>
     );
 }
-
-const styles = StyleSheet.create({
-    textFontMedium:{
-        fontFamily: variables.fontMedium
-    }
-})
 
 module.exports = AccountScreen;

@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, TextInput } from "react-native";
-import variables from "./styles/Variables";
 import { MaterialIcons } from '@expo/vector-icons';
-import { Keyboard } from 'react-native';
+import { useTheme } from 'react-native-paper';
 
 const InputTextInLine = ({ inputTextLabel, value, isEditable=true, isPassword=false, isNumeric=false, onChangeText }) => {
+    const { colors, fonts } = useTheme();
     const textInputRef = useRef(null);
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -18,34 +18,6 @@ const InputTextInLine = ({ inputTextLabel, value, isEditable=true, isPassword=fa
         setIsPasswordVisible(!isPasswordVisible);
     };
 
-    return (
-        <TouchableOpacity style={[styles.touchableOpacity, { backgroundColor: variables.blanc }]} onPress={handleClicModifyValue} >
-          <View style={styles.row}>
-            <Text style={[styles.textFontBold]}>{inputTextLabel}</Text>
-            <View style={styles.valueContainer}>
-                <TextInput
-                    placeholder={value}
-                    defaultValue={isPassword ? "                  " : null}
-                    style={[styles.valueText, styles.textFontRegular]} 
-                    placeholderTextColor={variables.rouan}
-                    editable={true}
-                    secureTextEntry={isPassword && !isPasswordVisible}
-                    keyboardType={isNumeric ? "numeric" : "default"}
-                    ref={textInputRef}
-                    onChangeText={(text) => onChangeText(text)}
-                />
-                {isPassword && 
-                    <TouchableOpacity onPress={togglePasswordVisibility}>
-                        <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={22} style={[styles.icon, {marginRight: 5}]} />
-                    </TouchableOpacity>
-                }
-              {isEditable && <MaterialIcons name='edit' size={20} style={styles.icon} />}
-            </View>
-          </View>
-        </TouchableOpacity>
-      );
-    };
-    
     const styles = StyleSheet.create({
       touchableOpacity: {
         width: "100%",
@@ -80,14 +52,42 @@ const InputTextInLine = ({ inputTextLabel, value, isEditable=true, isPassword=fa
         width: 20, // Fixed width for the icon
       },
       textFontRegular:{
-          fontFamily: variables.fontRegular
+          fontFamily: fonts.default.fontFamily
       },
       textFontMedium:{
-          fontFamily: variables.fontMedium
+          fontFamily: fonts.bodyMedium.fontFamily
       },
       textFontBold:{
-          fontFamily: variables.fontBold
+          fontFamily: fonts.bodyLarge.fontFamily
       }
     })
+
+    return (
+        <TouchableOpacity style={[styles.touchableOpacity, { backgroundColor: colors.background }]} onPress={handleClicModifyValue} >
+          <View style={styles.row}>
+            <Text style={[styles.textFontBold]}>{inputTextLabel}</Text>
+            <View style={styles.valueContainer}>
+                <TextInput
+                    placeholder={value}
+                    defaultValue={isPassword ? "                  " : null}
+                    style={[styles.valueText, styles.textFontRegular]} 
+                    placeholderTextColor={colors.quaternary}
+                    editable={true}
+                    secureTextEntry={isPassword && !isPasswordVisible}
+                    keyboardType={isNumeric ? "numeric" : "default"}
+                    ref={textInputRef}
+                    onChangeText={(text) => onChangeText(text)}
+                />
+                {isPassword && 
+                    <TouchableOpacity onPress={togglePasswordVisibility}>
+                        <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={22} style={[styles.icon, {marginRight: 5}]} />
+                    </TouchableOpacity>
+                }
+              {isEditable && <MaterialIcons name='edit' size={20} style={styles.icon} />}
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+};
 
 export default InputTextInLine;

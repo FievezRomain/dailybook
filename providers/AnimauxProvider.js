@@ -1,13 +1,16 @@
-import React, { useState, createContext } from 'react';
+import React, { useState, createContext, useContext } from 'react';
 
-export const AnimauxContext = createContext();
+const AnimauxContext = createContext();
 
-export default function AnimauxProvider ({ children }) {
-  const [animauxCache, setAnimauxCache] = useState({nom: "Sirius"});
+export const AnimauxProvider = ({ children }) => {
+  const [animaux, setAnimaux] = useState([]);
 
   return (
-    <AnimauxContext.Provider value={{ animauxCache, setAnimauxCache }}>
+    <AnimauxContext.Provider value={{ animaux, setAnimaux }}>
       {children}
     </AnimauxContext.Provider>
   );
 };
+
+// Hook pour accéder au contexte
+export const useAnimaux = () => useContext(AnimauxContext);

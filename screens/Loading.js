@@ -1,15 +1,16 @@
 import { View, Image, StyleSheet, Text } from "react-native";
 import { useEffect, useState } from "react";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import variables from "../components/styles/Variables";
-import AnimalsService from "../services/AnimalsService";
+import { useAnimaux } from "../providers/AnimauxProvider";
 import * as Font from 'expo-font';
 import LoggerService from "../services/LoggerService";
 import Constants from 'expo-constants';
+import { useTheme } from 'react-native-paper';
 
 const LoadingScreen = ({ navigation })=> {
+  const { colors, fonts } = useTheme();
     const { cacheUpdated, currentUser, loading, emailVerified, reloadUser } = useAuth();
-    const animalService = new AnimalsService();
+    const { animaux } = useAnimaux();
 
     useEffect(() => {
 
@@ -21,7 +22,7 @@ const LoadingScreen = ({ navigation })=> {
             if(currentUser && !emailVerified){
               navigation.navigate("VerifyEmail");
             }else if(currentUser && cacheUpdated){
-              var animaux = await animalService.getAnimals(currentUser.email);
+              //var animaux = await animalsServiceInstance.getAnimals(currentUser.email);
               if(Array.isArray(animaux) && animaux.length > 0){
                 LoggerService.log("Connexion réussie");
                 navigation.navigate("App");
@@ -54,6 +55,27 @@ const LoadingScreen = ({ navigation })=> {
       
     }, [currentUser, cacheUpdated, navigation, loading, emailVerified]);
 
+    const styles = StyleSheet.create({
+      loaderEvent: {
+        width: 150,
+        height: 150
+      },
+      logo:{
+        width: 250,
+        height: 250
+      },
+      loadingEvent: {
+        display: "flex",
+        height: "100%",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      },
+      textFontRegular: {
+        fontFamily: fonts.default.fontFamily
+      }
+    });
+
     return (
       <View style={styles.loadingEvent}>
           <Image
@@ -62,36 +84,15 @@ const LoadingScreen = ({ navigation })=> {
           />
         <View style={{position: "absolute", bottom: 0, marginBottom: 50}}>
           <View style={{flexDirection: "row"}}>
-            <Text style={[{color: variables.rouan, fontSize: 22}, styles.textFontRegular]}>From</Text>
-            <Text style={[{color: variables.isabelle, fontSize: 22}, styles.textFontRegular]}> Vasco & Co</Text>
+            <Text style={[{color: colors.quaternary, fontSize: 22}, styles.textFontRegular]}>From</Text>
+            <Text style={[{color: colors.neutral, fontSize: 22}, styles.textFontRegular]}> Vasco & Co</Text>
           </View>
           <View style={{flexDirection: "column"}}>
-            <Text style={[styles.textFontRegular, {color: variables.isabelle, textAlign: "center"}]}>{Constants.expoConfig?.version}</Text>
+            <Text style={[styles.textFontRegular, {color: colors.neutral, textAlign: "center"}]}>{Constants.expoConfig?.version}</Text>
           </View>
         </View>
       </View>
     );
 }
-
-const styles = StyleSheet.create({
-  loaderEvent: {
-    width: 150,
-    height: 150
-  },
-  logo:{
-    width: 250,
-    height: 250
-  },
-  loadingEvent: {
-    display: "flex",
-    height: "100%",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  textFontRegular: {
-    fontFamily: variables.fontRegular
-  }
-})
 
 module.exports = LoadingScreen;

@@ -2,11 +2,12 @@
   "expo": {
     "name": "Vasco",
     "slug": "dailybook",
-    "version": "1.0.11",
-    "sdkVersion": "51.0.0",
+    "version": "1.1.2",
+    "sdkVersion": "52.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "newArchEnabled": true,
     "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -19,7 +20,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.vascoandco.vasco.ios",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "1.0.11",
+      "buildNumber": "1.1.2",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
         "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
@@ -38,7 +39,7 @@
       },
       "package": "com.vascoandco.vasco.android",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 11,
+      "versionCode": 14,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
@@ -77,12 +78,13 @@
         {
           "ios": {
             "useFrameworks": "static",
-            "deploymentTarget": "13.4",
+            "deploymentTarget": "15.1",
             "modularHeaders": true
           }
         }
       ],
-      "expo-tracking-transparency"
+      "expo-tracking-transparency",
+      "expo-localization"
     ]
   }
 }
