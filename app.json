@@ -39,7 +39,7 @@
       },
       "package": "com.vascoandco.vasco.android",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 14,
+      "versionCode": 15,
       "permissions": [
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
