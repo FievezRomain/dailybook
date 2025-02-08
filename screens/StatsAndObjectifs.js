@@ -166,7 +166,7 @@ const StatsScreen = ({ navigation }) => {
               setSelected={setSelectedAnimal}
               selected={selectedAnimal}
               mode={activeRubrique === 0 ? "multiple" : "multiple"}
-              setValue={activeRubrique === 0 ? undefined : () => {}}
+              setValue={activeRubrique === 0 ? () => {} : () => {}}
             />
         </View>
         <View style={styles.rubriqueContainer}>

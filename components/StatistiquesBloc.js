@@ -9,10 +9,11 @@ import StatePicker from './StatePicker';
 import ChartWithLoader from './ChartWithLoader';
 import DepenseComponent from './statistics/DepenseComponent';
 import LineChartComponent from './charts/LineChartComponent';
+import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 
 const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
     const { colors, fonts } = useTheme();
-    const { currentUser } = useAuth();
+    const { currentUser, abonnement } = useAuth();
     const [itemStatistique, setItemStatistique] = useState("depense");
     const chartComponents = {
         line: LineChartComponent,
@@ -20,7 +21,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
     };
     const [statistiqueComponent, setStatisticComponent] = useState("depense");
     const ChartComponent = chartComponents[statistiqueComponent];
-    const accountType = "premium";
+    const accountType = abonnement.libelle;
     const arrayState = [
         {value: 'Mois', label: 'Mois', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
         {value: 'Année', label: 'Année', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
@@ -172,40 +173,43 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                     color={hexToRgba(colors.quaternary, 1)}
                 />
             </View>
-            <View style={styles.dateContainer}>
-                <TouchableOpacity onPress={() => changeDates(-1)}>
-                    <IconButton icon={"chevron-left"} size={30} />
-                </TouchableOpacity>
-                <Text style={styles.textFontRegular}>{getDateToDisplay()}</Text>
-                <TouchableOpacity onPress={() => changeDates(1)}>
-                    <IconButton icon={"chevron-right"} size={30} />
-                </TouchableOpacity>
-            </View>
+            {accountType === "Premium" &&
+                <View style={styles.dateContainer}>
+                    <TouchableOpacity onPress={() => changeDates(-1)}>
+                        <IconButton icon={"chevron-left"} size={30} />
+                    </TouchableOpacity>
+                    <Text style={styles.textFontRegular}>{getDateToDisplay()}</Text>
+                    <TouchableOpacity onPress={() => changeDates(1)}>
+                        <IconButton icon={"chevron-right"} size={30} />
+                    </TouchableOpacity>
+                </View>
+            }
+            
             <View style={styles.composantContainer}>
                 <ScrollView contentContainerStyle={{paddingBottom: 30}}>
-                    {accountType === "premium" ?
+                    {accountType === "Premium" ?
                         <>
                             <View style={{width: "90%", alignSelf: "center"}}>
                                 <View style={styles.statistiqueIndicatorContainer}>
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
                                         <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}} disabled>
+                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
                                         <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("entrainement")}}>
                                         <Entypo name="traffic-cone" size={20} style={itemStatistique == "entrainement" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}} disabled>
+                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}}>
                                         <FontAwesome name="trophy" size={20} style={itemStatistique == "concours" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}} disabled>
+                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
                                         <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("poids")}} disabled>
+                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("poids")}}>
                                         <FontAwesome6 name="weight-scale" size={20} style={itemStatistique == "poids" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("taille")}} disabled>
+                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("taille")}}>
                                         <MaterialIcons name="height" size={20} style={itemStatistique == "taille" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
                                 </View>
@@ -213,12 +217,22 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                             </View>
                             
                             <View style={styles.statistiquesContainer}>
-                                <ChartWithLoader
-                                    ChartComponent={ChartComponent}
-                                    chartConfig={chartConfig}
-                                    chartType={itemStatistique}
-                                    chartParameters={parameters}
-                                />
+                                {itemStatistique === "depense" ?
+                                    <ChartWithLoader
+                                        ChartComponent={ChartComponent}
+                                        chartConfig={chartConfig}
+                                        chartType={itemStatistique}
+                                        chartParameters={parameters}
+                                    />
+                                    :
+                                    <View style={{width: "90%", alignSelf: "center"}}>
+                                        <ModalDefaultNoValue
+                                            text={"À venir..."}
+                                        />
+                                    </View>
+                                    
+                                }
+                                
                             </View>
                         </>
                     :
