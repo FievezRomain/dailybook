@@ -8,7 +8,7 @@ const currentUrl = prodUrl;
 
 export function getBaseUrl(){
     return(
-        `${currentUrl}/`
+        `${currentUrl}/api/v1/`
     );
 }
 
