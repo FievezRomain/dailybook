@@ -74,7 +74,7 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
             backgroundColor: colors.default_dark,
         },
         title:{
-            color: "white"
+            color: colors.background,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -95,7 +95,7 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
             arrayHeight={["30%"]}
         >
                 <View style={styles.card}>
-                    <Text style={styles.textFontRegular}>Gérer les informations</Text>
+                    <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer les informations</Text>
                     <View style={styles.actionButtonContainer}>
                         {/* <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleManageBody)}>
                             <View style={styles.informationsActionButton}>

@@ -97,7 +97,7 @@ export default function TabStack() {
           name="Performance"
           component={StatsScreen}
           options={{
-            tabBarLabel: 'Performance',
+            tabBarLabel: 'Performances',
             tabBarIcon: ({ color, size }) => (
               <View style={styles.iconContainer}>
                 <IconButton icon="chart-bar" iconColor={color} size={size} />

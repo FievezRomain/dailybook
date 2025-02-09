@@ -10,15 +10,14 @@ const variables = {
     default: "#f4f4f4",
     bai_cerise: "#b07165",
     palomino: "#f6e6ce",
-    default_dark: "black",
+    default_dark: "#333333",
+    noir: "#1E1E1E",
     fontLight: "Quicksand-Light",
     fontRegular: "Quicksand-Regular",
     fontMedium: "Quicksand-Medium",
     fontSemiBold: "Quicksand-SemiBold",
-    fontBold: "Quicksand-Bold",
-    default_dark: "#333333",
-    noir: "#1E1E1E"
+    fontBold: "Quicksand-Bold",    
   };
   
   export default variables;
-  
+ 

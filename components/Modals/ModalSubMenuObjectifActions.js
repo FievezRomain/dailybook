@@ -73,7 +73,7 @@ const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModi
             backgroundColor: colors.default_dark,
         },
         title:{
-            color: "white"
+            color: colors.default_dark,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -94,7 +94,7 @@ const ModalSubMenuObjectifActions = ({ modalVisible, setModalVisible, handleModi
             arrayHeight={["25%"]}
         >
                 <View style={styles.card}>
-                    <Text style={styles.textFontRegular}>Gérer l'objectif</Text>
+                    <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer l'objectif</Text>
                     <View style={styles.actionButtonContainer}>{/* 
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleManageTasks)}>
                             <View style={styles.informationsActionButton}>

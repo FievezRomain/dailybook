@@ -73,7 +73,7 @@ const ModalSubMenuContactActions = ({ modalVisible, setModalVisible, contact, ha
             backgroundColor: colors.default_dark,
         },
         title:{
-            color: "white"
+            color: colors.background,
         },
         disabledButton:{
             backgroundColor: colors.secondary,
@@ -103,9 +103,9 @@ const ModalSubMenuContactActions = ({ modalVisible, setModalVisible, contact, ha
         >
                 <View style={styles.card}>
                     <View style={{alignItems: "center"}}>
-                        <Text style={styles.textFontRegular}>Gérer le contact</Text>
+                        <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer le contact</Text>
                         {contact !== null &&
-                            <Text style={[{fontSize: 12}, styles.textFontBold]}>{contact.nom}</Text>
+                            <Text style={[{fontSize: 12}, styles.textFontBold, {color:colors.default_dark}]}>{contact.nom}</Text>
                         }
                     </View>
                     

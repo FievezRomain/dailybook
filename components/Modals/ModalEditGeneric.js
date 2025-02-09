@@ -9,6 +9,7 @@ const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible, s
     // variables
     const bottomSheet = useRef(null);
     const [isOpen, setOpen] = useState(false);
+    const { colors } = useTheme();
 
     useEffect(() => {
         if(!isVisible){
@@ -58,6 +59,7 @@ const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible, s
                         onClose={() => setVisible(false)}
                         handleStyle={handleStyle ? handleStyle : null}
                         handleIndicatorStyle={handleIndicatorStyle ? handleIndicatorStyle : null}
+                        backgroundStyle={{backgroundColor : colors.background}}
                     >
                         <BottomSheetView style={styles.contentContainer}>
                             {children}

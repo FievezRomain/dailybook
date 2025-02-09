@@ -260,7 +260,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         if(date.includes("/")){
             date = dateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
         }
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         dateObject  = new Date(date);
         return String(dateObject.toLocaleDateString("fr-FR", options));
     };
@@ -346,7 +346,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         },
         textInput:{
             alignSelf: "flex-start",
-            marginBottom: 5
+            marginBottom: 5,
+            color : colors.default_dark
         },
         input: {
             height: 40,
@@ -355,7 +356,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             alignSelf: "baseline"
         },
         errorInput: {
@@ -411,7 +412,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             <View style={{width:"33.33%", alignItems: "center"}}>
-                                <Text style={[styles.textFontBold, {fontSize: 16}]}>Animal</Text>
+                                <Text style={[styles.textFontBold, {fontSize: 16, color:colors.default_dark}]}>Animal</Text>
                             </View>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 

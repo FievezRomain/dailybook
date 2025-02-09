@@ -18,7 +18,8 @@ const AutreCard = ({eventInfos, animaux, setSubMenu}) => {
         },
         eventTitle:{
             marginBottom: 10,
-            fontSize: 16
+            fontSize: 16,
+            color: colors.default_dark,
         },
         actionEventContainer:{
             width: "20%",
@@ -36,7 +37,7 @@ const AutreCard = ({eventInfos, animaux, setSubMenu}) => {
             fontSize: 14
         },
         avatarText: {
-            color: "white",
+            color: colors.background,
             textAlign: "center"
         },
         avatar: {
@@ -71,6 +72,9 @@ const AutreCard = ({eventInfos, animaux, setSubMenu}) => {
         },
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
+        },
+        text:{
+            color:colors.default_dark,
         }
     });
 
