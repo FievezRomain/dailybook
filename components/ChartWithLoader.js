@@ -21,7 +21,7 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
             result.statistic = addColorsToData(result.statistic);
             break;
           case 'entrainement':
-            var result = await statisticServiceInstance.getEntrainement(chartParameters);
+            var result = await statisticServiceInstance.getEntrainements(chartParameters);
             break;
         }
         

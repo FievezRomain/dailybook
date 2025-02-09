@@ -14,7 +14,7 @@ class StatisticService {
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les statistiques de dépenses : " + err.message ));
     }
 
-    async getEntrainement(parameters){
+    async getEntrainements(parameters){
         await this.updateAxiosAuthorization();
         return axios
         .post(`${getBaseUrl()}stats/entrainements`, parameters)
