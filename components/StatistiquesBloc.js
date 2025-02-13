@@ -9,14 +9,17 @@ import StatePicker from './StatePicker';
 import ChartWithLoader from './ChartWithLoader';
 import DepenseComponent from './statistics/DepenseComponent';
 import LineChartComponent from './charts/LineChartComponent';
+import EntrainementComponent from './statistics/EntrainementComponent';
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import BaladeComponent from './statistics/BaladeComponent';
 
 const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
     const { colors, fonts } = useTheme();
     const { currentUser, abonnement } = useAuth();
     const [itemStatistique, setItemStatistique] = useState("depense");
     const chartComponents = {
-        line: LineChartComponent,
+        balade: BaladeComponent,
+        entrainement: EntrainementComponent,
         depense: DepenseComponent,
     };
     const [statistiqueComponent, setStatisticComponent] = useState("depense");
@@ -28,11 +31,26 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
       ];
     const [temporality, setTemporality] = useState('Mois');
     const chartConfig = {
-        backgroundGradientFrom: "#1E2923",
-        backgroundGradientTo: "#08130D",
-        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        depense: {
+            backgroundGradientFrom: "#1E2923",
+            backgroundGradientTo: "#08130D",
+            color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        },
+        entrainement: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => `rgba(149, 101, 64, ${opacity-0.05})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        },
+        balade: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => `rgba(149, 101, 64, ${opacity-0.05})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        }
     };
+    const ChartConfig = chartConfig[statistiqueComponent];
     const now = new Date();
     const [parameters, setParameters] = useState({ animaux: selectedAnimal.map(function(item) { return item["id"] }), email: currentUser.email, dateDebut: new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString() });
 
@@ -137,7 +155,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             alignSelf: "center",
             paddingLeft: 20,
             paddingRight: 20,
-            paddingBottom: 15,
+            paddingBottom: 5,
             top: 5,
             zIndex: 1,
         },
@@ -184,7 +202,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                     </TouchableOpacity>
                 </View>
             }
-            
+
             <View style={styles.composantContainer}>
                 <ScrollView contentContainerStyle={{paddingBottom: 30}}>
                     {accountType === "Premium" ?
@@ -194,8 +212,8 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
                                         <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
-                                        <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
+                                        <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("entrainement")}}>
                                         <Entypo name="traffic-cone" size={20} style={itemStatistique == "entrainement" ? styles.itemIconSelected : styles.itemIconDefault}  />
@@ -203,24 +221,24 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}}>
                                         <FontAwesome name="trophy" size={20} style={itemStatistique == "concours" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
-                                        <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("poids")}}>
                                         <FontAwesome6 name="weight-scale" size={20} style={itemStatistique == "poids" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("taille")}}>
                                         <MaterialIcons name="height" size={20} style={itemStatistique == "taille" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
+                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
+                                        <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                    </TouchableOpacity>
                                 </View>
                                 <View style={styles.bottomBar} />
                             </View>
                             
                             <View style={styles.statistiquesContainer}>
-                                {itemStatistique === "depense" ?
+                                {itemStatistique === "depense" || itemStatistique === "entrainement" || itemStatistique === "balade" ?
                                     <ChartWithLoader
                                         ChartComponent={ChartComponent}
-                                        chartConfig={chartConfig}
+                                        chartConfig={ChartConfig}
                                         chartType={itemStatistique}
                                         chartParameters={parameters}
                                     />
@@ -230,9 +248,9 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                                             text={"À venir..."}
                                         />
                                     </View>
-                                    
+
                                 }
-                                
+
                             </View>
                         </>
                     :

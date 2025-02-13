@@ -14,8 +14,20 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
     const loadData = async () => {
       try {
         setLoading(true);
-        var result = await statisticServiceInstance.getDepenses(chartParameters);
-        result.statistic = addColorsToData(result.statistic);
+
+        switch(chartType){
+          case 'depense':
+            var result = await statisticServiceInstance.getDepenses(chartParameters);
+            result.statistic = addColorsToData(result.statistic);
+            break;
+          case 'entrainement':
+            var result = await statisticServiceInstance.getEntrainements(chartParameters);
+            break;
+          case 'balade':
+              var result = await statisticServiceInstance.getBalades(chartParameters);
+              break;
+        }
+        
         setData(result);
       } catch (error) {
         console.error(error);
