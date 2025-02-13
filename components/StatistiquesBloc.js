@@ -11,12 +11,14 @@ import DepenseComponent from './statistics/DepenseComponent';
 import LineChartComponent from './charts/LineChartComponent';
 import EntrainementComponent from './statistics/EntrainementComponent';
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import BaladeComponent from './statistics/BaladeComponent';
 
 const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
     const { colors, fonts } = useTheme();
     const { currentUser, abonnement } = useAuth();
     const [itemStatistique, setItemStatistique] = useState("depense");
     const chartComponents = {
+        balade: BaladeComponent,
         entrainement: EntrainementComponent,
         depense: DepenseComponent,
     };
@@ -40,7 +42,12 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             backgroundGradientToOpacity: 0,
             color: (opacity = 1) => `rgba(149, 101, 64, ${opacity-0.05})`,
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-
+        },
+        balade: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => `rgba(149, 101, 64, ${opacity-0.05})`,
+            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         }
     };
     const ChartConfig = chartConfig[statistiqueComponent];
@@ -228,7 +235,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                             </View>
                             
                             <View style={styles.statistiquesContainer}>
-                                {itemStatistique === "depense" || itemStatistique === "entrainement" ?
+                                {itemStatistique === "depense" || itemStatistique === "entrainement" || itemStatistique === "balade" ?
                                     <ChartWithLoader
                                         ChartComponent={ChartComponent}
                                         chartConfig={ChartConfig}
