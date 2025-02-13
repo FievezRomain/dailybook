@@ -23,6 +23,9 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
           case 'entrainement':
             var result = await statisticServiceInstance.getEntrainements(chartParameters);
             break;
+          case 'balade':
+              var result = await statisticServiceInstance.getBalades(chartParameters);
+              break;
         }
         
         setData(result);
