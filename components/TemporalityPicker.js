@@ -11,7 +11,7 @@ const TemporalityPicker = ({ arrayState, handleChange, defaultState=undefined })
             with: "100%",
             display: "flex",
             flexDirection: "row",
-            borderBlockColor: "black",
+            borderBlockColor: colors.default_dark,
             borderWidth: 0.4,
             backgroundColor: colors.onSurface,
             borderRadius: 5

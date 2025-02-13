@@ -70,11 +70,9 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     const htmlStyles = StyleSheet.create({
         p: {
             fontSize: 14,
-            color: '#333',
         },
         a: {
             fontWeight: 'bold',
-            color: '#00f',
         },
     });
     

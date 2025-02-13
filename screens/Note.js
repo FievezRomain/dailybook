@@ -106,8 +106,9 @@ const NoteScreen = ({ navigation }) => {
                     <View style={{flexDirection: "row", alignItems: "center"}}>
                         <AntDesign name="search1" size={16} color={colors.default_dark}/>
                         <TextInput
-                            placeholder="Recherche"
-                            style={[{marginLeft: 5, width: "100%"}, styles.textFontRegular]}
+                            placeholder="Recherche"             
+                            style={[{marginLeft: 5, width: "100%", color:colors.default_dark}, styles.textFontRegular]}
+                            placeholderTextColor={colors.default_dark}
                             value={searchQuery}
                             onChangeText={handleSearch}
                         />
@@ -122,7 +123,7 @@ const NoteScreen = ({ navigation }) => {
                         : 
                             <>
                                 {searchQuery.length > 0 && 
-                                    <Text style={{marginBottom: 10, textAlign: "center"}}>Résultats de la recherche "{searchQuery}"</Text>
+                                    <Text style={{marginBottom: 10, textAlign: "center", color:colors.default_dark}}>Résultats de la recherche "{searchQuery}"</Text>
                                 }
                                 <FlatList
                                     data={searchQuery.length > 0 ? filteredNotes : notes}

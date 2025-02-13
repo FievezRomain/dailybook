@@ -33,7 +33,7 @@ const ModalVerif = ({ modalVisible, setModalVisible, message, event }) => {
     },
     message:{
       alignSelf: "center",
-      color: "black"
+      color: colors.default_dark,
     },
     textFontRegular:{
         fontFamily: fonts.default.fontFamily

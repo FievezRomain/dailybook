@@ -146,7 +146,7 @@ const WishScreen = ({ navigation }) => {
             left: 10, 
             flexDirection: 'row',
             alignItems: 'center',
-            backgroundColor: 'white',
+            backgroundColor: colors.background,
             padding: 5,
             borderRadius: 5,
             zIndex: 1, 

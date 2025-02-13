@@ -84,7 +84,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, onModify=undef
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             alignSelf: "baseline"
         },
         textFontRegular:{

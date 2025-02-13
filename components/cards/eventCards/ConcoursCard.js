@@ -36,7 +36,7 @@ const ConcoursCard = ({eventInfos, animaux, setSubMenu}) => {
             fontSize: 14
         },
         avatarText: {
-            color: "white",
+            color: colors.background,
             textAlign: "center"
         },
         avatar: {
@@ -71,6 +71,9 @@ const ConcoursCard = ({eventInfos, animaux, setSubMenu}) => {
         },
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
+        },
+        text:{
+            color:colors.default_dark,
         }
     });
 

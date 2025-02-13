@@ -106,7 +106,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             return "Balade";
         }
         if( eventInfos.eventtype === "soins" ){
-            return "Soins";
+            return "Soin";
         }
         if( eventInfos.eventtype === "concours" ){
             return "Concours";

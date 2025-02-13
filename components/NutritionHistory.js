@@ -86,7 +86,7 @@ const NutritionHistory = ({ animal }) => {
                                 style={{
                                     marginVertical: 8,
                                     borderRadius: 10,
-                                    backgroundColor: "white",
+                                    backgroundColor: colors.background,
                                     padding: 5
                                 }}
                             />

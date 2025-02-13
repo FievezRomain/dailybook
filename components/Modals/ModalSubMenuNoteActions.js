@@ -74,7 +74,7 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
             backgroundColor: colors.default_dark,
         },
         title:{
-            color: "white"
+            color: colors.background,
         },
         disabledButton:{
             backgroundColor: colors.secondary,
@@ -104,9 +104,9 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
         >
                 <View style={styles.card}>
                     <View style={{alignItems: "center"}}>
-                        <Text style={styles.textFontRegular}>Gérer la note</Text>
+                        <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer la note</Text>
                         {note !== null &&
-                            <Text style={[{fontSize: 12}, styles.textFontBold]}>{note.titre}</Text>
+                            <Text style={[{fontSize: 12}, styles.textFontBold, {color:colors.default_dark}]}>{note.titre}</Text>
                         }
                     </View>
                     
