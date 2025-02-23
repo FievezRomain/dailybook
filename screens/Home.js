@@ -37,7 +37,7 @@ const HomeScreen = ({ navigation })=> {
       fontSize: 16
     },
     button: {
-      backgroundColor: "white",
+      backgroundColor: colors.background,
       width: "100%",
       paddingLeft: 20,
       paddingRight: 20,

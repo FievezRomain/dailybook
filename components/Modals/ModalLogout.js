@@ -39,7 +39,7 @@ const LogoutModal = ({ modalVisible, setModalVisible, navigation }) => {
     },
     message:{
       alignSelf: "center",
-      color: "black",
+      color: colors.default_dark,
       marginBottom: 20,
     },
     textFontRegular:{

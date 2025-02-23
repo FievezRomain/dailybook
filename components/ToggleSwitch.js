@@ -23,7 +23,7 @@ const ToggleSwitch = ({ isActive, onToggle }) => {
       width: 20,
       height: 20,
       borderRadius: 10,
-      backgroundColor: 'white',
+      backgroundColor: colors.background,
     },
     active: {
       backgroundColor: colors.text,

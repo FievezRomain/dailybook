@@ -45,7 +45,7 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
-      backgroundColor: 'white',
+      backgroundColor: colors.background,
       padding: 20,
       borderRadius: 10,
       width: '80%',
@@ -95,7 +95,7 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
                   theme={{
                     arrowColor: colors.neutral,
                     todayTextColor: colors.tertiary,
-                    selectedDayTextColor: "white",
+                    selectedDayTextColor: colors.background,
                     selectedDayBackgroundColor: colors.accent
                   }}
                   enableSwipeMonths={false} // Active le swipe de mois

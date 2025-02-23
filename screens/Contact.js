@@ -151,6 +151,7 @@ const ContactScreen = ({ navigation }) => {
         },
         name: {
             fontSize: 16,
+            color: colors.default_dark,
             fontFamily: fonts.bodyLarge.fontFamily
         },
         profession: {
@@ -169,11 +170,12 @@ const ContactScreen = ({ navigation }) => {
             marginRight: 50
         },
         headerContainer: {
-            backgroundColor: '#f4f4f4',
+            backgroundColor: colors.onSurface,
             padding: 5,
         },
         header: {
             fontSize: 18,
+            color: colors.default_dark,
             fontFamily: fonts.bodyLarge.fontFamily
         },
         separator: {
@@ -190,10 +192,11 @@ const ContactScreen = ({ navigation }) => {
         letter: {
             fontSize: 14,
             paddingVertical: 2,
+            color: colors.default_dark,
             fontFamily: fonts.bodyMedium.fontFamily
         },
         selectedLetter: {
-            color: 'red',
+            color: colors.error,
             fontWeight: 'bold',
         },
     });

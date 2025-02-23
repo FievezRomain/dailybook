@@ -20,7 +20,7 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
         {title: "Entraînement", id: "entrainement"},
         {title: "Concours", id: "concours"},
         {title: "Rendez-vous", id: "rdv"},
-        {title: "Soins", id: "soins"},
+        {title: "Soin", id: "soins"},
         {title: "Autre", id: "autre"},
         {title: "Dépense", id: "depense"},
     ];
@@ -142,7 +142,7 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
             backgroundColor: colors.accent,
         },
         title:{
-            color: "white"
+            color: colors.background,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -192,10 +192,10 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
                 </View>
                 <View style={styles.bottomBar} />
                 <View style={styles.contentCard}>
-                    <Text style={styles.textFontBold}>Filtrer les événements</Text>
+                    <Text style={[{color: colors.default_dark}, styles.textFontBold]}>Filtrer les événements</Text>
                     <View style={styles.filtersContainer}>
                         <View>
-                            <Text style={[styles.textFontRegular, {paddingLeft: 10}]}>Animaux :</Text>
+                            <Text style={[{color: colors.default_dark}, styles.textFontRegular, {paddingLeft: 10}]}>Animaux :</Text>
                             <AnimalsPicker
                                 animaux={animaux}
                                 mode="multiple"
@@ -207,7 +207,7 @@ const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter})
                         </View>
 
                         <View>
-                            <Text style={[styles.textFontRegular, {paddingLeft: 10, marginTop: 20}]}>Types d'événement :</Text>
+                            <Text style={[{color: colors.default_dark}, styles.textFontRegular, {paddingLeft: 10, marginTop: 20}]}>Types d'événement :</Text>
                             <View style={styles.itemContainer}>
                                 {list.map((item, index) => {
                                     return(

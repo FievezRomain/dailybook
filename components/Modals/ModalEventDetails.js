@@ -228,7 +228,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             // Convertir la différence en jours
             const differenceInDays = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
             return(
-                <Text style={{color: color}}>{differenceInDays} jour(s) de retard</Text>
+                <Text style={{color: color, fontFamily: fonts.default.fontFamily}}>{differenceInDays} jour(s) de retard</Text>
             )
         }
     }
@@ -391,7 +391,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         },
         tableauInfos:{
             marginLeft: 30,
-            marginTop: 10
+            marginTop: 10,
         },
         colorTextBlack:{
             color: colors.default_dark,
@@ -406,7 +406,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             justifyContent: "flex-end",
         },
         avatarText: {
-            color: "white",
+            color: colors.background,
             textAlign: "center"
         },
         avatar: {
@@ -510,69 +510,69 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                 <View style={styles.tableauInfos}>
                     {isValidString(localEvent.heuredebutevent) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Heure : {localEvent.heuredebutevent}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Heure : {localEvent.heuredebutevent}</Text>
                         </View>
                     }
                     {isValidString(localEvent.discipline) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Discipline : {localEvent.discipline}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Discipline : {localEvent.discipline}</Text>
                         </View>
                     }
                     {isValidString(localEvent.lieu) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Lieu : {localEvent.lieu}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Lieu : {localEvent.lieu}</Text>
                         </View>
                     }
                     {isValidString(localEvent.datefinbalade) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Date de fin de balade : {localEvent.datefinbalade.includes("-") ? dateUtils.dateFormatter(localEvent.datefinbalade, "yyyy-mm-dd", "-") : localEvent.datefinbalade}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Date de fin de balade : {localEvent.datefinbalade.includes("-") ? dateUtils.dateFormatter(localEvent.datefinbalade, "yyyy-mm-dd", "-") : localEvent.datefinbalade}</Text>
                         </View>
                     }
                     {isValidString(localEvent.heurefinbalade) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Heure de fin de balade : {localEvent.heurefinbalade}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Heure de fin de balade : {localEvent.heurefinbalade}</Text>
                         </View>
                     }
                     {isValidString(localEvent.epreuve) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Épreuve : {localEvent.epreuve}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Épreuve : {localEvent.epreuve}</Text>
                         </View>
                     }
                     {isValidString(localEvent.dossart) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Dossart : {localEvent.dossart}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Dossart : {localEvent.dossart}</Text>
                         </View>
                     }
                     {localEvent.placement != null && localEvent.placement != undefined &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Classement : {localEvent.placement}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Classement : {localEvent.placement}</Text>
                         </View>
                     }
                     {isValidString(localEvent.specialiste) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Spécialiste : {localEvent.specialiste}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Spécialiste : {localEvent.specialiste}</Text>
                         </View>
                     }
                     {event.eventtype !== "depense" &&
                         localEvent.depense !== null && localEvent.depense !== undefined &&
                             <View style={{marginBottom: 5}}>
-                                <Text style={styles.textFontRegular}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
+                                <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
                             </View>
                         
                     }
                     {isValidString(localEvent.traitement) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Traitement : {localEvent.traitement}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Traitement : {localEvent.traitement}</Text>
                         </View>
                     }
                     {isValidString(localEvent.datefinsoins) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={styles.textFontRegular}>Date de fin du soin : {localEvent.datefinsoins.includes("-") ? dateUtils.dateFormatter(localEvent.datefinsoins, "yyyy-mm-dd", "-") : localEvent.datefinsoins}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Date de fin du soin : {localEvent.datefinsoins.includes("-") ? dateUtils.dateFormatter(localEvent.datefinsoins, "yyyy-mm-dd", "-") : localEvent.datefinsoins}</Text>
                         </View>
                     }
                     {event.eventtype !== "depense" ?
                         <View style={{width: "90%"}}>
-                            <Text style={[{marginBottom: 5}, styles.textFontRegular]}>Commentaire :</Text>
+                            <Text style={[{marginBottom: 5}, styles.textFontRegular, styles.colorTextBlack]}>Commentaire :</Text>
                             <TextInput
                                 style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5, height: 200}, styles.textFontRegular]}
                                 multiline={true}
@@ -594,7 +594,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                         </View>
                         :
                         <View style={{marginBottom: 5, width: "90%"}}>
-                            <Text style={[styles.textFontRegular, {marginBottom: 5}]}>Dépense : {localEvent.depense ? parseFloat(localEvent.depense).toFixed(2) : localEvent.depense}</Text>
+                            <Text style={[styles.textFontRegular, {marginBottom: 5}, styles.colorTextBlack]}>Dépense : </Text>
                             <TextInput
                                 style={[{backgroundColor: colors.quaternary, padding: 10, borderRadius: 5,}, styles.textFontRegular]}
                                 placeholder="Exemple : 1"

@@ -74,7 +74,7 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
             backgroundColor: colors.default_dark,
         },
         title:{
-            color: "white"
+            color: colors.background,
         },
         disabledButton:{
             backgroundColor: colors.secondary,
@@ -103,9 +103,9 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
             arrayHeight={["30%"]}
         >
                 <View style={styles.card}>
-                    <Text style={styles.textFontRegular}>Gérer le souhait</Text>
+                    <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer le souhait</Text>
                     {wish !== null &&
-                        <Text style={[{fontSize: 12}, styles.textFontBold]}>{wish.nom}</Text>
+                        <Text style={[{fontSize: 12}, styles.textFontBold, {color:colors.default_dark}]}>{wish.nom}</Text>
                     }
                     <View style={styles.actionButtonContainer}>
                         <TouchableOpacity style={[styles.actionButton, (wish === null || wish.url === null || wish.url === undefined) && styles.disabledButton]} onPress={() => onAction(handleRedirect)} disabled={(wish === null || wish.url === null || wish.url === undefined)}>

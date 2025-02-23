@@ -33,7 +33,7 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
     },
     message:{
       alignSelf: "center",
-      color: "white"
+      color: colors.background,
     },
     avatar: {
       width: 60,
@@ -43,8 +43,8 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
       zIndex: 1,
       },
       defaultAvatar:{
-          backgroundColor: "white",
-          borderColor: 'white',
+          backgroundColor: colors.background,
+          borderColor: colors.background,
       },
       selectedAvatar:{
           backgroundColor: colors.default_dark,
@@ -65,7 +65,7 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
           marginRight: 20
       },
       defaultText:{
-          color: "white"
+          color: colors.background,
       },
       selectedText:{
           color: colors.default_dark

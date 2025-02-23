@@ -160,7 +160,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             width: "100%"
         },
         overdueIndicatorContainer:{
-            backgroundColor: "white", 
+            backgroundColor: colors.background, 
             alignSelf: "flex-end",
             top: -20, 
             width: "40%", 
@@ -177,7 +177,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             shadowOffset: {width: 0, height: 2}
         },
         overdueIndicator:{
-            color: "black", 
+            color: colors.default_dark, 
             fontSize: 12,
         },
         inputStateContainerDefault:{
@@ -235,7 +235,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
                                         />
                                     </View>
                                     <View style={styles.overdueIndicatorContainer}>
-                                        <Text style={[styles.overdueIndicator, styles.textFontRegular]}>{calculateOverdueDays(item)} jour(s) retard</Text>
+                                        <Text style={[styles.overdueIndicator, styles.textFontRegular]}>{calculateOverdueDays(item)} jour(s) de retard</Text>
                                     </View>
                                 </TouchableOpacity>
                             )}

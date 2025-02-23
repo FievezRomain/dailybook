@@ -37,7 +37,7 @@ const ActionScreen = ({ navigation }) => {
     {title: "Entrainement", id: "entrainement"},
     {title: "Concours", id: "concours"},
     {title: "Rendez-vous médical", id: "rdv"},
-    {title: "Soins", id: "soins"},
+    {title: "Soin", id: "soins"},
     {title: "Autre", id: "autre"},
   ];
   const listNotif = [
@@ -254,7 +254,7 @@ const ActionScreen = ({ navigation }) => {
       marginBottom: 5
     },
     textButton:{
-      color: "white"
+      color: colors.background,
     },
     registerButton: {
       marginBottom: 20,
@@ -310,7 +310,7 @@ const ActionScreen = ({ navigation }) => {
       borderRadius: 5,
       paddingLeft: 15,
       backgroundColor: colors.quaternary,
-      color: "black",
+      color: colors.default_dark,
       alignSelf: "baseline"
     },
     inputTextArea: {
@@ -321,7 +321,7 @@ const ActionScreen = ({ navigation }) => {
       paddingLeft: 15,
       paddingRight: 15,
       backgroundColor: colors.quaternary,
-      color: "black",
+      color: colors.default_dark,
     },
     datePicker:{
       marginBottom: 15,

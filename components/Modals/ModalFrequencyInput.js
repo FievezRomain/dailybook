@@ -111,7 +111,7 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
         width: "15%",
         borderRadius: 5,
         backgroundColor: colors.quaternary,
-        color: "black",
+        color: colors.default_dark,
         textAlign: "center",
         paddingVertical: 2
       },

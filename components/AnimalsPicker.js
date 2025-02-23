@@ -113,7 +113,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
         },
         avatarText: {
             textAlign: "center", 
-            color: "white", 
+            color: colors.background, 
             fontSize: 30
         },
         defaultAvatar:{

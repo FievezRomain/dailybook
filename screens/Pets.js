@@ -4,10 +4,10 @@ import React, { useState, useContext, useEffect, useRef, useCallback } from 'rea
 import AnimalsPicker from "../components/AnimalsPicker";
 import { useForm } from "react-hook-form";
 import animalsServiceInstance from "../services/AnimalsService";
-import { Entypo, FontAwesome6 } from '@expo/vector-icons';
+import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import InformationsAnimals from "../components/InformationsAnimals";
 import Toast from "react-native-toast-message";
-import NutritionHistory from "../components/NutritionHistory";
+import AnimalBody from "../components/AnimalBody";
 import MedicalBook from "../components/MedicalBook";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import DateUtils from '../utils/DateUtils';
@@ -42,6 +42,23 @@ const PetsScreen = ({ navigation }) => {
       }
     }, [navigation])
   );
+
+  useEffect(() => {
+    let array = [];
+
+    selected.forEach((obj) => {
+      var indice = animaux.findIndex((a) => a.id == obj.id);
+
+      if(indice !== -1){
+        array.push(animaux[indice]);
+      }
+    });
+
+    if( array.length > 0 ){
+      setSelected( array );
+    }
+    
+  }, [animaux]);
 
 
   const initDisplay = async () => {
@@ -132,12 +149,6 @@ const PetsScreen = ({ navigation }) => {
       position: "top",
       text1: "Modification de l'animal"
     }), 300);
-    
-
-    var indice = animaux.findIndex((a) => a.id == animal.id);
-    animaux[indice] = animal;
-    setAnimaux(animaux);
-    setSelected([animaux[indice]]);
   }
 
   const moveSeparator = (index) => {
@@ -206,8 +217,8 @@ const PetsScreen = ({ navigation }) => {
               <Text style={[{color: activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Informations</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <FontAwesome6 name="utensils" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Nutrition</Text>
+              <MaterialCommunityIcons name="clipboard-pulse-outline" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+              <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Physique</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
               <FontAwesome6 name="book-medical" size={20} color={activeRubrique === 2 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
@@ -225,8 +236,9 @@ const PetsScreen = ({ navigation }) => {
           />
         }
         {activeRubrique === 1 &&
-          <NutritionHistory 
+          <AnimalBody 
             animal={selected[0]}
+            onModify={onModify}
           />
         }
         {activeRubrique === 2 &&

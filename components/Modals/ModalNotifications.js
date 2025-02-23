@@ -169,7 +169,7 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
                         <View style={styles.titleContainer}>
                             <Text style={[styles.title, styles.textFontBold]}>Notifications</Text>
                         </View>
-                        <ScrollView showsVerticalScrollIndicator={true} indicatorStyle="white" contentContainerStyle={styles.contentContainer}>
+                        <ScrollView showsVerticalScrollIndicator={true} indicatorStyle={colors.background} contentContainerStyle={styles.contentContainer}>
                             <View style={styles.notificationsContainer}>
                                 {notifications.map((v) => <NotificationManagementLine key={v.key} notification={v} />)}
                             </View>
