@@ -297,34 +297,6 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           />
                         </View>
                       }
-                      {animal.taille != null && animal.taille != undefined &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Taille (cm) :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : 140"
-                              keyboardType="numeric"
-                              inputMode="numeric"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={String(animal.taille)}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {animal.poids != null && animal.poids != undefined &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Poids (kg) :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : 400"
-                              keyboardType="numeric"
-                              inputMode="numeric"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.poids != null ? String(animal.poids) : undefined}
-                              editable={false}
-                          />
-                        </View>
-                      }
                       {isValidString(animal.sexe) &&
                         <View style={styles.inputContainer}>
                           <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Sexe :</Text>
@@ -333,30 +305,6 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               placeholder="Exemple : Mâle"
                               placeholderTextColor={colors.secondary}
                               defaultValue={animal.sexe}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.food) &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom alimentation :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : Granulés X"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.food}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {animal.quantity != null && animal.quantity != undefined &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Quantité (gramme / cl) :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : 200"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.quantity != null ? String(animal.quantity) : undefined}
                               editable={false}
                           />
                         </View>

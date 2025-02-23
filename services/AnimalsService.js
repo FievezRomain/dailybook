@@ -45,6 +45,18 @@ class AnimalsService {
         }
     }
 
+    async createHistory(body){
+        await this.updateAxiosAuthorization();
+        return axios.post(`${getBaseUrl()}createEquideHistory`, body)
+        .then(async (response) => {
+            if( response.data.rows ){
+                await this.putInCache( response.data.rows );
+                return response.data.rows;
+            }
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour enregistrer une modification du physique : " + err.message ));
+    }
+
     /* async create(body) {
         await this.updateAxiosAuthorization();
         return axios.post(`${getBaseUrl()}createEquide`, body)
