@@ -92,6 +92,7 @@ const AnimalBody = ({ animal, onModify }) => {
                 animal={animal}
                 onModify={handleBodyUpdate}
                 item={item}
+                actionType={"create"}
             />
             <ScrollView>
                 <View style={{display: "flex", flexDirection: "column"}}>
