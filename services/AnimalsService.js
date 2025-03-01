@@ -57,6 +57,30 @@ class AnimalsService {
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour enregistrer une modification du physique : " + err.message ));
     }
 
+    async modifyHistory(body){
+        await this.updateAxiosAuthorization();
+        return axios.post(`${getBaseUrl()}modifyEquideHistory`, body)
+        .then(async (response) => {
+            if( response.data.rows ){
+                await this.putInCache( response.data.rows );
+                return response.data.rows;
+            }
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier un élément de l'historique du physique : " + err.message ));
+    }
+
+    async deleteHistory(body){
+        await this.updateAxiosAuthorization();
+        return axios.post(`${getBaseUrl()}deleteEquideHistory`, body)
+        .then(async (response) => {
+            if( response.data.rows ){
+                await this.putInCache( response.data.rows );
+                return response.data.rows;
+            }
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un élément de l'historique du physique : " + err.message ));
+    }
+
     /* async create(body) {
         await this.updateAxiosAuthorization();
         return axios.post(`${getBaseUrl()}createEquide`, body)
