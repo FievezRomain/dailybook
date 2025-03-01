@@ -12,6 +12,8 @@ import LineChartComponent from './charts/LineChartComponent';
 import EntrainementComponent from './statistics/EntrainementComponent';
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import BaladeComponent from './statistics/BaladeComponent';
+import PoidsComponent from './statistics/PoidsComponent';
+import TailleComponent from './statistics/TailleComponent';
 
 const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
     const { colors, fonts } = useTheme();
@@ -21,6 +23,8 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
         balade: BaladeComponent,
         entrainement: EntrainementComponent,
         depense: DepenseComponent,
+        poids: PoidsComponent,
+        taille: TailleComponent
     };
     const [statistiqueComponent, setStatisticComponent] = useState("depense");
     const ChartComponent = chartComponents[statistiqueComponent];
@@ -48,7 +52,14 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             backgroundGradientToOpacity: 0,
             color: (opacity = 1) => `rgba(149, 101, 64, ${opacity-0.05})`,
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-        }
+        },
+        poids: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => colors.default_dark,
+            labelColor: (opacity = 1) => colors.default_dark,
+            decimalPlaces: 2,
+        },
     };
     const ChartConfig = chartConfig[statistiqueComponent];
     const now = new Date();
@@ -235,7 +246,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                             </View>
                             
                             <View style={styles.statistiquesContainer}>
-                                {itemStatistique === "depense" || itemStatistique === "entrainement" || itemStatistique === "balade" ?
+                                {itemStatistique === "depense" || itemStatistique === "entrainement" || itemStatistique === "balade" || itemStatistique === "poids" ?
                                     <ChartWithLoader
                                         ChartComponent={ChartComponent}
                                         chartConfig={ChartConfig}

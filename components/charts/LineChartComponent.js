@@ -8,7 +8,7 @@ const LineChartComponent = ({ data, chartConfig }) => (
   <LineChart
     data={data}
     width={screenWidth}
-    height={220}
+    height={260}
     chartConfig={chartConfig}
     bezier // Pour des courbes lissées
     verticalLabelRotation={30}
