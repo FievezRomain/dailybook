@@ -70,16 +70,8 @@ const PoidsComponent = ({ data, chartConfig, chartParameters, forceUpdateDataCha
 
     const groupByMonth = (data) => {
         const map = new Map();
-        const processedDates = new Set();
 
         data.history.forEach((stat) => {
-            // Vérifie si cette date a déjà été traitée
-            if (processedDates.has(stat.date)) {
-                return; // Passe à l'élément suivant si la date a déjà été traitée
-            }
-        
-            // Ajoute la date au Set des dates traitées
-            processedDates.add(stat.date);
 
             // Extraire l'année et le mois de la date
             const statDate = new Date(stat.date);

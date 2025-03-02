@@ -60,6 +60,13 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             labelColor: (opacity = 1) => colors.default_dark,
             decimalPlaces: 2,
         },
+        taille: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => colors.default_dark,
+            labelColor: (opacity = 1) => colors.default_dark,
+            decimalPlaces: 2,
+        },
     };
     const ChartConfig = chartConfig[statistiqueComponent];
     const now = new Date();
@@ -246,7 +253,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                             </View>
                             
                             <View style={styles.statistiquesContainer}>
-                                {itemStatistique === "depense" || itemStatistique === "entrainement" || itemStatistique === "balade" || itemStatistique === "poids" ?
+                                {itemStatistique === "depense" || itemStatistique === "entrainement" || itemStatistique === "balade" || itemStatistique === "poids" || itemStatistique === "taille" ?
                                     <ChartWithLoader
                                         ChartComponent={ChartComponent}
                                         chartConfig={ChartConfig}
