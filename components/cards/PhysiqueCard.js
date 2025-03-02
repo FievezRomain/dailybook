@@ -34,9 +34,8 @@ const PhysiqueCard = ({ infos, itemType, handlePhysiqueChange, handlePhysiqueDel
         setModalPhysiqueVisible(true);
     }
 
-    const onModify = (physique) => {
-        //setCurrentPhysique(physique);
-        //handlePhysiqueChange(physique);
+    const onModify = () => {
+        handlePhysiqueChange();
     }
 
     const handleDelete = () =>{
@@ -59,7 +58,7 @@ const PhysiqueCard = ({ infos, itemType, handlePhysiqueChange, handlePhysiqueDel
                     text1: "Suppression d'un objectif réussi"
                 });
 
-                handlePhysiqueDelete(currentPhysique);
+                handlePhysiqueDelete();
 
             })
             .catch((err) =>{
@@ -70,6 +69,8 @@ const PhysiqueCard = ({ infos, itemType, handlePhysiqueChange, handlePhysiqueDel
                 });
                 LoggerService.log( "Erreur lors de la suppression d'un objectif : " + err.message );
             });
+        
+        setModalValidationDeleteVisible(false);
     }
 
     const getDayText = (date) =>{
@@ -95,45 +96,14 @@ const PhysiqueCard = ({ infos, itemType, handlePhysiqueChange, handlePhysiqueDel
     }
 
     const styles = StyleSheet.create({
-        headerObjectif:{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center"
-        },
-        completionBarContainer:{
-            marginTop: 10,
-            marginBottom: 10,
-            borderColor: colors.default_dark,
-            borderWidth: 0.2,
-            borderRadius: 60,
-            overflow: "hidden"
-        },
-        objectifContainer:{
+        container:{
             backgroundColor: colors.background,
-            borderRadius: 5,
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
+            borderRadius: 5, 
             marginBottom: 10,
-            shadowColor: "black",
-            shadowOpacity: 0.1,
-            elevation: 1,
-            shadowOffset: {
-                width: 0,
-                height: 1
-            },
-        },
-        avatarText: {
-            color: colors.background,
-            textAlign: "center"
-        },
-        avatar: {
-            width: 20,
-            height: 20,
-            borderRadius: 10,
-            zIndex: 1,
-            justifyContent: "center"
+            shadowColor: colors.default_dark, 
+            shadowOpacity: 0.1, 
+            elevation: 1, 
+            shadowOffset: {width: 0,height: 1},
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -171,7 +141,7 @@ const PhysiqueCard = ({ infos, itemType, handlePhysiqueChange, handlePhysiqueDel
                 title={"Suppression d'un historique de physique"}
             />
 
-            <View key={currentPhysique.id}>
+            <View key={currentPhysique.id} style={styles.container}>
                 <View style={{display: "flex",flexDirection: "row"}}>
                     <View style={{flexDirection: "row",justifyContent: "space-between", width: "100%",borderTopStartRadius: 5,borderTopEndRadius: 5, padding: 10}}>
                         <View>

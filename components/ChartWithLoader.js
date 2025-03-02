@@ -13,52 +13,56 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
   const RenderedChart = currentChartComponent.current;
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-
-        let result = undefined;
-        switch(chartType){
-          
-          case 'depense':
-              result = await statisticServiceInstance.getDepenses(chartParameters);
-              result.statistic = addColorsToData(result.statistic);
-            break;
-          case 'entrainement':
-              result = await statisticServiceInstance.getEntrainements(chartParameters);
-            break;
-          case 'balade':
-              result = await statisticServiceInstance.getBalades(chartParameters);
-            break;
-          case 'poids':
-              result = await statisticServiceInstance.getPoids(chartParameters);
-            break;
-          case 'taille':
-              result = await statisticServiceInstance.getTailles(chartParameters);
-            break;
-          case 'alimentation':
-              result = await statisticServiceInstance.getAlimentations(chartParameters);
-            break;
-        }
-
-        setData(result);
-        currentChartComponent.current = ChartComponent;
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadData();
   }, [chartType, chartParameters, events]);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+
+      let result = undefined;
+      switch(chartType){
+        
+        case 'depense':
+            result = await statisticServiceInstance.getDepenses(chartParameters);
+            result.statistic = addColorsToData(result.statistic);
+          break;
+        case 'entrainement':
+            result = await statisticServiceInstance.getEntrainements(chartParameters);
+          break;
+        case 'balade':
+            result = await statisticServiceInstance.getBalades(chartParameters);
+          break;
+        case 'poids':
+            result = await statisticServiceInstance.getPoids(chartParameters);
+          break;
+        case 'taille':
+            result = await statisticServiceInstance.getTailles(chartParameters);
+          break;
+        case 'alimentation':
+            result = await statisticServiceInstance.getAlimentations(chartParameters);
+          break;
+      }
+
+      setData(result);
+      currentChartComponent.current = ChartComponent;
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const forceUpdateDataChart = () => {
+    loadData();
+  }
 
   return (
     loading || !data ?
         <ActivityIndicator size="large" />
     :
         (data.statistic.length > 0 && data.statistic.datasets === undefined) || (data.statistic.datasets !== undefined && data.statistic.datasets.length > 0) ?
-            <RenderedChart data={data} chartConfig={chartConfig} chartParameters={chartParameters} />
+            <RenderedChart data={data} chartConfig={chartConfig} chartParameters={chartParameters} forceUpdateDataChart={forceUpdateDataChart} />
         :
             <View style={{width: "90%", alignSelf: "center"}}>
                 <ModalDefaultNoValue

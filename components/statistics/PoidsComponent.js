@@ -6,7 +6,7 @@ import Toast from "react-native-toast-message";
 import LineChartComponent from '../charts/LineChartComponent';
 import PhysiqueCard from '../cards/PhysiqueCard';
 
-const PoidsComponent = ({ data, chartConfig, chartParameters }) => {
+const PoidsComponent = ({ data, chartConfig, chartParameters, forceUpdateDataChart }) => {
     const { colors, fonts } = useTheme();
     const [loading, setLoading] = useState(false);
     const [dataToDisplay, setDataToDisplay] = useState(data);
@@ -22,12 +22,24 @@ const PoidsComponent = ({ data, chartConfig, chartParameters }) => {
         setLoading(false);
     }, [data]);
 
-    const handleEventsChange = async () => {
+    const handleEventsChange = async ( ) => {
+        forceUpdateDataChart();
 
         setTimeout(() => Toast.show({
           type: "success",
           position: "top",
-          text1: "Modification d'un événement"
+          text1: "Modification de l'historique"
+        }), 350);
+    
+    };
+
+    const handleEventsDelete = async ( ) => {
+        forceUpdateDataChart();
+
+        setTimeout(() => Toast.show({
+          type: "success",
+          position: "top",
+          text1: "Suppression d'un historique"
         }), 350);
     
     };
@@ -174,6 +186,7 @@ const PoidsComponent = ({ data, chartConfig, chartParameters }) => {
             />
             <FlatList
                 data={dataByDate}
+                style={{marginTop: 10}}
                 keyExtractor={(item, index) => index}
                 renderItem={({ item }) => (
                     <>
@@ -197,11 +210,12 @@ const PoidsComponent = ({ data, chartConfig, chartParameters }) => {
                             <FlatList
                                 data={item.history}
                                 keyExtractor={(event) => event.id.toString()}
+                                style={{marginLeft: 15, marginRight: 15}}
                                 renderItem={({ item }) => (
                                     <PhysiqueCard
                                         infos={item}
                                         handlePhysiqueChange={handleEventsChange}
-                                        handlePhysiqueDelete={handleEventsChange}
+                                        handlePhysiqueDelete={handleEventsDelete}
                                         itemType={"poids"}
                                     />
                                 )}

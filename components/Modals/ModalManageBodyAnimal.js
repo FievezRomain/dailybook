@@ -82,7 +82,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, actionType, animal={}, it
             animalsServiceInstance.modifyHistory(data)
                 .then((response) =>{
                     closeModal();
-                    onModify( {datemodification: getValues("datemodification"), value: getValues("value")} );
+                    onModify();
                     setLoading(false);
                 })
                 .catch((err) =>{
@@ -147,7 +147,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, actionType, animal={}, it
                         inputMode="decimal"
                         placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("value", text)}
-                        value={watch("value")}
+                        defaultValue={watch("value")}
                         {...register("value", { required: true })}
                     />
                 </>;
