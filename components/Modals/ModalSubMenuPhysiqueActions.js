@@ -1,12 +1,11 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView, Image, FlatList } from "react-native";
 import Button from "../Button";
-import { FontAwesome6, Octicons, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
+import { FontAwesome6, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
 
-const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleReportDeath }) => {
+const ModalSubMenuPhysiqueActions = ({ modalVisible, setModalVisible, infos, handleModify, handleDelete }) => {
     const { colors, fonts } = useTheme();
-    
     const onAction = (event) =>{
         setModalVisible(false);
         event();
@@ -28,14 +27,14 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
         },
         actionButtonContainer:{
             width: "90%",
-            marginTop: 15,
-            borderRadius: 5,
+            borderRadius: 10,
             backgroundColor: colors.quaternary,
             flexDirection: "column",
-            justifyContent: "space-evenly"
+            justifyContent: "space-evenly",
+            marginBottom: 15
         },
         actionButton:{
-            padding: 15,
+            padding: 20,
         },
         card: {
             justifyContent: "space-evenly",
@@ -76,6 +75,14 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
         title:{
             color: colors.background,
         },
+        disabledButton:{
+            backgroundColor: colors.secondary,
+            borderTopStartRadius: 5,
+            borderTopEndRadius: 5,
+        },
+        disabledText:{
+            color: colors.quaternary
+        },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
         },
@@ -92,20 +99,14 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
         <ModalEditGeneric
             isVisible={modalVisible}
             setVisible={setModalVisible}
-            arrayHeight={["30%"]}
+            arrayHeight={["25%"]}
         >
                 <View style={styles.card}>
-                    <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer les informations</Text>
+                    <View style={{alignItems: "center"}}>
+                        <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer le physique</Text>
+                    </View>
+                    
                     <View style={styles.actionButtonContainer}>
-                        {/* <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleManageBody)}>
-                            <View style={styles.informationsActionButton}>
-                                <Octicons name="history" size={20}/>
-                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
-                                    Gestion de l'évolution du physique
-                                </Text>
-                            </View>
-                        </TouchableOpacity> 
-                        <Divider style={{height: 1}}/>*/}
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
                             <View style={styles.informationsActionButton}>
                                 <SimpleLineIcons name="pencil" size={20}/>
@@ -114,16 +115,7 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
                                 </Text>
                             </View>
                         </TouchableOpacity>
-                        <Divider style={{height: 1}}/>
-                        <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleReportDeath)}>
-                            <View style={styles.informationsActionButton}>
-                                <MaterialCommunityIcons name="weather-night" size={20}/>
-                                <Text style={[styles.textActionButton, styles.textFontMedium]}>
-                                    Signaler le décès
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                        <Divider style={{height: 1}}/>
+                        <Divider style={{height: 1}} />
                         <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
                             <View style={styles.informationsActionButton}>
                                 <AntDesign name="delete" size={20}/>
@@ -139,4 +131,4 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
     );
 };
 
-export default ModalSubMenuAnimalActions;
+export default ModalSubMenuPhysiqueActions;

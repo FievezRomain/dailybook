@@ -11,7 +11,7 @@ import animalsServiceInstance from "../../services/AnimalsService";
 import LoggerService from "../../services/LoggerService";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, item, onModify=undefined}) => {
+const ModalManageBodyAnimal = ({isVisible, setVisible, actionType, animal={}, item, infos, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
@@ -20,17 +20,23 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, item, onModify
 
     useEffect(()=> {
         setArrayHeight("35%");
-        setValue("datemodification", new Date().toISOString().split('T')[0]);
-        setValue("value", undefined);
+        initValues();
     }, [isVisible]);
 
-    useEffect(() => {
-        setValue("item", item);
-    }, [item]);
-
-    useEffect(() => {
-        setValue("id", animal.id);
-    }, [animal]);
+    const initValues = () => {
+        if( actionType === "create" ){
+            setValue("datemodification", new Date().toISOString().split('T')[0]);
+            setValue("value", undefined);
+            setValue("idAnimal", animal.id);
+            setValue("item", item);
+        } else{
+            setValue("datemodification", new Date(infos.date).toISOString().split('T')[0]);
+            setValue("value", infos.value.toString());
+            setValue("id", infos.id);
+            setValue("item", item);
+            setValue("idAnimal", infos.idanimal);
+        }
+    }
 
     const closeModal = () => {
         setVisible(false);
@@ -56,21 +62,39 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, item, onModify
         }
 
         // Appel du service pour contacter l'API back
-        animalsServiceInstance.createHistory(data)
-            .then((response) =>{
-                closeModal();
-                onModify( );
-                setLoading(false);
-            })
-            .catch((err) =>{
-                Toast.show({
-                    type: "error",
-                    position: "top",
-                    text1: err.message
+        if( actionType === "create" ){
+            animalsServiceInstance.createHistory(data)
+                .then((response) =>{
+                    closeModal();
+                    onModify( );
+                    setLoading(false);
+                })
+                .catch((err) =>{
+                    Toast.show({
+                        type: "error",
+                        position: "top",
+                        text1: err.message
+                    });
+                    LoggerService.log( "Erreur lors de la modification du physique de l'animal (création d'un élément) : " + err.message );
+                    setLoading(false);
                 });
-                LoggerService.log( "Erreur lors de la modification du physique de l'animal : " + err.message );
-                setLoading(false);
-            });
+        } else {
+            animalsServiceInstance.modifyHistory(data)
+                .then((response) =>{
+                    closeModal();
+                    onModify();
+                    setLoading(false);
+                })
+                .catch((err) =>{
+                    Toast.show({
+                        type: "error",
+                        position: "top",
+                        text1: err.message
+                    });
+                    LoggerService.log( "Erreur lors de la modification du physique de l'animal (modification d'un élément) : " + err.message );
+                    setLoading(false);
+                });
+        }
         
 
         closeModal();
@@ -108,6 +132,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, item, onModify
                         inputMode="decimal"
                         placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("value", text)}
+                        defaultValue={watch("value")}
                         {...register("value", { required: true })}
                     />
                 </>;
@@ -122,6 +147,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, item, onModify
                         inputMode="decimal"
                         placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("value", text)}
+                        defaultValue={watch("value")}
                         {...register("value", { required: true })}
                     />
                 </>;
@@ -134,6 +160,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, item, onModify
                         placeholder="Exemple : Granulés X"
                         placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("value", text)}
+                        defaultValue={watch("value")}
                         {...register("value", { required: true })}
                     />
                 </>;
@@ -148,6 +175,7 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, animal={}, item, onModify
                         inputMode="decimal"
                         placeholderTextColor={colors.secondary}
                         onChangeText={(text) => setValue("value", text)}
+                        defaultValue={watch("value")}
                         {...register("value", { required: true })}
                     />
                 </>;
