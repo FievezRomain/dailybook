@@ -51,9 +51,11 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }) =>{
         var filteredObjectifs = []
         if(temporality === "En cours"){
             filteredObjectifs = objectifs.filter((item) =>  item.sousEtapes.some(etape => etape.state === false) 
-                                    && selectedAnimal.some(animal => item.animaux.includes(animal.id)) );
+                                    && selectedAnimal.some(animal => item.animaux.includes(animal.id))
+                                    && new Date(item.datefin) >= new Date() );
         } else{
-            filteredObjectifs = objectifs.filter((item) => item.sousEtapes.every(etape => etape.state === true) 
+            filteredObjectifs = objectifs.filter((item) => (item.sousEtapes.every(etape => etape.state === true) 
+                                    || new Date(item.datefin) < new Date() )
                                     && selectedAnimal.some(animal => item.animaux.includes(animal.id)) );
         }
         
