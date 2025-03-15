@@ -4,7 +4,6 @@ import variables from "./styles/Variables";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import ModalSubMenuAnimalActions from './Modals/ModalSubMenuAnimalActions';
 import ModalAnimal from './Modals/ModalAnimal';
-import ModalManageBodyAnimal from './Modals/ModalManageBodyAnimal';
 import DateUtils from '../utils/DateUtils';
 import { Image } from "expo-image";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
@@ -17,7 +16,6 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const [modalReportDeathVisible, setModalReportDeathVisible] = useState(false);
     const dateUtils = new DateUtils();
-    const [modalManageBodyAnimalVisible, setModalBodyAnimalVisible] = useState(false);
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
     const { colors, fonts } = useTheme();
@@ -29,17 +27,9 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const handleModify = () => {
       setModalAnimalVisible(true);
     }
-  
-    const handleManageBodyAnimal = () => {
-      setModalBodyAnimalVisible(true);
-    }
 
     const handleReportDeath = () => {
       setModalReportDeathVisible(true);
-    }
-  
-    const onModifyBodyAnimalHistory = (animal) =>{
-      console.log("enregitrer historique");
     }
 
     const styles = StyleSheet.create({
@@ -177,7 +167,6 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                 setModalVisible={setModalSubMenuAnimalActionsVisible}
                 handleDelete={onDelete}
                 handleModify={handleModify}
-                handleManageBody={handleManageBodyAnimal}
                 handleReportDeath={handleReportDeath}
             />
             <ModalAnimal
@@ -186,12 +175,6 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                 setVisible={setModalAnimalVisible}
                 animal={animal}
                 onModify={onModify}
-            />
-            <ModalManageBodyAnimal
-                isVisible={modalManageBodyAnimalVisible}
-                setVisible={setModalBodyAnimalVisible}
-                animal={animal}
-                onModify={onModifyBodyAnimalHistory}
             />
             <ModalReportDeath
               isVisible={modalReportDeathVisible}
