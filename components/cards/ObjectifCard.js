@@ -181,7 +181,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
             },
         },
         avatarText: {
-            color: "white",
+            color: colors.background,
             textAlign: "center"
         },
         avatar: {
@@ -284,10 +284,10 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                 <View style={{display: "flex",flexDirection: "row"}}>
                     <View style={{flexDirection: "row",justifyContent: "space-between", width: "100%",borderTopStartRadius: 5,borderTopEndRadius: 5, padding: 10}}>
                         <View>
-                            <Text style={[styles.textFontBold]}>{objectif.title}</Text>
+                            <Text style={[{color:colors.default_dark}, styles.textFontBold]}>{objectif.title}</Text>
                         </View>
                         <TouchableOpacity onPress={() => onPressOptions()}>
-                            <Entypo name='dots-three-horizontal' size={20} />
+                            <Entypo name='dots-three-horizontal' size={20} color={colors.default_dark} />
                         </TouchableOpacity>
                     </View>
                     
@@ -295,9 +295,9 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                 <Divider style={{backgroundColor: colors.default_dark}}/>
                 <View style={{display: "flex", flexDirection: "row", backgroundColor: colors.background, borderBottomStartRadius: 5, borderBottomEndRadius: 5}}>
                     <View style={{justifyContent: "center", padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: colors.default_dark, alignItems: "center"}}>
-                        <Text style={styles.textFontRegular}>{getDayText(objectif.datefin)}.</Text>
-                        <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(objectif.datefin)}</Text>
-                        <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(objectif.datefin)}</Text>
+                        <Text style={[{color:colors.default_dark}, styles.textFontRegular]}>{getDayText(objectif.datefin)}.</Text>
+                        <Text style={[{fontSize: 11, color:colors.default_dark}, styles.textFontRegular]}>{getDateText(objectif.datefin)}</Text>
+                        <Text style={[{fontSize: 9, color:colors.default_dark}, styles.textFontRegular]}>{getYearText(objectif.datefin)}</Text>
                     </View>
                     <View style={{paddingVertical: 10,display: "flex", flexDirection: "column", width: "80%"}}>
 
@@ -312,7 +312,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                                     ||
                                                     <Feather name="square" size={25} color={colors.default_dark} />
                                                 }
-                                                <Text style={[styles.textFontRegular, {flexShrink: 1, flexWrap: 'wrap', marginLeft: 5}]}>{etape.etape}</Text>
+                                                <Text style={[styles.textFontRegular, {flexShrink: 1, flexWrap: 'wrap', marginLeft: 5, color: colors.default_dark}]}>{etape.etape}</Text>
                                             </View>
                                         </TouchableOpacity>
                                     )

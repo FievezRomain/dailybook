@@ -72,7 +72,7 @@ const ModalSubMenuAvatarPickerActions = ({ modalVisible, setModalVisible, handle
             backgroundColor: colors.default_dark,
         },
         title:{
-            color: "white"
+            color: colors.background,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily

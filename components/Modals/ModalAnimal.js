@@ -260,7 +260,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         if(date.includes("/")){
             date = dateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
         }
-        options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         dateObject  = new Date(date);
         return String(dateObject.toLocaleDateString("fr-FR", options));
     };
@@ -346,7 +346,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         },
         textInput:{
             alignSelf: "flex-start",
-            marginBottom: 5
+            marginBottom: 5,
+            color : colors.default_dark
         },
         input: {
             height: 40,
@@ -355,7 +356,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             alignSelf: "baseline"
         },
         errorInput: {
@@ -411,7 +412,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             <View style={{width:"33.33%", alignItems: "center"}}>
-                                <Text style={[styles.textFontBold, {fontSize: 16}]}>Animal</Text>
+                                <Text style={[styles.textFontBold, {fontSize: 16, color:colors.default_dark}]}>Animal</Text>
                             </View>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 
@@ -510,30 +511,35 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             defaultValue={getValues("race")}
                                         />
                                     </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={[styles.textInput, styles.textFontRegular]}>Taille (cm) :</Text>
-                                        <TextInput
-                                            style={[styles.input, styles.textFontRegular]}
-                                            placeholder="Exemple : 140"
-                                            keyboardType="decimal-pad"
-                                            inputMode="decimal"
-                                            placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("taille", text)}
-                                            defaultValue={getValues("taille")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={[styles.textInput, styles.textFontRegular]}>Poids (kg) :</Text>
-                                        <TextInput
-                                            style={[styles.input, styles.textFontRegular]}
-                                            placeholder="Exemple : 400"
-                                            keyboardType="decimal-pad"
-                                            inputMode="decimal"
-                                            placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("poids", text)}
-                                            defaultValue={getValues("poids")}
-                                        />
-                                    </View>
+                                    {actionType === "create" && 
+                                        <>
+                                            <View style={styles.inputContainer}>
+                                                <Text style={[styles.textInput, styles.textFontRegular]}>Taille (cm) :</Text>
+                                                <TextInput
+                                                    style={[styles.input, styles.textFontRegular]}
+                                                    placeholder="Exemple : 140"
+                                                    keyboardType="decimal-pad"
+                                                    inputMode="decimal"
+                                                    placeholderTextColor={colors.secondary}
+                                                    onChangeText={(text) => setValue("taille", text)}
+                                                    defaultValue={getValues("taille")}
+                                                />
+                                            </View>
+                                            <View style={styles.inputContainer}>
+                                                <Text style={[styles.textInput, styles.textFontRegular]}>Poids (kg) :</Text>
+                                                <TextInput
+                                                    style={[styles.input, styles.textFontRegular]}
+                                                    placeholder="Exemple : 400"
+                                                    keyboardType="decimal-pad"
+                                                    inputMode="decimal"
+                                                    placeholderTextColor={colors.secondary}
+                                                    onChangeText={(text) => setValue("poids", text)}
+                                                    defaultValue={getValues("poids")}
+                                                />
+                                            </View>
+                                        </>
+                                    }
+                                    
                                     <View style={styles.inputContainer}>
                                         <Text style={[styles.textInput, styles.textFontRegular]}>Sexe :</Text>
                                         <TextInput
@@ -544,28 +550,32 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             defaultValue={getValues("sexe")}
                                         />
                                     </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={[styles.textInput, styles.textFontRegular]}>Nom alimentation :</Text>
-                                        <TextInput
-                                            style={[styles.input, styles.textFontRegular]}
-                                            placeholder="Exemple : Granulés X"
-                                            placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("food", text)}
-                                            defaultValue={getValues("food")}
-                                        />
-                                    </View>
-                                    <View style={styles.inputContainer}>
-                                        <Text style={[styles.textInput, styles.textFontRegular]}>Quantité (gramme / cl) :</Text>
-                                        <TextInput
-                                            style={[styles.input, styles.textFontRegular]}
-                                            placeholder="Exemple : 200"
-                                            keyboardType="decimal-pad"
-                                            inputMode="decimal"
-                                            placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("quantity", text)}
-                                            defaultValue={getValues("quantity")}
-                                        />
-                                    </View>
+                                    {actionType === "create" && 
+                                        <>
+                                            <View style={styles.inputContainer}>
+                                                <Text style={[styles.textInput, styles.textFontRegular]}>Nom alimentation :</Text>
+                                                <TextInput
+                                                    style={[styles.input, styles.textFontRegular]}
+                                                    placeholder="Exemple : Granulés X"
+                                                    placeholderTextColor={colors.secondary}
+                                                    onChangeText={(text) => setValue("food", text)}
+                                                    defaultValue={getValues("food")}
+                                                />
+                                            </View>
+                                            <View style={styles.inputContainer}>
+                                                <Text style={[styles.textInput, styles.textFontRegular]}>Quantité (gramme / cl) :</Text>
+                                                <TextInput
+                                                    style={[styles.input, styles.textFontRegular]}
+                                                    placeholder="Exemple : 200"
+                                                    keyboardType="decimal-pad"
+                                                    inputMode="decimal"
+                                                    placeholderTextColor={colors.secondary}
+                                                    onChangeText={(text) => setValue("quantity", text)}
+                                                    defaultValue={getValues("quantity")}
+                                                />
+                                            </View>
+                                        </>
+                                    }
                                     <View style={styles.inputContainer}>
                                         <Text style={[styles.textInput, styles.textFontRegular]}>Couleur :</Text>
                                         <TextInput

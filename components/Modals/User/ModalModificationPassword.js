@@ -157,7 +157,7 @@ const ModalModificationPassword = ({isVisible, setVisible, onModify=undefined}) 
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             alignSelf: "baseline"
         },
         iconContainer:{
@@ -194,7 +194,7 @@ const ModalModificationPassword = ({isVisible, setVisible, onModify=undefined}) 
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={styles.textFontBold}>Mot de passe</Text>
+                            <Text style={[styles.textFontBold, {color:colors.default_dark}]}>Mot de passe</Text>
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
@@ -213,13 +213,13 @@ const ModalModificationPassword = ({isVisible, setVisible, onModify=undefined}) 
                         <View style={styles.formContainer}>
 
                             <View style={{marginBottom: 10}}>
-                                <Text style={[styles.textFontBold, {marginBottom: 5}]}>Choisissez un mot de passe sécurisé.</Text>
-                                <Text>Utilisez au moins 6 caractères, avec une combinaison de lettres, chiffres et symboles pour renforcer sa sécurité. Gardez-le secret et ne le partagez jamais.</Text>
+                                <Text style={[styles.textFontBold, {marginBottom: 5} , {color:colors.default_dark}]}>Choisissez un mot de passe sécurisé.</Text>
+                                <Text style = {{color:colors.default_dark}} >Utilisez au moins 6 caractères, avec une combinaison de lettres, chiffres et symboles pour renforcer sa sécurité. Gardez-le secret et ne le partagez jamais.</Text>
                             </View>
 
                             <View style={styles.inputContainer}>
 
-                                <Text style={[styles.textInput, styles.textFontRegular]}>Mot de passe actuel : </Text>
+                                <Text style={[styles.textInput, styles.textFontRegular, {color:colors.default_dark}]}>Mot de passe actuel : </Text>
                                 <TextInput
                                     style={[styles.input, styles.textFontRegular]}
                                     placeholder="******"
@@ -231,7 +231,7 @@ const ModalModificationPassword = ({isVisible, setVisible, onModify=undefined}) 
 
                             <View style={styles.inputContainer}>
 
-                                <Text style={[styles.textInput, styles.textFontRegular]}>Nouveau mot de passe : </Text>
+                                <Text style={[styles.textInput, styles.textFontRegular, {color:colors.default_dark}]}>Nouveau mot de passe : </Text>
                                 <TextInput
                                     style={[styles.input, styles.textFontRegular]}
                                     placeholder="******"

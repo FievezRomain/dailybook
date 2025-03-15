@@ -10,7 +10,7 @@ const ModalValidation = ({ visible, setVisible, displayedText, title, onConfirm}
         <View>
             <Portal>
                 <Dialog style={{backgroundColor: colors.background}} visible={visible} dismissable={false}>
-                    <Dialog.Title style={{color: colors.bai}}>{title}</Dialog.Title>
+                    <Dialog.Title style={{color: colors.default_dark}}>{title}</Dialog.Title>
                     <Dialog.Content>
                         <Text style={{color: colors.default_dark}} variant="bodyMedium">{displayedText}</Text>
                     </Dialog.Content>

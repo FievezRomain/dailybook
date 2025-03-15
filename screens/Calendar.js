@@ -117,7 +117,7 @@ const CalendarScreen = ({ navigation }) => {
           selected: false,
           disableTouchEvent: false,
           selectedColor: colors.accent,
-          selectedTextColor: colors.background,
+          selectedTextColor: "white",
           dots: [getEventTypeDot(item.eventtype)]
         };
       }
@@ -147,7 +147,7 @@ const CalendarScreen = ({ navigation }) => {
           selected: true,
           disableTouchEvent: false,
           selectedColor: colors.accent,
-          selectedTextColor: colors.background,
+          selectedTextColor: "white",
           dots: []
         };
       } else{
@@ -179,7 +179,7 @@ const CalendarScreen = ({ navigation }) => {
       case "depense":
         return { color: colors.quaternary };
       default:
-        return { color: colors.onSurfaceDotColor };
+        return { color: colors.onSurface };
     }
   }
 
@@ -221,7 +221,7 @@ const CalendarScreen = ({ navigation }) => {
         selected : true,
         disableTouchEvent : false,
         selectedColor : colors.accent,
-        selectedTextColor: colors.background,
+        selectedTextColor: "white",
         dots: []
       }
       marked[day] = obj;
@@ -303,6 +303,7 @@ const CalendarScreen = ({ navigation }) => {
       display: "flex",
       alignSelf: "center",
       borderRadius: 5,
+      backgroundColor:colors.background
     },
     calendar: {
       borderRadius: 5,
@@ -310,7 +311,8 @@ const CalendarScreen = ({ navigation }) => {
       shadowOpacity: 0.1,
       elevation: 1,
       shadowRadius:5,
-      shadowOffset:{width:0, height:2}
+      shadowOffset:{width:0, height:2},
+      backgroundColor : colors.background
     },
     imagePrez: {
       height: "90%",
@@ -333,8 +335,7 @@ const CalendarScreen = ({ navigation }) => {
       width: "100%",
       resizeMode: "cover",
       position: "absolute",
-      justifyContent: "center",
-      backgroundColor: colors.onSurface
+      justifyContent: "center"
     },
     textFontRegular: {
       fontFamily: fonts.default.fontFamily
@@ -363,7 +364,8 @@ const CalendarScreen = ({ navigation }) => {
 
             <TextInput
               placeholder="Recherche"
-              style={[{marginLeft: 5, width: "80%"}, styles.textFontRegular]}
+              style={[{marginLeft: 5, width: "80%", color:colors.default_dark}, styles.textFontRegular]}
+              placeholderTextColor={colors.default_dark}
               value={filter ? filter.text : null}
               onChangeText={handleSearch}
             />
@@ -393,14 +395,16 @@ const CalendarScreen = ({ navigation }) => {
             style={[styles.calendar, styles.textFontRegular]}
             firstDay={1}
             theme={{
-              arrowColor: colors.quaternary,
-              todayTextColor: colors.accent,
+              arrowColor: colors.accent,
+              todayTextColor: colors.tertiary,
               selectedDayTextColor: "white",
-              selectedDayBackgroundColor: colors.text,
-              calendarBackground: colors.background,
-              dayTextColor: colors.text,
-              textDayHeaderTextColor: colors.text,
-              textSectionTitleColor: colors.text
+              selectedTextColor: "white",
+              selectedDayBackgroundColor: colors.accent,
+              calendarBackground : "transparent",
+              dayTextColor: colors.accent,
+              textDayHeaderTextColor: colors.accent,
+              textSectionTitleColor: colors.accent,
+              monthTextColor : colors.accent
             }}
             enableSwipeMonths={true}
             onDayPress={(day) => onDayPress(day.dateString)}

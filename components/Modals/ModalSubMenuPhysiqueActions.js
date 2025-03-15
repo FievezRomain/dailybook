@@ -4,7 +4,7 @@ import { FontAwesome6, Feather, SimpleLineIcons, AntDesign } from '@expo/vector-
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
 
-const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleModify, handleDelete }) => {
+const ModalSubMenuPhysiqueActions = ({ modalVisible, setModalVisible, infos, handleModify, handleDelete }) => {
     const { colors, fonts } = useTheme();
     const onAction = (event) =>{
         setModalVisible(false);
@@ -28,7 +28,6 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
         actionButtonContainer:{
             width: "90%",
             borderRadius: 10,
-            marginTop: 5,
             backgroundColor: colors.quaternary,
             flexDirection: "column",
             justifyContent: "space-evenly",
@@ -104,10 +103,7 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
         >
                 <View style={styles.card}>
                     <View style={{alignItems: "center"}}>
-                        <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer la note</Text>
-                        {note !== null &&
-                            <Text style={[{fontSize: 12}, styles.textFontBold, {color:colors.default_dark}]}>{note.titre}</Text>
-                        }
+                        <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer le physique</Text>
                     </View>
                     
                     <View style={styles.actionButtonContainer}>
@@ -135,4 +131,4 @@ const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleMo
     );
 };
 
-export default ModalSubMenuNoteActions;
+export default ModalSubMenuPhysiqueActions;

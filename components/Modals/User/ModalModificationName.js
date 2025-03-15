@@ -107,7 +107,7 @@ const ModalModificationName = ({isVisible, setVisible, onModify=undefined}) => {
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             alignSelf: "baseline"
         },
         iconContainer:{
@@ -144,7 +144,7 @@ const ModalModificationName = ({isVisible, setVisible, onModify=undefined}) => {
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={styles.textFontBold}>Nom d'utilisateur</Text>
+                            <Text style={[styles.textFontBold, {color:colors.default_dark}]}>Nom d'utilisateur</Text>
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 
@@ -163,13 +163,13 @@ const ModalModificationName = ({isVisible, setVisible, onModify=undefined}) => {
                         <View style={styles.formContainer}>
                             
                             <View style={{marginBottom: 10}}>
-                                <Text style={[styles.textFontBold, {marginBottom: 5}]}>Votre nom d'utilisateur reste privé.</Text>
-                                <Text>Ce nom est uniquement utilisé dans votre application sur votre téléphone.</Text> 
-                                <Text>Il n'est jamais partagé avec d'autres utilisateurs ni utilisé dans nos traitements internes.</Text>
+                                <Text style={[styles.textFontBold, {marginBottom: 5}, {color:colors.default_dark}]}>Votre nom d'utilisateur reste privé.</Text>
+                                <Text style = {{color:colors.default_dark}}>Ce nom est uniquement utilisé dans votre application sur votre téléphone.</Text> 
+                                <Text style ={{color:colors.default_dark}}>Il n'est jamais partagé avec d'autres utilisateurs ni utilisé dans nos traitements internes.</Text>
                             </View>
                             
                             <View style={styles.inputContainer}>
-                                <Text style={[styles.textInput, styles.textFontRegular]}>Nom : </Text>
+                                <Text style={[styles.textInput, styles.textFontRegular, {color:colors.default_dark}]}>Nom : </Text>
                                 <TextInput
                                     style={[styles.input, styles.textFontRegular]}
                                     placeholder="Exemple : Utilisateur"

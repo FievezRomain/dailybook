@@ -29,7 +29,7 @@ const ActionScreen = ({ navigation }) => {
     {title: "Entrainement", id: "entrainement"},
     {title: "Concours", id: "concours"},
     {title: "Rendez-vous", id: "rdv"},
-    {title: "Soins", id: "soins"},
+    {title: "Soin", id: "soins"},
     {title: "Autre", id: "autre"},
   ];
 

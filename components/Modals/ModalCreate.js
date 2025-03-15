@@ -27,7 +27,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
     {title: "Entrainement", id: "entrainement"},
     {title: "Concours", id: "concours"},
     {title: "Rendez-vous", id: "rdv"},
-    {title: "Soins", id: "soins"},
+    {title: "Soin", id: "soins"},
     {title: "Autre", id: "autre"},
   ];
   const { date } = useCalendar();
@@ -182,6 +182,9 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
         borderTopStartRadius: 15,
         marginBottom: -1
     },
+    titleButton : {
+      color : colors.default_dark,
+    }
   });
 
   return (
@@ -240,7 +243,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome name="paw" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Animal</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Animal</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -255,7 +258,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <Entypo name="compass" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Balade</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Balade</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -268,7 +271,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <Entypo name="traffic-cone" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Entraînement</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Entraînement</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -281,7 +284,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome name="trophy" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Concours</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Concours</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -294,7 +297,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome name="stethoscope" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Rendez-vous médical</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Rendez-vous médical</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -307,7 +310,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Soin</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Soin</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -320,7 +323,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Dépense</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Dépense</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -333,7 +336,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome6 name="check-circle" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Autre</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Autre</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -348,7 +351,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <SimpleLineIcons name="target" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Objectif</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Objectif</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -363,7 +366,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome name="heart" size={20} style={styles.iconButton}/>
-                        <Text style={styles.textFontRegular}>Souhait</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Souhait</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -376,7 +379,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <AntDesign name="contacts" size={20} style={styles.iconButton}/>
-                        <Text style={[styles.textFontRegular]}>Contact</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Contact</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
@@ -389,7 +392,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <SimpleLineIcons name="note" size={20} style={styles.iconButton}/>
-                        <Text style={[styles.textFontRegular]}>Note</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Note</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                     </View>
