@@ -490,7 +490,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             maxLength={10}
                                             placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => onChangeDate(text)}
-                                            value={date}
+                                            defaultValue={date}
                                         />
                                     </View>
                                     <View style={styles.containerDate}>
@@ -500,7 +500,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholder="XXXXXXXXXX"
                                             placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("numeroidentification", text)}
-                                            value={watch("numeroidentification")}
+                                            defaultValue={watch("numeroidentification")}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>
