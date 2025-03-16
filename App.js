@@ -83,7 +83,7 @@ function ThemedApp() {
   return (
     <PaperProvider theme={isDarkTheme ? darkTheme : lightTheme}> 
       <NavigationContainer>
-          <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
+          <StatusBar style={isDarkTheme ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
           <AuthStack />
       </NavigationContainer>
     </PaperProvider>

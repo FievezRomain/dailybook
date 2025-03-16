@@ -40,6 +40,8 @@
       "googleServicesFile": "./google-services.json",
       "versionCode": 15,
       "permissions": [
+        "WAKE_LOCK",
+        "RECEIVE_BOOT_COMPLETED",
         "CAMERA",
         "READ_EXTERNAL_STORAGE",
         "com.google.android.c2dm.permission.RECEIVE",

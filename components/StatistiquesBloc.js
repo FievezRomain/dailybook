@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
@@ -14,8 +14,10 @@ import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import BaladeComponent from './statistics/BaladeComponent';
 import PoidsComponent from './statistics/PoidsComponent';
 import TailleComponent from './statistics/TailleComponent';
+import { ThemeContext } from '../providers/ThemeProvider';
 
 const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
+    const { isDarkTheme } = useContext( ThemeContext );
     const { colors, fonts } = useTheme();
     const { currentUser, abonnement } = useAuth();
     const [itemStatistique, setItemStatistique] = useState("depense");
@@ -44,14 +46,14 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
         entrainement: {
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => `rgba(149, 101, 64, ${opacity-0.05})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            color: (opacity = 1) => hexToRgba(isDarkTheme ? colors.tertiary : colors.accent, opacity-0.05),
+            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
         },
         balade: {
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => `rgba(149, 101, 64, ${opacity-0.05})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            color: (opacity = 1) => hexToRgba(isDarkTheme ? colors.tertiary : colors.accent, opacity-0.05),
+            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
         },
         poids: {
             backgroundGradientFromOpacity: 0,
@@ -135,7 +137,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
         bottomBar: {
             width: '100%',
             height: 0.4, // ou la hauteur que vous souhaitez pour votre barre
-            backgroundColor: colors.text,
+            backgroundColor: colors.default_dark,
         },
         composantContainer:{
             marginLeft: 10,
@@ -212,11 +214,11 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             {accountType === "Premium" &&
                 <View style={styles.dateContainer}>
                     <TouchableOpacity onPress={() => changeDates(-1)}>
-                        <IconButton icon={"chevron-left"} size={30} />
+                        <IconButton icon={"chevron-left"} size={30} iconColor={colors.default_dark} />
                     </TouchableOpacity>
-                    <Text style={styles.textFontRegular}>{getDateToDisplay()}</Text>
+                    <Text style={[styles.textFontRegular, {color: colors.default_dark}]}>{getDateToDisplay()}</Text>
                     <TouchableOpacity onPress={() => changeDates(1)}>
-                        <IconButton icon={"chevron-right"} size={30} />
+                        <IconButton icon={"chevron-right"} size={30} iconColor={colors.default_dark} />
                     </TouchableOpacity>
                 </View>
             }
