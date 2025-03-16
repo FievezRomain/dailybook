@@ -87,6 +87,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("couleur", animal.couleur !== null ? animal.couleur : undefined);
         setValue("nomPere", animal.nompere !== null ? animal.nompere : undefined);
         setValue("nomMere", animal.nommere !== null ? animal.nommere : undefined);
+        setValue("numeroidentification", animal.numeroidentification !== null ? animal.numeroidentification : undefined);
         setValue("image", animal.image);
         setValue("previousimage", animal.image);
         setDate(animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : null);
@@ -113,6 +114,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nomPere", undefined);
         setValue("nomMere", undefined);
         setValue("image", undefined);
+        setValue("numeroidentification", undefined);
         setImage(null);
         setDate(String(jour + "/" + mois + "/" + annee));
         setEspece(undefined);
