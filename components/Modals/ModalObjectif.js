@@ -451,7 +451,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                         <View style={styles.sousEtapesContainer} key={index}>
                                             <TextInput
                                                 style={[styles.inputSousEtape, styles.textFontRegular]}
-                                                value={value.etape}
+                                                defaultValue={value.etape}
                                                 onChangeText={(text) => handleInputChange(text, index)}
                                                 placeholder="Entrez une valeur"
                                             />
