@@ -45,13 +45,13 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
             color: (opacity = 1) => `rgba(149, 101, 64, ${opacity-0.05})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
         },
         balade: {
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
             color: (opacity = 1) => `rgba(149, 101, 64, ${opacity-0.05})`,
-            labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
         },
         poids: {
             backgroundGradientFromOpacity: 0,
@@ -212,11 +212,11 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             {accountType === "Premium" &&
                 <View style={styles.dateContainer}>
                     <TouchableOpacity onPress={() => changeDates(-1)}>
-                        <IconButton icon={"chevron-left"} size={30} />
+                        <IconButton icon={"chevron-left"} size={30} iconColor={colors.default_dark} />
                     </TouchableOpacity>
-                    <Text style={styles.textFontRegular}>{getDateToDisplay()}</Text>
+                    <Text style={[styles.textFontRegular, {color: colors.default_dark}]}>{getDateToDisplay()}</Text>
                     <TouchableOpacity onPress={() => changeDates(1)}>
-                        <IconButton icon={"chevron-right"} size={30} />
+                        <IconButton icon={"chevron-right"} size={30} iconColor={colors.default_dark} />
                     </TouchableOpacity>
                 </View>
             }
