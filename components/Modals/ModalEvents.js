@@ -1196,7 +1196,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                   </View>
 
                   <View style={styles.inputContainer}>
-                    <Text style={[styles.textInput, styles.textFontRegular]}>Option notifications :</Text>
+                    <Text style={[styles.textInput, styles.textFontRegular]}>Rappel :</Text>
                     <TouchableOpacity 
                       style={styles.textInput} 
                       onPress={()=>{Keyboard.dismiss();setModalOptionNotifications(true)}}
@@ -1205,7 +1205,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         {optionNotifType == false &&
                           <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
                             <View style={{width: "90%"}}>
-                              <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Aucune option</Text>
+                              <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Aucun rappel</Text>
                             </View>
                             <Ionicons name="chevron-down" size={20}/>
                           </View>

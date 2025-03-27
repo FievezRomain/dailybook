@@ -163,7 +163,10 @@ const PoidsComponent = ({ data, chartConfig, chartParameters, forceUpdateDataCha
         categorieContainer:{
             flexDirection: "row",
             alignItems: "center"
-        }
+        },
+        textColor:{
+            color: colors.default_dark
+        },
     })
 
     if( loading ){
@@ -185,13 +188,13 @@ const PoidsComponent = ({ data, chartConfig, chartParameters, forceUpdateDataCha
                         <TouchableOpacity style={styles.card} onPress={() => handleDateCategoryPress(item.date)}>
                             <View style={styles.cardContainer}>
                                 <View style={styles.categorieContainer}>
-                                    <Text>{getDateToDisplay(item.date)}</Text>
+                                    <Text style={[styles.text, styles.textColor]}>{getDateToDisplay(item.date)}</Text>
                                 </View>
                                 <View style={styles.categorieContainer}>
                                 {expandedDate === item.date ?
-                                    <IconButton icon={"chevron-up"} size={20} />
+                                    <IconButton icon={"chevron-up"} size={20} iconColor={colors.default_dark} />
                                 :
-                                    <IconButton icon={"chevron-down"} size={20} />
+                                    <IconButton icon={"chevron-down"} size={20} iconColor={colors.default_dark} />
                                 }
                                 </View>
                                 

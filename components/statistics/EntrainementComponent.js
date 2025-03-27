@@ -194,7 +194,10 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }) => {
         categorieContainer:{
             flexDirection: "row",
             alignItems: "center"
-        }
+        },
+        textColor:{
+            color: colors.default_dark
+        },
     })
 
     if( loading ){
@@ -221,13 +224,13 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }) => {
                             <View style={styles.cardContainer}>
                                 <View style={styles.categorieContainer}>
                                     <View style={[styles.indicatorCategorie, {backgroundColor: item.color, marginRight: 15}]} />
-                                    <Text>{getDateToDisplay(item.date)}</Text>
+                                    <Text style={[styles.text, styles.textColor]}>{getDateToDisplay(item.date)}</Text>
                                 </View>
                                 <View style={styles.categorieContainer}>
                                 {expandedDate === item.date ?
-                                    <IconButton icon={"chevron-up"} size={20} />
+                                    <IconButton icon={"chevron-up"} size={20} iconColor={colors.default_dark} />
                                 :
-                                    <IconButton icon={"chevron-down"} size={20} />
+                                    <IconButton icon={"chevron-down"} size={20} iconColor={colors.default_dark} />
                                 }
                                 </View>
                                 

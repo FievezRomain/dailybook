@@ -356,9 +356,15 @@ const SettingsScreen = ({ }) => {
                                     </View>
                                 </TouchableOpacity>
                                 <Divider />
-                                <TouchableOpacity style={[styles.button, styles.buttonNormal]} onPress={toggleTheme}>
-                                    <Text style={[styles.textFontMedium]}>Passer en mode {isDarkTheme ? 'clair' : 'sombre'}</Text>
-                                </TouchableOpacity> 
+                                <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={toggleTheme}>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="invert-colors" iconColor={colors.accent} size={20} />
+                                        <Text style={[styles.textFontMedium, {fontSize: 16, color:colors.default_dark}]}>Passer en mode {isDarkTheme ? 'clair' : 'sombre'}</Text>
+                                    </View>
+                                    <View style={{flexDirection: "row", alignItems: "center"}}>
+                                        <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
+                                    </View>
+                                </TouchableOpacity>
                                 <Divider />
                                 <TouchableOpacity style={{paddingHorizontal: 10, flexDirection: "row", justifyContent: "space-between"}} onPress={() => setModalVerifDeleteAccountVisible(!modalVerifDeleteAccountVisible)}>
                                     <View style={{flexDirection: "row", alignItems: "center"}}>

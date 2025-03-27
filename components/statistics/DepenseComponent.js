@@ -52,6 +52,9 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }) => {
         text:{
             fontFamily: fonts.bodyMedium.fontFamily
         },
+        textColor:{
+            color: colors.default_dark
+        },
         listEventContainer: {
             display: "flex",
             alignSelf: "center",
@@ -92,7 +95,7 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }) => {
     return(
         <>
             <View style={styles.container}>
-                <Text style={styles.text}>Total: {dataToDisplay.total} €</Text>
+                <Text style={[styles.text, styles.textColor]}>Total: {dataToDisplay.total} €</Text>
             </View>
             <PieChartComponent
                 chartConfig={chartConfig}
@@ -107,15 +110,15 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }) => {
                             <View style={styles.cardContainer}>
                                 <View style={styles.categorieContainer}>
                                     <View style={[styles.indicatorCategorie, {backgroundColor: item.color, marginRight: 15}]} />
-                                    <Text>{item.name}</Text>
+                                    <Text style={[styles.text, styles.textColor]}>{item.name}</Text>
                                 </View>
                                 <View style={styles.categorieContainer}>
                                     {expandedCategory === item.name ?
-                                        <IconButton icon={"chevron-up"} size={20} />
+                                        <IconButton icon={"chevron-up"} size={20} iconColor={colors.default_dark} />
                                     :
-                                        <IconButton icon={"chevron-down"} size={20} />
+                                        <IconButton icon={"chevron-down"} size={20} iconColor={colors.default_dark} />
                                     }
-                                    <Text>{item.exact_value} €</Text>
+                                    <Text style={[styles.text, styles.textColor]}>{item.exact_value} €</Text>
                                 </View>
                                 
                             </View>

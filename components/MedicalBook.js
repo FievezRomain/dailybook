@@ -56,7 +56,7 @@ const MedicalBook = ({ animal, navigation }) => {
     }
 
     const compareDates = (a, b) => {
-        return new Date(a.dateevent) - new Date(b.dateevent);
+        return new Date(b.dateevent) - new Date(a.dateevent);
     }
 
     const handleStateChange = () =>{
