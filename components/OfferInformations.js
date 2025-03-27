@@ -51,6 +51,7 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
     cell: {
       flex: 1,
       textAlign: 'center',
+      color:colors.default_dark
     },
     headerCell: {
       color: colors.default_dark

@@ -51,6 +51,13 @@ const WelcomeScreen = ({ navigation })=> {
       }
     } */
 
+      const getObjectifsInProgress = () => {
+        if( objectifs !== undefined && Array.isArray(objectifs) ){
+          return objectifs.filter( (item) =>  item.sousEtapes.some(etape => etape.state === false) && new Date(item.datefin) >= new Date() );
+        }
+        return undefined;
+      }
+
     const convertDateToText = () => {
       const options = { year: 'numeric', month: 'long', day: 'numeric' };
       const dateObject = new Date();
@@ -137,7 +144,7 @@ const WelcomeScreen = ({ navigation })=> {
                       handleEventsChange={handleEventChange}
                     />
                     <ObjectifsInProgressBloc
-                      objectifs={objectifs}
+                      objectifs={getObjectifsInProgress()}
                       handleObjectifChange={handleObjectifChange}
                       handleObjectifDelete={handleObjectifDelete}
                     />

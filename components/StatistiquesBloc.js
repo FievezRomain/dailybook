@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
@@ -9,15 +9,24 @@ import StatePicker from './StatePicker';
 import ChartWithLoader from './ChartWithLoader';
 import DepenseComponent from './statistics/DepenseComponent';
 import LineChartComponent from './charts/LineChartComponent';
+import EntrainementComponent from './statistics/EntrainementComponent';
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import BaladeComponent from './statistics/BaladeComponent';
+import PoidsComponent from './statistics/PoidsComponent';
+import TailleComponent from './statistics/TailleComponent';
+import { ThemeContext } from '../providers/ThemeProvider';
 
 const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
+    const { isDarkTheme } = useContext( ThemeContext );
     const { colors, fonts } = useTheme();
     const { currentUser, abonnement } = useAuth();
     const [itemStatistique, setItemStatistique] = useState("depense");
     const chartComponents = {
-        line: LineChartComponent,
+        balade: BaladeComponent,
+        entrainement: EntrainementComponent,
         depense: DepenseComponent,
+        poids: PoidsComponent,
+        taille: TailleComponent
     };
     const [statistiqueComponent, setStatisticComponent] = useState("depense");
     const ChartComponent = chartComponents[statistiqueComponent];
@@ -28,11 +37,40 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
       ];
     const [temporality, setTemporality] = useState('Mois');
     const chartConfig = {
-        backgroundGradientFrom: "#1E2923",
-        backgroundGradientTo: "#08130D",
-        color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-        labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        depense: {
+            backgroundGradientFrom: "#1E2923",
+            backgroundGradientTo: "#08130D",
+            color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+        },
+        entrainement: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => hexToRgba(isDarkTheme ? colors.tertiary : colors.accent, opacity-0.05),
+            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
+        },
+        balade: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => hexToRgba(isDarkTheme ? colors.tertiary : colors.accent, opacity-0.05),
+            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
+        },
+        poids: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => colors.default_dark,
+            labelColor: (opacity = 1) => colors.default_dark,
+            decimalPlaces: 2,
+        },
+        taille: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => colors.default_dark,
+            labelColor: (opacity = 1) => colors.default_dark,
+            decimalPlaces: 2,
+        },
     };
+    const ChartConfig = chartConfig[statistiqueComponent];
     const now = new Date();
     const [parameters, setParameters] = useState({ animaux: selectedAnimal.map(function(item) { return item["id"] }), email: currentUser.email, dateDebut: new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString() });
 
@@ -99,7 +137,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
         bottomBar: {
             width: '100%',
             height: 0.4, // ou la hauteur que vous souhaitez pour votre barre
-            backgroundColor: colors.text,
+            backgroundColor: colors.default_dark,
         },
         composantContainer:{
             marginLeft: 10,
@@ -137,7 +175,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             alignSelf: "center",
             paddingLeft: 20,
             paddingRight: 20,
-            paddingBottom: 15,
+            paddingBottom: 5,
             top: 5,
             zIndex: 1,
         },
@@ -176,15 +214,15 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             {accountType === "Premium" &&
                 <View style={styles.dateContainer}>
                     <TouchableOpacity onPress={() => changeDates(-1)}>
-                        <IconButton icon={"chevron-left"} size={30} />
+                        <IconButton icon={"chevron-left"} size={30} iconColor={colors.default_dark} />
                     </TouchableOpacity>
-                    <Text style={styles.textFontRegular}>{getDateToDisplay()}</Text>
+                    <Text style={[styles.textFontRegular, {color: colors.default_dark}]}>{getDateToDisplay()}</Text>
                     <TouchableOpacity onPress={() => changeDates(1)}>
-                        <IconButton icon={"chevron-right"} size={30} />
+                        <IconButton icon={"chevron-right"} size={30} iconColor={colors.default_dark} />
                     </TouchableOpacity>
                 </View>
             }
-            
+
             <View style={styles.composantContainer}>
                 <ScrollView contentContainerStyle={{paddingBottom: 30}}>
                     {accountType === "Premium" ?
@@ -194,8 +232,8 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
                                         <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
-                                        <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
+                                        <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("entrainement")}}>
                                         <Entypo name="traffic-cone" size={20} style={itemStatistique == "entrainement" ? styles.itemIconSelected : styles.itemIconDefault}  />
@@ -203,24 +241,24 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}}>
                                         <FontAwesome name="trophy" size={20} style={itemStatistique == "concours" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
-                                        <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("poids")}}>
                                         <FontAwesome6 name="weight-scale" size={20} style={itemStatistique == "poids" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("taille")}}>
                                         <MaterialIcons name="height" size={20} style={itemStatistique == "taille" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
+                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
+                                        <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                    </TouchableOpacity>
                                 </View>
                                 <View style={styles.bottomBar} />
                             </View>
                             
                             <View style={styles.statistiquesContainer}>
-                                {itemStatistique === "depense" ?
+                                {itemStatistique === "depense" || itemStatistique === "entrainement" || itemStatistique === "balade" || itemStatistique === "poids" || itemStatistique === "taille" ?
                                     <ChartWithLoader
                                         ChartComponent={ChartComponent}
-                                        chartConfig={chartConfig}
+                                        chartConfig={ChartConfig}
                                         chartType={itemStatistique}
                                         chartParameters={parameters}
                                     />
@@ -230,9 +268,9 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                                             text={"À venir..."}
                                         />
                                     </View>
-                                    
+
                                 }
-                                
+
                             </View>
                         </>
                     :

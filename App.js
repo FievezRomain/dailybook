@@ -25,16 +25,16 @@ const lightTheme = {
     primary: variables.alezan,
     secondary: variables.gris,
     tertiary: variables.aubere,
+    quaternary: variables.rouan,
+    outline: variables.rouan,
     neutral: variables.isabelle,
     minor: variables.palomino,
     accent: variables.bai,
-    background: variables.blanc,
-    text: variables.bai_brun,
-    onSurface: variables.default,
-    error: variables.bai_cerise,
-    quaternary: variables.rouan,
     secondaryContainer: variables.bai,
-    outline: variables.rouan,
+    text: variables.bai_brun,
+    error: variables.bai_cerise, 
+    background: variables.blanc,
+    onSurface: variables.default,
     default_dark: variables.default_dark,
   },
   fonts: {
@@ -54,17 +54,18 @@ const darkTheme = {
     ...DefaultTheme.colors,
     primary: variables.alezan,
     secondary: variables.gris,
-    accent: variables.aubere,
+    tertiary: variables.aubere,
+    quaternary: variables.rouan,
+    outline: variables.rouan,
     neutral: variables.isabelle,
     minor: variables.palomino,
-    tertiary: variables.bai,
-    background: variables.noir,
-    text: variables.bai_brun,
-    onSurface: variables.default_dark,
-    error: variables.bai_cerise,
-    quaternary: variables.rouan,
+    accent: variables.bai,
     secondaryContainer: variables.bai,
-    default_dark: variables.default_dark,
+    text: variables.bai_brun,
+    error: variables.bai_cerise, 
+    background: variables.noir,
+    onSurface: variables.default_dark,
+    default_dark: variables.blanc,
   },
   fonts: {
     default: { fontFamily: variables.fontRegular },
@@ -79,11 +80,10 @@ const darkTheme = {
 
 function ThemedApp() {
   const { isDarkTheme } = useContext(ThemeContext);
-
   return (
-    <PaperProvider theme={isDarkTheme ? darkTheme : lightTheme}>
+    <PaperProvider theme={isDarkTheme ? darkTheme : lightTheme}> 
       <NavigationContainer>
-          <StatusBar style="dark" translucent backgroundColor="rgba(0, 0, 0, 0)" />
+          <StatusBar style={isDarkTheme ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
           <AuthStack />
       </NavigationContainer>
     </PaperProvider>

@@ -106,7 +106,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             return "Balade";
         }
         if( eventInfos.eventtype === "soins" ){
-            return "Soins";
+            return "Soin";
         }
         if( eventInfos.eventtype === "concours" ){
             return "Concours";
@@ -255,6 +255,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
             paddingVertical: 10,
             paddingLeft: 20,
             paddingRight: 10
+        },
+        textColor:{
+            color: colors.default_dark
         }
     });
 
@@ -447,9 +450,9 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
                     }
                     { withDate === true &&
                         <View style={[styles.indicatorEventContainer, {alignItems: "center"}]}>
-                            <Text style={styles.textFontRegular}>{getDayText(eventInfos.dateevent)}.</Text>
-                            <Text style={[{fontSize: 11}, styles.textFontRegular]}>{getDateText(eventInfos.dateevent)}</Text>
-                            <Text style={[{fontSize: 9}, styles.textFontRegular]}>{getYearText(eventInfos.dateevent)}</Text>
+                            <Text style={[styles.textFontRegular, styles.textColor]}>{getDayText(eventInfos.dateevent)}.</Text>
+                            <Text style={[{fontSize: 11}, styles.textFontRegular, styles.textColor]}>{getDateText(eventInfos.dateevent)}</Text>
+                            <Text style={[{fontSize: 9}, styles.textFontRegular, styles.textColor]}>{getYearText(eventInfos.dateevent)}</Text>
                         </View>
                     }
                     <TouchableOpacity style={[styles.cardEventContainer, withDate === false && withState === false ? styles.cardEventContainerWithoutIndicator : styles.cardEventContainerWithIndicator]} onPress={() => setModalEventDetailsVisible(true)}>

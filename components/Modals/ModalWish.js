@@ -204,7 +204,8 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         },
         textInput:{
             alignSelf: "flex-start",
-            marginBottom: 5
+            marginBottom: 5,
+            color : colors.default_dark
         },
         errorInput: {
             color: "red"
@@ -216,7 +217,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             alignSelf: "baseline"
         },
         imageContainer:{
@@ -267,7 +268,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                             <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={[styles.textFontBold, {fontSize: 16}]}>Souhait</Text>
+                            <Text style={[styles.textFontBold, {fontSize: 16, color:colors.default_dark}]}>Souhait</Text>
                         </View>
                         <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                             { loading ? 

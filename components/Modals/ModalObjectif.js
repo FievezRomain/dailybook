@@ -278,7 +278,8 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         },
         textInput:{
             alignSelf: "flex-start",
-            marginBottom: 5
+            marginBottom: 5,
+            color : colors.default_dark
         },
         containerAnimaux: {
             display: "flex",
@@ -307,7 +308,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             alignSelf: "baseline"
         },
         inputSousEtape: {
@@ -316,7 +317,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             marginRight: 10
         },
         sousEtapesContainer: {
@@ -372,7 +373,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
                             <View style={{width:"33.33%", alignItems: "center"}}>
-                                <Text style={[styles.textFontBold, {fontSize: 16}]}>Objectif</Text>
+                                <Text style={[styles.textFontBold, {fontSize: 16, color:colors.default_dark}]}>Objectif</Text>
                             </View>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
                                 { loading ? 
@@ -450,7 +451,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                         <View style={styles.sousEtapesContainer} key={index}>
                                             <TextInput
                                                 style={[styles.inputSousEtape, styles.textFontRegular]}
-                                                value={value.etape}
+                                                defaultValue={value.etape}
                                                 onChangeText={(text) => handleInputChange(text, index)}
                                                 placeholder="Entrez une valeur"
                                             />

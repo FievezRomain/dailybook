@@ -46,7 +46,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Entraînement", id: "entrainement"},
     {title: "Concours", id: "concours"},
     {title: "Rendez-vous", id: "rdv"},
-    {title: "Soins", id: "soins"},
+    {title: "Soin", id: "soins"},
     {title: "Autre", id: "autre"},
     {title: "Dépense", id: "depense"},
   ];
@@ -512,10 +512,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     },
     textInput:{
       alignSelf: "flex-start",
-      marginBottom: 5
+      marginBottom: 5,
+      color : colors.default_dark
     },
     textButton:{
-      color: "white"
+      color: colors.background,
     },
     containerActionsButtons: {
       flexDirection: "row",
@@ -564,7 +565,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       borderRadius: 5,
       paddingLeft: 15,
       backgroundColor: colors.quaternary,
-      color: "black",
+      color: colors.default_dark,
       alignSelf: "baseline"
     },
     inputTextArea: {
@@ -575,7 +576,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       paddingLeft: 15,
       paddingRight: 15,
       backgroundColor: colors.quaternary,
-      color: "black",
+      color: colors.default_dark,
     },
     datePicker:{
       marginBottom: 15,
@@ -1195,7 +1196,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                   </View>
 
                   <View style={styles.inputContainer}>
-                    <Text style={[styles.textInput, styles.textFontRegular]}>Option notifications :</Text>
+                    <Text style={[styles.textInput, styles.textFontRegular]}>Rappel :</Text>
                     <TouchableOpacity 
                       style={styles.textInput} 
                       onPress={()=>{Keyboard.dismiss();setModalOptionNotifications(true)}}
@@ -1204,7 +1205,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         {optionNotifType == false &&
                           <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 15}]}>
                             <View style={{width: "90%"}}>
-                              <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Aucune option</Text>
+                              <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Aucun rappel</Text>
                             </View>
                             <Ionicons name="chevron-down" size={20}/>
                           </View>

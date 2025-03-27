@@ -116,7 +116,8 @@ const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModif
         },
         textInput:{
             alignSelf: "flex-start",
-            marginBottom: 5
+            marginBottom: 5,
+            color : colors.default_dark
         },
         input: {
             height: 40,
@@ -125,7 +126,7 @@ const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModif
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             alignSelf: "baseline"
         },
         textFontRegular:{
@@ -158,7 +159,7 @@ const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModif
                             <TouchableOpacity onPress={closeModal} style={{width: "33.33%", alignItems: "center"}}>
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                            <Text style={[styles.textFontBold, {width: "33.33%", alignSelf: "center", textAlign: "center"}]}>Signaler le décès</Text>
+                            <Text style={[styles.textFontBold, {width: "33.33%", alignSelf: "center", textAlign: "center", color:colors.default_dark}]}>Signaler le décès</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width: "33.33%", alignItems: "center"}}>
                                 <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>

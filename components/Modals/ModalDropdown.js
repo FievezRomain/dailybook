@@ -72,7 +72,7 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
         backgroundColor: colors.accent,
       },
       title:{
-        color: "white"
+        color: colors.background,
       },
       textFontRegular:{
           fontFamily: fonts.default.fontFamily

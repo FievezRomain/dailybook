@@ -41,12 +41,14 @@ export const getReadableTextColor = (color) =>
 /**
  * Ajoute des couleurs harmonieuses à un ensemble de données pour un graphique.
  * @param {Array} data - Tableau d'objets contenant des données (name, value).
+ * @param {Array} colors - Tableau des couleurs de l'application
  * @returns {Array} Tableau d'objets avec des couleurs ajoutées.
  */
-export const addColorsToData = (data) => {
-  const colors = generateExtendedPalette(data.length);
+export const addColorsToData = (data, colors) => {
+  const colorsGenerated = generateExtendedPalette(data.length);
   return data.map((item, index) => ({
     ...item,
-    color: colors[index],
+    color: colorsGenerated[index],
+    legendFontColor: colors.default_dark
   }));
 };

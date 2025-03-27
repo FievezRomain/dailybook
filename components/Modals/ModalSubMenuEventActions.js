@@ -74,7 +74,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
             backgroundColor: colors.default_dark,
         },
         title:{
-            color: "white"
+            color: colors.default_dark,
         },
         disabledButton:{
             backgroundColor: colors.secondary,
@@ -85,7 +85,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
             color: colors.quaternary
         },
         textFontRegular:{
-            fontFamily: fonts.default.fontFamily
+            fontFamily: fonts.default.fontFamily,
         },
         textFontMedium:{
             fontFamily: fonts.bodyMedium.fontFamily
@@ -103,7 +103,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
             arrayHeight={((event.eventtype === "soins" || event.eventtype === "balade") && event.idparent !== null && event.idparent !== undefined) ? ["35%"] : ["30%"]}
         >
                 <View style={styles.card}>
-                    <Text style={styles.textFontRegular}>Gérer l'événement</Text>
+                    <Text style={[styles.textFontRegular, {color:colors.default_dark}]}>Gérer l'événement</Text>
                     <View style={styles.actionButtonContainer}>
                         <TouchableOpacity style={[styles.actionButton, styles.disabledButton]}>
                             <View style={styles.informationsActionButton}>

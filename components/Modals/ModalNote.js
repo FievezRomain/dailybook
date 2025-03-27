@@ -157,6 +157,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
         textInput: {
             alignSelf: "flex-start",
             marginBottom: 5,
+            color : colors.default_dark
         },
         textFontRegular: {
             fontFamily: fonts.default.fontFamily,
@@ -180,7 +181,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
                         </TouchableOpacity>
                         <View style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={[styles.textFontBold, {fontSize: 16}]}>
+                            <Text style={[styles.textFontBold, {fontSize: 16, color:colors.default_dark}]}>
                                 {actionType === "modify" ? "Note" : "Note"}
                             </Text>
                         </View>

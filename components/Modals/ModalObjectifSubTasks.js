@@ -177,7 +177,7 @@ const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, o
                             <TouchableOpacity onPress={closeModal}>
                                 <Text style={[{color: colors.tertiary}, styles.textFontRegular]}>Annuler</Text>
                             </TouchableOpacity>
-                                <Text style={[styles.textFontBold]}>Gérer les étapes</Text>
+                                <Text style={[styles.textFontBold, {color:colors.default_dark}]}>Gérer les étapes</Text>
                             <TouchableOpacity onPress={handleSubmit(submitRegister)}>
                                 <Text style={[{color: colors.default_dark}, styles.textFontRegular]}>Enregistrer</Text>
                             </TouchableOpacity>
