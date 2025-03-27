@@ -4,8 +4,10 @@ import statisticServiceInstance from "../services/StatisticService";
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import { useEvents } from '../providers/EventsProvider';
 import { addColorsToData } from '../utils/Colors';
+import { useTheme } from 'react-native-paper';
 
 const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParameters }) => {
+  const { colors } = useTheme();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const { events } = useEvents();
@@ -25,7 +27,7 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
         
         case 'depense':
             result = await statisticServiceInstance.getDepenses(chartParameters);
-            result.statistic = addColorsToData(result.statistic);
+            result.statistic = addColorsToData(result.statistic, colors);
           break;
         case 'entrainement':
             result = await statisticServiceInstance.getEntrainements(chartParameters);
