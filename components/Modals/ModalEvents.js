@@ -200,8 +200,20 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("depense", event.depense);
     setValue("categoriedepense", event.categoriedepense);
     setValue("frequencetype", event.frequencetype);
-    setValue("notif", undefined);
-    setValue("optionnotif", undefined);
+    setValue("notif", event.optionnotification);
+    setValue("optionnotif", event.rappelnotification);
+    if( event.optionnotification !== undefined ){
+      let arrayFiltered = listNotif.filter(e => e.id === event.optionnotification);
+      if( arrayFiltered.length > 0 ){
+        setNotifType(arrayFiltered.at(0));
+      }
+    }
+    if( event.rappelnotification !== undefined ){
+      let arrayFiltered = listOptionsNotif.filter(e => e.id === event.rappelnotification);
+      if( arrayFiltered.length > 0 ){
+        setOptionNotifType(arrayFiltered.at(0));
+      }
+    }
     setValue("state", event.state === undefined ? "À faire" : event.state);
     setValue("todisplay", event.todisplay === undefined ? true : event.todisplay);
     setValue("idparent", event.idparent);
