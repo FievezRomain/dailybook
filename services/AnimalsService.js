@@ -145,6 +145,34 @@ class AnimalsService {
         }
     }
 
+    async getAnimalBodyPictures(idanimal, email){
+        await this.updateAxiosAuthorization();
+        return axios
+            .get(`${getBaseUrl()}bodyPictures?email=${email}&idanimal=${idanimal}`)
+            .then(async ({data}) => {
+                return data.rows;
+            })
+            .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les images du physique de l'animal " + idanimal + " : " + err.message ));
+    }
+
+    async deleteAnimalBodyPicture(body) {
+        await this.updateAxiosAuthorization();
+        return axios.delete(`${getBaseUrl()}deleteBodyPicture`, {data: body})
+        .then(async (response) => {
+            return response.data;
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer une image du physique d'un animal : " + err.message ));
+    }
+
+    async addAnimalBodyPicture(body){
+        await this.updateAxiosAuthorization();
+        return axios.post(`${getBaseUrl()}addBodyPicture`, body)
+        .then(async (response) => {
+            return response.data;
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour enregistrer une image du physique d'un animal : " + err.message ));
+    }
+
     async updateAxiosAuthorization() {
         let token = await getAuth().currentUser.getIdToken();
         if (token) {
