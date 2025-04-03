@@ -44,6 +44,9 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
         case 'alimentation':
             result = await statisticServiceInstance.getAlimentations(chartParameters);
           break;
+        case 'concours':
+            result = await statisticServiceInstance.getConcours(chartParameters);
+          break;
       }
 
       setData(result);
