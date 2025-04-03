@@ -918,7 +918,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             inputMode="decimal"
                             placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("depense", text)}
-                            defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
+                            defaultValue={getValues("depense")}
                           />
                         </View>
 
@@ -967,7 +967,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             inputMode="decimal"
                             placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("depense", text)}
-                            defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
+                            defaultValue={getValues("depense")}
                           />
                         </View>
 
@@ -1037,7 +1037,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           inputMode="decimal"
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("depense", text)}
-                          defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
+                          defaultValue={getValues("depense")}
                         />
                       </View>
                       <View style={styles.inputContainer}>
@@ -1071,7 +1071,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           inputMode="decimal"
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("depense", text)}
-                          defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
+                          defaultValue={getValues("depense")}
                         />
                       </View>
                     </>
@@ -1116,7 +1116,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             inputMode="decimal"
                             placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("depense", text)}
-                            defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
+                            defaultValue={getValues("depense")}
                           />
                       </View>
                     </>
@@ -1133,7 +1133,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           inputMode="decimal"
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("depense", text)}
-                          defaultValue={getValues("depense") ? parseFloat(getValues("depense")).toFixed(2) : getValues("depense")}
+                          defaultValue={getValues("depense")}
                         />
                       </View>
 
