@@ -1,8 +1,10 @@
+import Constants from 'expo-constants';
+
 const awsconfig = {
-    region: process.env.AWS_REGION,
+    region: Constants.expoConfig.extra.EXPO_PUBLIC_AWS_REGION,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID, 
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY 
+        accessKeyId: Constants.expoConfig.extra.EXPO_PUBLIC_AWS_ACCESS_KEY_ID, 
+        secretAccessKey: Constants.expoConfig.extra.EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY 
     }
   };
   
