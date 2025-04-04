@@ -10,6 +10,7 @@ import { isSameMonth } from 'date-fns';
 import * as Localization from 'expo-localization';
 import Toast from "react-native-toast-message";
 import AvatarPicker from '../AvatarPicker';
+import ModalDefaultNoValue from '../Modals/ModalDefaultNoValue';
 
 const { width } = Dimensions.get('window');
 
@@ -126,7 +127,13 @@ const AnimalImageCarousel = ({ animalId }) => {
     );
   }
 
-  if (!images.length) return null;
+  if (!images.length) return (
+    <View style={{width: "90%", alignSelf: "center", marginBottom: 20}}>
+        <ModalDefaultNoValue
+            text={"Vous n'avez aucune photo à afficher."}
+        />
+    </View>
+  );
 
   return (
     <View style={{ marginBottom: 20 }}>
