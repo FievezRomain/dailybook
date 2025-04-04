@@ -128,11 +128,33 @@ const AnimalImageCarousel = ({ animalId }) => {
   }
 
   if (!images.length) return (
-    <View style={{width: "90%", alignSelf: "center", marginBottom: 20}}>
-        <ModalDefaultNoValue
-            text={"Vous n'avez aucune photo à afficher."}
+    <View style={{marginBottom: 20}}>
+
+        <View style={{width: "90%", alignSelf: "center"}}>
+            <ModalDefaultNoValue
+                text={"Vous n'avez aucune photo à afficher."}
+            />
+        </View>
+        <AvatarPicker
+            setImage={handleAddImage}
+            setValue={() => {}}
+            ButtonComponent={({ onPress }) => (
+                <TouchableOpacity
+                    onPress={onPress}
+                    disabled={currentMonthCount >= LIMIT_PICTURE_BY_MONTH}
+                    style={[
+                        styles.button,
+                        { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.disabled : colors.accent },
+                    ]}
+                >
+                    <Text style={[styles.textFontRegular, { color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? 'gray' : 'white' }]}>
+                        {currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? "Limite de photos atteinte ce mois-ci" : "Ajouter une photo pour ce mois"}
+                    </Text>
+                </TouchableOpacity>
+            )}
         />
     </View>
+    
   );
 
   return (
