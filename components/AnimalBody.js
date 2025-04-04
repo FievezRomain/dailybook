@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
-import Button from './Button';
-import { LineChart } from 'react-native-chart-kit';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Icon, useTheme } from 'react-native-paper';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import ModalManageBodyAnimal from './Modals/ModalManageBodyAnimal';
@@ -129,7 +128,7 @@ const AnimalBody = ({ animal, onModify }) => {
                         
                     }
                     <View style={styles.headerContainer}>
-                        <Icon source={"google-fit"} size={25} color={colors.default_dark} />
+                        <Icon source={"clipboard-pulse-outline"} size={25} color={colors.default_dark} />
                         <Text style={[styles.title, styles.textFontBold]}>Informations physique</Text>
                     </View>
                     <View style={{width: "90%", alignSelf: "center"}}>
