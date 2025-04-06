@@ -61,10 +61,7 @@
     "extra": {
       "eas": {
         "projectId": "9733b21a-2b6a-413e-98ff-c4fdc8c1765d"
-      },
-      "EXPO_PUBLIC_AWS_REGION": "$AWS_REGION",
-      "EXPO_PUBLIC_AWS_ACCESS_KEY_ID": "$AWS_ACCESS_KEY_ID",
-      "EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY": "$AWS_SECRET_ACCESS_KEY"
+      }
     },
     "owner": "riujin",
     "plugins": [
