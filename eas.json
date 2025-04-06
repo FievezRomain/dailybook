@@ -8,19 +8,7 @@
       "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal",
-      "env": {
-        "EXPO_PUBLIC_AWS_REGION": "AWS_REGION",
-        "EXPO_PUBLIC_AWS_ACCESS_KEY_ID": "AWS_ACCESS_KEY_ID",
-        "EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY": "AWS_SECRET_ACCESS_KEY"
-      }
-    },
-    "production": {
-      "env": {
-        "EXPO_PUBLIC_AWS_REGION": "AWS_REGION",
-        "EXPO_PUBLIC_AWS_ACCESS_KEY_ID": "AWS_ACCESS_KEY_ID",
-        "EXPO_PUBLIC_AWS_SECRET_ACCESS_KEY": "AWS_SECRET_ACCESS_KEY"
-      }
+      "distribution": "internal"
     }
   },
   "submit": {
