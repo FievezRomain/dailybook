@@ -6,7 +6,7 @@ import { useState } from 'react';
 import ImageUtils from "../utils/ImageUtils";
 import { useTheme } from 'react-native-paper';
 
-const AvatarPicker = ({ setImage, setValue, backgroundColor=null }) => {
+const AvatarPicker = ({ setImage, setValue, backgroundColor=null, ButtonComponent=undefined }) => {
   const { colors, fonts } = useTheme();
   const [modalVisibleSubMenu, setModalVisibleSubMenu] = useState(false);
   const imageUtils = new ImageUtils();
@@ -91,14 +91,21 @@ const AvatarPicker = ({ setImage, setValue, backgroundColor=null }) => {
           setModalVisible={setModalVisibleSubMenu}
       />
       <View>
-        <TouchableOpacity 
-          style={styles.textInput} 
-          onPress={() => setModalVisibleSubMenu(true)} 
-        >
-          <View style={styles.buttonContainer}>
-            <Text style={[styles.textFontRegular, {color: colors.secondary}]}>Sélectionner une image</Text>
-          </View>
-        </TouchableOpacity>
+        
+          {ButtonComponent ?
+              <ButtonComponent onPress={() => setModalVisibleSubMenu(true)} />
+            :
+              <TouchableOpacity 
+                style={styles.textInput} 
+                onPress={() => setModalVisibleSubMenu(true)} 
+              >
+                <View style={styles.buttonContainer}>
+                  <Text style={[styles.textFontRegular, {color: colors.secondary}]}>Sélectionner une image</Text>
+                </View>
+              </TouchableOpacity>
+          }
+          
+        
     </View>
     </>
   );

@@ -1,6 +1,6 @@
 import awsconfig from '../aws-exports';
 import LoggerService from './LoggerService';
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import "react-native-get-random-values";
 
 const s3 = new S3Client(awsconfig);
@@ -38,6 +38,21 @@ export default class FileStorageService {
         const url = `https://${bucket}.s3.eu-north-1.amazonaws.com/${filePath}`;
 
         return url;
+    }
+
+    async deleteFile(fileName, firebaseUserId) {
+        try {
+            const filePath = `${firebaseUserId}/${fileName}`;
+            const params = {
+                Bucket: 'vascoandco-storage',
+                Key: filePath,
+            };
+
+            const command = new DeleteObjectCommand(params);
+            await s3.send(command);
+        } catch (error) {
+            LoggerService.log("Erreur pendant la suppression du fichier : ", error.message);
+        }
     }
 
 }

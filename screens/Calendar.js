@@ -279,6 +279,7 @@ const CalendarScreen = ({ navigation }) => {
       display: "flex",
       alignSelf: "center",
       width: "90%",
+      marginBottom: 5
     },
     selectedDateContainer: {
       marginTop: 10,
@@ -357,82 +358,86 @@ const CalendarScreen = ({ navigation }) => {
         filter={filter}
       />
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-        <TopTab message1={messages.message1} message2={messages.message2} />
-        <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
-          <View style={{flexDirection: "row", alignItems: "center"}}>
-            <AntDesign name="search1" size={16} color={colors.default_dark}/>
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.quaternary }}>
 
-            <TextInput
-              placeholder="Recherche"
-              style={[{marginLeft: 5, width: "80%", color:colors.default_dark}, styles.textFontRegular]}
-              placeholderTextColor={colors.default_dark}
-              value={filter ? filter.text : null}
-              onChangeText={handleSearch}
-            />
-            {filter && filter.text && 
-              <TouchableOpacity
-                onPress={() => deleteSearchText()}
-              >
-                <AntDesign name="close" size={16} color={colors.default_dark}/>
-              </TouchableOpacity>
-            }
-            
-          </View>
-          <View style={{flexDirection: "row", alignItems: "center"}}>
-            
-            <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
-              {filter ? 
-                <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.default_dark}/>
-              :
-                <Ionicons name="filter" size={20} color={colors.default_dark}/>
-              }
-            </TouchableOpacity>
-          </View>
-          
-        </View>
-        <View style={styles.calendarContainer}>
-          <Calendar
-            style={[styles.calendar, styles.textFontRegular]}
-            firstDay={1}
-            theme={{
-              arrowColor: colors.accent,
-              todayTextColor: colors.tertiary,
-              selectedDayTextColor: "white",
-              selectedTextColor: "white",
-              selectedDayBackgroundColor: colors.accent,
-              calendarBackground : "transparent",
-              dayTextColor: colors.accent,
-              textDayHeaderTextColor: colors.accent,
-              textSectionTitleColor: colors.accent,
-              monthTextColor : colors.accent
-            }}
-            enableSwipeMonths={true}
-            onDayPress={(day) => onDayPress(day.dateString)}
-            markingType={'multi-dot'}
-            markedDates={marked}
-          />
-        </View>
-        <View style={styles.selectedDateContainer}>
-          {filter ?
-            <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats du filtre</Text>
-          : 
-            <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
-          }
-        </View>
-            
-          <FlatList
-            data={filter ? filteredEvents : eventsCurrentDateSelected}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <EventCard
-                eventInfos={item}
-                handleEventsChange={handleEventsChange}
-                withDate={filter ? true : false}
+          <TopTab message1={messages.message1} message2={messages.message2} />
+          <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
+            <View style={{flexDirection: "row", alignItems: "center"}}>
+              <AntDesign name="search1" size={16} color={colors.default_dark}/>
+
+              <TextInput
+                placeholder="Recherche"
+                style={[{marginLeft: 5, width: "80%", color:colors.default_dark}, styles.textFontRegular]}
+                placeholderTextColor={colors.default_dark}
+                value={filter ? filter.text : null}
+                onChangeText={handleSearch}
               />
-            )}
-            ListEmptyComponent={filter ? <ModalDefaultNoValue text={"Aucun événement correspond à ce filtre"}/> : <ModalDefaultNoValue text={"Vous n'avez aucun événement pour cette date"}/>}
-            contentContainerStyle={styles.listEventContainer}
-        />
+              {filter && filter.text && 
+                <TouchableOpacity
+                  onPress={() => deleteSearchText()}
+                >
+                  <AntDesign name="close" size={16} color={colors.default_dark}/>
+                </TouchableOpacity>
+              }
+              
+            </View>
+            <View style={{flexDirection: "row", alignItems: "center"}}>
+              
+              <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
+                {filter ? 
+                  <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.default_dark}/>
+                :
+                  <Ionicons name="filter" size={20} color={colors.default_dark}/>
+                }
+              </TouchableOpacity>
+            </View>
+            
+          </View>
+          <View style={styles.calendarContainer}>
+            <Calendar
+              style={[styles.calendar, styles.textFontRegular]}
+              firstDay={1}
+              theme={{
+                arrowColor: colors.accent,
+                todayTextColor: colors.tertiary,
+                selectedDayTextColor: "white",
+                selectedTextColor: "white",
+                selectedDayBackgroundColor: colors.accent,
+                calendarBackground : "transparent",
+                dayTextColor: colors.accent,
+                textDayHeaderTextColor: colors.accent,
+                textSectionTitleColor: colors.accent,
+                monthTextColor : colors.accent
+              }}
+              enableSwipeMonths={true}
+              onDayPress={(day) => onDayPress(day.dateString)}
+              markingType={'multi-dot'}
+              markedDates={marked}
+            />
+          </View>
+          <View style={styles.selectedDateContainer}>
+            {filter ?
+              <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats du filtre</Text>
+            : 
+              <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
+            }
+          </View>
+              
+            <FlatList
+              data={filter ? filteredEvents : eventsCurrentDateSelected}
+              keyExtractor={(item) => item.id.toString()}
+              scrollEnabled={false}
+              renderItem={({ item }) => (
+                <EventCard
+                  eventInfos={item}
+                  handleEventsChange={handleEventsChange}
+                  withDate={filter ? true : false}
+                />
+              )}
+              ListEmptyComponent={filter ? <ModalDefaultNoValue text={"Aucun événement correspond à ce filtre"}/> : <ModalDefaultNoValue text={"Vous n'avez aucun événement pour cette date"}/>}
+              contentContainerStyle={styles.listEventContainer}
+          />
+        </ScrollView>
       </LinearGradient>
     </>
   );

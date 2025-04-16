@@ -64,6 +64,16 @@ class StatisticService {
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les statistiques des alimentations : " + err.message ));
     }
 
+    async getConcours(parameters){
+        await this.updateAxiosAuthorization();
+        return axios
+        .post(`${getBaseUrl()}stats/concours`, parameters)
+        .then(async({data}) => {
+            return data;
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les statistiques des concours : " + err.message ));
+    }
+
     async updateAxiosAuthorization() {
         let token = await getAuth().currentUser.getIdToken();
         if (token) {

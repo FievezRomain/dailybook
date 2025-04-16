@@ -8,12 +8,13 @@ import { useTheme, IconButton } from 'react-native-paper';
 import StatePicker from './StatePicker';
 import ChartWithLoader from './ChartWithLoader';
 import DepenseComponent from './statistics/DepenseComponent';
-import LineChartComponent from './charts/LineChartComponent';
 import EntrainementComponent from './statistics/EntrainementComponent';
 import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import BaladeComponent from './statistics/BaladeComponent';
 import PoidsComponent from './statistics/PoidsComponent';
 import TailleComponent from './statistics/TailleComponent';
+import AlimentationComponent from './statistics/AlimentationComponent';
+import ConcoursComponent from './statistics/ConcoursComponent';
 import { ThemeContext } from '../providers/ThemeProvider';
 
 const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
@@ -26,7 +27,9 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
         entrainement: EntrainementComponent,
         depense: DepenseComponent,
         poids: PoidsComponent,
-        taille: TailleComponent
+        taille: TailleComponent,
+        alimentation: AlimentationComponent,
+        concours: ConcoursComponent
     };
     const [statistiqueComponent, setStatisticComponent] = useState("depense");
     const ChartComponent = chartComponents[statistiqueComponent];
@@ -68,6 +71,19 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             color: (opacity = 1) => colors.default_dark,
             labelColor: (opacity = 1) => colors.default_dark,
             decimalPlaces: 2,
+        },
+        alimentation: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => colors.default_dark,
+            labelColor: (opacity = 1) => colors.default_dark,
+            decimalPlaces: 2,
+        },
+        concours: {
+            backgroundGradientFromOpacity: 0,
+            backgroundGradientToOpacity: 0,
+            color: (opacity = 1) => hexToRgba(isDarkTheme ? colors.tertiary : colors.accent, opacity-0.05),
+            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
         },
     };
     const ChartConfig = chartConfig[statistiqueComponent];
@@ -255,22 +271,12 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
                             </View>
                             
                             <View style={styles.statistiquesContainer}>
-                                {itemStatistique === "depense" || itemStatistique === "entrainement" || itemStatistique === "balade" || itemStatistique === "poids" || itemStatistique === "taille" ?
-                                    <ChartWithLoader
-                                        ChartComponent={ChartComponent}
-                                        chartConfig={ChartConfig}
-                                        chartType={itemStatistique}
-                                        chartParameters={parameters}
-                                    />
-                                    :
-                                    <View style={{width: "90%", alignSelf: "center"}}>
-                                        <ModalDefaultNoValue
-                                            text={"À venir..."}
-                                        />
-                                    </View>
-
-                                }
-
+                                <ChartWithLoader
+                                    ChartComponent={ChartComponent}
+                                    chartConfig={ChartConfig}
+                                    chartType={itemStatistique}
+                                    chartParameters={parameters}
+                                />
                             </View>
                         </>
                     :
