@@ -8,7 +8,7 @@ import { PanGestureHandler } from "react-native-gesture-handler";
 import React, { useRef } from "react";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 
-const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined, inModal=false }) => {
+const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined, inModal=false, selectAll=false }) => {
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
     const { colors, fonts } = useTheme();
@@ -16,6 +16,13 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
 
 
     const changeSelectedAnimals = (animal) => {
+        if( animal.id === "select_all"){
+            setValue(valueName, animaux.map(e => e.id));
+            setSelected(animaux);
+            
+            return;
+        }
+
         const found = animaux.find(e => e.id === animal.id);
         if(found){
             if(mode === "single"){
@@ -97,6 +104,10 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
     
         return truncated + "..."; // Ajouter "..." après 10 caractères
     };
+
+    const displayedAnimaux = selectAll
+        ? [...animaux, { id: 'select_all', nom: 'Tous', image: null }]
+        : animaux;
 
     const styles = StyleSheet.create({
         add:{
@@ -181,7 +192,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
 
     return(
         <ListComponent
-            data={animaux}
+            data={displayedAnimaux}
             ref={flatListRef}
             key={(item) => item.id.toString()}
             horizontal

@@ -30,11 +30,11 @@ const StatsScreen = ({ navigation }) => {
     }, [])
   );
 
-  useEffect(() => {
+ /*  useEffect(() => {
     if( activeRubrique === 0 && selectedAnimal.length > 1 ){
       setSelectedAnimal([selectedAnimal[selectedAnimal.length-1]]);
     }
-  }, [activeRubrique])
+  }, [activeRubrique]) */
 
   const getAnimals = async () => {
     if(animaux.length !== 0){
@@ -167,6 +167,7 @@ const StatsScreen = ({ navigation }) => {
               selected={selectedAnimal}
               mode={activeRubrique === 0 ? "multiple" : "multiple"}
               setValue={activeRubrique === 0 ? () => {} : () => {}}
+              selectAll={true}
             />
         </View>
         <View style={styles.rubriqueContainer}>
