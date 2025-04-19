@@ -46,6 +46,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         }
         setValue("image", wish.image);
         setValue("previousimage", wish.image);
+        setValue("acquis", wish.acquis);
     };
 
     const resetValues = () =>{
@@ -55,6 +56,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         setValue("prix", undefined);
         setValue("destinataire", undefined);
         setValue("image", undefined);
+        setValue("acquis", undefined);
     };
 
     const deleteImage = () => {

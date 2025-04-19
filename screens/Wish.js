@@ -1,7 +1,7 @@
-import { View, Text, StyleSheet, FlatList, Dimensions, Linking } from "react-native";
+import { View, Text, StyleSheet, FlatList, Dimensions, Linking, ActivityIndicator } from "react-native";
 import React, { useContext, useState, useEffect } from 'react';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import { Entypo } from '@expo/vector-icons';
+import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
 import TopTabSecondary from "../components/TopTabSecondary";
 import wishsServiceInstance from "../services/WishService";
@@ -27,6 +27,7 @@ const WishScreen = ({ navigation }) => {
     const [modalWishVisible, setModalWishVisible] = useState(false);
     const fileStorageService = new FileStorageService();
     const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const unsubscribe = navigation.addListener("focus", () => {
@@ -55,7 +56,7 @@ const WishScreen = ({ navigation }) => {
             text1: "Modification d'un souhait"
           }), 300);
 
-        var indice = wishs.findIndex((a) => a.id == selectedWish.id);
+        var indice = wishs.findIndex((a) => a.id == wish.id);
         wishs[indice] = wish;
 
         setWishs(wishs);
@@ -104,6 +105,34 @@ const WishScreen = ({ navigation }) => {
         setSelectedWish(wish);
         setModalSubMenuWishVisible(true)
     };
+
+    const changeState = async (wish) => {
+        setLoading(true);
+
+        let data = {};
+        data.id = wish.id;
+        data.nom = wish.nom;
+        data.url = wish.url;
+        data.prix = wish.prix;
+        data.destinataire = wish.destinataire;
+        data.acquis = !wish.acquis;
+        data.email = currentUser.email;
+
+        wishsServiceInstance.update(data)
+                .then((reponse) =>{
+                    onModify(reponse);
+                    setLoading(false);
+                })
+                .catch((err) =>{
+                    Toast.show({
+                        type: "error",
+                        position: "top",
+                        text1: err.message
+                    });
+                    LoggerService.log( "Erreur lors de la MAJ d'un wish : " + err.message );
+                    setLoading(false);
+                });
+    }
 
     const styles = StyleSheet.create({
         loader: {
@@ -208,24 +237,74 @@ const WishScreen = ({ navigation }) => {
                             data={wishs}
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item, index }) => (
-                                <TouchableOpacity style={[styles.itemContainer, index % 2 !== 0 && styles.itemContainerSecondColumn]} onPress={() => openSubMenuWish(item)}>
-                                    {item.image !== null && item.image !== undefined &&
-                                        <Image source={{uri: fileStorageService.getFileUrl( item.image, currentUser.uid )}} style={styles.image} cachePolicy="disk" />
-                                    }
-                                    {(item.image === null || item.image === undefined) &&
-                                        <View style={[{backgroundColor: colors.quaternary, alignItems: "center", justifyContent: "center"}, styles.image]}>
-                                            <MaterialIcons name="no-photography" size={50} />
+                                <View style={[styles.itemContainer, index % 2 !== 0 && styles.itemContainerSecondColumn]} >
+                                    <TouchableOpacity onPress={() => openSubMenuWish(item)}>
+                                        {item.image !== null && item.image !== undefined &&
+                                            <Image source={{uri: fileStorageService.getFileUrl( item.image, currentUser.uid )}} style={styles.image} cachePolicy="disk" />
+                                        }
+                                        {(item.image === null || item.image === undefined) &&
+                                            <View style={[{backgroundColor: colors.quaternary, alignItems: "center", justifyContent: "center"}, styles.image]}>
+                                                <MaterialIcons name="no-photography" size={50} />
+                                            </View>
+                                        }
+                                        {item.prix !== null && item.prix !== undefined &&
+                                            <View style={styles.labelContainer}>
+                                                <Entypo name="price-tag" size={16} color={colors.accent} /> 
+                                                <Text style={[styles.price, styles.textFontRegular]}>{item.prix} €</Text> 
+                                            </View>
+                                        }
+                                    </TouchableOpacity>
+
+
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8 }}>
+                                        <View style={{ flex: 1 }}>
+                                            <Text style={[styles.title, styles.textFontBold]} numberOfLines={1}>{item.nom}</Text>
+                                            <Text style={styles.textFontRegular} numberOfLines={1}>{item.destinataire}</Text>
                                         </View>
-                                    }
-                                    {item.prix !== null && item.prix !== undefined &&
-                                        <View style={styles.labelContainer}>
-                                            <Entypo name="price-tag" size={16} color={colors.accent} /> 
-                                            <Text style={[styles.price, styles.textFontRegular]}>{item.prix} €</Text> 
-                                        </View>
-                                    }
-                                    <Text style={[styles.title, styles.textFontBold]}>{item.nom}</Text>
-                                    <Text style={styles.textFontRegular}>{item.destinataire}</Text>
-                                </TouchableOpacity>
+                                        
+                                        { loading ?
+                                            <ActivityIndicator
+                                                size="small"
+                                            />
+                                            :
+
+                                            <TouchableOpacity
+                                                onPress={() => changeState(item)}
+                                                style={{
+                                                flexDirection: 'row',
+                                                alignItems: 'center',
+                                                paddingVertical: 5,
+                                                paddingHorizontal: 8,
+                                                borderRadius: 20,
+                                                backgroundColor: item.acquis ? colors.minor : colors.tertiary,
+                                                marginLeft: 8
+                                                }}
+                                            >
+                                                <View
+                                                    style={{
+                                                        width: 20,
+                                                        height: 20,
+                                                        borderRadius: 10,
+                                                        backgroundColor: item.acquis ? colors.primary : colors.secondary,
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        marginRight: 6
+                                                    }}
+                                                >
+                                                {item.acquis &&
+                                                    <Entypo name="check" size={14} color={colors.background} />
+                                                }
+                                                </View>
+                                                <MaterialCommunityIcons
+                                                    name={item.acquis ? "gift-open" : "gift"}
+                                                    size={18}
+                                                    color={item.acquis ? colors.primary : colors.secondary}
+                                                />
+                                            </TouchableOpacity>
+                                        }
+                                        
+                                    </View>
+                                </View>
                             )}
                             numColumns={2}
                         />
