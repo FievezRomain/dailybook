@@ -66,6 +66,12 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     {title: "Service de garde / Pension", id: "garde"},
     {title: "Formation", id: "formation"},
     {title: "Assurance", id: "assurance"},
+    {title: "Balade", id: "balade"},
+    {title: "Entraînement", id: "entrainement"},
+    {title: "Concours", id: "concours"},
+    {title: "Rendez-vous", id: "rdv"},
+    {title: "Soin", id: "soins"},
+    {title: "Autre", id: "autre"},
   ];
   const listFrequency = [
     {title: "Le jour J", id: "tlj2"},
@@ -732,6 +738,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           state={categorieDepense}
           setValue={setValue}
           valueName={"categoriedepense"}
+          modalHeight="50%"
         />
         <ModalDropdwn
           list={listFrequency}
@@ -909,19 +916,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           />
                         </View> */}
 
-                        <View style={styles.inputContainer}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Dépense :</Text>
-                          <TextInput
-                            style={[styles.input, styles.textFontRegular]}
-                            placeholder="Exemple : 1"
-                            keyboardType="decimal-pad"
-                            inputMode="decimal"
-                            placeholderTextColor={colors.secondary}
-                            onChangeText={(text) => setValue("depense", text)}
-                            defaultValue={getValues("depense")}
-                          />
-                        </View>
-
                         {/* <View style={styles.inputContainer}>
                           <Text style={styles.textInput}>Heure de fin :</Text>
                           <TextInput
@@ -955,19 +949,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             placeholderTextColor={colors.secondary}
                             onChangeText={(text) => setValue("discipline", text)}
                             defaultValue={getValues("discipline")}
-                          />
-                        </View>
-
-                        <View style={styles.inputContainer}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Dépense :</Text>
-                          <TextInput
-                            style={[styles.input, styles.textFontRegular]}
-                            placeholder="Exemple : 1"
-                            keyboardType="decimal-pad"
-                            inputMode="decimal"
-                            placeholderTextColor={colors.secondary}
-                            onChangeText={(text) => setValue("depense", text)}
-                            defaultValue={getValues("depense")}
                           />
                         </View>
 
@@ -1029,18 +1010,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         />
                       </View>
                       <View style={styles.inputContainer}>
-                        <Text style={[styles.textInput, styles.textFontRegular]}>Dépense :</Text>
-                        <TextInput
-                          style={[styles.input, styles.textFontRegular]}
-                          placeholder="Exemple : 1"
-                          keyboardType="decimal-pad"
-                          inputMode="decimal"
-                          placeholderTextColor={colors.secondary}
-                          onChangeText={(text) => setValue("depense", text)}
-                          defaultValue={getValues("depense")}
-                        />
-                      </View>
-                      <View style={styles.inputContainer}>
                         <Text style={[styles.textInput, styles.textFontRegular]}>Ressenti :</Text>
                         <RatingInput 
                           onRatingChange={handleRatingChange} 
@@ -1060,18 +1029,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("specialiste", text)}
                           defaultValue={getValues("specialiste")}
-                        />
-                      </View>
-                      <View style={styles.inputContainer}>
-                        <Text style={[styles.textInput, styles.textFontRegular]}>Dépense :</Text>
-                        <TextInput
-                          style={[styles.input, styles.textFontRegular]}
-                          placeholder="Exemple : 0 (un doux rêve)"
-                          keyboardType="decimal-pad"
-                          inputMode="decimal"
-                          placeholderTextColor={colors.secondary}
-                          onChangeText={(text) => setValue("depense", text)}
-                          defaultValue={getValues("depense")}
                         />
                       </View>
                     </>
@@ -1107,36 +1064,24 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           </View>
                         </TouchableOpacity>
                       </View>
-                      <View style={styles.inputContainer}>
-                          <Text style={[styles.textInput, styles.textFontRegular]}>Dépense :</Text>
-                          <TextInput
-                            style={[styles.input, styles.textFontRegular]}
-                            placeholder="Exemple : 1"
-                            keyboardType="decimal-pad"
-                            inputMode="decimal"
-                            placeholderTextColor={colors.secondary}
-                            onChangeText={(text) => setValue("depense", text)}
-                            defaultValue={getValues("depense")}
-                          />
-                      </View>
                     </>
                   )}
 
+                  <View style={styles.inputContainer}>
+                    <Text style={[styles.textInput, styles.textFontRegular]}>Dépense :</Text>
+                    <TextInput
+                      style={[styles.input, styles.textFontRegular]}
+                      placeholder="Exemple : 1"
+                      keyboardType="decimal-pad"
+                      inputMode="decimal"
+                      placeholderTextColor={colors.secondary}
+                      onChangeText={(text) => setValue("depense", text)}
+                      defaultValue={getValues("depense")}
+                    />
+                  </View>
+
                   {eventType.id === "depense" && (
                     <>
-                      <View style={styles.inputContainer}>
-                        <Text style={[styles.textInput, styles.textFontRegular]}>Dépense :</Text>
-                        <TextInput
-                          style={[styles.input, styles.textFontRegular]}
-                          placeholder="Exemple : 1"
-                          keyboardType="decimal-pad"
-                          inputMode="decimal"
-                          placeholderTextColor={colors.secondary}
-                          onChangeText={(text) => setValue("depense", text)}
-                          defaultValue={getValues("depense")}
-                        />
-                      </View>
-
                       <View style={styles.inputContainer}>
                         <Text style={[styles.textInput, styles.textFontRegular]}>Catégorie :</Text>
                         <TouchableOpacity 

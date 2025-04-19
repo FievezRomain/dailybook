@@ -3,7 +3,7 @@ import Button from "../Button";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
 
-const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, setValue, valueName}) => {
+const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, setValue, valueName, modalHeight="40%"}) => {
   const { colors, fonts } = useTheme();
   
     const checkState = (value) =>{
@@ -96,7 +96,7 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
           <ModalEditGeneric
               isVisible={modalVisible}
               setVisible={setModalVisible}
-              arrayHeight={["40%"]}
+              arrayHeight={[modalHeight]}
           >
               <View style={styles.itemContainer}>
                   {list.map((item, index) => {
