@@ -278,6 +278,36 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           />
                         </View>
                       }
+                      {isValidString(animal.datearrivee) && 
+                        <View style={styles.inputContainer}>
+                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date d'arrivée :</Text>
+                          <TextInput
+                              style={[styles.input, styles.textFontRegular]}
+                              placeholder="Exemple : 01/01/1900"
+                              keyboardType="numeric"
+                              inputMode="numeric"
+                              maxLength={10}
+                              placeholderTextColor={colors.secondary}
+                              defaultValue={(animal.datearrivee.includes("-") ?  dateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee)}
+                              editable={false}
+                          />
+                        </View>
+                      }
+                      {isValidString(animal.datedepart) && 
+                        <View style={styles.inputContainer}>
+                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de départ :</Text>
+                          <TextInput
+                              style={[styles.input, styles.textFontRegular]}
+                              placeholder="Exemple : 01/01/1900"
+                              keyboardType="numeric"
+                              inputMode="numeric"
+                              maxLength={10}
+                              placeholderTextColor={colors.secondary}
+                              defaultValue={(animal.datedepart.includes("-") ?  dateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart)}
+                              editable={false}
+                          />
+                        </View>
+                      }
                       {isValidString(animal.race) &&
                         <View style={styles.inputContainer}>
                           <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Race :</Text>

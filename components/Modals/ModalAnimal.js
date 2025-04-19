@@ -27,6 +27,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     var mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
     var annee = today.getFullYear();
     const [date, setDate] = useState(undefined);
+    const [dateArrivee, setDateArrivee] = useState(undefined);
+    const [dateDepart, setDateDepart] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const scrollRef = useRef(null);
     const fileStorageService = new FileStorageService();
@@ -79,6 +81,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("espece", animal.espece);
         setEspece(animal.espece);
         setValue("datenaissance", animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : undefined);
+        setValue("datearrivee", animal.datearrivee !== null ? (animal.datearrivee.includes("-") ?  dateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee) : undefined);
+        setValue("datedepart", animal.datedepart !== null ? (animal.datedepart.includes("-") ?  dateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart) : undefined);
         setValue("datedeces", animal.datedeces !== null ? animal.datedeces : undefined);
         setValue("race", animal.race !== null ? animal.race : undefined);
         setValue("taille", animal.taille !== null ? animal.taille.toString() : undefined);
@@ -94,6 +98,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("previousimage", animal.image);
         setValue("informations", animal.informations !== null ? animal.informations : undefined);
         setDate(animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : null);
+        setDateArrivee(animal.datearrivee !== null ? (animal.datearrivee.includes("-") ?  dateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee) : null);
+        setDateDepart(animal.datedepart !== null ? (animal.datedepart.includes("-") ?  dateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart) : null);
         setImage(animal.image !== null ? fileStorageService.getFileUrl( animal.image, currentUser.uid ) : null);
     }
 
@@ -106,6 +112,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nom", undefined);
         setValue("espece", undefined);
         setValue("datenaissance", undefined);
+        setValue("datearrivee", undefined);
+        setValue("datedepart", undefined);
         setValue("datedeces", undefined);
         setValue("race", undefined);
         setValue("taille", undefined);
@@ -121,6 +129,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("informations", undefined);
         setImage(null);
         setDate(String(jour + "/" + mois + "/" + annee));
+        setDateArrivee(String(jour + "/" + mois + "/" + annee));
+        setDateDepart(String(jour + "/" + mois + "/" + annee));
         setEspece(undefined);
     };
 
@@ -145,9 +155,15 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         data["taille"] !== undefined ? data["taille"] = data["taille"].replace(",", ".") : undefined;
         data["quantity"] !== undefined ? data["quantity"] = data["quantity"].replace(",", ".") : undefined;
         
-        // Modification du format de la date pour le bon stockage en base
+        // Modification du format des dates pour le bon stockage en base
         if( data["datenaissance"] !== null && data["datenaissance"] !== undefined && data["datenaissance"].length === 0 ){
             data["datenaissance"] = undefined;
+        }
+        if( data["datearrivee"] !== null && data["datearrivee"] !== undefined && data["datearrivee"].length === 0 ){
+            data["datearrivee"] = undefined;
+        }
+        if( data["datedepart"] !== null && data["datedepart"] !== undefined && data["datedepart"].length === 0 ){
+            data["datedepart"] = undefined;
         }
 
         if( ( data["datenaissance"] !== null && data["datenaissance"] !== undefined ) && ( data["datenaissance"].length !== 10 || !dateUtils.isDateValid( dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/") ) ) ){
@@ -159,9 +175,33 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             setLoading(false);
             return;
         }
+        if( ( data["datearrivee"] !== null && data["datearrivee"] !== undefined ) && ( data["datearrivee"].length !== 10 || !dateUtils.isDateValid( dateUtils.dateFormatter( data["datearrivee"], "dd/MM/yyyy", "/") ) ) ){
+            Toast.show({
+                position: "top",
+                type: "error",
+                text1: "Problème de format de date d'arrivée"
+            });
+            setLoading(false);
+            return;
+        }
+        if( ( data["datedepart"] !== null && data["datedepart"] !== undefined ) && ( data["datedepart"].length !== 10 || !dateUtils.isDateValid( dateUtils.dateFormatter( data["datedepart"], "dd/MM/yyyy", "/") ) ) ){
+            Toast.show({
+                position: "top",
+                type: "error",
+                text1: "Problème de format de date de départ"
+            });
+            setLoading(false);
+            return;
+        }
 
         if( data["datenaissance"] !== null && data["datenaissance"] !== undefined ){
             data["datenaissance"] = dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
+        }
+        if( data["datearrivee"] !== null && data["datearrivee"] !== undefined ){
+            data["datearrivee"] = dateUtils.dateFormatter( data["datearrivee"], "dd/MM/yyyy", "/");
+        }
+        if( data["datedepart"] !== null && data["datedepart"] !== undefined ){
+            data["datedepart"] = dateUtils.dateFormatter( data["datedepart"], "dd/MM/yyyy", "/");
         }
 
         // Vérification de la valeur des entiers/décimal
@@ -234,25 +274,25 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         }
     }
 
-    const onChangeDate = (selectedDate) => {
+    const onChangeDate = (valueName, setter, selectedDate) => {
         nbOccur = (String(selectedDate).match(/\//g) || []).length;
         oldNbOccur = (String(date).match(/\//g) || []).length;
         if(String(selectedDate).length === 2){
             if(nbOccur === 0 && oldNbOccur === 0){
                 selectedDate = selectedDate + "/";
-                setValue("datenaissance", selectedDate);
-                setDate(selectedDate);
+                setValue(valueName, selectedDate);
+                setter(selectedDate);
             }
         } else if(String(selectedDate).length === 5){
             if(nbOccur === 1 && oldNbOccur === 1){
                 selectedDate = selectedDate + "/";
-                setValue("datenaissance", selectedDate);
-                setDate(selectedDate);
+                setValue(valueName, selectedDate);
+                setter(selectedDate);
             }
         }
 
-        setDate(selectedDate);
-        setValue("datenaissance", selectedDate);
+        setter(selectedDate);
+        setValue(valueName, selectedDate);
     };
 
     const convertDateToText = (fieldname) =>{
@@ -505,7 +545,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             inputMode="numeric"
                                             maxLength={10}
                                             placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => onChangeDate(text)}
+                                            onChangeText={(text) => onChangeDate("datenaissance", setDate, text)}
                                             defaultValue={date}
                                         />
                                     </View>
@@ -517,6 +557,32 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("numeroidentification", text)}
                                             defaultValue={watch("numeroidentification")}
+                                        />
+                                    </View>
+                                    <View style={styles.containerDate}>
+                                        <Text style={[styles.textInput, styles.textFontRegular]}>Date d'arrivée : {convertDateToText(dateArrivee)} </Text>
+                                        <TextInput
+                                            style={[styles.input, styles.textFontRegular]}
+                                            placeholder="Exemple : 01/01/1900"
+                                            keyboardType="numeric"
+                                            inputMode="numeric"
+                                            maxLength={10}
+                                            placeholderTextColor={colors.secondary}
+                                            onChangeText={(text) => onChangeDate("datearrivee", setDateArrivee, text)}
+                                            defaultValue={dateArrivee}
+                                        />
+                                    </View>
+                                    <View style={styles.containerDate}>
+                                        <Text style={[styles.textInput, styles.textFontRegular]}>Date de départ : {convertDateToText(dateDepart)} </Text>
+                                        <TextInput
+                                            style={[styles.input, styles.textFontRegular]}
+                                            placeholder="Exemple : 01/01/1900"
+                                            keyboardType="numeric"
+                                            inputMode="numeric"
+                                            maxLength={10}
+                                            placeholderTextColor={colors.secondary}
+                                            onChangeText={(text) => onChangeDate("datedepart", setDateDepart, text)}
+                                            defaultValue={dateDepart}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>
