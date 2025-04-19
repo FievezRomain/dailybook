@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from "react-native";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import animalsServiceInstance from "../../services/AnimalsService";
@@ -14,6 +14,7 @@ import { Image } from "expo-image";
 import DropdawnList from "../DropdawnList";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
+import Constants from 'expo-constants';
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -27,6 +28,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     var annee = today.getFullYear();
     const [date, setDate] = useState(undefined);
     const [loading, setLoading] = useState(false);
+    const scrollRef = useRef(null);
     const fileStorageService = new FileStorageService();
     const especeList = [
         { label: 'Chat', value: 'Chat' },
@@ -90,6 +92,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("numeroidentification", animal.numeroidentification !== null ? animal.numeroidentification : undefined);
         setValue("image", animal.image);
         setValue("previousimage", animal.image);
+        setValue("informations", animal.informations !== null ? animal.informations : undefined);
         setDate(animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : null);
         setImage(animal.image !== null ? fileStorageService.getFileUrl( animal.image, currentUser.uid ) : null);
     }
@@ -115,6 +118,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nomMere", undefined);
         setValue("image", undefined);
         setValue("numeroidentification", undefined);
+        setValue("informations", undefined);
         setImage(null);
         setDate(String(jour + "/" + mois + "/" + annee));
         setEspece(undefined);
@@ -361,6 +365,16 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             color: colors.default_dark,
             alignSelf: "baseline"
         },
+        inputTextArea: {
+            height: 100,
+            width: "100%",
+            marginBottom: 15,
+            borderRadius: 5,
+            paddingLeft: 15,
+            paddingRight: 15,
+            backgroundColor: colors.quaternary,
+            color: colors.default_dark,
+        },
         errorInput: {
             color: "red"
         },
@@ -429,6 +443,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                         </View>
                         <Divider/>
                         <KeyboardAwareScrollView
+                            ref={scrollRef}
+                            enableOnAndroid={true}
                             enableResetScrollToCoords={false}
                         >
                             <View style={styles.formContainer}>
@@ -606,6 +622,26 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("nomMere", text)}
                                             defaultValue={getValues("nomMere")}
+                                        />
+                                    </View>
+                                    <View style={styles.inputContainer}>
+                                        <Text style={[styles.textInput, styles.textFontRegular]}>Informations supplémentaires :</Text>
+                                        <TextInput
+                                            style={[styles.inputTextArea, styles.textFontRegular]}
+                                            multiline={true}
+                                            numberOfLines={4}
+                                            maxLength={2000}
+                                            placeholder="Exemple : Allergique aux incariens"
+                                            placeholderTextColor={colors.secondary}
+                                            onChangeText={(text) => setValue("informations", text)}
+                                            defaultValue={getValues("informations")}
+                                            onFocus={(e) => {
+                                                if(Constants.platform.ios){
+                                                  setTimeout(() => {
+                                                    scrollRef.current?.scrollToEnd({ animated: true });
+                                                  }, 100);
+                                                }
+                                            }}
                                         />
                                     </View>
                                 </View>

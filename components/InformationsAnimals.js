@@ -131,6 +131,16 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
           color: "black",
           alignSelf: "baseline"
         },
+        inputTextArea: {
+          height: 100,
+          width: "100%",
+          marginBottom: 15,
+          borderRadius: 5,
+          paddingLeft: 15,
+          paddingRight: 15,
+          backgroundColor: colors.quaternary,
+          color: colors.default_dark,
+        },
         avatar: {
           width: 60,
           height: 60,
@@ -324,6 +334,20 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               placeholder="Exemple : Sherry"
                               placeholderTextColor={colors.secondary}
                               defaultValue={animal.nomMere}
+                              editable={false}
+                          />
+                        </View>
+                      }
+                      {isValidString(animal.informations) &&
+                        <View style={styles.inputContainer}>
+                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Informations supplémentaires :</Text>
+                          <TextInput
+                              style={[styles.inputTextArea, styles.textFontRegular]}
+                              multiline={true}
+                              numberOfLines={4}
+                              placeholder="Exemple : Allergique aux incariens"
+                              placeholderTextColor={colors.secondary}
+                              defaultValue={animal.informations}
                               editable={false}
                           />
                         </View>
