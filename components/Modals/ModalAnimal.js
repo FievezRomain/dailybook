@@ -274,7 +274,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         }
     }
 
-    const onChangeDate = (valueName, setter, selectedDate) => {
+    const onChangeDate = (valueName, date, setter, selectedDate) => {
         nbOccur = (String(selectedDate).match(/\//g) || []).length;
         oldNbOccur = (String(date).match(/\//g) || []).length;
         if(String(selectedDate).length === 2){
@@ -307,7 +307,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             date = dateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
         }
         let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateObject  = new Date(date);
+        let dateObject  = new Date(date);
         return String(dateObject.toLocaleDateString("fr-FR", options));
     };
 
@@ -545,7 +545,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             inputMode="numeric"
                                             maxLength={10}
                                             placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => onChangeDate("datenaissance", setDate, text)}
+                                            onChangeText={(text) => onChangeDate("datenaissance", date, setDate, text)}
                                             defaultValue={date}
                                         />
                                     </View>
@@ -568,7 +568,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             inputMode="numeric"
                                             maxLength={10}
                                             placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => onChangeDate("datearrivee", setDateArrivee, text)}
+                                            onChangeText={(text) => onChangeDate("datearrivee", dateArrivee, setDateArrivee, text)}
                                             defaultValue={dateArrivee}
                                         />
                                     </View>
@@ -581,8 +581,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             inputMode="numeric"
                                             maxLength={10}
                                             placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => onChangeDate("datedepart", setDateDepart, text)}
-                                            defaultValue={dateDepart}
+                                            onChangeText={(text) => onChangeDate("datedepart", dateDepart, setDateDepart, text)}
+                                            defaultValue={dateDepart} 
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>
