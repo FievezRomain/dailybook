@@ -35,13 +35,33 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
 
     }
 
+    const parseHeureToMinutes = (heureStr) => {
+        if (!heureStr || typeof heureStr !== 'string') return Number.MAX_SAFE_INTEGER;
+      
+        const parts = heureStr.split('h');
+        const heures = parseInt(parts[0]) || 0;
+        const minutes = parseInt(parts[1]) || 0;
+      
+        return heures * 60 + minutes;
+    };
+
     const filterByPeriod = () => {
         var todayArray = [];
         var upcomingArray = [];
         var exceededArray = [];
 
         events.sort((a, b) => {
-            return new Date(a.dateevent) - new Date(b.dateevent);
+            let dateA = new Date(a.dateevent).setHours(0, 0, 0, 0);
+            let dateB = new Date(b.dateevent).setHours(0, 0, 0, 0);
+
+            if (dateA !== dateB) {
+                return dateA - dateB;
+            }
+
+            // Si la date est la même, on trie par heure
+            const heureA = parseHeureToMinutes(a.heuredebutevent);
+            const heureB = parseHeureToMinutes(b.heuredebutevent);
+            return heureA - heureB;
         })
   
         events.map((event) => {
