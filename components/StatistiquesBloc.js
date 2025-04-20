@@ -16,12 +16,12 @@ import TailleComponent from './statistics/TailleComponent';
 import AlimentationComponent from './statistics/AlimentationComponent';
 import ConcoursComponent from './statistics/ConcoursComponent';
 import { ThemeContext } from '../providers/ThemeProvider';
+import Toast from "react-native-toast-message";
 
-const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
+const StatistiquesBloc = ({ animaux, selectedAnimal, setSelectedAnimal, itemStatistique, setItemStatistique }) =>{
     const { isDarkTheme } = useContext( ThemeContext );
     const { colors, fonts } = useTheme();
     const { currentUser, abonnement } = useAuth();
-    const [itemStatistique, setItemStatistique] = useState("depense");
     const chartComponents = {
         balade: BaladeComponent,
         entrainement: EntrainementComponent,
@@ -31,8 +31,8 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
         alimentation: AlimentationComponent,
         concours: ConcoursComponent
     };
-    const [statistiqueComponent, setStatisticComponent] = useState("depense");
-    const ChartComponent = chartComponents[statistiqueComponent];
+    
+    const ChartComponent = chartComponents[itemStatistique];
     const accountType = abonnement.libelle;
     const arrayState = [
         {value: 'Mois', label: 'Mois', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
@@ -86,7 +86,7 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
             labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
         },
     };
-    const ChartConfig = chartConfig[statistiqueComponent];
+    const ChartConfig = chartConfig[itemStatistique];
     const now = new Date();
     const [parameters, setParameters] = useState({ animaux: selectedAnimal.map(function(item) { return item["id"] }), email: currentUser.email, dateDebut: new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString() });
 
@@ -99,11 +99,6 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
         }
         
     }, [temporality, selectedAnimal]);
-
-    const onItemStatistiqueChange = (value) => {
-        setItemStatistique(value);
-        setStatisticComponent(value);
-    }
 
     function hexToRgba(hex, opacity) {
         const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -143,6 +138,10 @@ const StatistiquesBloc = ({ animaux, selectedAnimal }) =>{
         }
 
         setParameters( objet );
+    }
+
+    const onItemStatistiqueChange = (value) => {
+        setItemStatistique(value);
     }
 
     const styles = StyleSheet.create({

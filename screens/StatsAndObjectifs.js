@@ -22,6 +22,16 @@ const StatsScreen = ({ navigation }) => {
   const [selectedAnimal, setSelectedAnimal] = useState([]);
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
+  const itemStatistiqueSeveralAnimals = {
+    balade: true,
+    entrainement: true,
+    depense: true,
+    poids: false,
+    taille: false,
+    alimentation: false,
+    concours: true
+  };
+  const [itemStatistique, setItemStatistique] = useState("depense");
 
   useFocusEffect(
     useCallback(() => {
@@ -29,6 +39,29 @@ const StatsScreen = ({ navigation }) => {
       getAnimals();
     }, [])
   );
+
+  useEffect(() => {
+    checkSeveralAnimalsAccepted(itemStatistique);
+  }, [itemStatistique]);
+
+  const checkSeveralAnimalsAccepted = (value) => {
+    let canSeveralAnimals = itemStatistiqueSeveralAnimals[value];
+
+    if( !canSeveralAnimals ){
+        if( selectedAnimal.length > 1 )
+        {
+            Toast.show({
+                type: "info",
+                position: "top",
+                text1: "Statistique pour un animal uniquement",
+                text2: "Affichage pour le dernier animal sélectionné"
+            });
+
+            let lastAnimalSelected = selectedAnimal[selectedAnimal.length - 1];
+            setSelectedAnimal([lastAnimalSelected]);
+        }
+    }
+  }
 
  /*  useEffect(() => {
     if( activeRubrique === 0 && selectedAnimal.length > 1 ){
@@ -165,9 +198,10 @@ const StatsScreen = ({ navigation }) => {
               animaux={animaux}
               setSelected={setSelectedAnimal}
               selected={selectedAnimal}
-              mode={activeRubrique === 0 ? "multiple" : "multiple"}
+              mode={itemStatistiqueSeveralAnimals[itemStatistique] ? "multiple" : "single"}
               setValue={activeRubrique === 0 ? () => {} : () => {}}
-              selectAll={true}
+              selectAll={itemStatistiqueSeveralAnimals[itemStatistique]}
+              setDate={() => {}}
             />
         </View>
         <View style={styles.rubriqueContainer}>
@@ -196,6 +230,9 @@ const StatsScreen = ({ navigation }) => {
             <StatistiquesBloc
               animaux={animaux}
               selectedAnimal={selectedAnimal}
+              setSelectedAnimal={setSelectedAnimal}
+              itemStatistique={itemStatistique}
+              setItemStatistique={setItemStatistique}
             />
           }
         </View>
