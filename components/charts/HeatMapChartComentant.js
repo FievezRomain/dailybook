@@ -35,11 +35,11 @@ const HeatMapChartComponent = ({ data, chartConfig, dateDebut, dateFin, handleDa
           endDate={dateFin}
           numDays={numDays}
           width={horizontal ? 1200 : screenWidth}
-          height={220}
+          height={250}
           chartConfig={chartConfig}
           squareSize={squareSize}
           accessor='count'
-          
+          style={{marginBottom: 10}}
           showMonthLabels={horizontal}
           horizontal={horizontal}
           onDayPress={(date) => handleDayPress(date)}

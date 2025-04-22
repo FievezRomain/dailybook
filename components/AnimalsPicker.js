@@ -221,7 +221,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                         >
                             <View style={[styles.containerAvatarWithoutImage, checkSelected(item) ? {backgroundColor: colors.background} : {backgroundColor: "transparent"}]}>
                                 <View style={[styles.avatar, checkSelected(item) ? {backgroundColor: colors.default_dark} : {backgroundColor: colors.quaternary}]}>
-                                    <Text style={[styles.avatarText, styles.textFontRegular]}>{item.nom[0]}</Text>
+                                    <Text style={[styles.avatarText, styles.textFontRegular]}>{ item.id === "select_all" ? "+" : item.nom[0]}</Text>
                                 </View>
                             </View>
                         </LinearGradient>

@@ -228,9 +228,7 @@ const StatsScreen = ({ navigation }) => {
             />
           :
             <StatistiquesBloc
-              animaux={animaux}
               selectedAnimal={selectedAnimal}
-              setSelectedAnimal={setSelectedAnimal}
               itemStatistique={itemStatistique}
               setItemStatistique={setItemStatistique}
             />

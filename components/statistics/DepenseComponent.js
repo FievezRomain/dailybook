@@ -103,7 +103,7 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }) => {
             />
             <FlatList
                 data={dataToDisplay.statistic}
-                keyExtractor={(item) => item.name}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item }) => (
                     <>
                         <TouchableOpacity style={styles.card} onPress={() => handleCategoryPress(item.name)}>

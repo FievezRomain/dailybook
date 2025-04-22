@@ -18,7 +18,7 @@ import ConcoursComponent from './statistics/ConcoursComponent';
 import { ThemeContext } from '../providers/ThemeProvider';
 import Toast from "react-native-toast-message";
 
-const StatistiquesBloc = ({ animaux, selectedAnimal, setSelectedAnimal, itemStatistique, setItemStatistique }) =>{
+const StatistiquesBloc = ({ selectedAnimal, itemStatistique, setItemStatistique }) =>{
     const { isDarkTheme } = useContext( ThemeContext );
     const { colors, fonts } = useTheme();
     const { currentUser, abonnement } = useAuth();
@@ -49,14 +49,14 @@ const StatistiquesBloc = ({ animaux, selectedAnimal, setSelectedAnimal, itemStat
         entrainement: {
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => hexToRgba(isDarkTheme ? colors.tertiary : colors.accent, opacity-0.05),
-            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
+            color: (opacity = 1) => opacityToColor(opacity-0.05),
+            labelColor: (opacity = 1) => opacityToColor(opacity-0.05),
         },
         balade: {
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => hexToRgba(isDarkTheme ? colors.tertiary : colors.accent, opacity-0.05),
-            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
+            color: (opacity = 1) => opacityToColor(opacity-0.05),
+            labelColor: (opacity = 1) => opacityToColor(opacity-0.05),
         },
         poids: {
             backgroundGradientFromOpacity: 0,
@@ -82,8 +82,8 @@ const StatistiquesBloc = ({ animaux, selectedAnimal, setSelectedAnimal, itemStat
         concours: {
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => hexToRgba(isDarkTheme ? colors.tertiary : colors.accent, opacity-0.05),
-            labelColor: (opacity = 1) => hexToRgba(colors.default_dark, opacity),
+            color: (opacity = 1) => opacityToColor(opacity-0.05),
+            labelColor: (opacity = 1) => opacityToColor(opacity-0.05),
         },
     };
     const ChartConfig = chartConfig[itemStatistique];
@@ -99,6 +99,56 @@ const StatistiquesBloc = ({ animaux, selectedAnimal, setSelectedAnimal, itemStat
         }
         
     }, [temporality, selectedAnimal]);
+
+    function opacityToColor(opacity) {
+
+        if( opacity <= 0.15 ){
+            return isDarkTheme ? hexToRgba(colors.secondary, opacity) : colors.secondary;
+        }
+
+        if( isDarkTheme ){
+            if( opacity <= 0.2 ){
+                return hexToRgba(colors.quaternary, opacity+0.1);
+            }
+            if( opacity <= 0.4 ){
+                return hexToRgba(colors.quaternary, opacity+0.1);
+            }
+            if( opacity <= 0.6 ){
+                return hexToRgba(colors.quaternary, opacity+0.1);
+            }
+            if( opacity <= 0.7 ){
+                return hexToRgba(colors.quaternary, opacity+0.1);
+            }
+            if( opacity <= 0.8 ){
+                return hexToRgba(colors.quaternary, opacity+0.1);
+            }
+            if( opacity <= 1 ){
+                return hexToRgba(colors.default_dark, opacity);
+            }
+        } else {
+            if( opacity <= 0.15 ){
+                return isDarkTheme ? hexToRgba(colors.secondary, opacity) : colors.secondary;
+            }
+            if( opacity <= 0.2 ){
+                return hexToRgba(colors.accent, opacity+0.1);
+            }
+            if( opacity <= 0.4 ){
+                return hexToRgba(colors.accent, opacity+0.1);
+            }
+            if( opacity <= 0.6 ){
+                return hexToRgba(colors.accent, opacity+0.1);
+            }
+            if( opacity <= 0.7 ){
+                return hexToRgba(colors.accent, opacity+0.1);
+            }
+            if( opacity <= 0.8 ){
+                return hexToRgba(colors.accent, opacity+0.1);
+            }
+            if( opacity <= 1 ){
+                return hexToRgba(colors.text, opacity);
+            }
+        }
+    }
 
     function hexToRgba(hex, opacity) {
         const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
