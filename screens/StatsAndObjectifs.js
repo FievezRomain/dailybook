@@ -28,7 +28,7 @@ const StatsScreen = ({ navigation }) => {
     depense: true,
     poids: false,
     taille: false,
-    alimentation: false,
+    alimentation: true,
     concours: true
   };
   const [itemStatistique, setItemStatistique] = useState("depense");
