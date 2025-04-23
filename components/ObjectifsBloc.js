@@ -11,6 +11,7 @@ import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 import { useObjectifs } from '../providers/ObjectifsProvider'; 
 import StatePicker from './StatePicker';
+import { isAfter, isBefore, isEqual, startOfDay } from 'date-fns';
 
 const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }) =>{
     const { colors, fonts } = useTheme();
@@ -52,10 +53,13 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }) =>{
         if(temporality === "En cours"){
             filteredObjectifs = objectifs.filter((item) =>  item.sousEtapes.some(etape => etape.state === false) 
                                     && selectedAnimal.some(animal => item.animaux.includes(animal.id))
-                                    && new Date(item.datefin) >= new Date() );
+                                    && (isAfter(startOfDay(new Date(item.datefin)), startOfDay(new Date())) ||
+                                    isEqual(startOfDay(new Date(item.datefin)), startOfDay(new Date()))) );
         } else{
-            filteredObjectifs = objectifs.filter((item) => (item.sousEtapes.every(etape => etape.state === true) 
-                                    || new Date(item.datefin) < new Date() )
+            filteredObjectifs = objectifs.filter((item) => (
+                                        item.sousEtapes.every(etape => etape.state === true) 
+                                        || isBefore(startOfDay(new Date(item.datefin)), startOfDay(new Date()))
+                                    )
                                     && selectedAnimal.some(animal => item.animaux.includes(animal.id)) );
         }
         

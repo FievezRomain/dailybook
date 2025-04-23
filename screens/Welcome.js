@@ -13,6 +13,7 @@ import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
 import { useEvents } from "../providers/EventsProvider";
 import { useObjectifs } from "../providers/ObjectifsProvider";
+import { isAfter, isEqual, startOfDay } from 'date-fns';
 
 const WelcomeScreen = ({ navigation })=> {
   const { colors, fonts } = useTheme();
@@ -53,7 +54,13 @@ const WelcomeScreen = ({ navigation })=> {
 
       const getObjectifsInProgress = () => {
         if( objectifs !== undefined && Array.isArray(objectifs) ){
-          return objectifs.filter( (item) =>  item.sousEtapes.some(etape => etape.state === false) && new Date(item.datefin) >= new Date() );
+          return objectifs.filter( (item) =>  item.sousEtapes.some(etape => etape.state === false) && 
+            (
+              isAfter( startOfDay(new Date(item.datefin)), startOfDay(new Date()) ) 
+              ||
+              isEqual( startOfDay(new Date(item.datefin)), startOfDay(new Date()) )
+            ) 
+          );
         }
         return undefined;
       }
