@@ -181,13 +181,13 @@ const AnimalBody = ({ animal, onModify }) => {
                                 </View>
                             </View>
                             <View style={styles.inputContainer}>
-                                <Text style={[styles.textInput, styles.textFontRegular, styles.text]}>Quantité (gramme / cl) :</Text>
+                                <Text style={[styles.textInput, styles.textFontRegular, styles.text]}>Quantité :</Text>
                                 <View style={{flexDirection: "row"}}>
                                     <TextInput
                                         style={[styles.input, styles.textFontRegular]}
                                         placeholder="Exemple : 200"
                                         placeholderTextColor={colors.secondary}
-                                        defaultValue={animal.quantity != null ? String(animal.quantity) : undefined}
+                                        defaultValue={(animal.quantity != null ? String(animal.quantity) + (animal.unity ? " " + animal.unity : "") : undefined)}
                                         editable={false}
                                     />
                                     <TouchableOpacity style={styles.iconUpdate} onPress={() => openModal('quantity')}>

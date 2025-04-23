@@ -2,39 +2,58 @@ import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity,
 import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
-import { AntDesign } from '@expo/vector-icons';
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
 import DatePickerModal from "./ModalDatePicker";
 import animalsServiceInstance from "../../services/AnimalsService";
 import LoggerService from "../../services/LoggerService";
+import DropdawnList from "../DropdawnList";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const ModalManageBodyAnimal = ({isVisible, setVisible, actionType, animal={}, item, infos, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
-    const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
+    const { register, handleSubmit, formState: { errors }, setValue, getValues, watch, clearErrors, setError } = useForm();
     const [arrayHeight, setArrayHeight] = useState("35%");
     const [loading, setLoading] = useState(false);
+    const unitsList = [
+        { label: 'g', value: 'gramme' },
+        { label: 'kg', value: 'kilogramme' },
+        { label: 'mg', value: 'milligramme' },
+        { label: 'q', value: 'quintal' },
+        { label: 't', value: 'tonne' },
+        { label: 'L', value: 'litre' },
+        { label: 'mL', value: 'millilitre ' },
+        { label: 'cL', value: 'centilitre ' },
+    ];
+    const [unity, setUnity] = useState(undefined);
 
     useEffect(()=> {
         setArrayHeight("35%");
         initValues();
     }, [isVisible]);
 
+    useEffect(() => {
+        setValue("unity", unity);
+    }), [unity];
+
     const initValues = () => {
         if( actionType === "create" ){
             setValue("datemodification", new Date().toISOString().split('T')[0]);
             setValue("value", undefined);
+            setValue("unity", undefined)
             setValue("idAnimal", animal.id);
             setValue("item", item);
+            setUnity(undefined);
         } else{
             setValue("datemodification", new Date(infos.date).toISOString().split('T')[0]);
             setValue("value", infos.value.toString());
+            setValue("unity", infos.unity);
             setValue("id", infos.id);
             setValue("item", item);
             setValue("idAnimal", infos.idanimal);
+            setUnity(infos.unity);
         }
     }
 
@@ -47,6 +66,12 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, actionType, animal={}, it
             return;
         }
         setLoading(true);
+
+        if (item === "quantity" && !unity) {
+            setError("unity", { type: "manual" });
+            setLoading(false);
+            return;
+        }
 
         // Modification des , en . pour les champs numériques taille, poids et quantity à cause de la possibilité de mettre les 2 sur android
         if( item === "taille" || item === "poids" || item === "quantity" ){
@@ -166,18 +191,40 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, actionType, animal={}, it
                 </>;
             case 'quantity':
                 return <>
-                    <Text style={[styles.textInput, styles.textFontRegular]}>Quantité (gramme / cl) : <Text style={{color: "red"}}>*</Text></Text>
-                    {errors.taille && <Text style={[styles.errorInput, styles.textFontRegular]}>Quantité obligatoire</Text>}
-                    <TextInput
-                        style={[styles.input, styles.textFontRegular]}
-                        placeholder="Exemple : 200"
-                        keyboardType="decimal-pad"
-                        inputMode="decimal"
-                        placeholderTextColor={colors.secondary}
-                        onChangeText={(text) => setValue("value", text)}
-                        defaultValue={watch("value")}
-                        {...register("value", { required: true })}
-                    />
+                    
+                    <Text style={[styles.textInput, styles.textFontRegular]}>Quantité : <Text style={{color: "red"}}>*</Text></Text>
+                    {(errors.value || errors.unity) && <Text style={[styles.errorInput, styles.textFontRegular]}>Quantité obligatoire</Text>}
+                    <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                        <View style={{width:"55%"}}>
+
+                            <TextInput
+                                style={[styles.input, styles.textFontRegular]}
+                                placeholder="Exemple : 200"
+                                keyboardType="decimal-pad"
+                                inputMode="decimal"
+                                placeholderTextColor={colors.secondary}
+                                onChangeText={(text) => setValue("value", text)}
+                                defaultValue={watch("value")}
+                                {...register("value", { required: true })}
+                            />
+
+                        </View>
+                        <View style={{width:"40%"}}>
+
+                            <DropdawnList
+                                list={unitsList}
+                                setValue={(value) => {
+                                    setUnity(value);
+                                    if (value) {
+                                        clearErrors("unity"); 
+                                    }
+                                }}
+                                value={unity}
+                            />
+
+                        </View>
+                        
+                    </View>
                 </>;
             default:
                 break;
@@ -245,7 +292,6 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, actionType, animal={}, it
             paddingBottom: 10,
         },
         inputContainer:{
-            alignItems: "center",
             width: "100%"
         },
         textInput:{
@@ -276,7 +322,10 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, actionType, animal={}, it
         },
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
-        }
+        },
+        errorInput: {
+            color: "red"
+        },
     });
 
     return(

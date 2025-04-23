@@ -64,6 +64,17 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         { label: 'Autre', value: 'Autre' },
     ];
     const [espece, setEspece] = useState(undefined);
+    const unitsList = [
+        { label: 'g', value: 'gramme' },
+        { label: 'kg', value: 'kilogramme' },
+        { label: 'mg', value: 'milligramme' },
+        { label: 'q', value: 'quintal' },
+        { label: 't', value: 'tonne' },
+        { label: 'L', value: 'litre' },
+        { label: 'mL', value: 'millilitre ' },
+        { label: 'cL', value: 'centilitre ' },
+    ];
+    const [unity, setUnity] = useState(undefined);
 
     useEffect(() => {
         if(animal.id !== undefined){
@@ -90,6 +101,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("sexe", animal.sexe !== null ? animal.sexe : undefined);
         setValue("food", animal.food !== null ? animal.food : undefined);
         setValue("quantity", animal.quantity !== null ? animal.quantity.toString() : undefined);
+        setValue("unity", animal.unity !== null ? animal.unity : undefined);
+        setUnity(animal.unity);
         setValue("couleur", animal.couleur !== null ? animal.couleur : undefined);
         setValue("nomPere", animal.nompere !== null ? animal.nompere : undefined);
         setValue("nomMere", animal.nommere !== null ? animal.nommere : undefined);
@@ -121,12 +134,14 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("sexe", undefined);
         setValue("food", undefined);
         setValue("quantity", undefined);
+        setValue("unity", undefined);
         setValue("couleur", undefined);
         setValue("nomPere", undefined);
         setValue("nomMere", undefined);
         setValue("image", undefined);
         setValue("numeroidentification", undefined);
         setValue("informations", undefined);
+        setUnity(undefined);
         setImage(null);
         setDate(String(jour + "/" + mois + "/" + annee));
         setDateArrivee(String(jour + "/" + mois + "/" + annee));
@@ -647,16 +662,32 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                                 />
                                             </View>
                                             <View style={styles.inputContainer}>
-                                                <Text style={[styles.textInput, styles.textFontRegular]}>Quantité (gramme / cl) :</Text>
-                                                <TextInput
-                                                    style={[styles.input, styles.textFontRegular]}
-                                                    placeholder="Exemple : 200"
-                                                    keyboardType="decimal-pad"
-                                                    inputMode="decimal"
-                                                    placeholderTextColor={colors.secondary}
-                                                    onChangeText={(text) => setValue("quantity", text)}
-                                                    defaultValue={getValues("quantity")}
-                                                />
+                                                <Text style={[styles.textInput, styles.textFontRegular]}>Quantité :</Text>
+                                                <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                                                    <View style={{width:"55%"}}>
+                                                        <TextInput
+                                                            style={[styles.input, styles.textFontRegular]}
+                                                            placeholder="Exemple : 200"
+                                                            keyboardType="decimal-pad"
+                                                            inputMode="decimal"
+                                                            placeholderTextColor={colors.secondary}
+                                                            onChangeText={(text) => setValue("quantity", text)}
+                                                            defaultValue={getValues("quantity")}
+                                                        />
+                                                    </View>
+                                                    <View style={{width:"40%"}}>
+                                                        <DropdawnList
+                                                            list={unitsList}
+                                                            setValue={(value) => {
+                                                                setUnity(value);
+                                                                if (value) {
+                                                                    clearErrors("unity"); 
+                                                                }
+                                                            }}
+                                                            value={unity}
+                                                        />
+                                                    </View>
+                                                </View>
                                             </View>
                                         </>
                                     }
@@ -697,7 +728,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             multiline={true}
                                             numberOfLines={4}
                                             maxLength={2000}
-                                            placeholder="Exemple : Allergique aux incariens"
+                                            placeholder="Exemple : Allergie, pathologie..."
                                             placeholderTextColor={colors.secondary}
                                             onChangeText={(text) => setValue("informations", text)}
                                             defaultValue={getValues("informations")}

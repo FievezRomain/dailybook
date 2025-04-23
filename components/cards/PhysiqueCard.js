@@ -145,7 +145,7 @@ const PhysiqueCard = ({ infos, itemType, handlePhysiqueChange, handlePhysiqueDel
                 <View style={{display: "flex",flexDirection: "row"}}>
                     <View style={{flexDirection: "row",justifyContent: "space-between", width: "100%",borderTopStartRadius: 5,borderTopEndRadius: 5, padding: 10}}>
                         <View>
-                            <Text style={[{color:colors.default_dark}, styles.textFontBold]}>{currentPhysique.value}</Text>
+                            <Text style={[{color:colors.default_dark}, styles.textFontBold]}>{currentPhysique.type !== "quantity" || currentPhysique.unity === null ? currentPhysique.value : currentPhysique.value + " " + currentPhysique.unity}</Text>
                         </View>
                         <TouchableOpacity onPress={() => onPressOptions()}>
                             <Entypo name='dots-three-horizontal' size={20} color={colors.default_dark} />
