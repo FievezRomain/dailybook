@@ -10,6 +10,7 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import FileStorageService from "../services/FileStorageService";
 import { useTheme } from 'react-native-paper';
 import ModalReportDeath from './Modals/ModalReportDeath';
+import { format } from 'date-fns'
 
 const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
@@ -261,7 +262,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               inputMode="numeric"
                               maxLength={10}
                               placeholderTextColor={colors.secondary}
-                              defaultValue={new Date(animal.datedeces).toLocaleDateString()}
+                              defaultValue={format(new Date(animal.datedeces), 'dd/MM/yyyy')}
                               editable={false}
                           />
                         </View>

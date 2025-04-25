@@ -2,13 +2,13 @@ import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity,
 import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
-import { AntDesign } from '@expo/vector-icons';
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
 import { useAnimalForm } from "../../hooks/useAnimalForm";
 import DatePickerModal from "./ModalDatePicker";
 import DateUtils from "../../utils/DateUtils";
+import { format } from 'date-fns'
 
 const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -37,7 +37,7 @@ const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModif
     useEffect(() => {
         if (animal) {
             initializeAnimal(animal, setEspece, setImage, setDate);
-            setValue("datedeces", animal.datedeces === undefined ? dateUtils.dateFormatter(new Date().toLocaleDateString(), "dd/MM/yyyy", "/") : dateUtils.dateFormatter(new Date(animal.datedeces).toLocaleDateString(), "dd/MM/yyyy", "/"));
+            setValue("datedeces", animal.datedeces === undefined ? dateUtils.dateFormatter(format(new Date(), 'dd/MM/yyyy'), "dd/MM/yyyy", "/") : dateUtils.dateFormatter(new Date(animal.datedeces).toLocaleDateString(), "dd/MM/yyyy", "/"));
         }
     }, [animal]);
 
