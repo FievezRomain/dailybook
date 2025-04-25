@@ -20,6 +20,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import sanitizeHtml from 'sanitize-html';
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
+import CustomRichTextEditor from "../CustomRichTextEditor";
 
 const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = undefined }) => {
     const { colors, fonts } = useTheme();
@@ -196,7 +197,7 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                         </TouchableOpacity>
                     </View>
                     <Divider />
-                    <KeyboardAwareScrollView style={{height: "100%"}}>
+                    <KeyboardAwareScrollView>
                         <View style={styles.formContainer}>
                             <View style={styles.inputContainer}>
                                 <Text style={[styles.textInput, styles.textFontRegular]}>
@@ -211,10 +212,11 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                                     defaultValue={watch("titre")}
                                     {...register("titre", { required: true })}
                                 />
-                                <RichTextEditor
-                                    ref={richText}  // Assign the ref to RichTextEditor
-                                    defaultValue={watch("note") !== undefined ? watch("note") : undefined}
-                                    onChange={(text) => setRichTextValue(text)}
+                                <CustomRichTextEditor
+                                    initialContent={watch("note") ?? ""}
+                                    onSave={(htmlContent) => {
+                                        setRichTextValue(htmlContent);
+                                    }}
                                 />
                             </View>
                         </View>
