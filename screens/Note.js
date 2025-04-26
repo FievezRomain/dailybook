@@ -55,12 +55,6 @@ const NoteScreen = ({ navigation }) => {
     }
 
     const handleNoteChange = (note) => {
-        setTimeout(() => Toast.show({
-            type: "success",
-            position: "top",
-            text1: "Modification d'une note"
-          }), 300);
-
         var tempArray = notes;
 
         var index = tempArray.findIndex(objet => objet.id === note.id);

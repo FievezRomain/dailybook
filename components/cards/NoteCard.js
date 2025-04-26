@@ -52,18 +52,30 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     };
 
     const onModify = (noteModified) => {
-        Toast.show({
+        setTimeout(() => Toast.show({
             type: "success",
             position: "top",
-            text1: "Modification d'une note réussie"
-        });
+            text1: "Modification d'une note"
+          }), 300);
 
         handleNoteChange(noteModified);
     };
 
     const getPreviewHTML = (htmlContent, length) => {
-        const plainText = htmlContent.replace(/<[^>]+>/g, ''); // Supprimer toutes les balises HTML pour avoir du texte brut
-        const trimmedText = plainText.substring(0, length); // Extraire les premiers caractères du texte brut
+        if (!htmlContent) return '';
+
+        // Remplacer certaines balises de saut de ligne par un vrai retour à la ligne
+        let plainText = htmlContent
+        .replace(/<br\s*\/?>/gi, ' ') 
+        .replace(/<p>/gi, '')
+        .replace(/<\/p>/gi, ' ')
+        .replace(/<div>/gi, '')
+        .replace(/<\/div>/gi, ' ')
+        .replace(/<[^>]+>/g, '')  
+        .replace(/\s+/g, ' ')     
+        .trim();
+
+        const trimmedText = plainText.substring(0, length);
         return trimmedText.length >= length ? `${trimmedText}...` : trimmedText;
     };
 
