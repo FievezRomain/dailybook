@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Platform, StyleSheet, Alert, Dimensions } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useTheme } from 'react-native-paper';
 
@@ -14,7 +14,8 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
         const injected = value
             ? `document.execCommand("${command}", false, "${value}"); true;`
             : `document.execCommand("${command}", false, null); true;`;
-        webviewRef.current.injectJavaScript(injected);
+        const syncFormatState = `window.postEditorState && window.postEditorState(); true;`;
+        webviewRef.current?.injectJavaScript(injected + syncFormatState);
     };
 
     const promptForLink = () => {
@@ -70,9 +71,8 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
             flexDirection: 'row',
             flexWrap: 'wrap',
             padding: 10,
-            backgroundColor: '#f5f5f5',
+            backgroundColor: colors.quaternary,
             borderBottomWidth: 1,
-            borderColor: '#ddd',
             alignItems: 'center',
             borderTopLeftRadius: 5,
             borderTopRightRadius: 5
@@ -80,7 +80,7 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
         button: {
             paddingHorizontal: 10,
             paddingVertical: 6,
-            backgroundColor: '#eee',
+            backgroundColor: colors.background,
             borderRadius: 5,
             marginRight: 8,
             marginBottom: 6
@@ -91,6 +91,7 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
         buttonText: {
             fontWeight: 'bold',
             fontSize: 16,
+            color: colors.default_dark
         },
         webview: {
             height: screenHeight * 0.5,
@@ -117,6 +118,10 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
                 <style>
                     body { font-size: 18px; padding: 10px; font-family: -apple-system, sans-serif; }
                     #editor { min-height: 100%; outline: none; line-height: 1.5; padding-bottom: 50px; }
+                    html, body {
+                        height: 100%;
+                        padding: 5;
+                    }
                 </style>
             </head>
             <body>
@@ -136,6 +141,7 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
                         window.ReactNativeWebView.postMessage(JSON.stringify({ formatStates }));
                         window.ReactNativeWebView.postMessage(editor.innerHTML);
                     };
+                    window.postEditorState = postUpdate;
                     editor.addEventListener('input', postUpdate);
                     document.addEventListener('selectionchange', postUpdate);
                     document.addEventListener('message', function(event) {
@@ -164,7 +170,7 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
                 <FormatButton label="Left" onPress={() => injectCommand('justifyLeft')} formatKey="justifyLeft" />
                 <FormatButton label="Center" onPress={() => injectCommand('justifyCenter')} formatKey="justifyCenter" />
                 <FormatButton label="Right" onPress={() => injectCommand('justifyRight')} formatKey="justifyRight" />
-                <FormatButton label="🔗" onPress={promptForLink} />
+                { Platform.OS == "ios" && <FormatButton label="🔗" onPress={promptForLink} /> }
             </View>
 
             <WebView
@@ -176,6 +182,8 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
                 javaScriptEnabled
                 domStorageEnabled
                 automaticallyAdjustContentInsets={false}
+                keyboardDisplayRequiresUserAction={false}
+                androidLayerType='hardware'
                 source={{ html: editorHTML }}
             />
         </View>

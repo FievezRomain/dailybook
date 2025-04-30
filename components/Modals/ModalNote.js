@@ -173,56 +173,62 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
             isVisible={isVisible}
             setVisible={setVisible}
             arrayHeight={["90%"]}
+            scrollInside={false}
         >
-            {/* Detect taps outside the input fields */}
-            <TouchableWithoutFeedback onPress={dismissRichTextKeyboard} accessible={false}>
-                <View style={styles.form}>
-                    <View style={styles.containerActionsButtons}>
-                        <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
-                        </TouchableOpacity>
-                        <View style={{width:"33.33%", alignItems: "center"}}>
-                            <Text style={[styles.textFontBold, {fontSize: 16, color:colors.default_dark}]}>
-                                {actionType === "modify" ? "Note" : "Note"}
-                            </Text>
-                        </View>
-                        <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
-                            {loading ? (
-                                <ActivityIndicator size={10} color={colors.default_dark} />
-                            ) : (
-                                <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>
-                                    {actionType === "modify" ? "Modifier" : "Créer"}
-                                </Text>
-                            )}
-                        </TouchableOpacity>
+            <View style={styles.form}>
+                <View style={styles.containerActionsButtons}>
+                    <TouchableOpacity onPress={closeModal} style={{width:"33.33%", alignItems: "center"}}>
+                        <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
+                    </TouchableOpacity>
+                    <View style={{width:"33.33%", alignItems: "center"}}>
+                        <Text style={[styles.textFontBold, {fontSize: 16, color:colors.default_dark}]}>
+                            {actionType === "modify" ? "Note" : "Note"}
+                        </Text>
                     </View>
-                    <Divider />
-                    <KeyboardAwareScrollView>
-                        <View style={styles.formContainer}>
-                            <View style={styles.inputContainer}>
-                                <Text style={[styles.textInput, styles.textFontRegular]}>
-                                    Titre : <Text style={{ color: "red" }}>*</Text>
-                                </Text>
-                                {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Titre obligatoire</Text>}
-                                <TextInput
-                                    style={[styles.input, styles.textFontRegular]}
-                                    placeholder="Exemple : Titre"
-                                    placeholderTextColor={colors.secondary}
-                                    onChangeText={(text) => setValue("titre", text)}
-                                    defaultValue={watch("titre")}
-                                    {...register("titre", { required: true })}
-                                />
-                                <CustomRichTextEditor
-                                    initialContent={watch("note") ?? ""}
-                                    onSave={(htmlContent) => {
-                                        setRichTextValue(htmlContent);
-                                    }}
-                                />
-                            </View>
-                        </View>
-                    </KeyboardAwareScrollView>
+                    <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{width:"33.33%", alignItems: "center"}}>
+                        {loading ? (
+                            <ActivityIndicator size={10} color={colors.default_dark} />
+                        ) : (
+                            <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>
+                                {actionType === "modify" ? "Modifier" : "Créer"}
+                            </Text>
+                        )}
+                    </TouchableOpacity>
                 </View>
-            </TouchableWithoutFeedback>
+                <Divider />
+                <KeyboardAwareScrollView
+                    keyboardShouldPersistTaps="handled"
+                    enableOnAndroid={true}
+                    extraScrollHeight={10}
+                    enableResetScrollToCoords={false}
+                >
+                    <View style={styles.formContainer}>
+                        <View style={styles.inputContainer}>
+                            <Text style={[styles.textInput, styles.textFontRegular]}>
+                                Titre : <Text style={{ color: "red" }}>*</Text>
+                            </Text>
+                            {errors.title && <Text style={[styles.errorInput, styles.textFontRegular]}>Titre obligatoire</Text>}
+                            <TextInput
+                                style={[styles.input, styles.textFontRegular]}
+                                placeholder="Exemple : Titre"
+                                placeholderTextColor={colors.secondary}
+                                onChangeText={(text) => setValue("titre", text)}
+                                defaultValue={watch("titre")}
+                                {...register("titre", { required: true })}
+                            />
+                            <Text style={[styles.textInput, styles.textFontRegular]}>
+                                Note :
+                            </Text>
+                            <CustomRichTextEditor
+                                initialContent={watch("note") ?? ""}
+                                onSave={(htmlContent) => {
+                                    setRichTextValue(htmlContent);
+                                }}
+                            />
+                        </View>
+                    </View>
+                </KeyboardAwareScrollView>
+            </View>
         </ModalEditGeneric>
     );
 }

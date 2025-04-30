@@ -65,16 +65,16 @@ const NoteScreen = ({ navigation }) => {
 
         setNotes(tempArray);
         handleSearch(searchQuery);
-      }
+    }
   
-      const handleNoteDelete = (note) => {
+    const handleNoteDelete = (note) => {
         let updatedNotes = [];
         updatedNotes = [... notes];
-  
+
         var index = updatedNotes.findIndex((a) => a.id == note.id);
         updatedNotes.splice(index, 1);
         setNotes(updatedNotes);
-      }
+    }
 
     const styles = StyleSheet.create({
         container: {
