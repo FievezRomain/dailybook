@@ -18,10 +18,11 @@ import ConcoursComponent from './statistics/ConcoursComponent';
 import { ThemeContext } from '../providers/ThemeProvider';
 import Toast from "react-native-toast-message";
 
-const StatistiquesBloc = ({ selectedAnimal, itemStatistique, setItemStatistique }) =>{
+const StatistiquesBloc = ({ selectedAnimal }) =>{
     const { isDarkTheme } = useContext( ThemeContext );
     const { colors, fonts } = useTheme();
     const { currentUser, abonnement } = useAuth();
+    const [itemStatistique, setItemStatistique] = useState("depense");
     const chartComponents = {
         balade: BaladeComponent,
         entrainement: EntrainementComponent,
@@ -89,7 +90,19 @@ const StatistiquesBloc = ({ selectedAnimal, itemStatistique, setItemStatistique 
     const ChartConfig = chartConfig[itemStatistique];
     const now = new Date();
     const [parameters, setParameters] = useState({ animaux: selectedAnimal.map(function(item) { return item["id"] }), email: currentUser.email, dateDebut: new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString() });
+    const itemStatistiqueSeveralAnimals = {
+        balade: true,
+        entrainement: true,
+        depense: true,
+        poids: false,
+        taille: false,
+        alimentation: false,
+        concours: true
+      };
 
+    useEffect(() => {
+        checkSeveralAnimalsAccepted(itemStatistique);
+      }, [itemStatistique]);
 
     useEffect(() => {
         if(temporality === "Mois"){
@@ -99,6 +112,10 @@ const StatistiquesBloc = ({ selectedAnimal, itemStatistique, setItemStatistique 
         }
         
     }, [temporality, selectedAnimal]);
+
+    const checkSeveralAnimalsAccepted = (value) => {
+        return itemStatistiqueSeveralAnimals[value];
+    }
 
     function opacityToColor(opacity) {
 
@@ -204,6 +221,11 @@ const StatistiquesBloc = ({ selectedAnimal, itemStatistique, setItemStatistique 
             height: 0.4, // ou la hauteur que vous souhaitez pour votre barre
             backgroundColor: colors.default_dark,
         },
+        midBar: {
+            width: 0.4,
+            borderRightWidth: 0.4,
+            borderRightColor: colors.default_dark,
+        },
         composantContainer:{
             marginLeft: 10,
             marginRight: 10,
@@ -306,6 +328,7 @@ const StatistiquesBloc = ({ selectedAnimal, itemStatistique, setItemStatistique 
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}}>
                                         <FontAwesome name="trophy" size={20} style={itemStatistique == "concours" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
+                                    <View style={styles.midBar} />
                                     <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("poids")}}>
                                         <FontAwesome6 name="weight-scale" size={20} style={itemStatistique == "poids" ? styles.itemIconSelected : styles.itemIconDefault}  />
                                     </TouchableOpacity>
@@ -320,12 +343,22 @@ const StatistiquesBloc = ({ selectedAnimal, itemStatistique, setItemStatistique 
                             </View>
                             
                             <View style={styles.statistiquesContainer}>
-                                <ChartWithLoader
-                                    ChartComponent={ChartComponent}
-                                    chartConfig={ChartConfig}
-                                    chartType={itemStatistique}
-                                    chartParameters={parameters}
-                                />
+                                {!checkSeveralAnimalsAccepted(itemStatistique) && selectedAnimal.length > 1 ?
+                                        <View style={{width: "90%", alignSelf: "center"}}>
+                                            <ModalDefaultNoValue
+                                                text={"⚠️ Cette statistique n'est pas disponible sur plusieurs animaux."}
+                                            />
+                                        </View>
+                                        
+                                    :
+                                        <ChartWithLoader
+                                            ChartComponent={ChartComponent}
+                                            chartConfig={ChartConfig}
+                                            chartType={itemStatistique}
+                                            chartParameters={parameters}
+                                        />
+                                }
+                                
                             </View>
                         </>
                     :

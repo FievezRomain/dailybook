@@ -22,16 +22,6 @@ const StatsScreen = ({ navigation }) => {
   const [selectedAnimal, setSelectedAnimal] = useState([]);
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
-  const itemStatistiqueSeveralAnimals = {
-    balade: true,
-    entrainement: true,
-    depense: true,
-    poids: false,
-    taille: false,
-    alimentation: true,
-    concours: true
-  };
-  const [itemStatistique, setItemStatistique] = useState("depense");
 
   useFocusEffect(
     useCallback(() => {
@@ -40,28 +30,7 @@ const StatsScreen = ({ navigation }) => {
     }, [])
   );
 
-  useEffect(() => {
-    checkSeveralAnimalsAccepted(itemStatistique);
-  }, [itemStatistique]);
-
-  const checkSeveralAnimalsAccepted = (value) => {
-    let canSeveralAnimals = itemStatistiqueSeveralAnimals[value];
-
-    if( !canSeveralAnimals ){
-        if( selectedAnimal.length > 1 )
-        {
-            Toast.show({
-                type: "info",
-                position: "top",
-                text1: "Statistique pour un animal uniquement",
-                text2: "Affichage pour le dernier animal sélectionné"
-            });
-
-            let lastAnimalSelected = selectedAnimal[selectedAnimal.length - 1];
-            setSelectedAnimal([lastAnimalSelected]);
-        }
-    }
-  }
+  
 
  /*  useEffect(() => {
     if( activeRubrique === 0 && selectedAnimal.length > 1 ){
@@ -198,9 +167,9 @@ const StatsScreen = ({ navigation }) => {
               animaux={animaux}
               setSelected={setSelectedAnimal}
               selected={selectedAnimal}
-              mode={itemStatistiqueSeveralAnimals[itemStatistique] ? "multiple" : "single"}
+              mode={"multiple"}
               setValue={activeRubrique === 0 ? () => {} : () => {}}
-              selectAll={itemStatistiqueSeveralAnimals[itemStatistique]}
+              selectAll={true}
               setDate={() => {}}
             />
         </View>
@@ -229,8 +198,6 @@ const StatsScreen = ({ navigation }) => {
           :
             <StatistiquesBloc
               selectedAnimal={selectedAnimal}
-              itemStatistique={itemStatistique}
-              setItemStatistique={setItemStatistique}
             />
           }
         </View>
