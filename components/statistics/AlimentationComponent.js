@@ -203,7 +203,7 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
                         {(isExpanded(item)) && (
                             <FlatList
                                 data={item.history}
-                                keyExtractor={(event) => event.id.toString()}
+                                keyExtractor={(item, index) => index}
                                 style={{marginLeft: 15, marginRight: 15}}
                                 renderItem={({ item }) => (
                                     <PhysiqueCard

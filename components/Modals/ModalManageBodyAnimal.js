@@ -18,14 +18,14 @@ const ModalManageBodyAnimal = ({isVisible, setVisible, actionType, animal={}, it
     const [arrayHeight, setArrayHeight] = useState("35%");
     const [loading, setLoading] = useState(false);
     const unitsList = [
-        { label: 'g', value: 'gramme' },
-        { label: 'kg', value: 'kilogramme' },
-        { label: 'mg', value: 'milligramme' },
-        { label: 'q', value: 'quintal' },
-        { label: 't', value: 'tonne' },
-        { label: 'L', value: 'litre' },
-        { label: 'mL', value: 'millilitre ' },
-        { label: 'cL', value: 'centilitre ' },
+        { label: 'g', value: 'g' },
+        { label: 'kg', value: 'kg' },
+        { label: 'mg', value: 'mg' },
+        { label: 'q', value: 'q' },
+        { label: 't', value: 't' },
+        { label: 'L', value: 'L' },
+        { label: 'mL', value: 'mL ' },
+        { label: 'cL', value: 'cL' },
     ];
     const [unity, setUnity] = useState(undefined);
 

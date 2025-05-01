@@ -17,9 +17,13 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
 
     const changeSelectedAnimals = (animal) => {
         if( animal.id === "select_all"){
-            setValue(valueName, animaux.map(e => e.id));
-            setSelected(animaux);
-            
+            if( selected.length === animaux.length ){
+                setValue(valueName, undefined);
+                setSelected([]);
+            } else{
+                setValue(valueName, animaux.map(e => e.id));
+                setSelected(animaux);
+            }
             return;
         }
 
@@ -106,7 +110,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
     };
 
     const displayedAnimaux = selectAll
-        ? [...animaux, { id: 'select_all', nom: 'Tous', image: null }]
+        ? [{ id: 'select_all', nom: 'Tous', image: null }, ...animaux]
         : animaux;
 
     const styles = StyleSheet.create({
