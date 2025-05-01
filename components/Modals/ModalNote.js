@@ -15,7 +15,6 @@ import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 import notesServiceInstance from "../../services/NoteService";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
-import RichTextEditor from "../RichTextEditor";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import sanitizeHtml from 'sanitize-html';
 import { Divider, useTheme } from 'react-native-paper';
@@ -99,13 +98,6 @@ const ModalNote = ({ isVisible, setVisible, actionType, note = {}, onModify = un
                     });
                     setLoading(false);
                 });
-        }
-    };
-
-    // Function to handle dismissing the keyboard inside the RichTextEditor
-    const dismissRichTextKeyboard = () => {
-        if (richText.current) {
-            richText.current.dismissKeyboard(); // Custom method to dismiss the RichTextEditor keyboard
         }
     };
 
