@@ -55,15 +55,9 @@ const NoteScreen = ({ navigation }) => {
     }
 
     const handleNoteChange = (note) => {
-        var tempArray = notes;
+        const updatedNotes = notes.map((n) => n.id === note.id ? note : n);
 
-        var index = tempArray.findIndex(objet => objet.id === note.id);
-
-        if(index !== -1){
-            tempArray[index] = note;
-        }
-
-        setNotes(tempArray);
+        setNotes(updatedNotes);
         handleSearch(searchQuery);
     }
   

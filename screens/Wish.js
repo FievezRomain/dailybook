@@ -22,21 +22,12 @@ const WishScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const { wishs, setWishs } = useWishs();
-    const [selectedWish, setSelectedWish] = useState(null);
+    const [selectedWish, setSelectedWish] = useState({});
     const [modalSubMenuWishVisible, setModalSubMenuWishVisible] = useState(false);
     const [modalWishVisible, setModalWishVisible] = useState(false);
     const fileStorageService = new FileStorageService();
     const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
     const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        const unsubscribe = navigation.addListener("focus", () => {
-          
-          //getWishs();
-          
-        });
-        return unsubscribe;
-    }, [navigation]);
 
 /*     const getWishs = async () => {
         var result = await wishService.getWishs(currentUser.email);
@@ -56,10 +47,9 @@ const WishScreen = ({ navigation }) => {
             text1: "Modification d'un souhait"
           }), 300);
 
-        var indice = wishs.findIndex((a) => a.id == wish.id);
-        wishs[indice] = wish;
+        const updatedWishs = wishs.map((w) => w.id === wish.id ? wish : w);
 
-        setWishs(wishs);
+        setWishs(updatedWishs);
         setSelectedWish(wish);
     };
 
@@ -103,7 +93,7 @@ const WishScreen = ({ navigation }) => {
 
     const openSubMenuWish = (wish) => {
         setSelectedWish(wish);
-        setModalSubMenuWishVisible(true)
+        setModalSubMenuWishVisible(true);
     };
 
     const changeState = async (wish) => {
@@ -132,6 +122,10 @@ const WishScreen = ({ navigation }) => {
                     LoggerService.log( "Erreur lors de la MAJ d'un wish : " + err.message );
                     setLoading(false);
                 });
+    }
+
+    const getOrderedWishs = () => {
+        return [...wishs].sort((a, b) => a.acquis - b.acquis);
     }
 
     const styles = StyleSheet.create({
@@ -234,7 +228,7 @@ const WishScreen = ({ navigation }) => {
                         
                     :    
                         <FlatList
-                            data={wishs}
+                            data={getOrderedWishs()}
                             keyExtractor={(item) => item.id.toString()}
                             renderItem={({ item, index }) => (
                                 <View style={[styles.itemContainer, index % 2 !== 0 && styles.itemContainerSecondColumn]} >

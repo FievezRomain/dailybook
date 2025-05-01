@@ -24,10 +24,8 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
     const fileStorageService = new FileStorageService();
 
     useEffect(() => {
-        if(wish !== null){
-            initValues();
-        }
-    }, [isVisible]);
+        initValues();
+    }, [isVisible, wish]);
 
     const closeModal = () => {
         setVisible(false);
@@ -37,15 +35,15 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         setValue("id", wish.id);
         setValue("nom", wish.nom);
         setValue("url", wish.url);
-        setValue("prix", wish.prix);
+        setValue("prix", String(wish.prix));
         setValue("destinataire", wish.destinataire);
         if(wish.image !== null && wish.image !== undefined){
             setImage( fileStorageService.getFileUrl( wish.image, currentUser.uid ));
         } else{
             setImage(null);
         }
-        setValue("image", wish.image);
-        setValue("previousimage", wish.image);
+        setValue("image", wish.image !== null ? wish.image : undefined);
+        setValue("previousimage", wish.image !== null ? wish.image : undefined);
         setValue("acquis", wish.acquis);
     };
 
@@ -71,15 +69,12 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
             return;
         }
         setLoading(true);
-
         // Vérification de la valeur des entiers/décimal
         if( !checkNumericFormat(data, "prix") ){
             setLoading(false);
             return;
         }
-
         data["email"] =  currentUser.email;
-
         if (data.image != undefined){
             if(actionType !== "modify" || data["previousimage"] !== data["image"]){
                 var filename = data.image.split("/");
@@ -90,7 +85,6 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                 data.image = filename;
             }
         }
-
         if(actionType === "modify"){
             wishsServiceInstance.update(data)
                 .then((reponse) =>{
@@ -98,7 +92,6 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                     closeModal();
                     onModify(reponse);
                     setLoading(false);
-
                 })
                 .catch((err) =>{
                     Toast.show({
@@ -132,22 +125,32 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
     }
 
     const checkNumericFormat = (data, attribute) => {
-        if( data[attribute] != undefined && data[attribute] != undefined )
-        {
-            const numericValue = parseFloat(data[attribute].replace(',', '.').replace(" ", ""));
-            if (isNaN(numericValue)) {
-                Toast.show({
-                    position: "top",
-                    type: "error",
-                    text1: "Problème de format sur l'attribut " + attribute,
-                    text2: "Seul les chiffres, virgule et point sont acceptés"
-                });
-                return false;
-            } else{
-                data[attribute] = numericValue;
-            }
+        try{
+            if( data[attribute] != undefined && data[attribute] != undefined )
+                {
+                    const numericValue = parseFloat(data[attribute].replace(',', '.').replace(" ", ""));
+                    if (isNaN(numericValue)) {
+                        Toast.show({
+                            position: "top",
+                            type: "error",
+                            text1: "Problème de format sur l'attribut " + attribute,
+                            text2: "Seul les chiffres, virgule et point sont acceptés"
+                        });
+                        return false;
+                    } else{
+                        data[attribute] = numericValue;
+                    }
+                }
+                return true;
+        } catch(err){
+            Toast.show({
+                type: "error",
+                position: "top",
+                text1: "Erreur lors de la conversion du prix"
+            });
+            LoggerService.log( "Erreur lors de la conversion du prix : " + err.message );
         }
-        return true;
+        
     }
 
     const styles = StyleSheet.create({
