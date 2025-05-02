@@ -91,7 +91,7 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
         buttonText: {
             fontWeight: 'bold',
             fontSize: 16,
-            color: colors.default_dark
+            color: colors.default_dark,
         },
         webview: {
             height: screenHeight * 0.5,
@@ -101,11 +101,11 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
         }
     });
 
-    const FormatButton = ({ label, onPress, formatKey }) => {
+    const FormatButton = ({ label, onPress, formatKey, styleOverride = {} }) => {
         const isActive = activeFormats.includes(formatKey);
         return (
             <TouchableOpacity onPress={onPress} style={[styles.button, isActive && styles.buttonActive]}>
-                <Text style={[styles.buttonText, isActive && { color: 'white' }]}>{label}</Text>
+                <Text style={[styles.buttonText, styleOverride, isActive && { color: 'white' }]}>{label}</Text>
             </TouchableOpacity>
         );
     };
@@ -164,12 +164,12 @@ const CustomRichTextEditor = ({ onSave, initialContent = "" }) => {
                 <FormatButton label="U" onPress={() => injectCommand('underline')} formatKey="underline" />
                 <FormatButton label="•" onPress={() => injectCommand('insertUnorderedList')} formatKey="insertUnorderedList" />
                 <FormatButton label="1.2..." onPress={() => injectCommand('insertOrderedList')} formatKey="insertOrderedList" />
-                <FormatButton label="Title1" onPress={() => injectCommand('formatBlock', 'h1')} formatKey="h1" />
-                <FormatButton label="Title2" onPress={() => injectCommand('formatBlock', 'h2')} formatKey="h2" />
+                <FormatButton label="T1" onPress={() => injectCommand('formatBlock', 'h1')} formatKey="h1" />
+                <FormatButton label="T2" onPress={() => injectCommand('formatBlock', 'h2')} formatKey="h2" />
                 <FormatButton label="P" onPress={() => injectCommand('formatBlock', 'p')} formatKey="p" />
-                <FormatButton label="Left" onPress={() => injectCommand('justifyLeft')} formatKey="justifyLeft" />
-                <FormatButton label="Center" onPress={() => injectCommand('justifyCenter')} formatKey="justifyCenter" />
-                <FormatButton label="Right" onPress={() => injectCommand('justifyRight')} formatKey="justifyRight" />
+                <FormatButton label="☰" onPress={() => injectCommand('justifyLeft')} formatKey="justifyLeft" styleOverride={{ textAlign: 'left', width: 24 }} />
+                <FormatButton label="☰" onPress={() => injectCommand('justifyCenter')} formatKey="justifyCenter" styleOverride={{ textAlign: 'center', width: 24 }} />
+                <FormatButton label="☰" onPress={() => injectCommand('justifyRight')} formatKey="justifyRight" styleOverride={{ textAlign: 'right', width: 24 }} />
                 { Platform.OS == "ios" && <FormatButton label="🔗" onPress={promptForLink} /> }
             </View>
 
