@@ -22,10 +22,13 @@ import ModalEditGeneric from "./ModalEditGeneric";
 import { useAnimaux } from "../../providers/AnimauxProvider";
 import { useEvents } from "../../providers/EventsProvider";
 import Constants from 'expo-constants';
+import DocumentPickerComponent from "../DocumentPickerComponent";
+import FilesList from "../FilesList";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined, date=null}) => {
   const { colors, fonts } = useTheme();
-  const { currentUser } = useAuth();
+  const { currentUser, abonnement } = useAuth();
+  const accountType = abonnement.libelle;
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDropdownVisible, setModalDropdownVisible] = useState(false);
   const [modalDropdownNotifVisible, setModalDropdownNotifVisible] = useState(false);
@@ -229,6 +232,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       setValue("dateevent", new Date(date).toISOString().split('T')[0]);
       onChangeDate("dateevent", date);
     }
+
+    setValue("documents", event.documents);
   }
 
   const submitRegister = async(data) =>{
@@ -398,6 +403,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setNotifType(false);
     setOptionNotifType(false);
     setFrequence(false);
+    setValue("documents", undefined);
     //setAnimaux([]);
   }
 
@@ -502,6 +508,17 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
   }
+
+  const onDocumentsChange = (documents) => {
+    setValue("documents", documents);
+    console.log(documents);
+  }
+
+  const markFileAsDeleted = (indexToDelete) => {
+    const updated = [...getValues("documents")];
+    updated[indexToDelete].toDelete = true;
+    setValue("documents", updated);
+  };
 
   const styles = StyleSheet.create({
     inputToggleContainer:{
@@ -859,14 +876,24 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     />
                   </View>
                   {eventType.id === "soins" &&
-                    <View style={styles.containerDate}>
-                      <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinsoins")} <Text style={{color: "red"}}>*</Text></Text>
-                      <DatePickerModal
-                          onDayChange={onChangeDate}
-                          propertyName={"datefinsoins"}
-                          defaultDate={watch("datefinsoins")}
-                      />
-                    </View>
+                    <>
+                      <View style={styles.containerDate}>
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText("datefinsoins")} <Text style={{color: "red"}}>*</Text></Text>
+                        <DatePickerModal
+                            onDayChange={onChangeDate}
+                            propertyName={"datefinsoins"}
+                            defaultDate={watch("datefinsoins")}
+                        />
+                      </View>
+                      <View style={styles.inputContainer}>
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Documents :</Text>
+                        <DocumentPickerComponent
+                          onChange={onDocumentsChange}
+                          accountType={accountType}
+                          value={watch("documents")}
+                        />
+                      </View>
+                    </>
                   }
                   {eventType.id === "balade" &&
                     <View style={styles.containerDate}>
@@ -1029,6 +1056,18 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                           placeholderTextColor={colors.secondary}
                           onChangeText={(text) => setValue("specialiste", text)}
                           defaultValue={getValues("specialiste")}
+                        />
+                      </View>
+                      <View style={styles.inputContainer}>
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Documents :</Text>
+                        <DocumentPickerComponent
+                          onChange={onDocumentsChange}
+                          accountType={accountType}
+                          value={watch("documents") || []}
+                        />
+                        <FilesList
+                          onMarkDelete={markFileAsDeleted}
+                          files={watch("documents") || []}
                         />
                       </View>
                     </>
