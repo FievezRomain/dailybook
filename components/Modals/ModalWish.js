@@ -153,6 +153,11 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
         
     }
 
+    const onChangeImage = (imageUri) => {
+        setImage(imageUri);
+        setValue("image", imageUri);
+    }
+
     const styles = StyleSheet.create({
         loadingEvent: {
             position: "absolute",
@@ -316,8 +321,7 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
                             <View style={styles.inputContainer}>
                                 <Text style={[styles.textInput, styles.textFontRegular]}>Image :</Text>
                                 <AvatarPicker
-                                    setImage={setImage}
-                                    setValue={setValue}
+                                    onChange={onChangeImage}
                                 />
                                 {image &&
                                     <View style={styles.imageContainer}>

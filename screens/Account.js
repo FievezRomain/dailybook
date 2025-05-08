@@ -93,7 +93,9 @@ const AccountScreen = ({ navigation }) => {
         });
     }
 
-    const setValue = (key, value) => {
+    const onChangeImage = (imageUri) => {
+        setImage(imageUri);
+        setValue("image", imageUri);
     }
 
     const styles = StyleSheet.create({
@@ -123,8 +125,7 @@ const AccountScreen = ({ navigation }) => {
                     <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 20}}>
                         <AvatarPicker
                             backgroundColor={colors.background}
-                            setImage={setImage}
-                            setValue={setValue}
+                            onChange={onChangeImage}
                         />
                     </View>
                     <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>

@@ -136,8 +136,7 @@ const AnimalImageCarousel = ({ animalId }) => {
             />
         </View>
         <AvatarPicker
-            setImage={handleAddImage}
-            setValue={() => {}}
+            onChange={handleAddImage}
             ButtonComponent={({ onPress }) => (
                 <TouchableOpacity
                     onPress={onPress}
@@ -222,8 +221,7 @@ const AnimalImageCarousel = ({ animalId }) => {
 
         {currentMonthCount < LIMIT_PICTURE_BY_MONTH && 
             <AvatarPicker
-                setImage={handleAddImage}
-                setValue={() => {}}
+                onChange={handleAddImage}
                 ButtonComponent={({ onPress }) => (
                     <TouchableOpacity
                         onPress={onPress}

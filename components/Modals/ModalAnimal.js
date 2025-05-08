@@ -310,6 +310,11 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue(valueName, selectedDate);
     };
 
+    const onChangeImage = (imageUri) => {
+        setImage(imageUri);
+        setValue("image", imageUri);
+    }
+
     const convertDateToText = (fieldname) =>{
         var date = fieldname;
         if(date === undefined || date === null){
@@ -539,8 +544,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                     <View style={[styles.inputContainer, {marginBottom: 10}]}>
                                         <Text style={[styles.textInput, styles.textFontRegular]}>Image :</Text>
                                         <AvatarPicker
-                                            setImage={setImage}
-                                            setValue={setValue}
+                                            onChange={onChangeImage}
                                         />
                                         {image &&
                                             <View style={styles.imageContainer}>

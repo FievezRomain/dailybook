@@ -5,59 +5,65 @@ import ModalSubMenuAvatarPickerActions from './Modals/ModalSubMenuAvatarPicker';
 import { useState } from 'react';
 import ImageUtils from "../utils/ImageUtils";
 import { useTheme } from 'react-native-paper';
+import LoggerService from '../services/LoggerService';
 
-const AvatarPicker = ({ setImage, setValue, backgroundColor=null, ButtonComponent=undefined }) => {
+const AvatarPicker = ({ onChange, backgroundColor=null, ButtonComponent=undefined }) => {
   const { colors, fonts } = useTheme();
   const [modalVisibleSubMenu, setModalVisibleSubMenu] = useState(false);
   const imageUtils = new ImageUtils();
 
   const pickImageAsync = async () => {
-    // Demande la permission d'utiliser la lib photo
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert("Désolé, nous avons besoin des permissions d'accès à la librairie photo!");
-      return;
+    try{
+      // Demande la permission d'utiliser la lib photo
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert("Désolé, nous avons besoin des permissions d'accès à la librairie photo!");
+        return;
+      }
+
+      let result = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        quality: 1,
+        base64: true
+      });
+
+      if (!result.canceled) {
+        var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
+        onChange(uriImageCompressed);
+      }
+
+      setModalVisibleSubMenu(false);
+    }catch(error){
+      LoggerService.log("Erreur lors de la sélection d'une image depuis la librairie : " + error.message);
     }
-
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      quality: 1,
-      base64: true
-    });
-
-    if (!result.canceled) {
-      var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
-      setImage(uriImageCompressed);
-      setValue("image", uriImageCompressed);
-      //setValue("image", result.assets[0].base64);
-    }
-
-    setModalVisibleSubMenu(false);
   };
 
   // Fonction pour ouvrir l'appareil photo
   const takePhotoAsync = async () => {
-    // Demande la permission d'utiliser l'appareil photo
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Désolé, nous avons besoin des permissions de caméra pour faire cela!');
-      return;
+    try{
+      // Demande la permission d'utiliser l'appareil photo
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Désolé, nous avons besoin des permissions de caméra pour faire cela!');
+        return;
+      }
+
+      let result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        quality: 1,
+        base64: true
+      });
+
+      if (!result.canceled) {
+        var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
+        onChange(uriImageCompressed);
+        // setValue("image", result.assets[0].base64); // Si vous avez besoin de stocker l'image en base64
+      }
+
+      setModalVisibleSubMenu(false);
+    }catch(error){
+      LoggerService.log("Erreur lors de la sélection d'une image depuis la caméra : " + error.message);
     }
-
-    let result = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      quality: 1,
-      base64: true
-    });
-
-    if (!result.canceled) {
-      var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
-      setImage(uriImageCompressed);
-      setValue("image", uriImageCompressed);
-      // setValue("image", result.assets[0].base64); // Si vous avez besoin de stocker l'image en base64
-    }
-
-    setModalVisibleSubMenu(false);
   };
 
   const styles = StyleSheet.create({
