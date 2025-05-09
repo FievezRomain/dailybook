@@ -49,7 +49,8 @@ const DocumentPickerComponent = ({ onChange, value = [], backgroundColor = null,
           alert("Fichier non valide", validation.message);
           continue;
         }
-
+        
+        file.isNew = true;
         if (file.mimeType?.startsWith("image/")) {
           const compressedUri = await imageUtils.compressImage(file.uri);
           validatedAndProcessedFiles.push({ ...file, uri: compressedUri });

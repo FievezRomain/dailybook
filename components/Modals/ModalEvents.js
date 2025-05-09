@@ -24,6 +24,7 @@ import { useEvents } from "../../providers/EventsProvider";
 import Constants from 'expo-constants';
 import DocumentPickerComponent from "../DocumentPickerComponent";
 import FilesList from "../FilesList";
+import FileStorageService from "../../services/FileStorageService";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined, date=null}) => {
   const { colors, fonts } = useTheme();
@@ -44,6 +45,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [categorieDepense, setCategorieDepense] = useState(false);
   const [frequence, setFrequence] = useState(false);
   const [dateEvent, setDateEvent] = useState(null);
+  const fileStorageService = new FileStorageService();
   const list = [
     {title: "Balade", id: "balade"},
     {title: "Entraînement", id: "entrainement"},
@@ -237,134 +239,172 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   }
 
   const submitRegister = async(data) =>{
-    if(loading){
-      return;
-    }
-    var complete = true;
-    setLoading(true);
-
-    // Vérification complétion du formulaire
-    if(data.dateevent === undefined){
-      complete = false;
-      Toast.show({
-        type: "error",
-        position: "top",
-        text1: "Veuillez saisir une date pour l'événement"
-      });
-    }
-    if(selected.length === 0){
-      complete = false;
-      Toast.show({
-        type: "error",
-        position: "top",
-        text1: "Veuillez saisir un animal"
-      });
-    } else{
-      setValue("animaux", selected.map(function(item) { return item["id"] }));
-    }
-    if(data.nom === undefined){
-      complete = false;
-      Toast.show({
-        type: "error",
-        position: "top",
-        text1: "Veuillez saisir un nom d'événement"
-      });
-    }
-    if(eventType === false){
-      complete = false;
-      Toast.show({
-        type: "error",
-        position: "top",
-        text1: "Veuillez saisir un type d'événement"
-      });
-    } else{
-      if(eventType.id === "soins"){
-        if(data.datefinsoins !== undefined && ( new Date(data.dateevent) > new Date(data.datefinsoins) && new Date(data.dateevent).toISOString().split('T')[0] !== new Date(data.datefinsoins).toISOString().split('T')[0] )){
-          complete = false;
-          Toast.show({
-            type: "error",
-            position: "top",
-            text1: "Date de fin de traitement postérieure à la date d'evénement"
-          });
-        }
+    try{
+      if(loading){
+        return;
       }
-      if(eventType.id === "balade"){
-        if(data.datefinbalade !== undefined && ( new Date(data.dateevent) > new Date(data.datefinbalade) &&  new Date(data.dateevent).toISOString().split('T')[0] !== new Date(data.datefinbalade).toISOString().split('T')[0] )){
-          complete = false;
-          Toast.show({
-            type: "error",
-            position: "top",
-            text1: "Date de fin de balade postérieure à la date d'evénement"
-          });
-        }
-      }
-    }
+      var complete = true;
+      setLoading(true);
 
-    // Vérification de la valeur des entiers/décimal
-    if( !checkNumericFormat(data, "depense") || !checkNumericFormat(data, "dossart") || !checkNumericFormat(data, "placement") ){
-      complete = false;
-    }
-
-    // Si formulaire complet, on enregistre
-    if(complete === true){
-      // Mise à défaut de l'option notif si rien de selectionné
-      if(notifType === false)
-      {
-        data.notif = "JourJ";
-      }
-      if(frequence === false){
-        data.frequencevalue = "tlj";
-      }
-
-      // Récupération du expo token pour gérer les notifications
-      var expoToken = await AsyncStorage.getItem("userExpoToken");
-      var timezone = await AsyncStorage.getItem("userTimezone");
-      if(expoToken){
-        data.expotoken = JSON.parse(expoToken);
-      }
-      if(timezone){
-        data.timezone = JSON.parse(timezone);
-      }
-      data.email = currentUser.email;
-
-      if(actionType === "modify"){
-        eventsServiceInstance.update(data)
-        .then((reponse) =>{
-
-          resetValues();
-          closeModal();
-          onModify();
-          setLoading(false);
-
-        })
-        .catch((err) =>{
-          Toast.show({
-              type: "error",
-              position: "top",
-              text1: err.message
-          });
-          LoggerService.log( "Erreur lors de la MAJ d'un event : " + err.message );
-          setLoading(false);
-        });
-      } else {
-        eventsServiceInstance.create(data)
-        .then((reponse) =>{
-          closeModal();
-          onModify();
-          setLoading(false);
-        })
-        .catch((err) =>{
-          Toast.show({
-              type: "error",
-              position: "top",
-              text1: err.message
-          });
-          LoggerService.log( "Erreur lors de la création d'un event : " + err.message );
-          setLoading(false);
+      // Vérification complétion du formulaire
+      if(data.dateevent === undefined){
+        complete = false;
+        Toast.show({
+          type: "error",
+          position: "top",
+          text1: "Veuillez saisir une date pour l'événement"
         });
       }
-    } else{
-      setLoading(false);
+      if(selected.length === 0){
+        complete = false;
+        Toast.show({
+          type: "error",
+          position: "top",
+          text1: "Veuillez saisir un animal"
+        });
+      } else{
+        setValue("animaux", selected.map(function(item) { return item["id"] }));
+      }
+      if(data.nom === undefined){
+        complete = false;
+        Toast.show({
+          type: "error",
+          position: "top",
+          text1: "Veuillez saisir un nom d'événement"
+        });
+      }
+      if(eventType === false){
+        complete = false;
+        Toast.show({
+          type: "error",
+          position: "top",
+          text1: "Veuillez saisir un type d'événement"
+        });
+      } else{
+        if(eventType.id === "soins"){
+          if(data.datefinsoins !== undefined && ( new Date(data.dateevent) > new Date(data.datefinsoins) && new Date(data.dateevent).toISOString().split('T')[0] !== new Date(data.datefinsoins).toISOString().split('T')[0] )){
+            complete = false;
+            Toast.show({
+              type: "error",
+              position: "top",
+              text1: "Date de fin de traitement postérieure à la date d'evénement"
+            });
+          }
+        }
+        if(eventType.id === "balade"){
+          if(data.datefinbalade !== undefined && ( new Date(data.dateevent) > new Date(data.datefinbalade) &&  new Date(data.dateevent).toISOString().split('T')[0] !== new Date(data.datefinbalade).toISOString().split('T')[0] )){
+            complete = false;
+            Toast.show({
+              type: "error",
+              position: "top",
+              text1: "Date de fin de balade postérieure à la date d'evénement"
+            });
+          }
+        }
+      }
+
+      // Vérification de la valeur des entiers/décimal
+      if( !checkNumericFormat(data, "depense") || !checkNumericFormat(data, "dossart") || !checkNumericFormat(data, "placement") ){
+        complete = false;
+      }
+
+      // Si formulaire complet, on enregistre
+      if(complete === true){
+        // Mise à défaut de l'option notif si rien de selectionné
+        if(notifType === false)
+        {
+          data.notif = "JourJ";
+        }
+        if(frequence === false){
+          data.frequencevalue = "tlj";
+        }
+
+        // Récupération du expo token pour gérer les notifications
+        var expoToken = await AsyncStorage.getItem("userExpoToken");
+        var timezone = await AsyncStorage.getItem("userTimezone");
+        if(expoToken){
+          data.expotoken = JSON.parse(expoToken);
+        }
+        if(timezone){
+          data.timezone = JSON.parse(timezone);
+        }
+        data.email = currentUser.email;
+
+        // Gestions des fichiers
+        if( Array.isArray(data.documents) && data.documents.length > 0 ){
+          const docsToUpload = data.documents.filter(f => f.isNew && !f.toDelete);
+          const docsToKeep = data.documents.filter(f => !f.isNew && !f.toDelete);
+          const docsToRemove = data.documents.filter(f => !f.isNew && f.toDelete);
+          let documentsFilenameArray = [];
+
+          for (const doc of docsToUpload) {
+            let filename = doc.name.split("/");
+            filename = filename[filename.length-1];
+
+            await fileStorageService.uploadFile(doc.uri, filename, doc.mimeType, currentUser.uid);
+
+            documentsFilenameArray.push(filename);
+          }
+
+          for (const doc of docsToKeep) {
+            let filename = doc.name.split("/");
+            filename = filename[filename.length-1];
+
+            documentsFilenameArray.push(filename);
+          }
+        
+          for (const doc of docsToRemove) {
+            let filename = doc.name.split("/");
+            filename = filename[filename.length-1];
+
+            await fileStorageService.deleteFile(filename, currentUser.uid);
+          }
+
+          data.documents = documentsFilenameArray;
+        }
+
+        if(actionType === "modify"){
+          eventsServiceInstance.update(data)
+          .then((reponse) =>{
+
+            resetValues();
+            closeModal();
+            onModify();
+            setLoading(false);
+
+          })
+          .catch((err) =>{
+            Toast.show({
+                type: "error",
+                position: "top",
+                text1: err.message
+            });
+            LoggerService.log( "Erreur lors de la MAJ d'un event : " + err.message );
+            setLoading(false);
+          });
+        } else {
+          eventsServiceInstance.create(data)
+          .then((reponse) =>{
+            closeModal();
+            onModify();
+            setLoading(false);
+          })
+          .catch((err) =>{
+            Toast.show({
+                type: "error",
+                position: "top",
+                text1: err.message
+            });
+            LoggerService.log( "Erreur lors de la création d'un event : " + err.message );
+            setLoading(false);
+          });
+        }
+      } else{
+        setLoading(false);
+      }
+    } catch(error){
+      console.log(error);
+      LoggerService.log("Erreur lors de l'enregistrement/modification d'un event : " + error.message);
     }
   };
 
@@ -511,12 +551,18 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
   const onDocumentsChange = (documents) => {
     setValue("documents", documents);
-    console.log(documents);
   }
 
-  const markFileAsDeleted = (indexToDelete) => {
-    const updated = [...getValues("documents")];
-    updated[indexToDelete].toDelete = true;
+  const markFileAsDeleted = (filename) => {
+    let updated = [...getValues("documents")];
+    let index = updated.findIndex((a) => a.name === filename);
+
+    if( updated[index].isNew ){
+      updated.splice(index, 1);
+    } else{
+      updated[index].toDelete = true;
+    }
+
     setValue("documents", updated);
   };
 
@@ -890,7 +936,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                         <DocumentPickerComponent
                           onChange={onDocumentsChange}
                           accountType={accountType}
-                          value={watch("documents")}
+                          value={watch("documents") || []}
+                        />
+                        <FilesList
+                          onMarkDelete={markFileAsDeleted}
+                          files={watch("documents") || []}
                         />
                       </View>
                     </>
