@@ -75,8 +75,8 @@ const PetsScreen = ({ navigation }) => {
       if(animaux[0].food !== null ? setValue("food", animaux[0].food) : null);
       if(animaux[0].quantity !== null ? setValue("quantity", String(animaux[0].quantity)) : null);
       if(animaux[0].couleur !== null ? setValue("couleur", animaux[0].couleur) : null);
-      if(animaux[0].nomPere !== null ? setValue("nomPere", animaux[0].nomPere) : null);
-      if(animaux[0].nomMere !== null ? setValue("nomMere", animaux[0].nomMere) : null);
+      if(animaux[0].nompere !== null ? setValue("nompere", animaux[0].nomPere) : null);
+      if(animaux[0].nommere !== null ? setValue("nommere", animaux[0].nomMere) : null);
       if(animaux[0].datenaissance !== null ? setDate(animaux[0].datenaissance) : setDate(null));
   };
 
@@ -119,8 +119,8 @@ const PetsScreen = ({ navigation }) => {
       setValue("food", animalToDisplay.food !== null ? animalToDisplay.food : undefined);
       setValue("quantity", animalToDisplay.quantity !== null ? animalToDisplay.quantity.toString() : undefined);
       setValue("couleur", animalToDisplay.couleur !== null ? animalToDisplay.couleur : undefined);
-      setValue("nomPere", animalToDisplay.nompere !== null ? animalToDisplay.nompere : undefined);
-      setValue("nomMere", animalToDisplay.nommere !== null ? animalToDisplay.nommere : undefined);
+      setValue("nompere", animalToDisplay.nompere !== null ? animalToDisplay.nompere : undefined);
+      setValue("nommere", animalToDisplay.nommere !== null ? animalToDisplay.nommere : undefined);
       setDate(animalToDisplay.datenaissance !== null ? animalToDisplay.datenaissance : String(jour + "/" + mois + "/" + annee));
 
 

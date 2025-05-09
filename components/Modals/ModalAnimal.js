@@ -104,8 +104,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("unity", animal.unity !== null ? animal.unity : undefined);
         setUnity(animal.unity);
         setValue("couleur", animal.couleur !== null ? animal.couleur : undefined);
-        setValue("nomPere", animal.nompere !== null ? animal.nompere : undefined);
-        setValue("nomMere", animal.nommere !== null ? animal.nommere : undefined);
+        setValue("nompere", animal.nompere !== null ? animal.nompere : undefined);
+        setValue("nommere", animal.nommere !== null ? animal.nommere : undefined);
         setValue("numeroidentification", animal.numeroidentification !== null ? animal.numeroidentification : undefined);
         setValue("image", animal.image);
         setValue("previousimage", animal.image);
@@ -136,8 +136,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("quantity", undefined);
         setValue("unity", undefined);
         setValue("couleur", undefined);
-        setValue("nomPere", undefined);
-        setValue("nomMere", undefined);
+        setValue("nompere", undefined);
+        setValue("nommere", undefined);
         setValue("image", undefined);
         setValue("numeroidentification", undefined);
         setValue("informations", undefined);
@@ -711,8 +711,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Esgard"
                                             placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("nomPere", text)}
-                                            defaultValue={getValues("nomPere")}
+                                            onChangeText={(text) => setValue("nompere", text)}
+                                            defaultValue={getValues("nompere")}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>
@@ -721,8 +721,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
                                             style={[styles.input, styles.textFontRegular]}
                                             placeholder="Exemple : Sherry"
                                             placeholderTextColor={colors.secondary}
-                                            onChangeText={(text) => setValue("nomMere", text)}
-                                            defaultValue={getValues("nomMere")}
+                                            onChangeText={(text) => setValue("nommere", text)}
+                                            defaultValue={getValues("nommere")}
                                         />
                                     </View>
                                     <View style={styles.inputContainer}>

@@ -345,26 +345,26 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                           />
                         </View>
                       }
-                      {isValidString(animal.nomPere) &&
+                      {isValidString(animal.nompere) &&
                         <View style={styles.inputContainer}>
                           <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom du père :</Text>
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Esgard"
                               placeholderTextColor={colors.secondary}
-                              defaultValue={animal.nomPere}
+                              defaultValue={animal.nompere}
                               editable={false}
                           />
                         </View>
                       }
-                      {isValidString(animal.nomMere) &&
+                      {isValidString(animal.nommere) &&
                         <View style={styles.inputContainer}>
                           <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom de la mère :</Text>
                           <TextInput
                               style={[styles.input, styles.textFontRegular]}
                               placeholder="Exemple : Sherry"
                               placeholderTextColor={colors.secondary}
-                              defaultValue={animal.nomMere}
+                              defaultValue={animal.nommere}
                               editable={false}
                           />
                         </View>

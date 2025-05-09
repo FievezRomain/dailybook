@@ -18,8 +18,8 @@ export const initValuesAnimal = (animal, setValue, setEspece, setImage, setDate,
     setValue("food", animal.food || undefined);
     setValue("quantity", animal.quantity?.toString());
     setValue("couleur", animal.couleur || undefined);
-    setValue("nomPere", animal.nompere || undefined);
-    setValue("nomMere", animal.nommere || undefined);
+    setValue("nompere", animal.nompere || undefined);
+    setValue("nommere", animal.nommere || undefined);
     setValue("image", animal.image);
     setValue("previousimage", animal.image);
     setDate(animal.datenaissance ? dateUtils.dateFormatter(animal.datenaissance, "yyyy-mm-dd", "-") : null);
@@ -39,8 +39,8 @@ export const resetValues = (setValue, setDate, setEspece) => {
     setValue("food", undefined);
     setValue("quantity", undefined);
     setValue("couleur", undefined);
-    setValue("nomPere", undefined);
-    setValue("nomMere", undefined);
+    setValue("nompere", undefined);
+    setValue("nommere", undefined);
     setValue("image", undefined);
     setDate(new Date().toISOString().slice(0, 10)); // Exemple : Aujourd'hui
     setEspece(undefined);

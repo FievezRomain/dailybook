@@ -41,8 +41,8 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
                     if(animal.poids !== null ? setValue("poids", String(animal.poids)) : null);
                     if(animal.sexe !== null ? setValue("sexe", animal.sexe) : null);
                     if(animal.couleur !== null ? setValue("couleur", animal.couleur) : null);
-                    if(animal.nomPere !== null ? setValue("nomPere", animal.nomPere) : null);
-                    if(animal.nomMere !== null ? setValue("nomMere", animal.nomMere) : null);
+                    if(animal.nompere !== null ? setValue("nompere", animal.nompere) : null);
+                    if(animal.nommere !== null ? setValue("nommere", animal.nommere) : null);
                     if(animal.datenaissance != null ? setDate(animal.datenaissance) : setDate(null));
                 }
                 
@@ -83,8 +83,8 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
         setValue("poids", null);
         setValue("sexe", null);
         setValue("couleur", null);
-        setValue("nomPere", null);
-        setValue("nomMere", null);
+        setValue("nompere", null);
+        setValue("nommere", null);
         today = new Date();
         jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
         mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
