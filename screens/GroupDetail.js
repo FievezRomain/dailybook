@@ -6,30 +6,20 @@ import groupServiceInstance from '../services/GroupService';
 import GroupCard from '../components/cards/GroupCard';
 import TopTabSecondary from '../components/TopTabSecondary';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRoute } from '@react-navigation/native';
 import { useGroups } from '../providers/GroupProvider';
 
-const GroupListScreen = () => {
+const GroupDetailScreen = ( ) => {
   const { colors } = useTheme();
   const { currentUser } = useAuth();
-  const { groups, setGroups } = useGroups();
+  const route = useRoute();
+  const { group } = route.params;
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchGroups = async () => {
-    try {
-      setRefreshing(true);
-      setLoading(true);
-      await groupServiceInstance.refreshCache(currentUser.email);
-    } catch (error) {
-      console.error('Erreur lors du chargement des groupes :', error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
   const onRefresh = () => {
-    fetchGroups();
+    setRefreshing(true);
+    groupServiceInstance.refreshCache(currentUser.email);
   };
 
   if (loading) {
@@ -43,27 +33,11 @@ const GroupListScreen = () => {
   return (
     <>
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-        <TopTabSecondary message1={"Vos"} message2={"Groupes"}/>
-        <FlatList
-          data={groups}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <GroupCard group={item} />}
-          contentContainerStyle={{ padding: 16 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              colors={[colors.primary]}
-              tintColor={colors.primary}
-            />
-          }
-          ListEmptyComponent={
-            <Text style={{ textAlign: 'center', marginTop: 20, color: colors.default_dark }}>Aucun groupe pour le moment</Text>
-          }
-        />
+        <TopTabSecondary message1={"Vos"} message2={group.name}/>
+        
       </LinearGradient>
     </>
   );
 };
 
-export default GroupListScreen;
+export default GroupDetailScreen;

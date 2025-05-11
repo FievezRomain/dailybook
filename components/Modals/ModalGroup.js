@@ -193,55 +193,53 @@ const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = 
                                 {...register("name", { required: true })}
                             />
                         </View>
-                        {actionType === "create" && 
-                            <>
-                                <View style={styles.inputContainer}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Animaux :</Text>
-                                    <TouchableOpacity 
-                                        style={styles.textInput}
-                                        disabled={animaux.length > 0 ? false : true}
-                                        onPress={()=>{ Keyboard.dismiss(); setModalSelectAnimalsIsVisible(true)}}
-                                    >
-                                    <View style={styles.containerAnimaux}>
-                                        {selected.length == 0 && animaux.length > 0 &&
-                                            <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Sélectionner un ou plusieurs animaux</Text></View>
-                                        }
-                                        {selected.map((animal, index) => {
-                                            return (
-                                                <View key={animal.id} style={styles.containerBadgeAnimal}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{animal.nom}</Text></View>
-                                            );
-                                        })}
-                                    </View>
+                        <View style={styles.inputContainer}>
+                            <Text style={[styles.textInput, styles.textFontRegular]}>Animaux :</Text>
+                            <TouchableOpacity 
+                                style={styles.textInput}
+                                disabled={animaux.length > 0 ? false : true || actionType !== "create"}
+                                onPress={()=>{ Keyboard.dismiss(); setModalSelectAnimalsIsVisible(true)}}
+                            >
+                                <View style={styles.containerAnimaux}>
+                                    {selected.length == 0 && animaux.length > 0 &&
+                                        <View style={[styles.containerBadgeAnimal, {width: "100%"}]}><Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Sélectionner un ou plusieurs animaux</Text></View>
+                                    }
+                                    {selected.map((animal, index) => {
+                                        return (
+                                            <View key={animal.id} style={styles.containerBadgeAnimal}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{animal.nom}</Text></View>
+                                        );
+                                    })}
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={[styles.inputContainer]}>
+                            <Text style={[styles.textInput, styles.textFontRegular]}>Membres : <Text style={{color: "red"}}>*</Text></Text>
+                            {members.map((value, index) => (
+                                <View style={styles.membersContainer} key={index}>
+                                    <TextInput
+                                        style={[styles.inputMember, styles.textFontRegular]}
+                                        defaultValue={value}
+                                        onChangeText={(text) => updateMembers(index, text)}
+                                        placeholder="Entrez une adresse e-mail"
+                                        placeholderTextColor={colors.secondary}
+                                        editable={actionType !== "create"}
+                                    />
+                                    <TouchableOpacity onPress={() => removeMember(index)}>
+                                        <AntDesign name="delete" size={20} color={colors.default_dark}/>
                                     </TouchableOpacity>
                                 </View>
-
-                                <View style={[styles.inputContainer]}>
-                                    <Text style={[styles.textInput, styles.textFontRegular]}>Membres : <Text style={{color: "red"}}>*</Text></Text>
-                                    {members.map((value, index) => (
-                                        <View style={styles.membersContainer} key={index}>
-                                            <TextInput
-                                                style={[styles.inputMember, styles.textFontRegular]}
-                                                defaultValue={value}
-                                                onChangeText={(text) => updateMembers(index, text)}
-                                                placeholder="Entrez une adresse e-mail"
-                                                placeholderTextColor={colors.secondary}
-                                            />
-                                            <TouchableOpacity onPress={() => removeMember(index)}>
-                                                <AntDesign name="delete" size={20} color={colors.default_dark}/>
-                                            </TouchableOpacity>
-                                        </View>
-                                    ))}
-                                    <Button
-                                        onPress={addMember}
-                                        type={"primary"}
-                                        size={"s"}
-                                        isLong={true}
-                                    >
-                                        <Text style={styles.textFontMedium}>Ajouter un membre</Text>
-                                    </Button>
-                                </View>
-                            </>
-                        }
+                            ))}
+                            <Button
+                                onPress={addMember}
+                                type={"primary"}
+                                size={"s"}
+                                isLong={true}
+                                disabled={actionType !== "create"}
+                            >
+                                <Text style={styles.textFontMedium}>Ajouter un membre</Text>
+                            </Button>
+                        </View>
                     </View>
                 </KeyboardAwareScrollView>
             </View>

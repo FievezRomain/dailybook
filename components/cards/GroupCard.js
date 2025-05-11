@@ -1,61 +1,59 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Text, Card, useTheme, IconButton } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const GroupCard = ({ group }) => {
   const { colors, fonts } = useTheme();
   const navigation = useNavigation();
 
   const handlePress = () => {
-    console.log("navigation");
-    //navigation.navigate('GroupDetail', { groupId: group.id });
+    navigation.navigate('GroupDetail', { group: group });
   };
+
+  const styles = StyleSheet.create({
+    card: {
+      marginBottom: 12,
+      borderRadius: 5,
+      elevation: 2,
+      backgroundColor: colors.background,
+      shadowColor: colors.default_dark,
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      shadowOffset: {width: 0, height: 1},
+      elevation: 2,
+      padding: 15
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    textFontBold:{
+      fontFamily: fonts.bodyLarge.fontFamily
+    },
+    textFontMedium:{
+      fontFamily: fonts.bodyMedium.fontFamily
+    },
+    iconAction:{
+      color: colors.accent,
+      paddingRight: 10
+    },
+  });
 
   return (
     <TouchableOpacity onPress={handlePress}>
-      <Card style={styles.card}>
-        <Card.Content>
+      <View style={styles.card}>
+        <View>
           <View style={styles.header}>
-            <Text style={[styles.title, { color: colors.primary }]}>{group.name}</Text>
-            {group.membersCount !== undefined && (
-              <Text style={styles.memberCount}>{group.membersCount} membre{group.membersCount > 1 ? 's' : ''}</Text>
-            )}
+            <Text style={[styles.textFontMedium, { color: colors.default_dark }]}>{group.name}</Text>
+            <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
           </View>
-          {group.description && (
-            <Text style={[styles.description, { color: colors.onSurfaceVariant }]}>
-              {group.description}
-            </Text>
-          )}
-        </Card.Content>
-      </Card>
+        </View>
+      </View>
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    marginBottom: 12,
-    borderRadius: 12,
-    elevation: 2,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  memberCount: {
-    fontSize: 14,
-    opacity: 0.7,
-  },
-  description: {
-    marginTop: 8,
-    fontSize: 14,
-  }
-});
 
 export default GroupCard;

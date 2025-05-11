@@ -17,6 +17,7 @@ import DiscoverPremiumScreen from "./DiscoverPremium";
 import AccountScreen from "./Account";
 import ContactScreen from "./Contact";
 import GroupListScreen from "./GroupList";
+import GroupDetailScreen from './GroupDetail';
 //import { ForgotPasswordScreen } from './ForgotPasswordScreen';
 
-module.exports = { SignInScreen, SignUpScreen, VerifyEmailScreen, WelcomeScreen, HomeScreen, LoadingScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen, NoteScreen, WishScreen, FirstPageAddAnimalScreen, DiscoverPremiumScreen, AccountScreen, ContactScreen, OtherScreen, GroupListScreen };
+module.exports = { SignInScreen, SignUpScreen, VerifyEmailScreen, WelcomeScreen, HomeScreen, LoadingScreen, PetsScreen, ActionScreen, CalendarScreen, StatsScreen, SettingsScreen, NoteScreen, WishScreen, FirstPageAddAnimalScreen, DiscoverPremiumScreen, AccountScreen, ContactScreen, OtherScreen, GroupListScreen, GroupDetailScreen };
