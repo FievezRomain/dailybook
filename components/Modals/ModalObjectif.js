@@ -247,7 +247,8 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         },
         form: {
             width: "100%",
-            paddingBottom: 40
+            paddingBottom: 40,
+            flex: 1
         },
         containerActionsButtons: {
             flexDirection: "row",

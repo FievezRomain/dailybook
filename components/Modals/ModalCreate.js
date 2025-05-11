@@ -7,29 +7,25 @@ import ModalWish from "../../components/Modals/ModalWish";
 import ModalContact from "../../components/Modals/ModalContact";
 import ModalNote from "../../components/Modals/ModalNote";
 import ModalAnimal from "../../components/Modals/ModalAnimal";
+import ModalGroup from "./ModalGroup";
 import Toast from "react-native-toast-message";
 import { useTheme, Divider } from 'react-native-paper';
 import ModalEditGeneric from "./ModalEditGeneric";
 import { useCalendar } from "../../providers/CalendarProvider";
-import { LinearGradient } from "expo-linear-gradient";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
 
 const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
   const { colors, fonts } = useTheme();
+  const { abonnement } = useAuth();
+  const accountType = abonnement.libelle;
   const [isEventModalVisible, setEventModalVisible] = useState(false);
   const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
   const [isWishModalVisible, setWishModalVisible] = useState(false);
   const [isContactModalVisible, setContactModalVisible] = useState(false);
   const [isNoteModalVisible, setNoteModalVisible] = useState(false);
   const [isAnimalModalVisible, setAnimalModalVisible] = useState(false);
+  const [isGroupModalVisible, setGroupModalVisible] = useState(false);
   const [event, setEvent] = useState({});
-  const list = [
-    {title: "Balade", id: "balade"},
-    {title: "Entrainement", id: "entrainement"},
-    {title: "Concours", id: "concours"},
-    {title: "Rendez-vous", id: "rdv"},
-    {title: "Soin", id: "soins"},
-    {title: "Autre", id: "autre"},
-  ];
   const { date } = useCalendar();
 
   const openModalEvent = (typeEvent) =>{
@@ -90,6 +86,15 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
       type: "success",
       position: "top",
       text1: "Création d'un objectif réussi"
+    }), 300);
+  }
+
+  const handleCreateGroup = () =>{
+    setModalVisible(false);
+    setTimeout(() => Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Création d'un groupe réussi"
     }), 300);
   }
 
@@ -232,6 +237,12 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
         isVisible={isAnimalModalVisible}
         setVisible={setAnimalModalVisible}
         onModify={handleCreateAnimal}
+      />
+      <ModalGroup
+        actionType={"create"}
+        isVisible={isGroupModalVisible}
+        setVisible={setGroupModalVisible}
+        onModify={handleCreateGroup}
       />
       <View style={{display: "flex", alignContent: "center", backgroundColor: colors.onSurface, flex: 1}}>
         <View style={styles.form}>
@@ -401,21 +412,24 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                 </View>
               </View>
 
-              {/* <TouchableOpacity disabled={true} style={styles.button}>
-                <View style={styles.touchableOpacityButtonContent}>
-                  <View style={styles.informationsButtonContainer}>
-                    <FontAwesome name="group" size={20} style={styles.iconButton}/>
-                    <Text style={[{color: colors.quaternary}, styles.textFontRegular]}>Groupe</Text>
-                  </View>
-                  <View style={styles.actionButtonContainer}>
-                    <Entypo name="lock" size={20} style={styles.iconAction}/>
-                    <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
-                  </View>
+              <View style={styles.groupButton}> 
+                <View style={styles.button}>
+                  <TouchableOpacity disabled={accountType !== "Premium"} onPress={() => setGroupModalVisible(true)}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <FontAwesome name="group" size={20} style={styles.iconButton}/>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>Groupe</Text>
+                      </View>
+                      <View style={styles.actionButtonContainer}>
+                        {accountType !== "Premium" && <Entypo name="lock" size={20} style={styles.iconAction}/> }
+                        <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+                      </View>
+                    </View>
+                    <Divider />
+                  </TouchableOpacity>
                 </View>
-                <Divider />
-              </TouchableOpacity>
-
-              <TouchableOpacity disabled={true} style={styles.button}>
+              </View>
+              {/*<TouchableOpacity disabled={true} style={styles.button}>
                 <View style={styles.touchableOpacityButtonContent}>
                   <View style={styles.informationsButtonContainer}>
                     <MaterialCommunityIcons name="barn" size={25} style={styles.iconButton}/>
