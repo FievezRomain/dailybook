@@ -53,7 +53,7 @@ class GroupService {
             return axios
             .get(`${getBaseUrl()}groups?email=${email}`)
             .then(async({data}) => {
-                await this.putInCache(data.rows);
+                await this.putInCache(data);
                 return await this.getCache();
             })
             .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les groupes : " + err.message ));

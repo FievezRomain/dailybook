@@ -6,12 +6,14 @@ import objectifsServiceInstance from '../services/ObjectifService';
 import contactsServiceInstance from '../services/ContactService';
 import notesServiceInstance from '../services/NoteService';
 import wishsServiceInstance from '../services/WishService';
+import groupServiceInstance from '../services/GroupService';
 import { useAnimaux } from './AnimauxProvider';
 import { useEvents } from "./EventsProvider";
 import { useObjectifs } from "./ObjectifsProvider";
 import { useContacts } from "./ContactsProvider";
 import { useNotes } from "./NotesProvider";
 import { useWishs } from "./WishProvider";
+import { useGroups } from './GroupProvider';
 import AuthService from "../services/AuthService";
 import { getFirebaseAuth } from '../firebase';
 import LoggerService from '../services/LoggerService';
@@ -33,6 +35,7 @@ export const AuthenticatedUserProvider =  ({ children }) => {
   const { setWishs } = useWishs();
   const { setNotes } = useNotes();
   const { setContacts } = useContacts();
+  const { setGroups } = useGroups();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -58,12 +61,14 @@ export const AuthenticatedUserProvider =  ({ children }) => {
         contactsServiceInstance.initialize( setContacts );
         notesServiceInstance.initialize( setNotes );
         wishsServiceInstance.initialize( setWishs );
+        groupServiceInstance.initialize( setGroups );
         await animalsServiceInstance.refreshCache(email);
         await eventsServiceInstance.refreshCache(email);
         await objectifsServiceInstance.refreshCache(email);
         await notesServiceInstance.refreshCache(email);
         await contactsServiceInstance.refreshCache(email);
         await wishsServiceInstance.refreshCache(email);
+        await groupServiceInstance.refreshCache(email);
     } catch (error) {
         LoggerService.log( "Erreur lors de la mise à jour du cache : " + error.message );
         console.error('Erreur lors de la mise à jour du cache :', error);
