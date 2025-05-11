@@ -10,7 +10,8 @@ const OtherScreen = ({ navigation }) => {
     const buttons = [
         { id: 1, icon: "heart", label: "Wishlist", screen: "Wish" },
         { id: 2, icon: "contacts", label: "Contacts", screen: "Contact" },
-        { id: 3, icon: "note-edit-outline", label: "Notes", screen: "Note"}
+        { id: 3, icon: "note-edit-outline", label: "Notes", screen: "Note"},
+        { id: 4, icon: "account-group", label: "Groupes", screen: "GroupList"},
     ];
 
     const renderButton = ({ item }) => {
