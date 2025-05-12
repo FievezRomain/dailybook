@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated } from "react-native";
 import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
-import AnimalsPicker from "../components/AnimalsPicker";
+import AnimalsPicker from "../components/inputs/AnimalsPicker";
 import { useForm } from "react-hook-form";
 import animalsServiceInstance from "../services/AnimalsService";
 import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import InformationsAnimals from "../components/InformationsAnimals";
 import Toast from "react-native-toast-message";
-import AnimalBody from "../components/AnimalBody";
+import AnimalBody from "../components/animal_body/AnimalBody";
 import MedicalBook from "../components/MedicalBook";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import DateUtils from '../utils/DateUtils';

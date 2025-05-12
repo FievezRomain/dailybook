@@ -1,8 +1,8 @@
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, FlatList } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from "expo-image";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
-import FileStorageService from "../services/FileStorageService";
+import { useAuth } from "../../providers/AuthenticatedUserProvider";
+import FileStorageService from "../../services/FileStorageService";
 import { useTheme } from 'react-native-paper';
 import { PanGestureHandler } from "react-native-gesture-handler";
 import React, { useRef } from "react";

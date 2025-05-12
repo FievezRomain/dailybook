@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, Image } from "react-native";
 import Button from "../../inputs/Button";
-import AnimalsPicker from "../../AnimalsPicker";
+import AnimalsPicker from "../../inputs/AnimalsPicker";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
 

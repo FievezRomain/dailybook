@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity } from "react-nativ
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
-import AnimalsPicker from "../AnimalsPicker";
+import AnimalsPicker from "../inputs/AnimalsPicker";
 import { CalendarFilter } from "../../business/models/CalendarFilter";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "./common/ModalEditGeneric";

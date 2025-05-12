@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Image, Animated } from "react-native";
 import TopTab from '../components/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { TouchableOpacity } from "react-native";
-import AnimalsPicker from "../components/AnimalsPicker";
+import AnimalsPicker from "../components/inputs/AnimalsPicker";
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
