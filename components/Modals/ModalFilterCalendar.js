@@ -5,7 +5,7 @@ import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import AnimalsPicker from "../AnimalsPicker";
 import { CalendarFilter } from "../../business/models/CalendarFilter";
 import { useTheme } from 'react-native-paper';
-import ModalEditGeneric from "./ModalEditGeneric";
+import ModalEditGeneric from "./common/ModalEditGeneric";
 import { useAnimaux } from "../../providers/AnimauxProvider";
 
 const ModalFilterCalendar = ({modalVisible, setModalVisible, setFilter, filter}) =>{

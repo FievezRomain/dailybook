@@ -6,20 +6,19 @@ import AutreCard from './eventCards/AutreCard';
 import EntrainementCard from './eventCards/EntrainementCard';
 import ConcoursCard from './eventCards/ConcoursCard';
 import RdvCard from './eventCards/RdvCard';
-import ModalEvents from "../Modals/ModalEvents";
+import ModalEvents from "../modals/events/ModalEvents";
 import DepenseCard from "./eventCards/DepenseCard";
 import React, { useEffect, useState, useContext } from 'react';
-import ModalSubMenuEventActions from "../Modals/ModalSubMenuEventActions";
+import ModalSubMenuEventActions from "../modals/events/ModalSubMenuEventActions";
 import { useAnimaux } from "../../providers/AnimauxProvider";
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
-import ModalEventDetails from "../Modals/ModalEventDetails";
+import ModalEventDetails from "../modals/events/ModalEventDetails";
 import eventsServiceInstance from "../../services/EventService";
 import LoggerService from '../../services/LoggerService';
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
-import ModalValidation from "../Modals/ModalValidation";
+import ModalValidation from "../modals/common/ModalValidation";
 import Feather from '@expo/vector-icons/Feather';
-import SvgComponent from "../SvgComponent";
 
 const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=false, withState=false, typeEvent=undefined}) => {
     const { colors, fonts } = useTheme();

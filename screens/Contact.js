@@ -6,13 +6,13 @@ import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { Entypo, Zocial } from '@expo/vector-icons';
 import { Linking } from 'react-native';
 import LoggerService from '../services/LoggerService';
-import ModalSubMenuContactActions from '../components/Modals/ModalSubMenuContactActions';
-import ModalContact from "../components/Modals/ModalContact";
+import ModalSubMenuContactActions from '../components/modals/contacts/ModalSubMenuContactActions';
+import ModalContact from "../components/modals/contacts/ModalContact";
 import Toast from "react-native-toast-message";
 import { LinearGradient } from "expo-linear-gradient";
-import ModalDefaultNoValue from '../components/Modals/ModalDefaultNoValue';
+import ModalDefaultNoValue from '../components/modals/common/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
-import ModalValidation from "../components/Modals/ModalValidation";
+import ModalValidation from "../components/modals/common/ModalValidation";
 import { useContacts } from '../providers/ContactsProvider';
 
 const ContactScreen = ({ navigation }) => {

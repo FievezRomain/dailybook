@@ -7,11 +7,12 @@ import GroupCard from '../components/cards/GroupCard';
 import TopTabSecondary from '../components/TopTabSecondary';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGroups } from '../providers/GroupProvider';
+import LoggerService from '../services/LoggerService';
 
 const GroupListScreen = () => {
   const { colors } = useTheme();
   const { currentUser } = useAuth();
-  const { groups, setGroups } = useGroups();
+  const { groups } = useGroups();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -22,6 +23,7 @@ const GroupListScreen = () => {
       await groupServiceInstance.refreshCache(currentUser.email);
     } catch (error) {
       console.error('Erreur lors du chargement des groupes :', error);
+      LoggerService.log('Erreur lors du chargement des groupes :' + error.message);
     } finally {
       setLoading(false);
       setRefreshing(false);

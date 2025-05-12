@@ -5,7 +5,7 @@ import wallpaper_login from "../assets/wallpaper_login.png";
 import AuthService from "../services/AuthService";
 import Toast from "react-native-toast-message";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Button from "../components/Button";
+import Button from "../components/inputs/Button";
 import Back from "../components/Back";
 import { getFirebaseAuth } from "../firebase";
 import { MaterialIcons } from '@expo/vector-icons';

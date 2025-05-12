@@ -6,9 +6,8 @@ import { useAuth } from "../../../providers/AuthenticatedUserProvider";
 import { ActivityIndicator } from "react-native";
 import LoggerService from "../../../services/LoggerService";
 import { Divider, useTheme } from 'react-native-paper';
-import ModalEditGeneric from "../ModalEditGeneric";
+import ModalEditGeneric from "../common/ModalEditGeneric";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import InputTextInLine from "../../InputTextInLine";
 
 const ModalModificationName = ({isVisible, setVisible, onModify=undefined}) => {
     const { colors, fonts } = useTheme();

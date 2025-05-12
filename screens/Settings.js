@@ -1,28 +1,23 @@
 import { View, Text, StyleSheet, Linking } from "react-native";
 import React, { useContext, useEffect, useState } from 'react';
-import Back from "../components/Back";
-import LogoutModal from "../components/Modals/ModalLogout";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Constants from 'expo-constants';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Image } from "expo-image";
-import ModalVerif from "../components/Modals/ModalVerif";
 import { ThemeContext } from '../providers/ThemeProvider';
 import { Divider, IconButton, useTheme } from 'react-native-paper';
-import TopTab from "../components/TopTab";
 import { LinearGradient } from "expo-linear-gradient";
-import ModalValidation from "../components/Modals/ModalValidation";
-import ModalSubMenuAvatarPickerActions from "../components/Modals/ModalSubMenuAvatarPicker";
+import ModalValidation from "../components/modals/common/ModalValidation";
+import ModalSubMenuAvatarPickerActions from "../components/modals/common/ModalSubMenuAvatarPicker";
 import * as ImagePicker from 'expo-image-picker';
 import ImageUtils from "../utils/ImageUtils";
 import AuthService from "../services/AuthService";
 import LoggerService from "../services/LoggerService";
 import Toast from "react-native-toast-message";
 import FileStorageService from "../services/FileStorageService";
-import ModalModificationName from "../components/Modals/User/ModalModificationName";
-import ModalModificationPassword from "../components/Modals/User/ModalModificationPassword";
+import ModalModificationName from "../components/modals/user/ModalModificationName";
+import ModalModificationPassword from "../components/modals/user/ModalModificationPassword";
 import TopTabSecondary from "../components/TopTabSecondary";
 
 const SettingsScreen = ({ }) => {

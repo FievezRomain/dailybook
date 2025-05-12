@@ -2,15 +2,14 @@ import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
-import CompletionBar from './CompletionBar';
-import ModalSubMenuObjectifActions from './Modals/ModalSubMenuObjectifActions';
-import ModalObjectif from './Modals/ModalObjectif';
-import ModalObjectifSubTasks from './Modals/ModalObjectifSubTasks';
+import ModalSubMenuObjectifActions from './modals/objectifs/ModalSubMenuObjectifActions';
+import ModalObjectif from './modals/objectifs/ModalObjectif';
+import ModalObjectifSubTasks from './modals/objectifs/ModalObjectifSubTasks';
 import ObjectifCard from './cards/ObjectifCard';
-import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import ModalDefaultNoValue from './modals/common/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 import { useObjectifs } from '../providers/ObjectifsProvider'; 
-import StatePicker from './StatePicker';
+import StatePicker from './inputs/StatePicker';
 import { isAfter, isBefore, isEqual, startOfDay } from 'date-fns';
 
 const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }) =>{

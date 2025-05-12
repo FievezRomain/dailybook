@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { IconButton, Text, useTheme } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
 const GroupCard = ({ group }) => {
   const { colors, fonts } = useTheme();
@@ -25,7 +25,7 @@ const GroupCard = ({ group }) => {
       elevation: 2,
       padding: 15
     },
-    header: {
+    containerCard: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -36,19 +36,38 @@ const GroupCard = ({ group }) => {
     textFontMedium:{
       fontFamily: fonts.bodyMedium.fontFamily
     },
-    iconAction:{
+    arrow:{
       color: colors.accent,
       paddingRight: 10
     },
+    icon:{
+      color: colors.default_dark, 
+      marginLeft: 10
+    }
   });
 
   return (
     <TouchableOpacity onPress={handlePress}>
       <View style={styles.card}>
         <View>
-          <View style={styles.header}>
-            <Text style={[styles.textFontMedium, { color: colors.default_dark }]}>{group.name}</Text>
-            <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
+          <View style={styles.containerCard}>
+            <View style={{width:"50%"}}>
+              <Text style={[styles.textFontMedium, { color: colors.default_dark }]}>{group.name}</Text>
+            </View>
+            <View style={{width:"30%", flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+              <View style={{flexDirection: "row", alignItems: "center"}}>
+                <Text style={[styles.textFontMedium, { color: colors.default_dark }]}>{group.nb_animaux}</Text>
+                <MaterialCommunityIcons name={"paw"} size={16} style={styles.icon} />
+              </View>
+              <View style={{flexDirection: "row", alignItems: "center"}}>
+                <Text style={[styles.textFontMedium, { color: colors.default_dark }]}>{group.nb_members}</Text>
+                <Ionicons name="person" size={14} style={styles.icon}/>
+              </View>
+            </View>
+            <View style={{width:"20%", alignItems: "flex-end"}}>
+              <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.arrow}/>
+            </View>
+            
           </View>
         </View>
       </View>

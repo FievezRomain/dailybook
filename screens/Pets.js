@@ -14,7 +14,7 @@ import DateUtils from '../utils/DateUtils';
 import LoggerService from "../services/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from 'react-native-paper';
-import ModalValidation from "../components/Modals/ModalValidation";
+import ModalValidation from "../components/modals/common/ModalValidation";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAnimaux } from "../providers/AnimauxProvider";
 

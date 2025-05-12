@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityInd
 import { useForm } from "react-hook-form";
 import wallpaper_login from "../assets/wallpaper_login.png";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Button from "../components/Button";
+import Button from "../components/inputs/Button";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { getFirebaseAuth } from "../firebase";
 import { useAuth } from "../providers/AuthenticatedUserProvider";

@@ -1,16 +1,16 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useState, useContext } from "react";
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
-import ModalEvents from "../../components/Modals/ModalEvents";
-import ModalObjectif from "../../components/Modals/ModalObjectif";
-import ModalWish from "../../components/Modals/ModalWish";
-import ModalContact from "../../components/Modals/ModalContact";
-import ModalNote from "../../components/Modals/ModalNote";
-import ModalAnimal from "../../components/Modals/ModalAnimal";
-import ModalGroup from "./ModalGroup";
+import ModalEvents from "../../components/modals/events/ModalEvents";
+import ModalObjectif from "../../components/modals/objectifs/ModalObjectif";
+import ModalWish from "../../components/modals/wishs/ModalWish";
+import ModalContact from "../../components/modals/contacts/ModalContact";
+import ModalNote from "../../components/modals/notes/ModalNote";
+import ModalAnimal from "../../components/modals/animals/ModalAnimal";
+import ModalGroup from "./groups/ModalGroup";
 import Toast from "react-native-toast-message";
 import { useTheme, Divider } from 'react-native-paper';
-import ModalEditGeneric from "./ModalEditGeneric";
+import ModalEditGeneric from "./common/ModalEditGeneric";
 import { useCalendar } from "../../providers/CalendarProvider";
 import { useAuth } from "../../providers/AuthenticatedUserProvider";
 

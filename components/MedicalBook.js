@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image, FlatList } from 'react-native';
-import StatePicker from './StatePicker';
+import StatePicker from './inputs/StatePicker';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import EventCard from "./cards/EventCard";
-import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import ModalDefaultNoValue from './modals/common/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 import { useEvents } from '../providers/EventsProvider';
 import Toast from "react-native-toast-message";

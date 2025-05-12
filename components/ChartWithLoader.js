@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import statisticServiceInstance from "../services/StatisticService";
-import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import ModalDefaultNoValue from './modals/common/ModalDefaultNoValue';
 import { useEvents } from '../providers/EventsProvider';
 import { addColorsToData } from '../utils/Colors';
 import { useTheme } from 'react-native-paper';

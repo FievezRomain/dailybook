@@ -4,15 +4,15 @@ import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import objectifsServiceInstance from '../../services/ObjectifService';
 import Toast from "react-native-toast-message";
 import React, { useState, useEffect, useContext } from 'react';
-import ModalSubMenuObjectifActions from '../Modals/ModalSubMenuObjectifActions';
-import ModalObjectifSubTasks from '../Modals/ModalObjectifSubTasks';
-import ModalObjectif from '../Modals/ModalObjectif';
+import ModalSubMenuObjectifActions from '../modals/objectifs/ModalSubMenuObjectifActions';
+import ModalObjectifSubTasks from '../modals/objectifs/ModalObjectifSubTasks';
+import ModalObjectif from '../modals/objectifs/ModalObjectif';
 import LoggerService from '../../services/LoggerService';
 import FileStorageService from '../../services/FileStorageService';
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { Image } from "expo-image";
 import { Divider, useTheme } from 'react-native-paper';
-import ModalValidation from "../Modals/ModalValidation";
+import ModalValidation from "../modals/common/ModalValidation";
 import Feather from '@expo/vector-icons/Feather';
 
 const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {

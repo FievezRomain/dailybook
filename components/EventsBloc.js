@@ -3,7 +3,7 @@ import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import CompletionBar from './CompletionBar';
 import EventCard from './cards/EventCard';
-import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import ModalDefaultNoValue from './modals/common/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 
 const EventsBloc = ({ navigation, events, handleEventsChange }) => {

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image 
 import { MaterialIcons } from '@expo/vector-icons';
 import { Icon, useTheme } from 'react-native-paper';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
-import ModalManageBodyAnimal from './Modals/ModalManageBodyAnimal';
+import ModalManageBodyAnimal from './modals/animals/ModalManageBodyAnimal';
 import AnimalImageCarousel from './animal_body/AnimalImageCarousel';
 
 const AnimalBody = ({ animal, onModify }) => {

@@ -6,7 +6,7 @@ import { FAB, useTheme } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import React, { useState } from 'react';
 import { CalendarProvider } from "../providers/CalendarProvider";
-import AddingButton from "../components/AddingButton";
+import AddingButton from "../components/inputs/AddingButton";
 
 const Stack = createNativeStackNavigator();
 

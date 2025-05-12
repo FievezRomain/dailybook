@@ -6,16 +6,16 @@ import { TouchableOpacity } from "react-native";
 import TopTabSecondary from "../components/TopTabSecondary";
 import wishsServiceInstance from "../services/WishService";
 import { Image } from "expo-image";
-import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishActions";
+import ModalSubMenuWishActions from "../components/modals/wishs/ModalSubMenuWishActions";
 import Toast from "react-native-toast-message";
-import ModalWish from "../components/Modals/ModalWish";
+import ModalWish from "../components/modals/wishs/ModalWish";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import LoggerService from "../services/LoggerService";
 import FileStorageService from "../services/FileStorageService";
-import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
+import ModalDefaultNoValue from "../components/modals/common/ModalDefaultNoValue";
 import { useTheme } from 'react-native-paper';
-import ModalValidation from "../components/Modals/ModalValidation";
+import ModalValidation from "../components/modals/common/ModalValidation";
 import { useWishs } from "../providers/WishProvider";
 
 const WishScreen = ({ navigation }) => {

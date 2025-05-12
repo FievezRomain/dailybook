@@ -1,18 +1,18 @@
 import { View, Text, StyleSheet, TextInput, Image, ScrollView, TouchableOpacity, KeyboardAvoidingView } from "react-native";
 import { useState, useEffect, useContext } from "react";
 import { useForm } from "react-hook-form";
-import Button from "../components/Button";
+import Button from "../components/inputs/Button";
 import Toast from "react-native-toast-message";
-import ModalAnimals from "../components/Modals/ModalAnimals";
+import ModalAnimals from "../components/modals/ModalAnimals";
 import AnimalsService from "../services/AnimalsService";
 import EventService from "../services/EventService";
 import { AuthenticatedUserContext } from "../providers/AuthenticatedUserProvider";
 import TopTab from '../components/TopTab';
-import ModalDropdwn from "../components/Modals/ModalDropdown";
+import ModalDropdwn from "../components/modals/inputs/ModalDropdown";
 import moment from "moment";
-import ModalNotifications from "../components/Modals/ModalNotifications";
-import DatePickerModal from "../components/Modals/ModalDatePicker";
-import RatingInput from "../components/RatingInput";
+import ModalNotifications from "../components/modals/inputs/ModalNotifications";
+import DatePickerModal from "../components/modals/inputs/ModalDatePicker";
+import RatingInput from "../components/inputs/RatingInput";
 import FrequencyInput from "../components/FrequencyInput";
 import { useTheme } from 'react-native-paper';
 

@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator } from "react-native";
 import wallpaper_login from "../assets/wallpaper_login.png";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Button from "../components/Button";
+import Button from "../components/inputs/Button";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { sendEmailVerification } from "firebase/auth";
 import Constants from 'expo-constants';

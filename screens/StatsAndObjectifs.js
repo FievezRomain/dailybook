@@ -6,7 +6,6 @@ import AnimalsPicker from "../components/AnimalsPicker";
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import StatePicker from "../components/StatePicker"
 import { SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";

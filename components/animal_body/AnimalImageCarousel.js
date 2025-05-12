@@ -9,8 +9,8 @@ import animalsServiceInstance from '../../services/AnimalsService';
 import { isSameMonth } from 'date-fns'; 
 import * as Localization from 'expo-localization';
 import Toast from "react-native-toast-message";
-import AvatarPicker from '../AvatarPicker';
-import ModalDefaultNoValue from '../Modals/ModalDefaultNoValue';
+import AvatarPicker from '../inputs/AvatarPicker';
+import ModalDefaultNoValue from '../modals/common/ModalDefaultNoValue';
 
 const { width } = Dimensions.get('window');
 

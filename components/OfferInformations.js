@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native';
 import { Fontisto, AntDesign } from '@expo/vector-icons';
-import Button from './Button';
+import Button from './inputs/Button';
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
 

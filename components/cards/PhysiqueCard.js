@@ -3,14 +3,14 @@ import { Entypo, MaterialIcons } from '@expo/vector-icons';
 import animalsServiceInstance from '../../services/AnimalsService';
 import Toast from "react-native-toast-message";
 import React, { useState, useEffect, useContext } from 'react';
-import ModalManageBodyAnimal from '../Modals/ModalManageBodyAnimal';
+import ModalManageBodyAnimal from '../modals/animals/ModalManageBodyAnimal';
 import LoggerService from '../../services/LoggerService';
 import { useAuth } from '../../providers/AuthenticatedUserProvider';
 import { Image } from "expo-image";
 import { Divider, useTheme } from 'react-native-paper';
-import ModalValidation from "../Modals/ModalValidation";
+import ModalValidation from "../modals/common/ModalValidation";
 import Feather from '@expo/vector-icons/Feather';
-import ModalSubMenuPhysiqueActions from '../Modals/ModalSubMenuPhysiqueActions';
+import ModalSubMenuPhysiqueActions from '../modals/animals/ModalSubMenuPhysiqueActions';
 
 const PhysiqueCard = ({ infos, itemType, handlePhysiqueChange, handlePhysiqueDelete }) => {
     const { colors, fonts } = useTheme();

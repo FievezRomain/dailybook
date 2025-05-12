@@ -5,18 +5,17 @@ import { TouchableOpacity } from "react-native";
 import OfferInformations from './OfferInformations';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import { useTheme, IconButton } from 'react-native-paper';
-import StatePicker from './StatePicker';
+import StatePicker from './inputs/StatePicker';
 import ChartWithLoader from './ChartWithLoader';
 import DepenseComponent from './statistics/DepenseComponent';
 import EntrainementComponent from './statistics/EntrainementComponent';
-import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import ModalDefaultNoValue from './modals/common/ModalDefaultNoValue';
 import BaladeComponent from './statistics/BaladeComponent';
 import PoidsComponent from './statistics/PoidsComponent';
 import TailleComponent from './statistics/TailleComponent';
 import AlimentationComponent from './statistics/AlimentationComponent';
 import ConcoursComponent from './statistics/ConcoursComponent';
 import { ThemeContext } from '../providers/ThemeProvider';
-import Toast from "react-native-toast-message";
 
 const StatistiquesBloc = ({ selectedAnimal }) =>{
     const { isDarkTheme } = useContext( ThemeContext );

@@ -1,11 +1,11 @@
 import { View, Text, Image, ActivityIndicator, StyleSheet } from "react-native";
 import React from 'react';
 import TopTabSecondary from "../components/TopTabSecondary";
-import InputTextInLine from "../components/InputTextInLine";
+import InputTextInLine from "../components/inputs/InputTextInLine";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import Button from "../components/Button";
+import Button from "../components/inputs/Button";
 import { useState } from "react";
-import AvatarPicker from "../components/AvatarPicker";
+import AvatarPicker from "../components/inputs/AvatarPicker";
 import AuthService from "../services/AuthService";
 import Toast from "react-native-toast-message";
 import LoggerService from "../services/LoggerService";
