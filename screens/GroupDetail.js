@@ -7,6 +7,8 @@ import TopTabSecondary from '../components/TopTabSecondary';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRoute } from '@react-navigation/native';
 import { MaterialIcons, FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import MembersGroup from '../components/groups/MembersGroup';
+import AnimalsGroup from '../components/groups/AnimalsGroup';
 
 const GroupDetailScreen = ( ) => {
   const { colors, fonts } = useTheme();
@@ -29,6 +31,14 @@ const GroupDetailScreen = ( ) => {
       useNativeDriver: false,
     }).start();
   };
+
+  const getUserRoleFromGroup = ( ) => {
+    let index = group.members.findIndex(object => object.email === currentUser.email);
+
+    if( index !== -1 ) return group.members[index].role;
+
+    return undefined;
+  }
 
   const styles = StyleSheet.create({
     iconsContainer:{
@@ -84,17 +94,28 @@ const GroupDetailScreen = ( ) => {
             <View style={styles.iconsContainer}>
               <TouchableOpacity style={{width: "50%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
                 <MaterialCommunityIcons name="paw" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-                <Text style={[{color :activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Animaux</Text>
+                <Text style={[{color :activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Animaux ({group.nb_animaux})</Text>
               </TouchableOpacity>
               <TouchableOpacity style={{width: "50%", alignItems: "center", flexDirection: "row", justifyContent: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
                 <MaterialIcons name="person" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-                <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Membres</Text>
+                <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Membres ({group.nb_members})</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.separatorFix}></View>
             <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1], outputRange: ['0%', '50%'] }) }]} />
           </View>
-
+          {activeRubrique === 0 && 
+            <AnimalsGroup
+              group={group}
+              userRole={getUserRoleFromGroup()}
+            />
+          }
+          {activeRubrique === 1 &&
+            <MembersGroup
+              group={group}
+              userRole={getUserRoleFromGroup()}
+            />
+          }
         </View>
       </LinearGradient>
     </>

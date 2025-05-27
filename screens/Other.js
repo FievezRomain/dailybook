@@ -1,22 +1,59 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import { IconButton, useTheme } from 'react-native-paper';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } from 'react-native';
+import { IconButton, useTheme, ActivityIndicator } from 'react-native-paper';
 import TopTab from '../components/TopTab';
+import LoggerService from '../services/LoggerService';
+import groupServiceInstance from '../services/GroupService';
+import { useGroups } from '../providers/GroupProvider';
 
 const OtherScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
     const [messages, setMessages] = useState({message1: "Mes", message2: "Autre"});
-    const buttons = [
+    const { groups } = useGroups();
+    const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+    const [buttons, setButtons] = useState([
         { id: 1, icon: "heart", label: "Wishlist", screen: "Wish" },
         { id: 2, icon: "contacts", label: "Contacts", screen: "Contact" },
         { id: 3, icon: "note-edit-outline", label: "Notes", screen: "Note"},
-        { id: 4, icon: "account-group", label: "Groupes", screen: "GroupList"},
-    ];
+    ]);
+
+    useEffect(() => {
+        if (groups && groups.length > 0) {
+          const groupButtons = groups.map(group => ({
+            id: `group-${group.id}`,
+            icon: "account-group",
+            label: group.name,
+            screen: "GroupDetail",
+            params: { group: group },
+          }));
+      
+          setButtons(prev => [...prev.filter(b => !`${b.id}`.startsWith("group-")), ...groupButtons]);
+        }
+    }, [groups]);
+
+    const fetchGroups = async () => {
+        try {
+          setRefreshing(true);
+          setLoading(true);
+          await groupServiceInstance.refreshCache(currentUser.email);
+        } catch (error) {
+          console.error('Erreur lors du chargement des groupes :', error);
+          LoggerService.log('Erreur lors du chargement des groupes :' + error.message);
+        } finally {
+          setLoading(false);
+          setRefreshing(false);
+        }
+    };
+    
+    const onRefresh = () => {
+        fetchGroups();
+    };
 
     const renderButton = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => navigation.navigate(item.screen)} style={styles.button}>
+            <TouchableOpacity onPress={() => navigation.navigate(item.screen, item.params)} style={styles.button}>
                 <IconButton icon={item.icon} iconColor={colors.default_dark} size={30}/>
                 <Text style={styles.label}>{item.label}</Text>
             </TouchableOpacity>
@@ -53,6 +90,14 @@ const OtherScreen = ({ navigation }) => {
         },
     })
 
+    if (loading) {
+        return (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+            <ActivityIndicator animating={true} size="large" />
+          </View>
+        );
+    }
+
     return(
         <>
             <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
@@ -64,6 +109,14 @@ const OtherScreen = ({ navigation }) => {
                     numColumns={2}
                     columnWrapperStyle={styles.row}
                     contentContainerStyle={styles.container}
+                    refreshControl={
+                        <RefreshControl
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                          colors={[colors.primary]}
+                          tintColor={colors.primary}
+                        />
+                    }
                 />
             </LinearGradient>
         </>
