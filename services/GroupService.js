@@ -101,7 +101,7 @@ class GroupService {
         .then(async(response) => {
             await this.putInCache(response.data.rows);
             await this.refreshDependencies();
-            return response.data;
+            return response;
         })
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour répondre à l'invitation d'un membre dans un groupe : " + err.message )); 
     } 

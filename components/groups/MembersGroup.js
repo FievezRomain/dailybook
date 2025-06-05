@@ -1,7 +1,6 @@
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import ModalDefaultNoValue from "../modals/common/ModalDefaultNoValue";
 import MemberCard from "../cards/MemberCard";
-import Button from "../inputs/Button";
 import { Icon, useTheme } from "react-native-paper";
 
 const MembersGroup = ({ members, group, userRole }) => {
@@ -43,7 +42,7 @@ const MembersGroup = ({ members, group, userRole }) => {
                         <FlatList
                             data={members.items}
                             keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => <MemberCard member={item} />}
+                            renderItem={({ item }) => <MemberCard member={item} group={group} memberState={members.type} userRole={userRole} />}
                             ListEmptyComponent={
                                 <ModalDefaultNoValue
                                     text={"Aucun utilisateur en attente"}
@@ -63,7 +62,7 @@ const MembersGroup = ({ members, group, userRole }) => {
                         <FlatList
                             data={members.items}
                             keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => <MemberCard member={item} />}
+                            renderItem={({ item }) => <MemberCard member={item} group={group} memberState={members.type} userRole={userRole} />}
                             ListEmptyComponent={
                                 <ModalDefaultNoValue
                                     text={"Aucun membre dans le groupe"}

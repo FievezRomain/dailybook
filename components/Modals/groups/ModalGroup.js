@@ -237,7 +237,7 @@ const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = 
                                 isLong={true}
                                 disabled={actionType !== "create"}
                             >
-                                <Text style={styles.textFontMedium}>Ajouter un membre</Text>
+                                <Text style={styles.textFontRegular}>Ajouter un membre</Text>
                             </Button>
                         </View>
                     </View>

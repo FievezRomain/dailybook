@@ -14,6 +14,7 @@ import Button from '../components/inputs/Button';
 import ModalAddAnimal from '../components/modals/groups/ModalAddAnimal';
 import { useGroups } from '../providers/GroupProvider';
 import Toast from 'react-native-toast-message';
+import ModalAddMember from '../components/modals/groups/ModalAddMember';
 
 const GroupDetailScreen = ( ) => {
   const { colors, fonts } = useTheme();
@@ -215,6 +216,12 @@ const GroupDetailScreen = ( ) => {
           setVisible={setModalAddAnimalVisible}
           group={group}
           onModify={onModify}
+      />
+      <ModalAddMember
+        isVisible={modalAddMemberVisible}
+        setVisible={setModalAddMemberVisible}
+        group={group}
+        onModify={onModify}
       />
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTabSecondary message1={"Vos"} message2={group.name}/>

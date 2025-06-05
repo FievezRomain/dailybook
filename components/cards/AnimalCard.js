@@ -42,13 +42,13 @@ const AnimalCard = ({ animal, animalState, userRole, group }) => {
     const acceptAnimal = async (data) => {
         data.status = 'accepted';
         data.id = group.id;
-        submitGroup(data, "acceptAnimal");
+        submitGroup(data, "respondAnimal");
     }
 
     const refuseAnimal = async (data) => {
         data.status = 'declined';
         data.id = group.id;
-        submitGroup(data, "refuseAnimal");
+        submitGroup(data, "respondAnimal");
     }
 
     const getActionsPart = () => {

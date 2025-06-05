@@ -40,7 +40,7 @@ export const useGroupForm = (setValue, onModify, closeModal) => {
     };
 
     const resetGroupValues = () => {
-        resetValues(setValue, setSelected);
+        resetValues(setValue, setSelected, setMembers);
     };
 
     const checkSelected = (animal) => {
@@ -79,16 +79,16 @@ export const useGroupForm = (setValue, onModify, closeModal) => {
                 // Création des invitations des membres
                 response = await groupServiceInstance.inviteMembers(data);
             } 
+            if( actionType === "respondMember" ){
+                // Répondre à une invitation de membre
+                response = await groupServiceInstance.respondInvitation(data);
+            } 
             if( actionType === "addAnimal" ){
                 // Création des invitations des animaux
                 response = await groupServiceInstance.inviteAnimals(data);
             }
-            if( actionType === "acceptAnimal" ){
-                // Acceptation d'un animal dans le group
-                response = await groupServiceInstance.respondAnimal(data);
-            }
-            if( actionType === "refuseAnimal" ){
-                // Refus d'un animal dans le group
+            if( actionType === "respondAnimal" ){
+                // Répondre à une invitation d'un animal dans le group
                 response = await groupServiceInstance.respondAnimal(data);
             }
 
