@@ -2,19 +2,23 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import ModalDefaultNoValue from "../modals/common/ModalDefaultNoValue";
 import AnimalCard from "../cards/AnimalCard";
 import { Icon, useTheme } from "react-native-paper";
-import Button from "../inputs/Button";
 
-const AnimalsGroup = ({ group, userRole }) => {
+const AnimalsGroup = ({ animals, userRole, group }) => {
     const { colors, fonts } = useTheme();
 
     const styles = StyleSheet.create({
         containerHeader:{
             paddingLeft: 20,
+            paddingBottom: 10,
             flexDirection: "row",
             alignItems: "center",
         },
+        container:{
+            paddingVertical: 10
+        },
         title:{
-            marginLeft: 5
+            marginLeft: 5,
+            color: colors.default_dark
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -29,28 +33,18 @@ const AnimalsGroup = ({ group, userRole }) => {
 
     return(
         <>
-            {userRole === "manager" &&
-                <View style={{ padding: 20}}>
-                    <Button
-                        type={"quaternary"}
-                    >
-                        <Text>Ajouter un animal</Text>
-                    </Button>
-                </View>
-            }
-            {userRole === "manager" && 
+            {userRole === "manager" && animals !== undefined && animals.type === "pending" &&
                 <>
-                    <View>
+                    <View style={styles.container}>
                         <View style={styles.containerHeader}>
                             <Icon source={"clock-outline"} size={20} color={colors.default_dark} />
                             <Text style={[styles.title, styles.textFontBold]}>Animaux en attente</Text>
                         </View>
                         <View>
                             <FlatList
-                                data={group.pending_animals}
+                                data={animals.items}
                                 keyExtractor={(item, index) => index.toString()}
-                                renderItem={({ item }) => <AnimalCard animal={item} animalState={"pending"} userRole={userRole} />}
-                                contentContainerStyle={{ padding: 20 }}
+                                renderItem={({ item }) => <AnimalCard animal={item} animalState={animals.type} userRole={userRole} group={group} />}
                                 ListEmptyComponent={
                                     <ModalDefaultNoValue
                                         text={"Aucun animal en attente"}
@@ -61,25 +55,28 @@ const AnimalsGroup = ({ group, userRole }) => {
                     </View>
                 </>
             }
-            <View>
-                <View style={styles.containerHeader}>
-                    <Icon source={"format-list-bulleted"} size={20} color={colors.default_dark} />
-                    <Text style={[styles.title, styles.textFontBold]}>Animaux du groupe</Text>
+
+            { animals && animals.type === "accepted" && 
+                <View style={styles.container}>
+                    <View style={styles.containerHeader}>
+                        <Icon source={"format-list-bulleted"} size={20} color={colors.default_dark} />
+                        <Text style={[styles.title, styles.textFontBold]}>Animaux du groupe</Text>
+                    </View>
+                    <View>
+                        <FlatList
+                            data={animals.items}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item }) => <AnimalCard animal={item} animalState={animals.type} userRole={userRole} group={group} />}
+                            ListEmptyComponent={
+                                <ModalDefaultNoValue
+                                    text={"Aucun animal dans le groupe"}
+                                />
+                            }
+                        />
+                    </View>
                 </View>
-                <View>
-                    <FlatList
-                        data={group.animals}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => <AnimalCard animal={item} animalState={"accepted"} userRole={userRole} />}
-                        contentContainerStyle={{ padding: 20 }}
-                        ListEmptyComponent={
-                            <ModalDefaultNoValue
-                                text={"Aucun animal dans le groupe"}
-                            />
-                        }
-                    />
-                </View>
-            </View>
+            }
+            
             
 
         </>

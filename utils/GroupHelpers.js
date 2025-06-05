@@ -3,7 +3,8 @@ export const initValuesGroup = (group, setValue) => {
     setValue("name", group.name);
 };
 
-export const resetValues = (setValue) => {
+export const resetValues = (setValue, setSelected) => {
     setValue("id", undefined);
     setValue("name", undefined);
+    setSelected([]);
 };

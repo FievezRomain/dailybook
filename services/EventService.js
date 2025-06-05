@@ -65,13 +65,13 @@ class EventService {
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un event : " + err.message ));
     }
 
-    async getEvents(email){
+    async getEvents(){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}eventsByUser?email=${email}`)
+            .get(`${getBaseUrl()}eventsByUser`)
             .then(async({data}) => {
                 await this.putInCache(data);
                 return await this.getCache();
@@ -175,9 +175,9 @@ class EventService {
         }
     }
 
-    async refreshCache(email){
+    async refreshCache(){
         await AsyncStorage.removeItem("events");
-        await this.getEvents(email);
+        await this.getEvents();
     }
 }
 

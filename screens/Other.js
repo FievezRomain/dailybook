@@ -26,7 +26,7 @@ const OtherScreen = ({ navigation }) => {
             icon: "account-group",
             label: group.name,
             screen: "GroupDetail",
-            params: { group: group },
+            params: { groupId: group.id },
           }));
       
           setButtons(prev => [...prev.filter(b => !`${b.id}`.startsWith("group-")), ...groupButtons]);

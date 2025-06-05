@@ -8,7 +8,7 @@ import { useAnimaux } from "../providers/AnimauxProvider";
 export const useGroupForm = (setValue, onModify, closeModal) => {
     const [loading, setLoading] = useState(false);
     const [selected, setSelected] = useState([]);
-    const { animaux, setAnimaux } = useAnimaux();
+    const { animaux } = useAnimaux();
     const [members, setMembers] = useState([""]);
     const [ modalSelectAnimalsIsVisible, setModalSelectAnimalsIsVisible ] = useState(false);
 
@@ -40,8 +40,15 @@ export const useGroupForm = (setValue, onModify, closeModal) => {
     };
 
     const resetGroupValues = () => {
-        resetValues(setValue);
+        resetValues(setValue, setSelected);
     };
+
+    const checkSelected = (animal) => {
+        if(selected.length > 0){
+            const found = selected.some(e => e.id == animal.id);
+            return found;
+        }
+    }
 
     const submitGroup = async (data, actionType) => {
         if (loading) return;
@@ -54,21 +61,40 @@ export const useGroupForm = (setValue, onModify, closeModal) => {
              if( !controlResult ) return;
 
             // Création ou modification
-            const response =
-                actionType === "modify"
-                    ? await groupServiceInstance.modify(data)
-                    : await groupServiceInstance.create(data);
+            let response = null;
+            if( actionType === "modify" ){
+                response = await groupServiceInstance.modify(data);
+            }
             if( actionType === "create" ){
+                // Création du groupe
+                await groupServiceInstance.create(data);
+
                 // Création des invitations des membres lors de la création
                 await groupServiceInstance.inviteMembers(data);
 
                 // Ajout des animaux au groupe lors de la création (et si des animaux sont sélectionnés)
-                
+                response = await groupServiceInstance.inviteAnimals(data);
+            }
+            if( actionType === "addMember" ){
+                // Création des invitations des membres
+                response = await groupServiceInstance.inviteMembers(data);
+            } 
+            if( actionType === "addAnimal" ){
+                // Création des invitations des animaux
+                response = await groupServiceInstance.inviteAnimals(data);
+            }
+            if( actionType === "acceptAnimal" ){
+                // Acceptation d'un animal dans le group
+                response = await groupServiceInstance.respondAnimal(data);
+            }
+            if( actionType === "refuseAnimal" ){
+                // Refus d'un animal dans le group
+                response = await groupServiceInstance.respondAnimal(data);
             }
 
             // Fermeture de la modale
             resetGroupValues();
-            closeModal();
+            await closeModal();
             onModify(response);
         } catch (err) {
             Toast.show({ type: "error", position: "top", text1: err.message });
@@ -101,12 +127,41 @@ export const useGroupForm = (setValue, onModify, closeModal) => {
                 return null;
             }
         }
+        if( actionType === "addMember" ){
+            if( !Array.isArray(data.members) || (Array.isArray(data.members) && data.members.length < 1) || (Array.isArray(data.members) && data.members.length === 1 && data.members[0].trim() === "") ){
+                Toast.show({ type: "error", position: "top", text1: "Vous devez ajouter au moins un membre" });
+                setLoading(false);
+                return null;
+            }
+
+            const invalidEmails = data.members.filter(
+                (email) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+            );
+    
+            if (invalidEmails.length > 0) {
+                Toast.show({
+                    type: "error",
+                    position: "top",
+                    text1: "Email(s) invalide(s)",
+                    text2: `Corrigez : ${invalidEmails.join(", ")}`
+                });
+                setLoading(false);
+                return null;
+            }
+        }
+        if( actionType === "addAnimal" ){
+            if( selected.length === 0 ){
+                Toast.show({ type: "error", position: "top", text1: "Vous devez ajouter au moins un animal" });
+                setLoading(false);
+                return null;
+            }
+        }
 
         return data;
     }
 
     return { initializeGroup, resetGroupValues, submitGroup,
-        animaux, selected, setSelected, modalSelectAnimalsIsVisible, setModalSelectAnimalsIsVisible,
+        animaux, selected, setSelected, checkSelected, modalSelectAnimalsIsVisible, setModalSelectAnimalsIsVisible,
         members, addMember, updateMembers, removeMember,
         loading };
 };

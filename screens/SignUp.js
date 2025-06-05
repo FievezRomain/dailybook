@@ -140,7 +140,7 @@ const SignUpScreen = ({ navigation })=> {
         },
         title: {
             top: - (Constants.statusBarHeight + 10),
-            color: colors.text,
+            color: colors.default_dark,
             fontSize: 30,
             letterSpacing: 2,
             marginBottom:20,
@@ -169,7 +169,8 @@ const SignUpScreen = ({ navigation })=> {
             color: "white"
         },
         errorInput: {
-            color: "red"
+            color: "red",
+            textAlign: "center"
         },
         textFontMedium:{
             fontFamily: fonts.bodyMedium.fontFamily
@@ -258,7 +259,7 @@ const SignUpScreen = ({ navigation })=> {
                                 {!loading ?
                                     <Button
                                         onPress={handleSubmit(submitRegister)}
-                                        type="primary"
+                                        type="quaternary"
                                         size={"m"}
                                     >
                                         <Text style={[styles.textButton, styles.textFontMedium]}>S'enregister</Text>

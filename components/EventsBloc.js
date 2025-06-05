@@ -128,7 +128,6 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             paddingRight: 20,
             paddingTop: 10,
             borderRadius: 5,
-            paddingBottom: 20
         },
         headerContainer:{
             display: "flex",

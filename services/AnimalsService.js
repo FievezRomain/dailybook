@@ -130,13 +130,13 @@ class AnimalsService {
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un animal : " + err.message ));
     }
 
-    async getAnimals(email){
+    async getAnimals(){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}equideByUser?email=${email}`)
+            .get(`${getBaseUrl()}equideByUser`)
             .then(async ({data}) => {
                 await this.putInCache(data.rows);
                 return await this.getCache();
@@ -251,9 +251,9 @@ class AnimalsService {
         }
     }
 
-    async refreshCache(email){
+    async refreshCache(){
         await AsyncStorage.removeItem("animals");
-        await this.getAnimals(email);
+        await this.getAnimals();
     }
 }
 

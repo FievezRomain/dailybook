@@ -3,6 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import LoggerService from './LoggerService';
+import objectifsServiceInstance from './ObjectifService';
+import animalsServiceInstance from './AnimalsService';
+import eventsServiceInstance from './EventService';
 
 class GroupService {
 
@@ -40,20 +43,21 @@ class GroupService {
         return axios.delete(`${getBaseUrl()}delete`, {data: body})
         .then(async(response) => {
             await this.deleteInCache(body);
+            await this.refreshDependencies();
             return response.data;
         })
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer une groupe : " + err.message ));
     }
 
-    async getGroups(email){
+    async getGroups(){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}groups?email=${email}`)
-            .then(async({data}) => {
-                await this.putInCache(data);
+            .get(`${getBaseUrl()}groups`)
+            .then(async(response) => {
+                await this.putInCache(response.data.rows);
                 return await this.getCache();
             })
             .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer les groupes : " + err.message ));
@@ -64,10 +68,42 @@ class GroupService {
         await this.updateAxiosAuthorization();
         return axios.post(`${getBaseUrl()}groups/invite`, body)
         .then(async(response) => {
-            await this.putInCache(response.data);
+            await this.putInCache(response.data.rows);
             return response.data;
         })
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour inviter des membres dans un groupe : " + err.message )); 
+    } 
+
+    async inviteAnimals(body) {
+        await this.updateAxiosAuthorization();
+        return axios.post(`${getBaseUrl()}groups/proposeAnimal`, body)
+        .then(async(response) => {
+            await this.putInCache(response.data.rows);
+            return response.data;
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour inviter des animaux dans un groupe : " + err.message )); 
+    } 
+
+    async respondAnimal(body) {
+        await this.updateAxiosAuthorization();
+        return axios.post(`${getBaseUrl()}groups/respondAnimal`, body)
+        .then(async(response) => {
+            await this.putInCache(response.data.rows);
+            await this.refreshDependencies();
+            return response;
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour répondre à l'invitation d'un animal dans un groupe : " + err.message )); 
+    } 
+
+    async respondInvitation(body) {
+        await this.updateAxiosAuthorization();
+        return axios.post(`${getBaseUrl()}groups/respondInvitation`, body)
+        .then(async(response) => {
+            await this.putInCache(response.data.rows);
+            await this.refreshDependencies();
+            return response.data;
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour répondre à l'invitation d'un membre dans un groupe : " + err.message )); 
     } 
 
     async updateAxiosAuthorization() {
@@ -143,9 +179,16 @@ class GroupService {
         }
     }
 
-    async refreshCache(email){
+    async refreshCache(){
         await AsyncStorage.removeItem("groups");
-        await this.getGroups(email);
+        await this.getGroups();
+        await this.refreshDependencies();
+    }
+
+    async refreshDependencies(){
+        await objectifsServiceInstance.refreshCache();
+        await animalsServiceInstance.refreshCache();
+        await eventsServiceInstance.refreshCache();
     }
 }
 

@@ -4,14 +4,18 @@ import MemberCard from "../cards/MemberCard";
 import Button from "../inputs/Button";
 import { Icon, useTheme } from "react-native-paper";
 
-const MembersGroup = ({ group, userRole }) => {
+const MembersGroup = ({ members, group, userRole }) => {
     const { colors, fonts } = useTheme();
 
     const styles = StyleSheet.create({
         containerHeader:{
             paddingLeft: 20,
+            paddingBottom: 10,
             flexDirection: "row",
             alignItems: "center",
+        },
+        container:{
+            paddingVertical: 10
         },
         title:{
             marginLeft: 5
@@ -29,27 +33,17 @@ const MembersGroup = ({ group, userRole }) => {
 
     return(
         <>
-            {userRole === "manager" &&
-                <View style={{ padding: 20}}>
-                    <Button
-                        type={"quaternary"}
-                    >
-                        <Text>Ajouter un membre</Text>
-                    </Button>
-                </View>
-            }
-            {userRole === "manager" &&
-                <View>
+            {userRole === "manager" && members !== undefined && members.type === "pending" &&
+                <View style={styles.container}>
                     <View style={styles.containerHeader}>
                         <Icon source={"clock-outline"} size={20} color={colors.default_dark} />
                         <Text style={[styles.title, styles.textFontBold]}>Utilisateurs en attente</Text>
                     </View>
                     <View>
                         <FlatList
-                            data={group.invitations}
+                            data={members.items}
                             keyExtractor={(item, index) => index.toString()}
                             renderItem={({ item }) => <MemberCard member={item} />}
-                            contentContainerStyle={{ padding: 20 }}
                             ListEmptyComponent={
                                 <ModalDefaultNoValue
                                     text={"Aucun utilisateur en attente"}
@@ -59,25 +53,26 @@ const MembersGroup = ({ group, userRole }) => {
                     </View>
                 </View>
             }
-            <View>
-                <View style={styles.containerHeader}>
-                    <Icon source={"format-list-bulleted"} size={20} color={colors.default_dark} />
-                    <Text style={[styles.title, styles.textFontBold]}>Membres du groupe</Text>
+            { members && members.type === "accepted" && 
+                <View style={styles.container}>
+                    <View style={styles.containerHeader}>
+                        <Icon source={"format-list-bulleted"} size={20} color={colors.default_dark} />
+                        <Text style={[styles.title, styles.textFontBold]}>Membres du groupe</Text>
+                    </View>
+                    <View>
+                        <FlatList
+                            data={members.items}
+                            keyExtractor={(item, index) => index.toString()}
+                            renderItem={({ item }) => <MemberCard member={item} />}
+                            ListEmptyComponent={
+                                <ModalDefaultNoValue
+                                    text={"Aucun membre dans le groupe"}
+                                />
+                            }
+                        />
+                    </View>
                 </View>
-                <View>
-                    <FlatList
-                        data={group.members}
-                        keyExtractor={(item, index) => index.toString()}
-                        renderItem={({ item }) => <MemberCard member={item} />}
-                        contentContainerStyle={{ padding: 20 }}
-                        ListEmptyComponent={
-                            <ModalDefaultNoValue
-                                text={"Aucun membre dans le groupe"}
-                            />
-                        }
-                    />
-                </View>
-            </View>
+            }
         </>
     );
 }

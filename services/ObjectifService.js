@@ -55,13 +55,13 @@ class ObjectifService {
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un objectif : " + err.message ));
     }
 
-    async getObjectifs(email){
+    async getObjectifs(){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}objectifsByUser?email=${email}`)
+            .get(`${getBaseUrl()}objectifsByUser`)
             .then(async({data}) => {
                 await this.putInCache(data);
                 return await this.getCache();
@@ -144,9 +144,9 @@ class ObjectifService {
         }
     }
 
-    async refreshCache(email){
+    async refreshCache(){
         await AsyncStorage.removeItem("objectifs");
-        await this.getObjectifs(email);
+        await this.getObjectifs();
     }
 }
 
