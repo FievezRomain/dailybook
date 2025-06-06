@@ -5,20 +5,20 @@ import { FontAwesome6, FontAwesome, Ionicons, Entypo, Feather } from '@expo/vect
 import Back from "./Back";
 import { useTheme, Divider } from 'react-native-paper';
 
-const TopTabSecondary = ({message1, message2}) => {
+const TopTabSecondary = ({message1, message2, btnList=undefined}) => {
     const { colors, fonts } = useTheme();
     const navigation = useNavigation();
     const styles = StyleSheet.create({
         topTabContainer:{
             paddingTop: Constants.platform.ios ? Constants.statusBarHeight + 10 : Constants.statusBarHeight + 10,
-            display: "flex",
+            paddingBottom: 20,
+            paddingRight: 20,
             flexDirection: "row",
             alignItems: "center",
-            paddingRight: 30,
-            paddingBottom: 20,
+            justifyContent: "space-between",
         },
         textContainer:{
-            flex: 1,
+            width: "60%",
             marginLeft: 10,
         },
         image:{
@@ -49,14 +49,21 @@ const TopTabSecondary = ({message1, message2}) => {
 
     return(
         <>
-        <View style={styles.topTabContainer}>
-            <Back />
-            <View style={styles.textContainer}>
-                {/* <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text> */}
-                <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
+            <View style={styles.topTabContainer}>
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                    <Back />
+                    <View style={styles.textContainer}>
+                        {/* <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text> */}
+                        <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
+                    </View>
+                </View>
+                <View style={{flexDirection: "row", alignItems: "center", gap: 25}}>
+                    {btnList?.map((Composant, index) => (
+                        <View key={index}>{Composant}</View>
+                    ))}
+                </View>
             </View>
-        </View>
-        <Divider style={{height: 0.4, backgroundColor: colors.quaternary}}/>
+            <Divider style={{height: 0.4, backgroundColor: colors.quaternary}}/>
         </>
     );
 }

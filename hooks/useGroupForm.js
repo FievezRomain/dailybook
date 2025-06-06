@@ -97,6 +97,7 @@ export const useGroupForm = (setValue, onModify, closeModal) => {
             await closeModal();
             onModify(response);
         } catch (err) {
+            console.log(err)
             Toast.show({ type: "error", position: "top", text1: err.message });
             LoggerService.log( "Erreur lors de la " + actionType + " d'un group : " + err.message );
         } finally {

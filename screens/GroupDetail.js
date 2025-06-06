@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { View, Animated, StyleSheet, TouchableOpacity, RefreshControl, FlatList } from 'react-native';
-import { useTheme, ActivityIndicator, Text } from 'react-native-paper';
+import { useTheme, ActivityIndicator, Text, Icon } from 'react-native-paper';
 import { useAuth } from '../providers/AuthenticatedUserProvider';
 import groupServiceInstance from '../services/GroupService';
 import TopTabSecondary from '../components/TopTabSecondary';
@@ -15,6 +15,8 @@ import ModalAddAnimal from '../components/modals/groups/ModalAddAnimal';
 import { useGroups } from '../providers/GroupProvider';
 import Toast from 'react-native-toast-message';
 import ModalAddMember from '../components/modals/groups/ModalAddMember';
+import ModalGroup from '../components/modals/groups/ModalGroup';
+import ModalValidation from '../components/modals/common/ModalValidation';
 
 const GroupDetailScreen = ( ) => {
   const { colors, fonts } = useTheme();
@@ -24,6 +26,8 @@ const GroupDetailScreen = ( ) => {
   const { groups } = useGroups();
   const { groupId } = route.params;
   const [activeRubrique, setActiveRubrique] = useState(0);
+  const [modalGroupVisible, setModalGroupVisible] = useState(false);
+  const [modalGroupValidationVisible, setModalGroupValidationVisible] = useState(false);
   const [modalAddAnimalVisible, setModalAddAnimalVisible] = useState(false);
   const [modalAddMemberVisible, setModalAddMemberVisible] = useState(false);
   const separatorPosition = useRef(new Animated.Value(0)).current;
@@ -68,6 +72,19 @@ const GroupDetailScreen = ( ) => {
       type: "success",
       position: "top",
       text1: "Modification du groupe"
+    }), 350);
+  }
+
+  const onDelete = async () => {
+    let data = {};
+    data.id = group.id;
+
+    await groupServiceInstance.delete(data);
+    
+    setTimeout(() => Toast.show({
+      type: "success",
+      position: "top",
+      text1: "Suppression du groupe"
     }), 350);
   }
 
@@ -143,6 +160,25 @@ const GroupDetailScreen = ( ) => {
   const handleRubriqueChange = (index) => {
     setActiveRubrique(index);
   };
+
+  const getActionsComponents = ( ) => {
+    let componentsArray = [];
+
+    if( getUserRoleFromGroup() === "manager" ){
+      componentsArray.push(
+        <TouchableOpacity onPress={() => setModalGroupVisible(true)}>
+          <Icon source={"pencil"} size={25} color={colors.default_dark} />
+        </TouchableOpacity>
+      );
+      componentsArray.push(
+        <TouchableOpacity onPress={() => setModalGroupValidationVisible(true)}>
+          <Icon source={"delete"} size={25} color={colors.default_dark} />
+        </TouchableOpacity>
+      );
+    }
+
+    return componentsArray;
+  }
 
   const styles = StyleSheet.create({
     item:{
@@ -241,8 +277,22 @@ const GroupDetailScreen = ( ) => {
         group={group}
         onModify={onModify}
       />
+      <ModalGroup
+        actionType={"modify"}
+        isVisible={modalGroupVisible}
+        setVisible={setModalGroupVisible}
+        group={group}
+        onModify={onModify}
+      />
+      <ModalValidation
+        displayedText={"Êtes-vous sûr de vouloir supprimer le groupe ?"}
+        title={"Suppression d'un groupe"}
+        onConfirm={onDelete}
+        setVisible={setModalGroupValidationVisible}
+        visible={modalGroupValidationVisible}
+      />
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-        <TopTabSecondary message1={"Vos"} message2={group.name}/>
+        <TopTabSecondary message1={"Vos"} message2={group.name} btnList={getActionsComponents()}/>
           {getContent()}
       </LinearGradient>
     </>

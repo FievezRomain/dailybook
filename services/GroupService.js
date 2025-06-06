@@ -21,7 +21,7 @@ class GroupService {
         await this.updateAxiosAuthorization();
         return axios.post(`${getBaseUrl()}groups/create`, body)
         .then(async(response) => {
-            await this.putInCache(response.data);
+            await this.putInCache(response.data.rows);
             return response.data;
         })
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour créer une groupe : " + err.message )); 
@@ -29,9 +29,9 @@ class GroupService {
 
     async modify(body) {
         await this.updateAxiosAuthorization();
-        return axios.post(`${getBaseUrl()}modify`, body)
+        return axios.post(`${getBaseUrl()}groups/modify`, body)
         .then(async(response) => {
-            await this.putInCache(response.data);
+            await this.putInCache(response.data.rows);
             return response.data;
         })
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour modifier une groupe : " + err.message )); 
@@ -40,13 +40,13 @@ class GroupService {
 
     async delete(body) {
         await this.updateAxiosAuthorization();
-        return axios.delete(`${getBaseUrl()}delete`, {data: body})
+        return axios.delete(`${getBaseUrl()}groups/delete`, {data: body})
         .then(async(response) => {
             await this.deleteInCache(body);
             await this.refreshDependencies();
             return response.data;
         })
-        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer une groupe : " + err.message ));
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un groupe : " + err.message ));
     }
 
     async getGroups(){
