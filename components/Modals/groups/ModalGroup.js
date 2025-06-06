@@ -187,10 +187,25 @@ const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = 
                             <TextInput
                                 style={[styles.input, styles.textFontRegular]}
                                 placeholder="Exemple : Groupe"
+                                maxLength={50}
                                 placeholderTextColor={colors.secondary}
                                 onChangeText={(text) => setValue("name", text)}
                                 defaultValue={watch("name")}
                                 {...register("name", { required: true })}
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Text style={[styles.textInput, styles.textFontRegular]}>
+                                Informations :
+                            </Text>
+                            <TextInput
+                                style={[styles.input, styles.textFontRegular]}
+                                placeholder="Exemple : Nouveau cadenas"
+                                maxLength={500}
+                                placeholderTextColor={colors.secondary}
+                                onChangeText={(text) => setValue("informations", text)}
+                                defaultValue={watch("informations")}
+                                {...register("informations", { required: true })}
                             />
                         </View>
                         <View style={styles.inputContainer}>

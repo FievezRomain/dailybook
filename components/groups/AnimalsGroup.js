@@ -8,7 +8,6 @@ const AnimalsGroup = ({ animals, userRole, group }) => {
 
     const styles = StyleSheet.create({
         containerHeader:{
-            paddingLeft: 20,
             paddingBottom: 10,
             flexDirection: "row",
             alignItems: "center",

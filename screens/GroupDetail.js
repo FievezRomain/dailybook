@@ -6,7 +6,7 @@ import groupServiceInstance from '../services/GroupService';
 import TopTabSecondary from '../components/TopTabSecondary';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRoute } from '@react-navigation/native';
-import { MaterialIcons, FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome, MaterialCommunityIcons, Ionicons, Entypo } from '@expo/vector-icons';
 import MembersGroup from '../components/groups/MembersGroup';
 import AnimalsGroup from '../components/groups/AnimalsGroup';
 import ModalDefaultNoValue from '../components/modals/common/ModalDefaultNoValue';
@@ -73,6 +73,17 @@ const GroupDetailScreen = ( ) => {
 
   const renderHeader = () => (
     <>
+      <View style={[styles.rubriqueContainer, styles.headerContainer]}>
+        <View>
+          <View style={styles.headerTitle}>
+            <Entypo name="info" size={20} color={colors.default_dark} style={{marginRight: 5}}/>
+            <Text style={[styles.textFontBold, {color: colors.default_dark}]}>Informations</Text>
+          </View>
+          <ModalDefaultNoValue
+            text={group.informations ? group.informations : "Aucune information"}
+          />
+        </View>
+      </View>
       <View style={styles.rubriqueContainer}>
         <View style={styles.iconsContainer}>
           <TouchableOpacity style={{width: "50%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { handleRubriqueChange(0) }}>
@@ -173,7 +184,14 @@ const GroupDetailScreen = ( ) => {
       bottom: 0, 
       width: '50%',
     },
-  
+    headerContainer:{
+      paddingHorizontal: 20
+    },
+    headerTitle:{
+      flexDirection: "row", 
+      alignItems: "center", 
+      paddingBottom: 10
+    }
   });
 
   const getContent = () => {

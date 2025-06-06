@@ -8,7 +8,6 @@ const MembersGroup = ({ members, group, userRole }) => {
 
     const styles = StyleSheet.create({
         containerHeader:{
-            paddingLeft: 20,
             paddingBottom: 10,
             flexDirection: "row",
             alignItems: "center",
