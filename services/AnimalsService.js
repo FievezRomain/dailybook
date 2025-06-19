@@ -233,8 +233,8 @@ class AnimalsService {
         if(await this.isInCache()){
 
             // Mise à jour des events suite à la potentielle suppression en cascade
-            await eventsServiceInstance.refreshCache(animal.email);
-            await objectifsServiceInstance.refreshCache(animal.email);
+            await eventsServiceInstance.refreshCache();
+            await objectifsServiceInstance.refreshCache();
 
             let animals = JSON.parse(await AsyncStorage.getItem("animals"));
 

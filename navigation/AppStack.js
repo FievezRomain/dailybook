@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigationState } from '@react-navigation/native';
 import TabStack from "./TabStack";
-import { SettingsScreen, NoteScreen, WishScreen, DiscoverPremiumScreen, AccountScreen, ContactScreen, GroupListScreen, GroupDetailScreen } from "../screens";
+import { SettingsScreen, NoteScreen, WishScreen, DiscoverPremiumScreen, AccountScreen, ContactScreen, GroupListScreen, GroupDetailScreen, NotificationScreen } from "../screens";
 import { FAB, useTheme } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import React, { useState } from 'react';
@@ -39,6 +39,7 @@ const AppStack = ({ navigation }) => {
             <Stack.Screen name="Account" component={AccountScreen} options={{ headerShown: false }}/>
             <Stack.Screen name="GroupList" component={GroupListScreen} options={{ headerShown: false }}/>
             <Stack.Screen name="GroupDetail" component={GroupDetailScreen} options={{ headerShown: false }}/>
+            <Stack.Screen name="Notification" component={NotificationScreen} options={{ headerShown: false }}/>
         </Stack.Navigator>
         
         {currentRouteName !== "Settings" && currentRouteName !== "Account" && currentRouteName !== "DiscoverPremium" && <AddingButton navigation={navigation}/>}

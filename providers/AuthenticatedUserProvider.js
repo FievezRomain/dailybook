@@ -62,13 +62,13 @@ export const AuthenticatedUserProvider =  ({ children }) => {
         notesServiceInstance.initialize( setNotes );
         wishsServiceInstance.initialize( setWishs );
         groupServiceInstance.initialize( setGroups );
-        await animalsServiceInstance.refreshCache(email);
-        await eventsServiceInstance.refreshCache(email);
-        await objectifsServiceInstance.refreshCache(email);
-        await notesServiceInstance.refreshCache(email);
-        await contactsServiceInstance.refreshCache(email);
-        await wishsServiceInstance.refreshCache(email);
-        await groupServiceInstance.refreshCache(email);
+        await animalsServiceInstance.refreshCache();
+        await eventsServiceInstance.refreshCache();
+        await objectifsServiceInstance.refreshCache();
+        await notesServiceInstance.refreshCache();
+        await contactsServiceInstance.refreshCache();
+        await wishsServiceInstance.refreshCache();
+        await groupServiceInstance.refreshCache();
     } catch (error) {
         LoggerService.log( "Erreur lors de la mise à jour du cache : " + error.message );
         console.error('Erreur lors de la mise à jour du cache :', error);

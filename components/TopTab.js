@@ -1,15 +1,30 @@
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Constants from 'expo-constants';
-import { useNavigation } from "@react-navigation/native";
-import { FontAwesome5 } from '@expo/vector-icons';
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { Image } from "expo-image";
-import { Divider, useTheme } from 'react-native-paper';
+import { Badge, Divider, useTheme } from 'react-native-paper';
+import { useCallback, useEffect, useState } from "react";
+import notificationServiceInstance from "../services/NotificationService";
 
 const TopTab = ({message1, message2, withBackground=false, withLogo=false}) => {
     const { colors, fonts } = useTheme();
     const navigation = useNavigation();
     const { currentUser } = useAuth();
+    const [ nbNotifications, setNbNotifications ] = useState(0);
+
+    useFocusEffect(
+        useCallback(() => {
+          getNotificationsNumber();
+        }, [])
+    );
+
+    const getNotificationsNumber = async () => {
+        const response = await notificationServiceInstance.getNotifications();
+        setNbNotifications(response.data.unreadCount);
+    }
+
     const styles = StyleSheet.create({
         topTabContainer:{
             paddingTop: Constants.platform.ios ? Constants.statusBarHeight + 10 : Constants.statusBarHeight + 10,
@@ -29,7 +44,8 @@ const TopTab = ({message1, message2, withBackground=false, withLogo=false}) => {
             direction: "ltr",
             justifyContent: "flex-end",
             alignSelf: "center",
-            flexDirection: "row"
+            flexDirection: "row",
+            alignItems: "center"
         },
         image:{
             height: 25,
@@ -80,9 +96,12 @@ const TopTab = ({message1, message2, withBackground=false, withLogo=false}) => {
                     
                 </View>
                 <View style={styles.imageContainer}>
-                    {/* <TouchableOpacity>
-                        <Ionicons name="notifications" size={25} color={withBackground == false ? Variables.bai : Variables.blanc} />
-                    </TouchableOpacity> */}
+                    <TouchableOpacity onPress={() => navigation.navigate("Notification")}>
+                        <Ionicons name="notifications" size={25} color={colors.default_dark} />
+                        { nbNotifications > 0 && 
+                            <Badge style={{position: "absolute", left: 15, bottom: 10}} size={20} visible>{nbNotifications}</Badge>
+                        }
+                    </TouchableOpacity>
                     <TouchableOpacity onPress={()=>navigation.navigate("Settings")}>
                         {currentUser && currentUser.photoURL !== undefined && currentUser.photoURL !== null ?
                             <Image style={styles.avatar} source={{uri: `${currentUser.photoURL}`}} cachePolicy="disk"/>
@@ -94,8 +113,8 @@ const TopTab = ({message1, message2, withBackground=false, withLogo=false}) => {
                             :
 
                             <View style={{paddingVertical: 10}}>
-                            <FontAwesome5 size={20} color={colors.default_dark} name="user-alt" />
-                        </View>
+                                <FontAwesome5 size={20} color={colors.default_dark} name="user-alt" />
+                            </View>
                         }
                         
                     </TouchableOpacity>

@@ -20,7 +20,7 @@ import ModalValidation from '../components/modals/common/ModalValidation';
 
 const GroupDetailScreen = ( ) => {
   const { colors, fonts } = useTheme();
-  const { currentUser } = useAuth();
+  const { currentUser, abonnement } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
   const route = useRoute();
   const { groups } = useGroups();
@@ -46,7 +46,7 @@ const GroupDetailScreen = ( ) => {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await groupServiceInstance.refreshCache(currentUser.email);
+    await groupServiceInstance.refreshCache();
     setRefreshing(false);
   };
 
@@ -78,9 +78,9 @@ const GroupDetailScreen = ( ) => {
   const onDelete = async () => {
     let data = {};
     data.id = group.id;
-
-    await groupServiceInstance.delete(data);
     
+    await groupServiceInstance.delete(data);
+
     setTimeout(() => Toast.show({
       type: "success",
       position: "top",
@@ -115,7 +115,7 @@ const GroupDetailScreen = ( ) => {
         <View style={styles.separatorFix}></View>
         <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1], outputRange: ['0%', '50%'] }) }]} />
       </View>
-      {getUserRoleFromGroup() === "manager" &&
+      {getUserRoleFromGroup() === "manager" || abonnement.libelle === "Premium" &&
         <View style={[styles.item, styles.headerRubrique]}>
             <Button
                 type={"quaternary"}

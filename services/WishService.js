@@ -81,13 +81,13 @@ class WishService {
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un wish : " + err.message ));
     }
 
-    async getWishs(email){
+    async getWishs(){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}wishsByUser?email=${email}`)
+            .get(`${getBaseUrl()}wishsByUser`)
             .then(async({data}) => {
                 await this.putInCache(data.rows);
                 return await this.getCache();
@@ -170,9 +170,9 @@ class WishService {
         }
     }
 
-    async refreshCache(email){
+    async refreshCache(){
         await AsyncStorage.removeItem("wishs");
-        await this.getWishs(email);
+        await this.getWishs();
     }
 }
 

@@ -45,13 +45,13 @@ class NoteService {
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer une note : " + err.message ));
     }
 
-    async getNotes(email){
+    async getNotes(){
         if(await this.isInCache()){
             return await this.getCache();
         } else{
             await this.updateAxiosAuthorization();
             return axios
-            .get(`${getBaseUrl()}notesByUser?email=${email}`)
+            .get(`${getBaseUrl()}notesByUser`)
             .then(async({data}) => {
                 await this.putInCache(data.rows);
                 return await this.getCache();
@@ -133,9 +133,9 @@ class NoteService {
         }
     }
 
-    async refreshCache(email){
+    async refreshCache(){
         await AsyncStorage.removeItem("notes");
-        await this.getNotes(email);
+        await this.getNotes();
     }
 }
 

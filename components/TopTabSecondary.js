@@ -57,9 +57,9 @@ const TopTabSecondary = ({message1, message2, btnList=undefined}) => {
                         <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
                     </View>
                 </View>
-                <View style={{flexDirection: "row", alignItems: "center", gap: 25}}>
+                <View style={{flexDirection: "row", alignItems: "center"}}>
                     {btnList?.map((Composant, index) => (
-                        <View key={index}>{Composant}</View>
+                        <View key={index} style={{marginLeft: 15}}>{Composant}</View>
                     ))}
                 </View>
             </View>

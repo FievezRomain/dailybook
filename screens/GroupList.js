@@ -20,7 +20,7 @@ const GroupListScreen = () => {
     try {
       setRefreshing(true);
       setLoading(true);
-      await groupServiceInstance.refreshCache(currentUser.email);
+      await groupServiceInstance.refreshCache();
     } catch (error) {
       console.error('Erreur lors du chargement des groupes :', error);
       LoggerService.log('Erreur lors du chargement des groupes :' + error.message);
