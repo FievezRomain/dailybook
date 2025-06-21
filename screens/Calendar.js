@@ -5,7 +5,6 @@ import { Calendar, CalendarUtils, LocaleConfig } from 'react-native-calendars';
 import { ScrollView } from "react-native";
 import moment from "moment";
 import EventCard from "../components/cards/EventCard";
-import DateUtils from "../utils/DateUtils";
 import Toast from "react-native-toast-message";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -25,7 +24,6 @@ const CalendarScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({ message1: "Mon", message2: "calendrier" });
-  const dateUtils = new DateUtils();
   const { events, setEvents } = useEvents();
   const [eventsCurrentDateSelected, setEventsCurrentDateSelected] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);

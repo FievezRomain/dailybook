@@ -2,13 +2,12 @@ import { useState } from "react";
 import { initValuesAnimal, resetValues } from "../utils/AnimalHelpers";
 import animalsServiceInstance from "../services/AnimalsService";
 import Toast from "react-native-toast-message";
-import DateUtils from "../utils/DateUtils";
 import FileStorageService from "../services/FileStorageService";
 import LoggerService from "../services/LoggerService";
+import instanceDateUtils from "../utils/DateUtils";
 
 export const useAnimalForm = (setValue, currentUser, onModify, closeModal) => {
     const [loading, setLoading] = useState(false);
-    const dateUtils = new DateUtils();
     const fileStorageService = new FileStorageService();
 
     const initializeAnimal = (animal, setEspece, setImage, setDate) => {
@@ -67,7 +66,7 @@ export const useAnimalForm = (setValue, currentUser, onModify, closeModal) => {
             data["datenaissance"] = undefined;
         }
 
-        if( ( data["datenaissance"] !== null && data["datenaissance"] !== undefined ) && ( data["datenaissance"].length !== 10 || !dateUtils.isDateValid( dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/") ) ) ){
+        if( ( data["datenaissance"] !== null && data["datenaissance"] !== undefined ) && ( data["datenaissance"].length !== 10 || !instanceDateUtils.isDateValid( instanceDateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/") ) ) ){
             Toast.show({
                 position: "top",
                 type: "error",
@@ -78,7 +77,7 @@ export const useAnimalForm = (setValue, currentUser, onModify, closeModal) => {
         }
 
         if( data["datenaissance"] !== null && data["datenaissance"] !== undefined ){
-            data["datenaissance"] = dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
+            data["datenaissance"] = instanceDateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
         }
 
         // Vérification de la valeur des entiers/décimal

@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import DateUtils from "../../../utils/DateUtils";
 import Button from "../../inputs/Button";
 import { useTheme } from 'react-native-paper';
+import instanceDateUtils from '../../../utils/DateUtils';
 
 const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) => {
   const { colors, fonts } = useTheme();
   const [selectedDate, setSelectedDate] = useState(defaultDate == undefined ? new Date().toISOString().split('T')[0] : defaultDate);
   const [modalVisible, setModalVisible] = useState(false);
-  const dateUtils = new DateUtils();
 
   LocaleConfig.locales['fr'] = {
     monthNames: [
@@ -75,7 +74,7 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
     <View>
       <TouchableOpacity onPress={() => setModalVisible(true)} >
         <View style={styles.dateContainer}>
-          <Text style={[styles.date, styles.textFontRegular]}>{dateUtils.dateFormatter(selectedDate, "yyyy-mm-dd", "-")}</Text>
+          <Text style={[styles.date, styles.textFontRegular]}>{instanceDateUtils.dateFormatter(selectedDate, "yyyy-mm-dd", "-")}</Text>
         </View>
       </TouchableOpacity>
       <Modal

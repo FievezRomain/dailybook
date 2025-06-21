@@ -4,19 +4,18 @@ import variables from "./styles/Variables";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import ModalSubMenuAnimalActions from './modals/animals/ModalSubMenuAnimalActions';
 import ModalAnimal from './modals/animals/ModalAnimal';
-import DateUtils from '../utils/DateUtils';
 import { Image } from "expo-image";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
 import FileStorageService from "../services/FileStorageService";
 import { useTheme } from 'react-native-paper';
 import ModalReportDeath from './modals/animals/ModalReportDeath';
 import { format } from 'date-fns'
+import instanceDateUtils from '../utils/DateUtils';
 
 const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const [modalReportDeathVisible, setModalReportDeathVisible] = useState(false);
-    const dateUtils = new DateUtils();
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
     const { colors, fonts } = useTheme();
@@ -247,7 +246,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               inputMode="numeric"
                               maxLength={10}
                               placeholderTextColor={colors.secondary}
-                              defaultValue={(animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance)}
+                              defaultValue={(animal.datenaissance.includes("-") ?  instanceDateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance)}
                               editable={false}
                           />
                         </View>
@@ -289,7 +288,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               inputMode="numeric"
                               maxLength={10}
                               placeholderTextColor={colors.secondary}
-                              defaultValue={(animal.datearrivee.includes("-") ?  dateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee)}
+                              defaultValue={(animal.datearrivee.includes("-") ?  instanceDateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee)}
                               editable={false}
                           />
                         </View>
@@ -304,7 +303,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                               inputMode="numeric"
                               maxLength={10}
                               placeholderTextColor={colors.secondary}
-                              defaultValue={(animal.datedepart.includes("-") ?  dateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart)}
+                              defaultValue={(animal.datedepart.includes("-") ?  instanceDateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart)}
                               editable={false}
                           />
                         </View>

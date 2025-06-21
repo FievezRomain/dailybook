@@ -9,16 +9,15 @@ import LoggerService from '../../../services/LoggerService';
 import FileStorageService from "../../../services/FileStorageService";
 import { Image } from "expo-image";
 import { useAuth } from "../../../providers/AuthenticatedUserProvider";
-import DateUtils from '../../../utils/DateUtils';
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from '../common/ModalEditGeneric';
 import Constants from 'expo-constants';
+import instanceDateUtils from '../../../utils/DateUtils';
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const fileStorageService = new FileStorageService();
-    const dateUtils = new DateUtils();
     const [loading, setLoading] = useState(false);
     const scrollRef = useRef(null);
     const [localEvent, setLocalEvent] = useState({ ...event });
@@ -525,7 +524,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                     }
                     {isValidString(localEvent.datefinbalade) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Date de fin de balade : {localEvent.datefinbalade.includes("-") ? dateUtils.dateFormatter(localEvent.datefinbalade, "yyyy-mm-dd", "-") : localEvent.datefinbalade}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Date de fin de balade : {localEvent.datefinbalade.includes("-") ? instanceDateUtils.dateFormatter(localEvent.datefinbalade, "yyyy-mm-dd", "-") : localEvent.datefinbalade}</Text>
                         </View>
                     }
                     {isValidString(localEvent.heurefinbalade) &&
@@ -567,7 +566,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                     }
                     {isValidString(localEvent.datefinsoins) &&
                         <View style={{marginBottom: 5}}>
-                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Date de fin du soin : {localEvent.datefinsoins.includes("-") ? dateUtils.dateFormatter(localEvent.datefinsoins, "yyyy-mm-dd", "-") : localEvent.datefinsoins}</Text>
+                            <Text style={[styles.textFontRegular, styles.colorTextBlack]}>Date de fin du soin : {localEvent.datefinsoins.includes("-") ? instanceDateUtils.dateFormatter(localEvent.datefinsoins, "yyyy-mm-dd", "-") : localEvent.datefinsoins}</Text>
                         </View>
                     }
                     {event.eventtype !== "depense" ?

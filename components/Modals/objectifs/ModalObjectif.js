@@ -9,13 +9,13 @@ import Button from "../../inputs/Button";
 import { AntDesign } from '@expo/vector-icons';
 import Toast from "react-native-toast-message";
 import DatePickerModal from "../inputs/ModalDatePicker";
-import DateUtils from "../../../utils/DateUtils";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from "../../../services/LoggerService";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
+import instanceDateUtils from "../../../utils/DateUtils";
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -26,7 +26,6 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
     const [selected, setSelected] = useState([]);
     const [temporalityObjectif, setTemporalityObjectif] = useState(false);
     const [inputs, setInputs] = useState(['']);
-    const dateUtils = new DateUtils();
     const list = [
         {title: "Semaine", id: "week"},
         {title: "Mois", id: "month"},
@@ -213,7 +212,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
             return "";
         }
         if(date.includes("/")){
-            date = dateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
+            date = instanceDateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
         }
         var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         var dateObject  = new Date(date);

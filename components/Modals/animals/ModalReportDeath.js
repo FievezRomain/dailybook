@@ -7,8 +7,8 @@ import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
 import { useAnimalForm } from "../../../hooks/useAnimalForm";
 import DatePickerModal from "../inputs/ModalDatePicker";
-import DateUtils from "../../../utils/DateUtils";
 import { format } from 'date-fns'
+import instanceDateUtils from "../../../utils/DateUtils";
 
 const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
@@ -21,7 +21,6 @@ const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModif
     var annee = today.getFullYear();
     const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch , setError} = useForm();
-    const dateUtils = new DateUtils();
 
     const closeModal = () => {
         setVisible(false);
@@ -37,7 +36,7 @@ const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModif
     useEffect(() => {
         if (animal) {
             initializeAnimal(animal, setEspece, setImage, setDate);
-            setValue("datedeces", animal.datedeces === undefined ? dateUtils.dateFormatter(format(new Date(), 'dd/MM/yyyy'), "dd/MM/yyyy", "/") : dateUtils.dateFormatter(new Date(animal.datedeces).toLocaleDateString(), "dd/MM/yyyy", "/"));
+            setValue("datedeces", animal.datedeces === undefined ? instanceDateUtils.dateFormatter(format(new Date(), 'dd/MM/yyyy'), "dd/MM/yyyy", "/") : instanceDateUtils.dateFormatter(new Date(animal.datedeces).toLocaleDateString(), "dd/MM/yyyy", "/"));
         }
     }, [animal]);
 
@@ -55,7 +54,7 @@ const ModalReportDeath = ({isVisible, setVisible, actionType, animal={}, onModif
         var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         var dateObject;
         if (date.includes('/')) {
-            dateObject = new Date(dateUtils.dateFormatter(date, "dd/MM/yyyy", "/"));
+            dateObject = new Date(instanceDateUtils.dateFormatter(date, "dd/MM/yyyy", "/"));
         } else {
             // Si la date est déjà au format ISO
             dateObject = new Date(date);

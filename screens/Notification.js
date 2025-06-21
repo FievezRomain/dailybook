@@ -5,8 +5,8 @@ import TopTabSecondary from '../components/TopTabSecondary';
 import { useEffect, useState } from 'react';
 import ModalDefaultNoValue from '../components/modals/common/ModalDefaultNoValue';
 import notificationServiceInstance from '../services/NotificationService';
-import { useGroups } from '../providers/GroupProvider';
 import groupServiceInstance from '../services/GroupService';
+import instanceDateUtils from '../utils/DateUtils';
 
 const NotificationScreen = ( ) => {
     const { colors, fonts } = useTheme();
@@ -46,7 +46,7 @@ const NotificationScreen = ( ) => {
         if( item.type === 'group_animal'){
             await groupServiceInstance.respondAnimal(data);
         }
-        
+
         await onRefresh();
     }
 
@@ -83,6 +83,12 @@ const NotificationScreen = ( ) => {
         },
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily,
+        },
+        textFontSmall:{
+            fontFamily: fonts.bodySmall.fontFamily
+        },
+        textColor:{
+            color: colors.default_dark
         }
     });
 
@@ -92,23 +98,31 @@ const NotificationScreen = ( ) => {
                 <View style={[styles.card, {backgroundColor: item.is_read ? colors.background : colors.quaternary}]}>
                     <View style={{flexDirection: "row", alignItems: "center"}}>
                         <View style={{width: "80%"}}>
-                            <Text style={styles.textFontBold}>{item.title}</Text>
-                            <Text style={styles.textFontRegular}>{item.message}</Text>
+                            <Text style={[styles.textFontBold, styles.textColor]}>{item.title}</Text>
+                            <Text style={[styles.textFontRegular, styles.textColor]}>{item.message}</Text>
                         </View>
                         <View style={{flexDirection: "row", width: "20%", justifyContent: "space-between"}}>
                             {item.action_available &&
                                 <>
-                                    <TouchableOpacity onPress={() => refuseInvitation( item )}>
-                                        <Icon source={"close"} size={30} color={colors.error} />
-                                    </TouchableOpacity>
-                                    
-                                    <TouchableOpacity onPress={() => acceptInvitation( item )}>
-                                        <Icon source={"check"} size={30} color={colors.accent} />
-                                    </TouchableOpacity>
+                                    {refreshing ?
+                                        <ActivityIndicator animating={true} size="small" />
+                                    :
+                                        <>
+                                            <TouchableOpacity onPress={() => refuseInvitation( item )}>
+                                                <Icon source={"close"} size={30} color={colors.error} />
+                                            </TouchableOpacity>
+                                            
+                                            <TouchableOpacity onPress={() => acceptInvitation( item )}>
+                                                <Icon source={"check"} size={30} color={colors.accent} />
+                                            </TouchableOpacity>
+                                        </>
+                                    }
                                 </>
                             }
-                            
                         </View>
+                    </View>
+                    <View style={{paddingTop: 10}}>
+                        <Text style={[styles.textFontSmall, {fontSize: 11}, styles.textColor]}>{instanceDateUtils.transformTimestampToDate(item.created_at)} - {item.proposed_by}</Text>
                     </View>
                 </View>
             </>
@@ -134,12 +148,9 @@ const NotificationScreen = ( ) => {
                   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
                 }
                 ListEmptyComponent={
-                  <View style={styles.container}>
                     <ModalDefaultNoValue
                         text={"Vous n'avez aucune notification"}
                     />
-                  </View>
-                  
               }
             />
         );

@@ -10,13 +10,13 @@ import Toast from "react-native-toast-message";
 import AnimalBody from "../components/animal_body/AnimalBody";
 import MedicalBook from "../components/MedicalBook";
 import { useAuth } from "../providers/AuthenticatedUserProvider";
-import DateUtils from '../utils/DateUtils';
 import LoggerService from "../services/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../components/modals/common/ModalValidation";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAnimaux } from "../providers/AnimauxProvider";
+import instanceDateUtils from "../utils/DateUtils";
 
 const PetsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -32,7 +32,6 @@ const PetsScreen = ({ navigation }) => {
   const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
-  const dateUtils = new DateUtils();
   const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
   useFocusEffect(
@@ -111,7 +110,7 @@ const PetsScreen = ({ navigation }) => {
       setValue("id", animalToDisplay.id);
       setValue("nom", animalToDisplay.nom);
       setValue("espece", animalToDisplay.espece);
-      setValue("datenaissance", animalToDisplay.datenaissance !== null ? dateUtils.dateFormatter(animalToDisplay.datenaissance, "dd/MM/yyyy", "/") : undefined);
+      setValue("datenaissance", animalToDisplay.datenaissance !== null ? instanceDateUtils.dateFormatter(animalToDisplay.datenaissance, "dd/MM/yyyy", "/") : undefined);
       setValue("race", animalToDisplay.race !== null ? animalToDisplay.race : undefined);
       setValue("taille", animalToDisplay.taille !== null ? animalToDisplay.taille.toString() : undefined);
       setValue("poids", animalToDisplay.poids !== null ? animalToDisplay.poids.toString() : undefined);

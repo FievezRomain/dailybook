@@ -1,7 +1,6 @@
-import DateUtils from './DateUtils';
 import FileStorageService from '../services/FileStorageService';
+import instanceDateUtils from './DateUtils';
 
-const dateUtils = new DateUtils();
 const fileStorageService = new FileStorageService();
 
 export const initValuesAnimal = (animal, setValue, setEspece, setImage, setDate, currentUser) => {
@@ -9,8 +8,8 @@ export const initValuesAnimal = (animal, setValue, setEspece, setImage, setDate,
     setValue("nom", animal.nom);
     setValue("espece", animal.espece);
     setEspece(animal.espece);
-    setValue("datenaissance", animal.datenaissance ? dateUtils.dateFormatter(animal.datenaissance, "yyyy-mm-dd", "-") : undefined);
-    setValue("datedeces", animal.datedeces ? dateUtils.dateFormatter(animal.datedeces, "yyyy-mm-dd", "-") : undefined);
+    setValue("datenaissance", animal.datenaissance ? instanceDateUtils.dateFormatter(animal.datenaissance, "yyyy-mm-dd", "-") : undefined);
+    setValue("datedeces", animal.datedeces ? instanceDateUtils.dateFormatter(animal.datedeces, "yyyy-mm-dd", "-") : undefined);
     setValue("race", animal.race || undefined);
     setValue("taille", animal.taille?.toString());
     setValue("poids", animal.poids?.toString());
@@ -22,7 +21,7 @@ export const initValuesAnimal = (animal, setValue, setEspece, setImage, setDate,
     setValue("nommere", animal.nommere || undefined);
     setValue("image", animal.image);
     setValue("previousimage", animal.image);
-    setDate(animal.datenaissance ? dateUtils.dateFormatter(animal.datenaissance, "yyyy-mm-dd", "-") : null);
+    setDate(animal.datenaissance ? instanceDateUtils.dateFormatter(animal.datenaissance, "yyyy-mm-dd", "-") : null);
     setImage(animal.image ? fileStorageService.getFileUrl(animal.image, currentUser.uid) : null);
 };
 

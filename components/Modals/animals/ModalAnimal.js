@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import animalsServiceInstance from "../../../services/AnimalsService";
 import { useAuth } from "../../../providers/AuthenticatedUserProvider";
 import AvatarPicker from "../../inputs/AvatarPicker";
-import DateUtils from "../../../utils/DateUtils";
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from "../../../services/LoggerService";
@@ -15,13 +14,13 @@ import DropdawnList from "../../inputs/DropdawnList";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
 import Constants from 'expo-constants';
+import instanceDateUtils from "../../../utils/DateUtils";
 
 const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
     const { currentUser } = useAuth();
     const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch, clearErrors } = useForm();
     const [image, setImage] = useState(null);
-    const dateUtils = new DateUtils();
     var today = new Date();
     var jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
     var mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
@@ -91,9 +90,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("nom", animal.nom);
         setValue("espece", animal.espece);
         setEspece(animal.espece);
-        setValue("datenaissance", animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : undefined);
-        setValue("datearrivee", animal.datearrivee !== null ? (animal.datearrivee.includes("-") ?  dateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee) : undefined);
-        setValue("datedepart", animal.datedepart !== null ? (animal.datedepart.includes("-") ?  dateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart) : undefined);
+        setValue("datenaissance", animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  instanceDateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : undefined);
+        setValue("datearrivee", animal.datearrivee !== null ? (animal.datearrivee.includes("-") ?  instanceDateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee) : undefined);
+        setValue("datedepart", animal.datedepart !== null ? (animal.datedepart.includes("-") ?  instanceDateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart) : undefined);
         setValue("datedeces", animal.datedeces !== null ? animal.datedeces : undefined);
         setValue("race", animal.race !== null ? animal.race : undefined);
         setValue("taille", animal.taille !== null ? animal.taille.toString() : undefined);
@@ -110,9 +109,9 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         setValue("image", animal.image);
         setValue("previousimage", animal.image);
         setValue("informations", animal.informations !== null ? animal.informations : undefined);
-        setDate(animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : null);
-        setDateArrivee(animal.datearrivee !== null ? (animal.datearrivee.includes("-") ?  dateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee) : null);
-        setDateDepart(animal.datedepart !== null ? (animal.datedepart.includes("-") ?  dateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart) : null);
+        setDate(animal.datenaissance !== null ? (animal.datenaissance.includes("-") ?  instanceDateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance) : null);
+        setDateArrivee(animal.datearrivee !== null ? (animal.datearrivee.includes("-") ?  instanceDateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee) : null);
+        setDateDepart(animal.datedepart !== null ? (animal.datedepart.includes("-") ?  instanceDateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart) : null);
         setImage(animal.image !== null ? fileStorageService.getFileUrl( animal.image, currentUser.uid ) : null);
     }
 
@@ -181,7 +180,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             data["datedepart"] = undefined;
         }
 
-        if( ( data["datenaissance"] !== null && data["datenaissance"] !== undefined ) && ( data["datenaissance"].length !== 10 || !dateUtils.isDateValid( dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/") ) ) ){
+        if( ( data["datenaissance"] !== null && data["datenaissance"] !== undefined ) && ( data["datenaissance"].length !== 10 || !instanceDateUtils.isDateValid( instanceDateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/") ) ) ){
             Toast.show({
                 position: "top",
                 type: "error",
@@ -190,7 +189,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             setLoading(false);
             return;
         }
-        if( ( data["datearrivee"] !== null && data["datearrivee"] !== undefined ) && ( data["datearrivee"].length !== 10 || !dateUtils.isDateValid( dateUtils.dateFormatter( data["datearrivee"], "dd/MM/yyyy", "/") ) ) ){
+        if( ( data["datearrivee"] !== null && data["datearrivee"] !== undefined ) && ( data["datearrivee"].length !== 10 || !instanceDateUtils.isDateValid( instanceDateUtils.dateFormatter( data["datearrivee"], "dd/MM/yyyy", "/") ) ) ){
             Toast.show({
                 position: "top",
                 type: "error",
@@ -199,7 +198,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             setLoading(false);
             return;
         }
-        if( ( data["datedepart"] !== null && data["datedepart"] !== undefined ) && ( data["datedepart"].length !== 10 || !dateUtils.isDateValid( dateUtils.dateFormatter( data["datedepart"], "dd/MM/yyyy", "/") ) ) ){
+        if( ( data["datedepart"] !== null && data["datedepart"] !== undefined ) && ( data["datedepart"].length !== 10 || !instanceDateUtils.isDateValid( instanceDateUtils.dateFormatter( data["datedepart"], "dd/MM/yyyy", "/") ) ) ){
             Toast.show({
                 position: "top",
                 type: "error",
@@ -210,13 +209,13 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
         }
 
         if( data["datenaissance"] !== null && data["datenaissance"] !== undefined ){
-            data["datenaissance"] = dateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
+            data["datenaissance"] = instanceDateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
         }
         if( data["datearrivee"] !== null && data["datearrivee"] !== undefined ){
-            data["datearrivee"] = dateUtils.dateFormatter( data["datearrivee"], "dd/MM/yyyy", "/");
+            data["datearrivee"] = instanceDateUtils.dateFormatter( data["datearrivee"], "dd/MM/yyyy", "/");
         }
         if( data["datedepart"] !== null && data["datedepart"] !== undefined ){
-            data["datedepart"] = dateUtils.dateFormatter( data["datedepart"], "dd/MM/yyyy", "/");
+            data["datedepart"] = instanceDateUtils.dateFormatter( data["datedepart"], "dd/MM/yyyy", "/");
         }
 
         // Vérification de la valeur des entiers/décimal
@@ -324,7 +323,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
             return "Invalid Date";
         }
         if(date.includes("/")){
-            date = dateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
+            date = instanceDateUtils.dateFormatter(date, "dd/MM/yyyy", "/");
         }
         let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         let dateObject  = new Date(date);

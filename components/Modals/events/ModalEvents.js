@@ -16,7 +16,6 @@ import TimePickerCustom from "../../inputs/TimePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
 import LoggerService from "../../../services/LoggerService";
-import DateUtils from "../../../utils/DateUtils";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
 import { useAnimaux } from "../../../providers/AnimauxProvider";
@@ -25,6 +24,7 @@ import Constants from 'expo-constants';
 import DocumentPickerComponent from "../../inputs/DocumentPickerComponent";
 import FilesList from "../../FilesList";
 import FileStorageService from "../../../services/FileStorageService";
+import instanceDateUtils from "../../../utils/DateUtils";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined, date=null}) => {
   const { colors, fonts } = useTheme();
@@ -93,7 +93,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const { events } = useEvents();
-  const dateUtils = new DateUtils();
   const scrollRef = useRef(null);
   //const watchAll = watch();
   //setValue("date", String(jour + "/" + mois + "/" + annee));
@@ -167,7 +166,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("heuredebutevent", event.heuredebutevent === undefined ? null : event.heuredebutevent);
     setValue("lieu", event.lieu);
     setValue("heuredebutbalade", event.heuredebutbalade);
-    setValue("datefinbalade", event.datefinbalade !== null && event.datefinbalade !== undefined ? (event.datefinbalade.includes("/") ? dateUtils.dateFormatter(event.datefinbalade, "dd/MM/yyyy", "/") : event.datefinbalade) : undefined);
+    setValue("datefinbalade", event.datefinbalade !== null && event.datefinbalade !== undefined ? (event.datefinbalade.includes("/") ? instanceDateUtils.dateFormatter(event.datefinbalade, "dd/MM/yyyy", "/") : event.datefinbalade) : undefined);
     setValue("heurefinbalade", event.heurefinbalade);
     setValue("discipline", event.discipline);
     setValue("note", event.note);
@@ -177,7 +176,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("specialiste", event.specialiste);
     setValue("depense", event.depense);
     setValue("traitement", event.traitement);
-    setValue("datefinsoins", event.datefinsoins !== null && event.datefinsoins !== undefined ? (event.datefinsoins.includes("/") ? dateUtils.dateFormatter(event.datefinsoins, "dd/MM/yyyy", "/") : event.datefinsoins) : undefined);
+    setValue("datefinsoins", event.datefinsoins !== null && event.datefinsoins !== undefined ? (event.datefinsoins.includes("/") ? instanceDateUtils.dateFormatter(event.datefinsoins, "dd/MM/yyyy", "/") : event.datefinsoins) : undefined);
     setValue("commentaire", event.commentaire);
     setValue("animaux", event.animaux);
     if(event.animaux != undefined){
