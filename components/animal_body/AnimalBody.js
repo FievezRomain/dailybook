@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { Icon, useTheme } from 'react-native-paper';
-import { useAuth } from '../../providers/AuthenticatedUserProvider';
+import { useAuth } from '../../contexts/AuthenticatedUserProvider';
 import ModalManageBodyAnimal from '../modals/animals/ModalManageBodyAnimal';
 import AnimalImageCarousel from './AnimalImageCarousel';
 

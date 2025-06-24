@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
-import OfferInformations from './OfferInformations';
-import { useAuth } from '../providers/AuthenticatedUserProvider';
+import OfferInformations from './common/OfferInformations';
+import { useAuth } from '../contexts/AuthenticatedUserProvider';
 import { useTheme, IconButton } from 'react-native-paper';
 import StatePicker from './inputs/StatePicker';
 import ChartWithLoader from './ChartWithLoader';
@@ -15,7 +15,7 @@ import PoidsComponent from './statistics/PoidsComponent';
 import TailleComponent from './statistics/TailleComponent';
 import AlimentationComponent from './statistics/AlimentationComponent';
 import ConcoursComponent from './statistics/ConcoursComponent';
-import { ThemeContext } from '../providers/ThemeProvider';
+import { ThemeContext } from '../contexts/ThemeProvider';
 
 const StatistiquesBloc = ({ selectedAnimal }) =>{
     const { isDarkTheme } = useContext( ThemeContext );

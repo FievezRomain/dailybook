@@ -1,6 +1,6 @@
 import { getBaseUrl } from './Config';
 import axios from 'axios';
-import LoggerService from './LoggerService';
+import LoggerService from '../logs/LoggerService';
 import { getAuth } from 'firebase/auth';
 
 class StatisticService {

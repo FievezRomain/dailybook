@@ -1,10 +1,10 @@
-//const myIp = ':';
+const myIp = ':';
 
-//const devUrl = "http://"+myIp+"8080";
+const devUrl = "http://"+myIp+"8080";
 const prodUrl = "https://vasco-planner.fr";
 const imageUrl = "ressources/images/";
 
-const currentUrl = prodUrl;
+const currentUrl = devUrl;
 
 export function getBaseUrl(){
     return(

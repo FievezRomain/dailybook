@@ -1,11 +1,11 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
-import TopTabSecondary from '../components/TopTabSecondary';
+import TopTabSecondary from '../components/common/TopTabSecondary';
 import { useEffect, useState } from 'react';
 import ModalDefaultNoValue from '../components/modals/common/ModalDefaultNoValue';
-import notificationServiceInstance from '../services/NotificationService';
-import groupServiceInstance from '../services/GroupService';
+import notificationServiceInstance from '../services/api/NotificationService';
+import groupServiceInstance from '../services/api/GroupService';
 import instanceDateUtils from '../utils/DateUtils';
 
 const NotificationScreen = ( ) => {

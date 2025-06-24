@@ -1,14 +1,14 @@
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
-import TopTab from '../components/TopTab';
+import TopTab from '../components/common/TopTab';
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import EventsBloc from "../components/EventsBloc";
 import ObjectifsInProgressBloc from "../components/ObjectifsInProgressBloc";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
-import { useEvents } from "../providers/EventsProvider";
-import { useObjectifs } from "../providers/ObjectifsProvider";
+import { useEvents } from "../contexts/EventsProvider";
+import { useObjectifs } from "../contexts/ObjectifsProvider";
 import { isAfter, isEqual, startOfDay } from 'date-fns';
 
 const WelcomeScreen = ({ navigation })=> {

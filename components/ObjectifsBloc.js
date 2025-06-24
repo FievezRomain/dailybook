@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
-import { useAuth } from '../providers/AuthenticatedUserProvider';
+import { useAuth } from '../contexts/AuthenticatedUserProvider';
 import ModalSubMenuObjectifActions from './modals/objectifs/ModalSubMenuObjectifActions';
 import ModalObjectif from './modals/objectifs/ModalObjectif';
 import ModalObjectifSubTasks from './modals/objectifs/ModalObjectifSubTasks';
 import ObjectifCard from './cards/ObjectifCard';
 import ModalDefaultNoValue from './modals/common/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
-import { useObjectifs } from '../providers/ObjectifsProvider'; 
+import { useObjectifs } from '../contexts/ObjectifsProvider'; 
 import StatePicker from './inputs/StatePicker';
 import { isAfter, isBefore, isEqual, startOfDay } from 'date-fns';
 

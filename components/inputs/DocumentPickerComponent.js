@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import validateFile from '../../utils/validateFile';
 import ImageUtils from "../../utils/ImageUtils";
-import LoggerService from '../../services/LoggerService';
+import LoggerService from '../../services/logs/LoggerService';
 
 const MAX_FILES = 3;
 

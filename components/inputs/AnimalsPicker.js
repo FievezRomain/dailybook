@@ -1,8 +1,8 @@
 import { StyleSheet, View, Text, TouchableOpacity, FlatList } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image } from "expo-image";
-import { useAuth } from "../../providers/AuthenticatedUserProvider";
-import FileStorageService from "../../services/FileStorageService";
+import { useAuth } from "../../contexts/AuthenticatedUserProvider";
+import FileStorageService from "../../services/aws/FileStorageService";
 import { useTheme } from 'react-native-paper';
 import React, { useRef } from "react";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";

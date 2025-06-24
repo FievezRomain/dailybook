@@ -11,8 +11,8 @@ import ModalGroup from "./groups/ModalGroup";
 import Toast from "react-native-toast-message";
 import { useTheme, Divider } from 'react-native-paper';
 import ModalEditGeneric from "./common/ModalEditGeneric";
-import { useCalendar } from "../../providers/CalendarProvider";
-import { useAuth } from "../../providers/AuthenticatedUserProvider";
+import { useCalendar } from "../../contexts/CalendarProvider";
+import { useAuth } from "../../contexts/AuthenticatedUserProvider";
 
 const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
   const { colors, fonts } = useTheme();

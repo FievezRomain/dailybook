@@ -3,12 +3,12 @@ import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput, ActivityInd
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import RatingInput from '../../inputs/RatingInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import eventsServiceInstance from '../../../services/EventService';
+import eventsServiceInstance from '../../../services/api/EventService';
 import Toast from "react-native-toast-message";
-import LoggerService from '../../../services/LoggerService';
-import FileStorageService from "../../../services/FileStorageService";
+import LoggerService from '../../../services/logs/LoggerService';
+import FileStorageService from "../../../services/aws/FileStorageService";
 import { Image } from "expo-image";
-import { useAuth } from "../../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../../contexts/AuthenticatedUserProvider";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from '../common/ModalEditGeneric';
 import Constants from 'expo-constants';

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { initValuesAnimal, resetValues } from "../utils/AnimalHelpers";
-import animalsServiceInstance from "../services/AnimalsService";
+import animalsServiceInstance from "../services/api/AnimalsService";
 import Toast from "react-native-toast-message";
-import FileStorageService from "../services/FileStorageService";
-import LoggerService from "../services/LoggerService";
+import FileStorageService from "../services/aws/FileStorageService";
+import LoggerService from "../services/logs/LoggerService";
 import instanceDateUtils from "../utils/DateUtils";
 
 export const useAnimalForm = (setValue, currentUser, onModify, closeModal) => {

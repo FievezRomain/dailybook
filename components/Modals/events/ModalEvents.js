@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 import ModalAnimals from "../animals/ModalSelectAnimals";
-import eventsServiceInstance from "../../../services/EventService";
-import { useAuth } from "../../../providers/AuthenticatedUserProvider";
+import eventsServiceInstance from "../../../services/api/EventService";
+import { useAuth } from "../../../contexts/AuthenticatedUserProvider";
 import ModalDropdwn from "../inputs/ModalDropdown";
 import ModalNotifications from "../inputs/ModalNotifications";
 import DatePickerModal from "../inputs/ModalDatePicker";
@@ -15,15 +15,15 @@ import { ActivityIndicator } from "react-native";
 import TimePickerCustom from "../../inputs/TimePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AntDesign, Ionicons } from '@expo/vector-icons';
-import LoggerService from "../../../services/LoggerService";
+import LoggerService from "../../../services/logs/LoggerService";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
-import { useAnimaux } from "../../../providers/AnimauxProvider";
-import { useEvents } from "../../../providers/EventsProvider";
+import { useAnimaux } from "../../../contexts/AnimauxProvider";
+import { useEvents } from "../../../contexts/EventsProvider";
 import Constants from 'expo-constants';
 import DocumentPickerComponent from "../../inputs/DocumentPickerComponent";
-import FilesList from "../../FilesList";
-import FileStorageService from "../../../services/FileStorageService";
+import FilesList from "../../common/FilesList";
+import FileStorageService from "../../../services/aws/FileStorageService";
 import instanceDateUtils from "../../../utils/DateUtils";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined, date=null}) => {
@@ -235,6 +235,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     }
 
     setValue("documents", event.documents);
+    setValue("shared_groups", event.shared_groups);
   }
 
   const submitRegister = async(data) =>{
@@ -443,6 +444,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setOptionNotifType(false);
     setFrequence(false);
     setValue("documents", undefined);
+    setValue("shared_groups", undefined);
     //setAnimaux([]);
   }
 

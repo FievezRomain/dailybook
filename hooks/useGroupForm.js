@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { initValuesGroup, resetValues } from "../utils/GroupHelpers";
-import groupServiceInstance from "../services/GroupService";
+import groupServiceInstance from "../services/api/GroupService";
 import Toast from "react-native-toast-message";
-import LoggerService from "../services/LoggerService";
-import { useAnimaux } from "../providers/AnimauxProvider";
+import LoggerService from "../services/logs/LoggerService";
+import { useAnimaux } from "../contexts/AnimauxProvider";
 
 export const useGroupForm = (setValue, onModify, closeModal) => {
     const [loading, setLoading] = useState(false);

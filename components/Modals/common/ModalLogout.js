@@ -1,6 +1,6 @@
 import { StyleSheet, Modal, View, Text, TouchableOpacity } from "react-native";
 import Button from "../../inputs/Button";
-import { useAuth } from "../../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../../contexts/AuthenticatedUserProvider";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../inputs/ModalEditGeneric";
 

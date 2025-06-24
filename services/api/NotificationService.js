@@ -1,7 +1,7 @@
 import { getBaseUrl } from './Config';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
-import LoggerService from './LoggerService';
+import LoggerService from '../logs/LoggerService';
 
 class NotificationService {
 

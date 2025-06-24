@@ -2,10 +2,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { IconButton, useTheme, ActivityIndicator } from 'react-native-paper';
-import TopTab from '../components/TopTab';
-import LoggerService from '../services/LoggerService';
-import groupServiceInstance from '../services/GroupService';
-import { useGroups } from '../providers/GroupProvider';
+import TopTab from '../components/common/TopTab';
+import LoggerService from '../services/logs/LoggerService';
+import groupServiceInstance from '../services/api/GroupService';
+import { useGroups } from '../contexts/GroupProvider';
 
 const OtherScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();

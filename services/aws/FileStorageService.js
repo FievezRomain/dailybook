@@ -1,5 +1,5 @@
-import awsconfig from '../aws-exports';
-import LoggerService from './LoggerService';
+import awsconfig from '../../aws-exports';
+import LoggerService from '../logs/LoggerService';
 import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import "react-native-get-random-values";
 

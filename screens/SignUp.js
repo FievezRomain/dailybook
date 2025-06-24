@@ -2,16 +2,16 @@ import { useState } from "react";
 import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator, TouchableOpacity } from "react-native";
 import { useForm } from "react-hook-form";
 import wallpaper_login from "../assets/wallpaper_login.png";
-import AuthService from "../services/AuthService";
+import AuthService from "../services/api/AuthService";
 import Toast from "react-native-toast-message";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import Button from "../components/inputs/Button";
-import Back from "../components/Back";
+import Back from "../components/common/Back";
 import { getFirebaseAuth } from "../firebase";
 import { MaterialIcons } from '@expo/vector-icons';
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import Constants from 'expo-constants';
-import LoggerService from "../services/LoggerService";
+import LoggerService from "../services/logs/LoggerService";
 import { useTheme } from 'react-native-paper';
 
 

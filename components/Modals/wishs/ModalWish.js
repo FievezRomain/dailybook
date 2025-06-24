@@ -5,13 +5,13 @@ import { useForm } from "react-hook-form";
 import AvatarPicker from "../../inputs/AvatarPicker";
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
-import wishsServiceInstance from "../../../services/WishService";
-import { useAuth } from '../../../providers/AuthenticatedUserProvider';
+import wishsServiceInstance from "../../../services/api/WishService";
+import { useAuth } from '../../../contexts/AuthenticatedUserProvider';
 import { Image } from "expo-image";
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import LoggerService from "../../../services/LoggerService";
-import FileStorageService from "../../../services/FileStorageService";
+import LoggerService from "../../../services/logs/LoggerService";
+import FileStorageService from "../../../services/aws/FileStorageService";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
 

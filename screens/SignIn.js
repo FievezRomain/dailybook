@@ -5,11 +5,11 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import Button from "../components/inputs/Button";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { getFirebaseAuth } from "../firebase";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { useState } from "react";
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from "react-native-toast-message";
-import LoggerService from "../services/LoggerService";
+import LoggerService from "../services/logs/LoggerService";
 import { useTheme } from 'react-native-paper';
 
 const SignInScreen = ({ navigation })=> {

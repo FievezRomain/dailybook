@@ -2,8 +2,8 @@ import { View, Text, StyleSheet } from "react-native";
 import { Entypo } from '@expo/vector-icons'
 import { TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
-import { useAuth } from "../../../providers/AuthenticatedUserProvider";
-import FileStorageService from "../../../services/FileStorageService";
+import { useAuth } from "../../../contexts/AuthenticatedUserProvider";
+import FileStorageService from "../../../services/aws/FileStorageService";
 import { useTheme } from 'react-native-paper';
 
 const DepenseCard = ({eventInfos, animaux, setSubMenu}) => {

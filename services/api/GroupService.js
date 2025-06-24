@@ -2,7 +2,7 @@ import { getBaseUrl } from './Config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
-import LoggerService from './LoggerService';
+import LoggerService from '../logs/LoggerService';
 import objectifsServiceInstance from './ObjectifService';
 import animalsServiceInstance from './AnimalsService';
 import eventsServiceInstance from './EventService';

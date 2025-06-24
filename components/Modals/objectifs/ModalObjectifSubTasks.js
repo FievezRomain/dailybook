@@ -3,10 +3,10 @@ import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
 import CheckboxInput from "../../inputs/CheckboxInput";
-import CompletionBar from "../../CompletionBar";
+import CompletionBar from "../../common/CompletionBar";
 import _ from 'lodash';
-import objectifsServiceInstance from "../../../services/ObjectifService";
-import LoggerService from "../../../services/LoggerService";
+import objectifsServiceInstance from "../../../services/api/ObjectifService";
+import LoggerService from "../../../services/logs/LoggerService";
 import { useTheme } from 'react-native-paper';
 
 const ModalObjectifSubTasks = ({isVisible, setVisible, handleTasksStateChange, objectif={}}) => {

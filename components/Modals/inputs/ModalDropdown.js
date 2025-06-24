@@ -3,7 +3,7 @@ import Button from "../../inputs/Button";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
 
-const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, setValue, valueName, modalHeight="40%"}) => {
+const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, setValue, valueName, modalHeight="40%", customizable=true}) => {
   const { colors, fonts } = useTheme();
   
     const checkState = (value) =>{
@@ -106,9 +106,12 @@ const ModalDropdwn = ({ modalVisible, setModalVisible, list, setState, state, se
                           </TouchableOpacity>
                       );
                   })}
-                  <TouchableOpacity style={[styles.item, styles.disabled]} disabled={true}>
-                    <Text style={[styles.title, styles.textFontRegular, styles.disabledText]}>Bientôt personnalisable...</Text>
-                  </TouchableOpacity>
+                  {customizable &&
+                    <TouchableOpacity style={[styles.item, styles.disabled]} disabled={true}>
+                      <Text style={[styles.title, styles.textFontRegular, styles.disabledText]}>Bientôt personnalisable...</Text>
+                    </TouchableOpacity>
+                  }
+                  
                   {/* <FlatList
                       data={list}
                       renderItem={({item}) => <Item title={item.title} event={setChoice} />}

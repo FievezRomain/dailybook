@@ -1,6 +1,6 @@
 import { Text, View, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
-import Variables from "../styles/Variables";
+import Variables from "../../styles/Variables";
 
 const ButtonLong = ({ children, type, onPress }) => {
     let backgroundColor = "white";

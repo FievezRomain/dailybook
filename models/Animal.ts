@@ -1,0 +1,23 @@
+export type Animal = {
+    id: number;
+    nom: string;
+    espece: string;
+    datenaissance?: Date;
+    datearrivee?: Date;
+    datedepart?: Date;
+    datedeces?: Date;
+    race?: string;
+    taille?: number;
+    poids?: number;
+    sexe?: string;
+    food?: string;
+    quantity?: number;
+    unity?: string;
+    couleur?: string;
+    nompere?: string;
+    nommere?: string;
+    numeroidentification?: string;
+    image?: string;
+    previousimage?: string;
+    informations?: string;
+};

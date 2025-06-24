@@ -1,4 +1,4 @@
-import FileStorageService from '../services/FileStorageService';
+import FileStorageService from '../services/aws/FileStorageService';
 import instanceDateUtils from './DateUtils';
 
 const fileStorageService = new FileStorageService();

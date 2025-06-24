@@ -3,9 +3,9 @@ import { View, Text, ActivityIndicator, Dimensions, TouchableOpacity, StyleSheet
 import { Image } from 'expo-image';
 import Carousel from 'react-native-reanimated-carousel';
 import { useTheme } from 'react-native-paper';
-import FileStorageService from '../../services/FileStorageService';
-import { useAuth } from '../../providers/AuthenticatedUserProvider';
-import animalsServiceInstance from '../../services/AnimalsService';
+import FileStorageService from '../../services/aws/FileStorageService';
+import { useAuth } from '../../contexts/AuthenticatedUserProvider';
+import animalsServiceInstance from '../../services/api/AnimalsService';
 import { isSameMonth } from 'date-fns'; 
 import * as Localization from 'expo-localization';
 import Toast from "react-native-toast-message";

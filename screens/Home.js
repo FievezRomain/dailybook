@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, Image, Dimensions } from "react-native";
 import wallpaper_accueil from "../assets/wallpaper_login.png";
 import logo from "../assets/logo.png";
-import WavyHeader from "../components/WavyHeader";
+import WavyHeader from "../components/common/WavyHeader";
 import { useTheme } from 'react-native-paper';
 
 const HomeScreen = ({ navigation })=> {

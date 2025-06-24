@@ -2,11 +2,11 @@ import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import Constants from 'expo-constants';
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../contexts/AuthenticatedUserProvider";
 import { Image } from "expo-image";
 import { Badge, Divider, useTheme } from 'react-native-paper';
 import { useCallback, useEffect, useState } from "react";
-import notificationServiceInstance from "../services/NotificationService";
+import notificationServiceInstance from "../../services/api/NotificationService";
 
 const TopTab = ({message1, message2, withBackground=false, withLogo=false}) => {
     const { colors, fonts } = useTheme();
@@ -87,7 +87,7 @@ const TopTab = ({message1, message2, withBackground=false, withLogo=false}) => {
                             </View>
                         :
                             <View style={{flexDirection: "row", alignItems: "center", marginTop: -5}}>
-                                <Image source={require("../assets/logo.png")} style={{height: 45, width: 45}}/>
+                                <Image source={require("../../assets/logo.png")} style={{height: 45, width: 45}}/>
                                 <Text style={[styles.textFontMedium, {color: colors.accent, fontSize: 25}]}>VASCO</Text>
                             </View>
                     :

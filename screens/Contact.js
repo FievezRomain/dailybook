@@ -1,11 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { View, SectionList, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import TopTabSecondary from '../components/TopTabSecondary';
-import contactsServiceInstance from '../services/ContactService';
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import TopTabSecondary from '../components/common/TopTabSecondary';
+import contactsServiceInstance from '../services/api/ContactService';
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { Entypo, Zocial } from '@expo/vector-icons';
 import { Linking } from 'react-native';
-import LoggerService from '../services/LoggerService';
+import LoggerService from '../services/logs/LoggerService';
 import ModalSubMenuContactActions from '../components/modals/contacts/ModalSubMenuContactActions';
 import ModalContact from "../components/modals/contacts/ModalContact";
 import Toast from "react-native-toast-message";
@@ -13,7 +13,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import ModalDefaultNoValue from '../components/modals/common/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../components/modals/common/ModalValidation";
-import { useContacts } from '../providers/ContactsProvider';
+import { useContacts } from '../contexts/ContactsProvider';
 
 const ContactScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();

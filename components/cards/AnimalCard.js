@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, Icon, useTheme } from "react-native-paper";
-import FileStorageService from "../../services/FileStorageService";
-import { useAuth } from "../../providers/AuthenticatedUserProvider";
+import FileStorageService from "../../services/aws/FileStorageService";
+import { useAuth } from "../../contexts/AuthenticatedUserProvider";
 import { useGroupForm } from "../../hooks/useGroupForm";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";

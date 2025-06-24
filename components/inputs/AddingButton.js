@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { FAB, useTheme } from 'react-native-paper';
 import ModalCreate from '../modals/ModalCreate';
-import { useCalendar } from '../../providers/CalendarProvider';
+import { useCalendar } from '../../contexts/CalendarProvider';
 
 const AddingButton = ({ navigation }) => {
     const { colors } = useTheme();

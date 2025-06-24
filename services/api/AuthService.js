@@ -5,7 +5,7 @@ import * as Notifications from 'expo-notifications';
 import * as TrackingTransparency from 'expo-tracking-transparency';
 import Constants from 'expo-constants';
 import { getAuth, signOut } from 'firebase/auth';
-import LoggerService from './LoggerService';
+import LoggerService from '../logs/LoggerService';
 import { Platform } from 'react-native';
 import * as Localization from 'expo-localization';
 

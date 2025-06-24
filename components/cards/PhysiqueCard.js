@@ -1,11 +1,11 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
-import animalsServiceInstance from '../../services/AnimalsService';
+import animalsServiceInstance from '../../services/api/AnimalsService';
 import Toast from "react-native-toast-message";
 import React, { useState, useEffect, useContext } from 'react';
 import ModalManageBodyAnimal from '../modals/animals/ModalManageBodyAnimal';
-import LoggerService from '../../services/LoggerService';
-import { useAuth } from '../../providers/AuthenticatedUserProvider';
+import LoggerService from '../../services/logs/LoggerService';
+import { useAuth } from '../../contexts/AuthenticatedUserProvider';
 import { Image } from "expo-image";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalValidation from "../modals/common/ModalValidation";

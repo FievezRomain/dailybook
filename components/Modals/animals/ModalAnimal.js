@@ -2,13 +2,13 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingVi
 import React, { useState, useRef, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
-import animalsServiceInstance from "../../../services/AnimalsService";
-import { useAuth } from "../../../providers/AuthenticatedUserProvider";
+import animalsServiceInstance from "../../../services/api/AnimalsService";
+import { useAuth } from "../../../contexts/AuthenticatedUserProvider";
 import AvatarPicker from "../../inputs/AvatarPicker";
 import { ActivityIndicator } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import LoggerService from "../../../services/LoggerService";
-import FileStorageService from "../../../services/FileStorageService";
+import LoggerService from "../../../services/logs/LoggerService";
+import FileStorageService from "../../../services/aws/FileStorageService";
 import { Image } from "expo-image";
 import DropdawnList from "../../inputs/DropdawnList";
 import { Divider, useTheme } from 'react-native-paper';

@@ -1,21 +1,21 @@
 import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated } from "react-native";
-import TopTab from '../components/TopTab';
+import TopTab from '../components/common/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import AnimalsPicker from "../components/inputs/AnimalsPicker";
 import { useForm } from "react-hook-form";
-import animalsServiceInstance from "../services/AnimalsService";
+import animalsServiceInstance from "../services/api/AnimalsService";
 import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import InformationsAnimals from "../components/InformationsAnimals";
 import Toast from "react-native-toast-message";
 import AnimalBody from "../components/animal_body/AnimalBody";
 import MedicalBook from "../components/MedicalBook";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
-import LoggerService from "../services/LoggerService";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
+import LoggerService from "../services/logs/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from 'react-native-paper';
 import ModalValidation from "../components/modals/common/ModalValidation";
 import { useFocusEffect } from "@react-navigation/native";
-import { useAnimaux } from "../providers/AnimauxProvider";
+import { useAnimaux } from "../contexts/AnimauxProvider";
 import instanceDateUtils from "../utils/DateUtils";
 
 const PetsScreen = ({ navigation }) => {

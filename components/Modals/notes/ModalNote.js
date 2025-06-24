@@ -13,8 +13,8 @@ import {
 } from "react-native";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
-import notesServiceInstance from "../../../services/NoteService";
-import { useAuth } from "../../../providers/AuthenticatedUserProvider";
+import notesServiceInstance from "../../../services/api/NoteService";
+import { useAuth } from "../../../contexts/AuthenticatedUserProvider";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import sanitizeHtml from 'sanitize-html';
 import { Divider, useTheme } from 'react-native-paper';

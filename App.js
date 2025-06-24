@@ -1,23 +1,23 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { AuthenticatedUserProvider } from "./providers/AuthenticatedUserProvider";
+import { AuthenticatedUserProvider } from "./contexts/AuthenticatedUserProvider";
 import AuthStack from "./navigation/AuthStack";
 import * as Font from 'expo-font';
 import { useEffect, useState, useContext } from "react";
 import { ActivityIndicator } from "react-native";
 import * as Sentry from '@sentry/react-native';
 import { StatusBar } from 'expo-status-bar';
-import AuthService from "./services/AuthService";
+import AuthService from "./services/api/AuthService";
 import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
-import variables from './components/styles/Variables';
-import { ThemeProvider, ThemeContext } from './providers/ThemeProvider';
+import variables from './styles/Variables';
+import { ThemeProvider, ThemeContext } from './contexts/ThemeProvider';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { AnimauxProvider } from "./providers/AnimauxProvider";
-import { EventsProvider } from "./providers/EventsProvider";
-import { ObjectifsProvider } from "./providers/ObjectifsProvider";
-import { NotesProvider } from "./providers/NotesProvider";
-import { ContactsProvider } from "./providers/ContactsProvider";
-import { WishProvider } from "./providers/WishProvider";
-import { GroupProvider } from "./providers/GroupProvider";
+import { AnimauxProvider } from "./contexts/AnimauxProvider";
+import { EventsProvider } from "./contexts/EventsProvider";
+import { ObjectifsProvider } from "./contexts/ObjectifsProvider";
+import { NotesProvider } from "./contexts/NotesProvider";
+import { ContactsProvider } from "./contexts/ContactsProvider";
+import { WishProvider } from "./contexts/WishProvider";
+import { GroupProvider } from "./contexts/GroupProvider";
 
 const lightTheme = {
   ...DefaultTheme,

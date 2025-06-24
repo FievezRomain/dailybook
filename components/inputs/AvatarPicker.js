@@ -5,7 +5,7 @@ import ModalSubMenuAvatarPickerActions from '../modals/common/ModalSubMenuAvatar
 import { useState } from 'react';
 import ImageUtils from "../../utils/ImageUtils";
 import { useTheme } from 'react-native-paper';
-import LoggerService from '../../services/LoggerService';
+import LoggerService from '../../services/logs/LoggerService';
 
 const AvatarPicker = ({ onChange, backgroundColor=null, ButtonComponent=undefined }) => {
   const { colors, fonts } = useTheme();

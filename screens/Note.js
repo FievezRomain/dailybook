@@ -1,13 +1,13 @@
 import { View, Text, StyleSheet, Image, FlatList, TextInput } from "react-native";
 import React, { useContext, useState, useEffect } from 'react';
-import { useAuth } from "../providers/AuthenticatedUserProvider";
-import TopTabSecondary from "../components/TopTabSecondary";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
+import TopTabSecondary from "../components/common/TopTabSecondary";
 import NoteCard from "../components/cards/NoteCard";
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import ModalDefaultNoValue from "../components/modals/common/ModalDefaultNoValue";
 import { useTheme } from 'react-native-paper';
-import { useNotes } from "../providers/NotesProvider";
+import { useNotes } from "../contexts/NotesProvider";
 
 const NoteScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();

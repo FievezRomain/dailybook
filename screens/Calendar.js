@@ -1,24 +1,24 @@
 import { View, Text, StyleSheet, Image, FlatList } from "react-native";
-import TopTab from '../components/TopTab';
+import TopTab from '../components/common/TopTab';
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Calendar, CalendarUtils, LocaleConfig } from 'react-native-calendars';
 import { ScrollView } from "react-native";
 import moment from "moment";
 import EventCard from "../components/cards/EventCard";
 import Toast from "react-native-toast-message";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
-import LoggerService from "../services/LoggerService";
+import LoggerService from "../services/logs/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
 import ModalDefaultNoValue from "../components/modals/common/ModalDefaultNoValue";
 import ModalFilterCalendar from "../components/modals/ModalFilterCalendar";
 import { CalendarFilter } from "../business/models/CalendarFilter";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
-import { useCalendar } from "../providers/CalendarProvider";
-import { useEvents } from "../providers/EventsProvider";
+import { useCalendar } from "../contexts/CalendarProvider";
+import { useEvents } from "../contexts/EventsProvider";
 
 const CalendarScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -395,6 +395,7 @@ const CalendarScreen = ({ navigation }) => {
             <Calendar
               style={[styles.calendar, styles.textFontRegular]}
               firstDay={1}
+              monthFormat={'MMMM yyyy'}
               theme={{
                 arrowColor: colors.accent,
                 todayTextColor: colors.tertiary,

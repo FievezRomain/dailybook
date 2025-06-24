@@ -1,17 +1,17 @@
 import { View, Text, StyleSheet, Image, Animated } from "react-native";
-import TopTab from '../components/TopTab';
+import TopTab from '../components/common/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { TouchableOpacity } from "react-native";
 import AnimalsPicker from "../components/inputs/AnimalsPicker";
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
-import { useAnimaux } from "../providers/AnimauxProvider";
+import { useAnimaux } from "../contexts/AnimauxProvider";
 
 const StatsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();

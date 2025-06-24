@@ -1,5 +1,5 @@
 import * as ImageManipulator from 'expo-image-manipulator';
-import LoggerService from '../services/LoggerService';
+import LoggerService from '../services/logs/LoggerService';
 import { Image } from 'react-native';
 
 export default class DateUtils {

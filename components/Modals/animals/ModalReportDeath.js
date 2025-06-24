@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity,
 import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../../contexts/AuthenticatedUserProvider";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
 import { useAnimalForm } from "../../../hooks/useAnimalForm";

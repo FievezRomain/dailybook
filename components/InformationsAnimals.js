@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import variables from "./styles/Variables";
+import variables from "../styles/Variables";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import ModalSubMenuAnimalActions from './modals/animals/ModalSubMenuAnimalActions';
 import ModalAnimal from './modals/animals/ModalAnimal';
 import { Image } from "expo-image";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
-import FileStorageService from "../services/FileStorageService";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
+import FileStorageService from "../services/aws/FileStorageService";
 import { useTheme } from 'react-native-paper';
 import ModalReportDeath from './modals/animals/ModalReportDeath';
 import { format } from 'date-fns'

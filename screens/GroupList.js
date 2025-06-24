@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
 import { useTheme, ActivityIndicator, Text } from 'react-native-paper';
-import { useAuth } from '../providers/AuthenticatedUserProvider';
-import groupServiceInstance from '../services/GroupService';
+import { useAuth } from '../contexts/AuthenticatedUserProvider';
+import groupServiceInstance from '../services/api/GroupService';
 import GroupCard from '../components/cards/GroupCard';
-import TopTabSecondary from '../components/TopTabSecondary';
+import TopTabSecondary from '../components/common/TopTabSecondary';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useGroups } from '../providers/GroupProvider';
-import LoggerService from '../services/LoggerService';
+import { useGroups } from '../contexts/GroupProvider';
+import LoggerService from '../services/logs/LoggerService';
 
 const GroupListScreen = () => {
   const { colors } = useTheme();

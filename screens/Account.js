@@ -1,16 +1,16 @@
 import { View, Text, Image, ActivityIndicator, StyleSheet } from "react-native";
 import React from 'react';
-import TopTabSecondary from "../components/TopTabSecondary";
+import TopTabSecondary from "../components/common/TopTabSecondary";
 import InputTextInLine from "../components/inputs/InputTextInLine";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import Button from "../components/inputs/Button";
 import { useState } from "react";
 import AvatarPicker from "../components/inputs/AvatarPicker";
-import AuthService from "../services/AuthService";
+import AuthService from "../services/api/AuthService";
 import Toast from "react-native-toast-message";
-import LoggerService from "../services/LoggerService";
+import LoggerService from "../services/logs/LoggerService";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import FileStorageService from "../services/FileStorageService";
+import FileStorageService from "../services/aws/FileStorageService";
 import { useTheme } from 'react-native-paper';
 
 const AccountScreen = ({ navigation }) => {

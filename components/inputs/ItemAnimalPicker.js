@@ -1,8 +1,8 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "react-native-paper";
-import { useAuth } from "../../providers/AuthenticatedUserProvider";
-import FileStorageService from "../../services/FileStorageService";
+import { useAuth } from "../../contexts/AuthenticatedUserProvider";
+import FileStorageService from "../../services/aws/FileStorageService";
 
 const ItemAnimalPicker = ({ isSelected, showBadge, item, selectedIndex }) => {
     const { colors, fonts } = useTheme();

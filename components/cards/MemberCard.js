@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { ActivityIndicator, Icon, useTheme } from "react-native-paper";
-import { useAuth } from "../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../contexts/AuthenticatedUserProvider";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 import { useGroupForm } from "../../hooks/useGroupForm";

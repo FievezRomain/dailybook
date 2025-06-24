@@ -2,8 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import ObjectifCard from './cards/ObjectifCard';
-import { useAnimaux } from '../providers/AnimauxProvider';
-import { useAuth } from '../providers/AuthenticatedUserProvider';
+import { useAnimaux } from '../contexts/AnimauxProvider';
+import { useAuth } from '../contexts/AuthenticatedUserProvider';
 import { useTheme } from 'react-native-paper';
 
 const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObjectifDelete }) => {
