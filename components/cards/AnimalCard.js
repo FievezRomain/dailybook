@@ -6,12 +6,14 @@ import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { useGroupForm } from "../../hooks/useGroupForm";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
+import ModalValidation from "../modals/common/ModalValidation";
 
 const AnimalCard = ({ animal, animalState, userRole, group }) => {
     const { colors, fonts } = useTheme();
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
+    const [ modalValidationVisible, setModalValidationVisible ] = useState(false);
 
     const onModify = () => {
         Toast.show({
@@ -70,7 +72,7 @@ const AnimalCard = ({ animal, animalState, userRole, group }) => {
         if( animalState === "accepted" && (userRole === "manager" || currentAnimal.provenance === "owner") ){
             return(
                 <>
-                    <TouchableOpacity onPress={handleSubmit(refuseAnimal)}>
+                    <TouchableOpacity onPress={() => { setModalValidationVisible(true) }}>
                         <Icon source={"exit-to-app"} size={30} color={colors.error} />
                     </TouchableOpacity>
                 </>
@@ -153,6 +155,13 @@ const AnimalCard = ({ animal, animalState, userRole, group }) => {
 
     return(
         <>
+            <ModalValidation
+                displayedText={`Êtes-vous sûr de vouloir retirer ${animal.nom} du groupe ?`}
+                title={"Retrait d'un animal"}
+                onConfirm={handleSubmit(refuseAnimal)}
+                setVisible={setModalValidationVisible}
+                visible={modalValidationVisible}
+            />
             <View style={styles.card}>
                 <View style={styles.contentCard}>
                     <View style={styles.itemsContainer}>

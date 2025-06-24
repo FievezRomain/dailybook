@@ -4,11 +4,14 @@ import { useAuth } from "../../providers/AuthenticatedUserProvider";
 import { useForm } from "react-hook-form";
 import Toast from "react-native-toast-message";
 import { useGroupForm } from "../../hooks/useGroupForm";
+import { useState } from "react";
+import ModalValidation from "../modals/common/ModalValidation";
 
 const MemberCard = ({ member, memberState, userRole, group }) => {
     const { colors } = useTheme();
     const { currentUser } = useAuth();
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
+    const [ modalValidationVisible, setModalValidationVisible ] = useState(false);
 
     const onModify = () => {
         Toast.show({
@@ -21,7 +24,7 @@ const MemberCard = ({ member, memberState, userRole, group }) => {
     const { submitGroup, animaux, loading } = useGroupForm(
         setValue,
         onModify,
-        () => {}
+        () => {} 
     );
 
     const refuseMember = async (data) => {
@@ -48,7 +51,7 @@ const MemberCard = ({ member, memberState, userRole, group }) => {
         if( memberState === "accepted" && ((userRole !== "manager" && member.email === currentUser.email) || (userRole === "manager" && member.email !== currentUser.email)) ){
             return(
                 <>
-                    <TouchableOpacity onPress={handleSubmit(refuseMember)}>
+                    <TouchableOpacity onPress={() => { setModalValidationVisible(true) }}>
                         <Icon source={"exit-to-app"} size={30} color={colors.error} />
                     </TouchableOpacity>
                 </>
@@ -82,6 +85,13 @@ const MemberCard = ({ member, memberState, userRole, group }) => {
 
     return(
         <>
+            <ModalValidation
+                displayedText={`Êtes-vous sûr de vouloir retirer ${member.email} du groupe ?`}
+                title={"Retrait d'un membre"}
+                onConfirm={handleSubmit(refuseMember)}
+                setVisible={setModalValidationVisible}
+                visible={modalValidationVisible}
+            />
             <View style={styles.card}>
                 <View style={styles.contentCard}>
                     <View style={styles.itemsContainer}>

@@ -52,7 +52,7 @@ const NotificationScreen = ( ) => {
 
     const refuseInvitation = async ( item ) => {
         let data = {};
-        data.status = "refuse";
+        data.status = "declined";
         data.id = item.object_id;
         
         if( item.type === 'group_member'){
@@ -76,7 +76,8 @@ const NotificationScreen = ( ) => {
             elevation: 1, 
             shadowRadius:5, 
             shadowOffset:{width:0, height:2}, 
-            padding: 20
+            padding: 20,
+            marginBottom: 10
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily,
@@ -122,7 +123,7 @@ const NotificationScreen = ( ) => {
                         </View>
                     </View>
                     <View style={{paddingTop: 10}}>
-                        <Text style={[styles.textFontSmall, {fontSize: 11}, styles.textColor]}>{instanceDateUtils.transformTimestampToDate(item.created_at)} - {item.proposed_by}</Text>
+                        <Text style={[styles.textFontSmall, {fontSize: 11}, styles.textColor]}>{instanceDateUtils.transformTimestampToDate(item.created_at)}{item.proposed_by && " - " + item.proposed_by}</Text>
                     </View>
                 </View>
             </>

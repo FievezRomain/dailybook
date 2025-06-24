@@ -115,7 +115,7 @@ const GroupDetailScreen = ( ) => {
         <View style={styles.separatorFix}></View>
         <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1], outputRange: ['0%', '50%'] }) }]} />
       </View>
-      {getUserRoleFromGroup() === "manager" || abonnement.libelle === "Premium" &&
+      {(getUserRoleFromGroup() === "manager" || abonnement.libelle === "Premium") &&
         <View style={[styles.item, styles.headerRubrique]}>
             <Button
                 type={"quaternary"}
