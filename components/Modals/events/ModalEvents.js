@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator } from "react-native";
 import TimePickerCustom from "../../inputs/TimePicker";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { AntDesign, Ionicons } from '@expo/vector-icons';
+import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons';
 import LoggerService from "../../../services/logs/LoggerService";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
@@ -25,6 +25,8 @@ import DocumentPickerComponent from "../../inputs/DocumentPickerComponent";
 import FilesList from "../../common/FilesList";
 import FileStorageService from "../../../services/aws/FileStorageService";
 import instanceDateUtils from "../../../utils/DateUtils";
+import { useGroups } from "../../../contexts/GroupProvider";
+import ModalMultiSelect from "../inputs/ModalMultiSelect";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined, date=null}) => {
   const { colors, fonts } = useTheme();
@@ -37,7 +39,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   const [modalOptionNotifications, setModalOptionNotifications] = useState(false);
   const [modalCategorieDepense, setModalCategorieDepense] = useState(false);
   const [modalFrequence, setModalFrequence] = useState(false);
+  const [modalMultiSelectGroupVisible, setModalMultiSelectGroupVisible] = useState(false);
   const { animaux, setAnimaux } = useAnimaux();
+  const { groups } = useGroups();
   const [selected, setSelected] = useState([]);
   const [eventType, setEventType] = useState(false);
   const [notifType, setNotifType] = useState(false);
@@ -567,6 +571,28 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setValue("documents", updated);
   };
 
+  function onGroupsSelectedChange ( selectedGroup ) {
+    const arrayGroup = getValues("shared_groups");
+
+    if( arrayGroup === undefined || arrayGroup.length === 0 ){
+      setValue("shared_groups", [selectedGroup]);
+    } else{
+      let updatedArray = [...arrayGroup];
+      let index = updatedArray.findIndex(group => group.id === selectedGroup.id);
+
+      if( index !== -1 ){
+        updatedArray.splice(index, 1);
+
+        if( updatedArray.length === 0 ){
+          updatedArray = undefined;
+        }
+      } else{
+        updatedArray.push( selectedGroup );
+      }
+      setValue("shared_groups", updatedArray);
+    }
+  }
+
   const styles = StyleSheet.create({
     inputToggleContainer:{
       display: "flex", 
@@ -744,7 +770,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     },
     handleIndicatorStyle:{
       backgroundColor: getColorByEventType(eventType.id)
-    }
+    },
+    iconAction:{
+      color: colors.accent,
+      paddingLeft: 10
+    },
   });
 
   return (
@@ -758,14 +788,14 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
         scrollInside={false}
       >
         <ModalAnimals
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        setAnimaux={setAnimaux}
-        animaux={animaux}
-        selected={selected}
-        setSelected={setSelected}
-        setValue={setValue}
-        valueName={"animaux"}
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+          setAnimaux={setAnimaux}
+          animaux={animaux}
+          selected={selected}
+          setSelected={setSelected}
+          setValue={setValue}
+          valueName={"animaux"}
         />
         <ModalDropdwn
           list={list}
@@ -819,6 +849,16 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           notifications={notifications}
           setNotifications={setNotifications}
           eventType={eventType}
+        />
+        <ModalMultiSelect
+          list={groups}
+          onChange={onGroupsSelectedChange}
+          onClose={() => setModalMultiSelectGroupVisible(false)}
+          visible={modalMultiSelectGroupVisible}
+          valueKey="id"
+          labelKey="name"
+          selected={watch("shared_groups")}
+          customizable={false}
         />
         <View style={styles.form}>
           <View style={styles.containerActionsButtons}>
@@ -1265,6 +1305,30 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             </View>
                             <Ionicons name="chevron-down" size={20}/>
                           </View>
+                        }
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <Text style={[styles.textInput, styles.textFontRegular]}>Partager aux groupes :</Text>
+                    <TouchableOpacity 
+                      style={styles.textInput} 
+                      onPress={()=>{Keyboard.dismiss();setModalMultiSelectGroupVisible(true)}}
+                      disabled={accountType !== "Premium"}
+                    >
+                      <View style={styles.containerAnimaux}>
+                        {getValues("shared_groups") === undefined ?
+                          <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center"}]}>
+                            <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Sélectionner un ou plusieurs groupes</Text>
+                            { (accountType !== "Premium") && <Entypo name="lock" size={20} style={styles.iconAction}/> }
+                          </View>
+                        :
+                          getValues("shared_groups").map((group, index) => {
+                            return (
+                              <View key={group.id} style={styles.containerBadgeAnimal}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{group.name}</Text></View>
+                            );
+                          })
                         }
                       </View>
                     </TouchableOpacity>

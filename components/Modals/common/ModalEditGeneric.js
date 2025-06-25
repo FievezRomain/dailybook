@@ -5,7 +5,7 @@ import BottomSheet, { BottomSheetView, useBottomSheetTimingConfigs } from '@gorh
 import Toast from "react-native-toast-message";
 import { Easing } from "react-native-reanimated";
 
-const ModalEditGeneric = ({ children, arrayHeight = [], isVisible, setVisible, scrollInside = true, handleStyle = undefined, handleIndicatorStyle = undefined }) => {
+const ModalEditGeneric = ({ children, arrayHeight, isVisible, setVisible, scrollInside = true, handleStyle = undefined, handleIndicatorStyle = undefined }) => {
     // variables
     const bottomSheet = useRef(null);
     const [isOpen, setOpen] = useState(false);

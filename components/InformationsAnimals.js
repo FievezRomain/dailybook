@@ -205,9 +205,10 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
                     }
                 </View>
                 <View style={styles.form}>
+                  
                     <View style={styles.headerCard}>
-                        <TouchableOpacity onPress={() => setModalSubMenuAnimalActionsVisible(true)} >
-                            <Entypo name='dots-three-horizontal' size={20} color={colors.default_dark}/>
+                        <TouchableOpacity onPress={() => setModalSubMenuAnimalActionsVisible(true)} disabled={animal.provenance === "group"}>
+                            <Entypo name='dots-three-horizontal' size={20} color={animal.provenance === "group" ? colors.background : colors.default_dark}/>
                         </TouchableOpacity>
                     </View>
                     

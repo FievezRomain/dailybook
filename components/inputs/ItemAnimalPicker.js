@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { useTheme } from "react-native-paper";
 import { useAuth } from "../../contexts/AuthenticatedUserProvider";
 import FileStorageService from "../../services/aws/FileStorageService";
+import { FontAwesome } from '@expo/vector-icons';
 
 const ItemAnimalPicker = ({ isSelected, showBadge, item, selectedIndex }) => {
     const { colors, fonts } = useTheme();
@@ -98,6 +99,13 @@ const ItemAnimalPicker = ({ isSelected, showBadge, item, selectedIndex }) => {
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
         },
+        iconGroup: {
+            position: 'absolute',
+            bottom: 12,
+            right: -5,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
     });
 
     return(
@@ -128,6 +136,11 @@ const ItemAnimalPicker = ({ isSelected, showBadge, item, selectedIndex }) => {
             {showBadge &&
                 <View style={styles.badge}>
                     <Text style={[styles.badgeText, styles.textFontBold]}>{selectedIndex + 1}</Text>
+                </View>
+            }
+            {item.provenance === "group" &&
+                <View style={styles.iconGroup}>
+                    <FontAwesome name={"group"} color={isSelected ? colors.accent : colors.quaternary} size={15}/>
                 </View>
             }
             <Text style={[(isSelected ? styles.selectedText : styles.defaultText), styles.textFontRegular]}>{truncateAnimalName(item.nom)}</Text>

@@ -7,8 +7,7 @@ import { ActivityIndicator } from "react-native";
 import * as Sentry from '@sentry/react-native';
 import { StatusBar } from 'expo-status-bar';
 import AuthService from "./services/api/AuthService";
-import { Provider as PaperProvider, DefaultTheme } from 'react-native-paper';
-import variables from './styles/Variables';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { ThemeProvider, ThemeContext } from './contexts/ThemeProvider';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AnimauxProvider } from "./contexts/AnimauxProvider";
@@ -18,66 +17,7 @@ import { NotesProvider } from "./contexts/NotesProvider";
 import { ContactsProvider } from "./contexts/ContactsProvider";
 import { WishProvider } from "./contexts/WishProvider";
 import { GroupProvider } from "./contexts/GroupProvider";
-
-const lightTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: variables.alezan,
-    secondary: variables.gris,
-    tertiary: variables.aubere,
-    quaternary: variables.rouan,
-    outline: variables.rouan,
-    neutral: variables.isabelle,
-    minor: variables.palomino,
-    accent: variables.bai,
-    secondaryContainer: variables.bai,
-    text: variables.bai_brun,
-    error: variables.bai_cerise, 
-    background: variables.blanc,
-    onSurface: variables.default,
-    default_dark: variables.default_dark,
-  },
-  fonts: {
-    default: { fontFamily: variables.fontRegular },
-    bodyMedium: { fontFamily: variables.fontMedium },
-    bodySmall: { fontFamily: variables.fontLight },
-    bodyLarge: { fontFamily: variables.fontBold },
-    labelMedium: { fontFamily: variables.fontMedium },
-    labelLarge: { fontFamily: variables.fontBold },
-    headlineSmall: { fontFamily: variables.fontRegular },
-  },
-};
-
-const darkTheme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: variables.alezan,
-    secondary: variables.gris,
-    tertiary: variables.aubere,
-    quaternary: variables.rouan,
-    outline: variables.rouan,
-    neutral: variables.isabelle,
-    minor: variables.palomino,
-    accent: variables.bai,
-    secondaryContainer: variables.bai,
-    text: variables.bai_brun,
-    error: variables.bai_cerise, 
-    background: variables.noir,
-    onSurface: variables.default_dark,
-    default_dark: variables.blanc,
-  },
-  fonts: {
-    default: { fontFamily: variables.fontRegular },
-    bodyMedium: { fontFamily: variables.fontMedium },
-    bodySmall: { fontFamily: variables.fontLight },
-    bodyLarge: { fontFamily: variables.fontBold },
-    labelMedium: { fontFamily: variables.fontMedium },
-    labelLarge: { fontFamily: variables.fontBold },
-    headlineSmall: { fontFamily: variables.fontRegular },
-  },
-};
+import { darkTheme, lightTheme } from "./theme/theme";
 
 function ThemedApp() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -97,7 +37,6 @@ function App() {
 
   Sentry.init({
     //dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
-    enableInExpoDevelopment: false,
     debug: false, // Passez à false en production
   });
 

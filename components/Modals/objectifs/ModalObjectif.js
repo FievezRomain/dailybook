@@ -6,7 +6,7 @@ import ModalAnimals from "../animals/ModalSelectAnimals";
 import { useAnimaux } from "../../../contexts/AnimauxProvider";
 import objectifsServiceInstance from "../../../services/api/ObjectifService";
 import Button from "../../inputs/Button";
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import Toast from "react-native-toast-message";
 import DatePickerModal from "../inputs/ModalDatePicker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,13 +16,18 @@ import LoggerService from "../../../services/logs/LoggerService";
 import { Divider, useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
 import instanceDateUtils from "../../../utils/DateUtils";
+import ModalMultiSelect from "../inputs/ModalMultiSelect";
+import { useGroups } from "../../../contexts/GroupProvider";
 
 const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
-    const { currentUser } = useAuth();
+    const { currentUser, abonnement } = useAuth();
+    const accountType = abonnement.libelle;
     const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
+    const [modalMultiSelectGroupVisible, setModalMultiSelectGroupVisible] = useState(false);
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const { animaux, setAnimaux } = useAnimaux();
+    const { groups } = useGroups();
     const [selected, setSelected] = useState([]);
     const [temporalityObjectif, setTemporalityObjectif] = useState(false);
     const [inputs, setInputs] = useState(['']);
@@ -77,6 +82,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         if(objectif.sousEtapes != undefined){
             setInputs(objectif.sousEtapes);
         }
+        setValue("shared_groups", objectif.shared_groups);
     }
 
     const closeModal = () => {
@@ -95,6 +101,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setValue("sousetapes", []);
         setValue("datedebut", new Date().toISOString().split('T')[0]);
         setValue("datefin", new Date().toISOString().split('T')[0]);
+        setValue("shared_groups", undefined);
         //setAnimaux([]);
     };
 
@@ -223,6 +230,28 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         setValue(propertyName, selectedDate);
     };
 
+    function onGroupsSelectedChange ( selectedGroup ) {
+        const arrayGroup = getValues("shared_groups");
+    
+        if( arrayGroup === undefined || arrayGroup.length === 0 ){
+          setValue("shared_groups", [selectedGroup]);
+        } else{
+          let updatedArray = [...arrayGroup];
+          let index = updatedArray.findIndex(group => group.id === selectedGroup.id);
+    
+          if( index !== -1 ){
+            updatedArray.splice(index, 1);
+    
+            if( updatedArray.length === 0 ){
+              updatedArray = undefined;
+            }
+          } else{
+            updatedArray.push( selectedGroup );
+          }
+          setValue("shared_groups", updatedArray);
+        }
+    }
+
     const styles = StyleSheet.create({
         loadingEvent: {
             position: "absolute",
@@ -343,7 +372,11 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
         },
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
-        }
+        },
+        iconAction:{
+            color: colors.accent,
+            paddingLeft: 10
+        },
     
     });
 
@@ -364,6 +397,16 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                     setSelected={setSelected}
                     setValue={setValue}
                     valueName={"animaux"}
+                />
+                <ModalMultiSelect
+                    list={groups}
+                    onChange={onGroupsSelectedChange}
+                    onClose={() => setModalMultiSelectGroupVisible(false)}
+                    visible={modalMultiSelectGroupVisible}
+                    valueKey="id"
+                    labelKey="name"
+                    selected={watch("shared_groups")}
+                    customizable={false}
                 />
                     <View style={styles.form}>
                         <View style={styles.containerActionsButtons}>
@@ -442,6 +485,29 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                         defaultValue={getValues("title")}
                                         {...register("title", { required: true })}
                                     />
+                                </View>
+
+                                <View style={styles.inputContainer}>
+                                    <Text style={[styles.textInput, styles.textFontRegular]}>Partager aux groupes :</Text>
+                                    <TouchableOpacity 
+                                    style={styles.textInput} 
+                                    onPress={()=>{setModalMultiSelectGroupVisible(true)}}
+                                    >
+                                    <View style={styles.containerAnimaux}>
+                                        {getValues("shared_groups") === undefined ?
+                                            <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center"}]}>
+                                                <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Sélectionner un ou plusieurs groupes</Text>
+                                                { (accountType !== "Premium") && <Entypo name="lock" size={20} style={styles.iconAction}/> }
+                                            </View>
+                                        :
+                                            getValues("shared_groups").map((group, index) => {
+                                                return (
+                                                <View key={group.id} style={styles.containerBadgeAnimal}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{group.name}</Text></View>
+                                                );
+                                            })
+                                        }
+                                    </View>
+                                    </TouchableOpacity>
                                 </View>
 
                                 <View style={styles.inputContainer}>
