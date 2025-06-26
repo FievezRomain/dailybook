@@ -11,6 +11,7 @@ import * as Localization from 'expo-localization';
 import Toast from "react-native-toast-message";
 import AvatarPicker from '../inputs/AvatarPicker';
 import ModalDefaultNoValue from '../modals/common/ModalDefaultNoValue';
+import ModalValidation from '../modals/common/ModalValidation';
 
 const { width } = Dimensions.get('window');
 
@@ -20,6 +21,8 @@ const AnimalImageCarousel = ({ animalId }) => {
     const { colors, fonts } = useTheme();
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [modalConfirmDeleteVisible, setModalConfirmDeleteVisible] = useState(false);
+    const [itemFocused, setItemFocused] = useState({});
     const [currentMonthCount, setCurrentMonthCount] = useState(0);
     const locale = Localization.getLocales()[0].languageTag;
 
@@ -78,12 +81,12 @@ const AnimalImageCarousel = ({ animalId }) => {
     }
   };
 
-  const handleDeleteImage = async ( id, filename ) => {
+  const handleDeleteImage = async ( ) => {
     setLoading(true);
 
-    let data = {id: id, email: currentUser.email};
+    let data = {id: itemFocused.id, email: currentUser.email};
 
-    await fileStorageService.deleteFile( filename, currentUser.uid );
+    await fileStorageService.deleteFile( itemFocused.filename, currentUser.uid );
 
     await animalsServiceInstance.deleteAnimalBodyPicture( data );
 
@@ -157,91 +160,98 @@ const AnimalImageCarousel = ({ animalId }) => {
   );
 
   return (
-    <View style={{ marginBottom: 20 }}>
-        <Carousel
-            width={width}
-            height={200}
-            data={images}
-            defaultIndex={currentIndex}
-            onSnapToItem={(index) => setCurrentIndex(index)}
-            scrollAnimationDuration={500}
-            renderItem={({ item }) => (
-            <View style={{ flex: 1, alignItems: "center" }}>
-                <Image
-                    source={{uri:  fileStorageService.getFileUrl( item.filename, currentUser.uid ) }}
-                    style={{ width: '90%', height: '100%', borderRadius: 12 }}
-                    contentFit="contain"
-                    cachePolicy="disk"
-                />
-                <TouchableOpacity
-                    onPress={() => handleDeleteImage(item.id, item.filename)}
-                    style={{
-                        position: 'absolute',
-                        top: 10,
-                        right: 25,
-                        backgroundColor: 'rgba(0,0,0,0.5)',
-                        borderRadius: 20,
-                        width: 35,
-                        height: 35,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Text style={[styles.textFontBold, { color: 'white', fontSize: 20 }]}>×</Text>
-                </TouchableOpacity>
-                <View style={{ position: 'absolute', bottom: 8, left: 30, backgroundColor: 'rgba(0,0,0,0.4)', padding: 4, borderRadius: 5 }}>
-                    <Text style={[styles.textFontRegular ,{ color: 'white', fontSize: 12 }]}>
-                        {new Intl.DateTimeFormat(locale, {
-                            day: '2-digit',
-                            month: 'long',
-                            year: 'numeric',
-                        }).format(new Date(item.date_enregistrement))}
-                    </Text>
-                </View>
-            </View>
-            )}
+    <>
+        <ModalValidation
+            displayedText={"Êtes-vous sûr de vouloir supprimer cette image ?"}
+            title={"Suppression d'une image"}
+            onConfirm={handleDeleteImage}
+            setVisible={setModalConfirmDeleteVisible}
+            visible={modalConfirmDeleteVisible}
         />
-        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 8 }}>
-            {visibleDots.map((_, index) => {
-                const dotIndex = start + index;
-                return (
-                <View
-                    key={dotIndex}
-                    style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        marginHorizontal: 4,
-                        backgroundColor: dotIndex === currentIndex ? colors.accent : colors.tertiary,
-                    }}
-                />
-                );
-            })}
-        </View>
-
-        {currentMonthCount < LIMIT_PICTURE_BY_MONTH && 
-            <AvatarPicker
-                onChange={handleAddImage}
-                ButtonComponent={({ onPress }) => (
+        <View style={{ marginBottom: 20 }}>
+            <Carousel
+                width={width}
+                height={200}
+                data={images}
+                defaultIndex={currentIndex}
+                onSnapToItem={(index) => setCurrentIndex(index)}
+                scrollAnimationDuration={500}
+                renderItem={({ item }) => (
+                <View style={{ flex: 1, alignItems: "center" }}>
+                    <Image
+                        source={{uri:  fileStorageService.getFileUrl( item.filename, currentUser.uid ) }}
+                        style={{ width: '90%', height: '100%', borderRadius: 12 }}
+                        contentFit="contain"
+                        cachePolicy="disk"
+                    />
                     <TouchableOpacity
-                        onPress={onPress}
-                        disabled={currentMonthCount >= LIMIT_PICTURE_BY_MONTH}
-                        style={[
-                            styles.button,
-                            { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.disabled : colors.accent },
-                        ]}
+                        onPress={() => { setItemFocused( item ); setModalConfirmDeleteVisible( true ); }}
+                        style={{
+                            position: 'absolute',
+                            top: 10,
+                            right: 25,
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                            borderRadius: 20,
+                            width: 35,
+                            height: 35,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
                     >
-                        <Text style={[styles.textFontRegular, { color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? 'gray' : 'white' }]}>
-                            {currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? "Limite de photos atteinte ce mois-ci" : "Ajouter une photo pour ce mois"}
-                        </Text>
+                        <Text style={[styles.textFontBold, { color: 'white', fontSize: 20 }]}>×</Text>
                     </TouchableOpacity>
+                    <View style={{ position: 'absolute', bottom: 8, left: 30, backgroundColor: 'rgba(0,0,0,0.4)', padding: 4, borderRadius: 5 }}>
+                        <Text style={[styles.textFontRegular ,{ color: 'white', fontSize: 12 }]}>
+                            {new Intl.DateTimeFormat(locale, {
+                                day: '2-digit',
+                                month: 'long',
+                                year: 'numeric',
+                            }).format(new Date(item.date_enregistrement))}
+                        </Text>
+                    </View>
+                </View>
                 )}
             />
-        }
-        
+            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 8 }}>
+                {visibleDots.map((_, index) => {
+                    const dotIndex = start + index;
+                    return (
+                    <View
+                        key={dotIndex}
+                        style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: 4,
+                            marginHorizontal: 4,
+                            backgroundColor: dotIndex === currentIndex ? colors.accent : colors.tertiary,
+                        }}
+                    />
+                    );
+                })}
+            </View>
 
-        
-    </View>
+            {currentMonthCount < LIMIT_PICTURE_BY_MONTH && 
+                <AvatarPicker
+                    onChange={handleAddImage}
+                    ButtonComponent={({ onPress }) => (
+                        <TouchableOpacity
+                            onPress={onPress}
+                            disabled={currentMonthCount >= LIMIT_PICTURE_BY_MONTH}
+                            style={[
+                                styles.button,
+                                { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.disabled : colors.accent },
+                            ]}
+                        >
+                            <Text style={[styles.textFontRegular, { color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? 'gray' : 'white' }]}>
+                                {currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? "Limite de photos atteinte ce mois-ci" : "Ajouter une photo pour ce mois"}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                />
+            }
+            
+        </View>
+    </>
   );
 };
 
