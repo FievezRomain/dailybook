@@ -8,7 +8,7 @@ import React, { useRef } from "react";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import ItemAnimalPicker from "./ItemAnimalPicker";
 
-const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined, inModal=false, selectAll=false }) => {
+const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined, inModal=false, selectAll=false, displayAnimalsShared=true }) => {
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
     const { colors, fonts } = useTheme();
@@ -109,9 +109,17 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
         return truncated + "..."; // Ajouter "..." après 10 caractères
     };
 
-    const displayedAnimaux = selectAll
-        ? [{ id: 'select_all', nom: 'Tous', image: null }, ...animaux]
-        : animaux;
+    const displayedAnimaux = () => {
+        let animalsFiltered = animaux;
+        if( !displayAnimalsShared ){
+            animalsFiltered = animalsFiltered.filter((animal) => animal.provenance === "owner");
+        }
+        if( selectAll ){
+            return [{ id: 'select_all', nom: 'Tous', image: null }, ...animalsFiltered];
+        } else {
+            return animalsFiltered;
+        }
+    }
 
     const styles = StyleSheet.create({
         containerAvatar:{
@@ -127,7 +135,7 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
 
     return(
         <ListComponent
-            data={displayedAnimaux}
+            data={displayedAnimaux()}
             ref={flatListRef}
             key={(item) => item.id.toString()}
             horizontal

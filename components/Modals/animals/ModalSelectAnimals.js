@@ -4,7 +4,7 @@ import AnimalsPicker from "../../inputs/AnimalsPicker";
 import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from "../common/ModalEditGeneric";
 
-const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected, setValue, valueName }) => {
+const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected, setValue, valueName, displayAnimalsShared=true }) => {
   const { colors, fonts } = useTheme();
   
   const styles = StyleSheet.create({
@@ -98,6 +98,7 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
             setSelected={setSelected}
             setValue={setValue}
             valueName={valueName}
+            displayAnimalsShared={displayAnimalsShared}
           />
         </View>
           

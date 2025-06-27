@@ -164,6 +164,7 @@ const StatsScreen = ({ navigation }) => {
         <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
             <AnimalsPicker
               animaux={animaux}
+              displayAnimalsShared={false}
               setSelected={setSelectedAnimal}
               selected={selectedAnimal}
               mode={"multiple"}
