@@ -240,6 +240,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
     setValue("documents", event.documents);
     setValue("shared_groups", event.shared_groups);
+    setValue("created_by", event.created_by);
+    setValue("made_by", event.made_by);
   }
 
   const submitRegister = async(data) =>{
@@ -367,6 +369,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           data.documents = documentsFilenameArray;
         }
 
+        // Gestion de l'utilisateur qui a effectué la tâche (garde fou)
+        if( data.state === "Terminé" && !data.made_by ){
+          data.made_by = {"email": currentUser.email};
+        }
+
         if(actionType === "modify"){
           eventsServiceInstance.update(data)
           .then((reponse) =>{
@@ -449,6 +456,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     setFrequence(false);
     setValue("documents", undefined);
     setValue("shared_groups", undefined);
+    setValue("created_by", undefined);
+    setValue("made_by", undefined);
     //setAnimaux([]);
   }
 
@@ -574,8 +583,9 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
   function onGroupsSelectedChange ( selectedGroup ) {
     const arrayGroup = getValues("shared_groups");
 
-    if( arrayGroup === undefined || arrayGroup.length === 0 ){
+    if( arrayGroup === undefined || arrayGroup === null || arrayGroup.length === 0 ){
       setValue("shared_groups", [selectedGroup]);
+      console.log([selectedGroup])
     } else{
       let updatedArray = [...arrayGroup];
       let index = updatedArray.findIndex(group => group.id === selectedGroup.id);
@@ -589,6 +599,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       } else{
         updatedArray.push( selectedGroup );
       }
+      console.log(updatedArray)
       setValue("shared_groups", updatedArray);
     }
   }
@@ -1318,7 +1329,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       disabled={accountType !== "Premium"}
                     >
                       <View style={styles.containerAnimaux}>
-                        {getValues("shared_groups") === undefined ?
+                        {(getValues("shared_groups") === undefined || getValues("shared_groups") === null) ?
                           <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center"}]}>
                             <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Sélectionner un ou plusieurs groupes</Text>
                             { (accountType !== "Premium") && <Entypo name="lock" size={20} style={styles.iconAction}/> }
