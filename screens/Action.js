@@ -127,7 +127,7 @@ const ActionScreen = ({ navigation }) => {
       marginRight: "auto",
       borderRadius: 10,
       paddingTop: 10,
-      shadowColor: "black",
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       marginTop: 50,
       elevation: 1,

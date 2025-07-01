@@ -144,7 +144,7 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
             padding: 10,
             borderRadius: 5,
             marginBottom: 10,
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowRadius: 5,

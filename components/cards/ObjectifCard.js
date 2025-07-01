@@ -172,7 +172,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
             display: "flex",
             flexDirection: "column",
             marginBottom: 10,
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowOffset: {

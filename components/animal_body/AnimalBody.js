@@ -49,7 +49,7 @@ const AnimalBody = ({ animal, onModify }) => {
             paddingLeft: 20, 
             paddingVertical: 25, 
             borderRadius: 5, 
-            shadowColor: "black", 
+            shadowColor: colors.default_dark, 
             shadowOpacity: 0.1, 
             elevation: 1, 
             shadowOffset: {width: 0,height: 1},
@@ -72,7 +72,7 @@ const AnimalBody = ({ animal, onModify }) => {
             borderRadius: 5,
             paddingLeft: 15,
             backgroundColor: colors.quaternary,
-            color: "black",
+            color: colors.default_dark,
             alignSelf: "baseline"
         },
         iconUpdate:{

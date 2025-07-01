@@ -125,7 +125,7 @@ const StatsScreen = ({ navigation }) => {
       flex: 1,
       backgroundColor: colors.background,
       borderRadius: 10,
-      shadowColor: "black",
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowRadius: 5,

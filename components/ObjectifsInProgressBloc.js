@@ -72,7 +72,7 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
                 </View>
                 <View>
                     {objectifs.length === 0 &&
-                        <View style={{backgroundColor: colors.background, marginBottom: 20, width: "100%", paddingHorizontal: 20, paddingVertical: 25, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1},}}>
+                        <View style={{backgroundColor: colors.background, marginBottom: 20, width: "100%", paddingHorizontal: 20, paddingVertical: 25, borderRadius: 5, shadowColor: colors.default_dark, shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1},}}>
                             <Text style={[styles.textFontRegular, {color: colors.default_dark}]}>Vous n'avez aucun objectif en cours</Text>
                         </View>
                     }

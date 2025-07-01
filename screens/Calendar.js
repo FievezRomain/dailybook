@@ -306,7 +306,7 @@ const CalendarScreen = ({ navigation }) => {
     },
     calendar: {
       borderRadius: 5,
-      shadowColor: "black",
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowRadius:5,
@@ -359,7 +359,7 @@ const CalendarScreen = ({ navigation }) => {
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.quaternary }}>
 
           <TopTab message1={messages.message1} message2={messages.message2} />
-          <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
+          <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: colors.default_dark,elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
             <View style={{flexDirection: "row", alignItems: "center"}}>
               <AntDesign name="search1" size={16} color={colors.default_dark}/>
 

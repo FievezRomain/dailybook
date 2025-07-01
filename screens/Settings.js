@@ -149,7 +149,7 @@ const SettingsScreen = ({ }) => {
             borderRadius: 10,
             marginLeft: "auto",
             marginRight: "auto",
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: "0.1",
             elevation: 1,
             shadowRadius: 5,

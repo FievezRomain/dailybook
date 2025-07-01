@@ -94,7 +94,7 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
             flexDirection: "column",
             width: "100%",
             marginBottom: 10,
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowOffset: { width: 0, height: 1 },

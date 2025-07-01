@@ -24,7 +24,7 @@ const CompletionBar = ({ percentage=0 }) => {
       height: 20,
       backgroundColor: colors.background,
       borderRadius: 60,
-      shadowColor: "black",
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowRadius: 1,

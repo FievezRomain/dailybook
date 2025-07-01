@@ -322,7 +322,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             paddingHorizontal: 3,
             paddingVertical: 5,
             borderRadius: 15,
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowOffset: {
@@ -340,7 +340,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         separator: {
             borderTopWidth: 0.2,
             borderTopColor: colors.onSurface,
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: 1,
             elevation: 5,
             shadowOffset: {

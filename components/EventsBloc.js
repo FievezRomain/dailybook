@@ -189,7 +189,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             borderColor: colors.default_dark,
             borderWidth: 0.2,
             alignItems: "center",
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowRadius: 5,
