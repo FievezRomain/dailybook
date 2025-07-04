@@ -220,6 +220,7 @@ const PoidsComponent = ({ data, chartConfig, chartParameters, forceUpdateDataCha
                 )}
                 scrollEnabled={false}
                 contentContainerStyle={styles.listEventContainer}
+                style={{paddingLeft:20, paddingRight: 20, paddingBottom: 30}}
             />
         </>
     );

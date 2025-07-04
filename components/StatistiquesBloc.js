@@ -310,62 +310,58 @@ const StatistiquesBloc = ({ selectedAnimal }) =>{
             }
 
             <View style={styles.composantContainer}>
-                <ScrollView contentContainerStyle={{paddingBottom: 30}}>
-                    {accountType === "Premium" ?
-                        <>
-                            <View style={{width: "90%", alignSelf: "center"}}>
-                                <View style={styles.statistiqueIndicatorContainer}>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
-                                        <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
-                                        <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("entrainement")}}>
-                                        <Entypo name="traffic-cone" size={20} style={itemStatistique == "entrainement" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}}>
-                                        <FontAwesome name="trophy" size={20} style={itemStatistique == "concours" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <View style={styles.midBar} />
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("poids")}}>
-                                        <FontAwesome6 name="weight-scale" size={20} style={itemStatistique == "poids" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("taille")}}>
-                                        <MaterialIcons name="height" size={20} style={itemStatistique == "taille" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
-                                        <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.bottomBar} />
+                {accountType === "Premium" ?
+                    <>
+                        <View style={{width: "90%", alignSelf: "center"}}>
+                            <View style={styles.statistiqueIndicatorContainer}>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
+                                    <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
+                                    <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("entrainement")}}>
+                                    <Entypo name="traffic-cone" size={20} style={itemStatistique == "entrainement" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}}>
+                                    <FontAwesome name="trophy" size={20} style={itemStatistique == "concours" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <View style={styles.midBar} />
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("poids")}}>
+                                    <FontAwesome6 name="weight-scale" size={20} style={itemStatistique == "poids" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("taille")}}>
+                                    <MaterialIcons name="height" size={20} style={itemStatistique == "taille" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
+                                    <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
                             </View>
-                            
-                            <View style={styles.statistiquesContainer}>
-                                {!checkSeveralAnimalsAccepted(itemStatistique) && selectedAnimal.length > 1 ?
-                                        <View style={{width: "90%", alignSelf: "center"}}>
-                                            <ModalDefaultNoValue
-                                                text={"⚠️ Cette statistique n'est pas disponible sur plusieurs animaux."}
-                                            />
-                                        </View>
-                                        
-                                    :
-                                        <ChartWithLoader
-                                            ChartComponent={ChartComponent}
-                                            chartConfig={ChartConfig}
-                                            chartType={itemStatistique}
-                                            chartParameters={parameters}
+                            <View style={styles.bottomBar} />
+                        </View>
+                        
+                        <View style={styles.statistiquesContainer}>
+                            {!checkSeveralAnimalsAccepted(itemStatistique) && selectedAnimal.length > 1 ?
+                                    <View style={{width: "90%", alignSelf: "center"}}>
+                                        <ModalDefaultNoValue
+                                            text={"⚠️ Cette statistique n'est pas disponible sur plusieurs animaux."}
                                         />
-                                }
-                                
-                            </View>
-                        </>
-                    :
-                        <OfferInformations />
-                    }
-                
-                
-                </ScrollView>
+                                    </View>
+                                    
+                                :
+                                    <ChartWithLoader
+                                        ChartComponent={ChartComponent}
+                                        chartConfig={ChartConfig}
+                                        chartType={itemStatistique}
+                                        chartParameters={parameters}
+                                    />
+                            }
+                            
+                        </View>
+                    </>
+                :
+                    <OfferInformations />
+                }
             </View>
             
         </>

@@ -116,24 +116,21 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
         },
         eventTodayContainer:{
             width: "100%",
-            paddingLeft: 20,
-            paddingRight: 20,
             paddingTop: 20,
             borderRadius: 5,
             paddingBottom: 20
         },
         eventUpcomingContainer:{
             width: "100%",
-            paddingLeft: 20,
-            paddingRight: 20,
-            paddingTop: 10,
             borderRadius: 5,
         },
         headerContainer:{
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: 20
+            marginBottom: 20,
+            paddingLeft: 20,
+            paddingRight: 20,
         },
         title:{
             color: colors.default_dark,
@@ -143,7 +140,9 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
             marginRight: 10,
         },
         containerCompletionBar:{
-            paddingBottom: 30,
+            paddingBottom: 20,
+            paddingLeft: 20,
+            paddingRight: 20,
         },
         eventContainer:{
             display: "flex",
@@ -264,6 +263,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
                         data={eventsToday}
                         keyExtractor={(item) => item.id.toString()}
                         scrollEnabled={false}
+                        style={{paddingHorizontal: 20, paddingBottom: 5, paddingTop: 5}}
                         ListEmptyComponent={
                             <ModalDefaultNoValue
                                 text={"Vous n'avez aucun événement aujourd'hui"}
@@ -297,6 +297,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
                         data={eventsUpcoming}
                         keyExtractor={(item) => item.id.toString()}
                         scrollEnabled={false}
+                        style={{paddingHorizontal: 20, paddingBottom: 5, paddingTop: 5}}
                         ListEmptyComponent={
                             <ModalDefaultNoValue
                                 text={"Vous n'avez aucun événement à venir"}

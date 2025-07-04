@@ -17,12 +17,22 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
 
     const changeSelectedAnimals = (animal) => {
         if( animal.id === "select_all"){
-            if( selected.length === animaux.length ){
-                setValue(valueName, undefined);
-                setSelected([]);
+            if( displayAnimalsShared ){
+                if( selected.length === animaux.length ){
+                    setValue(valueName, undefined);
+                    setSelected([]);
+                } else{
+                    setValue(valueName, animaux.map(e => e.id));
+                    setSelected(animaux);
+                }
             } else{
-                setValue(valueName, animaux.map(e => e.id));
-                setSelected(animaux);
+                if( selected.length === animaux.filter((animal) => animal.provenance === "owner").length ){
+                    setValue(valueName, undefined);
+                    setSelected([]);
+                } else{
+                    setValue(valueName, animaux.filter((animal) => animal.provenance === "owner").map(e => e.id));
+                    setSelected(animaux.filter((animal) => animal.provenance === "owner"));
+                }
             }
             return;
         }

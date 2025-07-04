@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl } from 'react-native';
-import { IconButton, useTheme, ActivityIndicator } from 'react-native-paper';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, RefreshControl, ActivityIndicator } from 'react-native';
+import { IconButton, useTheme } from 'react-native-paper';
 import TopTab from '../components/common/TopTab';
 import LoggerService from '../services/logs/LoggerService';
 import groupServiceInstance from '../services/api/GroupService';
@@ -114,7 +114,7 @@ const OtherScreen = ({ navigation }) => {
                           refreshing={refreshing}
                           onRefresh={onRefresh}
                           colors={[colors.primary]}
-                          tintColor={colors.primary}
+                          tintColor={colors.default_dark}
                         />
                     }
                 />

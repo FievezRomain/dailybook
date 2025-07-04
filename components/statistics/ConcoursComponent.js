@@ -254,6 +254,7 @@ const ConcoursComponent = ({ data, chartConfig, chartParameters }) => {
                 )}
                 scrollEnabled={false}
                 contentContainerStyle={styles.listEventContainer}
+                style={{paddingLeft:20, paddingRight: 20, paddingBottom: 30}}
             />
         </>
     );

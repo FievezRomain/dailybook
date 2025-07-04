@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthenticatedUserProvider';
 import ModalSubMenuObjectifActions from './modals/objectifs/ModalSubMenuObjectifActions';
@@ -129,7 +129,6 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }) =>{
             backgroundColor: colors.text,
         },
         composantContainer:{
-            marginTop: 10,
             paddingLeft: 20,
             paddingRight: 20,
             height: "100%",
@@ -162,8 +161,6 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }) =>{
             justifyContent: "flex-end",
             width: "100%",
             alignSelf: "center",
-            paddingLeft: 20,
-            paddingRight: 20,
             paddingBottom: 15,
             top: 5,
             zIndex: 1,
@@ -207,40 +204,39 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }) =>{
                 objectif={currentObjectif}
                 handleTasksStateChange={onModify}
             />
-            <View style={styles.temporalityIndicator}>
-                <StatePicker
-                arrayState={arrayState}
-                handleChange={onTemporalityChange}
-                defaultState={temporality}
-                color={hexToRgba(colors.quaternary, 1)}
-                />
-            </View>
-            <ScrollView contentContainerStyle={{paddingBottom: 30, width: "100%"}}>
-                <View style={styles.composantContainer}>
                 
-                    {/* <Text style={[{textAlign: "center", color: colors.default_dark, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Objectifs</Text> */}
-                    
-                    {objectifsDisplay.length !== 0 ?
-                        objectifsDisplay.map((objectif, index) => {
-                            return(
-                                <View style={styles.objectifContainer} key={objectif.id}>
-                                    <ObjectifCard
-                                            objectif={objectif}
-                                            animaux={animaux}
-                                            handleObjectifChange={onModify}
-                                            handleObjectifDelete={handleDelete}
-                                    />
-                                </View>
-                            );
-                        })
-                    :
-                        <ModalDefaultNoValue
-                            text={"Vous n'avez aucun objectif"}
+            <FlatList
+                data={objectifsDisplay}
+                scrollEnabled={false}
+                ListHeaderComponentStyle={styles.temporalityIndicator}
+                contentContainerStyle={styles.composantContainer}
+                style={{paddingLeft: 20, paddingRight: 20}}
+                ListHeaderComponent={
+                    <StatePicker
+                        arrayState={arrayState}
+                        handleChange={onTemporalityChange}
+                        defaultState={temporality}
+                        color={hexToRgba(colors.quaternary, 1)}
+                    />
+                }
+                ListEmptyComponent={
+                    <ModalDefaultNoValue
+                        text={"Vous n'avez aucun objectif"}
+                    />
+                }
+                renderItem={({ item }) => (
+                    <View style={styles.objectifContainer} key={item.id}>
+                        <ObjectifCard
+                            objectif={item}
+                            animaux={animaux}
+                            handleObjectifChange={onModify}
+                            handleObjectifDelete={handleDelete}
                         />
-                    }
+                    </View>
+                )}
+            />
+                        
                     
-                </View>
-            </ScrollView>
         </>
     );
 }

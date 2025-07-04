@@ -219,6 +219,7 @@ const TailleComponent = ({ data, chartConfig, chartParameters, forceUpdateDataCh
                 )}
                 scrollEnabled={false}
                 contentContainerStyle={styles.listEventContainer}
+                style={{paddingLeft:20, paddingRight: 20, paddingBottom: 30}}
             />
         </>
     );

@@ -246,7 +246,7 @@ const GroupDetailScreen = ( ) => {
           ListHeaderComponent={renderHeader}
           renderItem={renderItem}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />
           }
           ListEmptyComponent={
             <View style={styles.item}>

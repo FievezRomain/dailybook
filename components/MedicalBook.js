@@ -105,6 +105,7 @@ const MedicalBook = ({ animal, navigation }) => {
                 <FlatList
                     data={typeEvent === "Rendez-vous" ? eventsRdv : eventsSoins}
                     keyExtractor={(item) => item.id.toString()}
+                    scrollEnabled={false}
                     ListEmptyComponent={
                         <ModalDefaultNoValue
                             text={typeEvent === "Rendez-vous" ? "Aucun rendez-vous pour cet animal" : "Aucun soin pour cet animal"}
@@ -120,7 +121,8 @@ const MedicalBook = ({ animal, navigation }) => {
                             />
                         </View>
                     )}
-                    contentContainerStyle={{ paddingBottom: 20, paddingTop:10, paddingLeft: 20, paddingRight: 20 }}
+                    contentContainerStyle={{ paddingBottom: 20, paddingTop:10 }}
+                    style={{paddingLeft: 20, paddingRight: 20}}
                 />
             </View>
         </>

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated } from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated, ActivityIndicator, FlatList, RefreshControl } from "react-native";
 import TopTab from '../components/common/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import AnimalsPicker from "../components/inputs/AnimalsPicker";
@@ -17,6 +17,7 @@ import ModalValidation from "../components/modals/common/ModalValidation";
 import { useFocusEffect } from "@react-navigation/native";
 import { useAnimaux } from "../contexts/AnimauxProvider";
 import instanceDateUtils from "../utils/DateUtils";
+import groupServiceInstance from "../services/api/GroupService";
 
 const PetsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -33,6 +34,7 @@ const PetsScreen = ({ navigation }) => {
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
   const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -59,6 +61,11 @@ const PetsScreen = ({ navigation }) => {
     
   }, [animaux]);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await groupServiceInstance.refreshCache();
+    setRefreshing(false);
+  };
 
   const initDisplay = async () => {
       // On valorise l'animal selectionné par défaut au premier de la liste
@@ -186,6 +193,80 @@ const PetsScreen = ({ navigation }) => {
     }
   });
 
+  function getContent() {
+    if (refreshing) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+          <ActivityIndicator animating={true} size="large" />
+        </View>
+      );
+    }
+
+    return(
+      <FlatList
+        data={[]}
+        keyExtractor={() => "key"}
+        renderItem={null}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />
+        }
+        ListHeaderComponent={
+          <>
+            <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
+              <AnimalsPicker
+                setAnimaux={setAnimaux}
+                animaux={animaux}
+                setSelected={setSelected}
+                selected={selected}
+                setValue={setValue}
+                mode="single"
+                buttonAdd={true}
+                setDate={setDate}
+              />
+            </View>
+            <View style={styles.rubriqueContainer}>
+              <View style={styles.iconsContainer}>
+                <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+                  <Entypo name="info-with-circle" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+                  <Text style={[{color: activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Informations</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+                  <MaterialCommunityIcons name="clipboard-pulse-outline" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+                  <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Physique</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
+                  <FontAwesome6 name="book-medical" size={20} color={activeRubrique === 2 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+                  <Text style={[{color: activeRubrique === 2 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Santé</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.separatorFix}></View>
+              <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1, 2], outputRange: ['0%', '33.3%', '66.6%'] }) }]} />
+            </View>
+            {activeRubrique === 0 && 
+              <InformationsAnimals
+                animal={selected[0]}
+                onDelete={handleDeletePet}
+                onModify={onModify}
+              />
+            }
+            {activeRubrique === 1 &&
+              <AnimalBody 
+                animal={selected[0]}
+                onModify={onModify}
+              />
+            }
+            {activeRubrique === 2 &&
+              <MedicalBook 
+                animal={selected[0]}
+                navigation={navigation}
+              />
+            }
+          </>
+        }
+      />
+    );
+  }
+
   return (
     <>
       <ModalValidation
@@ -197,55 +278,7 @@ const PetsScreen = ({ navigation }) => {
       />
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2}/>
-        <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
-          <AnimalsPicker
-            setAnimaux={setAnimaux}
-            animaux={animaux}
-            setSelected={setSelected}
-            selected={selected}
-            setValue={setValue}
-            mode="single"
-            buttonAdd={true}
-            setDate={setDate}
-          />
-        </View>
-        <View style={styles.rubriqueContainer}>
-          <View style={styles.iconsContainer}>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <Entypo name="info-with-circle" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color: activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Informations</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <MaterialCommunityIcons name="clipboard-pulse-outline" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Physique</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
-              <FontAwesome6 name="book-medical" size={20} color={activeRubrique === 2 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color: activeRubrique === 2 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Santé</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.separatorFix}></View>
-          <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1, 2], outputRange: ['0%', '33.3%', '66.6%'] }) }]} />
-        </View>
-        {activeRubrique === 0 && 
-          <InformationsAnimals
-            animal={selected[0]}
-            onDelete={handleDeletePet}
-            onModify={onModify}
-          />
-        }
-        {activeRubrique === 1 &&
-          <AnimalBody 
-            animal={selected[0]}
-            onModify={onModify}
-          />
-        }
-        {activeRubrique === 2 &&
-          <MedicalBook 
-            animal={selected[0]}
-            navigation={navigation}
-          />
-        }
+        {getContent()}
       </LinearGradient>
     </>
   );
