@@ -114,6 +114,11 @@ const SoinsCard = ({eventInfos, animaux, setSubMenu}) => {
                 </View>
             </View>
             <View style={styles.contentEventContainer}>
+                {isValidString(eventInfos.heuredebutevent) && 
+                    <View style={{paddingRight: 5, paddingBottom: 5}}>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Heure de début : </Text>{eventInfos.heuredebutevent}</Text>
+                    </View>
+                }
                 {isValidString(eventInfos.lieu) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
                         <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Lieu : </Text>{eventInfos.lieu}</Text>
