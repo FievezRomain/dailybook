@@ -306,7 +306,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                 {currentObjectif.sousEtapes !== undefined && currentObjectif.sousEtapes.map((etape, index) => {
                                     return(
                                         <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
-                                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                            <View style={{display: "flex", flexDirection: "row"}}>
                                                 {etape.state === true &&
                                                     <Feather name="x-square" size={25} color={colors.default_dark} />
                                                     ||

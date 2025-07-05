@@ -125,7 +125,11 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
             animalsFiltered = animalsFiltered.filter((animal) => animal.provenance === "owner");
         }
         if( selectAll ){
-            return [{ id: 'select_all', nom: 'Tous', image: null }, ...animalsFiltered];
+            if( animalsFiltered.length > 0 ){
+                return [{ id: 'select_all', nom: 'Tous', image: null }, ...animalsFiltered];
+            } else{
+                return [];
+            }
         } else {
             return animalsFiltered;
         }
@@ -139,6 +143,9 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
             alignSelf: "center",
             marginLeft: 5,
         },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        }
     });
 
     const ListComponent = inModal ? BottomSheetFlatList : FlatList;
@@ -153,6 +160,11 @@ const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, 
             showsHorizontalScrollIndicator={false} // Masque la barre de scroll
             keyboardShouldPersistTaps="handled" // Gère les taps quand le clavier est actif
             contentContainerStyle={{ flexGrow: 1 }}
+            ListEmptyComponent={
+                <View style={{alignItems: "center", width:"100%"}}>
+                    <Text style={[styles.textFontRegular ,{color: colors.default_dark}]}>Vous n'êtes propriétaire d'aucun animal</Text>
+                </View>
+            }
             renderItem={({ item }) => {
                 const isSelected = checkSelected(item);
                 const selectedIndex = selected.findIndex(e => e.id === item.id);

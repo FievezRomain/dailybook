@@ -24,18 +24,21 @@ const ModalWish = ({isVisible, setVisible, actionType, wish={}, onModify=undefin
     const fileStorageService = new FileStorageService();
 
     useEffect(() => {
-        initValues();
-    }, [isVisible, wish]);
+        if(isVisible){
+            initValues();
+        }
+    }, [isVisible]);
 
     const closeModal = () => {
         setVisible(false);
+        resetValues();
     };
 
     const initValues = () =>{
         setValue("id", wish.id);
         setValue("nom", wish.nom);
         setValue("url", wish.url);
-        setValue("prix", String(wish.prix));
+        setValue("prix", !!wish.prix ? String(wish.prix) : undefined);
         setValue("destinataire", wish.destinataire);
         if(wish.image !== null && wish.image !== undefined){
             setImage( fileStorageService.getFileUrl( wish.image, currentUser.uid ));

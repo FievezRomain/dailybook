@@ -90,6 +90,7 @@ const CalendarPicker = ({onDayChange, propertyName, defaultDate = undefined}) =>
                 <Calendar
                   onDayPress={handleDayPress}
                   firstDay={1}
+                  monthFormat={'MMMM yyyy'}
                   markedDates={selectedDate ? { [selectedDate]: { selected: true } } : {}}
                   theme={{
                     arrowColor: colors.neutral,
