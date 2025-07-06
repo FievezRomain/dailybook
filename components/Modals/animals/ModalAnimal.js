@@ -86,6 +86,7 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     }), [espece];
 
     const initValuesAnimal = () => {
+        console.log(animal)
         setValue("id", animal.id);
         setValue("nom", animal.nom);
         setValue("espece", animal.espece);

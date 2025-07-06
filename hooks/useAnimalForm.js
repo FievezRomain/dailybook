@@ -86,7 +86,7 @@ export const useAnimalForm = (setValue, currentUser, onModify, closeModal) => {
             data["datedeces"] !== null &&
             data["datedeces"] !== undefined &&
             (data["datedeces"].length !== 10 ||
-              !instanceDateUtils.isDateValid(instanceDateUtils.dateFormatter(data["datedeces"], "dd/MM/yyyy", "/")))
+              !instanceDateUtils.isDateValid(data["datedeces"]))
         ) {
             Toast.show({
               position: "top",
@@ -95,10 +95,6 @@ export const useAnimalForm = (setValue, currentUser, onModify, closeModal) => {
             });
             setLoading(false);
             return null;
-          }
-          
-        if (data["datedeces"] !== null && data["datedeces"] !== undefined) {
-            data["datedeces"] = instanceDateUtils.dateFormatter(data["datedeces"], "dd/MM/yyyy", "/");
         }
 
         // Vérification de la valeur des entiers/décimal

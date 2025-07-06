@@ -305,6 +305,7 @@ const EventCard = ({eventInfos, handleEventsChange, withSubMenu=true, withDate=f
         let data = {};
         data.id = eventInfos.idparent === null ? eventInfos.id : eventInfos.idparent;
         data.email = currentUser.email;
+        data.animaux = eventInfos.animaux;
 
         eventsServiceInstance.delete(data)
             .then((reponse) =>{
