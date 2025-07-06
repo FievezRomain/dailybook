@@ -66,6 +66,7 @@ export const useAnimalForm = (setValue, currentUser, onModify, closeModal) => {
             data["datenaissance"] = undefined;
         }
 
+        // Vérification et formattage de la date de naissance
         if( ( data["datenaissance"] !== null && data["datenaissance"] !== undefined ) && ( data["datenaissance"].length !== 10 || !instanceDateUtils.isDateValid( instanceDateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/") ) ) ){
             Toast.show({
                 position: "top",
@@ -78,6 +79,26 @@ export const useAnimalForm = (setValue, currentUser, onModify, closeModal) => {
 
         if( data["datenaissance"] !== null && data["datenaissance"] !== undefined ){
             data["datenaissance"] = instanceDateUtils.dateFormatter( data["datenaissance"], "dd/MM/yyyy", "/");
+        }
+
+        // Vérification et formattage de la date de décès
+        if (
+            data["datedeces"] !== null &&
+            data["datedeces"] !== undefined &&
+            (data["datedeces"].length !== 10 ||
+              !instanceDateUtils.isDateValid(instanceDateUtils.dateFormatter(data["datedeces"], "dd/MM/yyyy", "/")))
+        ) {
+            Toast.show({
+              position: "top",
+              type: "error",
+              text1: "Problème de format de date de décès"
+            });
+            setLoading(false);
+            return null;
+          }
+          
+        if (data["datedeces"] !== null && data["datedeces"] !== undefined) {
+            data["datedeces"] = instanceDateUtils.dateFormatter(data["datedeces"], "dd/MM/yyyy", "/");
         }
 
         // Vérification de la valeur des entiers/décimal

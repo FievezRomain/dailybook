@@ -27,6 +27,7 @@ import FileStorageService from "../../../services/aws/FileStorageService";
 import instanceDateUtils from "../../../utils/DateUtils";
 import { useGroups } from "../../../contexts/GroupProvider";
 import ModalMultiSelect from "../inputs/ModalMultiSelect";
+import { isBefore, isEqual, startOfDay } from "date-fns";
 
 const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModify=undefined, date=null}) => {
   const { colors, fonts } = useTheme();
@@ -463,9 +464,15 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
   const onChangeDate = (propertyName, selectedDate) => {
     setValue(propertyName, selectedDate);
-    var currentDate = new Date();
-    currentDate.setHours(1, 0, 0, 0);
-    if(currentDate > new Date(selectedDate)){
+
+    const today = startOfDay(new Date());
+    const selected = startOfDay(selectedDate);
+
+    if(isEqual(selected, today)){
+      return;
+    }
+
+    if(isBefore(selected, today)){
       handleStateChange("Terminé");
       setNotifType({title: "Aucune notification", id: "None"});
       setValue("notif", "None");
