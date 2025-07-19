@@ -105,7 +105,7 @@ const AnimalImageCarousel = ({ animalId }) => {
       alignSelf: 'center',
       paddingHorizontal: 25,
       paddingVertical: 12,
-      borderRadius: 8,
+      borderRadius: 20,
     },
     buttonText: {
       fontSize: 14,

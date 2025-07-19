@@ -177,7 +177,6 @@ const DocumentPickerComponent = ({ onChange, value = [], backgroundColor = null,
 
         // Compression puis ajout du fichier à la liste des documents
         var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
-        console.log({ uri:uriImageCompressed, name: result.assets[0].fileName, mimeType: result.assets[0].mimeType, isNew: true });
         onChange([...value, { uri:uriImageCompressed, name: result.assets[0].fileName, mimeType: result.assets[0].mimeType, isNew: true }]);
       }
 

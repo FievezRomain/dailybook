@@ -72,7 +72,7 @@ const Button = ({ children, type, size, optionalStyle, disabled, onPress, isUppe
         paddingRight: paddingRight,
         paddingBottom: paddingBottom,
         paddingTop: paddingTop,
-        borderRadius: 15,
+        borderRadius: 50,
         optionalStyle
       },
       buttonText: {
