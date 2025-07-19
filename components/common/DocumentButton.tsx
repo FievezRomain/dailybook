@@ -80,7 +80,7 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({ visible, uri, onClose }
             style={{ flex: 1 }}
             startInLoadingState
             renderLoading={() => (
-              <ActivityIndicator size="large" color={colors.default_dark} style={{ marginTop: 20 }} />
+              <ActivityIndicator size="large" color={colors.default_dark} />
             )}
           />
         ) : (
