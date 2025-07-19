@@ -239,8 +239,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       onChangeDate("dateevent", date);
     }
 
-    setValue("documents", event.documents);
-    setValue("shared_groups", event.shared_groups);
+    setValue("documents", event.documents ? event.documents : undefined);
+    setValue("shared_groups", event.shared_groups ? event.shared_groups : undefined);
     setValue("created_by", event.created_by);
     setValue("made_by", event.made_by);
   }
@@ -348,7 +348,8 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
             let filename = doc.name.split("/");
             filename = filename[filename.length-1];
 
-            await fileStorageService.uploadFile(doc.uri, filename, doc.mimeType, currentUser.uid);
+            console.log(filename)
+            await fileStorageService.uploadFile(doc.uri, filename, doc.mimeType, currentUser.uid, "evenements/");
 
             documentsFilenameArray.push(filename);
           }
@@ -583,6 +584,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     } else{
       updated[index].toDelete = true;
     }
+    console.log(updated)
 
     setValue("documents", updated);
   };
@@ -592,7 +594,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
     if( arrayGroup === undefined || arrayGroup === null || arrayGroup.length === 0 ){
       setValue("shared_groups", [selectedGroup]);
-      console.log([selectedGroup])
     } else{
       let updatedArray = [...arrayGroup];
       let index = updatedArray.findIndex(group => group.id === selectedGroup.id);
@@ -606,7 +607,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       } else{
         updatedArray.push( selectedGroup );
       }
-      console.log(updatedArray)
       setValue("shared_groups", updatedArray);
     }
   }
@@ -990,18 +990,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             defaultDate={watch("datefinsoins")}
                         />
                       </View>
-                      <View style={styles.inputContainer}>
-                        <Text style={[styles.textInput, styles.textFontRegular]}>Documents :</Text>
-                        <DocumentPickerComponent
-                          onChange={onDocumentsChange}
-                          accountType={accountType}
-                          value={watch("documents") || []}
-                        />
-                        <FilesList
-                          onMarkDelete={markFileAsDeleted}
-                          files={watch("documents") || []}
-                        />
-                      </View>
                     </>
                   }
                   {eventType.id === "balade" &&
@@ -1013,6 +1001,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       />
                     </View>
                   }
+
                   <Divider/>
                   <View style={[styles.inputContainer, {marginBottom: 15}, {marginTop: 15}]}>
                     <Text style={[styles.textInput, styles.textFontRegular]}>Heure de début : </Text>
@@ -1184,6 +1173,18 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
 
                   {eventType.id === "soins" && (
                     <>
+                      <View style={styles.inputContainer}>
+                        <Text style={[styles.textInput, styles.textFontRegular]}>Documents :</Text>
+                        <DocumentPickerComponent
+                          onChange={onDocumentsChange}
+                          accountType={accountType}
+                          value={watch("documents") || []}
+                        />
+                        <FilesList
+                          onMarkDelete={markFileAsDeleted}
+                          files={watch("documents") || []}
+                        />
+                      </View>
                       <View style={styles.inputContainer}>
                         <Text style={[styles.textInput, styles.textFontRegular]}>Traitement : </Text>
                         <TextInput

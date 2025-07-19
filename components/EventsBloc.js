@@ -241,6 +241,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }) => {
                             data={eventsExceeded}
                             keyExtractor={(item) => item.id.toString()}
                             scrollEnabled={false}
+                            style={{paddingHorizontal: 20, paddingBottom: 5, paddingTop: 5}}
                             renderItem={({ item }) => (
                                 <TouchableOpacity>
                                     <View style={styles.eventContainer}>

@@ -25,22 +25,24 @@ const FilesList = ({ files, onMarkDelete }) => {
   });
 
   return (
-    <FlatList
-      data={visibleFiles}
-      keyExtractor={(item, index) => index}
-      scrollEnabled={false}
-      style={{marginBottom: 10}}
-      renderItem={({ item, index }) => (
-        <View style={styles.fileItem}>
-          <Text style={styles.fileName}>
-            {item.name}
-          </Text>
-          <TouchableOpacity onPress={() => onMarkDelete(item.name)}>
-            <MaterialIcons name="close" size={20} color={colors.error} />
-          </TouchableOpacity>
-        </View>
-      )}
-    />
+    <>
+      <FlatList
+        data={visibleFiles}
+        keyExtractor={(item, index) => index}
+        scrollEnabled={false}
+        style={{marginBottom: 10}}
+        renderItem={({ item, index }) => (
+          <View style={styles.fileItem}>
+            <Text style={styles.fileName}>
+              {item.name}
+            </Text>
+            <TouchableOpacity onPress={() => onMarkDelete(item.name)}>
+              <MaterialIcons name="close" size={20} color={colors.error} />
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+    </>
   );
 };
 

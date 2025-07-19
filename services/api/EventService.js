@@ -81,6 +81,16 @@ class EventService {
         
     }
 
+    async getFileUrl(body){
+        await this.updateAxiosAuthorization();
+        return axios
+        .post(`${getBaseUrl()}event/document`, body)
+        .then(async( {data} ) => {
+            return data;
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour récupérer l'url d'un document : " + err.message ));
+    }
+
     async updateAxiosAuthorization() {
         let token = await getAuth().currentUser.getIdToken();
         if (token) {

@@ -2,21 +2,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Icon, useTheme } from 'react-native-paper';
 import TopTabSecondary from '../components/common/TopTabSecondary';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ModalDefaultNoValue from '../components/modals/common/ModalDefaultNoValue';
 import notificationServiceInstance from '../services/api/NotificationService';
 import groupServiceInstance from '../services/api/GroupService';
 import instanceDateUtils from '../utils/DateUtils';
+import { useFocusEffect } from '@react-navigation/native';
+import { setBadgeCountAsync } from 'expo-notifications';
 
 const NotificationScreen = ( ) => {
     const { colors, fonts } = useTheme();
     const [ refreshing, setRefreshing ] = useState(true);
     const [ notifications, setNotifications ] = useState([]);
 
-    useEffect(() => {
-        fetchNotifications();
-    }, []);
-    
     const fetchNotifications = async () => {
         try {
             const response = await notificationServiceInstance.getNotifications();
@@ -29,6 +27,33 @@ const NotificationScreen = ( ) => {
             setRefreshing(false);
         }
     };
+
+    useFocusEffect(
+        useCallback(() => {
+          // Quand l'écran devient actif
+          const fetchNotificationsOnFocus = async () => {
+            try{
+                await fetchNotifications();
+            }catch(error){
+                console.error('Erreur lors de la mise à jour des notifications : ', err);
+            }
+          }
+          const resetBadge = async () => {
+            try {
+              await setBadgeCountAsync(0);
+            } catch (err) {
+              console.warn('Erreur lors de la remise à zéro du badge :', err);
+            }
+          };
+    
+          fetchNotificationsOnFocus();
+          resetBadge();
+    
+          // Pas besoin de return pour cleanup ici, sauf si tu ajoutes des listeners
+        }, [])
+    );
+    
+    
     
     const onRefresh = async () => {
         setRefreshing(true);

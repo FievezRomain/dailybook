@@ -57,7 +57,6 @@ const ModalNotifications = ({notifications, setNotifications, modalVisible, setM
         notifications[indice].value = time;
         setNotifications(notifications);
         setDatePickerVisibility(false);
-        console.log(time);
     }
 
     const handleCancelPicker = () => {

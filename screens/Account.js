@@ -1,4 +1,4 @@
-import { View, Text, Image, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import React from 'react';
 import TopTabSecondary from "../components/common/TopTabSecondary";
 import InputTextInLine from "../components/inputs/InputTextInLine";
@@ -12,6 +12,7 @@ import LoggerService from "../services/logs/LoggerService";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import FileStorageService from "../services/aws/FileStorageService";
 import { useTheme } from 'react-native-paper';
+import { Image } from "expo-image";
 
 const AccountScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
@@ -118,7 +119,7 @@ const AccountScreen = ({ navigation }) => {
                         alignSelf: "flex-start",
                         marginTop: 30,
                         marginBottom: 5, alignSelf: "center"}}>
-                            <Image source={{uri: image}} style={{width: 100,height: 100,borderRadius: 50,borderWidth: 2,zIndex: 1}}/>
+                            <Image source={{uri: image}} cachePolicy={"disk"} style={{width: 100,height: 100,borderRadius: 50,borderWidth: 2,zIndex: 1}}/>
                         </View>
                     }
                     

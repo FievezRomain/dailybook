@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput, ActivityIndicator } from "react-native";
+import { Modal, StyleSheet, View, TouchableOpacity, Text, TextInput, ActivityIndicator, FlatList } from "react-native";
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import RatingInput from '../../inputs/RatingInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -13,6 +13,7 @@ import { useTheme } from 'react-native-paper';
 import ModalEditGeneric from '../common/ModalEditGeneric';
 import Constants from 'expo-constants';
 import instanceDateUtils from '../../../utils/DateUtils';
+import DocumentButton from '../../common/DocumentButton';
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }) => {
     const { colors, fonts } = useTheme();
@@ -603,6 +604,27 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
                                 defaultValue={event.depense ? parseFloat(event.depense).toFixed(2) : event.depense}
                             />
                         </View>
+                    }
+
+                    {/* Affichage des documents liés à l'événement (on peut ajouter des documents uniquement sur les soins et rdv) */}
+                    { (event.eventtype === "rdv" || event.eventtype === "soins") && 
+                        <FlatList
+                            data={event.documents}
+                            keyExtractor={(item, index) => index.toString()}
+                            ListHeaderComponent={
+                                <Text style={[styles.textFontRegular, {color: colors.default_dark}]}>Documents :</Text>
+                            }
+                            ListEmptyComponent={
+                                <Text style={{color: colors.default_dark}}>Aucun document lié à l'événement</Text>
+                            }
+                            numColumns={3}
+                            scrollEnabled={false}
+                            renderItem={({ item }) => (
+                                <DocumentButton item={item} event={event} />
+                            )}
+                            columnWrapperStyle={{ justifyContent: "space-around" }}
+                            style={{paddingTop: 10, paddingRight: 30}}
+                        />
                     }
                 </View>
             </KeyboardAwareScrollView>
