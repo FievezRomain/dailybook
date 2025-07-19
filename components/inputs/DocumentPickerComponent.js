@@ -157,6 +157,25 @@ const DocumentPickerComponent = ({ onChange, value = [], backgroundColor = null,
       });
 
       if (!result.canceled) {
+        // Vérification du nombre de fichiers MAX
+        const totalFiles = value.length + 1;
+        if (totalFiles > MAX_FILES) {
+          if(value.length > 0){
+              Alert.alert(
+                  'Limite atteinte',
+                  `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum. Vous avez déjà sélectionné ${value.length} fichier(s).`,
+                );
+          } else{
+              Alert.alert(
+                  'Limite atteinte',
+                  `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum.`,
+                );
+          }
+          
+          return;
+        }
+
+        // Compression puis ajout du fichier à la liste des documents
         var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
         console.log({ uri:uriImageCompressed, name: result.assets[0].fileName, mimeType: result.assets[0].mimeType, isNew: true });
         onChange([...value, { uri:uriImageCompressed, name: result.assets[0].fileName, mimeType: result.assets[0].mimeType, isNew: true }]);
@@ -185,6 +204,26 @@ const DocumentPickerComponent = ({ onChange, value = [], backgroundColor = null,
       });
 
       if (!result.canceled) {
+
+        // Vérification du nombre de fichiers MAX
+        const totalFiles = value.length + 1;
+        if (totalFiles > MAX_FILES) {
+          if(value.length > 0){
+              Alert.alert(
+                  'Limite atteinte',
+                  `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum. Vous avez déjà sélectionné ${value.length} fichier(s).`,
+                );
+          } else{
+              Alert.alert(
+                  'Limite atteinte',
+                  `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum.`,
+                );
+          }
+          
+          return;
+        }
+
+        // Compression puis ajout du fichier à la liste des documents
         var uriImageCompressed = await imageUtils.compressImage( result.assets[0].uri );
         onChange([...value, { uri:uriImageCompressed, name: result.assets[0].fileName, mimeType: result.assets[0].mimeType, isNew: true }]);
         // setValue("image", result.assets[0].base64); // Si vous avez besoin de stocker l'image en base64
