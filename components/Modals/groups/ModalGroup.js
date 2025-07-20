@@ -240,7 +240,7 @@ const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = 
                                                 onChangeText={(text) => updateMembers(index, text)}
                                                 placeholder="Entrez une adresse e-mail"
                                                 placeholderTextColor={colors.secondary}
-                                                editable={actionType !== "create"}
+                                                editable={actionType === "create"}
                                             />
                                             <TouchableOpacity onPress={() => removeMember(index)}>
                                                 <AntDesign name="delete" size={20} color={colors.default_dark}/>

@@ -131,7 +131,7 @@ const OfferInformations = ({ withMessageFunctionality=true }) => {
             type={"quaternary"}
             onPress={() => handleInscription()}
           >
-            <Text style={styles.textFontMedium}>S'inscrire pour être averti de la sortie de la version premium</Text>
+            <Text style={[styles.textFontMedium, {textTransform: "uppercase"}]}>S'inscrire pour être averti de la sortie de la version premium</Text>
           </Button>
           <Text style={[styles.price, styles.textFontRegular]}>8.99€ /an pour les 1 000 premiers inscrits</Text>
         </View>

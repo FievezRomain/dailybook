@@ -34,7 +34,8 @@ const HomeScreen = ({ navigation })=> {
     text: {
       color: colors.background,
       textAlign: "center",
-      fontSize: 16
+      fontSize: 16,
+      textTransform: "uppercase"
     },
     button: {
       backgroundColor: colors.accent,

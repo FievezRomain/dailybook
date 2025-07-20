@@ -473,7 +473,7 @@ const ModalObjectif = ({isVisible, setVisible, actionType, objectif={}, onModify
                                         size={"s"}
                                         isLong={true}
                                     >
-                                        <Text style={styles.textFontMedium}>Ajouter une étape</Text>
+                                        <Text style={[styles.textFontMedium, {textTransform: "uppercase"}]}>Ajouter une étape</Text>
                                     </Button>
                                 </View>
 

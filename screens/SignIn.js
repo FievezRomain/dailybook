@@ -152,6 +152,7 @@ const SignInScreen = ({ navigation })=> {
             color: colors.text,
             alignSelf: "flex-end",
             justifyContent: "flex-end",
+            textTransform: "uppercase"
         },
         forgetPassword: {
             flexDirection: "row",
@@ -175,7 +176,8 @@ const SignInScreen = ({ navigation })=> {
             borderRadius: 10
         },
         textButton:{
-            color: "white"
+            color: "white",
+            textTransform: "uppercase"
         },
         errorInput: {
             color: "red"

@@ -149,7 +149,7 @@ const AnimalImageCarousel = ({ animalId }) => {
                         { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.disabled : colors.accent },
                     ]}
                 >
-                    <Text style={[styles.textFontRegular, { color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? 'gray' : 'white' }]}>
+                    <Text style={[styles.textFontRegular, { textTransform: "uppercase", color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? 'gray' : 'white' }]}>
                         {currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? "Limite de photos atteinte ce mois-ci" : "Ajouter une photo pour ce mois"}
                     </Text>
                 </TouchableOpacity>
