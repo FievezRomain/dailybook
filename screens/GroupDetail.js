@@ -18,7 +18,7 @@ import ModalAddMember from '../components/modals/groups/ModalAddMember';
 import ModalGroup from '../components/modals/groups/ModalGroup';
 import ModalValidation from '../components/modals/common/ModalValidation';
 
-const GroupDetailScreen = ( ) => {
+const GroupDetailScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser, abonnement } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
@@ -79,8 +79,10 @@ const GroupDetailScreen = ( ) => {
     let data = {};
     data.id = group.id;
     
-    await groupServiceInstance.delete(data);
+    navigation.navigate("Autre");
 
+    await groupServiceInstance.delete(data);
+    
     setTimeout(() => Toast.show({
       type: "success",
       position: "top",

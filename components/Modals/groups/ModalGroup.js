@@ -143,13 +143,14 @@ const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = 
             scrollInside={false}
         >
             <ModalAnimals
-                valueName={"animaux"}
+                valueName={"animals"}
                 setValue={setValue}
                 animaux={animaux}
                 selected={selected}
                 setSelected={setSelected}
                 modalVisible={modalSelectAnimalsIsVisible}
                 setModalVisible={setModalSelectAnimalsIsVisible}
+                displayAnimalsShared={false}
             />
             <View style={styles.form}>
                 <View style={styles.containerActionsButtons}>
