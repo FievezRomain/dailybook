@@ -31,7 +31,7 @@ const MembersGroup = ({ members, group, userRole }) => {
 
     return(
         <>
-            {userRole === "manager" && members !== undefined && members.type === "pending" &&
+            {members !== undefined && members.type === "pending" &&
                 <View style={styles.container}>
                     <View style={styles.containerHeader}>
                         <Icon source={"clock-outline"} size={20} color={colors.default_dark} />

@@ -14,23 +14,36 @@ const OtherScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [buttons, setButtons] = useState([
-        { id: 1, icon: "heart", label: "Wishlist", screen: "Wish" },
-        { id: 2, icon: "contacts", label: "Contacts", screen: "Contact" },
-        { id: 3, icon: "note-edit-outline", label: "Notes", screen: "Note"},
+        { id: 1, icon: "heart", label: "Wishlist", screen: "Wish", disabled: false },
+        { id: 2, icon: "contacts", label: "Contacts", screen: "Contact", disabled: false },
+        { id: 3, icon: "note-edit-outline", label: "Notes", screen: "Note", disabled: false },
     ]);
 
     useEffect(() => {
+        let groupButtons;
         if (groups && groups.length > 0) {
-          const groupButtons = groups.map(group => ({
-            id: `group-${group.id}`,
-            icon: "account-group",
-            label: group.name,
-            screen: "GroupDetail",
-            params: { groupId: group.id },
-          }));
-      
-          setButtons(prev => [...prev.filter(b => !`${b.id}`.startsWith("group-")), ...groupButtons]);
+            // Création d'un bouton pour chaque groupe
+            groupButtons = groups.map(group => ({
+                id: `group-${group.id}`,
+                icon: "account-group",
+                label: group.name,
+                screen: "GroupDetail",
+                params: { groupId: group.id },
+                disabled: false
+            }));
+          
+        } else{
+            // Création d'un bouton par défaut
+            groupButtons = [{
+                id: `group-default`,
+                icon: "account-group",
+                label: "Vous retrouverez vos groupes ici",
+                screen: "GroupDetail",
+                disabled: true
+            }];
         }
+
+        setButtons(prev => [...prev.filter(b => !`${b.id}`.startsWith("group-")), ...groupButtons]);
     }, [groups]);
 
     const fetchGroups = async () => {
@@ -53,7 +66,7 @@ const OtherScreen = ({ navigation }) => {
 
     const renderButton = ({ item }) => {
         return (
-            <TouchableOpacity onPress={() => navigation.navigate(item.screen, item.params)} style={styles.button}>
+            <TouchableOpacity onPress={() => navigation.navigate(item.screen, item.params)} style={[styles.button, item.disabled && {opacity: 0.5}]} disabled={item.disabled}>
                 <IconButton icon={item.icon} iconColor={colors.default_dark} size={30}/>
                 <Text style={styles.label}>{item.label}</Text>
             </TouchableOpacity>
@@ -87,6 +100,7 @@ const OtherScreen = ({ navigation }) => {
             color: colors.default_dark,
             marginTop: 5,
             textAlign: "center",
+            paddingHorizontal: 10
         },
     })
 

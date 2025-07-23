@@ -39,7 +39,7 @@ const MemberCard = ({ member, memberState, userRole, group }) => {
             return <ActivityIndicator animating={true} size="large" />
         }
 
-        if( memberState === "pending" ){
+        if( memberState === "pending" && (userRole === "manager" && member.email !== currentUser.email) ){
             return(
                 <>
                     <TouchableOpacity onPress={handleSubmit(refuseMember)}>

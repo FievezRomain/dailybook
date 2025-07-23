@@ -10,7 +10,7 @@ import instanceDateUtils from '../utils/DateUtils';
 import { useFocusEffect } from '@react-navigation/native';
 import { setBadgeCountAsync } from 'expo-notifications';
 
-const NotificationScreen = ( ) => {
+const NotificationScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
     const [ refreshing, setRefreshing ] = useState(true);
     const [ notifications, setNotifications ] = useState([]);
@@ -71,6 +71,8 @@ const NotificationScreen = ( ) => {
         if( item.type === 'group_animal'){
             await groupServiceInstance.respondAnimal(data);
         }
+
+        navigation.navigate("Autre");
 
         await onRefresh();
     }

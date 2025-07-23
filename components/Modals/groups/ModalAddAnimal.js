@@ -52,6 +52,18 @@ const ModalAddAnimal = ({ isVisible, setVisible, group = {}, onModify = undefine
         submitGroup(data, "addAnimal");
     }
 
+    const getAnimals = () => {
+        if( Array.isArray(animaux) && animaux.length > 0 ){
+            const excludedIds = group.data.animals
+                .flatMap((g) => g.items)
+                .map((item) => item.id);
+
+            return animaux.filter((animal) => animal.provenance === "owner" && !excludedIds.includes(animal.id) );
+        } else{
+            return [];
+        }
+    }
+
     const styles = StyleSheet.create({
         form: {
             width: "100%",
@@ -108,7 +120,7 @@ const ModalAddAnimal = ({ isVisible, setVisible, group = {}, onModify = undefine
                 <Divider />
                 <View style={styles.formContentContainer}>
                     <FlatList
-                        data={animaux}
+                        data={getAnimals()}
                         keyExtractor={(item, index) => item.id.toString()}
                         numColumns={4}
                         style={{paddingVertical: 10}}

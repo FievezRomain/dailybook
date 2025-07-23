@@ -68,7 +68,7 @@ export const useGroupForm = (setValue, onModify, closeModal) => {
             if( actionType === "create" ){
                 // Création du groupe
                 let responseApi = await groupServiceInstance.create(data);
-                data.id = responseApi.id;
+                data.id = responseApi.rows[0].id;
 
                 // Création des invitations des membres lors de la création
                 await groupServiceInstance.inviteMembers(data);

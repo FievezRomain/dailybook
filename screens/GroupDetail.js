@@ -117,16 +117,14 @@ const GroupDetailScreen = ({ navigation }) => {
         <View style={styles.separatorFix}></View>
         <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1], outputRange: ['0%', '50%'] }) }]} />
       </View>
-      {(getUserRoleFromGroup() === "manager" || abonnement.libelle === "Premium") &&
-        <View style={[styles.item, styles.headerRubrique]}>
-            <Button
-                type={"quaternary"}
-                onPress={() => activeRubrique === 0 ? setModalAddAnimalVisible(true) : setModalAddMemberVisible(true)}
-            >
-                <Text style={[styles.textFontMedium, {color: colors.background, textAlign: "center"}]}>{activeRubrique === 0 ? "Ajouter un animal" : "Ajouter un membre" }</Text>
-            </Button>
-        </View>
-      }
+      <View style={[styles.item, styles.headerRubrique]}>
+          <Button
+              type={"quaternary"}
+              onPress={() => activeRubrique === 0 ? setModalAddAnimalVisible(true) : setModalAddMemberVisible(true)}
+          >
+              <Text style={[styles.textFontMedium, {color: colors.background, textAlign: "center"}]}>{activeRubrique === 0 ? "Ajouter un animal" : "Ajouter un membre" }</Text>
+          </Button>
+      </View>
     </>
   );
 

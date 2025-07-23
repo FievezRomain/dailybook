@@ -2,9 +2,41 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import ModalDefaultNoValue from "../modals/common/ModalDefaultNoValue";
 import AnimalCard from "../cards/AnimalCard";
 import { Icon, useTheme } from "react-native-paper";
+import { useAnimaux } from "../../contexts/AnimauxProvider";
 
 const AnimalsGroup = ({ animals, userRole, group }) => {
     const { colors, fonts } = useTheme();
+    const { animaux } = useAnimaux();
+
+    const areMyAnimalsWaiting = () => {
+        if( animals.type === "pending" && animals !== undefined ){
+            const pendingAnimalsIds = animals.items
+                .map((item) => item.id);
+            
+            return animaux.some(animal => pendingAnimalsIds.includes( animal.id ) );
+        } else{
+            return false;
+        }
+    }
+
+    const canSeePendingAnimals = () => {
+        if( userRole === "manager" && animals !== undefined && animals.type === "pending" ){
+            return true;
+        } else {
+            return areMyAnimalsWaiting();
+        }
+    }
+
+    const getPendingAnimalsICanSee = () => {
+        if( userRole === "manager"){
+            return animals.items;
+        } else{
+            const pendingAnimalsIds = animals.items
+                .map((item) => item.id);
+
+            return animals.items.filter(animal => pendingAnimalsIds.includes( animal.id ));
+        }
+    }
 
     const styles = StyleSheet.create({
         containerHeader:{
@@ -32,7 +64,7 @@ const AnimalsGroup = ({ animals, userRole, group }) => {
 
     return(
         <>
-            {userRole === "manager" && animals !== undefined && animals.type === "pending" &&
+            {canSeePendingAnimals() &&
                 <>
                     <View style={styles.container}>
                         <View style={styles.containerHeader}>
@@ -41,7 +73,7 @@ const AnimalsGroup = ({ animals, userRole, group }) => {
                         </View>
                         <View>
                             <FlatList
-                                data={animals.items}
+                                data={getPendingAnimalsICanSee()}
                                 keyExtractor={(item, index) => index.toString()}
                                 renderItem={({ item }) => <AnimalCard animal={item} animalState={animals.type} userRole={userRole} group={group} />}
                                 ListEmptyComponent={

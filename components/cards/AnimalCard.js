@@ -63,9 +63,11 @@ const AnimalCard = ({ animal, animalState, userRole, group }) => {
                     <TouchableOpacity style={{marginRight: 20}} onPress={handleSubmit(refuseAnimal)}>
                         <Icon source={"close"} size={30} color={colors.error} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleSubmit(acceptAnimal)}>
-                        <Icon source={"check"} size={30} color={colors.accent} />
-                    </TouchableOpacity>
+                    {userRole === "manager" &&
+                        <TouchableOpacity onPress={handleSubmit(acceptAnimal)}>
+                            <Icon source={"check"} size={30} color={colors.accent} />
+                        </TouchableOpacity>
+                    }
                 </>
             );
         }

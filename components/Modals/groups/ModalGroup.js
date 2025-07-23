@@ -206,7 +206,6 @@ const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = 
                                 placeholderTextColor={colors.secondary}
                                 onChangeText={(text) => setValue("informations", text)}
                                 defaultValue={watch("informations")}
-                                {...register("informations", { required: true })}
                             />
                         </View>
                         { actionType === "create" &&
