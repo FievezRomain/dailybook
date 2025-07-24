@@ -106,6 +106,21 @@ class GroupService {
         .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour répondre à l'invitation d'un membre dans un groupe : " + err.message )); 
     } 
 
+    async deleteMember(body) {
+        await this.updateAxiosAuthorization();
+        return axios.delete(`${getBaseUrl()}groups/member`, {data: body})
+        .then(async(response) => {
+            if( response.data.rows ){
+                await this.putInCache(response.data.rows);
+            } else {
+                await this.deleteInCache(body);
+            }
+            await this.refreshDependencies();
+            return response;
+        })
+        .catch((err) => LoggerService.log( "Erreur lors de l'envoi de la requête pour supprimer un member du groupe : " + err.message ));
+    }
+
     async updateAxiosAuthorization() {
         let token = await getAuth().currentUser.getIdToken();
         if (token) {

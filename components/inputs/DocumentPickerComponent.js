@@ -342,7 +342,7 @@ const DocumentPickerComponent = ({ onChange, value = [], backgroundColor = null,
         <View style={styles.textInput}>
           {!isPremium && (
             <View style={styles.premiumOverlay}>
-              <Text style={styles.premiumText}>Premium uniquement</Text>
+              <Text style={styles.premiumText}>Premium</Text>
             </View>
           )}
           {ButtonComponent ? (

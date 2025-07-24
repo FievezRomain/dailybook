@@ -189,7 +189,19 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
     },
     titleButton : {
       color : colors.default_dark,
-    }
+    },
+    premiumOverlay: {
+      backgroundColor: colors.primary,
+      borderRadius: 4,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      zIndex: 2
+    },
+    premiumText: {
+      fontSize: 12,
+      color: colors.default_dark,
+      fontFamily: fonts.bodySmall.fontFamily
+    },
   });
 
   return (
@@ -421,7 +433,11 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }) => {
                         <Text style={[styles.textFontRegular, styles.titleButton]}>Groupe</Text>
                       </View>
                       <View style={styles.actionButtonContainer}>
-                        {accountType !== "Premium" && <Entypo name="lock" size={20} style={styles.iconAction}/> }
+                        {accountType !== "Premium" && 
+                          <View style={styles.premiumOverlay}>
+                            <Text style={styles.premiumText}>Premium</Text>
+                          </View>
+                        }
                         <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction}/>
                       </View>
                     </View>

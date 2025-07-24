@@ -92,6 +92,10 @@ export const useGroupForm = (setValue, onModify, closeModal) => {
                 // Répondre à une invitation d'un animal dans le group
                 response = await groupServiceInstance.respondAnimal(data);
             }
+            if( actionType === "deleteMember" ){
+                // Supprimer un membre du groupe
+                response = await groupServiceInstance.deleteMember(data);
+            }
 
             // Fermeture de la modale
             resetGroupValues();

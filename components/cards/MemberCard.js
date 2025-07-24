@@ -6,12 +6,14 @@ import Toast from "react-native-toast-message";
 import { useGroupForm } from "../../hooks/useGroupForm";
 import { useState } from "react";
 import ModalValidation from "../modals/common/ModalValidation";
+import { useNavigation } from "@react-navigation/native";
 
 const MemberCard = ({ member, memberState, userRole, group }) => {
     const { colors } = useTheme();
     const { currentUser } = useAuth();
     const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
     const [ modalValidationVisible, setModalValidationVisible ] = useState(false);
+    const navigation = useNavigation();
 
     const onModify = () => {
         Toast.show({
@@ -32,6 +34,19 @@ const MemberCard = ({ member, memberState, userRole, group }) => {
         data.id = group.id;
         data.email = member.email;
         submitGroup(data, "respondMember");
+    }
+
+    const deleteMember = async (data) => {
+        data.id = group.id;
+        data.email = member.email;
+
+        setModalValidationVisible(false);
+
+        if( member.email === currentUser.email ){
+            navigation.navigate("Autre");
+        }
+
+        submitGroup(data, "deleteMember");
     }
 
     const getActionsPart = () => {
@@ -88,7 +103,7 @@ const MemberCard = ({ member, memberState, userRole, group }) => {
             <ModalValidation
                 displayedText={`Êtes-vous sûr de vouloir retirer ${member.email} du groupe ?`}
                 title={"Retrait d'un membre"}
-                onConfirm={handleSubmit(refuseMember)}
+                onConfirm={handleSubmit(deleteMember)}
                 setVisible={setModalValidationVisible}
                 visible={modalValidationVisible}
             />

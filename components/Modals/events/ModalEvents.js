@@ -793,6 +793,21 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
       color: colors.accent,
       paddingLeft: 10
     },
+    premiumOverlay: {
+      position: 'absolute',
+      top: 30,
+      right: 5,
+      backgroundColor: colors.primary,
+      borderRadius: 4,
+      paddingHorizontal: 6,
+      paddingVertical: 2,
+      zIndex: 2
+    },
+    premiumText: {
+      fontSize: 10,
+      color: colors.background,
+      fontFamily: fonts.bodySmall.fontFamily
+    },
   });
 
   return (
@@ -1334,13 +1349,11 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                     <TouchableOpacity 
                       style={styles.textInput} 
                       onPress={()=>{Keyboard.dismiss();setModalMultiSelectGroupVisible(true)}}
-                      disabled={accountType !== "Premium"}
                     >
                       <View style={styles.containerAnimaux}>
                         {(getValues("shared_groups") === undefined || getValues("shared_groups") === null) ?
                           <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center"}]}>
                             <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Sélectionner un ou plusieurs groupes</Text>
-                            { (accountType !== "Premium") && <Entypo name="lock" size={20} style={styles.iconAction}/> }
                           </View>
                         :
                           getValues("shared_groups").map((group, index) => {
