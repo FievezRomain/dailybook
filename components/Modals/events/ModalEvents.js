@@ -611,6 +611,20 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     }
   }
 
+  const getSelectableGroup = () => {
+    const selectedAnimals = getValues("animaux");
+
+    if( !Array.isArray( getValues("animaux") ) ){
+      return [];
+    }
+    return groups.filter(group => {
+      const groupAnimalIds = group.data.animals
+        .filter(animalsGrouped => animalsGrouped.type === "accepted")
+        .flatMap(a => a.items.map(animal => animal.id));
+      return selectedAnimals.every(id => groupAnimalIds.includes(id));
+    });
+  }
+
   const styles = StyleSheet.create({
     inputToggleContainer:{
       display: "flex", 
@@ -884,7 +898,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           eventType={eventType}
         />
         <ModalMultiSelect
-          list={groups}
+          list={getSelectableGroup()}
           onChange={onGroupsSelectedChange}
           onClose={() => setModalMultiSelectGroupVisible(false)}
           visible={modalMultiSelectGroupVisible}
@@ -1038,6 +1052,29 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                       onChangeText={(text) => setValue("lieu", text)}
                       defaultValue={getValues("lieu")}
                     />
+                  </View>
+
+                  <View style={styles.inputContainer}>
+                    <Text style={[styles.textInput, styles.textFontRegular]}>Partager aux groupes :</Text>
+                    <TouchableOpacity 
+                      style={styles.textInput} 
+                      onPress={()=>{Keyboard.dismiss();setModalMultiSelectGroupVisible(true)}}
+                      disabled={getSelectableGroup().length === 0}
+                    >
+                      <View style={styles.containerAnimaux}>
+                        {(getValues("shared_groups") === undefined || getValues("shared_groups") === null) ?
+                          <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center"}]}>
+                            <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>{getSelectableGroup().length === 0 ? (Array.isArray( getValues("animaux") ) ? "Aucun groupe disponible avec l'ensemble de ces animaux partagés" : "Aucun animal sélectionné") : "Sélectionner un ou plusieurs groupes"}</Text>
+                          </View>
+                        :
+                          getValues("shared_groups").map((group, index) => {
+                            return (
+                              <View key={group.id} style={styles.containerBadgeAnimal}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{group.name}</Text></View>
+                            );
+                          })
+                        }
+                      </View>
+                    </TouchableOpacity>
                   </View>
 
                   {eventType.id === "balade" && (
@@ -1339,28 +1376,6 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
                             </View>
                             <Ionicons name="chevron-down" size={20}/>
                           </View>
-                        }
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-
-                  <View style={styles.inputContainer}>
-                    <Text style={[styles.textInput, styles.textFontRegular]}>Partager aux groupes :</Text>
-                    <TouchableOpacity 
-                      style={styles.textInput} 
-                      onPress={()=>{Keyboard.dismiss();setModalMultiSelectGroupVisible(true)}}
-                    >
-                      <View style={styles.containerAnimaux}>
-                        {(getValues("shared_groups") === undefined || getValues("shared_groups") === null) ?
-                          <View style={[styles.containerBadgeAnimal, {width: "100%", flexDirection: "row", alignItems: "center"}]}>
-                            <Text style={[styles.badgeAnimal, styles.textFontRegular, {color: colors.secondary}]}>Sélectionner un ou plusieurs groupes</Text>
-                          </View>
-                        :
-                          getValues("shared_groups").map((group, index) => {
-                            return (
-                              <View key={group.id} style={styles.containerBadgeAnimal}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{group.name}</Text></View>
-                            );
-                          })
                         }
                       </View>
                     </TouchableOpacity>

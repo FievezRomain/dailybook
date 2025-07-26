@@ -1,5 +1,5 @@
 import * as DocumentPicker from 'expo-document-picker';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Keyboard } from 'react-native';
 import { Divider, useTheme } from 'react-native-paper';
 import { FontAwesome6, Octicons, SimpleLineIcons, Entypo, FontAwesome } from '@expo/vector-icons';
 import validateFile from '../../utils/validateFile';
@@ -151,7 +151,7 @@ const DocumentPickerComponent = ({ onChange, value = [], backgroundColor = null,
       }
 
       let result = await ImagePicker.launchImageLibraryAsync({
-        allowsEditing: true,
+        allowsEditing: false,
         quality: 1,
         base64: true
       });
@@ -197,7 +197,7 @@ const DocumentPickerComponent = ({ onChange, value = [], backgroundColor = null,
       }
 
       let result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
+        allowsEditing: false,
         quality: 1,
         base64: true
       });
@@ -346,11 +346,11 @@ const DocumentPickerComponent = ({ onChange, value = [], backgroundColor = null,
             </View>
           )}
           {ButtonComponent ? (
-            <ButtonComponent onPress={() => setModalSubMenuVisible(true)} disabled={!isPremium} />
+            <ButtonComponent onPress={() => {Keyboard.dismiss();setModalSubMenuVisible(true)}} disabled={!isPremium} />
           ) : (
             <TouchableOpacity
               style={styles.buttonContainer}
-              onPress={() => setModalSubMenuVisible(true)}
+              onPress={() => {Keyboard.dismiss();setModalSubMenuVisible(true)}}
               disabled={!isPremium}
             >
               <Text style={[styles.buttonText, styles.textFontRegular]}>

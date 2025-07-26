@@ -134,9 +134,14 @@ const DepenseCard = ({eventInfos, animaux, setSubMenu}) => {
                         <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
                     </View>
                 }
+                {eventInfos.created_by !== null && eventInfos.created_by.email !== currentUser.email &&
+                    <View>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Créer par : </Text>{eventInfos.created_by.name}</Text>
+                    </View>
+                }
                 {eventInfos.made_by !== null && !!eventInfos.shared_groups &&
                     <View>
-                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Fait par : </Text>{eventInfos.made_by.email} ({eventInfos.made_by.name})</Text>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Fait par : </Text>{eventInfos.made_by.name}</Text>
                     </View>
                 }
             </View>
