@@ -1,31 +1,30 @@
-import { View, Text, StyleSheet, Image, FlatList } from "react-native";
-import TopTab from '../components/TopTab';
+import { View, Text, StyleSheet, Image, FlatList, ActivityIndicator, RefreshControl } from "react-native";
+import TopTab from '../components/common/TopTab';
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Calendar, CalendarUtils, LocaleConfig } from 'react-native-calendars';
 import { ScrollView } from "react-native";
 import moment from "moment";
 import EventCard from "../components/cards/EventCard";
-import DateUtils from "../utils/DateUtils";
 import Toast from "react-native-toast-message";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { TextInput } from "react-native";
 import { TouchableOpacity } from "react-native";
-import LoggerService from "../services/LoggerService";
+import LoggerService from "../services/logs/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
-import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
-import ModalFilterCalendar from "../components/Modals/ModalFilterCalendar";
+import ModalDefaultNoValue from "../components/modals/common/ModalDefaultNoValue";
+import ModalFilterCalendar from "../components/modals/ModalFilterCalendar";
 import { CalendarFilter } from "../business/models/CalendarFilter";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
-import { useCalendar } from "../providers/CalendarProvider";
-import { useEvents } from "../providers/EventsProvider";
+import { useCalendar } from "../contexts/CalendarProvider";
+import { useEvents } from "../contexts/EventsProvider";
+import groupServiceInstance from "../services/api/GroupService";
 
 const CalendarScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState({ message1: "Mon", message2: "calendrier" });
-  const dateUtils = new DateUtils();
   const { events, setEvents } = useEvents();
   const [eventsCurrentDateSelected, setEventsCurrentDateSelected] = useState([]);
   const [filteredEvents, setFilteredEvents] = useState([]);
@@ -34,6 +33,7 @@ const CalendarScreen = ({ navigation }) => {
   const [modalFilterVisible, setModalFilterVisible] = useState(false);
   const [filter, setFilter] = useState(null);
   const { setDate } = useCalendar();
+  const [refreshing, setRefreshing] = useState(false);
 
   const INITIAL_DATE = new Date().toISOString().split('T')[0];
   const [selectedDate, setSelectedDate] = useState(INITIAL_DATE);
@@ -74,6 +74,12 @@ const CalendarScreen = ({ navigation }) => {
   useEffect(() => {
     applyFilter();
   }, [filter, events]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await groupServiceInstance.refreshCache();
+    setRefreshing(false);
+  };
 
   const applyFilter = () =>{
     if( filter ){
@@ -308,7 +314,7 @@ const CalendarScreen = ({ navigation }) => {
     },
     calendar: {
       borderRadius: 5,
-      shadowColor: "black",
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowRadius:5,
@@ -349,6 +355,112 @@ const CalendarScreen = ({ navigation }) => {
     }
   });
 
+  function getContent (){
+    if (refreshing) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+          <ActivityIndicator animating={true} size="large" />
+        </View>
+      );
+    }
+
+    return(
+      <FlatList
+          data={filter ? filteredEvents : eventsCurrentDateSelected}
+          keyExtractor={(item) => item.id.toString()}
+          scrollEnabled={true}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />
+          }
+          ListHeaderComponent={
+            <>
+              <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: colors.default_dark,elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                  <AntDesign name="search1" size={16} color={colors.default_dark}/>
+
+                  <TextInput
+                    placeholder="Recherche"
+                    style={[{marginLeft: 5, width: "80%", color:colors.default_dark}, styles.textFontRegular]}
+                    placeholderTextColor={colors.default_dark}
+                    value={filter ? filter.text : null}
+                    onChangeText={handleSearch}
+                  />
+                  {filter && filter.text && 
+                    <TouchableOpacity
+                      onPress={() => deleteSearchText()}
+                    >
+                      <AntDesign name="close" size={16} color={colors.default_dark}/>
+                    </TouchableOpacity>
+                  }
+                  
+                </View>
+                <View style={{flexDirection: "row", alignItems: "center"}}>
+                  
+                  <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
+                    {filter ? 
+                      <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.default_dark}/>
+                    :
+                      <Ionicons name="filter" size={20} color={colors.default_dark}/>
+                    }
+                  </TouchableOpacity>
+                </View>
+            
+              </View>
+              <View style={styles.calendarContainer}>
+                <Calendar
+                  style={[styles.calendar, styles.textFontRegular]}
+                  firstDay={1}
+                  monthFormat={'MMMM yyyy'}
+                  theme={{
+                    arrowColor: colors.accent,
+                    todayTextColor: colors.tertiary,
+                    selectedDayTextColor: "white",
+                    selectedTextColor: "white",
+                    selectedDayBackgroundColor: colors.accent,
+                    calendarBackground : "transparent",
+                    dayTextColor: colors.accent,
+                    textDayHeaderTextColor: colors.accent,
+                    textSectionTitleColor: colors.accent,
+                    monthTextColor : colors.accent
+                  }}
+                  enableSwipeMonths={true}
+                  onDayPress={(day) => onDayPress(day.dateString)}
+                  markingType={'multi-dot'}
+                  markedDates={marked}
+                />
+              </View>
+              <View style={styles.selectedDateContainer}>
+                {filter ?
+                  <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats du filtre</Text>
+                : 
+                  <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
+                }
+              </View>
+          </>
+          }
+          renderItem={({ item }) => (
+            <View style={styles.listEventContainer}>
+              <EventCard
+                eventInfos={item}
+                handleEventsChange={handleEventsChange}
+                withDate={filter ? true : false}
+              />
+            </View>
+          )}
+          ListEmptyComponent={
+            <View style={styles.listEventContainer}>
+              {filter ? 
+                <ModalDefaultNoValue text={"Aucun événement correspond à ce filtre"}/> 
+                : 
+                <ModalDefaultNoValue text={"Vous n'avez aucun événement pour cette date"}/>
+              }
+            </View>
+            
+          }
+      />
+    );
+  }
+
   return (
     <>
       <ModalFilterCalendar
@@ -358,86 +470,8 @@ const CalendarScreen = ({ navigation }) => {
         filter={filter}
       />
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
-        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true} scrollIndicatorInsets={{ color: colors.quaternary }}>
-
-          <TopTab message1={messages.message1} message2={messages.message2} />
-          <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: "black",elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
-            <View style={{flexDirection: "row", alignItems: "center"}}>
-              <AntDesign name="search1" size={16} color={colors.default_dark}/>
-
-              <TextInput
-                placeholder="Recherche"
-                style={[{marginLeft: 5, width: "80%", color:colors.default_dark}, styles.textFontRegular]}
-                placeholderTextColor={colors.default_dark}
-                value={filter ? filter.text : null}
-                onChangeText={handleSearch}
-              />
-              {filter && filter.text && 
-                <TouchableOpacity
-                  onPress={() => deleteSearchText()}
-                >
-                  <AntDesign name="close" size={16} color={colors.default_dark}/>
-                </TouchableOpacity>
-              }
-              
-            </View>
-            <View style={{flexDirection: "row", alignItems: "center"}}>
-              
-              <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
-                {filter ? 
-                  <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.default_dark}/>
-                :
-                  <Ionicons name="filter" size={20} color={colors.default_dark}/>
-                }
-              </TouchableOpacity>
-            </View>
-            
-          </View>
-          <View style={styles.calendarContainer}>
-            <Calendar
-              style={[styles.calendar, styles.textFontRegular]}
-              firstDay={1}
-              theme={{
-                arrowColor: colors.accent,
-                todayTextColor: colors.tertiary,
-                selectedDayTextColor: "white",
-                selectedTextColor: "white",
-                selectedDayBackgroundColor: colors.accent,
-                calendarBackground : "transparent",
-                dayTextColor: colors.accent,
-                textDayHeaderTextColor: colors.accent,
-                textSectionTitleColor: colors.accent,
-                monthTextColor : colors.accent
-              }}
-              enableSwipeMonths={true}
-              onDayPress={(day) => onDayPress(day.dateString)}
-              markingType={'multi-dot'}
-              markedDates={marked}
-            />
-          </View>
-          <View style={styles.selectedDateContainer}>
-            {filter ?
-              <Text style={[styles.selectedDateText, styles.textFontMedium]}>Résultats du filtre</Text>
-            : 
-              <Text style={[styles.selectedDateText, styles.textFontMedium]}>{convertDateToText(selectedDate)}</Text>
-            }
-          </View>
-              
-            <FlatList
-              data={filter ? filteredEvents : eventsCurrentDateSelected}
-              keyExtractor={(item) => item.id.toString()}
-              scrollEnabled={false}
-              renderItem={({ item }) => (
-                <EventCard
-                  eventInfos={item}
-                  handleEventsChange={handleEventsChange}
-                  withDate={filter ? true : false}
-                />
-              )}
-              ListEmptyComponent={filter ? <ModalDefaultNoValue text={"Aucun événement correspond à ce filtre"}/> : <ModalDefaultNoValue text={"Vous n'avez aucun événement pour cette date"}/>}
-              contentContainerStyle={styles.listEventContainer}
-          />
-        </ScrollView>
+        <TopTab message1={messages.message1} message2={messages.message2} />
+        {getContent()}
       </LinearGradient>
     </>
   );

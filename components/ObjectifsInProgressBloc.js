@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import ObjectifCard from './cards/ObjectifCard';
-import { useAnimaux } from '../providers/AnimauxProvider';
-import { useAuth } from '../providers/AuthenticatedUserProvider';
+import { useAnimaux } from '../contexts/AnimauxProvider';
+import { useAuth } from '../contexts/AuthenticatedUserProvider';
 import { useTheme } from 'react-native-paper';
+import ModalDefaultNoValue from './modals/common/ModalDefaultNoValue';
 
 const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObjectifDelete }) => {
     const { currentUser } = useAuth();
@@ -26,8 +27,6 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
     const styles = StyleSheet.create({
         objectifsInProgressContainer:{
             width: "100%",
-            paddingLeft: 20,
-            paddingRight: 20,
             paddingTop: 10,
             borderRadius: 5,
         },
@@ -35,7 +34,9 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
-            marginBottom: 20
+            marginBottom: 20,
+            paddingLeft: 20,
+            paddingRight: 20,
         },
         title:{
             color: colors.default_dark,
@@ -71,27 +72,32 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
                     <Text style={[styles.title, styles.textFontBold]}>Objectifs en cours</Text>
                 </View>
                 <View>
-                    {objectifs.length === 0 &&
-                        <View style={{backgroundColor: colors.background, marginBottom: 20, width: "100%", paddingHorizontal: 20, paddingVertical: 25, borderRadius: 5, shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowOffset: {width: 0,height: 1},}}>
-                            <Text style={[styles.textFontRegular, {color: colors.default_dark}]}>Vous n'avez aucun objectif en cours</Text>
-                        </View>
-                    }
-                    {objectifs.map((objectifItem, index) => (
-                        <TouchableOpacity key={objectifItem.id}>
-                            <View style={styles.objectifContainer}>
-                                <View style={[styles.cardObjectifContainer]}>
-                                    <ObjectifCard
-                                        objectif={objectifItem}
-                                        animaux={animaux}
-                                        handleObjectifChange={handleObjectifChange}
-                                        handleObjectifDelete={handleObjectifDelete}
-                                    />
+                    <FlatList
+                        data={objectifs}
+                        keyExtractor={(item) => item.id.toString()}
+                        scrollEnabled={false}
+                        style={{paddingHorizontal: 20, paddingBottom: 5, paddingTop: 5}}
+                        ListEmptyComponent={
+                            <ModalDefaultNoValue
+                                text={"Vous n'avez aucun objectif en cours"}
+                            />
+                        }
+                        renderItem={({ item }) => (
+                            <TouchableOpacity key={item.id}>
+                                <View style={styles.objectifContainer}>
+                                    <View style={[styles.cardObjectifContainer]}>
+                                        <ObjectifCard
+                                            objectif={item}
+                                            animaux={animaux}
+                                            handleObjectifChange={handleObjectifChange}
+                                            handleObjectifDelete={handleObjectifDelete}
+                                        />
+                                    </View>
                                 </View>
-                            </View>
-                            
-                        </TouchableOpacity>
+                            </TouchableOpacity>
+                        )}
+                    />
                         
-                    ))}
                 </View>
             </View>
         </>

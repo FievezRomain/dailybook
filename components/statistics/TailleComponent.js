@@ -144,7 +144,7 @@ const TailleComponent = ({ data, chartConfig, chartParameters, forceUpdateDataCh
             padding: 10,
             borderRadius: 5,
             marginBottom: 10,
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowRadius: 5,
@@ -219,6 +219,7 @@ const TailleComponent = ({ data, chartConfig, chartParameters, forceUpdateDataCh
                 )}
                 scrollEnabled={false}
                 contentContainerStyle={styles.listEventContainer}
+                style={{paddingLeft:20, paddingRight: 20, paddingBottom: 30}}
             />
         </>
     );

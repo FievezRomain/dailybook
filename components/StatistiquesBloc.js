@@ -2,21 +2,20 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
-import OfferInformations from './OfferInformations';
-import { useAuth } from '../providers/AuthenticatedUserProvider';
+import OfferInformations from './common/OfferInformations';
+import { useAuth } from '../contexts/AuthenticatedUserProvider';
 import { useTheme, IconButton } from 'react-native-paper';
-import StatePicker from './StatePicker';
+import StatePicker from './inputs/StatePicker';
 import ChartWithLoader from './ChartWithLoader';
 import DepenseComponent from './statistics/DepenseComponent';
 import EntrainementComponent from './statistics/EntrainementComponent';
-import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import ModalDefaultNoValue from './modals/common/ModalDefaultNoValue';
 import BaladeComponent from './statistics/BaladeComponent';
 import PoidsComponent from './statistics/PoidsComponent';
 import TailleComponent from './statistics/TailleComponent';
 import AlimentationComponent from './statistics/AlimentationComponent';
 import ConcoursComponent from './statistics/ConcoursComponent';
-import { ThemeContext } from '../providers/ThemeProvider';
-import Toast from "react-native-toast-message";
+import { ThemeContext } from '../contexts/ThemeProvider';
 
 const StatistiquesBloc = ({ selectedAnimal }) =>{
     const { isDarkTheme } = useContext( ThemeContext );
@@ -311,62 +310,58 @@ const StatistiquesBloc = ({ selectedAnimal }) =>{
             }
 
             <View style={styles.composantContainer}>
-                <ScrollView contentContainerStyle={{paddingBottom: 30}}>
-                    {accountType === "Premium" ?
-                        <>
-                            <View style={{width: "90%", alignSelf: "center"}}>
-                                <View style={styles.statistiqueIndicatorContainer}>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
-                                        <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
-                                        <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("entrainement")}}>
-                                        <Entypo name="traffic-cone" size={20} style={itemStatistique == "entrainement" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}}>
-                                        <FontAwesome name="trophy" size={20} style={itemStatistique == "concours" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <View style={styles.midBar} />
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("poids")}}>
-                                        <FontAwesome6 name="weight-scale" size={20} style={itemStatistique == "poids" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("taille")}}>
-                                        <MaterialIcons name="height" size={20} style={itemStatistique == "taille" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
-                                        <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
-                                    </TouchableOpacity>
-                                </View>
-                                <View style={styles.bottomBar} />
+                {accountType === "Premium" ?
+                    <>
+                        <View style={{width: "90%", alignSelf: "center"}}>
+                            <View style={styles.statistiqueIndicatorContainer}>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("depense")}}>
+                                    <FontAwesome6 name="money-bill-wave" size={20} style={itemStatistique == "depense" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("balade")}}>
+                                    <Entypo name="compass" size={20} style={itemStatistique == "balade" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("entrainement")}}>
+                                    <Entypo name="traffic-cone" size={20} style={itemStatistique == "entrainement" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("concours")}}>
+                                    <FontAwesome name="trophy" size={20} style={itemStatistique == "concours" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <View style={styles.midBar} />
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("poids")}}>
+                                    <FontAwesome6 name="weight-scale" size={20} style={itemStatistique == "poids" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("taille")}}>
+                                    <MaterialIcons name="height" size={20} style={itemStatistique == "taille" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.itemIndicatorStatistique} onPress={() => {onItemStatistiqueChange("alimentation")}}>
+                                    <MaterialCommunityIcons name="food-apple" size={20} style={itemStatistique == "alimentation" ? styles.itemIconSelected : styles.itemIconDefault}  />
+                                </TouchableOpacity>
                             </View>
-                            
-                            <View style={styles.statistiquesContainer}>
-                                {!checkSeveralAnimalsAccepted(itemStatistique) && selectedAnimal.length > 1 ?
-                                        <View style={{width: "90%", alignSelf: "center"}}>
-                                            <ModalDefaultNoValue
-                                                text={"⚠️ Cette statistique n'est pas disponible sur plusieurs animaux."}
-                                            />
-                                        </View>
-                                        
-                                    :
-                                        <ChartWithLoader
-                                            ChartComponent={ChartComponent}
-                                            chartConfig={ChartConfig}
-                                            chartType={itemStatistique}
-                                            chartParameters={parameters}
+                            <View style={styles.bottomBar} />
+                        </View>
+                        
+                        <View style={styles.statistiquesContainer}>
+                            {!checkSeveralAnimalsAccepted(itemStatistique) && selectedAnimal.length > 1 ?
+                                    <View style={{width: "90%", alignSelf: "center"}}>
+                                        <ModalDefaultNoValue
+                                            text={"⚠️ Cette statistique n'est pas disponible sur plusieurs animaux."}
                                         />
-                                }
-                                
-                            </View>
-                        </>
-                    :
-                        <OfferInformations />
-                    }
-                
-                
-                </ScrollView>
+                                    </View>
+                                    
+                                :
+                                    <ChartWithLoader
+                                        ChartComponent={ChartComponent}
+                                        chartConfig={ChartConfig}
+                                        chartType={itemStatistique}
+                                        chartParameters={parameters}
+                                    />
+                            }
+                            
+                        </View>
+                    </>
+                :
+                    <OfferInformations />
+                }
             </View>
             
         </>

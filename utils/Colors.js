@@ -1,5 +1,5 @@
 import chroma from 'chroma-js';
-import variables from '../components/styles/Variables';
+import variables from '../styles/Variables';
 
 // Palette principale de l'application
 const appPalette = [

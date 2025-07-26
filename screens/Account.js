@@ -1,17 +1,18 @@
-import { View, Text, Image, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import React from 'react';
-import TopTabSecondary from "../components/TopTabSecondary";
-import InputTextInLine from "../components/InputTextInLine";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
-import Button from "../components/Button";
+import TopTabSecondary from "../components/common/TopTabSecondary";
+import InputTextInLine from "../components/inputs/InputTextInLine";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
+import Button from "../components/inputs/Button";
 import { useState } from "react";
-import AvatarPicker from "../components/AvatarPicker";
-import AuthService from "../services/AuthService";
+import AvatarPicker from "../components/inputs/AvatarPicker";
+import AuthService from "../services/api/AuthService";
 import Toast from "react-native-toast-message";
-import LoggerService from "../services/LoggerService";
+import LoggerService from "../services/logs/LoggerService";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import FileStorageService from "../services/FileStorageService";
+import FileStorageService from "../services/aws/FileStorageService";
 import { useTheme } from 'react-native-paper';
+import { Image } from "expo-image";
 
 const AccountScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();
@@ -93,7 +94,9 @@ const AccountScreen = ({ navigation }) => {
         });
     }
 
-    const setValue = (key, value) => {
+    const onChangeImage = (imageUri) => {
+        setImage(imageUri);
+        setValue("image", imageUri);
     }
 
     const styles = StyleSheet.create({
@@ -116,15 +119,14 @@ const AccountScreen = ({ navigation }) => {
                         alignSelf: "flex-start",
                         marginTop: 30,
                         marginBottom: 5, alignSelf: "center"}}>
-                            <Image source={{uri: image}} style={{width: 100,height: 100,borderRadius: 50,borderWidth: 2,zIndex: 1}}/>
+                            <Image source={{uri: image}} cachePolicy={"disk"} style={{width: 100,height: 100,borderRadius: 50,borderWidth: 2,zIndex: 1}}/>
                         </View>
                     }
                     
                     <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 20}}>
                         <AvatarPicker
                             backgroundColor={colors.background}
-                            setImage={setImage}
-                            setValue={setValue}
+                            onChange={onChangeImage}
                         />
                     </View>
                     <View style={{width: "90%", display: "flex", flexDirection: "column", alignSelf: "center", marginTop: 10}}>

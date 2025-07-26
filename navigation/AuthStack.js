@@ -4,7 +4,7 @@ import AppStack from './AppStack';
 import { View } from "react-native";
 import Toast from "react-native-toast-message";
 import { Portal } from "react-native-paper";
-import { AnimauxProvider } from "../providers/AnimauxProvider";
+import { AnimauxProvider } from "../contexts/AnimauxProvider";
 
 const Stack = createNativeStackNavigator();
 

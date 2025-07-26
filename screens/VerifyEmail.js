@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator } from "react-native";
 import wallpaper_login from "../assets/wallpaper_login.png";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Button from "../components/Button";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import Button from "../components/inputs/Button";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { sendEmailVerification } from "firebase/auth";
 import Constants from 'expo-constants';
 import Toast from "react-native-toast-message";
@@ -145,7 +145,7 @@ const VerifyEmailScreen = ({ navigation })=> {
                         <Text style={[{textAlign: "center", textTransform: "uppercase", fontSize: 16}, styles.textFontMedium]}>Veuillez consulter votre boîte mail et cliquer sur le lien de confirmation.</Text>
                     </View>
                     <View style={{width: "70%", alignSelf: "center"}}>
-                        <View style={{shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
+                        <View style={{shadowColor: colors.default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
                             {!canResend ?
                                 <Button
                                     size={"m"}
@@ -163,7 +163,7 @@ const VerifyEmailScreen = ({ navigation })=> {
                                 </Button>
                             }
                         </View>
-                        <View style={{marginTop: 10, shadowColor: "black", shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
+                        <View style={{marginTop: 10, shadowColor: colors.default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: {width: 0, height: 1}}}>
                             <Button
                                 onPress={() => navigation.navigate("Login")}
                                 size={"m"}

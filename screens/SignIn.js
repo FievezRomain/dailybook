@@ -2,14 +2,14 @@ import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityInd
 import { useForm } from "react-hook-form";
 import wallpaper_login from "../assets/wallpaper_login.png";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import Button from "../components/Button";
+import Button from "../components/inputs/Button";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { getFirebaseAuth } from "../firebase";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { useState } from "react";
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from "react-native-toast-message";
-import LoggerService from "../services/LoggerService";
+import LoggerService from "../services/logs/LoggerService";
 import { useTheme } from 'react-native-paper';
 
 const SignInScreen = ({ navigation })=> {
@@ -152,6 +152,7 @@ const SignInScreen = ({ navigation })=> {
             color: colors.text,
             alignSelf: "flex-end",
             justifyContent: "flex-end",
+            textTransform: "uppercase"
         },
         forgetPassword: {
             flexDirection: "row",
@@ -175,7 +176,8 @@ const SignInScreen = ({ navigation })=> {
             borderRadius: 10
         },
         textButton:{
-            color: "white"
+            color: "white",
+            textTransform: "uppercase"
         },
         errorInput: {
             color: "red"

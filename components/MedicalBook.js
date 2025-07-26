@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image, FlatList } from 'react-native';
-import StatePicker from './StatePicker';
-import { useAuth } from '../providers/AuthenticatedUserProvider';
+import StatePicker from './inputs/StatePicker';
+import { useAuth } from '../contexts/AuthenticatedUserProvider';
 import EventCard from "./cards/EventCard";
-import ModalDefaultNoValue from './Modals/ModalDefaultNoValue';
+import ModalDefaultNoValue from './modals/common/ModalDefaultNoValue';
 import { useTheme } from 'react-native-paper';
-import { useEvents } from '../providers/EventsProvider';
+import { useEvents } from '../contexts/EventsProvider';
 import Toast from "react-native-toast-message";
 
 const MedicalBook = ({ animal, navigation }) => {
@@ -105,6 +105,7 @@ const MedicalBook = ({ animal, navigation }) => {
                 <FlatList
                     data={typeEvent === "Rendez-vous" ? eventsRdv : eventsSoins}
                     keyExtractor={(item) => item.id.toString()}
+                    scrollEnabled={false}
                     ListEmptyComponent={
                         <ModalDefaultNoValue
                             text={typeEvent === "Rendez-vous" ? "Aucun rendez-vous pour cet animal" : "Aucun soin pour cet animal"}
@@ -120,7 +121,8 @@ const MedicalBook = ({ animal, navigation }) => {
                             />
                         </View>
                     )}
-                    contentContainerStyle={{ paddingBottom: 20, paddingTop:10, paddingLeft: 20, paddingRight: 20 }}
+                    contentContainerStyle={{ paddingBottom: 20, paddingTop:10 }}
+                    style={{paddingLeft: 20, paddingRight: 20}}
                 />
             </View>
         </>

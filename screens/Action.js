@@ -1,16 +1,16 @@
 import { View, Text, StyleSheet, Image, ScrollView, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState, useContext } from "react";
-import TopTab from '../components/TopTab';
+import TopTab from '../components/common/TopTab';
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
-import ModalEvents from "../components/Modals/ModalEvents";
-import ModalObjectif from "../components/Modals/ModalObjectif";
-import ModalWish from "../components/Modals/ModalWish";
-import ModalContact from "../components/Modals/ModalContact";
-import ModalNote from "../components/Modals/ModalNote";
-import ModalAnimal from "../components/Modals/ModalAnimal";
+import ModalEvents from "../components/modals/events/ModalEvents";
+import ModalObjectif from "../components/modals/objectifs/ModalObjectif";
+import ModalWish from "../components/modals/wishs/ModalWish";
+import ModalContact from "../components/modals/contacts/ModalContact";
+import ModalNote from "../components/modals/notes/ModalNote";
+import ModalAnimal from "../components/modals/animals/ModalAnimal";
 import Toast from "react-native-toast-message";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { useTheme, Divider } from 'react-native-paper';
 
 const ActionScreen = ({ navigation }) => {
@@ -127,7 +127,7 @@ const ActionScreen = ({ navigation }) => {
       marginRight: "auto",
       borderRadius: 10,
       paddingTop: 10,
-      shadowColor: "black",
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       marginTop: 50,
       elevation: 1,

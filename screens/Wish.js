@@ -1,22 +1,22 @@
 import { View, Text, StyleSheet, FlatList, Dimensions, Linking, ActivityIndicator } from "react-native";
 import React, { useContext, useState, useEffect } from 'react';
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
-import TopTabSecondary from "../components/TopTabSecondary";
-import wishsServiceInstance from "../services/WishService";
+import TopTabSecondary from "../components/common/TopTabSecondary";
+import wishsServiceInstance from "../services/api/WishService";
 import { Image } from "expo-image";
-import ModalSubMenuWishActions from "../components/Modals/ModalSubMenuWishActions";
+import ModalSubMenuWishActions from "../components/modals/wishs/ModalSubMenuWishActions";
 import Toast from "react-native-toast-message";
-import ModalWish from "../components/Modals/ModalWish";
+import ModalWish from "../components/modals/wishs/ModalWish";
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import LoggerService from "../services/LoggerService";
-import FileStorageService from "../services/FileStorageService";
-import ModalDefaultNoValue from "../components/Modals/ModalDefaultNoValue";
+import LoggerService from "../services/logs/LoggerService";
+import FileStorageService from "../services/aws/FileStorageService";
+import ModalDefaultNoValue from "../components/modals/common/ModalDefaultNoValue";
 import { useTheme } from 'react-native-paper';
-import ModalValidation from "../components/Modals/ModalValidation";
-import { useWishs } from "../providers/WishProvider";
+import ModalValidation from "../components/modals/common/ModalValidation";
+import { useWishs } from "../contexts/WishProvider";
 
 const WishScreen = ({ navigation }) => {
     const { colors, fonts } = useTheme();

@@ -1,22 +1,23 @@
-import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated } from "react-native";
-import TopTab from '../components/TopTab';
+import { View, Text, StyleSheet, Image, ScrollView, TextInput, TouchableOpacity, Animated, ActivityIndicator, FlatList, RefreshControl } from "react-native";
+import TopTab from '../components/common/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
-import AnimalsPicker from "../components/AnimalsPicker";
+import AnimalsPicker from "../components/inputs/AnimalsPicker";
 import { useForm } from "react-hook-form";
-import animalsServiceInstance from "../services/AnimalsService";
+import animalsServiceInstance from "../services/api/AnimalsService";
 import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import InformationsAnimals from "../components/InformationsAnimals";
 import Toast from "react-native-toast-message";
-import AnimalBody from "../components/AnimalBody";
+import AnimalBody from "../components/animal_body/AnimalBody";
 import MedicalBook from "../components/MedicalBook";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
-import DateUtils from '../utils/DateUtils';
-import LoggerService from "../services/LoggerService";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
+import LoggerService from "../services/logs/LoggerService";
 import { LinearGradient } from "expo-linear-gradient";
 import { useTheme } from 'react-native-paper';
-import ModalValidation from "../components/Modals/ModalValidation";
+import ModalValidation from "../components/modals/common/ModalValidation";
 import { useFocusEffect } from "@react-navigation/native";
-import { useAnimaux } from "../providers/AnimauxProvider";
+import { useAnimaux } from "../contexts/AnimauxProvider";
+import instanceDateUtils from "../utils/DateUtils";
+import groupServiceInstance from "../services/api/GroupService";
 
 const PetsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -32,8 +33,8 @@ const PetsScreen = ({ navigation }) => {
   const [date, setDate] = useState(String(jour + "/" + mois + "/" + annee));
   const [activeRubrique, setActiveRubrique] = useState(0);
   const separatorPosition = useRef(new Animated.Value(0)).current;
-  const dateUtils = new DateUtils();
   const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -60,6 +61,11 @@ const PetsScreen = ({ navigation }) => {
     
   }, [animaux]);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await groupServiceInstance.refreshCache();
+    setRefreshing(false);
+  };
 
   const initDisplay = async () => {
       // On valorise l'animal selectionné par défaut au premier de la liste
@@ -75,8 +81,8 @@ const PetsScreen = ({ navigation }) => {
       if(animaux[0].food !== null ? setValue("food", animaux[0].food) : null);
       if(animaux[0].quantity !== null ? setValue("quantity", String(animaux[0].quantity)) : null);
       if(animaux[0].couleur !== null ? setValue("couleur", animaux[0].couleur) : null);
-      if(animaux[0].nomPere !== null ? setValue("nomPere", animaux[0].nomPere) : null);
-      if(animaux[0].nomMere !== null ? setValue("nomMere", animaux[0].nomMere) : null);
+      if(animaux[0].nompere !== null ? setValue("nompere", animaux[0].nomPere) : null);
+      if(animaux[0].nommere !== null ? setValue("nommere", animaux[0].nomMere) : null);
       if(animaux[0].datenaissance !== null ? setDate(animaux[0].datenaissance) : setDate(null));
   };
 
@@ -111,7 +117,7 @@ const PetsScreen = ({ navigation }) => {
       setValue("id", animalToDisplay.id);
       setValue("nom", animalToDisplay.nom);
       setValue("espece", animalToDisplay.espece);
-      setValue("datenaissance", animalToDisplay.datenaissance !== null ? dateUtils.dateFormatter(animalToDisplay.datenaissance, "dd/MM/yyyy", "/") : undefined);
+      setValue("datenaissance", animalToDisplay.datenaissance !== null ? instanceDateUtils.dateFormatter(animalToDisplay.datenaissance, "dd/MM/yyyy", "/") : undefined);
       setValue("race", animalToDisplay.race !== null ? animalToDisplay.race : undefined);
       setValue("taille", animalToDisplay.taille !== null ? animalToDisplay.taille.toString() : undefined);
       setValue("poids", animalToDisplay.poids !== null ? animalToDisplay.poids.toString() : undefined);
@@ -119,8 +125,8 @@ const PetsScreen = ({ navigation }) => {
       setValue("food", animalToDisplay.food !== null ? animalToDisplay.food : undefined);
       setValue("quantity", animalToDisplay.quantity !== null ? animalToDisplay.quantity.toString() : undefined);
       setValue("couleur", animalToDisplay.couleur !== null ? animalToDisplay.couleur : undefined);
-      setValue("nomPere", animalToDisplay.nompere !== null ? animalToDisplay.nompere : undefined);
-      setValue("nomMere", animalToDisplay.nommere !== null ? animalToDisplay.nommere : undefined);
+      setValue("nompere", animalToDisplay.nompere !== null ? animalToDisplay.nompere : undefined);
+      setValue("nommere", animalToDisplay.nommere !== null ? animalToDisplay.nommere : undefined);
       setDate(animalToDisplay.datenaissance !== null ? animalToDisplay.datenaissance : String(jour + "/" + mois + "/" + annee));
 
 
@@ -187,6 +193,80 @@ const PetsScreen = ({ navigation }) => {
     }
   });
 
+  function getContent() {
+    if (refreshing) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+          <ActivityIndicator animating={true} size="large" />
+        </View>
+      );
+    }
+
+    return(
+      <FlatList
+        data={[]}
+        keyExtractor={() => "key"}
+        renderItem={null}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />
+        }
+        ListHeaderComponent={
+          <>
+            <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
+              <AnimalsPicker
+                setAnimaux={setAnimaux}
+                animaux={animaux}
+                setSelected={setSelected}
+                selected={selected}
+                setValue={setValue}
+                mode="single"
+                buttonAdd={true}
+                setDate={setDate}
+              />
+            </View>
+            <View style={styles.rubriqueContainer}>
+              <View style={styles.iconsContainer}>
+                <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+                  <Entypo name="info-with-circle" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+                  <Text style={[{color: activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Informations</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+                  <MaterialCommunityIcons name="clipboard-pulse-outline" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+                  <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Physique</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
+                  <FontAwesome6 name="book-medical" size={20} color={activeRubrique === 2 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+                  <Text style={[{color: activeRubrique === 2 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Santé</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.separatorFix}></View>
+              <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1, 2], outputRange: ['0%', '33.3%', '66.6%'] }) }]} />
+            </View>
+            {activeRubrique === 0 && 
+              <InformationsAnimals
+                animal={selected[0]}
+                onDelete={handleDeletePet}
+                onModify={onModify}
+              />
+            }
+            {activeRubrique === 1 &&
+              <AnimalBody 
+                animal={selected[0]}
+                onModify={onModify}
+              />
+            }
+            {activeRubrique === 2 &&
+              <MedicalBook 
+                animal={selected[0]}
+                navigation={navigation}
+              />
+            }
+          </>
+        }
+      />
+    );
+  }
+
   return (
     <>
       <ModalValidation
@@ -198,55 +278,7 @@ const PetsScreen = ({ navigation }) => {
       />
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2}/>
-        <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
-          <AnimalsPicker
-            setAnimaux={setAnimaux}
-            animaux={animaux}
-            setSelected={setSelected}
-            selected={selected}
-            setValue={setValue}
-            mode="single"
-            buttonAdd={true}
-            setDate={setDate}
-          />
-        </View>
-        <View style={styles.rubriqueContainer}>
-          <View style={styles.iconsContainer}>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <Entypo name="info-with-circle" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color: activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Informations</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <MaterialCommunityIcons name="clipboard-pulse-outline" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Physique</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width: "33.3%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
-              <FontAwesome6 name="book-medical" size={20} color={activeRubrique === 2 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color: activeRubrique === 2 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Santé</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.separatorFix}></View>
-          <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1, 2], outputRange: ['0%', '33.3%', '66.6%'] }) }]} />
-        </View>
-        {activeRubrique === 0 && 
-          <InformationsAnimals
-            animal={selected[0]}
-            onDelete={handleDeletePet}
-            onModify={onModify}
-          />
-        }
-        {activeRubrique === 1 &&
-          <AnimalBody 
-            animal={selected[0]}
-            onModify={onModify}
-          />
-        }
-        {activeRubrique === 2 &&
-          <MedicalBook 
-            animal={selected[0]}
-            navigation={navigation}
-          />
-        }
+        {getContent()}
       </LinearGradient>
     </>
   );

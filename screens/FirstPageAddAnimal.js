@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
-import Button from '../components/Button';
-import ModalAnimal from '../components/Modals/ModalAnimal';
+import Button from '../components/inputs/Button';
+import ModalAnimal from '../components/modals/animals/ModalAnimal';
 import wallpaper_first_add from "../assets/wallpaper_first_add_animal.jpg";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { useTheme } from 'react-native-paper';
 
 const FirstPageAddAnimalScreen = ({ navigation })=> {

@@ -1,18 +1,18 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import CompletionBar from '../CompletionBar';
+import CompletionBar from '../common/CompletionBar';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
-import objectifsServiceInstance from '../../services/ObjectifService';
+import objectifsServiceInstance from '../../services/api/ObjectifService';
 import Toast from "react-native-toast-message";
 import React, { useState, useEffect, useContext } from 'react';
-import ModalSubMenuObjectifActions from '../Modals/ModalSubMenuObjectifActions';
-import ModalObjectifSubTasks from '../Modals/ModalObjectifSubTasks';
-import ModalObjectif from '../Modals/ModalObjectif';
-import LoggerService from '../../services/LoggerService';
-import FileStorageService from '../../services/FileStorageService';
-import { useAuth } from '../../providers/AuthenticatedUserProvider';
+import ModalSubMenuObjectifActions from '../modals/objectifs/ModalSubMenuObjectifActions';
+import ModalObjectifSubTasks from '../modals/objectifs/ModalObjectifSubTasks';
+import ModalObjectif from '../modals/objectifs/ModalObjectif';
+import LoggerService from '../../services/logs/LoggerService';
+import FileStorageService from '../../services/aws/FileStorageService';
+import { useAuth } from '../../contexts/AuthenticatedUserProvider';
 import { Image } from "expo-image";
 import { Divider, useTheme } from 'react-native-paper';
-import ModalValidation from "../Modals/ModalValidation";
+import ModalValidation from "../modals/common/ModalValidation";
 import Feather from '@expo/vector-icons/Feather';
 
 const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifDelete }) => {
@@ -172,7 +172,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
             display: "flex",
             flexDirection: "column",
             marginBottom: 10,
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowOffset: {
@@ -306,7 +306,7 @@ const ObjectifCard = ({ objectif, animaux, handleObjectifChange, handleObjectifD
                                 {currentObjectif.sousEtapes !== undefined && currentObjectif.sousEtapes.map((etape, index) => {
                                     return(
                                         <TouchableOpacity key={etape.id} style={{marginLeft: 5}} onPress={() => handleTasksStateChange(etape)}>
-                                            <View style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+                                            <View style={{display: "flex", flexDirection: "row"}}>
                                                 {etape.state === true &&
                                                     <Feather name="x-square" size={25} color={colors.default_dark} />
                                                     ||

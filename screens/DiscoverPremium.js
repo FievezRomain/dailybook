@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React from 'react';
-import OfferInformations from '../components/OfferInformations';
-import TopTabSecondary from "../components/TopTabSecondary";
+import OfferInformations from '../components/common/OfferInformations';
+import TopTabSecondary from "../components/common/TopTabSecondary";
 import { ScrollView } from "react-native";
 import { useTheme } from 'react-native-paper';
 

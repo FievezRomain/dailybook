@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import variables from "./styles/Variables";
+import variables from "../styles/Variables";
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
-import ModalSubMenuAnimalActions from './Modals/ModalSubMenuAnimalActions';
-import ModalAnimal from './Modals/ModalAnimal';
-import DateUtils from '../utils/DateUtils';
+import ModalSubMenuAnimalActions from './modals/animals/ModalSubMenuAnimalActions';
+import ModalAnimal from './modals/animals/ModalAnimal';
 import { Image } from "expo-image";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
-import FileStorageService from "../services/FileStorageService";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
+import FileStorageService from "../services/aws/FileStorageService";
 import { useTheme } from 'react-native-paper';
-import ModalReportDeath from './Modals/ModalReportDeath';
+import ModalReportDeath from './modals/animals/ModalReportDeath';
 import { format } from 'date-fns'
+import instanceDateUtils from '../utils/DateUtils';
 
 const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
     const [modalSubMenuAnimalActionsVisible, setModalSubMenuAnimalActionsVisible] = useState(false);
     const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
     const [modalReportDeathVisible, setModalReportDeathVisible] = useState(false);
-    const dateUtils = new DateUtils();
     const fileStorageService = new FileStorageService();
     const { currentUser } = useAuth();
     const { colors, fonts } = useTheme();
@@ -102,7 +101,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
           borderRadius: 10, 
           top: -35, 
           zIndex: 0,
-          shadowColor: "black",
+          shadowColor: colors.default_dark,
           shadowOpacity: 0.1,
           elevation: 1,
           shadowRadius:5,
@@ -129,7 +128,7 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
           borderRadius: 5,
           paddingLeft: 15,
           backgroundColor: colors.quaternary,
-          color: "black",
+          color: colors.default_dark,
           alignSelf: "baseline"
         },
         inputTextArea: {
@@ -194,198 +193,197 @@ const InformationsAnimals = ({ animal = {}, onModify, onDelete }) => {
               animal={animal}
               onModify={onModify}
             />
-            <ScrollView>
-                <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
-                    {/* <Text style={[{color: colors.default_dark, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text> */}
-                    {animal.image !== null ?
-                        <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: colors.default_dark}} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
-                    :
-                        <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: colors.default_dark, borderColor: colors.default_dark, justifyContent: "center", alignItems: "center"}}>
-                            <Text style={[{color: colors.background, fontSize: 50}, styles.textFontBold]}>{animal.nom[0]}</Text>
-                        </View>
+              <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
+                  {/* <Text style={[{color: colors.default_dark, fontSize: 16, paddingVertical: 15}, styles.textFontBold]}>Informations</Text> */}
+                  {animal.image !== null ?
+                      <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: colors.default_dark}} source={{uri:  fileStorageService.getFileUrl( animal.image, currentUser.uid ) }} cachePolicy="disk" />
+                  :
+                      <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: colors.default_dark, borderColor: colors.default_dark, justifyContent: "center", alignItems: "center"}}>
+                          <Text style={[{color: colors.background, fontSize: 50}, styles.textFontBold]}>{animal.nom[0]}</Text>
+                      </View>
+                  }
+              </View>
+              <View style={styles.form}>
+                
+                  <View style={styles.headerCard}>
+                      <TouchableOpacity onPress={() => setModalSubMenuAnimalActionsVisible(true)} disabled={animal.provenance === "group"}>
+                          <Entypo name='dots-three-horizontal' size={20} color={animal.provenance === "group" ? colors.background : colors.default_dark}/>
+                      </TouchableOpacity>
+                  </View>
+                  
+                  <View style={styles.formContainer}>
+                    {isValidString(animal.nom) && 
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom de l'animal :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : Vasco"
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={animal.nom}
+                            editable={false}
+                        />
+                      </View>
                     }
-                </View>
-                <View style={styles.form}>
-                    <View style={styles.headerCard}>
-                        <TouchableOpacity onPress={() => setModalSubMenuAnimalActionsVisible(true)} >
-                            <Entypo name='dots-three-horizontal' size={20} color={colors.default_dark}/>
-                        </TouchableOpacity>
-                    </View>
-                    
-                    <View style={styles.formContainer}>
-                      {isValidString(animal.nom) && 
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom de l'animal :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : Vasco"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.nom}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.espece) && 
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Espèce :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : Cheval"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.espece}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.datenaissance) && 
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de naissance :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : 01/01/1900"
-                              keyboardType="numeric"
-                              inputMode="numeric"
-                              maxLength={10}
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={(animal.datenaissance.includes("-") ?  dateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance)}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.datedeces) && 
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de décès :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : 01/01/1900"
-                              keyboardType="numeric"
-                              inputMode="numeric"
-                              maxLength={10}
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={format(new Date(animal.datedeces), 'dd/MM/yyyy')}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.numeroidentification) &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Numéro identification :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : XXXXXXXXX"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.numeroidentification}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.datearrivee) && 
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date d'arrivée :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : 01/01/1900"
-                              keyboardType="numeric"
-                              inputMode="numeric"
-                              maxLength={10}
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={(animal.datearrivee.includes("-") ?  dateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee)}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.datedepart) && 
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de départ :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : 01/01/1900"
-                              keyboardType="numeric"
-                              inputMode="numeric"
-                              maxLength={10}
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={(animal.datedepart.includes("-") ?  dateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart)}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.race) &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Race :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : Fjord"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.race}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.sexe) &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Sexe :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : Mâle"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.sexe}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.couleur) &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Couleur :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : Isabelle"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.couleur}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.nomPere) &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom du père :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : Esgard"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.nomPere}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.nomMere) &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom de la mère :</Text>
-                          <TextInput
-                              style={[styles.input, styles.textFontRegular]}
-                              placeholder="Exemple : Sherry"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.nomMere}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                      {isValidString(animal.informations) &&
-                        <View style={styles.inputContainer}>
-                          <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Informations supplémentaires :</Text>
-                          <TextInput
-                              style={[styles.inputTextArea, styles.textFontRegular]}
-                              multiline={true}
-                              numberOfLines={4}
-                              placeholder="Exemple : Allergique aux incariens"
-                              placeholderTextColor={colors.secondary}
-                              defaultValue={animal.informations}
-                              editable={false}
-                          />
-                        </View>
-                      }
-                    </View>
-                </View>
-            </ScrollView>
+                    {isValidString(animal.espece) && 
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Espèce :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : Cheval"
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={animal.espece}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.datenaissance) && 
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de naissance :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : 01/01/1900"
+                            keyboardType="numeric"
+                            inputMode="numeric"
+                            maxLength={10}
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={(animal.datenaissance.includes("-") ?  instanceDateUtils.dateFormatter( animal.datenaissance, "yyyy-mm-dd", "-") : animal.datenaissance)}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.datedeces) && 
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de décès :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : 01/01/1900"
+                            keyboardType="numeric"
+                            inputMode="numeric"
+                            maxLength={10}
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={format(new Date(animal.datedeces), 'dd/MM/yyyy')}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.numeroidentification) &&
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Numéro identification :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : XXXXXXXXX"
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={animal.numeroidentification}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.datearrivee) && 
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date d'arrivée :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : 01/01/1900"
+                            keyboardType="numeric"
+                            inputMode="numeric"
+                            maxLength={10}
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={(animal.datearrivee.includes("-") ?  instanceDateUtils.dateFormatter( animal.datearrivee, "yyyy-mm-dd", "-") : animal.datearrivee)}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.datedepart) && 
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de départ :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : 01/01/1900"
+                            keyboardType="numeric"
+                            inputMode="numeric"
+                            maxLength={10}
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={(animal.datedepart.includes("-") ?  instanceDateUtils.dateFormatter( animal.datedepart, "yyyy-mm-dd", "-") : animal.datedepart)}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.race) &&
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Race :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : Fjord"
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={animal.race}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.sexe) &&
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Sexe :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : Mâle"
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={animal.sexe}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.couleur) &&
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Couleur :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : Isabelle"
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={animal.couleur}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.nompere) &&
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom du père :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : Esgard"
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={animal.nompere}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.nommere) &&
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom de la mère :</Text>
+                        <TextInput
+                            style={[styles.input, styles.textFontRegular]}
+                            placeholder="Exemple : Sherry"
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={animal.nommere}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                    {isValidString(animal.informations) &&
+                      <View style={styles.inputContainer}>
+                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Informations supplémentaires :</Text>
+                        <TextInput
+                            style={[styles.inputTextArea, styles.textFontRegular]}
+                            multiline={true}
+                            numberOfLines={4}
+                            placeholder="Exemple : Allergique aux incariens"
+                            placeholderTextColor={colors.secondary}
+                            defaultValue={animal.informations}
+                            editable={false}
+                        />
+                      </View>
+                    }
+                  </View>
+              </View>
         </>
     )
 }

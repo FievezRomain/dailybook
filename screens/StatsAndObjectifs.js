@@ -1,18 +1,18 @@
-import { View, Text, StyleSheet, Image, Animated } from "react-native";
-import TopTab from '../components/TopTab';
+import { View, Text, StyleSheet, Image, Animated, ActivityIndicator, FlatList, RefreshControl } from "react-native";
+import TopTab from '../components/common/TopTab';
 import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { TouchableOpacity } from "react-native";
-import AnimalsPicker from "../components/AnimalsPicker";
+import AnimalsPicker from "../components/inputs/AnimalsPicker";
 import StatistiquesBloc from "../components/StatistiquesBloc";
 import ObjectifsBloc from "../components/ObjectifsBloc";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
-import StatePicker from "../components/StatePicker"
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import { SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import Toast from "react-native-toast-message";
 import { useTheme } from 'react-native-paper';
 import { useFocusEffect } from "@react-navigation/native";
-import { useAnimaux } from "../providers/AnimauxProvider";
+import { useAnimaux } from "../contexts/AnimauxProvider";
+import groupServiceInstance from "../services/api/GroupService";
 
 const StatsScreen = ({ navigation }) => {
   const { colors, fonts } = useTheme();
@@ -21,6 +21,7 @@ const StatsScreen = ({ navigation }) => {
   const { animaux } = useAnimaux();
   const [selectedAnimal, setSelectedAnimal] = useState([]);
   const [activeRubrique, setActiveRubrique] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
   const separatorPosition = useRef(new Animated.Value(0)).current;
 
   useFocusEffect(
@@ -30,7 +31,11 @@ const StatsScreen = ({ navigation }) => {
     }, [])
   );
 
-  
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await groupServiceInstance.refreshCache();
+    setRefreshing(false);
+  };
 
  /*  useEffect(() => {
     if( activeRubrique === 0 && selectedAnimal.length > 1 ){
@@ -126,7 +131,7 @@ const StatsScreen = ({ navigation }) => {
       flex: 1,
       backgroundColor: colors.background,
       borderRadius: 10,
-      shadowColor: "black",
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowRadius: 5,
@@ -158,49 +163,76 @@ const StatsScreen = ({ navigation }) => {
   
   });
 
+  function getContent () {
+    if (refreshing) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+          <ActivityIndicator animating={true} size="large" />
+        </View>
+      );
+    }
+
+    return(
+      <FlatList
+        data={[]}
+        renderItem={null}
+        keyExtractor={() => "key"}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />
+        }
+        ListHeaderComponent={
+          <>
+            <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
+              <AnimalsPicker
+                animaux={animaux}
+                displayAnimalsShared={false}
+                setSelected={setSelectedAnimal}
+                selected={selectedAnimal}
+                mode={"multiple"}
+                setValue={activeRubrique === 0 ? () => {} : () => {}}
+                selectAll={true}
+                setDate={() => {}}
+              />
+            </View>
+            <View style={styles.rubriqueContainer}>
+              <View style={styles.iconsContainer}>
+                <TouchableOpacity style={{width: "50%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
+                  <SimpleLineIcons name="target" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+                  <Text style={[{color :activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Objectifs</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{width: "50%", alignItems: "center", flexDirection: "row", justifyContent: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
+                  <FontAwesome name="pie-chart" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
+                  <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Statistiques</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.separatorFix}></View>
+              <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1], outputRange: ['0%', '50%'] }) }]} />
+            </View>
+            <View style={styles.contentContainer}>
+
+              {activeRubrique === 0 ?
+                <ObjectifsBloc
+                  animaux={animaux}
+                  selectedAnimal={selectedAnimal}
+                  navigation={navigation}
+                />
+              :
+                <StatistiquesBloc
+                  selectedAnimal={selectedAnimal}
+                />
+              }
+            </View>
+          </>
+        }
+      />
+    );
+  }
+
   return (
     <>
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{flex: 1}}>
         <TopTab message1={messages.message1} message2={messages.message2} />
-        <View style={{display: "flex", alignContent: "flex-start", justifyContent: "flex-start", alignItems: "flex-start", marginTop: 20}}>
-            <AnimalsPicker
-              animaux={animaux}
-              setSelected={setSelectedAnimal}
-              selected={selectedAnimal}
-              mode={"multiple"}
-              setValue={activeRubrique === 0 ? () => {} : () => {}}
-              selectAll={true}
-              setDate={() => {}}
-            />
-        </View>
-        <View style={styles.rubriqueContainer}>
-          <View style={styles.iconsContainer}>
-            <TouchableOpacity style={{width: "50%", alignItems: "center", justifyContent: "center", flexDirection: "row"}} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-              <SimpleLineIcons name="target" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color :activeRubrique === 0 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Objectifs</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width: "50%", alignItems: "center", flexDirection: "row", justifyContent: "center"}} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-              <FontAwesome name="pie-chart" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{marginRight: 5}}/>
-              <Text style={[{color: activeRubrique === 1 ? colors.default_dark : colors.quaternary}, styles.textFontMedium]}>Statistiques</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.separatorFix}></View>
-          <Animated.View style={[styles.separatorAnimated, { left: separatorPosition.interpolate({ inputRange: [0, 1], outputRange: ['0%', '50%'] }) }]} />
-        </View>
-        <View style={styles.contentContainer}>
-
-          {activeRubrique === 0 ?
-            <ObjectifsBloc
-              animaux={animaux}
-              selectedAnimal={selectedAnimal}
-              navigation={navigation}
-            />
-          :
-            <StatistiquesBloc
-              selectedAnimal={selectedAnimal}
-            />
-          }
-        </View>
+        {getContent()}
       </LinearGradient>
     </>
     );

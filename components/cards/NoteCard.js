@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons, Entypo } from '@expo/vector-icons';
-import ModalSubMenuNoteActions from '../Modals/ModalSubMenuNoteActions';
-import ModalNote from "../Modals/ModalNote";
+import ModalSubMenuNoteActions from '../modals/notes/ModalSubMenuNoteActions';
+import ModalNote from "../modals/notes/ModalNote";
 import Toast from "react-native-toast-message";
-import notesServiceInstance from '../../services/NoteService';
-import LoggerService from '../../services/LoggerService';
+import notesServiceInstance from '../../services/api/NoteService';
+import LoggerService from '../../services/logs/LoggerService';
 import HTMLView from 'react-native-htmlview';
 import { useTheme } from 'react-native-paper';
-import ModalValidation from '../Modals/ModalValidation';
+import ModalValidation from '../modals/common/ModalValidation';
 
 const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
     const { colors, fonts } = useTheme();
@@ -94,7 +94,7 @@ const NoteCard = ({ note, handleNoteChange, handleNoteDelete }) => {
             flexDirection: "column",
             width: "100%",
             marginBottom: 10,
-            shadowColor: "black",
+            shadowColor: colors.default_dark,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowOffset: { width: 0, height: 1 },

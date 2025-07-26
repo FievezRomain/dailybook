@@ -2,8 +2,8 @@ import { View, Text, StyleSheet } from "react-native";
 import { Entypo } from '@expo/vector-icons'
 import { TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
-import { useAuth } from "../../../providers/AuthenticatedUserProvider";
-import FileStorageService from "../../../services/FileStorageService";
+import { useAuth } from "../../../contexts/AuthenticatedUserProvider";
+import FileStorageService from "../../../services/aws/FileStorageService";
 import { useTheme } from 'react-native-paper';
 
 const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
@@ -126,6 +126,16 @@ const BaladeCard = ({eventInfos, animaux, setSubMenu}) => {
                 {isValidString(eventInfos.commentaire) && 
                     <View style={{paddingRight: 5, paddingBottom: 5}}>
                         <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Commentaire : </Text>{eventInfos.commentaire}</Text>
+                    </View>
+                }
+                {eventInfos.created_by !== null && eventInfos.created_by.email !== currentUser.email &&
+                    <View>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Créer par : </Text>{eventInfos.created_by.name}</Text>
+                    </View>
+                }
+                {eventInfos.made_by !== null && !!eventInfos.shared_groups &&
+                    <View>
+                        <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}><Text style={[{fontStyle: "italic", color: colors.default_dark}, styles.textFontRegular]}>Fait par : </Text>{eventInfos.made_by.name}</Text>
                     </View>
                 }
             </View>

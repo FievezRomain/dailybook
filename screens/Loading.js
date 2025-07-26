@@ -1,9 +1,9 @@
 import { View, Image, StyleSheet, Text } from "react-native";
 import { useEffect, useState } from "react";
-import { useAuth } from "../providers/AuthenticatedUserProvider";
-import { useAnimaux } from "../providers/AnimauxProvider";
+import { useAuth } from "../contexts/AuthenticatedUserProvider";
+import { useAnimaux } from "../contexts/AnimauxProvider";
 import * as Font from 'expo-font';
-import LoggerService from "../services/LoggerService";
+import LoggerService from "../services/logs/LoggerService";
 import Constants from 'expo-constants';
 import { useTheme } from 'react-native-paper';
 

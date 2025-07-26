@@ -1,0 +1,189 @@
+import { StyleSheet, View, Text, TouchableOpacity, FlatList } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
+import { Image } from "expo-image";
+import { useAuth } from "../../contexts/AuthenticatedUserProvider";
+import FileStorageService from "../../services/aws/FileStorageService";
+import { useTheme } from 'react-native-paper';
+import React, { useRef } from "react";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import ItemAnimalPicker from "./ItemAnimalPicker";
+
+const AnimalsPicker = ({ animaux, setSelected, selected, mode, buttonAdd=false, setValue=undefined, setDate=undefined, valueName=undefined, inModal=false, selectAll=false, displayAnimalsShared=true }) => {
+    const fileStorageService = new FileStorageService();
+    const { currentUser } = useAuth();
+    const { colors, fonts } = useTheme();
+    const flatListRef = useRef();
+
+
+    const changeSelectedAnimals = (animal) => {
+        if( animal.id === "select_all"){
+            if( displayAnimalsShared ){
+                if( selected.length === animaux.length ){
+                    setValue(valueName, undefined);
+                    setSelected([]);
+                } else{
+                    setValue(valueName, animaux.map(e => e.id));
+                    setSelected(animaux);
+                }
+            } else{
+                if( selected.length === animaux.filter((animal) => animal.provenance === "owner").length ){
+                    setValue(valueName, undefined);
+                    setSelected([]);
+                } else{
+                    setValue(valueName, animaux.filter((animal) => animal.provenance === "owner").map(e => e.id));
+                    setSelected(animaux.filter((animal) => animal.provenance === "owner"));
+                }
+            }
+            return;
+        }
+
+        const found = animaux.find(e => e.id === animal.id);
+        if(found){
+            if(mode === "single"){
+                setSelected(animaux.filter((a) => a.id === animal.id));
+                if(setValue !== undefined){
+                    if(animal.id !== null ? setValue("id", animal.id) : null);
+                    if(animal.nom !== null ? setValue("nom", animal.nom) : null);
+                    if(animal.espace !== null ? setValue("espece", animal.espece) : null);
+                    if(animal.datenaissance !== null ? setValue("datenaissance", animal.datenaissance) : null);
+                    if(animal.race !== null ? setValue("race", animal.race) : null );
+                    if(animal.taille !== null ? setValue("taille", String(animal.taille)) : null);
+                    if(animal.poids !== null ? setValue("poids", String(animal.poids)) : null);
+                    if(animal.sexe !== null ? setValue("sexe", animal.sexe) : null);
+                    if(animal.couleur !== null ? setValue("couleur", animal.couleur) : null);
+                    if(animal.nompere !== null ? setValue("nompere", animal.nompere) : null);
+                    if(animal.nommere !== null ? setValue("nommere", animal.nommere) : null);
+                    if(animal.datenaissance != null ? setDate(animal.datenaissance) : setDate(null));
+                }
+                
+            }
+            if(mode === "multiple"){
+                const foundSelected = selected.find(e => e.id === animal.id);
+                if (foundSelected){
+                    setValue(valueName, selected.filter(e => e.id !== animal.id).map(e => e.id));
+                    setSelected(selected.filter((a) => a.id !== animal.id));
+                } else{
+                    if(selected.length === 0){
+                        setValue(valueName, animaux.filter(e => e.id === animal.id).map(e => e.id));
+                        setSelected(animaux.filter((a) => a.id === animal.id));
+                    } else{
+                        setValue(valueName, selected.concat(animaux.filter(e => e.id === animal.id)).map(e => e.id));
+                        setSelected(selected.concat(animaux.filter((a) => a.id === animal.id)));
+                    }
+                }
+            }
+        } 
+    }
+
+    const checkSelected = (animal) => {
+        if(selected.length > 0){
+            const found = selected.some(e => e.id == animal.id);
+            return found;
+        }
+    }
+
+    const reset = () =>{
+        setSelected([]);
+        setValue("id", null);
+        setValue("nom", null);
+        setValue("espece", null);
+        setValue("datenaissance", null);
+        setValue("race", null);
+        setValue("taille", null);
+        setValue("poids", null);
+        setValue("sexe", null);
+        setValue("couleur", null);
+        setValue("nompere", null);
+        setValue("nommere", null);
+        today = new Date();
+        jour = parseInt(today.getDate()) < 10 ? "0"+String(today.getDate()) : String(today.getDate());
+        mois = parseInt(today.getMonth()+1) < 10 ? "0" + String(today.getMonth()+1) : String(today.getMonth()+1);
+        annee = today.getFullYear();
+        setDate(String(jour + "/" + mois + "/" + annee));
+    }
+
+    const truncateAnimalName = (name) => {
+        if (name.length <= 15) {
+            return name; // Le nom est déjà court
+        }
+    
+        // Tronquer à 10 caractères
+        const truncated = name.slice(0, 15);
+    
+        // Vérifier s'il y a un espace dans les 10 premiers caractères
+        const lastSpaceIndex = truncated.indexOf(" ");
+        if (lastSpaceIndex !== -1) {
+            return truncated.slice(0, lastSpaceIndex); // Tronquer au dernier espace
+        }
+    
+        return truncated + "..."; // Ajouter "..." après 10 caractères
+    };
+
+    const displayedAnimaux = () => {
+        let animalsFiltered = animaux;
+        if( !displayAnimalsShared ){
+            animalsFiltered = animalsFiltered.filter((animal) => animal.provenance === "owner");
+        }
+        if( selectAll ){
+            if( animalsFiltered.length > 0 ){
+                return [{ id: 'select_all', nom: 'Tous', image: null }, ...animalsFiltered];
+            } else{
+                return [];
+            }
+        } else {
+            return animalsFiltered;
+        }
+    }
+
+    const styles = StyleSheet.create({
+        containerAvatar:{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            alignSelf: "center",
+            marginLeft: 5,
+        },
+        textFontRegular:{
+            fontFamily: fonts.default.fontFamily
+        }
+    });
+
+    const ListComponent = inModal ? BottomSheetFlatList : FlatList;
+
+    return(
+        <ListComponent
+            data={displayedAnimaux()}
+            ref={flatListRef}
+            key={(item) => item.id.toString()}
+            horizontal
+            nestedScrollEnabled={true} // Permet le scroll imbriqué
+            showsHorizontalScrollIndicator={false} // Masque la barre de scroll
+            keyboardShouldPersistTaps="handled" // Gère les taps quand le clavier est actif
+            contentContainerStyle={{ flexGrow: 1 }}
+            ListEmptyComponent={
+                <View style={{alignItems: "center", width:"100%"}}>
+                    <Text style={[styles.textFontRegular ,{color: colors.default_dark}]}>Vous n'êtes propriétaire d'aucun animal</Text>
+                </View>
+            }
+            renderItem={({ item }) => {
+                const isSelected = checkSelected(item);
+                const selectedIndex = selected.findIndex(e => e.id === item.id);
+                const showBadge = isSelected && selected.length > 1;
+
+                return (
+                    <TouchableOpacity style={styles.containerAvatar} onPress={()=>changeSelectedAnimals(item)} key={item.id} onTouchStart={(e) => e.stopPropagation()}>
+                        <ItemAnimalPicker 
+                            item={item}
+                            showBadge={showBadge}
+                            isSelected={checkSelected(item)}
+                            selectedIndex={selectedIndex}
+                        />
+                    </TouchableOpacity>
+                )
+            }}
+        />
+    );
+    
+}
+
+export default AnimalsPicker;

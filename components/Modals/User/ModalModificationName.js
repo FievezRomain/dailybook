@@ -2,13 +2,12 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image } from "reac
 import React, { useState, useContext, useEffect } from "react";
 import Toast from "react-native-toast-message";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../../providers/AuthenticatedUserProvider";
+import { useAuth } from "../../../contexts/AuthenticatedUserProvider";
 import { ActivityIndicator } from "react-native";
-import LoggerService from "../../../services/LoggerService";
+import LoggerService from "../../../services/logs/LoggerService";
 import { Divider, useTheme } from 'react-native-paper';
-import ModalEditGeneric from "../ModalEditGeneric";
+import ModalEditGeneric from "../common/ModalEditGeneric";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import InputTextInLine from "../../InputTextInLine";
 
 const ModalModificationName = ({isVisible, setVisible, onModify=undefined}) => {
     const { colors, fonts } = useTheme();
