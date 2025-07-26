@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/react-native';
 class LoggerService {
 
     static log ( text ) {
-        //Sentry.captureMessage( text );
+        Sentry.captureMessage( text );
     }
 }
 
