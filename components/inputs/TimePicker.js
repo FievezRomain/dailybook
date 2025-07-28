@@ -49,6 +49,7 @@ const TimePickerCustom = ({setValue, valueName, defaultValue}) => {
         cancelTextIOS='Annuler'
         buttonTextColorIOS={colors.accent}
         themeVariant="light"
+        date={selectedDate || new Date()}
       />
     </>
   );
