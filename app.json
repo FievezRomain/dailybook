@@ -2,7 +2,7 @@
   "expo": {
     "name": "Vasco",
     "slug": "dailybook",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -20,13 +20,14 @@
     ],
     "updates": {
       "enabled": true,
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/9733b21a-2b6a-413e-98ff-c4fdc8c1765d"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.vascoandco.vasco.ios",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "1.2.0",
+      "buildNumber": "1.2.1",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
         "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
@@ -45,16 +46,18 @@
       },
       "package": "com.vascoandco.vasco.android",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 21,
+      "versionCode": 22,
       "permissions": [
-        "WAKE_LOCK",
-        "RECEIVE_BOOT_COMPLETED",
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
+        "android.permission.WAKE_LOCK",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
         "com.google.android.c2dm.permission.RECEIVE",
-        "INTERNET",
-        "ACCESS_NETWORK_STATE",
-        "ACCESS_WIFI_STATE"
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.RECORD_AUDIO",
+        "com.google.android.gms.permission.AD_ID"
       ],
       "statusBar": {
         "backgroundColor": "#ffffff",

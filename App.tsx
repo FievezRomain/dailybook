@@ -3,7 +3,7 @@ import { AuthenticatedUserProvider } from "./contexts/AuthenticatedUserProvider"
 import AuthStack from "./navigation/AuthStack";
 import * as Font from 'expo-font';
 import { useEffect, useState, useContext } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 import * as Sentry from '@sentry/react-native';
 import { StatusBar } from 'expo-status-bar';
 import AuthService from "./services/api/AuthService";
@@ -18,6 +18,7 @@ import { ContactsProvider } from "./contexts/ContactsProvider";
 import { WishProvider } from "./contexts/WishProvider";
 import { GroupProvider } from "./contexts/GroupProvider";
 import { darkTheme, lightTheme } from "./theme/theme";
+import * as Updates from 'expo-updates';
 
 function ThemedApp() {
   const { isDarkTheme } = useContext(ThemeContext);
@@ -33,6 +34,7 @@ function ThemedApp() {
 
 function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const authService = new AuthService;
 
   Sentry.init({
@@ -41,8 +43,40 @@ function App() {
   });
 
   useEffect(() => {
-    loadFonts().then(() => setFontsLoaded(true));
-    authService.initTrackingActivity();
+
+    const initializeApp = async () => {
+      await loadFonts();
+      setFontsLoaded(true);
+      authService.initTrackingActivity();
+
+      // Vérification et téléchargement des OTA
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          setIsUpdating(true);
+          await Updates.fetchUpdateAsync();
+          Alert.alert(
+            "Mise à jour disponible",
+            "Une nouvelle version a été téléchargée. L'application va redémarrer.",
+            [
+              {
+                text: "OK",
+                onPress: async () => {
+                  await Updates.reloadAsync();
+                }
+              }
+            ]
+          );
+        }
+      } catch (error) {
+        console.log("Erreur lors de la vérification OTA:", error);
+      } finally {
+        setIsUpdating(false);
+      }
+    }
+
+    initializeApp();
+    
   }, []);
 
   /*const navigation = useNavigation();
@@ -68,35 +102,55 @@ function App() {
     });
   };
 
+  const styles = StyleSheet.create({
+    loaderContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: '#fff',
+    },
+    loaderText: {
+      marginTop: 10,
+      fontSize: 16,
+      color: '#333',
+    },
+  });
+
+  if (!fontsLoaded || isUpdating) {
+    return (
+      <View style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text style={styles.loaderText}>
+          {isUpdating ? "Téléchargement de la mise à jour…" : "Chargement…"}
+        </Text>
+      </View>
+    );
+  }
+
   return (
-    fontsLoaded ?
-          <>
-            <GroupProvider>
-              <AnimauxProvider>
-                <EventsProvider>
-                  <ObjectifsProvider>
-                    <NotesProvider>
-                      <ContactsProvider>
-                        <WishProvider>
-                          <AuthenticatedUserProvider>
-                            <GestureHandlerRootView>
-                              <ThemeProvider>
-                                <ThemedApp />
-                              </ThemeProvider>
-                            </GestureHandlerRootView>
-                          </AuthenticatedUserProvider>
-                        </WishProvider>
-                      </ContactsProvider>
-                    </NotesProvider>
-                  </ObjectifsProvider>
-                </EventsProvider>
-              </AnimauxProvider>
-            </GroupProvider>
-          </>
-      :
-      <ActivityIndicator size={10} />
-    
-    
+    <>
+      <GroupProvider>
+        <AnimauxProvider>
+          <EventsProvider>
+            <ObjectifsProvider>
+              <NotesProvider>
+                <ContactsProvider>
+                  <WishProvider>
+                    <AuthenticatedUserProvider>
+                      <GestureHandlerRootView>
+                        <ThemeProvider>
+                          <ThemedApp />
+                        </ThemeProvider>
+                      </GestureHandlerRootView>
+                    </AuthenticatedUserProvider>
+                  </WishProvider>
+                </ContactsProvider>
+              </NotesProvider>
+            </ObjectifsProvider>
+          </EventsProvider>
+        </AnimauxProvider>
+      </GroupProvider>
+    </>
   );
 };
 
