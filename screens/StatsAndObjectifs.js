@@ -46,7 +46,8 @@ const StatsScreen = ({ navigation }) => {
   const getAnimals = async () => {
     if(animaux.length !== 0){
       // On valorise l'animal selectionné par défaut au premier de la liste
-      setSelectedAnimal([animaux[0]]);
+      const firstOwnerAnimal = animaux.find(animal => animal.provenance === 'owner');
+      setSelectedAnimal(firstOwnerAnimal ? [firstOwnerAnimal] : []);
     }
   };
 
