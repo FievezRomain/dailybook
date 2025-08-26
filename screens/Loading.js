@@ -24,7 +24,6 @@ const LoadingScreen = ({ navigation })=> {
             }else if(currentUser && cacheUpdated){
               //var animaux = await animalsServiceInstance.getAnimals(currentUser.email);
               if(Array.isArray(animaux) && animaux.length > 0){
-                LoggerService.log("Connexion réussie");
                 navigation.navigate("App");
               } else{
                 navigation.navigate("FirstPageAddAnimal");

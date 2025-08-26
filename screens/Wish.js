@@ -71,6 +71,8 @@ const WishScreen = ({ navigation }) => {
                 var filteredArray = wishs.filter((item) => item.id != selectedWish.id);
                 setWishs(filteredArray);
                 setSelectedWish(null);
+                setModalValidationDeleteVisible(false);
+                setModalSubMenuWishVisible(false);
 
                 Toast.show({
                     type: "success",
