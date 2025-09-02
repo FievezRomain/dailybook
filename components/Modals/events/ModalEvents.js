@@ -625,6 +625,32 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
     });
   }
 
+  const getSelectableAnimals = () => {
+    const selectedGroups = getValues("shared_groups");
+
+    // Aucun groupe sélectionné : tous les animaux sont sélectionnables
+    if (!Array.isArray(selectedGroups) || selectedGroups.length === 0) {
+      return animaux;
+    }
+
+    // Récupère les animaux "accepted" pour chaque groupe sélectionné
+    const acceptedAnimalsPerGroup = selectedGroups.map(group => {
+      const groupData = groups.find(g => g.id === group.id);
+      if (!groupData) return [];
+      return groupData.data.animals
+        .filter(animalsGrouped => animalsGrouped.type === "accepted")
+        .flatMap(animalsGrouped => animalsGrouped.items.map(animal => animal.id));
+    });
+
+    // Intersection des animaux présents dans tous les groupes sélectionnés
+    const intersectionIds = acceptedAnimalsPerGroup.reduce((acc, ids) => {
+      return acc.filter(id => ids.includes(id));
+    });
+
+    // Retourne les objets animaux correspondant à l'intersection
+    return animaux.filter(animal => intersectionIds.includes(animal.id));
+  };
+
   const styles = StyleSheet.create({
     inputToggleContainer:{
       display: "flex", 
@@ -838,7 +864,7 @@ const ModalEvents = ({isVisible, setVisible, actionType, event=undefined, onModi
           modalVisible={modalVisible}
           setModalVisible={setModalVisible}
           setAnimaux={setAnimaux}
-          animaux={animaux}
+          animaux={getSelectableAnimals()}
           selected={selected}
           setSelected={setSelected}
           setValue={setValue}

@@ -202,8 +202,8 @@ class GroupService {
 
     async refreshDependencies(){
         await objectifsServiceInstance.refreshCache();
-        await animalsServiceInstance.refreshCache();
         await eventsServiceInstance.refreshCache();
+        await animalsServiceInstance.refreshCache();
     }
 }
 

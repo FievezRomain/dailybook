@@ -51,6 +51,7 @@ const AnimalCard = ({ animal, animalState, userRole, group }) => {
         data.status = 'declined';
         data.id = group.id;
         submitGroup(data, "respondAnimal");
+        setModalValidationVisible(false);
     }
 
     const getActionsPart = () => {
