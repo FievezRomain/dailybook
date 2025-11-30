@@ -35,8 +35,11 @@
         "NSPushNotificationsUsageDescription": "Cette application utilise des notifications pour vous envoyer des mises à jour importantes.",
         "UIBackgroundModes": [
           "fetch",
+          "remote-notification",
+          "fetch",
           "remote-notification"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
