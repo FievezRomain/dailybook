@@ -151,8 +151,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignSelf: "center",
     alignContent: "center",
-    marginBottom: 30,
-    marginTop: 10,
+    transform: [{ translateY: -15 }],
   },
   label: {
     fontSize: 10,

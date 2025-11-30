@@ -19,11 +19,19 @@ import { WishProvider } from "./contexts/WishProvider";
 import { GroupProvider } from "./contexts/GroupProvider";
 import { darkTheme, lightTheme } from "./theme/theme";
 import * as Updates from 'expo-updates';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+const IconComponent = (props: any) => <MaterialCommunityIcons {...props} />;
 
 function ThemedApp() {
   const { isDarkTheme } = useContext(ThemeContext);
   return (
-    <PaperProvider theme={isDarkTheme ? darkTheme : lightTheme}> 
+    <PaperProvider 
+      theme={isDarkTheme ? darkTheme : lightTheme} 
+      settings={{
+        icon: IconComponent,
+      }}
+    > 
       <NavigationContainer>
           <StatusBar style={isDarkTheme ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
           <AuthStack />
