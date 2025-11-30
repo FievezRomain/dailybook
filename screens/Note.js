@@ -3,7 +3,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { useAuth } from "../contexts/AuthenticatedUserProvider";
 import TopTabSecondary from "../components/common/TopTabSecondary";
 import NoteCard from "../components/cards/NoteCard";
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from "expo-linear-gradient";
 import ModalDefaultNoValue from "../components/modals/common/ModalDefaultNoValue";
 import { useTheme } from 'react-native-paper';
@@ -86,7 +86,7 @@ const NoteScreen = ({ navigation }) => {
             <View style={styles.container}>
                 <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, marginBottom: 10, marginTop: 20, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: colors.default_dark, elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}}}>
                     <View style={{flexDirection: "row", alignItems: "center"}}>
-                        <AntDesign name="search1" size={16} color={colors.default_dark}/>
+                        <Ionicons name="search-outline" size={16} color={colors.default_dark}/>
                         <TextInput
                             placeholder="Recherche"             
                             style={[{marginLeft: 5, width: "100%", color:colors.default_dark}, styles.textFontRegular]}

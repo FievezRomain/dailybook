@@ -376,7 +376,7 @@ const CalendarScreen = ({ navigation }) => {
             <>
               <View style={{flexDirection: "row", alignContent: "center", alignItems: "center", backgroundColor: colors.background, alignSelf: "center", width: "90%", justifyContent:"space-between", padding: 10, borderRadius: 5, shadowColor: colors.default_dark,elevation: 1, shadowOpacity: 0.1, shadowRadius:5, shadowOffset:{width:0, height:2}, marginTop: 20}}>
                 <View style={{flexDirection: "row", alignItems: "center"}}>
-                  <AntDesign name="search1" size={16} color={colors.default_dark}/>
+                  <Ionicons name="search-outline" size={16} color={colors.default_dark}/>
 
                   <TextInput
                     placeholder="Recherche"
