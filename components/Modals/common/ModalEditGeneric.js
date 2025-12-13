@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TextInput, Modal, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView } from "react-native";
 import React, { useState, useContext, useEffect, useRef, useCallback, useMemo } from "react";
 import { useTheme, Portal } from 'react-native-paper';
-import BottomSheet, { BottomSheetView, useBottomSheetTimingConfigs } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetScrollView, useBottomSheetTimingConfigs } from '@gorhom/bottom-sheet';
 import Toast from "react-native-toast-message";
 import { Easing } from "react-native-reanimated";
 
@@ -61,9 +61,9 @@ const ModalEditGeneric = ({ children, arrayHeight, isVisible, setVisible, scroll
                         handleIndicatorStyle={handleIndicatorStyle ? handleIndicatorStyle : null}
                         backgroundStyle={{backgroundColor : colors.background}}
                     >
-                        <BottomSheetView style={styles.contentContainer}>
+                        <BottomSheetScrollView style={styles.contentContainer}>
                             {children}
-                        </BottomSheetView>
+                        </BottomSheetScrollView>
                     </BottomSheet>
                 </View>
             </Portal>
