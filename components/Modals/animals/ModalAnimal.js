@@ -289,8 +289,8 @@ const ModalAnimal = ({isVisible, setVisible, actionType, animal={}, onModify=und
     }
 
     const onChangeDate = (valueName, date, setter, selectedDate) => {
-        nbOccur = (String(selectedDate).match(/\//g) || []).length;
-        oldNbOccur = (String(date).match(/\//g) || []).length;
+        let nbOccur = (String(selectedDate).match(/\//g) || []).length;
+        let oldNbOccur = (String(date).match(/\//g) || []).length;
         if(String(selectedDate).length === 2){
             if(nbOccur === 0 && oldNbOccur === 0){
                 selectedDate = selectedDate + "/";
