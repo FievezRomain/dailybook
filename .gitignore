@@ -19,3 +19,8 @@ web-build/
 
 aws-exports.js
 
+# Variables d'environnement — ne pas commiter les fichiers avec de vraies valeurs
+.env.dev
+.env.prod
+# .env.example est commité intentionnellement (pas de vraies valeurs)
+

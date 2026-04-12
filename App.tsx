@@ -1,41 +1,49 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { AuthenticatedUserProvider } from "./contexts/AuthenticatedUserProvider";
-import AuthStack from "./navigation/AuthStack";
 import * as Font from 'expo-font';
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
 import * as Sentry from '@sentry/react-native';
+import { env } from './config/env';
+
+// Sentry actif uniquement en production (__DEV__ = false)
+if (!env.IS_DEV && env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: env.SENTRY_DSN,
+    debug: false,
+  });
+}
+
 import { StatusBar } from 'expo-status-bar';
-import AuthService from "./services/api/AuthService";
+import { initTrackingActivity } from "./services/api/AuthService";
 import { Provider as PaperProvider } from 'react-native-paper';
-import { ThemeProvider, ThemeContext } from './contexts/ThemeProvider';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { AnimauxProvider } from "./contexts/AnimauxProvider";
-import { EventsProvider } from "./contexts/EventsProvider";
-import { ObjectifsProvider } from "./contexts/ObjectifsProvider";
-import { NotesProvider } from "./contexts/NotesProvider";
-import { ContactsProvider } from "./contexts/ContactsProvider";
-import { WishProvider } from "./contexts/WishProvider";
-import { GroupProvider } from "./contexts/GroupProvider";
 import { darkTheme, lightTheme } from "./theme/theme";
 import * as Updates from 'expo-updates';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useAuthStore } from './stores/useAuthStore';
+import { useThemeStore } from './stores/useThemeStore';
+import { RootNavigator } from './navigation/RootNavigator';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // données considérées fraîches pendant 5 min
+      retry: 2,
+    },
+  },
+});
 
 const IconComponent = (props: any) => <MaterialCommunityIcons {...props} />;
 
 function ThemedApp() {
-  const { isDarkTheme } = useContext(ThemeContext);
+  const isDark = useThemeStore((s) => s.isDark);
   return (
-    <PaperProvider 
-      theme={isDarkTheme ? darkTheme : lightTheme} 
-      settings={{
-        icon: IconComponent,
-      }}
-    > 
-      <NavigationContainer>
-          <StatusBar style={isDarkTheme ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
-          <AuthStack />
-      </NavigationContainer>
+    <PaperProvider
+      theme={isDark ? darkTheme : lightTheme}
+      settings={{ icon: IconComponent }}
+    >
+      <StatusBar style={isDark ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
+      <RootNavigator />
     </PaperProvider>
   );
 }
@@ -43,19 +51,16 @@ function ThemedApp() {
 function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const authService = new AuthService;
-
-  Sentry.init({
-    dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
-    debug: false, // Passez à false en production
-  });
+  const initAuth = useAuthStore((s) => s.initAuth);
 
   useEffect(() => {
+    // Lance l'écoute Firebase auth state
+    const unsubscribe = initAuth();
 
     const initializeApp = async () => {
       await loadFonts();
       setFontsLoaded(true);
-      authService.initTrackingActivity();
+      initTrackingActivity();
 
       // Vérification et téléchargement des OTA
       try {
@@ -66,14 +71,7 @@ function App() {
           Alert.alert(
             "Mise à jour disponible",
             "Une nouvelle version a été téléchargée. L'application va redémarrer.",
-            [
-              {
-                text: "OK",
-                onPress: async () => {
-                  await Updates.reloadAsync();
-                }
-              }
-            ]
+            [{ text: "OK", onPress: async () => await Updates.reloadAsync() }],
           );
         }
       } catch (error) {
@@ -81,34 +79,21 @@ function App() {
       } finally {
         setIsUpdating(false);
       }
-    }
+    };
 
     initializeApp();
-    
+
+    return unsubscribe;
   }, []);
 
-  /*const navigation = useNavigation();
-  const authService = new AuthService;
-  const { setUser } = useContext(AuthenticatedUserProvider);
-
-  useEffect( async () => {
-    const unsubscribe = navigation.addListener("state", () => {
-      authService.getUser().then((myUser) => {
-        setUser(myUser);
-      })
-    });
-    return unsubscribe;
-  }, [navigation]) */
-
-  const loadFonts = () => {
-    return Font.loadAsync({
+  const loadFonts = () =>
+    Font.loadAsync({
       'Quicksand-Bold': require('./assets/fonts/Quicksand-Bold.ttf'),
       'Quicksand-Light': require('./assets/fonts/Quicksand-Light.ttf'),
       'Quicksand-Medium': require('./assets/fonts/Quicksand-Medium.ttf'),
       'Quicksand-Regular': require('./assets/fonts/Quicksand-Regular.ttf'),
-      'Quicksand-SemiBold': require('./assets/fonts/Quicksand-SemiBold.ttf')
+      'Quicksand-SemiBold': require('./assets/fonts/Quicksand-SemiBold.ttf'),
     });
-  };
 
   const styles = StyleSheet.create({
     loaderContainer: {
@@ -136,30 +121,12 @@ function App() {
   }
 
   return (
-    <>
-      <GroupProvider>
-        <AnimauxProvider>
-          <EventsProvider>
-            <ObjectifsProvider>
-              <NotesProvider>
-                <ContactsProvider>
-                  <WishProvider>
-                    <AuthenticatedUserProvider>
-                      <GestureHandlerRootView>
-                        <ThemeProvider>
-                          <ThemedApp />
-                        </ThemeProvider>
-                      </GestureHandlerRootView>
-                    </AuthenticatedUserProvider>
-                  </WishProvider>
-                </ContactsProvider>
-              </NotesProvider>
-            </ObjectifsProvider>
-          </EventsProvider>
-        </AnimauxProvider>
-      </GroupProvider>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <GestureHandlerRootView>
+        <ThemedApp />
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
-};
+}
 
 export default Sentry.wrap(App);
