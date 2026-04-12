@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import * as StatisticService from '../../services/api/StatisticService';
+import { StatisticsQueryPayload } from '../../features/statistics/types';
 
 type StatType =
   | 'depenses'
@@ -10,7 +11,7 @@ type StatType =
   | 'alimentations'
   | 'concours';
 
-export function useStatisticsQuery(type: StatType, parameters: Record<string, unknown>) {
+export function useStatisticsQuery(type: StatType, parameters: StatisticsQueryPayload) {
   return useQuery({
     queryKey: ['statistics', type, parameters],
     queryFn: () => StatisticService.getStatistics(type, parameters),

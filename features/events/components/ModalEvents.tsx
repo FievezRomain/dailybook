@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Keyboard } from 'react-native';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,7 +19,7 @@ import StatePicker from '../../../shared/components/inputs/StatePicker';
 import TimePicker from '../../../shared/components/inputs/TimePicker';
 import DocumentPickerComponent from '../../../shared/components/inputs/DocumentPickerComponent';
 import FilesList from '../../../shared/components/common/FilesList';
-import eventsServiceInstance from '../../../services/api/EventService';
+import { createEvent, updateEvent } from '../../../services/api/EventService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import LoggerService from '../../../services/logs/LoggerService';
 import FileStorageService from '../../../services/aws/FileStorageService';
@@ -27,18 +27,11 @@ import instanceDateUtils from '../../../shared/utils/DateUtils';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useEventsQuery } from '../../../hooks/queries/useEventsQuery';
 import { useGroupsQuery } from '../../../hooks/queries/useGroupsQuery';
-
-interface ModalEventsProps {
-  isVisible: boolean;
-  setVisible: (v: boolean) => void;
-  actionType: string;
-  event?: any;
-  onModify?: () => void;
-  date?: any;
-}
+import { useAppTheme } from '../../../theme/useAppTheme';
+import { ModalEventsProps } from '../types';
 
 const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onModify = undefined, date = null }: ModalEventsProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { firebaseUser, user } = useAuthStore();
   const accountType = (user as any)?.abonnement?.libelle;
   const [modalVisible, setModalVisible] = useState(false);
@@ -86,8 +79,8 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
     { title: 'Toutes les 2 semaines', id: 'tl2s' }, { title: 'Tous les mois', id: 'tlm' },
   ];
   const arrayState = [
-    { value: 'À faire', label: 'À faire', checkedColor: (colors as any).default_dark, uncheckedColor: (colors as any).quaternary, style: { borderRadius: 5 }, rippleColor: 'transparent' },
-    { value: 'Terminé', label: 'Terminé', checkedColor: (colors as any).default_dark, uncheckedColor: (colors as any).quaternary, style: { borderRadius: 5 }, rippleColor: 'transparent' },
+    { value: 'À faire', label: 'À faire', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: { borderRadius: 5 }, rippleColor: 'transparent' },
+    { value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: { borderRadius: 5 }, rippleColor: 'transparent' },
   ];
 
   useEffect(() => {
@@ -213,7 +206,7 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
 
   const getColorByEventType = (type: string | undefined) => {
     if (!type) return undefined;
-    const map: Record<string, any> = { depense: (colors as any).quaternary, balade: (colors as any).accent, soins: (colors as any).neutral, concours: colors.primary, entrainement: colors.tertiary, autre: colors.error, rdv: (colors as any).text };
+    const map: Record<string, any> = { depense: colors.quaternary, balade: colors.accent, soins: colors.neutral, concours: colors.primary, entrainement: colors.tertiary, autre: colors.error, rdv: colors.text };
     return map[type];
   };
 
@@ -299,9 +292,9 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
         }
         if (data.state === 'Terminé' && !data.made_by) data.made_by = { email: firebaseUser?.email ?? '' };
         if (actionType === 'modify') {
-          eventsServiceInstance.update(data).then(() => { resetValues(); closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la MAJ d\'un event : ' + err.message); setLoading(false); });
+          updateEvent(data.id, data).then(() => { resetValues(); closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la MAJ d\'un event : ' + err.message); setLoading(false); });
         } else {
-          eventsServiceInstance.create(data).then(() => { closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la création d\'un event : ' + err.message); setLoading(false); });
+          createEvent(data).then(() => { closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la création d\'un event : ' + err.message); setLoading(false); });
         }
       } else setLoading(false);
     } catch (error: any) { LoggerService.log('Erreur lors de l\'enregistrement/modification d\'un event : ' + error.message); }
@@ -313,16 +306,16 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
     containerActionsButtons: { flexDirection: 'row', alignItems: 'center', paddingBottom: 15, paddingTop: 5, backgroundColor: eventType ? hexToRgba(getColorByEventType(eventType.id), 0.3) ?? undefined : colors.background },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: (colors as any).default_dark },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark, alignSelf: 'baseline' },
-    inputTextArea: { height: 100, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, paddingRight: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, alignSelf: 'baseline' },
+    inputTextArea: { height: 100, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, paddingRight: 15, backgroundColor: colors.quaternary, color: colors.default_dark },
     containerDate: { flexDirection: 'column', alignSelf: 'flex-start', width: '100%', marginBottom: 15 },
     containerAnimaux: { display: 'flex', flexDirection: 'row', flexWrap: 'wrap' },
     badgeAnimal: { padding: 10 },
-    containerBadgeAnimal: { borderRadius: 5, backgroundColor: (colors as any).quaternary, marginRight: 5, marginBottom: 5 },
+    containerBadgeAnimal: { borderRadius: 5, backgroundColor: colors.quaternary, marginRight: 5, marginBottom: 5 },
     errorInput: { color: 'red' },
-    disabled: { backgroundColor: (colors as any).onSurface },
-    disabledText: { color: (colors as any).quaternary },
+    disabled: { backgroundColor: colors.onSurface },
+    disabledText: { color: colors.quaternary },
     handleStyleModal: { backgroundColor: eventType ? hexToRgba(getColorByEventType(eventType.id), 0.3) ?? undefined : colors.background, borderTopEndRadius: 15, borderTopStartRadius: 15 },
     handleIndicatorStyle: { backgroundColor: getColorByEventType(eventType?.id) },
     premiumOverlay: { position: 'absolute', top: 30, right: 5, backgroundColor: colors.primary, borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2, zIndex: 2 },
@@ -345,13 +338,13 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
         <View style={styles.form}>
           <View style={styles.containerActionsButtons}>
             <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
-              <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>Annuler</Text>
+              <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Annuler</Text>
             </TouchableOpacity>
             <View style={{ width: '33.33%', alignItems: 'center' }}>
               <Text style={[styles.textFontBold, { color: getColorByEventType(eventType?.id), fontSize: 16 }]}>{eventType && eventType.title}</Text>
             </View>
             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-              {loading ? <ActivityIndicator size={16} color={(colors as any).default_dark} /> : actionType === 'modify' ? <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>Modifier</Text> : <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>Créer</Text>}
+              {loading ? <ActivityIndicator size={16} color={colors.default_dark} /> : actionType === 'modify' ? <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Modifier</Text> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Créer</Text>}
             </TouchableOpacity>
           </View>
           <Divider />
@@ -359,7 +352,7 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
             <View style={styles.formContainer}>
               <Text style={[styles.textInput, styles.textFontRegular]}>Status de l'événement :</Text>
               <View style={styles.inputToggleContainer}>
-                <StatePicker arrayState={arrayState} handleChange={handleStateChange} defaultState={watch('state') === undefined ? 'À faire' : watch('state')} color={(colors as any).quaternary} />
+                <StatePicker arrayState={arrayState} handleChange={handleStateChange} defaultState={watch('state') === undefined ? 'À faire' : watch('state')} color={colors.quaternary} />
               </View>
               {actionType === 'modify' && eventType && (eventType.id === 'soins' || eventType.id === 'balade') ? (
                 <View style={styles.inputContainer}>

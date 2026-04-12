@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Modal, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import CheckboxInput from '../../../shared/components/inputs/CheckboxInput';
 import CompletionBar from '../../../shared/components/common/CompletionBar';
-import objectifsServiceInstance from '../../../services/api/ObjectifService';
+import { updateObjectif } from '../../../services/api/ObjectifService';
 import LoggerService from '../../../services/logs/LoggerService';
 import cloneDeep from 'lodash/cloneDeep';
 
@@ -15,7 +15,7 @@ interface ModalObjectifSubTasksProps {
 }
 
 const ModalObjectifSubTasks = ({ isVisible, setVisible, handleTasksStateChange, objectif = {} }: ModalObjectifSubTasksProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [tasks, setTasks] = useState<any[]>([]);
   const [completionPercentage, setCompletionPercentage] = useState(0);
 
@@ -46,7 +46,7 @@ const ModalObjectifSubTasks = ({ isVisible, setVisible, handleTasksStateChange, 
     try {
       const updatedObjectif = cloneDeep(objectif);
       updatedObjectif.sousEtapes = tasks;
-      const result = await objectifsServiceInstance.updateTasks({ id: objectif.id, sousEtapes: tasks });
+      const result = await updateObjectif(String(objectif.id), { ...objectif, sousEtapes: tasks });
       handleTasksStateChange?.(result);
       closeModal();
     } catch (err: any) {
@@ -56,14 +56,14 @@ const ModalObjectifSubTasks = ({ isVisible, setVisible, handleTasksStateChange, 
 
   const styles = StyleSheet.create({
     overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-    container: { backgroundColor: (colors as any).default_light ?? '#fff', borderTopLeftRadius: 12, borderTopRightRadius: 12, minHeight: '50%', maxHeight: '85%', paddingBottom: 30 },
+    container: { backgroundColor: colors.background, borderTopLeftRadius: 12, borderTopRightRadius: 12, minHeight: '50%', maxHeight: '85%', paddingBottom: 30 },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 15 },
-    title: { fontFamily: fonts.bodyLarge.fontFamily, fontSize: 16, color: (colors as any).default_dark },
-    actionText: { fontFamily: fonts.default.fontFamily, color: (colors as any).default_dark },
+    title: { fontFamily: fonts.bodyLarge.fontFamily, fontSize: 16, color: colors.default_dark },
+    actionText: { fontFamily: fonts.default.fontFamily, color: colors.default_dark },
     cancelText: { fontFamily: fonts.default.fontFamily, color: colors.tertiary },
     progressContainer: { paddingHorizontal: 20, marginBottom: 10 },
     scrollContent: { paddingHorizontal: 20 },
-    taskRow: { paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: (colors as any).quaternary },
+    taskRow: { paddingVertical: 10, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.quaternary },
   });
 
   return (

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconButton, useTheme } from 'react-native-paper';
+import { IconButton } from 'react-native-paper';
 import { useQueryClient } from '@tanstack/react-query';
 import TopTab from '../../../shared/components/common/TopTab';
 import { useGroupsQuery, GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import type { TabScreenProps } from '../../../navigation/types';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 type ButtonItem = {
   id: string | number;
@@ -23,7 +24,7 @@ const BASE_BUTTONS: ButtonItem[] = [
 ];
 
 export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const queryClient = useQueryClient();
   const { data: groups, isFetching } = useGroupsQuery();
   const [buttons, setButtons] = useState<ButtonItem[]>(BASE_BUTTONS);
@@ -67,8 +68,8 @@ export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
     },
     label: {
       fontSize: 16,
-      fontFamily: (fonts as any).bodyMedium.fontFamily,
-      color: (colors as any).default_dark,
+      fontFamily: fonts.bodyMedium.fontFamily,
+      color: colors.default_dark,
       marginTop: 5,
       textAlign: 'center',
       paddingHorizontal: 10,
@@ -94,7 +95,7 @@ export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
             style={[styles.button, item.disabled && { opacity: 0.5 }]}
             disabled={item.disabled}
           >
-            <IconButton icon={item.icon} iconColor={(colors as any).default_dark} size={30} />
+            <IconButton icon={item.icon} iconColor={colors.default_dark} size={30} />
             <Text style={styles.label}>{item.label}</Text>
           </TouchableOpacity>
         )}
@@ -103,7 +104,7 @@ export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.container}
         refreshControl={
-          <RefreshControl refreshing={isFetching} onRefresh={onRefresh} colors={[colors.primary]} tintColor={(colors as any).default_dark} />
+          <RefreshControl refreshing={isFetching} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.default_dark} />
         }
       />
     </LinearGradient>

@@ -4,9 +4,9 @@ import { Image } from 'expo-image';
 import Toast from 'react-native-toast-message';
 import { useForm } from 'react-hook-form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import Constants from 'expo-constants';
-import animalsServiceInstance from '../../../services/api/AnimalsService';
+import { createAnimal, updateAnimal } from '../../../services/api/AnimalsService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import AvatarPicker from '../../../shared/components/inputs/AvatarPicker';
 import LoggerService from '../../../services/logs/LoggerService';
@@ -14,14 +14,8 @@ import FileStorageService from '../../../services/aws/FileStorageService';
 import DropdawnList from '../../../shared/components/inputs/DropdawnList';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import instanceDateUtils from '../../../shared/utils/DateUtils';
-
-interface ModalAnimalProps {
-  isVisible: boolean;
-  setVisible: (v: boolean) => void;
-  actionType: string;
-  animal?: any;
-  onModify?: (data?: any) => void;
-}
+import { useAppTheme } from '../../../theme/useAppTheme';
+import { ModalAnimalProps } from '../types';
 
 const especeList = [
   { label: 'Chat', value: 'Chat' }, { label: 'Chien', value: 'Chien' }, { label: 'Poisson', value: 'Poisson' },
@@ -42,8 +36,8 @@ const unitsList = [
   { label: 'mL', value: 'millilitre' }, { label: 'cL', value: 'centilitre' },
 ];
 
-const ModalAnimal = ({ isVisible, setVisible, actionType, animal = {}, onModify = undefined }: ModalAnimalProps) => {
-  const { colors, fonts } = useTheme();
+const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = undefined }: ModalAnimalProps) => {
+  const { colors, fonts } = useAppTheme();
   const { firebaseUser } = useAuthStore();
   const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch, clearErrors } = useForm();
   const [image, setImage] = useState<string | null>(null);
@@ -60,15 +54,16 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal = {}, onModify 
   const scrollRef = useRef<any>(null);
   const fileStorageService = new FileStorageService();
 
-  useEffect(() => { if (animal.id !== undefined) initValuesAnimal(); }, [animal]);
+  useEffect(() => { if (animal?.id !== undefined) initValuesAnimal(); }, [animal]);
   useEffect(() => { setValue('espece', espece); }, [espece]);
 
   const initValuesAnimal = () => {
+    if (!animal) return;
     setValue('id', animal.id);
     setValue('nom', animal.nom);
     setValue('espece', animal.espece);
     setEspece(animal.espece);
-    const formatDate = (d: string | null) => d != null ? (d.includes('-') ? instanceDateUtils.dateFormatter(d, 'yyyy-mm-dd', '-') : d) : undefined;
+    const formatDate = (d: string | null | undefined) => d != null ? (d.includes('-') ? instanceDateUtils.dateFormatter(d, 'yyyy-mm-dd', '-') : d) : undefined;
     setValue('datenaissance', formatDate(animal.datenaissance));
     setValue('datearrivee', formatDate(animal.datearrivee));
     setValue('datedepart', formatDate(animal.datedepart));
@@ -143,9 +138,9 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal = {}, onModify 
       }
     }
     if (actionType === 'modify') {
-      animalsServiceInstance.modify(data).then((response) => { resetValues(); closeModal(); onModify?.(response); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la MAJ d\'un animal : ' + err.message); setLoading(false); });
+      updateAnimal(data.id, data).then((response) => { resetValues(); closeModal(); onModify?.(response); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la MAJ d\'un animal : ' + err.message); setLoading(false); });
     } else {
-      animalsServiceInstance.create(data).then(() => { resetValues(); closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la création d\'un animal : ' + err.message); setLoading(false); });
+      createAnimal(data).then(() => { resetValues(); closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la création d\'un animal : ' + err.message); setLoading(false); });
     }
   };
 
@@ -174,14 +169,14 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal = {}, onModify 
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: (colors as any).default_dark },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark, alignSelf: 'baseline' },
-    inputTextArea: { height: 100, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, paddingRight: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, alignSelf: 'baseline' },
+    inputTextArea: { height: 100, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, paddingRight: 15, backgroundColor: colors.quaternary, color: colors.default_dark },
     containerDate: { flexDirection: 'column', alignSelf: 'flex-start', width: '100%' },
     imageContainer: { flexDirection: 'row', alignSelf: 'flex-start', marginTop: 5 },
     avatar: { width: 60, height: 60, borderRadius: 50, borderWidth: 2, zIndex: 1 },
     errorInput: { color: 'red' },
-    separatorForm: { width: '100%', marginBottom: 20, marginTop: 10, height: 0.5, backgroundColor: (colors as any).text },
+    separatorForm: { width: '100%', marginBottom: 20, marginTop: 10, height: 0.5, backgroundColor: colors.text },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
@@ -196,10 +191,10 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal = {}, onModify 
               <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
             </TouchableOpacity>
             <View style={{ width: '33.33%', alignItems: 'center' }}>
-              <Text style={[styles.textFontBold, { fontSize: 16, color: (colors as any).default_dark }]}>Animal</Text>
+              <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Animal</Text>
             </View>
             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-              {loading ? <ActivityIndicator size={10} color={(colors as any).default_dark} /> : actionType === 'modify' ? <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>Modifier</Text> : <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>Créer</Text>}
+              {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : actionType === 'modify' ? <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Modifier</Text> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Créer</Text>}
             </TouchableOpacity>
           </View>
           <Divider />

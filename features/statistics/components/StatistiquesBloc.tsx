@@ -17,14 +17,15 @@ import PoidsComponent from './PoidsComponent';
 import TailleComponent from './TailleComponent';
 import AlimentationComponent from './AlimentationComponent';
 import ConcoursComponent from './ConcoursComponent';
+import { StatistiquesBlocProps, StatItemKey, Temporality, StatisticsQueryPayload, ChartConfig } from '../types';
 
 
-const StatistiquesBloc = ({ selectedAnimal }: any) =>{
+const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
     const { isDark: isDarkTheme } = useThemeStore();
     const { colors, fonts } = useAppTheme();
     const { firebaseUser, user } = useAuthStore();
-    const [itemStatistique, setItemStatistique] = useState("depense");
-    const chartComponents = {
+    const [itemStatistique, setItemStatistique] = useState<StatItemKey>('depense');
+    const chartComponents: Record<StatItemKey, React.ComponentType<any>> = {
         balade: BaladeComponent,
         entrainement: EntrainementComponent,
         depense: DepenseComponent,
@@ -34,14 +35,14 @@ const StatistiquesBloc = ({ selectedAnimal }: any) =>{
         concours: ConcoursComponent
     };
     
-    const ChartComponent = (chartComponents as any)[itemStatistique];
-    const accountType = (user as any)?.abonnement?.libelle;
+    const ChartComponent = chartComponents[itemStatistique as StatItemKey];
+    const accountType = (user as any)?.abonnement?.libelle as string | undefined;
     const arrayState = [
         {value: 'Mois', label: 'Mois', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
         {value: 'Année', label: 'Année', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
       ];
-    const [temporality, setTemporality] = useState('Mois');
-    const chartConfig = {
+    const [temporality, setTemporality] = useState<Temporality>('Mois');
+    const chartConfig: Record<StatItemKey, ChartConfig> = {
         depense: {
             backgroundGradientFrom: "#1E2923",
             backgroundGradientTo: "#08130D",
@@ -88,10 +89,10 @@ const StatistiquesBloc = ({ selectedAnimal }: any) =>{
             labelColor: (opacity = 1) => opacityToColor(opacity-0.05),
         },
     };
-    const ChartConfig = (chartConfig as any)[itemStatistique];
+    const ChartConfig = chartConfig[itemStatistique as StatItemKey];
     const now = new Date();
-    const [parameters, setParameters] = useState({ animaux: selectedAnimal.map(function(item: any) { return item["id"] }), email: firebaseUser?.email ?? '', dateDebut: new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString() });
-    const itemStatistiqueSeveralAnimals = {
+    const [parameters, setParameters] = useState<StatisticsQueryPayload>({ animaux: selectedAnimal.map((item) => item.id), email: firebaseUser?.email ?? '', dateDebut: new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString() });
+    const itemStatistiqueSeveralAnimals: Record<StatItemKey, boolean> = {
         balade: true,
         entrainement: true,
         depense: true,
@@ -107,18 +108,18 @@ const StatistiquesBloc = ({ selectedAnimal }: any) =>{
 
     useEffect(() => {
         if(temporality === "Mois"){
-            setParameters({ animaux: selectedAnimal.map(function(item: any) { return item["id"] }), email: firebaseUser?.email ?? '', dateDebut: new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString() });
+            setParameters({ animaux: selectedAnimal.map((item) => item.id), email: firebaseUser?.email ?? '', dateDebut: new Date(now.getFullYear(), now.getMonth(), 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), now.getMonth() + 1, 0).toLocaleDateString() });
         } else{
-            setParameters({ animaux: selectedAnimal.map(function(item: any) { return item["id"] }), email: firebaseUser?.email ?? '', dateDebut: new Date(now.getFullYear(), 0, 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), 11, 31).toLocaleDateString() });
+            setParameters({ animaux: selectedAnimal.map((item) => item.id), email: firebaseUser?.email ?? '', dateDebut: new Date(now.getFullYear(), 0, 1).toLocaleDateString(), dateFin: new Date(now.getFullYear(), 11, 31).toLocaleDateString() });
         }
         
     }, [temporality, selectedAnimal]);
 
-    const checkSeveralAnimalsAccepted = (value: any) => {
-        return (itemStatistiqueSeveralAnimals as any)[value];
+    const checkSeveralAnimalsAccepted = (value: StatItemKey): boolean => {
+        return itemStatistiqueSeveralAnimals[value];
     }
 
-    function opacityToColor(opacity: any) {
+    function opacityToColor(opacity: number): string | null {
 
         if( opacity <= 0.15 ){
             return isDarkTheme ? hexToRgba(colors.secondary, opacity) : colors.secondary;
@@ -166,18 +167,19 @@ const StatistiquesBloc = ({ selectedAnimal }: any) =>{
                 return hexToRgba(colors.text, opacity);
             }
         }
+        return null;
     }
 
-    function hexToRgba(hex: any, opacity: any) {
+    function hexToRgba(hex: string, opacity: number): string | null {
         const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-        hex = hex.replace(shorthandRegex, (m: any, r: any, g: any, b: any) => r + r + g + g + b + b);
+        hex = hex.replace(shorthandRegex, (_m: string, r: string, g: string, b: string) => r + r + g + g + b + b);
     
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
     }
 
-    const onTemporalityChange = (value: any) => {
-        setTemporality(value);
+    const onTemporalityChange = (value: string) => {
+        setTemporality(value as Temporality);
     };
 
     const getDateToDisplay = () => {
@@ -192,23 +194,23 @@ const StatistiquesBloc = ({ selectedAnimal }: any) =>{
         return `${startFormatted} - ${endFormatted}`;
     }
 
-    const changeDates = (offset: any) => {
-        let objet = parameters;
+    const changeDates = (offset: number) => {
+        let objet: StatisticsQueryPayload = parameters;
         const [day, month, year] = parameters.dateDebut.split('/').map(Number);
         let actualDateFromParameters = new Date(year, month - 1, day);
 
         if( temporality === "Mois" ){
-            objet = { animaux: selectedAnimal.map(function(item: any) { return item["id"] }), email: firebaseUser?.email ?? '', dateDebut: new Date(actualDateFromParameters.getFullYear(), actualDateFromParameters.getMonth() + offset, 1).toLocaleDateString(), dateFin: new Date(actualDateFromParameters.getFullYear(), actualDateFromParameters.getMonth() + 1 + offset, 0).toLocaleDateString() };
+            objet = { animaux: selectedAnimal.map((item) => item.id), email: firebaseUser?.email ?? '', dateDebut: new Date(actualDateFromParameters.getFullYear(), actualDateFromParameters.getMonth() + offset, 1).toLocaleDateString(), dateFin: new Date(actualDateFromParameters.getFullYear(), actualDateFromParameters.getMonth() + 1 + offset, 0).toLocaleDateString() };
 
         } else{
-            objet = { animaux: selectedAnimal.map(function(item: any) { return item["id"] }), email: firebaseUser?.email ?? '', dateDebut: new Date(actualDateFromParameters.getFullYear() + offset, 0, 1).toLocaleDateString(), dateFin: new Date(actualDateFromParameters.getFullYear() + offset, 11, 31).toLocaleDateString() };
+            objet = { animaux: selectedAnimal.map((item) => item.id), email: firebaseUser?.email ?? '', dateDebut: new Date(actualDateFromParameters.getFullYear() + offset, 0, 1).toLocaleDateString(), dateFin: new Date(actualDateFromParameters.getFullYear() + offset, 11, 31).toLocaleDateString() };
 
         }
 
         setParameters( objet );
     }
 
-    const onItemStatistiqueChange = (value: any) => {
+    const onItemStatistiqueChange = (value: StatItemKey) => {
         setItemStatistique(value);
     }
 

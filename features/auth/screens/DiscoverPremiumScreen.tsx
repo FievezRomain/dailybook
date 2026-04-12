@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
 import OfferInformations from '../../../shared/components/common/OfferInformations';
 import type { AppStackScreenProps } from '../../../navigation/types';
 
 export default function DiscoverPremiumScreen({ navigation }: AppStackScreenProps<'DiscoverPremium'>) {
-  const { colors } = useTheme();
+  const { colors } = useAppTheme();
 
   return (
     <View style={{ backgroundColor: colors.onSurface }}>

@@ -6,8 +6,9 @@ import EventCard from '../../../shared/components/cards/EventCard';
 import Toast from "react-native-toast-message";
 import LineChartComponent from '../../../shared/components/charts/LineChartComponent';
 import PhysiqueCard from '../../animals/components/PhysiqueCard';
+import { PhysiqueChartComponentProps } from '../types';
 
-const PoidsComponent = ({ data, chartConfig, chartParameters, forceUpdateDataChart }: any) => {
+const PoidsComponent = ({ data, chartConfig, chartParameters, forceUpdateDataChart }: PhysiqueChartComponentProps) => {
     const { colors, fonts } = useAppTheme();
     const [loading, setLoading] = useState(false);
     const [dataToDisplay, setDataToDisplay] = useState(data);

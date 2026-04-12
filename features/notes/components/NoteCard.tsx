@@ -8,7 +8,7 @@ import { deleteNote } from '../../../services/api/NoteService';
 import LoggerService from '../../../services/logs/LoggerService';
 // @ts-ignore - react-native-htmlview has no type declarations
 import HTMLView from 'react-native-htmlview';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
 
 const NoteCard = ({
@@ -20,7 +20,7 @@ const NoteCard = ({
   handleNoteChange: (note: any) => void;
   handleNoteDelete: (note: any) => void;
 }) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [focus, setFocus] = useState(false);
   const [modalSubMenuNoteVisible, setModalSubMenuNoteVisible] = useState(false);
   const [modalNote, setModaleNote] = useState(false);
@@ -76,7 +76,7 @@ const NoteCard = ({
       flexDirection: 'column',
       width: '100%',
       marginBottom: 10,
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -84,7 +84,7 @@ const NoteCard = ({
     },
     header: {
       flexDirection: 'row',
-      backgroundColor: (colors as any).quaternary,
+      backgroundColor: colors.quaternary,
       padding: 10,
       justifyContent: 'space-between',
       borderTopEndRadius: 5,
@@ -130,12 +130,12 @@ const NoteCard = ({
           <Text style={styles.textFontBold}>{note.titre}</Text>
           <View style={styles.icons}>
             {focus ? (
-              <Ionicons name="chevron-up" size={20} color={(colors as any).default_dark} />
+              <Ionicons name="chevron-up" size={20} color={colors.default_dark} />
             ) : (
-              <Ionicons name="chevron-down" size={20} color={(colors as any).default_dark} />
+              <Ionicons name="chevron-down" size={20} color={colors.default_dark} />
             )}
             <TouchableOpacity onPress={onPressOptions}>
-              <Entypo name="dots-three-horizontal" size={20} color={(colors as any).default_dark} style={{ marginLeft: 10 }} />
+              <Entypo name="dots-three-horizontal" size={20} color={colors.default_dark} style={{ marginLeft: 10 }} />
             </TouchableOpacity>
           </View>
         </View>

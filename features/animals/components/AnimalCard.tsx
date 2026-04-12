@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ActivityIndicator, Icon, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Icon } from 'react-native-paper';
 import { getFileUrl } from '../../../services/aws/FileStorageService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { useGroupForm } from '../../groups/hooks/useGroupForm';
@@ -8,6 +8,8 @@ import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
 import { Image } from 'expo-image';
+import { Animal } from '../../../models/Animal';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 const AnimalCard = ({
   animal,
@@ -20,7 +22,7 @@ const AnimalCard = ({
   userRole: string;
   group: any;
 }) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { handleSubmit, setValue } = useForm();
   const [modalValidationVisible, setModalValidationVisible] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -31,10 +33,9 @@ const AnimalCard = ({
 
   const { submitGroup, animaux, loading } = useGroupForm(setValue, onModify, () => {});
 
-  const getGlobalCurrantAnimalByAnimalGroup = (a: any) => {
-    const index = animaux.findIndex((obj: any) => obj.id === a.id);
-    if (index !== -1) return animaux[index];
-    return {};
+  const getGlobalCurrantAnimalByAnimalGroup = (a: any): Animal => {
+    const found = animaux.find((obj) => obj.id === a.id);
+    return found ?? {} as Animal;
   };
 
   const currentAnimal = getGlobalCurrantAnimalByAnimalGroup(animal);
@@ -45,7 +46,7 @@ const AnimalCard = ({
 
   useEffect(() => {
     if (currentAnimal.image) {
-      getFileUrl(currentAnimal.image, 'animal', currentAnimal.id)
+      getFileUrl(currentAnimal.image!, 'animal', String(currentAnimal.id))
         .then((u) => setImageUrl(u))
         .catch(() => {});
     } else {
@@ -76,7 +77,7 @@ const AnimalCard = ({
           </TouchableOpacity>
           {userRole === 'manager' && (
             <TouchableOpacity onPress={handleSubmit(acceptAnimal)}>
-              <Icon source="check" size={30} color={(colors as any).accent} />
+              <Icon source="check" size={30} color={colors.accent} />
             </TouchableOpacity>
           )}
         </>
@@ -97,7 +98,7 @@ const AnimalCard = ({
       backgroundColor: colors.background,
       marginBottom: 10,
       borderRadius: 5,
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -120,7 +121,7 @@ const AnimalCard = ({
       borderRadius: 50,
       justifyContent: 'center',
       alignItems: 'center',
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -131,14 +132,14 @@ const AnimalCard = ({
       borderRadius: 50,
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
     },
     avatarText: { textAlign: 'center', color: colors.background, fontSize: 30 },
     informationsAnimal: { marginLeft: 10 },
-    infoText: { color: (colors as any).default_dark },
+    infoText: { color: colors.default_dark },
   });
 
   return (
@@ -159,7 +160,7 @@ const AnimalCard = ({
               </View>
             ) : (
               <View style={styles.containerAvatarWithoutImage}>
-                <View style={[styles.avatar, { backgroundColor: (colors as any).quaternary }]}>
+                <View style={[styles.avatar, { backgroundColor: colors.quaternary }]}>
                   <Text style={[styles.avatarText, styles.textFontRegular]}>{currentAnimal.nom?.[0]}</Text>
                 </View>
               </View>

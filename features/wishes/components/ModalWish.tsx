@@ -2,16 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import { Image } from 'expo-image';
 import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import wishsServiceInstance from '../../../services/api/WishService';
+import { createWish, updateWish } from '../../../services/api/WishService';
 import LoggerService from '../../../services/logs/LoggerService';
 import FileStorageService from '../../../services/aws/FileStorageService';
 import AvatarPicker from '../../../shared/components/inputs/AvatarPicker';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalWishProps {
   isVisible: boolean;
@@ -22,7 +23,7 @@ interface ModalWishProps {
 }
 
 const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = undefined }: ModalWishProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { firebaseUser } = useAuthStore();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
   const [loading, setLoading] = useState(false);
@@ -62,10 +63,10 @@ const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = un
         data['image'] = uploadedUrl;
       }
       if (actionType === 'modify') {
-        const reponse = await wishsServiceInstance.update(data);
+        const reponse = await updateWish(String(data.id), data);
         closeModal(); onModify?.(reponse);
       } else {
-        await wishsServiceInstance.create(data);
+        await createWish(data);
         closeModal(); onModify?.();
       }
     } catch (err: any) {
@@ -81,8 +82,8 @@ const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = un
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { alignItems: 'center', width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: (colors as any).default_dark },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
     imageContainer: { alignItems: 'center', marginBottom: 15 },
@@ -98,17 +99,17 @@ const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = un
             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
           </TouchableOpacity>
           <View style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[styles.textFontBold, { fontSize: 16, color: (colors as any).default_dark }]}>Souhait</Text>
+            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Souhait</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-            {loading ? <ActivityIndicator size={10} color={(colors as any).default_dark} /> : <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>{actionType === 'modify' ? 'Modifier' : 'Créer'}</Text>}
+            {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>{actionType === 'modify' ? 'Modifier' : 'Créer'}</Text>}
           </TouchableOpacity>
         </View>
         <Divider />
         <KeyboardAwareScrollView keyboardShouldPersistTaps="handled" enableOnAndroid={true} extraScrollHeight={10} enableResetScrollToCoords={false}>
           <View style={styles.formContainer}>
             <View style={styles.imageContainer}>
-              {imageUri ? <Image source={{ uri: imageUri }} style={styles.imagePreview} contentFit="cover" /> : <View style={[styles.imagePreview, { backgroundColor: (colors as any).quaternary, justifyContent: 'center', alignItems: 'center' }]}><FontAwesome name="image" size={30} color={colors.secondary} /></View>}
+              {imageUri ? <Image source={{ uri: imageUri }} style={styles.imagePreview} contentFit="cover" /> : <View style={[styles.imagePreview, { backgroundColor: colors.quaternary, justifyContent: 'center', alignItems: 'center' }]}><FontAwesome name="image" size={30} color={colors.secondary} /></View>}
               <TouchableOpacity onPress={() => setAvatarPickerVisible(true)}>
                 <Text style={[styles.textFontRegular, { color: colors.primary }]}>{imageUri ? 'Modifier l\'image' : 'Ajouter une image'}</Text>
               </TouchableOpacity>

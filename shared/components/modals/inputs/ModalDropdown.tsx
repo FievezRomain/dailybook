@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import Button from '../../inputs/Button';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 import ModalEditGeneric from '../common/ModalEditGeneric';
 
 interface DropdownItem {
@@ -33,7 +33,7 @@ const ModalDropdown = ({
   modalHeight = '40%',
   customizable = true,
 }: ModalDropdownProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   const checkState = (value: DropdownItem) => {
     if (state !== false) {
@@ -54,10 +54,10 @@ const ModalDropdown = ({
   const styles = StyleSheet.create({
     buttonContainer: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 20, marginBottom: 20 },
     itemContainer: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 20, justifyContent: 'center' },
-    item: { backgroundColor: (colors as any).quaternary, borderRadius: 5, margin: 5, padding: 10 },
-    selected: { backgroundColor: (colors as any).accent },
+    item: { backgroundColor: colors.quaternary, borderRadius: 5, margin: 5, padding: 10 },
+    selected: { backgroundColor: colors.accent },
     disabled: { backgroundColor: colors.onSurface },
-    disabledText: { color: (colors as any).quaternary },
+    disabledText: { color: colors.quaternary },
     title: { color: colors.background },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },

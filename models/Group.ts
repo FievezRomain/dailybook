@@ -1,7 +1,12 @@
+import { GroupMember } from './GroupMember';
+
 export type Group = {
     id: number;
     name: string;
-    members: number[];
+    members: GroupMember[];
     animals: number[];
     informations?: string;
+    nb_members?: number;
+    nb_animaux?: number;
+    created_at?: string;
 };

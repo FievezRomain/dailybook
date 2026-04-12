@@ -27,7 +27,7 @@ type ModalSubMenuProps = {
 };
 
 type DocumentButtonProps = {
-  event: { id: string };
+  event: { id: number };
   item: { name: string };
 };
 
@@ -157,7 +157,7 @@ const DocumentButton: React.FC<DocumentButtonProps> = ({ event, item }) => {
   const openOrDownloadDocument = async (action: ActionType) => {
     setLoading(true);
     setSubMenuVisible(false);
-    const url = await getEventDocumentUrl(event.id, item.name);
+    const url = await getEventDocumentUrl(String(event.id), item.name);
 
     if (action === "download") {
       await openDocumentWithCache(url, item.name);

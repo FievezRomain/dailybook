@@ -3,7 +3,7 @@ import { View, SectionList, Text, TouchableOpacity, StyleSheet, Linking } from '
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, Zocial } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
 import ModalSubMenuContactActions from '../components/ModalSubMenuContactActions';
 import ModalContact from '../components/ModalContact';
@@ -14,7 +14,7 @@ import { useContactsQuery, useContactMutations } from '../../../hooks/queries/us
 import type { AppStackScreenProps } from '../../../navigation/types';
 
 export default function ContactScreen({ navigation }: AppStackScreenProps<'Contact'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const sectionListRef = useRef<any>(null);
   const { data: contacts = [] } = useContactsQuery();
   const { remove } = useContactMutations();
@@ -72,15 +72,15 @@ export default function ContactScreen({ navigation }: AppStackScreenProps<'Conta
 
   const styles = StyleSheet.create({
     itemContainer: { flexDirection: 'row', justifyContent: 'space-between', padding: 15 },
-    name: { fontSize: 16, color: (colors as any).default_dark, fontFamily: (fonts as any).bodyLarge.fontFamily },
-    profession: { fontSize: 14, color: (colors as any).default_dark, fontFamily: (fonts as any).default.fontFamily },
-    phone: { fontSize: 14, color: (colors as any).default_dark, fontFamily: (fonts as any).default.fontFamily },
+    name: { fontSize: 16, color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily },
+    profession: { fontSize: 14, color: colors.default_dark, fontFamily: fonts.default.fontFamily },
+    phone: { fontSize: 14, color: colors.default_dark, fontFamily: fonts.default.fontFamily },
     iconsContainer: { flexDirection: 'row', alignItems: 'center', marginRight: 50 },
     headerContainer: { backgroundColor: colors.onSurface, padding: 5 },
-    header: { fontSize: 18, color: (colors as any).default_dark, fontFamily: (fonts as any).bodyLarge.fontFamily },
+    header: { fontSize: 18, color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily },
     separator: { height: 1, backgroundColor: '#ccc' },
     sidebarContainer: { position: 'absolute', right: 10, top: 50, bottom: 50, justifyContent: 'center' },
-    letter: { fontSize: 14, paddingVertical: 2, color: (colors as any).default_dark, fontFamily: (fonts as any).bodyMedium.fontFamily },
+    letter: { fontSize: 14, paddingVertical: 2, color: colors.default_dark, fontFamily: fonts.bodyMedium.fontFamily },
   });
 
   return (
@@ -133,16 +133,16 @@ export default function ContactScreen({ navigation }: AppStackScreenProps<'Conta
                     {item.telephone && (
                       <>
                         <TouchableOpacity style={{ marginRight: 5 }} onPress={() => makePhoneCall(item.telephone)}>
-                          <Entypo name="phone" size={25} color={(colors as any).default_dark} />
+                          <Entypo name="phone" size={25} color={colors.default_dark} />
                         </TouchableOpacity>
                         <TouchableOpacity style={{ marginRight: 5 }} onPress={() => sendSMS(item.telephone)}>
-                          <Entypo name="message" size={25} color={(colors as any).default_dark} />
+                          <Entypo name="message" size={25} color={colors.default_dark} />
                         </TouchableOpacity>
                       </>
                     )}
                     {item.email && (
                       <TouchableOpacity onPress={() => sendEmail(item.email)}>
-                        <Zocial name="email" size={25} color={(colors as any).default_dark} />
+                        <Zocial name="email" size={25} color={colors.default_dark} />
                       </TouchableOpacity>
                     )}
                   </View>

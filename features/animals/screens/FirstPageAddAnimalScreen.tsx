@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import Button from '../../../shared/components/inputs/Button';
 import ModalAnimal from '../components/ModalAnimal';
 import { useAuthStore } from '../../../stores/useAuthStore';
@@ -9,7 +9,7 @@ import type { AuthStackScreenProps } from '../../../navigation/types';
 const wallpaper = require('../../../assets/wallpaper_first_add_animal.jpg');
 
 export default function FirstPageAddAnimalScreen({ navigation }: AuthStackScreenProps<'FirstPageAddAnimal'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
   const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
 
@@ -27,8 +27,8 @@ export default function FirstPageAddAnimalScreen({ navigation }: AuthStackScreen
       justifyContent: 'center',
       backgroundColor: colors.secondary,
     },
-    textFontRegular: { fontFamily: (fonts as any).default.fontFamily },
-    textFontMedium: { fontFamily: (fonts as any).bodyMedium.fontFamily },
+    textFontRegular: { fontFamily: fonts.default.fontFamily },
+    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
   });
 
   return (

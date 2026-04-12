@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl, TextInput, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import { useFocusEffect } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import { Calendar, CalendarUtils, LocaleConfig } from 'react-native-calendars';
@@ -12,6 +12,7 @@ import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalD
 import ModalFilterCalendar from '../components/ModalFilterCalendar';
 import Toast from 'react-native-toast-message';
 import { CalendarFilter } from '../../../business/models/CalendarFilter';
+import { getEventTypeDot, convertDateToText, buildMarkedDates } from '../../../shared/utils/EventUtils';
 import { useEventsQuery, EVENTS_KEY } from '../../../hooks/queries/useEventsQuery';
 import { GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import type { TabScreenProps } from '../../../navigation/types';
@@ -28,7 +29,7 @@ LocaleConfig.defaultLocale = 'fr';
 const INITIAL_DATE = new Date().toISOString().split('T')[0];
 
 export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrier'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const queryClient = useQueryClient();
   const { data: events = [] } = useEventsQuery();
   const [eventsCurrentDateSelected, setEventsCurrentDateSelected] = useState<any[]>([]);
@@ -66,50 +67,12 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
     setRefreshing(false);
   };
 
-  const getEventTypeDot = (eventType: string) => {
-    const map: Record<string, string> = {
-      balade: (colors as any).accent,
-      entrainement: colors.tertiary,
-      concours: colors.primary,
-      rdv: (colors as any).text,
-      soins: (colors as any).neutral,
-      autre: colors.error,
-      depense: (colors as any).quaternary,
-    };
-    return { color: map[eventType] ?? colors.onSurface };
-  };
-
   const setupMarkedDates = (isInit: boolean) => {
-    const newMarked: Record<string, any> = {};
-    events.forEach((item: any) => {
-      const dateString = item.dateevent;
-      if (newMarked[dateString]) {
-        if (!newMarked[dateString].dots.some((d: any) => d.color === getEventTypeDot(item.eventtype).color)) {
-          newMarked[dateString].dots.push(getEventTypeDot(item.eventtype));
-        }
-      } else {
-        newMarked[dateString] = { selected: false, disableTouchEvent: false, selectedColor: (colors as any).accent, selectedTextColor: 'white', dots: [getEventTypeDot(item.eventtype)] };
-      }
-    });
-    if (isInit) {
-      if (!newMarked[selectedDate]) {
-        newMarked[selectedDate] = { selected: true, disableTouchEvent: false, selectedColor: (colors as any).accent, selectedTextColor: 'white', dots: [] };
-      } else {
-        newMarked[selectedDate].selected = true;
-      }
-    }
-    setMarked(newMarked);
+    setMarked(buildMarkedDates(events, selectedDate, colors, isInit));
   };
 
   const changeEventsCurrentDateSelected = (date: string) => {
     setEventsCurrentDateSelected(events.filter((item: any) => item.dateevent === date));
-  };
-
-  const convertDateToText = (date: string) => {
-    const dateObject = new Date(date);
-    if (isNaN(dateObject.getTime())) return 'Date invalide';
-    let text = dateObject.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    return text.charAt(0).toUpperCase() + text.slice(1);
   };
 
   const onDayPress = (day: string) => {
@@ -118,7 +81,7 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
     const newMarked = { ...marked };
     Object.values(newMarked).forEach((v) => (v.selected = false));
     if (!newMarked[day]) {
-      newMarked[day] = { selected: true, disableTouchEvent: false, selectedColor: (colors as any).accent, selectedTextColor: 'white', dots: [] };
+      newMarked[day] = { selected: true, disableTouchEvent: false, selectedColor: colors.accent, selectedTextColor: 'white', dots: [] };
     } else {
       newMarked[day].selected = true;
     }
@@ -142,12 +105,12 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
 
   const styles = StyleSheet.create({
     calendarContainer: { marginTop: 10, width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: colors.background },
-    calendar: { borderRadius: 5, shadowColor: (colors as any).default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, backgroundColor: colors.background },
+    calendar: { borderRadius: 5, shadowColor: colors.default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, backgroundColor: colors.background },
     listEventContainer: { alignSelf: 'center', width: '90%', marginBottom: 5 },
     selectedDateContainer: { marginTop: 10, padding: 2, width: '100%', marginBottom: 10 },
-    selectedDateText: { textAlign: 'center', color: (colors as any).default_dark },
-    textFontRegular: { fontFamily: (fonts as any).default.fontFamily },
-    textFontMedium: { fontFamily: (fonts as any).bodyMedium.fontFamily },
+    selectedDateText: { textAlign: 'center', color: colors.default_dark },
+    textFontRegular: { fontFamily: fonts.default.fontFamily },
+    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
   });
 
   return (
@@ -163,21 +126,21 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
           <FlatList
             data={filter ? filteredEvents : eventsCurrentDateSelected}
             keyExtractor={(item) => item.id.toString()}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={(colors as any).default_dark} />}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />}
             ListHeaderComponent={
               <>
-                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background, alignSelf: 'center', width: '90%', justifyContent: 'space-between', padding: 10, borderRadius: 5, shadowColor: (colors as any).default_dark, elevation: 1, shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background, alignSelf: 'center', width: '90%', justifyContent: 'space-between', padding: 10, borderRadius: 5, shadowColor: colors.default_dark, elevation: 1, shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, marginTop: 20 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Ionicons name="search-outline" size={16} color={(colors as any).default_dark} />
-                    <TextInput placeholder="Recherche" style={[{ marginLeft: 5, width: '80%', color: (colors as any).default_dark }, styles.textFontRegular]} placeholderTextColor={(colors as any).default_dark} value={filter?.text ?? ''} onChangeText={handleSearch} />
+                    <Ionicons name="search-outline" size={16} color={colors.default_dark} />
+                    <TextInput placeholder="Recherche" style={[{ marginLeft: 5, width: '80%', color: colors.default_dark }, styles.textFontRegular]} placeholderTextColor={colors.default_dark} value={filter?.text ?? ''} onChangeText={handleSearch} />
                     {filter?.text && (
                       <TouchableOpacity onPress={deleteSearchText}>
-                        <AntDesign name="close" size={16} color={(colors as any).default_dark} />
+                        <AntDesign name="close" size={16} color={colors.default_dark} />
                       </TouchableOpacity>
                     )}
                   </View>
                   <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
-                    {filter ? <MaterialCommunityIcons name="filter-variant-plus" size={21} color={(colors as any).default_dark} /> : <Ionicons name="filter" size={20} color={(colors as any).default_dark} />}
+                    {filter ? <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.default_dark} /> : <Ionicons name="filter" size={20} color={colors.default_dark} />}
                   </TouchableOpacity>
                 </View>
                 <View style={styles.calendarContainer}>
@@ -185,7 +148,7 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
                     style={styles.calendar}
                     firstDay={1}
                     monthFormat="MMMM yyyy"
-                    theme={{ arrowColor: (colors as any).accent, todayTextColor: colors.tertiary, selectedDayTextColor: 'white', selectedDayBackgroundColor: (colors as any).accent, calendarBackground: 'transparent', dayTextColor: (colors as any).accent, textDayHeaderTextColor: (colors as any).accent, textSectionTitleColor: (colors as any).accent, monthTextColor: (colors as any).accent } as any}
+                    theme={{ arrowColor: colors.accent, todayTextColor: colors.tertiary, selectedDayTextColor: 'white', selectedDayBackgroundColor: colors.accent, calendarBackground: 'transparent', dayTextColor: colors.accent, textDayHeaderTextColor: colors.accent, textSectionTitleColor: colors.accent, monthTextColor: colors.accent } as any}
                     enableSwipeMonths
                     onDayPress={(day) => onDayPress(day.dateString)}
                     markingType="multi-dot"

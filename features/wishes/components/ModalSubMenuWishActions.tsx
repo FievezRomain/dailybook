@@ -1,7 +1,8 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalSubMenuWishActionsProps {
   modalVisible: boolean;
@@ -14,7 +15,7 @@ interface ModalSubMenuWishActionsProps {
 }
 
 const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleModify, handleDelete, handleShare, handleRedirect }: ModalSubMenuWishActionsProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   const onAction = (event: () => void) => {
     setModalVisible(false);
@@ -24,11 +25,11 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
   const styles = StyleSheet.create({
     textActionButton: { marginLeft: 15 },
     informationsActionButton: { flexDirection: 'row', alignItems: 'center', marginLeft: 10 },
-    actionButtonContainer: { width: '90%', borderRadius: 10, marginTop: 5, backgroundColor: (colors as any).quaternary, flexDirection: 'column', justifyContent: 'space-evenly', marginBottom: 15 },
+    actionButtonContainer: { width: '90%', borderRadius: 10, marginTop: 5, backgroundColor: colors.quaternary, flexDirection: 'column', justifyContent: 'space-evenly', marginBottom: 15 },
     actionButton: { padding: 10 },
     card: { justifyContent: 'space-evenly', alignItems: 'center' },
     disabledButton: { backgroundColor: colors.secondary, borderTopStartRadius: 5, borderTopEndRadius: 5 },
-    disabledText: { color: (colors as any).quaternary },
+    disabledText: { color: colors.quaternary },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
@@ -39,9 +40,9 @@ const ModalSubMenuWishActions = ({ modalVisible, setModalVisible, wish, handleMo
   return (
     <ModalEditGeneric isVisible={modalVisible} setVisible={setModalVisible} arrayHeight={['30%']}>
       <View style={styles.card}>
-        <Text style={[styles.textFontRegular, { color: (colors as any).default_dark }]}>Gérer le souhait</Text>
+        <Text style={[styles.textFontRegular, { color: colors.default_dark }]}>Gérer le souhait</Text>
         {wish !== null && (
-          <Text style={[{ fontSize: 12 }, styles.textFontBold, { color: (colors as any).default_dark }]}>{wish.nom}</Text>
+          <Text style={[{ fontSize: 12 }, styles.textFontBold, { color: colors.default_dark }]}>{wish.nom}</Text>
         )}
         <View style={styles.actionButtonContainer}>
           <TouchableOpacity style={[styles.actionButton, noUrl && styles.disabledButton]} onPress={() => onAction(handleRedirect)} disabled={noUrl}>

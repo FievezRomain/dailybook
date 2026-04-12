@@ -4,7 +4,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
 import ModalSubMenuWishActions from '../components/ModalSubMenuWishActions';
 import ModalWish from '../components/ModalWish';
@@ -16,7 +16,7 @@ import { useAuthStore } from '../../../stores/useAuthStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
 
 export default function WishScreen({ navigation }: AppStackScreenProps<'Wish'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { data: wishes = [] } = useWishesQuery();
   const { update, remove } = useWishMutations();
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
@@ -58,11 +58,11 @@ export default function WishScreen({ navigation }: AppStackScreenProps<'Wish'>) 
     itemContainer: { flex: 1, margin: 5 },
     itemContainerSecondColumn: { marginTop: Dimensions.get('window').width * 0.05 },
     image: { width: '100%', aspectRatio: 1, borderRadius: 10 },
-    title: { color: (colors as any).default_dark, marginTop: 5 },
+    title: { color: colors.default_dark, marginTop: 5 },
     labelContainer: { position: 'absolute', top: 10, left: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background, padding: 5, borderRadius: 5, zIndex: 1 },
-    price: { marginLeft: 5, color: (colors as any).accent, fontSize: 12 },
-    textFontRegular: { fontFamily: (fonts as any).default.fontFamily, color: (colors as any).default_dark },
-    textFontBold: { fontFamily: (fonts as any).bodyLarge.fontFamily },
+    price: { marginLeft: 5, color: colors.accent, fontSize: 12 },
+    textFontRegular: { fontFamily: fonts.default.fontFamily, color: colors.default_dark },
+    textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
   });
 
   return (
@@ -113,13 +113,13 @@ export default function WishScreen({ navigation }: AppStackScreenProps<'Wish'>) 
                       cachePolicy="disk"
                     />
                   ) : (
-                    <View style={[{ backgroundColor: (colors as any).quaternary, alignItems: 'center', justifyContent: 'center' }, styles.image]}>
+                    <View style={[{ backgroundColor: colors.quaternary, alignItems: 'center', justifyContent: 'center' }, styles.image]}>
                       <MaterialIcons name="no-photography" size={50} />
                     </View>
                   )}
                   {item.prix != null && (
                     <View style={styles.labelContainer}>
-                      <Entypo name="price-tag" size={16} color={(colors as any).accent} />
+                      <Entypo name="price-tag" size={16} color={colors.accent} />
                       <Text style={[styles.price, styles.textFontRegular]}>{item.prix} €</Text>
                     </View>
                   )}
@@ -134,7 +134,7 @@ export default function WishScreen({ navigation }: AppStackScreenProps<'Wish'>) 
                   ) : (
                     <TouchableOpacity
                       onPress={() => changeState(item)}
-                      style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 5, paddingHorizontal: 8, borderRadius: 20, backgroundColor: item.acquis ? (colors as any).minor : colors.tertiary, marginLeft: 8 }}
+                      style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 5, paddingHorizontal: 8, borderRadius: 20, backgroundColor: item.acquis ? colors.minor : colors.tertiary, marginLeft: 8 }}
                     >
                       <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: item.acquis ? colors.primary : colors.secondary, alignItems: 'center', justifyContent: 'center', marginRight: 6 }}>
                         {item.acquis && <Entypo name="check" size={14} color={colors.background} />}

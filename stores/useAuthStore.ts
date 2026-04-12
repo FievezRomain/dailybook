@@ -1,17 +1,10 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { getFirebaseAuth } from '../firebase';
 import { getMe } from '../services/api/AuthService';
-
-interface UserProfile {
-  id: string;
-  email: string;
-  prenom?: string;
-  expotoken?: string;
-  timezone?: string;
-  filename?: string;
-}
+import { UserProfile } from '../models/User';
 
 interface AuthState {
   firebaseUser: User | null;
@@ -36,7 +29,7 @@ export const useAuthStore = create<AuthState>()(
        * Retourne la fonction d'unsubscribe à appeler au démontage.
        */
       initAuth: () => {
-        const auth = getAuth();
+        const auth = getFirebaseAuth();
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
           if (firebaseUser) {
             try {
@@ -55,7 +48,7 @@ export const useAuthStore = create<AuthState>()(
       setUser: (user) => set({ user }),
 
       signOutUser: async () => {
-        await signOut(getAuth());
+        await signOut(getFirebaseAuth());
         set({ firebaseUser: null, user: null, isAuthenticated: false });
       },
     }),

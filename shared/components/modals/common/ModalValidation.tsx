@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import { Button, Dialog, Portal, Text, useTheme } from 'react-native-paper';
+import { Button, Dialog, Portal, Text } from 'react-native-paper';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 
 interface ModalValidationProps {
   visible: boolean;
@@ -11,20 +12,20 @@ interface ModalValidationProps {
 }
 
 const ModalValidation = ({ visible, setVisible, displayedText, title, onConfirm }: ModalValidationProps) => {
-  const { colors } = useTheme();
+  const { colors } = useAppTheme();
   const hideDialog = () => setVisible(false);
 
   return (
     <View>
       <Portal>
         <Dialog style={{ backgroundColor: colors.background }} visible={visible} dismissable={false}>
-          <Dialog.Title style={{ color: (colors as any).default_dark }}>{title}</Dialog.Title>
+          <Dialog.Title style={{ color: colors.default_dark }}>{title}</Dialog.Title>
           <Dialog.Content>
-            <Text style={{ color: (colors as any).default_dark }} variant="bodyMedium">{displayedText}</Text>
+            <Text style={{ color: colors.default_dark }} variant="bodyMedium">{displayedText}</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <Button onPress={hideDialog} labelStyle={{ color: (colors as any).default_dark }}>Annuler</Button>
-            <Button onPress={() => onConfirm()} labelStyle={{ color: (colors as any).accent }}>Confirmer</Button>
+            <Button onPress={hideDialog} labelStyle={{ color: colors.default_dark }}>Annuler</Button>
+            <Button onPress={() => onConfirm()} labelStyle={{ color: colors.accent }}>Confirmer</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>

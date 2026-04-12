@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from './ModalEditGeneric';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 
 interface ModalSubMenuAvatarPickerProps {
   modalVisible: boolean;
@@ -17,7 +18,7 @@ const ModalSubMenuAvatarPicker = ({
   handleLibraryPick,
   handleCameraPick,
 }: ModalSubMenuAvatarPickerProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   const onAction = (action: () => void) => {
     action();
@@ -30,7 +31,7 @@ const ModalSubMenuAvatarPicker = ({
       width: '90%',
       borderRadius: 5,
       marginTop: 15,
-      backgroundColor: (colors as any).quaternary,
+      backgroundColor: colors.quaternary,
       flexDirection: 'column',
       justifyContent: 'space-evenly',
     },

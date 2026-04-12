@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useForm } from 'react-hook-form';
-import contactsServiceInstance from '../../../services/api/ContactService';
+import { createContact, updateContact } from '../../../services/api/ContactService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import LoggerService from '../../../services/logs/LoggerService';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalContactProps {
   isVisible: boolean;
@@ -18,7 +19,7 @@ interface ModalContactProps {
 }
 
 const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModify = undefined }: ModalContactProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { firebaseUser } = useAuthStore();
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [loading, setLoading] = useState(false);
@@ -44,11 +45,11 @@ const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModif
     setLoading(true);
     data['emailproprietaire'] = firebaseUser?.email ?? '';
     if (actionType === 'modify') {
-      contactsServiceInstance.update(data)
+      updateContact(String(data.id), data)
         .then((reponse) => { onModify?.(reponse); resetValues(); closeModal(); setLoading(false); })
         .catch((err) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la MAJ d\'un contact : ' + err.message); setLoading(false); });
     } else {
-      contactsServiceInstance.create(data)
+      createContact(data)
         .then(() => { resetValues(); closeModal(); onModify?.(); setLoading(false); })
         .catch((err) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la création d\'un contact : ' + err.message); setLoading(false); });
     }
@@ -59,8 +60,8 @@ const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModif
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { alignItems: 'center', width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: (colors as any).default_dark },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark, alignSelf: 'baseline' },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, alignSelf: 'baseline' },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
@@ -74,13 +75,13 @@ const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModif
             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
           </TouchableOpacity>
           <View style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[styles.textFontBold, { fontSize: 16, color: (colors as any).default_dark }]}>Contact</Text>
+            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Contact</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
             {loading ? (
-              <ActivityIndicator size={10} color={(colors as any).default_dark} />
+              <ActivityIndicator size={10} color={colors.default_dark} />
             ) : (
-              <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>
+              <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>
                 {actionType === 'modify' ? 'Modifier' : 'Créer'}
               </Text>
             )}

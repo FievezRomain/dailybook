@@ -29,7 +29,7 @@ export class CalendarFilter {
   filter(events: Event[]): Event[] {
     return events
       .filter((event) => {
-        const matchDate = this.date ? event.dateevent === this.date : true;
+        const matchDate = this.date ? new Date(event.dateevent).toDateString() === this.date.toDateString() : true;
 
         const matchAnimals =
           this.animals && this.animals.length > 0
@@ -44,9 +44,9 @@ export class CalendarFilter {
             : true;
 
         const matchText = this.text
-          ? [event.eventtype, event.discipline, event.epreuve, event.lieu, event.nom, event.traitement].some(
+          ? [event.eventtype, (event as Record<string, unknown>)['discipline'], (event as Record<string, unknown>)['epreuve'], event.lieu, event.nom, (event as Record<string, unknown>)['traitement']].some(
               (field) =>
-                this.normalizeText(field || '').includes(this.normalizeText(this.text))
+                this.normalizeText(String(field ?? '')).includes(this.normalizeText(this.text))
             )
           : true;
 

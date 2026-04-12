@@ -1,7 +1,8 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { SimpleLineIcons, AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalSubMenuAnimalActionsProps {
   modalVisible: boolean;
@@ -12,7 +13,7 @@ interface ModalSubMenuAnimalActionsProps {
 }
 
 const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify, handleDelete, handleReportDeath }: ModalSubMenuAnimalActionsProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   const onAction = (event: () => void) => {
     setModalVisible(false);
@@ -22,7 +23,7 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
   const styles = StyleSheet.create({
     textActionButton: { marginLeft: 15 },
     informationsActionButton: { flexDirection: 'row', alignItems: 'center', marginLeft: 10 },
-    actionButtonContainer: { width: '90%', marginTop: 15, borderRadius: 5, backgroundColor: (colors as any).quaternary, flexDirection: 'column', justifyContent: 'space-evenly' },
+    actionButtonContainer: { width: '90%', marginTop: 15, borderRadius: 5, backgroundColor: colors.quaternary, flexDirection: 'column', justifyContent: 'space-evenly' },
     actionButton: { padding: 15 },
     card: { justifyContent: 'space-evenly', alignItems: 'center' },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
@@ -32,7 +33,7 @@ const ModalSubMenuAnimalActions = ({ modalVisible, setModalVisible, handleModify
   return (
     <ModalEditGeneric isVisible={modalVisible} setVisible={setModalVisible} arrayHeight={['30%']}>
       <View style={styles.card}>
-        <Text style={[styles.textFontRegular, { color: (colors as any).default_dark }]}>Gérer les informations</Text>
+        <Text style={[styles.textFontRegular, { color: colors.default_dark }]}>Gérer les informations</Text>
         <View style={styles.actionButtonContainer}>
           <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
             <View style={styles.informationsActionButton}>

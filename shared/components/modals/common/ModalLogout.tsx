@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import Button from '../../inputs/Button';
 import { useAuthStore } from '../../../../stores/useAuthStore';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 import ModalEditGeneric from './ModalEditGeneric';
 
 interface ModalLogoutProps {
@@ -12,7 +12,7 @@ interface ModalLogoutProps {
 }
 
 const ModalLogout = ({ modalVisible, setModalVisible }: ModalLogoutProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { signOutUser } = useAuthStore();
 
   const disconnect = async () => {
@@ -27,7 +27,7 @@ const ModalLogout = ({ modalVisible, setModalVisible }: ModalLogoutProps) => {
     },
     message: {
       alignSelf: 'center',
-      color: (colors as any).default_dark,
+      color: colors.default_dark,
       marginBottom: 20,
     },
     textFontRegular: { fontFamily: fonts.default.fontFamily },

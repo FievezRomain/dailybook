@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import { ActivityIndicator, StyleSheet, TouchableOpacity, View, Text, FlatList } from 'react-native';
 import { useGroupForm } from '../hooks/useGroupForm';
 import ItemAnimalPicker from '../../../shared/components/inputs/ItemAnimalPicker';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalAddAnimalProps {
   isVisible: boolean;
@@ -14,7 +15,7 @@ interface ModalAddAnimalProps {
 }
 
 const ModalAddAnimal = ({ isVisible, setVisible, group = {}, onModify = undefined }: ModalAddAnimalProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
 
   const closeModal = () => setVisible(false);
@@ -68,10 +69,10 @@ const ModalAddAnimal = ({ isVisible, setVisible, group = {}, onModify = undefine
             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
           </TouchableOpacity>
           <View style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[styles.textFontBold, { fontSize: 16, color: (colors as any).default_dark }]}>Groupe</Text>
+            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Groupe</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-            {loading ? <ActivityIndicator size={10} color={(colors as any).default_dark} /> : <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>Inviter</Text>}
+            {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Inviter</Text>}
           </TouchableOpacity>
         </View>
         <Divider />

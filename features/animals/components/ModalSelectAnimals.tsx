@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Button from '../../../shared/components/inputs/Button';
 import AnimalsPicker from '../../../shared/components/inputs/AnimalsPicker';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 
 interface ModalSelectAnimalsProps {
@@ -17,7 +17,7 @@ interface ModalSelectAnimalsProps {
 }
 
 const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected, setValue, valueName, displayAnimalsShared = true }: ModalSelectAnimalsProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   const styles = StyleSheet.create({
     buttonContainer: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 5, marginBottom: 20 },

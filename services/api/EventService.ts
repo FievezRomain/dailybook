@@ -1,40 +1,22 @@
 import httpClient from './httpClient';
+import { createCrudService } from './factory';
+import { CreateEventPayload, UpdateEventPayload, PatchEventPayload } from '../../features/events/types';
+import { Event } from '../../models/Event';
 
-export async function getEvents() {
-  const response = await httpClient.get('/events');
-  return response.data;
-}
+const _crud = createCrudService<Event, CreateEventPayload, UpdateEventPayload>('/events');
 
-export async function createEvent(body: Record<string, unknown>) {
-  const response = await httpClient.post('/events', body);
-  return response.data;
-}
-
-export async function updateEvent(eventId: string, body: Record<string, unknown>) {
-  const response = await httpClient.put(`/events/${eventId}`, body);
-  return response.data;
-}
+export const getEvents = _crud.getAll;
+export const createEvent = _crud.create;
+export const updateEvent = _crud.update;
+export const deleteEvent = _crud.remove;
 
 /** Mise à jour partielle : état, commentaire, note, dépense */
-export async function patchEvent(eventId: string, body: Record<string, unknown>) {
+export async function patchEvent(eventId: string, body: PatchEventPayload): Promise<Event> {
   const response = await httpClient.patch(`/events/${eventId}`, body);
   return response.data;
 }
 
-export async function deleteEvent(eventId: string) {
-  const response = await httpClient.delete(`/events/${eventId}`);
-  return response.data;
-}
-
-export async function getEventDocumentUrl(eventId: string, filename: string) {
+export async function getEventDocumentUrl(eventId: string, filename: string): Promise<string> {
   const response = await httpClient.get(`/events/${eventId}/documents/${filename}`);
   return response.data;
 }
-
-// ─── Backward-compatible service adapter ────────────────────────────────────
-const eventsServiceInstance = {
-  create: (body: any) => createEvent(body),
-  update: (body: any) => updateEvent(body.id, body),
-  updateCommentaireNote: (body: any) => patchEvent(body.id, body),
-};
-export default eventsServiceInstance;

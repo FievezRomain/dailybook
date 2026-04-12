@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import ModalEditGeneric from "../common/ModalEditGeneric";
 import Button from "../../inputs/Button";
-import { useTheme } from "react-native-paper";
+import { useAppTheme } from "../../../../theme/useAppTheme";
 
 type ModalMultiSelectProps<T> = {
   visible: boolean;
@@ -29,14 +29,14 @@ function ModalMultiSelect<T extends Record<string, any>>({
   modalHeight = "40%",
   renderItem,
 }: ModalMultiSelectProps<T>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   const styles = StyleSheet.create({
     itemContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "center", marginTop: 20 },
-    item: { backgroundColor: (colors as any).quaternary, borderRadius: 5, margin: 5, padding: 10 },
-    selected: { backgroundColor: (colors as any).accent },
+    item: { backgroundColor: colors.quaternary, borderRadius: 5, margin: 5, padding: 10 },
+    selected: { backgroundColor: colors.accent },
     disabled: { backgroundColor: colors.onSurface },
-    disabledText: { color: (colors as any).quaternary },
+    disabledText: { color: colors.quaternary },
     title: { color: colors.background },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },

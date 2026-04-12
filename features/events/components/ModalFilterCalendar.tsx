@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useForm } from 'react-hook-form';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import AnimalsPicker from '../../../shared/components/inputs/AnimalsPicker';
 import { CalendarFilter } from '../../../business/models/CalendarFilter';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
+import { Animal } from '../../../models/Animal';
 
 interface ModalFilterCalendarProps {
   modalVisible: boolean;
@@ -25,11 +26,11 @@ const typesList = [
 ];
 
 const ModalFilterCalendar = ({ modalVisible, setModalVisible, setFilter, filter }: ModalFilterCalendarProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { register, handleSubmit, setValue, watch } = useForm();
   const { data: animauxData } = useAnimalsQuery();
-  const [animaux, setAnimaux] = useState<any[]>([]);
-  const [selectedAnimals, setSelectedAnimals] = useState<any[]>([]);
+  const [animaux, setAnimaux] = useState<Animal[]>([]);
+  const [selectedAnimals, setSelectedAnimals] = useState<Animal[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
 
   useEffect(() => { if (animauxData) setAnimaux(animauxData); }, [animauxData]);
@@ -57,17 +58,17 @@ const ModalFilterCalendar = ({ modalVisible, setModalVisible, setFilter, filter 
 
   const styles = StyleSheet.create({
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingBottom: 15, paddingTop: 5 },
-    bottomBar: { height: 1, backgroundColor: (colors as any).quaternary, marginHorizontal: 20, marginBottom: 10 },
+    bottomBar: { height: 1, backgroundColor: colors.quaternary, marginHorizontal: 20, marginBottom: 10 },
     contentCard: { paddingHorizontal: 20, paddingBottom: 20 },
     filtersContainer: { marginTop: 10 },
-    filterTitle: { fontSize: 15, marginBottom: 8, color: (colors as any).default_dark },
+    filterTitle: { fontSize: 15, marginBottom: 8, color: colors.default_dark },
     itemContainer: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 5 },
-    item: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: (colors as any).quaternary, marginRight: 8, marginBottom: 8 },
-    selected: { backgroundColor: (colors as any).accent },
-    title: { fontSize: 13, color: (colors as any).default_dark },
-    actionText: { color: (colors as any).default_dark, fontSize: 16 },
+    item: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: colors.quaternary, marginRight: 8, marginBottom: 8 },
+    selected: { backgroundColor: colors.accent },
+    title: { fontSize: 13, color: colors.default_dark },
+    actionText: { color: colors.default_dark, fontSize: 16 },
     cancelText: { color: colors.tertiary, fontSize: 16 },
-    headerTitle: { fontSize: 16, color: (colors as any).default_dark },
+    headerTitle: { fontSize: 16, color: colors.default_dark },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
   });

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as NoteService from '../../services/api/NoteService';
+import { CreateNotePayload, UpdateNotePayload } from '../../features/notes/types';
 
 export const NOTES_KEY = ['notes'] as const;
 
@@ -15,12 +16,12 @@ export function useNoteMutations() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: NOTES_KEY });
 
   const create = useMutation({
-    mutationFn: (body: Record<string, unknown>) => NoteService.createNote(body),
+    mutationFn: (body: CreateNotePayload) => NoteService.createNote(body),
     onSuccess: invalidate,
   });
 
   const update = useMutation({
-    mutationFn: ({ id, body }: { id: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ id, body }: { id: string; body: UpdateNotePayload }) =>
       NoteService.updateNote(id, body),
     onSuccess: invalidate,
   });

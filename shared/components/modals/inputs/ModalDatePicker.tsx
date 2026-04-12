@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import Button from '../../inputs/Button';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 import instanceDateUtils from '../../../utils/DateUtils';
 
 LocaleConfig.locales['fr'] = {
@@ -21,7 +21,7 @@ interface CalendarPickerProps {
 }
 
 const CalendarPicker = ({ onDayChange, propertyName, defaultDate }: CalendarPickerProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [selectedDate, setSelectedDate] = useState(defaultDate ?? new Date().toISOString().split('T')[0]);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -39,7 +39,7 @@ const CalendarPicker = ({ onDayChange, propertyName, defaultDate }: CalendarPick
   const styles = StyleSheet.create({
     modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0, 0, 0, 0.5)' },
     modalContent: { backgroundColor: colors.background, padding: 20, borderRadius: 10, width: '80%' },
-    dateContainer: { borderRadius: 5, backgroundColor: (colors as any).quaternary },
+    dateContainer: { borderRadius: 5, backgroundColor: colors.quaternary },
     date: { padding: 10 },
     closeButtonContainer: { marginTop: 20 },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
@@ -64,10 +64,10 @@ const CalendarPicker = ({ onDayChange, propertyName, defaultDate }: CalendarPick
                   monthFormat="MMMM yyyy"
                   markedDates={selectedDate ? { [selectedDate]: { selected: true } } : {}}
                   theme={{
-                    arrowColor: (colors as any).neutral,
+                    arrowColor: colors.neutral,
                     todayTextColor: colors.tertiary,
                     selectedDayTextColor: colors.background,
-                    selectedDayBackgroundColor: (colors as any).accent,
+                    selectedDayBackgroundColor: colors.accent,
                   }}
                   enableSwipeMonths={false}
                 />

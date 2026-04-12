@@ -13,7 +13,7 @@ export const env = {
 
   // URL de l'API — commute automatiquement dev/prod
   API_URL: IS_DEV
-    ? (process.env.EXPO_PUBLIC_API_URL_DEV ?? 'http://192.168.1.21:8080/api/v1')
+    ? (process.env.EXPO_PUBLIC_API_URL_DEV ?? 'http://192.168.1.16:8080/api/v1')
     : (process.env.EXPO_PUBLIC_API_URL_PROD ?? 'https://vasco-planner.fr/api/v1'),
 
   // Firebase

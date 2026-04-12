@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 
 const ModalDefaultNoValue = ({ text }: { text: string }) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   return (
     <View style={{
@@ -12,12 +12,12 @@ const ModalDefaultNoValue = ({ text }: { text: string }) => {
       paddingHorizontal: 20,
       paddingVertical: 25,
       borderRadius: 5,
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
     }}>
-      <Text style={{ fontFamily: fonts.default.fontFamily, color: (colors as any).default_dark }}>{text}</Text>
+      <Text style={{ fontFamily: fonts.default.fontFamily, color: colors.default_dark }}>{text}</Text>
     </View>
   );
 };

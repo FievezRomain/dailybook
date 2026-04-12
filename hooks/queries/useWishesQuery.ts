@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as WishService from '../../services/api/WishService';
+import { CreateWishPayload, UpdateWishPayload } from '../../features/wishes/types';
 
 export const WISHES_KEY = ['wishes'] as const;
 
@@ -15,12 +16,12 @@ export function useWishMutations() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: WISHES_KEY });
 
   const create = useMutation({
-    mutationFn: (body: FormData | Record<string, unknown>) => WishService.createWish(body),
+    mutationFn: (body: FormData | CreateWishPayload) => WishService.createWish(body),
     onSuccess: invalidate,
   });
 
   const update = useMutation({
-    mutationFn: ({ id, body }: { id: string; body: FormData | Record<string, unknown> }) =>
+    mutationFn: ({ id, body }: { id: string; body: FormData | UpdateWishPayload }) =>
       WishService.updateWish(id, body),
     onSuccess: invalidate,
   });

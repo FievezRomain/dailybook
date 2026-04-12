@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { useTheme, Divider } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import TopTab from '../../../shared/components/common/TopTab';
 import ModalEvents from '../components/ModalEvents';
@@ -12,34 +12,35 @@ import ModalContact from '../../contacts/components/ModalContact';
 import ModalNote from '../../notes/components/ModalNote';
 import ModalAnimal from '../../animals/components/ModalAnimal';
 import type { TabScreenProps } from '../../../navigation/types';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 const toastSuccess = (text1: string) => setTimeout(() => Toast.show({ type: 'success', position: 'top', text1 }), 300);
 
 export default function ActionScreen({ navigation }: TabScreenProps<'Action' extends keyof any ? any : any>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [isEventModalVisible, setEventModalVisible] = useState(false);
   const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
   const [isWishModalVisible, setWishModalVisible] = useState(false);
   const [isContactModalVisible, setContactModalVisible] = useState(false);
   const [isNoteModalVisible, setNoteModalVisible] = useState(false);
   const [isAnimalModalVisible, setAnimalModalVisible] = useState(false);
-  const [event, setEvent] = useState<Record<string, unknown>>({});
+  const [event, setEvent] = useState<any>(undefined);
 
   const openModalEvent = (typeEvent: string) => {
-    setEvent({ eventtype: typeEvent });
+    setEvent({ eventtype: typeEvent } as any);
     setEventModalVisible(true);
   };
 
   const styles = StyleSheet.create({
-    iconAction: { color: (colors as any).default_dark, paddingRight: 10 },
-    iconButton: { marginRight: 20, color: (colors as any).default_dark },
+    iconAction: { color: colors.default_dark, paddingRight: 10 },
+    iconButton: { marginRight: 20, color: colors.default_dark },
     informationsButtonContainer: { flexDirection: 'row', alignItems: 'center', paddingLeft: 30 },
     touchableOpacityButtonContent: { flexDirection: 'row', width: '100%', justifyContent: 'space-between', paddingBottom: 10, paddingTop: 10 },
     formContainer: { paddingTop: 10, paddingBottom: 10 },
-    form: { alignItems: 'center', justifyContent: 'center', marginLeft: 'auto', marginRight: 'auto', borderRadius: 10, paddingTop: 10, shadowColor: (colors as any).default_dark, shadowOpacity: 0.1, marginTop: 50, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
+    form: { alignItems: 'center', justifyContent: 'center', marginLeft: 'auto', marginRight: 'auto', borderRadius: 10, paddingTop: 10, shadowColor: colors.default_dark, shadowOpacity: 0.1, marginTop: 50, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
     groupButton: { backgroundColor: colors.background, marginBottom: 10 },
     button: {},
-    textFontRegular: { fontFamily: (fonts as any).default?.fontFamily },
+    textFontRegular: { fontFamily: fonts.default?.fontFamily },
   });
 
   const row = (icon: React.ReactNode, label: string, onPress: () => void) => (

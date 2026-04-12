@@ -10,5 +10,10 @@ declare module 'react-native-paper' {
     neutral: string;
     text: string;
     onSurface: string;
+    disabled: string;
+  }
+
+  interface MD3TypescaleKey {
+    default: string;
   }
 }

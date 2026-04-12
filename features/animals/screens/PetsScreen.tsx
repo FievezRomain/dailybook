@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, Animated, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import { useFocusEffect } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import Toast from 'react-native-toast-message';
@@ -18,7 +18,7 @@ import { GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import type { TabScreenProps } from '../../../navigation/types';
 
 export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const queryClient = useQueryClient();
   const { data: animaux = [], isFetching } = useAnimalsQuery();
   const { remove } = useAnimalMutations();
@@ -81,9 +81,9 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
   const styles = StyleSheet.create({
     rubriqueContainer: { marginTop: 10, marginBottom: 25 },
     iconsContainer: { flexDirection: 'row', paddingVertical: 10 },
-    separatorFix: { borderTopColor: (colors as any).quaternary, borderTopWidth: 0.4, position: 'absolute', bottom: 0, height: 2, width: '100%' },
-    separatorAnimated: { height: 3, backgroundColor: (colors as any).default_dark, position: 'absolute', bottom: 0, width: '33.3%' },
-    textFontMedium: { fontFamily: (fonts as any).bodyMedium?.fontFamily },
+    separatorFix: { borderTopColor: colors.quaternary, borderTopWidth: 0.4, position: 'absolute', bottom: 0, height: 2, width: '100%' },
+    separatorAnimated: { height: 3, backgroundColor: colors.default_dark, position: 'absolute', bottom: 0, width: '33.3%' },
+    textFontMedium: { fontFamily: fonts.bodyMedium?.fontFamily },
   });
 
   return (
@@ -106,7 +106,7 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
             data={[]}
             keyExtractor={() => 'key'}
             renderItem={null}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={(colors as any).default_dark} />}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />}
             ListHeaderComponent={
               <>
                 <View style={{ alignContent: 'flex-start', justifyContent: 'flex-start', alignItems: 'flex-start', marginTop: 20 }}>
@@ -123,16 +123,16 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
                 <View style={styles.rubriqueContainer}>
                   <View style={styles.iconsContainer}>
                     <TouchableOpacity style={{ width: '33.3%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-                      <Entypo name="info-with-circle" size={20} color={activeRubrique === 0 ? (colors as any).default_dark : (colors as any).quaternary} style={{ marginRight: 5 }} />
-                      <Text style={[{ color: activeRubrique === 0 ? (colors as any).default_dark : (colors as any).quaternary }, styles.textFontMedium]}>Informations</Text>
+                      <Entypo name="info-with-circle" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{ marginRight: 5 }} />
+                      <Text style={[{ color: activeRubrique === 0 ? colors.default_dark : colors.quaternary }, styles.textFontMedium]}>Informations</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ width: '33.3%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-                      <MaterialCommunityIcons name="clipboard-pulse-outline" size={20} color={activeRubrique === 1 ? (colors as any).default_dark : (colors as any).quaternary} style={{ marginRight: 5 }} />
-                      <Text style={[{ color: activeRubrique === 1 ? (colors as any).default_dark : (colors as any).quaternary }, styles.textFontMedium]}>Physique</Text>
+                      <MaterialCommunityIcons name="clipboard-pulse-outline" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{ marginRight: 5 }} />
+                      <Text style={[{ color: activeRubrique === 1 ? colors.default_dark : colors.quaternary }, styles.textFontMedium]}>Physique</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ width: '33.3%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} onPress={() => { setActiveRubrique(2); moveSeparator(2); }}>
-                      <FontAwesome6 name="book-medical" size={20} color={activeRubrique === 2 ? (colors as any).default_dark : (colors as any).quaternary} style={{ marginRight: 5 }} />
-                      <Text style={[{ color: activeRubrique === 2 ? (colors as any).default_dark : (colors as any).quaternary }, styles.textFontMedium]}>Santé</Text>
+                      <FontAwesome6 name="book-medical" size={20} color={activeRubrique === 2 ? colors.default_dark : colors.quaternary} style={{ marginRight: 5 }} />
+                      <Text style={[{ color: activeRubrique === 2 ? colors.default_dark : colors.quaternary }, styles.textFontMedium]}>Santé</Text>
                     </TouchableOpacity>
                   </View>
                   <View style={styles.separatorFix} />

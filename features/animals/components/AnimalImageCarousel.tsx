@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import Carousel from 'react-native-reanimated-carousel';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import { getFileUrl, uploadFile, deleteFile } from '../../../services/aws/FileStorageService';
 
 import { getAnimalBodyPictures, addAnimalBodyPicture, deleteAnimalBodyPicture } from '../../../services/api/AnimalsService';
@@ -74,7 +74,7 @@ const CarouselImageItem = ({
 };
 
 const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [modalConfirmDeleteVisible, setModalConfirmDeleteVisible] = useState(false);
@@ -169,7 +169,7 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
               disabled={currentMonthCount >= LIMIT_PICTURE_BY_MONTH}
               style={[
                 styles.button,
-                { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? (colors as any).disabled : (colors as any).accent },
+                { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.secondary : colors.accent },
               ]}
             >
               <Text style={[styles.textFontRegular, { textTransform: 'uppercase', color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? 'gray' : 'white' }]}>
@@ -222,7 +222,7 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
                   height: 8,
                   borderRadius: 4,
                   marginHorizontal: 4,
-                  backgroundColor: dotIndex === currentIndex ? (colors as any).accent : colors.tertiary,
+                  backgroundColor: dotIndex === currentIndex ? colors.accent : colors.tertiary,
                 }}
               />
             );
@@ -237,7 +237,7 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
                 disabled={currentMonthCount >= LIMIT_PICTURE_BY_MONTH}
                 style={[
                   styles.button,
-                  { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? (colors as any).disabled : (colors as any).accent },
+                  { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.secondary : colors.accent },
                 ]}
               >
                 <Text style={[styles.textFontRegular, { color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? 'gray' : 'white' }]}>

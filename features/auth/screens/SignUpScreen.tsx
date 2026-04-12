@@ -6,8 +6,9 @@ import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } 
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import Constants from 'expo-constants';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import { getFirebaseAuth } from '../../../firebase';
+import { getFirebaseError } from '../../../shared/utils/FirebaseErrorUtils';
 import { register as apiRegister } from '../../../services/api/AuthService';
 import Back from '../../../shared/components/common/Back';
 import Button from '../../../shared/components/inputs/Button';
@@ -17,17 +18,8 @@ const wallpaper_login = require('../../../assets/wallpaper_login.png');
 
 type FormData = { email: string; prenom: string; password: string; password_confirm: string };
 
-const FIREBASE_ERRORS: Record<string, string> = {
-  'auth/email-already-in-use': 'Cette adresse e-mail est déjà utilisée.',
-  'auth/invalid-email': 'Adresse e-mail invalide.',
-  'auth/operation-not-allowed': "L'inscription par e-mail et mot de passe est désactivée.",
-  'auth/weak-password': 'Le mot de passe est trop faible.',
-};
-const getFirebaseError = (error: any) =>
-  FIREBASE_ERRORS[error?.code] ?? "Une erreur inconnue s'est produite. Veuillez réessayer.";
-
 export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Register'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [evenPassword, setEvenPassword] = useState(true);
   const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
@@ -63,13 +55,13 @@ export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Regis
     image: { flex: 1, height: '100%', width: '100%', resizeMode: 'cover', position: 'absolute', justifyContent: 'center' },
     register: { flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
     form: { paddingTop: 50, alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.9)', justifyContent: 'center', width: '90%', top: -(Constants.statusBarHeight + 10), borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
-    title: { top: -(Constants.statusBarHeight + 10), color: (colors as any).default_dark, fontSize: 30, letterSpacing: 2, marginBottom: 20 },
-    input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: 'black' },
+    title: { top: -(Constants.statusBarHeight + 10), color: colors.default_dark, fontSize: 30, letterSpacing: 2, marginBottom: 20 },
+    input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: 'black' },
     registerButton: { marginBottom: 20, marginTop: 10, borderRadius: 10 },
     textButton: { color: 'white' },
     errorInput: { color: 'red', textAlign: 'center' },
-    textFontMedium: { fontFamily: (fonts as any).bodyMedium.fontFamily },
-    textFontRegular: { fontFamily: (fonts as any).default.fontFamily },
+    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
+    textFontRegular: { fontFamily: fonts.default.fontFamily },
   });
 
   return (

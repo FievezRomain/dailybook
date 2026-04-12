@@ -1,37 +1,33 @@
 import httpClient from './httpClient';
+import { createCrudService } from './factory';
+import {
+  CreateGroupPayload,
+  UpdateGroupPayload,
+  RemoveMemberPayload,
+  InviteMembersPayload,
+  RespondInvitationPayload,
+  ProposeAnimalPayload,
+  RespondAnimalSharePayload,
+} from '../../features/groups/types';
+import { Group } from '../../models/Group';
 
-// ─── Groupes ──────────────────────────────────────────────────────────────────
+// ─── Groupes ──────────────────────────────────────────────────────────────────────────────────
 
-export async function getGroups() {
-  const response = await httpClient.get('/groups');
-  return response.data;
-}
+const _crud = createCrudService<Group, CreateGroupPayload, UpdateGroupPayload>('/groups');
 
-export async function createGroup(body: Record<string, unknown>) {
-  const response = await httpClient.post('/groups', body);
-  return response.data;
-}
+export const getGroups = _crud.getAll;
+export const createGroup = _crud.create;
+export const updateGroup = _crud.update;
+export const deleteGroup = _crud.remove;
 
-export async function updateGroup(groupId: string, body: Record<string, unknown>) {
-  const response = await httpClient.put(`/groups/${groupId}`, body);
-  return response.data;
-}
-
-export async function deleteGroup(groupId: string) {
-  const response = await httpClient.delete(`/groups/${groupId}`);
-  return response.data;
-}
-
-export async function removeMember(groupId: string, body: Record<string, unknown>) {
-  const response = await httpClient.delete(`/groups/${groupId}/members`, { data: body });
-  return response.data;
+export async function removeMember(groupId: string, body: RemoveMemberPayload): Promise<void> {
+  await httpClient.delete(`/groups/${groupId}/members`, { data: body });
 }
 
 // ─── Invitations membres ──────────────────────────────────────────────────────
 
-export async function inviteMembers(groupId: string, body: Record<string, unknown>) {
-  const response = await httpClient.post(`/groups/${groupId}/invitations`, body);
-  return response.data;
+export async function inviteMembers(groupId: string, body: InviteMembersPayload): Promise<void> {
+  await httpClient.post(`/groups/${groupId}/invitations`, body);
 }
 
 export async function getInvitations() {
@@ -41,10 +37,9 @@ export async function getInvitations() {
 
 export async function respondInvitation(
   invitationId: string,
-  body: Record<string, unknown>,
-) {
-  const response = await httpClient.patch(`/invitations/${invitationId}`, body);
-  return response.data;
+  body: RespondInvitationPayload,
+): Promise<void> {
+  await httpClient.patch(`/invitations/${invitationId}`, body);
 }
 
 // ─── Partage d'animaux ────────────────────────────────────────────────────────
@@ -54,9 +49,8 @@ export async function getGroupAnimals(groupId: string) {
   return response.data;
 }
 
-export async function proposeAnimal(groupId: string, body: Record<string, unknown>) {
-  const response = await httpClient.post(`/groups/${groupId}/animals`, body);
-  return response.data;
+export async function proposeAnimal(groupId: string, body: ProposeAnimalPayload): Promise<void> {
+  await httpClient.post(`/groups/${groupId}/animals`, body);
 }
 
 export async function getPendingAnimalShares(groupId: string) {
@@ -66,8 +60,7 @@ export async function getPendingAnimalShares(groupId: string) {
 
 export async function respondAnimalShare(
   shareId: string,
-  body: Record<string, unknown>,
-) {
-  const response = await httpClient.patch(`/animal-shares/${shareId}`, body);
-  return response.data;
+  body: RespondAnimalSharePayload,
+): Promise<void> {
+  await httpClient.patch(`/animal-shares/${shareId}`, body);
 }

@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useAnimalMutations } from "../../../hooks/queries/useAnimalsQuery";
 import { initValuesAnimal, resetValues } from "../../../shared/utils/AnimalHelpers";
-import { createAnimal, updateAnimal } from "../../../services/api/AnimalsService";
 import Toast from "react-native-toast-message";
 import { uploadFile } from "../../../services/aws/FileStorageService";
 import LoggerService from "../../../services/logs/LoggerService";
+import { CreateAnimalPayload, UpdateAnimalPayload } from '../types';
 import instanceDateUtils from "../../../shared/utils/DateUtils";
 
 interface CurrentUser {
@@ -20,7 +20,8 @@ export const useAnimalForm = (
   onModify: (response: unknown) => void,
   closeModal: () => void,
 ) => {
-  const [loading, setLoading] = useState(false);
+  const mutations = useAnimalMutations();
+  const loading = mutations.create.isPending || mutations.update.isPending;
 
   const initializeAnimal = async (
     animal: Record<string, unknown>,
@@ -44,7 +45,6 @@ export const useAnimalForm = (
     setError: (name: string, error: { type: string }) => void,
   ) => {
     if (loading) return;
-    setLoading(true);
 
     try {
       const controlResult = await formatAndControlAnimalData(data, actionType, setError, espece);
@@ -52,8 +52,8 @@ export const useAnimalForm = (
 
       const response =
         actionType === "modify"
-          ? await updateAnimal(data.id as string, data)
-          : await createAnimal(data);
+          ? await mutations.update.mutateAsync({ id: String(data.id as string | number), body: data as unknown as UpdateAnimalPayload })
+          : await mutations.create.mutateAsync(data as unknown as CreateAnimalPayload);
 
       resetAnimalValues(setDate, setEspece);
       closeModal();
@@ -61,8 +61,6 @@ export const useAnimalForm = (
     } catch (err: unknown) {
       Toast.show({ type: "error", position: "top", text1: (err as Error).message });
       LoggerService.log("Erreur lors de la " + actionType + " d'un animal : " + (err as Error).message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -74,7 +72,6 @@ export const useAnimalForm = (
   ): Promise<Record<string, unknown> | null> => {
     if (!espece) {
       setError("espece", { type: "manual" });
-      setLoading(false);
       return null;
     }
 
@@ -97,7 +94,6 @@ export const useAnimalForm = (
         ))
     ) {
       Toast.show({ position: "top", type: "error", text1: "Problème de format de date" });
-      setLoading(false);
       return null;
     }
 
@@ -112,12 +108,10 @@ export const useAnimalForm = (
         !instanceDateUtils.isDateValid(data["datedeces"] as string))
     ) {
       Toast.show({ position: "top", type: "error", text1: "Problème de format de date de décès" });
-      setLoading(false);
       return null;
     }
 
     if (!checkNumericFormat(data, "taille") || !checkNumericFormat(data, "poids") || !checkNumericFormat(data, "quantity")) {
-      setLoading(false);
       return null;
     }
 

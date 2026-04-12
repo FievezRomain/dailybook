@@ -3,9 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView } from 'r
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { Divider, IconButton, useTheme } from 'react-native-paper';
+import { Divider, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { deleteUser, updateProfile, getAuth } from 'firebase/auth';
+import { deleteUser, updateProfile } from 'firebase/auth';
+import { getFirebaseAuth } from '../../../firebase';
 import * as ImagePicker from 'expo-image-picker';
 import Toast from 'react-native-toast-message';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
@@ -19,12 +20,13 @@ import { useAuthStore } from '../../../stores/useAuthStore';
 import { useThemeStore } from '../../../stores/useThemeStore';
 import ImageUtils from '../../../shared/utils/ImageUtils';
 import type { AppNavigationProp } from '../../../navigation/types';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 const imageUtils = new ImageUtils();
 
 export default function SettingsScreen() {
   const navigation = useNavigation<AppNavigationProp>();
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
   const user = useAuthStore((s) => s.user);
   const signOutUser = useAuthStore((s) => s.signOutUser);
@@ -45,7 +47,7 @@ export default function SettingsScreen() {
 
   const handleDeleteAccount = async () => {
     try {
-      const fbUser = getAuth().currentUser;
+      const fbUser = getFirebaseAuth().currentUser;
       if (fbUser) await deleteUser(fbUser);
       await signOutUser();
     } catch (err: any) {
@@ -57,7 +59,7 @@ export default function SettingsScreen() {
   const saveNewPhoto = async (uriImage: string) => {
     const filename = uriImage.split('/').pop() ?? 'photo.jpg';
     const fileURL = await uploadFile(uriImage, filename, 'image/jpeg', 'user', firebaseUser?.uid ?? '');
-    const fbUser = getAuth().currentUser;
+    const fbUser = getFirebaseAuth().currentUser;
     if (fbUser) await updateProfile(fbUser, { photoURL: fileURL });
     Toast.show({ type: 'success', position: 'top', text1: 'Photo mise à jour' });
   };
@@ -94,13 +96,13 @@ export default function SettingsScreen() {
     settings: { flexDirection: 'column' },
     title: { fontSize: 25 },
     avatar: { width: 100, height: 100, borderRadius: 50, borderWidth: 3, borderColor: colors.background, alignSelf: 'center', top: 25, zIndex: 1, backgroundColor: colors.background },
-    textFontMedium: { fontFamily: (fonts as any).bodyMedium.fontFamily },
-    textFontRegular: { fontFamily: (fonts as any).default.fontFamily },
-    textFontBold: { fontFamily: (fonts as any).bodyLarge.fontFamily },
+    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
+    textFontRegular: { fontFamily: fonts.default.fontFamily },
+    textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
     informationsUserContainer: { alignItems: 'center' },
-    buttonEditUserImage: { height: 30, width: 30, backgroundColor: (colors as any).accent, zIndex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 30, marginLeft: 70 },
-    titleContainer: { color: (colors as any).quaternary, marginLeft: 20, fontFamily: (fonts as any).labelMedium?.fontFamily, fontSize: 16, paddingVertical: 10 },
-    abonnementContainer: { paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15, backgroundColor: (colors as any).accent, marginTop: 10, marginBottom: 20 },
+    buttonEditUserImage: { height: 30, width: 30, backgroundColor: colors.accent, zIndex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 30, marginLeft: 70 },
+    titleContainer: { color: colors.quaternary, marginLeft: 20, fontFamily: fonts.labelMedium?.fontFamily, fontSize: 16, paddingVertical: 10 },
+    abonnementContainer: { paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15, backgroundColor: colors.accent, marginTop: 10, marginBottom: 20 },
     contentContainer: { flex: 1 },
     email: { fontSize: 14 },
   });
@@ -109,11 +111,11 @@ export default function SettingsScreen() {
     <>
       <TouchableOpacity style={{ paddingHorizontal: 10, flexDirection: 'row', justifyContent: 'space-between' }} onPress={onPress}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <IconButton icon={icon} iconColor={(colors as any).accent} size={20} />
-          <Text style={[styles.textFontMedium, { fontSize: 16, color: (colors as any).default_dark }]}>{label}</Text>
+          <IconButton icon={icon} iconColor={colors.accent} size={20} />
+          <Text style={[styles.textFontMedium, { fontSize: 16, color: colors.default_dark }]}>{label}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <IconButton icon="chevron-right" iconColor={(colors as any).accent} size={20} />
+          <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
         </View>
       </TouchableOpacity>
       <Divider />
@@ -166,10 +168,10 @@ export default function SettingsScreen() {
             <TouchableOpacity style={styles.buttonEditUserImage} onPress={() => setModalSubMenuAvatarPickerVisible(true)}>
               <IconButton icon="pencil" size={20} iconColor={colors.background} />
             </TouchableOpacity>
-            <Text style={[styles.title, styles.textFontBold, { color: (colors as any).default_dark }]}>
+            <Text style={[styles.title, styles.textFontBold, { color: colors.default_dark }]}>
               {firebaseUser?.displayName?.slice(0, 17) ?? ''}
             </Text>
-            <Text style={[styles.email, styles.textFontRegular, { color: (colors as any).default_dark }]}>
+            <Text style={[styles.email, styles.textFontRegular, { color: colors.default_dark }]}>
               {firebaseUser?.email ?? ''}
             </Text>
             {user && (

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as ObjectifService from '../../services/api/ObjectifService';
+import { CreateObjectifPayload, UpdateObjectifPayload } from '../../features/objectifs/types';
 
 export const OBJECTIFS_KEY = ['objectifs'] as const;
 
@@ -15,12 +16,12 @@ export function useObjectifMutations() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: OBJECTIFS_KEY });
 
   const create = useMutation({
-    mutationFn: (body: Record<string, unknown>) => ObjectifService.createObjectif(body),
+    mutationFn: (body: CreateObjectifPayload) => ObjectifService.createObjectif(body),
     onSuccess: invalidate,
   });
 
   const update = useMutation({
-    mutationFn: ({ id, body }: { id: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ id, body }: { id: string; body: UpdateObjectifPayload }) =>
       ObjectifService.updateObjectif(id, body),
     onSuccess: invalidate,
   });

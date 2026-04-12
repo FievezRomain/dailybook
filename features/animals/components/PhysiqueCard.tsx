@@ -5,10 +5,12 @@ import { deleteAnimalHistory } from '../../../services/api/AnimalsService';
 import Toast from 'react-native-toast-message';
 import ModalManageBodyAnimal from './ModalManageBodyAnimal';
 import LoggerService from '../../../services/logs/LoggerService';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
 import Feather from '@expo/vector-icons/Feather';
 import ModalSubMenuPhysiqueActions from './ModalSubMenuPhysiqueActions';
+import { useAppTheme } from '../../../theme/useAppTheme';
+import { AnimalHistoryItem } from '../types';
 
 const PhysiqueCard = ({
   infos,
@@ -17,11 +19,11 @@ const PhysiqueCard = ({
   handlePhysiqueDelete,
 }: {
   infos: any;
-  itemType: string;
+  itemType: AnimalHistoryItem;
   handlePhysiqueChange: () => void;
   handlePhysiqueDelete: () => void;
 }) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [modalSubMenuPhysiqueVisible, setModalSubMenuPhysiqueVisible] = useState(false);
   const [modalPhysiqueVisible, setModalPhysiqueVisible] = useState(false);
   const [currentPhysique, setCurrentPhysique] = useState(infos);
@@ -69,7 +71,7 @@ const PhysiqueCard = ({
       backgroundColor: colors.background,
       borderRadius: 5,
       marginBottom: 10,
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -107,14 +109,14 @@ const PhysiqueCard = ({
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', borderTopStartRadius: 5, borderTopEndRadius: 5, padding: 10 }}>
             <View>
-              <Text style={[{ color: (colors as any).default_dark }, styles.textFontBold]}>
+              <Text style={[{ color: colors.default_dark }, styles.textFontBold]}>
                 {currentPhysique.type !== 'quantity' || currentPhysique.unity === null
                   ? currentPhysique.value
                   : `${currentPhysique.value} ${currentPhysique.unity}`}
               </Text>
             </View>
             <TouchableOpacity onPress={onPressOptions}>
-              <Entypo name="dots-three-horizontal" size={20} color={(colors as any).default_dark} />
+              <Entypo name="dots-three-horizontal" size={20} color={colors.default_dark} />
             </TouchableOpacity>
           </View>
         </View>

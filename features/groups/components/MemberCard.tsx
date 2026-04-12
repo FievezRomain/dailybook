@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ActivityIndicator, Icon, useTheme } from 'react-native-paper';
+import { ActivityIndicator, Icon } from 'react-native-paper';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
 import { useGroupForm } from '../hooks/useGroupForm';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
 import { useNavigation } from '@react-navigation/native';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface Member {
   email: string;
@@ -29,7 +30,7 @@ const MemberCard = ({
   userRole: string;
   group: Group;
 }) => {
-  const { colors } = useTheme();
+  const { colors } = useAppTheme();
   const { firebaseUser } = useAuthStore();
   const { handleSubmit, setValue } = useForm();
   const [modalValidationVisible, setModalValidationVisible] = useState(false);
@@ -87,7 +88,7 @@ const MemberCard = ({
       backgroundColor: colors.background,
       marginBottom: 10,
       borderRadius: 5,
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },

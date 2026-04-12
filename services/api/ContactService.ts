@@ -1,28 +1,10 @@
-import httpClient from './httpClient';
+import { createCrudService } from './factory';
+import { CreateContactPayload, UpdateContactPayload } from '../../features/contacts/types';
+import { Contact } from '../../models/Contact';
 
-export async function getContacts() {
-  const response = await httpClient.get('/contacts');
-  return response.data;
-}
+const _crud = createCrudService<Contact, CreateContactPayload, UpdateContactPayload>('/contacts');
 
-export async function createContact(body: Record<string, unknown>) {
-  const response = await httpClient.post('/contacts', body);
-  return response.data;
-}
-
-export async function updateContact(contactId: string, body: Record<string, unknown>) {
-  const response = await httpClient.put(`/contacts/${contactId}`, body);
-  return response.data;
-}
-
-export async function deleteContact(contactId: string) {
-  const response = await httpClient.delete(`/contacts/${contactId}`);
-  return response.data;
-}
-
-// ─── Backward-compatible service adapter ────────────────────────────────────
-const contactsServiceInstance = {
-  create: (body: any) => createContact(body),
-  update: (body: any) => updateContact(body.id, body),
-};
-export default contactsServiceInstance;
+export const getContacts = _crud.getAll;
+export const createContact = _crud.create;
+export const updateContact = _crud.update;
+export const deleteContact = _crud.remove;

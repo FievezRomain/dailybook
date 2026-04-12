@@ -1,12 +1,14 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { useAppTheme } from '../../../theme/useAppTheme';
+import { Event } from '../../../models/Event';
 
 interface ModalSubMenuEventActionsProps {
   modalVisible: boolean;
   setModalVisible: (v: boolean) => void;
-  event: any;
+  event: Event;
   handleModify: () => void;
   handleDelete: () => void;
   handleDeleteAll: () => void;
@@ -14,7 +16,7 @@ interface ModalSubMenuEventActionsProps {
 }
 
 const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handleModify, handleDelete, handleDeleteAll, handleShare }: ModalSubMenuEventActionsProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   const onAction = (e: () => void) => {
     setModalVisible(false);
@@ -24,11 +26,11 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
   const styles = StyleSheet.create({
     textActionButton: { marginLeft: 15 },
     informationsActionButton: { flexDirection: 'row', alignItems: 'center', marginLeft: 10 },
-    actionButtonContainer: { width: '90%', borderRadius: 10, marginTop: 15, backgroundColor: (colors as any).quaternary, flexDirection: 'column', justifyContent: 'space-evenly', marginBottom: 15 },
+    actionButtonContainer: { width: '90%', borderRadius: 10, marginTop: 15, backgroundColor: colors.quaternary, flexDirection: 'column', justifyContent: 'space-evenly', marginBottom: 15 },
     actionButton: { padding: 15 },
     card: { justifyContent: 'space-evenly', alignItems: 'center' },
     disabledButton: { backgroundColor: colors.secondary, borderTopStartRadius: 5, borderTopEndRadius: 5 },
-    disabledText: { color: (colors as any).quaternary },
+    disabledText: { color: colors.quaternary },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
   });
@@ -40,7 +42,7 @@ const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handle
   return (
     <ModalEditGeneric isVisible={modalVisible} setVisible={setModalVisible} arrayHeight={height}>
       <View style={styles.card}>
-        <Text style={[styles.textFontRegular, { color: (colors as any).default_dark }]}>Gérer l'événement</Text>
+        <Text style={[styles.textFontRegular, { color: colors.default_dark }]}>Gérer l'événement</Text>
         <View style={styles.actionButtonContainer}>
           <TouchableOpacity style={[styles.actionButton, styles.disabledButton]}>
             <View style={styles.informationsActionButton}>

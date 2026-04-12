@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, Animated, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import { useFocusEffect } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import { SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
@@ -14,7 +14,7 @@ import { GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import type { TabScreenProps } from '../../../navigation/types';
 
 export default function StatsAndObjectifsScreen({ navigation }: TabScreenProps<'Performance'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const queryClient = useQueryClient();
   const { data: animaux = [] } = useAnimalsQuery();
   const [selectedAnimal, setSelectedAnimal] = useState<any[]>([]);
@@ -45,9 +45,9 @@ export default function StatsAndObjectifsScreen({ navigation }: TabScreenProps<'
   const styles = StyleSheet.create({
     iconsContainer: { flexDirection: 'row', paddingVertical: 10 },
     rubriqueContainer: { marginTop: 10, marginBottom: 10 },
-    separatorFix: { borderTopColor: (colors as any).quaternary, borderTopWidth: 0.4, position: 'absolute', bottom: 0, height: 2, width: '100%' },
-    separatorAnimated: { height: 3, backgroundColor: (colors as any).default_dark, position: 'absolute', bottom: 0, width: '50%' },
-    textFontMedium: { fontFamily: (fonts as any).labelMedium?.fontFamily },
+    separatorFix: { borderTopColor: colors.quaternary, borderTopWidth: 0.4, position: 'absolute', bottom: 0, height: 2, width: '100%' },
+    separatorAnimated: { height: 3, backgroundColor: colors.default_dark, position: 'absolute', bottom: 0, width: '50%' },
+    textFontMedium: { fontFamily: fonts.labelMedium?.fontFamily },
     contentContainer: { flex: 1, alignSelf: 'center', height: '100%', width: '100%', borderRadius: 10 },
   });
 
@@ -66,7 +66,7 @@ export default function StatsAndObjectifsScreen({ navigation }: TabScreenProps<'
         data={[]}
         renderItem={null}
         keyExtractor={() => 'key'}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={(colors as any).default_dark} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />}
         ListHeaderComponent={
           <>
             <View style={{ alignContent: 'flex-start', justifyContent: 'flex-start', alignItems: 'flex-start', marginTop: 20 }}>
@@ -82,12 +82,12 @@ export default function StatsAndObjectifsScreen({ navigation }: TabScreenProps<'
             <View style={styles.rubriqueContainer}>
               <View style={styles.iconsContainer}>
                 <TouchableOpacity style={{ width: '50%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
-                  <SimpleLineIcons name="target" size={20} color={activeRubrique === 0 ? (colors as any).default_dark : (colors as any).quaternary} style={{ marginRight: 5 }} />
-                  <Text style={[{ color: activeRubrique === 0 ? (colors as any).default_dark : (colors as any).quaternary }, styles.textFontMedium]}>Objectifs</Text>
+                  <SimpleLineIcons name="target" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{ marginRight: 5 }} />
+                  <Text style={[{ color: activeRubrique === 0 ? colors.default_dark : colors.quaternary }, styles.textFontMedium]}>Objectifs</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={{ width: '50%', alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }} onPress={() => { setActiveRubrique(1); moveSeparator(1); }}>
-                  <FontAwesome name="pie-chart" size={20} color={activeRubrique === 1 ? (colors as any).default_dark : (colors as any).quaternary} style={{ marginRight: 5 }} />
-                  <Text style={[{ color: activeRubrique === 1 ? (colors as any).default_dark : (colors as any).quaternary }, styles.textFontMedium]}>Statistiques</Text>
+                  <FontAwesome name="pie-chart" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{ marginRight: 5 }} />
+                  <Text style={[{ color: activeRubrique === 1 ? colors.default_dark : colors.quaternary }, styles.textFontMedium]}>Statistiques</Text>
                 </TouchableOpacity>
               </View>
               <View style={styles.separatorFix} />

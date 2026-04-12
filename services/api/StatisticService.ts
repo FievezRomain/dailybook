@@ -1,24 +1,16 @@
 import httpClient from './httpClient';
+import { StatType, StatisticsQueryPayload } from '../../features/statistics/types';
 
-type StatType =
-  | 'depenses'
-  | 'entrainements'
-  | 'balades'
-  | 'poids'
-  | 'tailles'
-  | 'alimentations'
-  | 'concours';
-
-export async function getStatistics(type: StatType, parameters: Record<string, unknown>) {
+export async function getStatistics(type: StatType, parameters: StatisticsQueryPayload) {
   const response = await httpClient.post(`/statistics/${type}`, parameters);
   return response.data;
 }
 
 // Raccourcis par type — conservés pour compatibilité avec les appels existants
-export const getDepenses = (params: Record<string, unknown>) => getStatistics('depenses', params);
-export const getEntrainements = (params: Record<string, unknown>) => getStatistics('entrainements', params);
-export const getBalades = (params: Record<string, unknown>) => getStatistics('balades', params);
-export const getPoids = (params: Record<string, unknown>) => getStatistics('poids', params);
-export const getTailles = (params: Record<string, unknown>) => getStatistics('tailles', params);
-export const getAlimentations = (params: Record<string, unknown>) => getStatistics('alimentations', params);
-export const getConcours = (params: Record<string, unknown>) => getStatistics('concours', params);
+export const getDepenses = (params: StatisticsQueryPayload) => getStatistics('depenses', params);
+export const getEntrainements = (params: StatisticsQueryPayload) => getStatistics('entrainements', params);
+export const getBalades = (params: StatisticsQueryPayload) => getStatistics('balades', params);
+export const getPoids = (params: StatisticsQueryPayload) => getStatistics('poids', params);
+export const getTailles = (params: StatisticsQueryPayload) => getStatistics('tailles', params);
+export const getAlimentations = (params: StatisticsQueryPayload) => getStatistics('alimentations', params);
+export const getConcours = (params: StatisticsQueryPayload) => getStatistics('concours', params);

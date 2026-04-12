@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useTheme } from 'react-native-paper';
-import { updateProfile, updatePassword, updateEmail, getAuth } from 'firebase/auth';
+import { useAppTheme } from '../../../theme/useAppTheme';
+import { updateProfile, updatePassword, updateEmail } from 'firebase/auth';
+import { getFirebaseAuth } from '../../../firebase';
 import Toast from 'react-native-toast-message';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
 import InputTextInLine from '../../../shared/components/inputs/InputTextInLine';
@@ -16,7 +17,7 @@ import { useAuthStore } from '../../../stores/useAuthStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
 
 export default function AccountScreen({ navigation }: AppStackScreenProps<'Account'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
 
   const [password, setPassword] = useState('');
@@ -29,7 +30,7 @@ export default function AccountScreen({ navigation }: AppStackScreenProps<'Accou
   const submitModifications = async () => {
     setLoading(true);
     try {
-      const fbUser = getAuth().currentUser;
+      const fbUser = getFirebaseAuth().currentUser;
       if (!fbUser) return;
 
       if (displayName !== firebaseUser?.displayName) {
@@ -63,7 +64,7 @@ export default function AccountScreen({ navigation }: AppStackScreenProps<'Accou
   };
 
   const styles = StyleSheet.create({
-    textFontMedium: { fontFamily: (fonts as any).bodyMedium.fontFamily },
+    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
   });
 
   return (
@@ -97,7 +98,7 @@ export default function AccountScreen({ navigation }: AppStackScreenProps<'Accou
       </View>
       <View style={{ width: '70%', alignSelf: 'center', marginBottom: 50 }}>
         {loading ? (
-          <ActivityIndicator size={30} color={(colors as any).default_dark} />
+          <ActivityIndicator size={30} color={colors.default_dark} />
         ) : (
           <Button isLong type="primary" size="m" onPress={submitModifications}>
             <Text style={styles.textFontMedium}>Enregistrer</Text>

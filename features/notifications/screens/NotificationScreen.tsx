@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Icon, useTheme } from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import { setBadgeCountAsync } from 'expo-notifications';
 import { useFocusEffect } from '@react-navigation/native';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
@@ -10,9 +10,10 @@ import { useNotificationsQuery, useNotificationMutations } from '../../../hooks/
 import { useGroupMutations } from '../../../hooks/queries/useGroupsQuery';
 import type { AppStackScreenProps } from '../../../navigation/types';
 import instanceDateUtils from '../../../shared/utils/DateUtils';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 export default function NotificationScreen({ navigation }: AppStackScreenProps<'Notification'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { data: notifications = [], isFetching, refetch } = useNotificationsQuery();
   const { markAllAsRead } = useNotificationMutations();
   const { respondInvitation, respondAnimalShare } = useGroupMutations();
@@ -28,7 +29,7 @@ export default function NotificationScreen({ navigation }: AppStackScreenProps<'
   const onRefresh = () => refetch();
 
   const acceptInvitation = (item: any) => {
-    const body = { status: 'accepted' };
+    const body = { status: 'accepted' as const };
     if (item.type === 'group_member') {
       respondInvitation.mutate(
         { invitationId: item.object_id, body },
@@ -43,7 +44,7 @@ export default function NotificationScreen({ navigation }: AppStackScreenProps<'
   };
 
   const refuseInvitation = (item: any) => {
-    const body = { status: 'declined' };
+    const body = { status: 'declined' as const };
     if (item.type === 'group_member') {
       respondInvitation.mutate({ invitationId: item.object_id, body }, { onSuccess: onRefresh });
     } else if (item.type === 'group_animal') {
@@ -52,11 +53,11 @@ export default function NotificationScreen({ navigation }: AppStackScreenProps<'
   };
 
   const styles = StyleSheet.create({
-    card: { borderRadius: 5, shadowColor: (colors as any).default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, padding: 20, marginBottom: 10 },
-    textFontRegular: { fontFamily: (fonts as any).default.fontFamily },
-    textFontBold: { fontFamily: (fonts as any).bodyLarge.fontFamily },
-    textFontSmall: { fontFamily: (fonts as any).bodySmall.fontFamily },
-    textColor: { color: (colors as any).default_dark },
+    card: { borderRadius: 5, shadowColor: colors.default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, padding: 20, marginBottom: 10 },
+    textFontRegular: { fontFamily: fonts.default.fontFamily },
+    textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
+    textFontSmall: { fontFamily: fonts.bodySmall.fontFamily },
+    textColor: { color: colors.default_dark },
   });
 
   if (isFetching && !notifications.length) {
@@ -74,10 +75,10 @@ export default function NotificationScreen({ navigation }: AppStackScreenProps<'
         data={notifications}
         keyExtractor={(item: any, index) => index.toString()}
         contentContainerStyle={{ paddingTop: 10, paddingHorizontal: 20 }}
-        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefresh} colors={[(colors as any).primary]} />}
+        refreshControl={<RefreshControl refreshing={isFetching} onRefresh={onRefresh} colors={[colors.primary]} />}
         ListEmptyComponent={<ModalDefaultNoValue text="Vous n'avez aucune notification" />}
         renderItem={({ item }) => (
-          <View style={[styles.card, { backgroundColor: item.is_read ? colors.background : (colors as any).quaternary }]}>
+          <View style={[styles.card, { backgroundColor: item.is_read ? colors.background : colors.quaternary }]}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <View style={{ width: '80%' }}>
                 <Text style={[styles.textFontBold, styles.textColor]}>{item.title}</Text>
@@ -93,7 +94,7 @@ export default function NotificationScreen({ navigation }: AppStackScreenProps<'
                         <Icon source="close" size={30} color={colors.error} />
                       </TouchableOpacity>
                       <TouchableOpacity onPress={() => acceptInvitation(item)}>
-                        <Icon source="check" size={30} color={(colors as any).accent} />
+                        <Icon source="check" size={30} color={colors.accent} />
                       </TouchableOpacity>
                     </>
                   )

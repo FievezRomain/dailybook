@@ -1,14 +1,6 @@
 import { useState, useEffect } from "react";
 import { initValuesGroup, resetValues } from "../../../shared/utils/GroupHelpers";
-import {
-  createGroup,
-  updateGroup,
-  inviteMembers,
-  respondInvitation,
-  proposeAnimal,
-  respondAnimalShare,
-  removeMember,
-} from "../../../services/api/GroupService";
+import { useGroupMutations } from "../../../hooks/queries/useGroupsQuery";
 import Toast from "react-native-toast-message";
 import LoggerService from "../../../services/logs/LoggerService";
 import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
@@ -20,11 +12,17 @@ export const useGroupForm = (
   onModify: ((response: unknown) => void) | undefined,
   closeModal: () => Promise<void> | void,
 ) => {
-  const [loading, setLoading] = useState(false);
+  const mutations = useGroupMutations();
   const [selected, setSelected] = useState<unknown[]>([]);
   const { data: animaux = [] } = useAnimalsQuery();
   const [members, setMembers] = useState<string[]>([""]);
   const [modalSelectAnimalsIsVisible, setModalSelectAnimalsIsVisible] = useState(false);
+
+  const loading =
+    mutations.create.isPending || mutations.update.isPending ||
+    mutations.inviteMembers.isPending || mutations.respondInvitation.isPending ||
+    mutations.proposeAnimal.isPending || mutations.respondAnimalShare.isPending ||
+    mutations.removeMember.isPending;
 
   useEffect(() => {
     setValue("members", members);
@@ -52,16 +50,15 @@ export const useGroupForm = (
     resetValues(setValue, setSelected, setMembers);
   };
 
-  const checkSelected = (animal: { id: string }) => {
+  const checkSelected = (animal: { id: number }) => {
     if (selected.length > 0) {
-      return (selected as { id: string }[]).some((e) => e.id === animal.id);
+      return (selected as { id: number }[]).some((e) => e.id === animal.id);
     }
     return false;
   };
 
   const submitGroup = async (data: Record<string, unknown>, actionType: string) => {
     if (loading) return;
-    setLoading(true);
 
     try {
       const controlResult = await formatAndControlGroupData(data, actionType);
@@ -70,34 +67,58 @@ export const useGroupForm = (
       let response: unknown = null;
 
       if (actionType === "modify") {
-        response = await updateGroup(data.id as string, data);
+        response = await mutations.update.mutateAsync({
+          id: String(data.id as number),
+          body: { name: data.name as string, informations: data.informations as string | undefined, id: data.id as number },
+        });
       }
       if (actionType === "create") {
-        const created = await createGroup(data);
-        data.id = (created as { id: string }).id;
-        await inviteMembers(data.id as string, { members: data.members });
+        const created = await mutations.create.mutateAsync({
+          name: data.name as string,
+          informations: data.informations as string | undefined,
+        });
+        await mutations.inviteMembers.mutateAsync({
+          groupId: String(created.id),
+          body: { members: (data.members as string[]).filter((m) => m.trim() !== '') },
+        });
         if (selected.length > 0) {
-          response = await proposeAnimal(data.id as string, {
-            animalIds: (selected as { id: string }[]).map((a) => a.id),
+          response = await mutations.proposeAnimal.mutateAsync({
+            groupId: String(created.id),
+            body: { animals: (selected as { id: number }[]).map((a) => a.id) },
           });
         } else {
           response = created;
         }
       }
       if (actionType === "addMember") {
-        response = await inviteMembers(data.id as string, { members: data.members });
+        response = await mutations.inviteMembers.mutateAsync({
+          groupId: String(data.id as number),
+          body: { members: data.members as string[] },
+        });
       }
       if (actionType === "respondMember") {
-        response = await respondInvitation(data.id as string, data);
+        response = await mutations.respondInvitation.mutateAsync({
+          invitationId: String(data.id as number),
+          body: { status: data.status as 'accepted' | 'declined', email: data.email as string | undefined },
+        });
       }
       if (actionType === "addAnimal") {
-        response = await proposeAnimal(data.id as string, data);
+        response = await mutations.proposeAnimal.mutateAsync({
+          groupId: String(data.id as number),
+          body: { animals: (selected as { id: number }[]).map((a) => a.id) },
+        });
       }
       if (actionType === "respondAnimal") {
-        response = await respondAnimalShare(data.id as string, data);
+        response = await mutations.respondAnimalShare.mutateAsync({
+          shareId: String(data.id as number),
+          body: { status: data.status as 'accepted' | 'declined', animaux: data.animaux as number[] | undefined },
+        });
       }
       if (actionType === "deleteMember") {
-        response = await removeMember(data.id as string, data);
+        response = await mutations.removeMember.mutateAsync({
+          groupId: String(data.id as number),
+          body: { user_id: data.user_id as number },
+        });
       }
 
       resetGroupValues();
@@ -107,8 +128,6 @@ export const useGroupForm = (
       console.log(err);
       Toast.show({ type: "error", position: "top", text1: (err as Error).message });
       LoggerService.log("Erreur lors de la " + actionType + " d'un group : " + (err as Error).message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -124,7 +143,6 @@ export const useGroupForm = (
         (membersArr.length === 1 && membersArr[0].trim() === "")
       ) {
         Toast.show({ type: "error", position: "top", text1: "Vous devez ajouter au moins un membre" });
-        setLoading(false);
         return null;
       }
 
@@ -138,7 +156,6 @@ export const useGroupForm = (
           text1: "Email(s) invalide(s)",
           text2: `Corrigez : ${invalidEmails.join(", ")}`,
         });
-        setLoading(false);
         return null;
       }
     }
@@ -150,7 +167,6 @@ export const useGroupForm = (
         (membersArr.length === 1 && membersArr[0].trim() === "")
       ) {
         Toast.show({ type: "error", position: "top", text1: "Vous devez ajouter au moins un membre" });
-        setLoading(false);
         return null;
       }
 
@@ -164,14 +180,12 @@ export const useGroupForm = (
           text1: "Email(s) invalide(s)",
           text2: `Corrigez : ${invalidEmails.join(", ")}`,
         });
-        setLoading(false);
         return null;
       }
     }
     if (actionType === "addAnimal") {
       if (selected.length === 0) {
         Toast.show({ type: "error", position: "top", text1: "Vous devez ajouter au moins un animal" });
-        setLoading(false);
         return null;
       }
     }

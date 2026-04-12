@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator 
 import Toast from 'react-native-toast-message';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import { useAnimalForm } from '../hooks/useAnimalForm';
 import CalendarPicker from '../../../shared/components/modals/inputs/ModalDatePicker';
 import { format } from 'date-fns';
 import instanceDateUtils from '../../../shared/utils/DateUtils';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalReportDeathProps {
   isVisible: boolean;
@@ -19,7 +20,7 @@ interface ModalReportDeathProps {
 }
 
 const ModalReportDeath = ({ isVisible, setVisible, actionType, animal = {}, onModify = undefined }: ModalReportDeathProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { firebaseUser } = useAuthStore();
   const today = new Date();
   const jour = parseInt(String(today.getDate())) < 10 ? '0' + String(today.getDate()) : String(today.getDate());
@@ -42,8 +43,7 @@ const ModalReportDeath = ({ isVisible, setVisible, actionType, animal = {}, onMo
   }, [animal]);
 
   const submitRegister = async (data: any) => {
-    // @ts-ignore
-    submitAnimal(data, actionType, setDate, undefined, () => {}, setError);
+    submitAnimal(data, actionType, setDate as unknown as (v: string | null) => void, undefined, () => {}, setError);
   };
 
   const convertDateToText = (fieldname: string) => {
@@ -62,9 +62,9 @@ const ModalReportDeath = ({ isVisible, setVisible, actionType, animal = {}, onMo
   const styles = StyleSheet.create({
     form: { width: '100%', paddingBottom: 40 },
     containerActionsButtons: { flexDirection: 'row', alignItems: 'center' },
-    bottomBar: { width: '100%', marginBottom: 10, marginTop: 10, height: 0.3, backgroundColor: (colors as any).text },
+    bottomBar: { width: '100%', marginBottom: 10, marginTop: 10, height: 0.3, backgroundColor: colors.text },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: (colors as any).default_dark },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
     containerDate: { flexDirection: 'column', alignSelf: 'center', width: '90%', marginBottom: 15 },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
@@ -78,9 +78,9 @@ const ModalReportDeath = ({ isVisible, setVisible, actionType, animal = {}, onMo
           <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
           </TouchableOpacity>
-          <Text style={[styles.textFontBold, { width: '33.33%', alignSelf: 'center', textAlign: 'center', color: (colors as any).default_dark }]}>Signaler le décès</Text>
+          <Text style={[styles.textFontBold, { width: '33.33%', alignSelf: 'center', textAlign: 'center', color: colors.default_dark }]}>Signaler le décès</Text>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>Enregistrer</Text>
+            <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Enregistrer</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.bottomBar} />

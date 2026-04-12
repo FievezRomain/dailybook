@@ -5,8 +5,9 @@ import { useAppTheme } from '../../../theme/useAppTheme';
 import EventCard from '../../../shared/components/cards/EventCard';
 import Toast from "react-native-toast-message";
 import HeatMapChartComponent from '../../../shared/components/charts/HeatMapChartComponent';
+import { EventChartComponentProps } from '../types';
 
-const EntrainementComponent = ({ data, chartConfig, chartParameters }: any) => {
+const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChartComponentProps) => {
     const { colors, fonts } = useAppTheme();
     const [loading, setLoading] = useState(true);
     const [dataToDisplay, setDataToDisplay] = useState(data);

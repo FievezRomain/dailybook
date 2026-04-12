@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, Keyboard } from 'react-native';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import { Entypo, FontAwesome } from '@expo/vector-icons';
 import validateFile from '../../utils/validateFile';
 import ImageUtils from '../../utils/ImageUtils';

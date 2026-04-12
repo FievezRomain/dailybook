@@ -2,12 +2,13 @@ import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Keyboard } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import { useGroupForm } from '../hooks/useGroupForm';
 import ModalAnimals from '../../animals/components/ModalSelectAnimals';
 import Button from '../../../shared/components/inputs/Button';
 import { AntDesign } from '@expo/vector-icons';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalGroupProps {
   isVisible: boolean;
@@ -18,7 +19,7 @@ interface ModalGroupProps {
 }
 
 const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = undefined }: ModalGroupProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
 
   const closeModal = () => setVisible(false);
@@ -33,15 +34,15 @@ const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = 
     form: { width: '100%', paddingBottom: 40, flex: 1 },
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark },
     inputContainer: { alignItems: 'center', width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: (colors as any).default_dark },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
     containerAnimaux: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 10 },
     badgeAnimal: { padding: 10 },
-    containerBadgeAnimal: { borderRadius: 5, backgroundColor: (colors as any).quaternary, marginRight: 5, marginBottom: 5 },
-    inputMember: { height: 40, width: '95%', borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark, marginRight: 10 },
+    containerBadgeAnimal: { borderRadius: 5, backgroundColor: colors.quaternary, marginRight: 5, marginBottom: 5 },
+    inputMember: { height: 40, width: '95%', borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, marginRight: 10 },
     membersContainer: { flexDirection: 'row', marginBottom: 15, width: '100%', alignItems: 'center' },
   });
 
@@ -54,10 +55,10 @@ const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = 
             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
           </TouchableOpacity>
           <View style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[styles.textFontBold, { fontSize: 16, color: (colors as any).default_dark }]}>Groupe</Text>
+            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Groupe</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-            {loading ? <ActivityIndicator size={10} color={(colors as any).default_dark} /> : <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>{actionType === 'modify' ? 'Modifier' : 'Créer'}</Text>}
+            {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>{actionType === 'modify' ? 'Modifier' : 'Créer'}</Text>}
           </TouchableOpacity>
         </View>
         <Divider />
@@ -89,7 +90,7 @@ const ModalGroup = ({ isVisible, setVisible, actionType, group = {}, onModify = 
                     <View style={styles.membersContainer} key={index}>
                       <TextInput style={[styles.inputMember, styles.textFontRegular]} defaultValue={value} onChangeText={(text) => updateMembers(index, text)} placeholder="Entrez une adresse e-mail" placeholderTextColor={colors.secondary} editable={actionType === 'create'} />
                       <TouchableOpacity onPress={() => removeMember(index)}>
-                        <AntDesign name="delete" size={20} color={(colors as any).default_dark} />
+                        <AntDesign name="delete" size={20} color={colors.default_dark} />
                       </TouchableOpacity>
                     </View>
                   ))}

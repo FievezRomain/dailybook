@@ -1,19 +1,20 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { IconButton, Text, useTheme } from 'react-native-paper';
+import { IconButton, Text } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons, FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface Group {
-  id: string;
+  id: number;
   name: string;
-  nb_animaux: number;
-  nb_members: number;
+  nb_animaux?: number;
+  nb_members?: number;
   [key: string]: any;
 }
 
 const GroupCard = ({ group }: { group: Group }) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const navigation = useNavigation<any>();
 
   const handlePress = () => {
@@ -26,7 +27,7 @@ const GroupCard = ({ group }: { group: Group }) => {
       borderRadius: 5,
       elevation: 2,
       backgroundColor: colors.background,
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       shadowRadius: 4,
       shadowOffset: { width: 0, height: 1 },
@@ -39,8 +40,8 @@ const GroupCard = ({ group }: { group: Group }) => {
     },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
-    arrow: { color: (colors as any).accent, paddingRight: 10 },
-    icon: { color: (colors as any).default_dark, marginLeft: 10 },
+    arrow: { color: colors.accent, paddingRight: 10 },
+    icon: { color: colors.default_dark, marginLeft: 10 },
   });
 
   return (
@@ -48,15 +49,15 @@ const GroupCard = ({ group }: { group: Group }) => {
       <View style={styles.card}>
         <View style={styles.containerCard}>
           <View style={{ width: '50%' }}>
-            <Text style={[styles.textFontMedium, { color: (colors as any).default_dark }]}>{group.name}</Text>
+            <Text style={[styles.textFontMedium, { color: colors.default_dark }]}>{group.name}</Text>
           </View>
           <View style={{ width: '30%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={[styles.textFontMedium, { color: (colors as any).default_dark }]}>{group.nb_animaux}</Text>
+              <Text style={[styles.textFontMedium, { color: colors.default_dark }]}>{group.nb_animaux}</Text>
               <MaterialCommunityIcons name='paw' size={16} style={styles.icon} />
             </View>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={[styles.textFontMedium, { color: (colors as any).default_dark }]}>{group.nb_members}</Text>
+              <Text style={[styles.textFontMedium, { color: colors.default_dark }]}>{group.nb_members}</Text>
               <Ionicons name="person" size={14} style={styles.icon} />
             </View>
           </View>

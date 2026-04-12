@@ -86,7 +86,7 @@ const TopTab: React.FC<TopTabProps> = ({
               </View>
             ) : (
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -5 }}>
-                <Image source={require('../../assets/logo.png')} style={{ height: 45, width: 45 }} />
+                <Image source={require('../../../assets/logo.png')} style={{ height: 45, width: 45 }} />
                 <Text style={[styles.textFontMedium, { color: colors.accent, fontSize: 25 }]}>
                   VASCO
                 </Text>

@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { useTheme, Portal } from 'react-native-paper';
+import { Portal } from 'react-native-paper';
 import BottomSheet, { BottomSheetScrollView, useBottomSheetTimingConfigs } from '@gorhom/bottom-sheet';
 import Toast from 'react-native-toast-message';
 import { Easing } from 'react-native-reanimated';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 
 interface ModalEditGenericProps {
   children: React.ReactNode;
@@ -26,7 +27,7 @@ const ModalEditGeneric = ({
 }: ModalEditGenericProps) => {
   const bottomSheet = useRef<any>(null);
   const [isOpen, setOpen] = useState(false);
-  const { colors } = useTheme();
+  const { colors } = useAppTheme();
 
   React.useEffect(() => {
     if (!isVisible) {

@@ -12,13 +12,14 @@ import LoggerService from '../../../services/logs/LoggerService';
 import { getFileUrl } from '../../../services/aws/FileStorageService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { Image } from 'expo-image';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface Animal {
-  id: string;
+  id: number;
   nom: string;
-  image: string | null;
+  image?: string;
   [key: string]: any;
 }
 
@@ -26,7 +27,7 @@ const AnimalAvatar = ({ animal, avatarStyle, textStyle }: { animal: Animal; avat
   const [url, setUrl] = useState<string | null>(null);
   useEffect(() => {
     if (animal.image) {
-      getFileUrl(animal.image, 'animal', animal.id)
+      getFileUrl(animal.image, 'animal', String(animal.id))
         .then((u) => setUrl(u))
         .catch(() => {});
     }
@@ -49,7 +50,7 @@ const ObjectifCard = ({
   handleObjectifChange: (o: any) => void;
   handleObjectifDelete: (o: any) => void;
 }) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [modalSubMenuObjectifVisible, setModalSubMenuObjectifVisible] = useState(false);
   const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
   const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
@@ -92,7 +93,7 @@ const ObjectifCard = ({
     return 0;
   };
 
-  const getAnimalById = (idAnimal: string): Animal | undefined =>
+  const getAnimalById = (idAnimal: number): Animal | undefined =>
     animaux.find((a) => a.id === idAnimal);
 
   const handleTasksStateChange = async (etape: any) => {
@@ -138,7 +139,7 @@ const ObjectifCard = ({
     completionBarContainer: {
       marginTop: 10,
       marginBottom: 10,
-      borderColor: (colors as any).default_dark,
+      borderColor: colors.default_dark,
       borderWidth: 0.2,
       borderRadius: 60,
       overflow: 'hidden',
@@ -149,7 +150,7 @@ const ObjectifCard = ({
       width: '100%',
       flexDirection: 'column',
       marginBottom: 10,
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -193,18 +194,18 @@ const ObjectifCard = ({
       <View style={styles.objectifContainer} key={objectif.id}>
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', borderTopStartRadius: 5, borderTopEndRadius: 5, padding: 10 }}>
-            <Text style={[{ color: (colors as any).default_dark }, styles.textFontBold]}>{objectif.title}</Text>
+            <Text style={[{ color: colors.default_dark }, styles.textFontBold]}>{objectif.title}</Text>
             <TouchableOpacity onPress={onPressOptions}>
-              <Entypo name="dots-three-horizontal" size={20} color={(colors as any).default_dark} />
+              <Entypo name="dots-three-horizontal" size={20} color={colors.default_dark} />
             </TouchableOpacity>
           </View>
         </View>
-        <Divider style={{ backgroundColor: (colors as any).default_dark }} />
+        <Divider style={{ backgroundColor: colors.default_dark }} />
         <View style={{ flexDirection: 'row', backgroundColor: colors.background, borderBottomStartRadius: 5, borderBottomEndRadius: 5 }}>
-          <View style={{ justifyContent: 'center', padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: (colors as any).default_dark, alignItems: 'center' }}>
-            <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>{getDayText(objectif.datefin)}.</Text>
-            <Text style={[{ fontSize: 11, color: (colors as any).default_dark }, styles.textFontRegular]}>{getDateText(objectif.datefin)}</Text>
-            <Text style={[{ fontSize: 9, color: (colors as any).default_dark }, styles.textFontRegular]}>{getYearText(objectif.datefin)}</Text>
+          <View style={{ justifyContent: 'center', padding: 10, marginRight: 10, borderRightWidth: 0.3, borderColor: colors.default_dark, alignItems: 'center' }}>
+            <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>{getDayText(objectif.datefin)}.</Text>
+            <Text style={[{ fontSize: 11, color: colors.default_dark }, styles.textFontRegular]}>{getDateText(objectif.datefin)}</Text>
+            <Text style={[{ fontSize: 9, color: colors.default_dark }, styles.textFontRegular]}>{getYearText(objectif.datefin)}</Text>
           </View>
           <View style={{ paddingVertical: 10, flexDirection: 'column', width: '80%' }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -214,23 +215,23 @@ const ObjectifCard = ({
                     <TouchableOpacity key={etape.id} style={{ marginLeft: 5 }} onPress={() => handleTasksStateChange(etape)}>
                       <View style={{ flexDirection: 'row' }}>
                         {etape.state ? (
-                          <Feather name="x-square" size={25} color={(colors as any).default_dark} />
+                          <Feather name="x-square" size={25} color={colors.default_dark} />
                         ) : (
-                          <Feather name="square" size={25} color={(colors as any).default_dark} />
+                          <Feather name="square" size={25} color={colors.default_dark} />
                         )}
-                        <Text style={[styles.textFontRegular, { flexShrink: 1, flexWrap: 'wrap', marginLeft: 5, color: (colors as any).default_dark }]}>{etape.etape}</Text>
+                        <Text style={[styles.textFontRegular, { flexShrink: 1, flexWrap: 'wrap', marginLeft: 5, color: colors.default_dark }]}>{etape.etape}</Text>
                       </View>
                     </TouchableOpacity>
                   ))}
               </View>
               <View style={{ flexDirection: 'row' }}>
                 {objectif !== undefined && animaux.length !== 0 &&
-                  objectif.animaux.map((eventAnimal: string) => {
+                  objectif.animaux.map((eventAnimal: number) => {
                     const animal = getAnimalById(eventAnimal);
                     if (!animal) return null;
                     return (
                       <View key={animal.id} style={{ marginLeft: -3 }}>
-                        <View style={{ height: 20, width: 20, backgroundColor: (colors as any).default_dark, borderRadius: 10, justifyContent: 'center' }}>
+                        <View style={{ height: 20, width: 20, backgroundColor: colors.default_dark, borderRadius: 10, justifyContent: 'center' }}>
                           <AnimalAvatar animal={animal} avatarStyle={styles.avatar} textStyle={styles.avatarText} />
                         </View>
                       </View>

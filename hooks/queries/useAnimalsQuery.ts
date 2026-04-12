@@ -1,5 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as AnimalsService from '../../services/api/AnimalsService';
+import {
+  CreateAnimalPayload,
+  UpdateAnimalPayload,
+  AnimalHistoryPayload,
+  AnimalHistoryItem,
+} from '../../features/animals/types';
 
 export const ANIMALS_KEY = ['animals'] as const;
 
@@ -23,13 +29,13 @@ export function useAnimalMutations() {
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ANIMALS_KEY });
 
   const create = useMutation({
-    mutationFn: (body: FormData | Record<string, unknown>) =>
+    mutationFn: (body: FormData | CreateAnimalPayload) =>
       AnimalsService.createAnimal(body),
     onSuccess: invalidate,
   });
 
   const update = useMutation({
-    mutationFn: ({ id, body }: { id: string; body: FormData | Record<string, unknown> }) =>
+    mutationFn: ({ id, body }: { id: string; body: FormData | UpdateAnimalPayload }) =>
       AnimalsService.updateAnimal(id, body),
     onSuccess: invalidate,
   });
@@ -40,13 +46,13 @@ export function useAnimalMutations() {
   });
 
   const createHistory = useMutation({
-    mutationFn: ({ animalId, body }: { animalId: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ animalId, body }: { animalId: string; body: AnimalHistoryPayload }) =>
       AnimalsService.createAnimalHistory(animalId, body),
     onSuccess: invalidate,
   });
 
   const updateHistory = useMutation({
-    mutationFn: ({ animalId, body }: { animalId: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ animalId, body }: { animalId: string; body: AnimalHistoryPayload }) =>
       AnimalsService.updateAnimalHistory(animalId, body),
     onSuccess: invalidate,
   });
@@ -58,7 +64,7 @@ export function useAnimalMutations() {
       historyId,
     }: {
       animalId: string;
-      item: string;
+      item: AnimalHistoryItem;
       historyId: string;
     }) => AnimalsService.deleteAnimalHistory(animalId, item, historyId),
     onSuccess: invalidate,

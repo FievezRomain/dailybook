@@ -10,7 +10,8 @@
  */
 
 import axios from 'axios';
-import { getAuth, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
+import { getFirebaseAuth } from '../../firebase';
 import { env } from '../../config/env';
 
 const httpClient = axios.create({
@@ -19,7 +20,7 @@ const httpClient = axios.create({
 
 // ─── Request : injection automatique du token Firebase ───────────────────────
 httpClient.interceptors.request.use(async (config) => {
-  const user = getAuth().currentUser;
+  const user = getFirebaseAuth().currentUser;
   if (user) {
     const token = await user.getIdToken();
     config.headers['x-access-token'] = token;
@@ -44,7 +45,7 @@ httpClient.interceptors.response.use(
     const status = error?.response?.status;
 
     if (status === 401) {
-      signOut(getAuth());
+      signOut(getFirebaseAuth());
       return Promise.reject(
         new Error("Session expirée. Veuillez vous reconnecter."),
       );

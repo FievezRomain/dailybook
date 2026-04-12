@@ -2,6 +2,15 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as GroupService from '../../services/api/GroupService';
 import { ANIMALS_KEY } from './useAnimalsQuery';
 import { EVENTS_KEY } from './useEventsQuery';
+import {
+  CreateGroupPayload,
+  UpdateGroupPayload,
+  InviteMembersPayload,
+  RespondInvitationPayload,
+  ProposeAnimalPayload,
+  RespondAnimalSharePayload,
+  RemoveMemberPayload,
+} from '../../features/groups/types';
 
 export const GROUPS_KEY = ['groups'] as const;
 export const INVITATIONS_KEY = ['invitations'] as const;
@@ -40,12 +49,12 @@ export function useGroupMutations() {
   };
 
   const create = useMutation({
-    mutationFn: (body: Record<string, unknown>) => GroupService.createGroup(body),
+    mutationFn: (body: CreateGroupPayload) => GroupService.createGroup(body),
     onSuccess: invalidateGroups,
   });
 
   const update = useMutation({
-    mutationFn: ({ id, body }: { id: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ id, body }: { id: string; body: UpdateGroupPayload }) =>
       GroupService.updateGroup(id, body),
     onSuccess: invalidateGroups,
   });
@@ -56,13 +65,13 @@ export function useGroupMutations() {
   });
 
   const inviteMembers = useMutation({
-    mutationFn: ({ groupId, body }: { groupId: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ groupId, body }: { groupId: string; body: InviteMembersPayload }) =>
       GroupService.inviteMembers(groupId, body),
     onSuccess: invalidateGroups,
   });
 
   const respondInvitation = useMutation({
-    mutationFn: ({ invitationId, body }: { invitationId: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ invitationId, body }: { invitationId: string; body: RespondInvitationPayload }) =>
       GroupService.respondInvitation(invitationId, body),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: INVITATIONS_KEY });
@@ -71,19 +80,19 @@ export function useGroupMutations() {
   });
 
   const proposeAnimal = useMutation({
-    mutationFn: ({ groupId, body }: { groupId: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ groupId, body }: { groupId: string; body: ProposeAnimalPayload }) =>
       GroupService.proposeAnimal(groupId, body),
     onSuccess: invalidateGroups,
   });
 
   const respondAnimalShare = useMutation({
-    mutationFn: ({ shareId, body }: { shareId: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ shareId, body }: { shareId: string; body: RespondAnimalSharePayload }) =>
       GroupService.respondAnimalShare(shareId, body),
     onSuccess: invalidateAll,
   });
 
   const removeMember = useMutation({
-    mutationFn: ({ groupId, body }: { groupId: string; body: Record<string, unknown> }) =>
+    mutationFn: ({ groupId, body }: { groupId: string; body: RemoveMemberPayload }) =>
       GroupService.removeMember(groupId, body),
     onSuccess: invalidateAll,
   });

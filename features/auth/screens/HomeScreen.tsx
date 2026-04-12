@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet, Dimensions } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import WavyHeader from '../../../shared/components/common/WavyHeader';
 import type { AuthStackScreenProps } from '../../../navigation/types';
 
@@ -8,7 +8,7 @@ const wallpaper_accueil = require('../../../assets/wallpaper_login.png');
 const logo = require('../../../assets/logo.png');
 
 export default function HomeScreen({ navigation }: AuthStackScreenProps<'Home'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   const styles = StyleSheet.create({
     svgCurve: {
@@ -30,7 +30,7 @@ export default function HomeScreen({ navigation }: AuthStackScreenProps<'Home'>)
       position: 'absolute',
       justifyContent: 'center',
     },
-    textFontMedium: { fontFamily: (fonts as any).bodyMedium.fontFamily },
+    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     text: {
       color: colors.background,
       textAlign: 'center',
@@ -38,7 +38,7 @@ export default function HomeScreen({ navigation }: AuthStackScreenProps<'Home'>)
       textTransform: 'uppercase',
     },
     button: {
-      backgroundColor: (colors as any).accent,
+      backgroundColor: colors.accent,
       width: '100%',
       paddingLeft: 20,
       paddingRight: 20,
@@ -53,7 +53,7 @@ export default function HomeScreen({ navigation }: AuthStackScreenProps<'Home'>)
     <>
       <Image source={wallpaper_accueil} style={styles.image} />
       <WavyHeader
-        customBgColor={(colors as any).quaternary}
+        customBgColor={colors.quaternary}
         customHeight={140}
         customTop={-80}
         customWavePattern="M0,64L60,80C120,96,240,128,360,138.7C480,149,600,139,720,149.3C840,160,960,192,1080,176C1200,160,1320,96,1380,64L1440,32L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
@@ -62,7 +62,7 @@ export default function HomeScreen({ navigation }: AuthStackScreenProps<'Home'>)
       <View style={styles.container}>
         <Image source={logo} style={{ height: 120, width: 120, marginTop: 100 }} />
         <View style={{ width: '60%', alignItems: 'center' }}>
-          <Text style={[styles.textFontMedium, { color: (colors as any).accent, textAlign: 'center', marginBottom: 15, fontSize: 12 }]}>
+          <Text style={[styles.textFontMedium, { color: colors.accent, textAlign: 'center', marginBottom: 15, fontSize: 12 }]}>
             MOINS DE CHARGE MENTALE, PLUS DE MOMENTS POUR VOTRE ANIMAL !
           </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.button, { justifyContent: 'flex-end' }]}>

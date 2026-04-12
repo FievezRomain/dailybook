@@ -2,8 +2,9 @@ import React from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
 import AnimalCard from '../../animals/components/AnimalCard';
-import { Icon, useTheme } from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 const AnimalsGroup = ({
   animals,
@@ -14,7 +15,7 @@ const AnimalsGroup = ({
   userRole: string;
   group: any;
 }) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { data: animaux = [] } = useAnimalsQuery();
 
   const areMyAnimalsWaiting = () => {
@@ -39,7 +40,7 @@ const AnimalsGroup = ({
   const styles = StyleSheet.create({
     containerHeader: { paddingBottom: 10, flexDirection: 'row', alignItems: 'center' },
     container: { paddingVertical: 10 },
-    title: { marginLeft: 5, color: (colors as any).default_dark },
+    title: { marginLeft: 5, color: colors.default_dark },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
@@ -50,7 +51,7 @@ const AnimalsGroup = ({
       {canSeePendingAnimals() && (
         <View style={styles.container}>
           <View style={styles.containerHeader}>
-            <Icon source="clock-outline" size={20} color={(colors as any).default_dark} />
+            <Icon source="clock-outline" size={20} color={colors.default_dark} />
             <Text style={[styles.title, styles.textFontBold]}>Animaux en attente</Text>
           </View>
           <View>
@@ -68,7 +69,7 @@ const AnimalsGroup = ({
       {animals && animals.type === 'accepted' && (
         <View style={styles.container}>
           <View style={styles.containerHeader}>
-            <Icon source="format-list-bulleted" size={20} color={(colors as any).default_dark} />
+            <Icon source="format-list-bulleted" size={20} color={colors.default_dark} />
             <Text style={[styles.title, styles.textFontBold]}>Animaux du groupe</Text>
           </View>
           <View>

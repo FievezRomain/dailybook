@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import CalendarPicker from '../../../shared/components/modals/inputs/ModalDatePicker';
-import animalsServiceInstance from '../../../services/api/AnimalsService';
+import { createAnimalHistory, updateAnimalHistory } from '../../../services/api/AnimalsService';
 import LoggerService from '../../../services/logs/LoggerService';
 import DropdawnList from '../../../shared/components/inputs/DropdawnList';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalManageBodyAnimalProps {
   isVisible: boolean;
@@ -21,7 +22,7 @@ interface ModalManageBodyAnimalProps {
 }
 
 const ModalManageBodyAnimal = ({ isVisible, setVisible, actionType, animal = {}, item, infos, onModify = undefined }: ModalManageBodyAnimalProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch, clearErrors, setError } = useForm();
   const [arrayHeight, setArrayHeight] = useState('35%');
   const [loading, setLoading] = useState(false);
@@ -63,9 +64,9 @@ const ModalManageBodyAnimal = ({ isVisible, setVisible, actionType, animal = {},
     if (['taille', 'poids', 'quantity'].includes(item ?? '')) { data['value'] = data['value'].replace(',', '.'); }
     if (['taille', 'poids', 'quantity'].includes(item ?? '')) { if (!checkNumericFormat(data, 'value')) { setLoading(false); return; } }
     if (actionType === 'create') {
-      animalsServiceInstance.createHistory(data).then(() => { closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la modification du physique: ' + err.message); setLoading(false); });
+      createAnimalHistory(String(data.idAnimal), data).then(() => { closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la modification du physique: ' + err.message); setLoading(false); });
     } else {
-      animalsServiceInstance.modifyHistory(data).then(() => { closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la modification du physique: ' + err.message); setLoading(false); });
+      updateAnimalHistory(String(data.idAnimal), data).then(() => { closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la modification du physique: ' + err.message); setLoading(false); });
     }
     closeModal();
   };
@@ -94,7 +95,7 @@ const ModalManageBodyAnimal = ({ isVisible, setVisible, actionType, animal = {},
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { width: '100%' },
     textInput: { alignSelf: 'flex-start', marginBottom: 5 },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark, alignSelf: 'baseline' },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, alignSelf: 'baseline' },
     containerDate: { flexDirection: 'column', alignSelf: 'flex-start', width: '100%', marginBottom: 15 },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
@@ -112,7 +113,7 @@ const ModalManageBodyAnimal = ({ isVisible, setVisible, actionType, animal = {},
             <Text style={[styles.textFontBold]}>Physique</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-            {loading ? <ActivityIndicator size={10} color={(colors as any).default_dark} /> : <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>Enregistrer</Text>}
+            {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Enregistrer</Text>}
           </TouchableOpacity>
         </View>
         <Divider />

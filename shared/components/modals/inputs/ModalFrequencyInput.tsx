@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import Button from '../../inputs/Button';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 
 interface ModalFrequencyInputProps {
   label?: string;
@@ -11,7 +11,7 @@ interface ModalFrequencyInputProps {
 }
 
 const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInputValue }: ModalFrequencyInputProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [frequencyValue, setFrequencyValue] = useState('');
   const [inputValue, setInputValue] = useState(defaultInputValue ?? '');
@@ -35,19 +35,19 @@ const ModalFrequencyInput = ({ label, onChange, defaultFrequencyType, defaultInp
   const handleTypeChange = (type: string) => { setFrequencyType(type); setInputValue(''); };
 
   const styles = StyleSheet.create({
-    frequencyButton: { backgroundColor: (colors as any).quaternary, padding: 10, borderRadius: 5, marginBottom: 10, width: '100%', alignSelf: 'flex-start' },
+    frequencyButton: { backgroundColor: colors.quaternary, padding: 10, borderRadius: 5, marginBottom: 10, width: '100%', alignSelf: 'flex-start' },
     card: { borderTopStartRadius: 10, borderTopEndRadius: 10, height: '30%' },
     background: { backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'flex-end', height: '100%' },
     emptyBackground: { height: '80%' },
     buttonContainer: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 5, marginBottom: 20 },
     headerCard: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: 'rgba(0, 0, 0, 0)' },
     bodyCard: { backgroundColor: colors.background, justifyContent: 'space-evenly', height: '100%' },
-    headerButtonContainer: { borderTopStartRadius: 5, borderTopEndRadius: 5, backgroundColor: (colors as any).quaternary, width: '50%', justifyContent: 'center' },
-    typeSelected: { backgroundColor: (colors as any).quaternary },
+    headerButtonContainer: { borderTopStartRadius: 5, borderTopEndRadius: 5, backgroundColor: colors.quaternary, width: '50%', justifyContent: 'center' },
+    typeSelected: { backgroundColor: colors.quaternary },
     textTypeButton: { textAlign: 'center' },
     textSelectedTypeButton: { color: colors.background },
     bottomBar: { width: '100%', height: 0.3, backgroundColor: colors.outline },
-    input: { width: '15%', borderRadius: 5, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark, textAlign: 'center', paddingVertical: 2 },
+    input: { width: '15%', borderRadius: 5, backgroundColor: colors.quaternary, color: colors.default_dark, textAlign: 'center', paddingVertical: 2 },
     informationInputContainer: { flexDirection: 'row', justifyContent: 'center' },
     keyboardAvoidingContainer: { flex: 1 },
     textFontRegular: { fontFamily: fonts.default.fontFamily },

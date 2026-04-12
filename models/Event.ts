@@ -1,37 +1,92 @@
-export type EventType = {
-    id: string;
-    title: string;
+import { EventDocument } from './EventDocument';
+
+/** Référence à l'utilisateur créateur/réalisateur d'un événement. */
+export type UserRef = {
+  id: string;
+  name: string;
+  email: string;
 };
 
-export type Event = {
-    id: number;
-    dateevent: Date;
-    nom: string;
-    animaux: number[];
-    eventtype: string;
-    heuredebutevent?: string;
-    lieu?: string;
-    heuredebutbalade?: string;
-    datefinbalade?: Date;
-    heurefinbalade?: string;
-    discipline?: string;
-    note?: number;
-    epreuve?: string;
-    dossart?: string;
-    placement?: string;
-    specialiste?: string;
-    depense?: number;
-    traitement?: string;
-    datefinsoins?: Date;
-    commentaire?: string;
-    frequencevalue?: string;
-    categoriedepense?: string;
-    frequencetype?: string;
-    notif?: string;
-    optionnotif?: string;
-    state?: string;
-    todisplay?: boolean;
-    idparent?: number;
-    documents?: string[];
-    shared_groups?: number[];
+/** Valeurs du sélecteur de type d'événement (liste UI). */
+export type EventType = {
+  id: string;
+  title: string;
 };
+
+/** Champs communs à toutes les variantes d'événement. */
+type BaseEvent = {
+  id: number;
+  nom: string;
+  dateevent: string;
+  animaux: number[];
+  eventtype: string;
+  heuredebutevent?: string;
+  lieu?: string;
+  commentaire?: string;
+  state?: string;
+  todisplay?: boolean;
+  idparent?: number;
+  frequencetype?: string;
+  frequencevalue?: string;
+  notif?: string;
+  optionnotif?: string;
+  documents?: EventDocument[];
+  shared_groups?: number[];
+  created_by?: UserRef;
+  made_by?: UserRef;
+};
+
+export type BaladeEvent = BaseEvent & {
+  eventtype: 'balade';
+  heuredebutbalade?: string;
+  datefinbalade?: string;
+  heurefinbalade?: string;
+  note?: number;
+};
+
+export type EntrainementEvent = BaseEvent & {
+  eventtype: 'entrainement';
+  discipline?: string;
+  note?: number;
+};
+
+export type ConcoursEvent = BaseEvent & {
+  eventtype: 'concours';
+  discipline?: string;
+  epreuve?: string;
+  dossart?: string;
+  placement?: string;
+  note?: number;
+};
+
+export type RdvEvent = BaseEvent & {
+  eventtype: 'rdv';
+  specialiste?: string;
+  depense?: number;
+};
+
+export type SoinsEvent = BaseEvent & {
+  eventtype: 'soins';
+  traitement?: string;
+  datefinsoins?: string;
+};
+
+export type DepenseEvent = BaseEvent & {
+  eventtype: 'depense';
+  depense?: number;
+  categoriedepense?: string;
+};
+
+export type AutreEvent = BaseEvent & {
+  eventtype: 'autre';
+};
+
+/** Union discriminée sur `eventtype` — préférer ce type dans les composants. */
+export type Event =
+  | BaladeEvent
+  | EntrainementEvent
+  | ConcoursEvent
+  | RdvEvent
+  | SoinsEvent
+  | DepenseEvent
+  | AutreEvent;

@@ -2,10 +2,10 @@ export type Animal = {
     id: number;
     nom: string;
     espece: string;
-    datenaissance?: Date;
-    datearrivee?: Date;
-    datedepart?: Date;
-    datedeces?: Date;
+    datenaissance?: string;
+    datearrivee?: string;
+    datedepart?: string;
+    datedeces?: string;
     race?: string;
     taille?: number;
     poids?: number;
@@ -20,4 +20,5 @@ export type Animal = {
     image?: string;
     previousimage?: string;
     informations?: string;
+    provenance?: string;
 };

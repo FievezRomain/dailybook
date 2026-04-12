@@ -1,4 +1,6 @@
 import httpClient from './httpClient';
+import { LoginPayload, RegisterPayload, UpdateUserPayload } from '../../features/auth/types';
+import { UserProfile } from '../../models/User';
 import * as Notifications from 'expo-notifications';
 import * as TrackingTransparency from 'expo-tracking-transparency';
 import * as Localization from 'expo-localization';
@@ -6,22 +8,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
-export async function login(data: Record<string, unknown>) {
+export async function login(data: LoginPayload): Promise<UserProfile> {
   const response = await httpClient.post('/auth/login', data);
   return response.data;
 }
 
-export async function register(body: Record<string, unknown>) {
+export async function register(body: RegisterPayload): Promise<UserProfile> {
   const response = await httpClient.post('/auth/register', body);
   return response.data;
 }
 
-export async function getMe() {
+export async function getMe(): Promise<UserProfile> {
   const response = await httpClient.get('/users/me');
   return response.data;
 }
 
-export async function updateMe(user: Record<string, unknown>) {
+export async function updateMe(user: UpdateUserPayload): Promise<UserProfile> {
   const response = await httpClient.patch('/users/me', user);
   return response.data;
 }

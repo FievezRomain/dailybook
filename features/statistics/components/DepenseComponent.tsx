@@ -5,19 +5,20 @@ import { IconButton } from 'react-native-paper';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import EventCard from '../../../shared/components/cards/EventCard';
 import Toast from "react-native-toast-message";
+import { EventChartComponentProps } from '../types';
 
-const DepenseComponent = ({ data, chartConfig, chartParameters }: any) => {
+const DepenseComponent = ({ data, chartConfig, chartParameters }: EventChartComponentProps) => {
     const { colors, fonts } = useAppTheme();
     const [loading, setLoading] = useState(true);
     const [dataToDisplay, setDataToDisplay] = useState(data);
-    const [expandedCategory, setExpandedCategory] = useState(null);
+    const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
     useEffect(() => {
         setLoading(true);
 
         // Calcul du montant total
         let total = 0;
-        dataToDisplay.statistic.map((objet: any) => {total += objet.exact_value;});
+        dataToDisplay.statistic.map((objet) => {total += objet.exact_value;});
         let objet = {
             total: parseFloat(total.toFixed(2)),
             ...data
@@ -37,7 +38,7 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }: any) => {
     
     };
 
-    const handleCategoryPress = (category: any) => {
+    const handleCategoryPress = (category: string) => {
         // Si la catégorie est déjà ouverte, on la referme, sinon on l'ouvre
         setExpandedCategory(expandedCategory === category ? null : category);
     };

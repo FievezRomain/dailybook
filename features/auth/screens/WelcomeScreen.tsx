@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Dimensions, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import { useFocusEffect } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
 import { isAfter, isEqual, startOfDay } from 'date-fns';
@@ -17,7 +17,7 @@ import { EVENTS_KEY } from '../../../hooks/queries/useEventsQuery';
 import type { TabScreenProps } from '../../../navigation/types';
 
 export default function WelcomeScreen({ navigation }: TabScreenProps<'Accueil'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const queryClient = useQueryClient();
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
   const displayName = firebaseUser?.displayName ?? '';
@@ -61,7 +61,7 @@ export default function WelcomeScreen({ navigation }: TabScreenProps<'Accueil'>)
   const styles = StyleSheet.create({
     svgCurve: { position: 'absolute', width: Dimensions.get('window').width },
     summaryContainer: { marginTop: 15, marginLeft: 20 },
-    summary: { fontSize: 20, color: (colors as any).default_dark },
+    summary: { fontSize: 20, color: colors.default_dark },
   });
 
   const content = refreshing ? (
@@ -73,14 +73,14 @@ export default function WelcomeScreen({ navigation }: TabScreenProps<'Accueil'>)
       data={[]}
       keyExtractor={() => 'key'}
       renderItem={null}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={(colors as any).default_dark} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />}
       ListHeaderComponent={
         <>
           <View style={styles.summaryContainer}>
-            <Text style={[styles.summary, { fontFamily: (fonts as any).bodyMedium.fontFamily, marginBottom: 2 }]}>
+            <Text style={[styles.summary, { fontFamily: fonts.bodyMedium.fontFamily, marginBottom: 2 }]}>
               Bienvenue {displayName.slice(0, 17)}
             </Text>
-            <Text style={[styles.summary, { fontFamily: (fonts as any).bodySmall.fontFamily }]}>
+            <Text style={[styles.summary, { fontFamily: fonts.bodySmall.fontFamily }]}>
               {convertDayDateToText()} {convertDateToText()}
             </Text>
           </View>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Modal, View, Text, TouchableOpacity } from 'react-native';
 import Button from '../../inputs/Button';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 
 interface ModalVerifProps {
   modalVisible: boolean;
@@ -11,7 +11,7 @@ interface ModalVerifProps {
 }
 
 const ModalVerif = ({ modalVisible, setModalVisible, message, event }: ModalVerifProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
 
   const eventToCall = () => {
     event();
@@ -37,7 +37,7 @@ const ModalVerif = ({ modalVisible, setModalVisible, message, event }: ModalVeri
     },
     message: {
       alignSelf: 'center',
-      color: (colors as any).default_dark,
+      color: colors.default_dark,
     },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },

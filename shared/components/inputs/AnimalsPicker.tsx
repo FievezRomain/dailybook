@@ -3,22 +3,9 @@ import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native
 import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import ItemAnimalPicker from './ItemAnimalPicker';
+import { Animal } from '../../../models/Animal';
 
-interface Animal {
-  id: string;
-  nom: string;
-  image: string | null;
-  espece?: string | null;
-  datenaissance?: string | null;
-  race?: string | null;
-  taille?: number | null;
-  poids?: number | null;
-  sexe?: string | null;
-  couleur?: string | null;
-  nompere?: string | null;
-  nommere?: string | null;
-  provenance?: string;
-}
+type AnimalListItem = Animal | { id: 'select_all'; nom: string; image: null; provenance?: undefined };
 
 interface AnimalsPickerProps {
   animaux: Animal[];
@@ -49,8 +36,9 @@ const AnimalsPicker: React.FC<AnimalsPickerProps> = ({
 }) => {
   const { colors, fonts } = useAppTheme();
 
-  const changeSelectedAnimals = (animal: Animal) => {
-    if (animal.id === 'select_all') {
+  const changeSelectedAnimals = (animalOrAll: AnimalListItem) => {
+    if (animalOrAll.id === 'select_all') {
+      const animal = animalOrAll;
       if (displayAnimalsShared) {
         if (selected.length === animaux.length) {
           setValue?.(valueName!, undefined);
@@ -72,6 +60,7 @@ const AnimalsPicker: React.FC<AnimalsPickerProps> = ({
       return;
     }
 
+    const animal = animalOrAll as Animal;
     const found = animaux.find((e) => e.id === animal.id);
     if (found) {
       if (mode === 'single') {
@@ -112,7 +101,7 @@ const AnimalsPicker: React.FC<AnimalsPickerProps> = ({
     }
   };
 
-  const checkSelected = (animal: Animal): boolean => {
+  const checkSelected = (animal: AnimalListItem): boolean => {
     if (selected.length > 0) {
       return selected.some((e) => e.id === animal.id);
     }
@@ -145,7 +134,7 @@ const AnimalsPicker: React.FC<AnimalsPickerProps> = ({
     setDate?.(String(jour + '/' + mois + '/' + annee));
   };
 
-  const displayedAnimaux = (): Animal[] => {
+  const displayedAnimaux = (): AnimalListItem[] => {
     let animalsFiltered = animaux;
     if (!displayAnimalsShared) {
       animalsFiltered = animalsFiltered.filter((a) => a.provenance === 'owner');

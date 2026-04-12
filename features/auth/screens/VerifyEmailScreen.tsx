@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { sendEmailVerification } from 'firebase/auth';
 import Toast from 'react-native-toast-message';
@@ -12,7 +12,7 @@ import type { AuthStackScreenProps } from '../../../navigation/types';
 const wallpaper_login = require('../../../assets/wallpaper_login.png');
 
 export default function VerifyEmailScreen({ navigation }: AuthStackScreenProps<'VerifyEmail'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
   const [canResend, setCanResend] = useState(false);
   const [timer, setTimer] = useState(120);
@@ -42,7 +42,7 @@ export default function VerifyEmailScreen({ navigation }: AuthStackScreenProps<'
     register: { flex: 1, flexDirection: 'column', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 80 },
     form: { marginTop: 100, padding: 10, alignItems: 'center', justifyContent: 'center', width: '90%', borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
     title: { top: -(Constants.statusBarHeight + 10), color: colors.secondary, fontSize: 30, letterSpacing: 2, marginBottom: 20 },
-    textFontMedium: { fontFamily: (fonts as any).bodyMedium.fontFamily },
+    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
   });
 
   return (
@@ -56,7 +56,7 @@ export default function VerifyEmailScreen({ navigation }: AuthStackScreenProps<'
             </Text>
           </View>
           <View style={{ width: '70%', alignSelf: 'center' }}>
-            <View style={{ shadowColor: (colors as any).default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: { width: 0, height: 1 } }}>
+            <View style={{ shadowColor: colors.default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: { width: 0, height: 1 } }}>
               {!canResend ? (
                 <Button size="m" type="secondary">
                   <Text style={[styles.textFontMedium, { color: colors.onSurface }]}>
@@ -69,7 +69,7 @@ export default function VerifyEmailScreen({ navigation }: AuthStackScreenProps<'
                 </Button>
               )}
             </View>
-            <View style={{ marginTop: 10, shadowColor: (colors as any).default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: { width: 0, height: 1 } }}>
+            <View style={{ marginTop: 10, shadowColor: colors.default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: { width: 0, height: 1 } }}>
               <Button onPress={() => navigation.navigate('Login')} size="m" type="quaternary">
                 <Text style={styles.textFontMedium}>Je me connecte</Text>
               </Button>

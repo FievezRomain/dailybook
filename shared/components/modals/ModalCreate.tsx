@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { useTheme, Divider } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import Toast from 'react-native-toast-message';
 import ModalEditGeneric from './common/ModalEditGeneric';
 import ModalEvents from '../../../features/events/components/ModalEvents';
@@ -21,7 +22,7 @@ interface ModalCreateProps {
 }
 
 const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { user } = useAuthStore();
   const accountType = (user as any)?.abonnement?.libelle;
   const [isEventModalVisible, setEventModalVisible] = useState(false);
@@ -48,9 +49,9 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
   const handleCreateGroup = () => { setModalVisible(false); setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Création d\'un groupe réussi' }), 300); };
 
   const styles = StyleSheet.create({
-    textDesactivated: { color: (colors as any).neutral },
-    iconAction: { color: (colors as any).accent, paddingRight: 10 },
-    iconButton: { marginRight: 20, color: (colors as any).accent, width: 30 },
+    textDesactivated: { color: colors.neutral },
+    iconAction: { color: colors.accent, paddingRight: 10 },
+    iconButton: { marginRight: 20, color: colors.accent, width: 30 },
     informationsButtonContainer: { flexDirection: 'row', alignItems: 'center', paddingLeft: 30 },
     actionButtonContainer: { flexDirection: 'row', alignItems: 'center' },
     touchableOpacityButtonContent: { display: 'flex', flexDirection: 'row', width: '100%', justifyContent: 'space-between', paddingBottom: 10, paddingTop: 10 },
@@ -58,11 +59,11 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
     form: { alignItems: 'center', justifyContent: 'center', marginLeft: 'auto', marginRight: 'auto', borderRadius: 10, paddingTop: 10 },
     textFontRegular: { fontFamily: fonts.labelMedium.fontFamily, fontSize: 16 },
     groupButton: { backgroundColor: colors.background, marginBottom: 10 },
-    handleStyleModal: { backgroundColor: (colors as any).onSurface, borderTopEndRadius: 15, borderTopStartRadius: 15, marginBottom: -1 },
-    titleButton: { color: (colors as any).default_dark },
+    handleStyleModal: { backgroundColor: colors.onSurface, borderTopEndRadius: 15, borderTopStartRadius: 15, marginBottom: -1 },
+    titleButton: { color: colors.default_dark },
     premiumOverlay: { backgroundColor: colors.primary, borderRadius: 4, paddingHorizontal: 10, paddingVertical: 5, zIndex: 2 },
-    premiumText: { fontSize: 12, color: (colors as any).default_dark, fontFamily: fonts.bodySmall.fontFamily },
-    button: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: (colors as any).quaternary },
+    premiumText: { fontSize: 12, color: colors.default_dark, fontFamily: fonts.bodySmall.fontFamily },
+    button: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: colors.quaternary },
   });
 
   return (
@@ -75,7 +76,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
         <ModalNote actionType="create" isVisible={isNoteModalVisible} setVisible={setNoteModalVisible} onModify={handleCreateNote} />
         <ModalAnimal actionType="create" isVisible={isAnimalModalVisible} setVisible={setAnimalModalVisible} onModify={handleCreateAnimal} />
         <ModalGroup actionType="create" isVisible={isGroupModalVisible} setVisible={setGroupModalVisible} onModify={handleCreateGroup} />
-        <View style={{ display: 'flex', alignContent: 'center', backgroundColor: (colors as any).onSurface, flex: 1 }}>
+        <View style={{ display: 'flex', alignContent: 'center', backgroundColor: colors.onSurface, flex: 1 }}>
           <View style={styles.form}>
             <View style={styles.formContainer}>
               <View style={styles.groupButton}>

@@ -4,17 +4,18 @@ import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
-import objectifsServiceInstance from '../../../services/api/ObjectifService';
+import { createObjectif, updateObjectif } from '../../../services/api/ObjectifService';
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import CalendarPicker from '../../../shared/components/modals/inputs/ModalDatePicker';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import LoggerService from '../../../services/logs/LoggerService';
-import { Divider, useTheme } from 'react-native-paper';
+import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import instanceDateUtils from '../../../shared/utils/DateUtils';
 import ModalMultiSelect from '../../../shared/components/modals/inputs/ModalMultiSelect';
 import ModalAnimals from '../../animals/components/ModalSelectAnimals';
 import Button from '../../../shared/components/inputs/Button';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalObjectifProps {
   isVisible: boolean;
@@ -25,7 +26,7 @@ interface ModalObjectifProps {
 }
 
 const ModalObjectif = ({ isVisible, setVisible, actionType, objectif = {}, onModify = undefined }: ModalObjectifProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { firebaseUser } = useAuthStore();
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [loading, setLoading] = useState(false);
@@ -73,11 +74,11 @@ const ModalObjectif = ({ isVisible, setVisible, actionType, objectif = {}, onMod
     data['email'] = firebaseUser?.email ?? '';
     data['sousEtapes'] = inputs.filter(s => s.trim() !== '').map(titre => ({ titre, etat: false }));
     if (actionType === 'modify') {
-      objectifsServiceInstance.update(data)
+      updateObjectif(String(data.id), data)
         .then((reponse) => { closeModal(); onModify?.(reponse); setLoading(false); })
         .catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la modification d\'un objectif: ' + err.message); setLoading(false); });
     } else {
-      objectifsServiceInstance.create(data)
+      createObjectif(data)
         .then(() => { closeModal(); onModify?.(); setLoading(false); })
         .catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la création d\'un objectif: ' + err.message); setLoading(false); });
     }
@@ -88,15 +89,15 @@ const ModalObjectif = ({ isVisible, setVisible, actionType, objectif = {}, onMod
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { alignItems: 'center', width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: (colors as any).default_dark },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
     containerAnimaux: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 10 },
-    containerBadgeAnimal: { borderRadius: 5, backgroundColor: (colors as any).quaternary, marginRight: 5, marginBottom: 5 },
+    containerBadgeAnimal: { borderRadius: 5, backgroundColor: colors.quaternary, marginRight: 5, marginBottom: 5 },
     badgeAnimal: { padding: 10 },
     sousEtapeRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-    inputSousEtape: { flex: 1, height: 40, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: (colors as any).default_dark, marginRight: 10 },
+    inputSousEtape: { flex: 1, height: 40, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, marginRight: 10 },
     containerDate: { flexDirection: 'column', alignSelf: 'flex-start', width: '100%', marginBottom: 15 },
   });
 
@@ -109,10 +110,10 @@ const ModalObjectif = ({ isVisible, setVisible, actionType, objectif = {}, onMod
             <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
           </TouchableOpacity>
           <View style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[styles.textFontBold, { fontSize: 16, color: (colors as any).default_dark }]}>Objectif</Text>
+            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Objectif</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-            {loading ? <ActivityIndicator size={10} color={(colors as any).default_dark} /> : <Text style={[{ color: (colors as any).default_dark }, styles.textFontRegular]}>{actionType === 'modify' ? 'Modifier' : 'Créer'}</Text>}
+            {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>{actionType === 'modify' ? 'Modifier' : 'Créer'}</Text>}
           </TouchableOpacity>
         </View>
         <Divider />
@@ -146,7 +147,7 @@ const ModalObjectif = ({ isVisible, setVisible, actionType, objectif = {}, onMod
                 <View key={index} style={styles.sousEtapeRow}>
                   <TextInput style={[styles.inputSousEtape, styles.textFontRegular]} value={value} onChangeText={(text) => handleInputChange(text, index)} placeholder={`Étape ${index + 1}`} placeholderTextColor={colors.secondary} />
                   <TouchableOpacity onPress={() => handleRemoveInput(index)}>
-                    <AntDesign name="delete" size={20} color={(colors as any).default_dark} />
+                    <AntDesign name="delete" size={20} color={colors.default_dark} />
                   </TouchableOpacity>
                 </View>
               ))}

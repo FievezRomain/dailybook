@@ -4,34 +4,37 @@ import { Image } from 'expo-image';
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import RatingInput from '../../../shared/components/inputs/RatingInput';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import eventsServiceInstance from '../../../services/api/EventService';
+import { patchEvent } from '../../../services/api/EventService';
 import Toast from 'react-native-toast-message';
 import LoggerService from '../../../services/logs/LoggerService';
 import FileStorageService from '../../../services/aws/FileStorageService';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import Constants from 'expo-constants';
 import instanceDateUtils from '../../../shared/utils/DateUtils';
 import DocumentButton from '../../../shared/components/common/DocumentButton';
+import { Event } from '../../../models/Event';
+import { Animal } from '../../../models/Animal';
 
 interface ModalEventDetailsProps {
-  event?: any;
+  event?: Event;
   isVisible: boolean;
   setVisible: (v: boolean) => void;
-  animaux: any[];
+  animaux: Animal[];
   handleEventsChange: () => void;
 }
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }: ModalEventDetailsProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { firebaseUser } = useAuthStore();
   const fileStorageService = new FileStorageService();
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<any>(null);
-  const [localEvent, setLocalEvent] = useState<any>({ ...event });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [localEvent, setLocalEvent] = useState<any>(event ?? undefined);
 
-  useEffect(() => { setLocalEvent({ ...event }); }, [isVisible]);
+  useEffect(() => { setLocalEvent(event ?? undefined); }, [isVisible]);
 
   const closeModal = () => setVisible(false);
 
@@ -39,7 +42,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
 
   const getColorEventType = () => {
     if (event === undefined) return;
-    const map: Record<string, any> = { depense: (colors as any).quaternary, balade: (colors as any).accent, soins: (colors as any).neutral, concours: colors.primary, entrainement: colors.tertiary, autre: colors.error, rdv: (colors as any).text };
+    const map: Record<string, string> = { depense: colors.quaternary, balade: colors.accent, soins: colors.neutral, concours: colors.primary, entrainement: colors.tertiary, autre: colors.error, rdv: colors.text };
     return map[event.eventtype];
   };
 
@@ -63,7 +66,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     return map[event.eventtype];
   };
 
-  const useLightText = () => ['balade','soins','concours','autre','rdv'].includes(event?.eventtype);
+  const useLightText = () => ['balade','soins','concours','autre','rdv'].includes(event?.eventtype ?? '');
 
   const hexToRgba = (hex: string, opacity: number) => {
     if (!hex) return null;
@@ -82,9 +85,9 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
 
   const getAnimalById = (idAnimal: number) => animaux.filter((a) => a.id === idAnimal)[0];
 
-  function isValidString(str: any) { return str !== null && str !== undefined && String(str).trim() !== ''; }
+  function isValidString(str: unknown): boolean { return str !== null && str !== undefined && String(str).trim() !== ''; }
 
-  const checkOverdueEvent = (evt: any, color: any) => {
+  const checkOverdueEvent = (evt: Event, color: string) => {
     const dateEvent = new Date(evt.dateevent).setHours(0, 0, 0, 0);
     const currentDate = new Date().setHours(0, 0, 0, 0);
     if (dateEvent < currentDate && evt.state !== 'Terminé') {
@@ -106,16 +109,16 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     if (loading || !checkNumericFormat()) return;
     setLoading(true);
     const data: any = { id: localEvent.id, commentaire: localEvent.commentaire, depense: localEvent.depense, animaux: localEvent.animaux, note: localEvent.note, email: firebaseUser?.email ?? '' };
-    eventsServiceInstance.updateCommentaireNote(data)
+    patchEvent(String(data.id), data)
       .then(() => { handleEventsChange(); setVisible(false); setLoading(false); })
       .catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la MAJ du commentaire : ' + err.message); setLoading(false); });
   };
 
   const isWithRating = () => event?.eventtype !== 'depense' && event?.eventtype !== 'rdv' && event?.eventtype !== 'soins';
 
-  const handleInputChange = (key: string, value: any) => setLocalEvent((prev: any) => ({ ...prev, [key]: value }));
+  const handleInputChange = (key: string, value: unknown) => setLocalEvent((prev: any) => prev ? ({ ...prev, [key]: value }) : prev);
 
-  const textColor = useLightText() ? colors.background : (colors as any).default_dark;
+  const textColor = useLightText() ? colors.background : colors.default_dark;
   const eventColor = getColorEventType();
 
   const styles = StyleSheet.create({
@@ -131,14 +134,14 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     avatarText: { color: colors.background, textAlign: 'center' as const },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-    colorTextBlack: { color: (colors as any).default_dark },
+    colorTextBlack: { color: colors.default_dark },
     colorTextWhite: { color: colors.background },
-    input: { backgroundColor: (colors as any).quaternary, padding: 10, borderRadius: 5, color: (colors as any).default_dark },
+    input: { backgroundColor: colors.quaternary, padding: 10, borderRadius: 5, color: colors.default_dark },
   });
 
   const getTextEventType = () => {
     const textStyle = useLightText() ? styles.colorTextWhite : styles.colorTextBlack;
-    const overdueColor = useLightText() ? colors.background : (colors as any).accent;
+    const overdueColor = useLightText() ? colors.background : colors.accent;
     return (
       <>
         <Text style={[textStyle, styles.textFontBold]}>{event?.nom}</Text>
@@ -158,10 +161,10 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
           <Text style={[styles.textFontBold, { color: colors.background }]}>{getTitleEventType()}</Text>
         </View>
         <TouchableOpacity onPress={() => handleModifyEvent()} style={{ width: '33.33%', alignItems: 'center' }}>
-          {loading ? <ActivityIndicator size={10} color={(colors as any).default_dark} /> : <Text style={[{ color: colors.background }, styles.textFontRegular]}>Enregistrer</Text>}
+          {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.background }, styles.textFontRegular]}>Enregistrer</Text>}
         </TouchableOpacity>
       </View>
-      <View style={[styles.tableauPrimaryInfos, { backgroundColor: hexToRgba(eventColor, 0.5) ?? undefined }]}>
+      <View style={[styles.tableauPrimaryInfos, { backgroundColor: hexToRgba(eventColor ?? '', 0.5) ?? undefined }]}>
         <View style={{ justifyContent: 'center', marginLeft: 20 }}>
           {getTextEventType()}
         </View>
@@ -171,8 +174,8 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             if (!animal) return null;
             return (
               <View key={animal.id} style={{ marginRight: -3 }}>
-                <View style={{ height: 25, width: 25, backgroundColor: (colors as any).default_dark, borderRadius: 15, justifyContent: 'center' }}>
-                  {animal.image !== null ? <Image style={styles.avatar} source={{ uri: fileStorageService.getFileUrl(animal.image, firebaseUser?.uid ?? '') }} cachePolicy="disk" /> : <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>}
+                <View style={{ height: 25, width: 25, backgroundColor: colors.default_dark, borderRadius: 15, justifyContent: 'center' }}>
+                  {animal.image != null ? <Image style={styles.avatar} source={{ uri: fileStorageService.getFileUrl(animal.image, firebaseUser?.uid ?? '') }} cachePolicy="disk" /> : <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>}
                 </View>
               </View>
             );
@@ -180,7 +183,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
         </View>
       </View>
       {isWithRating() && (
-        <View style={[styles.tableauSecondaryInfo, { backgroundColor: hexToRgba(eventColor, 0.2) ?? undefined }]}>
+        <View style={[styles.tableauSecondaryInfo, { backgroundColor: hexToRgba(eventColor ?? '', 0.2) ?? undefined }]}>
           <RatingInput onRatingChange={handleRatingChange} defaultRating={localEvent.note ?? 0} margin={0} size={25} color={eventColor} />
         </View>
       )}
@@ -206,11 +209,11 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
           ) : (
             <View style={{ marginBottom: 5, width: '90%' }}>
               <Text style={[styles.textFontRegular, { marginBottom: 5 }, styles.colorTextBlack]}>Dépense : </Text>
-              <TextInput style={[styles.input, styles.textFontRegular, { borderRadius: 5 }]} placeholder="Exemple : 1" keyboardType="decimal-pad" inputMode="decimal" onChangeText={(text) => handleInputChange('depense', text)} defaultValue={event?.depense ? parseFloat(event.depense).toFixed(2) : event?.depense} />
+              <TextInput style={[styles.input, styles.textFontRegular, { borderRadius: 5 }]} placeholder="Exemple : 1" keyboardType="decimal-pad" inputMode="decimal" onChangeText={(text) => handleInputChange('depense', text)} defaultValue={localEvent?.depense != null ? String(parseFloat(String(localEvent.depense)).toFixed(2)) : undefined} />
             </View>
           )}
           {(event?.eventtype === 'rdv' || event?.eventtype === 'soins') && (
-            <FlatList data={event.documents} keyExtractor={(_item: any, index: number) => index.toString()} ListHeaderComponent={<Text style={[styles.textFontRegular, { color: (colors as any).default_dark }]}>Documents :</Text>} ListEmptyComponent={<Text style={{ color: (colors as any).default_dark }}>Aucun document lié à l'événement</Text>} numColumns={3} scrollEnabled={false} renderItem={({ item }) => <DocumentButton item={item} event={event} />} columnWrapperStyle={{ justifyContent: 'space-around' }} style={{ paddingTop: 10, paddingRight: 30 }} />
+            <FlatList data={(event as any).documents} keyExtractor={(_item: any, index: number) => index.toString()} ListHeaderComponent={<Text style={[styles.textFontRegular, { color: colors.default_dark }]}>Documents :</Text>} ListEmptyComponent={<Text style={{ color: colors.default_dark }}>Aucun document lié à l'événement</Text>} numColumns={3} scrollEnabled={false} renderItem={({ item }) => <DocumentButton item={item} event={event as any} />} columnWrapperStyle={{ justifyContent: 'space-around' }} style={{ paddingTop: 10, paddingRight: 30 }} />
           )}
         </View>
       </KeyboardAwareScrollView>

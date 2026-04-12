@@ -5,8 +5,9 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import { getFirebaseAuth } from '../../../firebase';
+import { getFirebaseError } from '../../../shared/utils/FirebaseErrorUtils';
 import Button from '../../../shared/components/inputs/Button';
 import type { AuthStackScreenProps } from '../../../navigation/types';
 
@@ -14,17 +15,8 @@ const wallpaper_login = require('../../../assets/wallpaper_login.png');
 
 type FormData = { email: string; password: string };
 
-const FIREBASE_ERRORS: Record<string, string> = {
-  'auth/invalid-email': 'Adresse e-mail invalide.',
-  'auth/user-disabled': 'Ce compte a été désactivé.',
-  'auth/user-not-found': 'Aucun compte trouvé avec cet e-mail.',
-  'auth/wrong-password': 'Mot de passe incorrect.',
-};
-const getFirebaseError = (error: any) =>
-  FIREBASE_ERRORS[error?.code] ?? "Une erreur inconnue s'est produite. Veuillez réessayer.";
-
 export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm<FormData>();
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -61,15 +53,15 @@ export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login
     login: { flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
     form: { paddingTop: 50, alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.9)', justifyContent: 'center', width: '90%', borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
     title: { fontSize: 30, letterSpacing: 2, marginBottom: 20 },
-    input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: (colors as any).quaternary, color: 'black' },
+    input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: 'black' },
     clickableText: { marginLeft: 5, color: colors.onSurface, alignSelf: 'flex-end', justifyContent: 'flex-end', textTransform: 'uppercase' },
     forgetPassword: { flexDirection: 'row', marginBottom: 50 },
     loginButton: { marginBottom: 20, marginTop: 10, backgroundColor: colors.secondary, borderRadius: 10 },
     registerButton: { marginBottom: 30, marginTop: 10, borderRadius: 10 },
     textButton: { color: 'white', textTransform: 'uppercase' },
     errorInput: { color: 'red' },
-    textFontMedium: { fontFamily: (fonts as any).bodyMedium.fontFamily },
-    textFontRegular: { fontFamily: (fonts as any).default.fontFamily },
+    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
+    textFontRegular: { fontFamily: fonts.default.fontFamily },
   });
 
   return (

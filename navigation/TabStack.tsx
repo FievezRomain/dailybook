@@ -2,15 +2,16 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
-import { BottomNavigation, IconButton, useTheme } from 'react-native-paper';
+import { BottomNavigation, IconButton } from 'react-native-paper';
 import Constants from 'expo-constants';
 import type { TabParamList } from './types';
 import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, OtherScreen } from './screens';
+import { useAppTheme } from '../theme/useAppTheme';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
 export default function TabStack() {
-  const { colors } = useTheme();
+  const { colors } = useAppTheme();
 
   return (
     <Tab.Navigator
@@ -41,7 +42,7 @@ export default function TabStack() {
               <View style={styles.iconContainer}>
                 {options.tabBarIcon({
                   focused,
-                  color: focused ? colors.secondaryContainer : (colors as any).default_dark,
+                  color: focused ? colors.secondaryContainer : colors.default_dark,
                   size: focused ? 28 : 24,
                 })}
               </View>
@@ -54,7 +55,7 @@ export default function TabStack() {
                 ? options.tabBarLabel
                 : options.title ?? route.name;
             return (
-              <Text style={[styles.label, { color: focused ? (colors as any).accent : (colors as any).default_dark, marginTop: -10 }]}>
+              <Text style={[styles.label, { color: focused ? colors.accent : colors.default_dark, marginTop: -10 }]}>
                 {label as string}
               </Text>
             );
@@ -68,10 +69,10 @@ export default function TabStack() {
             shadowRadius: 4,
             elevation: 8,
           }}
-          activeColor={(colors as any).accent}
+          activeColor={colors.accent}
           inactiveColor={colors.onSurface}
           activeIndicatorStyle={{
-            backgroundColor: (colors as any).accent,
+            backgroundColor: colors.accent,
             height: 2,
             marginBottom: 55,
           }}

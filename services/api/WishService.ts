@@ -1,36 +1,10 @@
-import httpClient from './httpClient';
+import { createCrudService } from './factory';
+import { CreateWishPayload, UpdateWishPayload } from '../../features/wishes/types';
+import { Wish } from '../../models/Wish';
 
-export async function getWishes() {
-  const response = await httpClient.get('/wishes');
-  return response.data;
-}
+const _crud = createCrudService<Wish, CreateWishPayload, UpdateWishPayload>('/wishes');
 
-export async function createWish(body: FormData | Record<string, unknown>) {
-  const isMultipart = body instanceof FormData;
-  const response = await httpClient.post('/wishes', body, {
-    headers: isMultipart ? { 'Content-Type': 'multipart/form-data' } : undefined,
-    transformRequest: isMultipart ? (data) => data : undefined,
-  });
-  return response.data;
-}
-
-export async function updateWish(wishId: string, body: FormData | Record<string, unknown>) {
-  const isMultipart = body instanceof FormData;
-  const response = await httpClient.put(`/wishes/${wishId}`, body, {
-    headers: isMultipart ? { 'Content-Type': 'multipart/form-data' } : undefined,
-    transformRequest: isMultipart ? (data) => data : undefined,
-  });
-  return response.data;
-}
-
-export async function deleteWish(wishId: string) {
-  const response = await httpClient.delete(`/wishes/${wishId}`);
-  return response.data;
-}
-
-// ─── Backward-compatible service adapter ────────────────────────────────────
-const wishsServiceInstance = {
-  create: (body: any) => createWish(body),
-  update: (body: any) => updateWish(body.id, body),
-};
-export default wishsServiceInstance;
+export const getWishes = _crud.getAll;
+export const createWish = _crud.create;
+export const updateWish = _crud.update;
+export const deleteWish = _crud.remove;

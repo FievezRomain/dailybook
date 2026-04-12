@@ -4,16 +4,18 @@ import { getDepenses, getEntrainements, getBalades, getPoids, getTailles, getAli
 import ModalDefaultNoValue from '../modals/common/ModalDefaultNoValue';
 import { useEventsQuery } from '../../../hooks/queries/useEventsQuery';
 import { addColorsToData } from '../../utils/Colors';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
+import { StatisticsData } from '../../../models/Statistics';
+import { StatItemKey, ChartConfig, StatisticsQueryPayload } from '../../../features/statistics/types';
 
 const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParameters }: {
   ChartComponent: React.ComponentType<any>;
-  chartType: string;
-  chartConfig: any;
-  chartParameters: any;
+  chartType: StatItemKey;
+  chartConfig: ChartConfig;
+  chartParameters: StatisticsQueryPayload;
 }) => {
-  const { colors } = useTheme();
-  const [data, setData] = useState<any>(null);
+  const { colors } = useAppTheme();
+  const [data, setData] = useState<StatisticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const { data: events } = useEventsQuery();
   const currentChartComponent = useRef(ChartComponent);
@@ -26,11 +28,11 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
   const loadData = async () => {
     try {
       setLoading(true);
-      let result: any = undefined;
+      let result: StatisticsData | undefined = undefined;
       switch (chartType) {
         case 'depense':
           result = await getDepenses(chartParameters);
-          result.statistic = addColorsToData(result.statistic, colors as any);
+          (result as any).statistic = addColorsToData((result as any).statistic, colors);
           break;
         case 'entrainement':
           result = await getEntrainements(chartParameters);
@@ -51,7 +53,7 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
           result = await getConcours(chartParameters);
           break;
       }
-      setData(result);
+      setData(result ?? null);
       currentChartComponent.current = ChartComponent;
     } catch (error) {
       console.error(error);
@@ -64,10 +66,14 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
     loadData();
   };
 
-  return loading || !data ? (
-    <ActivityIndicator size="large" />
-  ) : (data.statistic.length > 0 && data.statistic.datasets === undefined) ||
-    (data.statistic.datasets !== undefined && data.statistic.datasets.length > 0) ? (
+  if (loading || !data) return <ActivityIndicator size="large" />;
+
+  const statistic = (data as any).statistic;
+  const hasData =
+    (Array.isArray(statistic) && statistic.length > 0) ||
+    (!Array.isArray(statistic) && statistic?.datasets?.length > 0);
+
+  return hasData ? (
     <RenderedChart
       data={data}
       chartConfig={chartConfig}
@@ -82,3 +88,4 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
 };
 
 export default ChartWithLoader;
+

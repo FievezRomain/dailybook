@@ -7,9 +7,9 @@ import { useAuthStore } from '../../../stores/useAuthStore';
 import { getFileUrl } from '../../../services/aws/FileStorageService';
 
 interface AnimalItem {
-  id: string;
+  id: number | string;
   nom: string;
-  image: string | null;
+  image?: string | null;
   provenance?: string;
 }
 
@@ -32,7 +32,7 @@ const ItemAnimalPicker: React.FC<ItemAnimalPickerProps> = ({
 
   useEffect(() => {
     if (item.image && item.id !== 'select_all') {
-      getFileUrl(item.image, 'animal', item.id)
+      getFileUrl(item.image, 'animal', String(item.id))
         .then((url) => setImageUrl(url))
         .catch(() => {});
     }

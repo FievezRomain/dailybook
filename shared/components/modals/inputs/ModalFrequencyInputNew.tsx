@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import Button from '../../inputs/Button';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../../theme/useAppTheme';
 
 interface ModalFrequencyInputNewProps {
   label?: string;
@@ -11,7 +11,7 @@ interface ModalFrequencyInputNewProps {
 }
 
 const ModalFrequencyInputNew = ({ label, onChange, defaultFrequencyType, defaultInputValue }: ModalFrequencyInputNewProps) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [frequencyValue, setFrequencyValue] = useState('');
   const [inputValue, setInputValue] = useState(defaultInputValue ?? '');
@@ -26,15 +26,15 @@ const ModalFrequencyInputNew = ({ label, onChange, defaultFrequencyType, default
   };
 
   const styles = StyleSheet.create({
-    frequencyButton: { backgroundColor: (colors as any).quaternary, padding: 10, borderRadius: 5, marginBottom: 10, width: '100%', alignSelf: 'flex-start' },
+    frequencyButton: { backgroundColor: colors.quaternary, padding: 10, borderRadius: 5, marginBottom: 10, width: '100%', alignSelf: 'flex-start' },
     card: { borderTopStartRadius: 10, borderTopEndRadius: 10, height: '50%' },
     background: { backgroundColor: 'rgba(0, 0, 0, 0.5)', justifyContent: 'flex-end', height: '100%' },
     emptyBackground: { height: '80%' },
     buttonContainer: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 5, marginBottom: 20 },
     headerCard: { flexDirection: 'row', justifyContent: 'center', backgroundColor: colors.secondary, paddingVertical: 15 },
     bodyCard: { backgroundColor: colors.background, height: '100%' },
-    headerButtonContainer: { borderTopStartRadius: 5, borderTopEndRadius: 5, backgroundColor: (colors as any).quaternary, width: '50%', justifyContent: 'center' },
-    typeSelected: { backgroundColor: (colors as any).neutral },
+    headerButtonContainer: { borderTopStartRadius: 5, borderTopEndRadius: 5, backgroundColor: colors.quaternary, width: '50%', justifyContent: 'center' },
+    typeSelected: { backgroundColor: colors.neutral },
     textTypeButton: { textAlign: 'center' },
     textSelectedTypeButton: { color: colors.background },
     bottomBar: { width: '100%', height: 0.3, backgroundColor: colors.outline },

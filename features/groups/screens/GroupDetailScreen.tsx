@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { View, Animated, StyleSheet, TouchableOpacity, RefreshControl, FlatList } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme, ActivityIndicator, Text, Icon } from 'react-native-paper';
+import { ActivityIndicator, Text, Icon } from 'react-native-paper';
 import { useQueryClient } from '@tanstack/react-query';
 import { MaterialIcons, MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
@@ -17,9 +17,10 @@ import ModalValidation from '../../../shared/components/modals/common/ModalValid
 import { useGroupsQuery, useGroupMutations, GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 export default function GroupDetailScreen({ navigation, route }: AppStackScreenProps<'GroupDetail'>) {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const queryClient = useQueryClient();
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
   const { groupId } = route.params;
@@ -77,10 +78,10 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
     if (getUserRoleFromGroup() !== 'manager') return [];
     return [
       <TouchableOpacity key="edit" onPress={() => setModalGroupVisible(true)}>
-        <Icon source="pencil" size={25} color={(colors as any).default_dark} />
+        <Icon source="pencil" size={25} color={colors.default_dark} />
       </TouchableOpacity>,
       <TouchableOpacity key="delete" onPress={() => setModalGroupValidationVisible(true)}>
-        <Icon source="delete" size={25} color={(colors as any).default_dark} />
+        <Icon source="delete" size={25} color={colors.default_dark} />
       </TouchableOpacity>,
     ];
   };
@@ -90,11 +91,11 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
     headerRubrique: { paddingVertical: 20 },
     iconsContainer: { flexDirection: 'row', paddingVertical: 10 },
     rubriqueContainer: { marginTop: 10, marginBottom: 10 },
-    separatorFix: { borderTopColor: (colors as any).quaternary, borderTopWidth: 0.4, position: 'absolute', bottom: 0, height: 2, width: '100%' },
-    separatorAnimated: { height: 3, backgroundColor: (colors as any).default_dark, position: 'absolute', bottom: 0, width: '50%' },
-    textFontBold: { fontFamily: (fonts as any).labelLarge?.fontFamily },
-    textFontRegular: { fontFamily: (fonts as any).default?.fontFamily },
-    textFontMedium: { fontFamily: (fonts as any).labelMedium?.fontFamily },
+    separatorFix: { borderTopColor: colors.quaternary, borderTopWidth: 0.4, position: 'absolute', bottom: 0, height: 2, width: '100%' },
+    separatorAnimated: { height: 3, backgroundColor: colors.default_dark, position: 'absolute', bottom: 0, width: '50%' },
+    textFontBold: { fontFamily: fonts.labelLarge?.fontFamily },
+    textFontRegular: { fontFamily: fonts.default?.fontFamily },
+    textFontMedium: { fontFamily: fonts.labelMedium?.fontFamily },
     headerContainer: { paddingHorizontal: 20 },
     headerTitle: { flexDirection: 'row', alignItems: 'center', paddingBottom: 10 },
   });
@@ -104,8 +105,8 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
       <View style={[styles.rubriqueContainer, styles.headerContainer]}>
         <View>
           <View style={styles.headerTitle}>
-            <Entypo name="info" size={20} color={(colors as any).default_dark} style={{ marginRight: 5 }} />
-            <Text style={[styles.textFontBold, { color: (colors as any).default_dark }]}>Informations</Text>
+            <Entypo name="info" size={20} color={colors.default_dark} style={{ marginRight: 5 }} />
+            <Text style={[styles.textFontBold, { color: colors.default_dark }]}>Informations</Text>
           </View>
           <ModalDefaultNoValue text={group.informations ?? 'Aucune information'} />
         </View>
@@ -113,12 +114,12 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
       <View style={styles.rubriqueContainer}>
         <View style={styles.iconsContainer}>
           <TouchableOpacity style={{ width: '50%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} onPress={() => setActiveRubrique(0)}>
-            <MaterialCommunityIcons name="paw" size={20} color={activeRubrique === 0 ? (colors as any).default_dark : (colors as any).quaternary} style={{ marginRight: 5 }} />
-            <Text style={[{ color: activeRubrique === 0 ? (colors as any).default_dark : (colors as any).quaternary }, styles.textFontMedium]}>Animaux ({group.nb_animaux ?? 0})</Text>
+            <MaterialCommunityIcons name="paw" size={20} color={activeRubrique === 0 ? colors.default_dark : colors.quaternary} style={{ marginRight: 5 }} />
+            <Text style={[{ color: activeRubrique === 0 ? colors.default_dark : colors.quaternary }, styles.textFontMedium]}>Animaux ({group.nb_animaux ?? 0})</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ width: '50%', alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }} onPress={() => setActiveRubrique(1)}>
-            <MaterialIcons name="person" size={20} color={activeRubrique === 1 ? (colors as any).default_dark : (colors as any).quaternary} style={{ marginRight: 5 }} />
-            <Text style={[{ color: activeRubrique === 1 ? (colors as any).default_dark : (colors as any).quaternary }, styles.textFontMedium]}>Membres ({group.nb_members ?? 0})</Text>
+            <MaterialIcons name="person" size={20} color={activeRubrique === 1 ? colors.default_dark : colors.quaternary} style={{ marginRight: 5 }} />
+            <Text style={[{ color: activeRubrique === 1 ? colors.default_dark : colors.quaternary }, styles.textFontMedium]}>Membres ({group.nb_members ?? 0})</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.separatorFix} />
@@ -160,7 +161,7 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
             keyExtractor={(_, index) => index.toString()}
             ListHeaderComponent={renderHeader}
             renderItem={renderItem}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={(colors as any).default_dark} />}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />}
             ListEmptyComponent={
               <View style={styles.item}>
                 <ModalDefaultNoValue text={activeRubrique === 0 ? 'Aucun animal' : 'Aucun membre'} />

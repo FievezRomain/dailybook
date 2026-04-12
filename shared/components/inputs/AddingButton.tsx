@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
-import { FAB, useTheme } from 'react-native-paper';
+import { FAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import ModalCreate from '../modals/ModalCreate';
+import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface AddingButtonProps {
   navigation?: unknown;
 }
 
 const AddingButton: React.FC<AddingButtonProps> = () => {
-  const { colors } = useTheme();
+  const { colors } = useAppTheme();
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
 

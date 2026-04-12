@@ -1,30 +1,11 @@
-import httpClient from './httpClient';
+import { createCrudService } from './factory';
+import { CreateObjectifPayload, UpdateObjectifPayload } from '../../features/objectifs/types';
+import { Objectif } from '../../models/Objectif';
 
-export async function getObjectifs() {
-  const response = await httpClient.get('/objectifs');
-  return response.data;
-}
+const _crud = createCrudService<Objectif, CreateObjectifPayload, UpdateObjectifPayload>('/objectifs');
 
-export async function createObjectif(body: Record<string, unknown>) {
-  const response = await httpClient.post('/objectifs', body);
-  return response.data;
-}
-
+export const getObjectifs = _crud.getAll;
+export const createObjectif = _crud.create;
 /** Mise à jour complète de l'objectif et de ses sous-tâches */
-export async function updateObjectif(objectifId: string, body: Record<string, unknown>) {
-  const response = await httpClient.put(`/objectifs/${objectifId}`, body);
-  return response.data;
-}
-
-export async function deleteObjectif(objectifId: string) {
-  const response = await httpClient.delete(`/objectifs/${objectifId}`);
-  return response.data;
-}
-
-// ─── Backward-compatible service adapter ────────────────────────────────────
-const objectifsServiceInstance = {
-  create: (body: any) => createObjectif(body),
-  update: (body: any) => updateObjectif(body.id, body),
-  updateTasks: (body: any) => updateObjectif(body.id, body),
-};
-export default objectifsServiceInstance;
+export const updateObjectif = _crud.update;
+export const deleteObjectif = _crud.remove;

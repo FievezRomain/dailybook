@@ -16,7 +16,7 @@ import ModalEventDetails from '../../../features/events/components/ModalEventDet
 import { deleteEvent, patchEvent } from '../../../services/api/EventService';
 import LoggerService from '../../../services/logs/LoggerService';
 import Toast from 'react-native-toast-message';
-import { useTheme } from 'react-native-paper';
+import { useAppTheme } from '../../../theme/useAppTheme';
 import ModalValidation from '../modals/common/ModalValidation';
 import Feather from '@expo/vector-icons/Feather';
 
@@ -45,7 +45,7 @@ const EventCard = ({
   withState?: boolean;
   typeEvent?: string;
 }) => {
-  const { colors, fonts } = useTheme();
+  const { colors, fonts } = useAppTheme();
   const { firebaseUser } = useAuthStore();
   const [modalModificationVisible, setModalModificationVisible] = useState(false);
   const [modalSubMenuEventVisible, setModalSubMenuEventVisible] = useState(false);
@@ -57,9 +57,9 @@ const EventCard = ({
   const getColorEventType = (): string | undefined => {
     if (eventInfos === undefined) return undefined;
     switch (eventInfos.eventtype) {
-      case 'depense': return (colors as any).quaternary;
-      case 'balade': return (colors as any).accent;
-      case 'soins': return (colors as any).neutral;
+      case 'depense': return colors.quaternary;
+      case 'balade': return colors.accent;
+      case 'soins': return colors.neutral;
       case 'concours': return colors.primary;
       case 'entrainement': return colors.tertiary;
       case 'autre': return colors.error;
@@ -177,7 +177,7 @@ const EventCard = ({
       width: '100%',
       flexDirection: 'column',
       marginBottom: 10,
-      shadowColor: (colors as any).default_dark,
+      shadowColor: colors.default_dark,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -198,13 +198,13 @@ const EventCard = ({
       padding: 10,
       marginRight: 10,
       borderRightWidth: 0.3,
-      borderColor: (colors as any).default_dark,
+      borderColor: colors.default_dark,
     },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
     subMenuContainer: { paddingVertical: 10, paddingLeft: 20, paddingRight: 10 },
-    textColor: { color: (colors as any).default_dark },
+    textColor: { color: colors.default_dark },
   });
 
   return (
@@ -267,9 +267,9 @@ const EventCard = ({
           {withState === true && (
             <TouchableOpacity onPress={handleStateChange} style={styles.indicatorEventContainer}>
               {eventInfos.state === 'À faire' ? (
-                <Feather name="square" size={25} color={(colors as any).default_dark} />
+                <Feather name="square" size={25} color={colors.default_dark} />
               ) : (
-                <Feather name="x-square" size={25} color={(colors as any).default_dark} />
+                <Feather name="x-square" size={25} color={colors.default_dark} />
               )}
             </TouchableOpacity>
           )}
