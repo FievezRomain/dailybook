@@ -67,7 +67,7 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }: EventChartComp
             backgroundColor: colors.background,
             width: "100%",
             padding: 10,
-            borderRadius: 5,
+            borderRadius: 8,
             marginBottom: 10,
             shadowColor: colors.default_dark,
             shadowOpacity: 0.1,
@@ -82,7 +82,7 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }: EventChartComp
         indicatorCategorie:{
             height: 10,
             width: 10,
-            borderRadius: 15
+            borderRadius: 8
         },
         categorieContainer:{
             flexDirection: "row",

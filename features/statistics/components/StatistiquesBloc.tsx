@@ -18,6 +18,7 @@ import TailleComponent from './TailleComponent';
 import AlimentationComponent from './AlimentationComponent';
 import ConcoursComponent from './ConcoursComponent';
 import { StatistiquesBlocProps, StatItemKey, Temporality, StatisticsQueryPayload, ChartConfig } from '../types';
+import { lightTokens } from '../../../theme/tokens';
 
 
 const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
@@ -44,10 +45,10 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
     const [temporality, setTemporality] = useState<Temporality>('Mois');
     const chartConfig: Record<StatItemKey, ChartConfig> = {
         depense: {
-            backgroundGradientFrom: "#1E2923",
-            backgroundGradientTo: "#08130D",
-            color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            backgroundGradientFrom: lightTokens.chartBackground,
+            backgroundGradientTo: lightTokens.chartBackgroundTo,
+            color: (opacity = 1) => `rgba(206, 152, 113, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(244, 237, 235, ${opacity})`,
         },
         entrainement: {
             backgroundGradientFromOpacity: 0,

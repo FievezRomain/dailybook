@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import type { StyleProp, ViewStyle, TextStyle } from 'react-native';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { radii } from '../../../theme/tokens';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -93,7 +94,7 @@ const Button: React.FC<ButtonProps> = ({
       paddingRight,
       paddingBottom,
       paddingTop,
-      borderRadius: 50,
+      borderRadius: radii.pill,
     },
     buttonText: {
       color,

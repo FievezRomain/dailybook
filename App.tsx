@@ -112,7 +112,7 @@ function App() {
   if (!fontsLoaded || isUpdating) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#956540" />
         <Text style={styles.loaderText}>
           {isUpdating ? "Téléchargement de la mise à jour…" : "Chargement…"}
         </Text>

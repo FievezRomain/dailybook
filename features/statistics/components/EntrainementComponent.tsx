@@ -175,7 +175,7 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
             backgroundColor: colors.background,
             width: "100%",
             padding: 10,
-            borderRadius: 5,
+            borderRadius: 8,
             marginBottom: 10,
             shadowColor: colors.default_dark,
             shadowOpacity: 0.1,

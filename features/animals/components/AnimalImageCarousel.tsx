@@ -34,7 +34,9 @@ const CarouselImageItem = ({
     if (item.filename) {
       getFileUrl(item.filename, 'animal', item.idanimal ?? '')
         .then((u) => setImageUrl(u))
-        .catch(() => {});
+        .catch((err: unknown) => {
+          if (__DEV__) console.warn('[AnimalImageCarousel] getFileUrl failed', err);
+        });
     }
   }, [item.filename, item.idanimal]);
 

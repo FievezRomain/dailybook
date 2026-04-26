@@ -54,7 +54,7 @@ export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Regis
     textInput: { alignSelf: 'flex-start', marginLeft: 35, marginBottom: 10 },
     image: { flex: 1, height: '100%', width: '100%', resizeMode: 'cover', position: 'absolute', justifyContent: 'center' },
     register: { flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
-    form: { paddingTop: 50, alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.9)', justifyContent: 'center', width: '90%', top: -(Constants.statusBarHeight + 10), borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
+    form: { paddingTop: 50, alignItems: 'center', backgroundColor: colors.surface, justifyContent: 'center', width: '90%', top: -(Constants.statusBarHeight + 10), borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
     title: { top: -(Constants.statusBarHeight + 10), color: colors.default_dark, fontSize: 30, letterSpacing: 2, marginBottom: 20 },
     input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: 'black' },
     registerButton: { marginBottom: 20, marginTop: 10, borderRadius: 10 },

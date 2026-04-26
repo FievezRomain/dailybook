@@ -51,7 +51,7 @@ export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login
     textInput: { alignSelf: 'flex-start', marginLeft: 35, marginBottom: 10 },
     image: { flex: 1, height: '100%', width: '100%', resizeMode: 'cover', position: 'absolute', justifyContent: 'center', backgroundColor: colors.onSurface },
     login: { flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
-    form: { paddingTop: 50, alignItems: 'center', backgroundColor: 'rgba(255, 255, 255, 0.9)', justifyContent: 'center', width: '90%', borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
+    form: { paddingTop: 50, alignItems: 'center', backgroundColor: colors.surface, justifyContent: 'center', width: '90%', borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
     title: { fontSize: 30, letterSpacing: 2, marginBottom: 20 },
     input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: 'black' },
     clickableText: { marginLeft: 5, color: colors.onSurface, alignSelf: 'flex-end', justifyContent: 'flex-end', textTransform: 'uppercase' },
