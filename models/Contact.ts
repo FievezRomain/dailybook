@@ -5,4 +5,6 @@ export type Contact = {
     telephone: string;
     email: string;
     emailproprietaire: string;
+    /** UI-only — true pendant la sync optimiste */
+    syncing?: boolean;
 };

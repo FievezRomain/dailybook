@@ -9,4 +9,6 @@ export type Group = {
     nb_members?: number;
     nb_animaux?: number;
     created_at?: string;
+    /** UI-only — true pendant la sync optimiste */
+    syncing?: boolean;
 };

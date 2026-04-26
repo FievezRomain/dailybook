@@ -9,4 +9,6 @@ export type Notification = {
   created_at: string;
   action_available: boolean;
   proposed_by?: string;
+  /** UI-only — true pendant la sync optimiste */
+  syncing?: boolean;
 };

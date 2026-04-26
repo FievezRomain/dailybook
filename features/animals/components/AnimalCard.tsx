@@ -10,6 +10,7 @@ import ModalValidation from '../../../shared/components/modals/common/ModalValid
 import { Image } from 'expo-image';
 import { Animal } from '../../../models/Animal';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import * as Haptics from 'expo-haptics';
 
 const AnimalCard = ({
   animal,
@@ -55,12 +56,14 @@ const AnimalCard = ({
   }, [currentAnimal.image, currentAnimal.id]);
 
   const acceptAnimal = async (data: any) => {
+    Haptics.selectionAsync().catch(() => undefined);
     data.status = 'accepted';
     data.id = group.id;
     submitGroup(data, 'respondAnimal');
   };
 
   const refuseAnimal = async (data: any) => {
+    Haptics.selectionAsync().catch(() => undefined);
     data.status = 'declined';
     data.id = group.id;
     submitGroup(data, 'respondAnimal');

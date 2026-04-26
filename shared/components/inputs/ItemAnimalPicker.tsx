@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Image, StyleSheet, Text, View } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { FontAwesome } from '@expo/vector-icons';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { useAuthStore } from '../../../stores/useAuthStore';
@@ -37,6 +38,19 @@ const ItemAnimalPicker: React.FC<ItemAnimalPickerProps> = ({
         .catch(() => {});
     }
   }, [item.image, item.id]);
+
+  const scale = useSharedValue(0.8);
+  const opacity = useSharedValue(0);
+
+  useEffect(() => {
+    scale.value = withSpring(1, { stiffness: 150, damping: 20 });
+    opacity.value = withSpring(1, { stiffness: 150, damping: 20 });
+  }, []);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+  }));
 
   const truncateAnimalName = (name: string): string => {
     if (name.length <= 15) {
@@ -108,7 +122,7 @@ const ItemAnimalPicker: React.FC<ItemAnimalPickerProps> = ({
   });
 
   return (
-    <View style={[styles.containerAvatar, { position: 'relative' }]}>
+    <Animated.View style={[styles.containerAvatar, { position: 'relative' }, animatedStyle]}>
       {item.image !== null ? (
         <LinearGradient
           colors={isSelected ? [colors.accent, colors.tertiary] : ['transparent', 'transparent']}
@@ -170,7 +184,7 @@ const ItemAnimalPicker: React.FC<ItemAnimalPickerProps> = ({
       <Text style={[isSelected ? styles.selectedText : styles.defaultText, styles.textFontRegular]}>
         {truncateAnimalName(item.nom)}
       </Text>
-    </View>
+    </Animated.View>
   );
 };
 

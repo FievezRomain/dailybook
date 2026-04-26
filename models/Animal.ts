@@ -21,4 +21,6 @@ export type Animal = {
     previousimage?: string;
     informations?: string;
     provenance?: string;
+    /** UI-only — true pendant la sync optimiste */
+    syncing?: boolean;
 };

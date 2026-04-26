@@ -1,9 +1,8 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Portal } from 'react-native-paper';
-import BottomSheet, { BottomSheetScrollView, useBottomSheetTimingConfigs } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetScrollView, useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
 import Toast from 'react-native-toast-message';
-import { Easing } from 'react-native-reanimated';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 
 interface ModalEditGenericProps {
@@ -46,9 +45,13 @@ const ModalEditGeneric = ({
     contentContainer: { flex: 1 },
   });
 
-  const animationConfigs = useBottomSheetTimingConfigs({
-    duration: 200,
-    easing: Easing.sin,
+  const animationConfigs = useBottomSheetSpringConfigs({
+    stiffness: 150,
+    damping: 20,
+    mass: 1,
+    overshootClamping: false,
+    restSpeedThreshold: 0.3,
+    restDisplacementThreshold: 0.3,
   });
 
   if (!isVisible && !isOpen) return null;

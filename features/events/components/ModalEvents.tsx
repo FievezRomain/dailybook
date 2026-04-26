@@ -28,6 +28,7 @@ import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useEventsQuery } from '../../../hooks/queries/useEventsQuery';
 import { useGroupsQuery } from '../../../hooks/queries/useGroupsQuery';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import * as Haptics from 'expo-haptics';
 import { ModalEventsProps } from '../types';
 
 const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onModify = undefined, date = null }: ModalEventsProps) => {
@@ -45,7 +46,8 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
   const { data: animaux = [] } = useAnimalsQuery();
   const { data: groups = [] } = useGroupsQuery();
   const [selected, setSelected] = useState<any[]>([]);
-  const [eventType, setEventType] = useState<any>(false);
+  const [eventType, setEventTypeRaw] = useState<any>(false);
+  const setEventType = (item: any) => { setEventTypeRaw(item); Haptics.selectionAsync().catch(() => undefined); };
   const [notifType, setNotifType] = useState<any>(false);
   const [optionNotifType, setOptionNotifType] = useState<any>(false);
   const [categorieDepense, setCategorieDepense] = useState<any>(false);

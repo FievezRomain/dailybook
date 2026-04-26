@@ -7,4 +7,6 @@ export type Wish = {
     prix?: number;
     image?: string;
     previousimage?: string;
+    /** UI-only — true pendant la sync optimiste */
+    syncing?: boolean;
 };

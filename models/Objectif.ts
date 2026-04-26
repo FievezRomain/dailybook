@@ -14,4 +14,6 @@ export type Objectif = {
     temporalityobjectif?: string;
     sousetapes: ObjectifEtape[];
     sharedgroups?: number[];
+    /** UI-only — true pendant la sync optimiste */
+    syncing?: boolean;
 };

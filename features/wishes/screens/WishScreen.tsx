@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import * as Haptics from 'expo-haptics';
 import { View, Text, StyleSheet, FlatList, Dimensions, Linking, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -44,6 +45,7 @@ import { Wish } from '../../../models/Wish';
   };
 
   const changeState = (wish: Wish) => {
+    Haptics.selectionAsync().catch(() => undefined);
     update.mutate(
       { id: wish.id, body: { ...wish, acquis: !wish.acquis } },
       { onError: (err: any) => Toast.show({ type: 'error', position: 'top', text1: err.message }) }
