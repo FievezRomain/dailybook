@@ -8,7 +8,6 @@ import ModalEditGeneric from './ModalEditGeneric';
 interface ModalLogoutProps {
   modalVisible: boolean;
   setModalVisible: (v: boolean) => void;
-  navigation?: any;
 }
 
 const ModalLogout = ({ modalVisible, setModalVisible }: ModalLogoutProps) => {

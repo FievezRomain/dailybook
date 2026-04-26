@@ -4,6 +4,7 @@ import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather, Mat
 import { TouchableOpacity } from "react-native";
 import OfferInformations from '../../../shared/components/common/OfferInformations';
 import { useAuthStore } from '../../../stores/useAuthStore';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
 import { useThemeStore } from '../../../stores/useThemeStore';
 import { IconButton } from 'react-native-paper';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -25,7 +26,8 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
     const { isDark: isDarkTheme } = useThemeStore();
     const { colors, fonts } = useAppTheme();
     const { firebaseUser, user } = useAuthStore();
-    const [itemStatistique, setItemStatistique] = useState<StatItemKey>('depense');
+    const { hasRole } = useCurrentUser();
+    const isPremium = hasRole('premium');
     const chartComponents: Record<StatItemKey, React.ComponentType<any>> = {
         balade: BaladeComponent,
         entrainement: EntrainementComponent,
@@ -36,8 +38,8 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
         concours: ConcoursComponent
     };
     
+    const [itemStatistique, setItemStatistique] = useState<StatItemKey>('depense');
     const ChartComponent = chartComponents[itemStatistique as StatItemKey];
-    const accountType = (user as any)?.abonnement?.libelle as string | undefined;
     const arrayState = [
         {value: 'Mois', label: 'Mois', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
         {value: 'Année', label: 'Année', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
@@ -302,7 +304,7 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
                     color={hexToRgba(colors.quaternary, 1) ?? undefined}
                 />
             </View>
-            {accountType === "Premium" &&
+            {isPremium &&
                 <View style={styles.dateContainer}>
                     <TouchableOpacity onPress={() => changeDates(-1)}>
                         <IconButton icon={"chevron-left"} size={30} iconColor={colors.default_dark} />
@@ -315,7 +317,7 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
             }
 
             <View style={styles.composantContainer}>
-                {accountType === "Premium" ?
+                {isPremium ?
                     <>
                         <View style={{width: "90%", alignSelf: "center"}}>
                             <View style={styles.statistiqueIndicatorContainer}>

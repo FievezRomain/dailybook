@@ -3,11 +3,12 @@ import { Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { Wish } from '../../../models/Wish';
 
 interface ModalSubMenuWishActionsProps {
   modalVisible: boolean;
   setModalVisible: (v: boolean) => void;
-  wish: any;
+  wish: Wish;
   handleModify: () => void;
   handleDelete: () => void;
   handleShare: () => void;

@@ -3,7 +3,8 @@ export type CreateWishPayload = {
   destinataire?: string;
   acquis?: boolean;
   url?: string;
-  prix?: number;
+  /** Le backend stocke le prix comme chaîne pour gérer unités et devises. */
+  prix?: string;
   image?: string;
 };
 

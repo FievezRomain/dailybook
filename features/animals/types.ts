@@ -31,6 +31,12 @@ export type AnimalHistoryItem = 'poids' | 'taille' | 'food' | 'quantity';
 
 export type AnimalBodyPicturePayload = FormData;
 
+export type BodyPicturePayload = {
+  idanimal: number;
+  filename: string;
+  date_enregistrement?: string;
+};
+
 export type AnimalHistoryPayload = {
   idAnimal: number;
   item: AnimalHistoryItem;

@@ -9,6 +9,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { createWish, updateWish } from '../../../services/api/WishService';
+import { Wish } from '../../../models/Wish';
 import LoggerService from '../../../services/logs/LoggerService';
 import FileStorageService from '../../../services/aws/FileStorageService';
 import AvatarPicker from '../../../shared/components/inputs/AvatarPicker';
@@ -18,8 +19,8 @@ interface ModalWishProps {
   isVisible: boolean;
   setVisible: (v: boolean) => void;
   actionType: string;
-  wish?: any;
-  onModify?: (data?: any) => void;
+  wish?: Wish;
+  onModify?: (data?: Wish) => void;
 }
 
 const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = undefined }: ModalWishProps) => {
@@ -48,7 +49,7 @@ const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = un
     return !isNaN(numericValue);
   };
 
-  const submitRegister = async (data: any) => {
+  const submitRegister = async (data: Record<string, unknown>) => {
     if (loading) return;
     setLoading(true);
     if (data.prix && !checkNumericFormat(data.prix)) {

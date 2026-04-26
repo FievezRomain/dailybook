@@ -7,13 +7,16 @@ import Toast from "react-native-toast-message";
 import LineChartComponent from '../../../shared/components/charts/LineChartComponent';
 import PhysiqueCard from '../../animals/components/PhysiqueCard';
 import { PhysiqueChartComponentProps } from '../types';
+import { PhysiqueStatisticsData, HistoryEntry } from '../../../models/Statistics';
+
+type GroupedHistoryEntry = { date: string; history: HistoryEntry[] };
 
 const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdateDataChart }: PhysiqueChartComponentProps) => {
     const { colors, fonts } = useAppTheme();
     const [loading, setLoading] = useState(false);
     const [dataToDisplay, setDataToDisplay] = useState(data);
-    const [dataByDate, setDataByDate] = useState<any>(null);
-    const [expandedDate, setExpandedDate] = useState(null);
+    const [dataByDate, setDataByDate] = useState<GroupedHistoryEntry[] | null>(null);
+    const [expandedDate, setExpandedDate] = useState<string | null>(null);
 
     useEffect(() => {
         setLoading(true);
@@ -46,51 +49,48 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
     
     };
 
-    const groupEvents = (data: any, dateDebut: any, dateFin: any) => {
+    const groupEvents = (data: PhysiqueStatisticsData, dateDebut: string, dateFin: string): GroupedHistoryEntry[] => {
         const monthDifference = calculateMonthDifference(dateDebut, dateFin);
 
-        if( monthDifference === 0 ){ // Si affichage par mois, on affiche par date
+        if( monthDifference === 0 ){
             return groupByDay(data);
-        } else { // Si affichage par an, on affiche par mois
+        } else {
             return groupByMonth(data);
         }
     }
 
-    const groupByDay = (data: any) => {
-        const map = new Map();
+    const groupByDay = (data: PhysiqueStatisticsData): GroupedHistoryEntry[] => {
+        const map = new Map<string, GroupedHistoryEntry>();
 
-        data.history.forEach((stat: any) => {
+        data.history.forEach((stat: HistoryEntry) => {
             if (!map.has(stat.date)) {
                 map.set(stat.date, { date: stat.date, history: [stat] });
             } else {
-                map.get(stat.date).history.push(stat);
+                map.get(stat.date)!.history.push(stat);
             }
         });
 
         return Array.from(map.values());
     }
 
-    const groupByMonth = (data: any) => {
-        const map = new Map();
+    const groupByMonth = (data: PhysiqueStatisticsData): GroupedHistoryEntry[] => {
+        const map = new Map<string, GroupedHistoryEntry>();
 
-        data.history.forEach((stat: any) => {
+        data.history.forEach((stat: HistoryEntry) => {
             const statDate = new Date(stat.date);
-            const yearMonth = `${statDate.getFullYear()}-${String(statDate.getMonth() + 1).padStart(2, '0')}`; // Format "YYYY-MM"
+            const yearMonth = `${statDate.getFullYear()}-${String(statDate.getMonth() + 1).padStart(2, '0')}`;
         
-            // Si la clé "yearMonth" n'existe pas, on l'ajoute
             if (!map.has(yearMonth)) {
-                map.set(yearMonth, { date: yearMonth, history: [stat] }); // On ajoute tout le tableau d'événements
+                map.set(yearMonth, { date: yearMonth, history: [stat] });
               } else {
-                // Sinon, on fusionne les nouveaux événements avec ceux existants
-                const existingEvents = map.get(yearMonth).history;
-                map.get(yearMonth).history.push(stat);
+                map.get(yearMonth)!.history.push(stat);
               }
         });
 
         return Array.from(map.values());
     }
 
-    const calculateMonthDifference = (dateDebut: any, dateFin: any) => {
+    const calculateMonthDifference = (dateDebut: string, dateFin: string): number => {
         // Vérification si par mois ou par an
         var [jourDebut, moisDebut, anneeDebut] = dateDebut.split("/").map(Number);
         var [jourFin, moisFin, anneeFin] = dateFin.split("/").map(Number);
@@ -98,12 +98,11 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
         return moisFin - moisDebut;
     }
 
-    const handleDateCategoryPress = (date: any) => {
-        // Si la date est déjà ouverte, on la referme, sinon on l'ouvre
+    const handleDateCategoryPress = (date: string) => {
         setExpandedDate(expandedDate === date ? null : date);
     };
 
-    const getDateToDisplay = (date: any) => {
+    const getDateToDisplay = (date: string) => {
         const monthDifference = calculateMonthDifference(chartParameters.dateDebut, chartParameters.dateFin);
         const options: Intl.DateTimeFormatOptions = monthDifference > 0 ? { month: 'long', year: 'numeric' } : { day: '2-digit', month: 'long', year: 'numeric' };
         const formatter = new Intl.DateTimeFormat('fr-FR', options);
@@ -118,7 +117,7 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
         return `${dateFormatted}`;
     }
 
-    const isExpanded = (item: any) => {
+    const isExpanded = (item: GroupedHistoryEntry) => {
         return expandedDate === item.date;
     }
 

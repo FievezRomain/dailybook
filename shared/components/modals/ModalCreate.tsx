@@ -14,17 +14,20 @@ import ModalAnimal from '../../../features/animals/components/ModalAnimal';
 import ModalGroup from '../../../features/groups/components/ModalGroup';
 import { useCalendarUIStore } from '../../../stores/useCalendarUIStore';
 import { useAuthStore } from '../../../stores/useAuthStore';
+import { useCurrentUser } from '../../../hooks/useCurrentUser';
+import type { AppNavigationProp } from '../../../navigation/types';
 
 interface ModalCreateProps {
   isVisible: boolean;
   setModalVisible: (v: boolean) => void;
-  navigation?: any;
+  navigation?: AppNavigationProp;
 }
 
 const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProps) => {
   const { colors, fonts } = useAppTheme();
   const { user } = useAuthStore();
-  const accountType = (user as any)?.abonnement?.libelle;
+  const { hasRole } = useCurrentUser();
+  const isPremium = hasRole('premium');
   const [isEventModalVisible, setEventModalVisible] = useState(false);
   const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
   const [isWishModalVisible, setWishModalVisible] = useState(false);
@@ -175,14 +178,14 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
 
               <View style={styles.groupButton}>
                 <View style={styles.button}>
-                  <TouchableOpacity disabled={accountType !== 'Premium'} onPress={() => setGroupModalVisible(true)}>
+                  <TouchableOpacity disabled={!isPremium} onPress={() => setGroupModalVisible(true)}>
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome name="group" size={20} style={styles.iconButton} />
                         <Text style={[styles.textFontRegular, styles.titleButton]}>Groupe</Text>
                       </View>
                       <View style={styles.actionButtonContainer}>
-                        {accountType !== 'Premium' && <View style={styles.premiumOverlay}><Text style={styles.premiumText}>Premium</Text></View>}
+                        {!isPremium && <View style={styles.premiumOverlay}><Text style={styles.premiumText}>Premium</Text></View>}
                         <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
                       </View>
                     </View>

@@ -6,14 +6,18 @@ import EventCard from '../../../shared/components/cards/EventCard';
 import Toast from "react-native-toast-message";
 import HeatMapChartComponent from '../../../shared/components/charts/HeatMapChartComponent';
 import { EventChartComponentProps } from '../types';
+import { EventStatisticsData, StatisticItem } from '../../../models/Statistics';
+import { Event } from '../../../models/Event';
+
+type GroupedEventEntry = { date: string; events: Event[]; color?: string };
 
 const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChartComponentProps) => {
     const { colors, fonts } = useAppTheme();
     const [loading, setLoading] = useState(true);
     const [dataToDisplay, setDataToDisplay] = useState(data);
-    const [dataByDate, setDataByDate] = useState<any>(null);
-    const flatListRef = useRef<any>(null);
-    const [expandedDate, setExpandedDate] = useState(null);
+    const [dataByDate, setDataByDate] = useState<GroupedEventEntry[] | null>(null);
+    const flatListRef = useRef<FlatList>(null);
+    const [expandedDate, setExpandedDate] = useState<string | null>(null);
 
     useEffect(() => {
         setLoading(true);
@@ -24,7 +28,7 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
         setLoading(false);
     }, [data]);
 
-    const groupEvents = (data: any, dateDebut: any, dateFin: any) => {
+    const groupEvents = (data: EventStatisticsData, dateDebut: string, dateFin: string): GroupedEventEntry[] => {
         const monthDifference = calculateMonthDifference(dateDebut, dateFin);
 
         if( monthDifference === 0 ){ // Si affichage par mois, on affiche par date
@@ -34,10 +38,10 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
         }
     }
 
-    const groupByDay = (data: any) => {
-        const map = new Map();
+    const groupByDay = (data: EventStatisticsData): GroupedEventEntry[] => {
+        const map = new Map<string, GroupedEventEntry>();
 
-        data.statistic.forEach((stat: any) => {
+        data.statistic.forEach((stat: StatisticItem) => {
             if (!map.has(stat.date)) {
                 map.set(stat.date, { date: stat.date, events: [...stat.events] });
             }
@@ -46,11 +50,11 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
         return Array.from(map.values());
     }
 
-    const groupByMonth = (data: any) => {
-        const map = new Map();
-        const processedDates = new Set();
+    const groupByMonth = (data: EventStatisticsData): GroupedEventEntry[] => {
+        const map = new Map<string, GroupedEventEntry>();
+        const processedDates = new Set<string>();
 
-        data.statistic.forEach((stat: any) => {
+        data.statistic.forEach((stat: StatisticItem) => {
             if (processedDates.has(stat.date)) {
                 return; // Passe à l'élément suivant si la date a déjà été traitée
             }
@@ -67,15 +71,15 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
                 map.set(yearMonth, { date: yearMonth, events: [...stat.events] }); // On ajoute tout le tableau d'événements
               } else {
                 // Sinon, on fusionne les nouveaux événements avec ceux existants
-                const existingEvents = map.get(yearMonth).events;
-                map.get(yearMonth).events = [...existingEvents, ...stat.events];
+                const existingEvents = map.get(yearMonth)!.events;
+                map.get(yearMonth)!.events = [...existingEvents, ...stat.events];
               }
         });
 
         return Array.from(map.values());
     }
 
-    const calculateMonthDifference = (dateDebut: any, dateFin: any) => {
+    const calculateMonthDifference = (dateDebut: string, dateFin: string): number => {
         // Vérification si par mois ou par an
         var [jourDebut, moisDebut, anneeDebut] = dateDebut.split("/").map(Number);
         var [jourFin, moisFin, anneeFin] = dateFin.split("/").map(Number);
@@ -107,7 +111,7 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
         }
     }
 
-    const handleDayPress = (day: any) => {
+    const handleDayPress = (day: StatisticItem & { date: string }) => {
         if(day.events === undefined){
             return;
         }
@@ -120,7 +124,7 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
         } else{
             date = day.date;
         }
-        const index = dataByDate!.findIndex((item: any) => item.date === date);
+        const index = dataByDate!.findIndex((gItem) => gItem.date === date);
     
         if (index !== -1) {
             setExpandedDate(date);
@@ -129,12 +133,12 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
         }
     };
 
-    const handleDateCategoryPress = (date: any) => {
+    const handleDateCategoryPress = (date: string) => {
         // Si la date est déjà ouverte, on la referme, sinon on l'ouvre
         setExpandedDate(expandedDate === date ? null : date);
     };
 
-    const getDateToDisplay = (date: any) => {
+    const getDateToDisplay = (date: string) => {
         const monthDifference = calculateMonthDifference(chartParameters.dateDebut, chartParameters.dateFin);
         const options: Intl.DateTimeFormatOptions = monthDifference > 0 ? { month: 'long', year: 'numeric' } : { day: '2-digit', month: 'long', year: 'numeric' };
         const formatter = new Intl.DateTimeFormat('fr-FR', options);
@@ -149,7 +153,7 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
         return `${dateFormatted}`;
     }
 
-    const isExpanded = (item: any) => {
+    const isExpanded = (item: GroupedEventEntry) => {
         return expandedDate === item.date;
     }
     

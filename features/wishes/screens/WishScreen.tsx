@@ -14,19 +14,18 @@ import { getFileUrl } from '../../../services/aws/FileStorageService';
 import { useWishesQuery, useWishMutations } from '../../../hooks/queries/useWishesQuery';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
-
-export default function WishScreen({ navigation }: AppStackScreenProps<'Wish'>) {
+import { Wish } from '../../../models/Wish';
   const { colors, fonts } = useAppTheme();
   const { data: wishes = [] } = useWishesQuery();
   const { update, remove } = useWishMutations();
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
 
-  const [selectedWish, setSelectedWish] = useState<any>(null);
+  const [selectedWish, setSelectedWish] = useState<Wish | null>(null);
   const [modalSubMenuWishVisible, setModalSubMenuWishVisible] = useState(false);
   const [modalWishVisible, setModalWishVisible] = useState(false);
   const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
-  const openSubMenuWish = (wish: any) => {
+  const openSubMenuWish = (wish: Wish) => {
     setSelectedWish(wish);
     setModalSubMenuWishVisible(true);
   };
@@ -44,14 +43,14 @@ export default function WishScreen({ navigation }: AppStackScreenProps<'Wish'>) 
     });
   };
 
-  const changeState = (wish: any) => {
+  const changeState = (wish: Wish) => {
     update.mutate(
       { id: wish.id, body: { ...wish, acquis: !wish.acquis } },
       { onError: (err: any) => Toast.show({ type: 'error', position: 'top', text1: err.message }) }
     );
   };
 
-  const getOrderedWishes = () => [...wishes].sort((a: any, b: any) => Number(a.acquis) - Number(b.acquis));
+  const getOrderedWishes = () => [...wishes].sort((a: Wish, b: Wish) => Number(a.acquis) - Number(b.acquis));
 
   const styles = StyleSheet.create({
     container: { flex: 1, marginTop: 20 },
@@ -82,9 +81,9 @@ export default function WishScreen({ navigation }: AppStackScreenProps<'Wish'>) 
         isVisible={modalWishVisible}
         setVisible={setModalWishVisible}
         wish={selectedWish}
-        onModify={(wish: any) => {
+        onModify={(wish?: Wish) => {
           setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: "Modification d'un souhait" }), 300);
-          setSelectedWish(wish);
+          if (wish) setSelectedWish(wish);
         }}
       />
       <ModalValidation
@@ -102,7 +101,7 @@ export default function WishScreen({ navigation }: AppStackScreenProps<'Wish'>) 
         ) : (
           <FlatList
             data={getOrderedWishes()}
-            keyExtractor={(item: any) => item.id.toString()}
+            keyExtractor={(item: Wish) => item.id.toString()}
             renderItem={({ item, index }) => (
               <View style={[styles.itemContainer, index % 2 !== 0 && styles.itemContainerSecondColumn]}>
                 <TouchableOpacity onPress={() => openSubMenuWish(item)}>
