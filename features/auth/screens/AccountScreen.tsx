@@ -3,8 +3,7 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { updateProfile, updatePassword, updateEmail } from 'firebase/auth';
-import { getFirebaseAuth } from '../../../firebase';
+import { authService } from '../../../services/auth/FirebaseAuthService';
 import Toast from 'react-native-toast-message';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
 import InputTextInLine from '../../../shared/components/inputs/InputTextInLine';
@@ -30,26 +29,25 @@ export default function AccountScreen({ navigation }: AppStackScreenProps<'Accou
   const submitModifications = async () => {
     setLoading(true);
     try {
-      const fbUser = getFirebaseAuth().currentUser;
-      if (!fbUser) return;
+      if (!authService.getCurrentUser()) return;
 
       if (displayName !== firebaseUser?.displayName) {
-        await updateProfile(fbUser, { displayName });
+        await authService.updateProfile({ displayName });
       }
       if (image && image !== firebaseUser?.photoURL) {
         const filename = image.split('/').pop() ?? 'photo.jpg';
-        const fileURL = await uploadFile(image, filename, 'image/jpeg', 'user', fbUser.uid);
-        await updateProfile(fbUser, { photoURL: fileURL });
+        const fileURL = await uploadFile(image, filename, 'image/jpeg', 'user', firebaseUser?.uid ?? '');
+        await authService.updateProfile({ photoURL: fileURL });
       }
       if (email.trim() !== firebaseUser?.email) {
-        await updateEmail(fbUser, email.trim());
+        await authService.updateEmail(email.trim());
       }
       if (password.trim()) {
         if (password !== passwordRepeat) {
           Toast.show({ type: 'error', position: 'top', text1: 'Les mots de passe ne correspondent pas' });
           return;
         }
-        await updatePassword(fbUser, password);
+        await authService.updatePassword(password);
       }
 
       const filename = image?.split('/').pop() ?? '';

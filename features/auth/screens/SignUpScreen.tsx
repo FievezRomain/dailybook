@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from 'firebase/auth';
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import Constants from 'expo-constants';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { getFirebaseAuth } from '../../../firebase';
+import { authService } from '../../../services/auth/FirebaseAuthService';
 import { getFirebaseError } from '../../../shared/utils/FirebaseErrorUtils';
 import { register as apiRegister } from '../../../services/api/AuthService';
 import Back from '../../../shared/components/common/Back';
@@ -35,10 +34,7 @@ export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Regis
       }
       setEvenPassword(true);
 
-      const userCredential = await createUserWithEmailAndPassword(getFirebaseAuth(), data.email.trim(), data.password);
-      const user = userCredential.user;
-      await updateProfile(user, { displayName: data.prenom });
-      await sendEmailVerification(user);
+      await authService.signUp(data.email.trim(), data.password, data.prenom);
 
       await apiRegister({ email: data.email, prenom: data.prenom });
       navigation.navigate('VerifyEmail');

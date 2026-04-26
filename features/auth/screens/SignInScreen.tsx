@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { getFirebaseAuth } from '../../../firebase';
+import { authService } from '../../../services/auth/FirebaseAuthService';
 import { getFirebaseError } from '../../../shared/utils/FirebaseErrorUtils';
 import Button from '../../../shared/components/inputs/Button';
 import type { AuthStackScreenProps } from '../../../navigation/types';
@@ -24,7 +23,7 @@ export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login
   const submitLogin = async (data: FormData) => {
     try {
       setLoading(true);
-      await signInWithEmailAndPassword(getFirebaseAuth(), data.email.trim(), data.password);
+      await authService.signIn(data.email.trim(), data.password);
       navigation.navigate('Loading');
     } catch (error) {
       Toast.show({ type: 'error', position: 'top', text1: getFirebaseError(error) });
@@ -40,7 +39,7 @@ export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login
       return;
     }
     try {
-      await sendPasswordResetEmail(getFirebaseAuth(), email.trim());
+      await authService.sendPasswordResetEmail(email.trim());
       Toast.show({ type: 'success', position: 'top', text1: 'Un e-mail vous a été envoyé' });
     } catch (error) {
       Toast.show({ type: 'error', position: 'top', text1: getFirebaseError(error) });

@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator 
 import Toast from 'react-native-toast-message';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
+import { authService } from '../../../services/auth/FirebaseAuthService';
 import LoggerService from '../../../services/logs/LoggerService';
 import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
@@ -42,9 +42,14 @@ const ModalModificationPassword = ({ isVisible, setVisible, onModify = undefined
     if (checkPasswordValidity()) {
       try {
         if (password !== '') {
-          const credential = EmailAuthProvider.credential(firebaseUser!.email!, currentPassword);
-          const isReAuthSuccessful = await reauthenticateWithCredential(firebaseUser as any, credential).then(() => true).catch(() => false);
-          if (isReAuthSuccessful) { await updatePassword(firebaseUser as any, password); closeModal(); onModify?.(); }
+          try {
+            await authService.reauthenticate(firebaseUser!.email!, currentPassword);
+            await authService.updatePassword(password);
+            closeModal();
+            onModify?.();
+          } catch {
+            Toast.show({ type: 'error', position: 'top', text1: 'Mot de passe actuel incorrect' });
+          }
         }
       } catch (error: any) {
         LoggerService.log('Erreur lors de la MAJ d\'un utilisateur sur Firebase : ' + error.message);

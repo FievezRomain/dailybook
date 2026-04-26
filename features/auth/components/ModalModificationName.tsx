@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator 
 import Toast from 'react-native-toast-message';
 import { useForm } from 'react-hook-form';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import { updateProfile } from 'firebase/auth';
+import { authService } from '../../../services/auth/FirebaseAuthService';
 import LoggerService from '../../../services/logs/LoggerService';
 import { Divider } from 'react-native-paper';
 import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
@@ -31,7 +31,7 @@ const ModalModificationName = ({ isVisible, setVisible, onModify = undefined }: 
     setLoading(true);
     try {
       if (previousDisplayName !== displayName) {
-        await updateProfile(firebaseUser as any, { displayName });
+        await authService.updateProfile({ displayName });
         closeModal();
         onModify?.();
       }

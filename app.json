@@ -39,7 +39,8 @@
           "fetch",
           "remote-notification"
         ],
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSFaceIDUsageDescription": "Cette application utilise Face ID pour sécuriser vos données."
       }
     },
     "android": {

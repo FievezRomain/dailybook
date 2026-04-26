@@ -1,6 +1,6 @@
 import * as Font from 'expo-font';
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import * as Sentry from '@sentry/react-native';
 import { env } from './config/env';
 
@@ -9,10 +9,18 @@ if (!env.IS_DEV && env.SENTRY_DSN) {
   Sentry.init({
     dsn: env.SENTRY_DSN,
     debug: false,
+    tracesSampleRate: 0.2,
+    enableAutoSessionTracking: true,
+    attachStacktrace: true,
+    beforeSend(event) {
+      if (__DEV__) return null;
+      return event;
+    },
   });
 }
 
 import { StatusBar } from 'expo-status-bar';
+import Toast from 'react-native-toast-message';
 import { initTrackingActivity } from "./services/api/AuthService";
 import { Provider as PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -68,14 +76,16 @@ function App() {
         if (update.isAvailable) {
           setIsUpdating(true);
           await Updates.fetchUpdateAsync();
-          Alert.alert(
-            "Mise à jour disponible",
-            "Une nouvelle version a été téléchargée. L'application va redémarrer.",
-            [{ text: "OK", onPress: async () => await Updates.reloadAsync() }],
-          );
+          Toast.show({
+            type: 'info',
+            position: 'top',
+            text1: 'Mise à jour disponible',
+            text2: "Une nouvelle version a été téléchargée. L'application va redémarrer.",
+          });
+          await Updates.reloadAsync();
         }
       } catch (error) {
-        console.log("Erreur lors de la vérification OTA:", error);
+        if (__DEV__) console.warn('Erreur lors de la vérification OTA:', error);
       } finally {
         setIsUpdating(false);
       }

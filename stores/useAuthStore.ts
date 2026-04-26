@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { getFirebaseAuth } from '../firebase';
+import { authService } from '../services/auth/FirebaseAuthService';
+import type { AuthUser } from '../services/auth/IAuthService';
+import { secureStorage } from '../utils/secureStorage';
 import { getMe } from '../services/api/AuthService';
 import { UserProfile } from '../models/User';
 
 interface AuthState {
-  firebaseUser: User | null;
+  firebaseUser: AuthUser | null;
   user: UserProfile | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -18,25 +18,24 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       firebaseUser: null,
       user: null,
       isAuthenticated: false,
       isLoading: true,
 
       /**
-       * Lance l'écoute des changements d'état Firebase.
+       * Lance l'écoute des changements d'état d'authentification.
        * Retourne la fonction d'unsubscribe à appeler au démontage.
        */
       initAuth: () => {
-        const auth = getFirebaseAuth();
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-          if (firebaseUser) {
+        const unsubscribe = authService.onAuthStateChanged(async (authUser) => {
+          if (authUser) {
             try {
               const profile = await getMe();
-              set({ firebaseUser, user: profile, isAuthenticated: true, isLoading: false });
+              set({ firebaseUser: authUser, user: profile, isAuthenticated: true, isLoading: false });
             } catch {
-              set({ firebaseUser, user: null, isAuthenticated: true, isLoading: false });
+              set({ firebaseUser: authUser, user: null, isAuthenticated: true, isLoading: false });
             }
           } else {
             set({ firebaseUser: null, user: null, isAuthenticated: false, isLoading: false });
@@ -48,14 +47,14 @@ export const useAuthStore = create<AuthState>()(
       setUser: (user) => set({ user }),
 
       signOutUser: async () => {
-        await signOut(getFirebaseAuth());
+        await authService.signOut();
         set({ firebaseUser: null, user: null, isAuthenticated: false });
       },
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => AsyncStorage),
-      // On ne persiste que le profil utilisateur, pas les objets Firebase
+      storage: createJSONStorage(() => secureStorage),
+      // On ne persiste que le profil utilisateur, pas les objets auth
       partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
     },
   ),

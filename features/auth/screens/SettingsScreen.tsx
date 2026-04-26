@@ -5,8 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { Divider, IconButton } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
-import { deleteUser, updateProfile } from 'firebase/auth';
-import { getFirebaseAuth } from '../../../firebase';
+import { authService } from '../../../services/auth/FirebaseAuthService';
 import * as ImagePicker from 'expo-image-picker';
 import Toast from 'react-native-toast-message';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
@@ -47,20 +46,19 @@ export default function SettingsScreen() {
 
   const handleDeleteAccount = async () => {
     try {
-      const fbUser = getFirebaseAuth().currentUser;
-      if (fbUser) await deleteUser(fbUser);
+      await authService.deleteCurrentUser();
       await signOutUser();
-    } catch (err: any) {
-      Toast.show({ type: 'error', position: 'top', text1: err.message });
-      LoggerService.log('Erreur lors de la suppression du compte : ' + err.message);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Erreur inconnue';
+      Toast.show({ type: 'error', position: 'top', text1: msg });
+      LoggerService.log('Erreur lors de la suppression du compte : ' + msg);
     }
   };
 
   const saveNewPhoto = async (uriImage: string) => {
     const filename = uriImage.split('/').pop() ?? 'photo.jpg';
     const fileURL = await uploadFile(uriImage, filename, 'image/jpeg', 'user', firebaseUser?.uid ?? '');
-    const fbUser = getFirebaseAuth().currentUser;
-    if (fbUser) await updateProfile(fbUser, { photoURL: fileURL });
+    await authService.updateProfile({ photoURL: fileURL });
     Toast.show({ type: 'success', position: 'top', text1: 'Photo mise à jour' });
   };
 

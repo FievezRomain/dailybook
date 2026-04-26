@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { sendEmailVerification } from 'firebase/auth';
+import { authService } from '../../../services/auth/FirebaseAuthService';
 import Toast from 'react-native-toast-message';
 import Constants from 'expo-constants';
 import Button from '../../../shared/components/inputs/Button';
@@ -19,7 +19,7 @@ export default function VerifyEmailScreen({ navigation }: AuthStackScreenProps<'
 
   const handleResendVerificationEmail = async () => {
     if (firebaseUser && canResend) {
-      await sendEmailVerification(firebaseUser);
+      await authService.sendEmailVerification();
       setCanResend(false);
       setTimer(120);
       Toast.show({ type: 'success', position: 'top', text1: 'Un email vient de vous être envoyé' });
