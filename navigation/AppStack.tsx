@@ -13,6 +13,17 @@ import {
   GroupListScreen,
   GroupDetailScreen,
   NotificationScreen,
+  AnimalDetailScreen,
+  AnimalAddWizardScreen,
+  EventEntryScreen,
+  EventAIScreen,
+  EventTypeScreen,
+  EventFormScreen,
+  EventAnimalsScreen,
+  EventOptionsScreen,
+  NoteAIScreen,
+  ObjectifListScreen,
+  ObjectifAddScreen,
 } from './screens';
 import AddingButton from '../shared/components/inputs/AddingButton';
 
@@ -44,6 +55,17 @@ export function AppStack({ navigation }: { navigation?: any }) {
         <Stack.Screen name="GroupList" component={GroupListScreen} options={{ headerShown: false }} />
         <Stack.Screen name="GroupDetail" component={GroupDetailScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Notification" component={NotificationScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="AnimalDetail" component={AnimalDetailScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="AnimalAddWizard" component={AnimalAddWizardScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="EventEntry" component={EventEntryScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="EventAI" component={EventAIScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="EventWizardType" component={EventTypeScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="EventWizardForm" component={EventFormScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="EventWizardAnimals" component={EventAnimalsScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="EventWizardOptions" component={EventOptionsScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="NoteAI" component={NoteAIScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="ObjectifList" component={ObjectifListScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="ObjectifAdd" component={ObjectifAddScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
 
       {showFAB && <AddingButton navigation={navigation} />}

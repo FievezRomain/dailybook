@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Keyboard } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { Divider } from 'react-native-paper';
 import { Entypo, FontAwesome } from '@expo/vector-icons';
 import validateFile from '../../utils/validateFile';
@@ -126,7 +127,7 @@ const DocumentPickerComponent: React.FC<DocumentPickerComponentProps> = ({
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        alert("Désolé, nous avons besoin des permissions d'accès à la librairie photo!");
+        Toast.show({ type: 'info', position: 'top', text1: "Accès à la librairie requis", text2: "Veuillez autoriser l'accès à la librairie photo dans les réglages." });
         return;
       }
 
@@ -139,40 +140,14 @@ const DocumentPickerComponent: React.FC<DocumentPickerComponentProps> = ({
       if (!result.canceled) {
         const totalFiles = value.length + 1;
         if (totalFiles > MAX_FILES) {
-          Alert.alert(
-            'Limite atteinte',
-            value.length > 0
-              ? `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum. Vous avez déjà sélectionné ${value.length} fichier(s).`
-              : `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum.`,
-          );
-          return;
-        }
-        const uriImageCompressed = await imageUtils.compressImage(result.assets[0].uri);
-        onChange([
-          ...value,
-          {
-            uri: uriImageCompressed,
-            name: result.assets[0].fileName ?? '',
-            mimeType: result.assets[0].mimeType,
-            isNew: true,
-          },
-        ]);
-      }
-
-      setModalSubMenuVisible(false);
-    } catch (error: unknown) {
-      LoggerService.log(
-        "Erreur lors de la sélection d'une image depuis la librairie : " +
-          (error as Error).message,
-      );
-    }
-  };
-
-  const takePhotoAsync = async () => {
-    try {
-      const { status } = await ImagePicker.requestCameraPermissionsAsync();
-      if (status !== 'granted') {
-        alert('Désolé, nous avons besoin des permissions de caméra pour faire cela!');
+          Toast.show({
+            type: 'info',
+            position: 'top',
+            text1: 'Limite atteinte',
+            text2: value.length > 0
+              ? `Maximum ${MAX_FILES} fichiers. Vous en avez déjà ${value.length}.`
+              : `Maximum ${MAX_FILES} fichiers autorisés.`,
+          });
         return;
       }
 
@@ -185,12 +160,14 @@ const DocumentPickerComponent: React.FC<DocumentPickerComponentProps> = ({
       if (!result.canceled) {
         const totalFiles = value.length + 1;
         if (totalFiles > MAX_FILES) {
-          Alert.alert(
-            'Limite atteinte',
-            value.length > 0
-              ? `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum. Vous avez déjà sélectionné ${value.length} fichier(s).`
-              : `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum.`,
-          );
+          Toast.show({
+            type: 'info',
+            position: 'top',
+            text1: 'Limite atteinte',
+            text2: value.length > 0
+              ? `Maximum ${MAX_FILES} fichiers. Vous en avez déjà ${value.length}.`
+              : `Maximum ${MAX_FILES} fichiers autorisés.`,
+          });
           return;
         }
         const uriImageCompressed = await imageUtils.compressImage(result.assets[0].uri);
@@ -227,12 +204,14 @@ const DocumentPickerComponent: React.FC<DocumentPickerComponentProps> = ({
       const totalFiles = value.length + selectedFiles.length;
 
       if (totalFiles > MAX_FILES) {
-        Alert.alert(
-          'Limite atteinte',
-          value.length > 0
-            ? `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum. Vous avez déjà sélectionné ${value.length} fichier(s).`
-            : `Vous ne pouvez sélectionner que ${MAX_FILES} fichiers maximum.`,
-        );
+        Toast.show({
+          type: 'info',
+          position: 'top',
+          text1: 'Limite atteinte',
+          text2: value.length > 0
+            ? `Maximum ${MAX_FILES} fichiers. Vous en avez déjà ${value.length}.`
+            : `Maximum ${MAX_FILES} fichiers autorisés.`,
+        });
         return;
       }
 
@@ -241,7 +220,7 @@ const DocumentPickerComponent: React.FC<DocumentPickerComponentProps> = ({
       for (const file of selectedFiles) {
         const validation = validateFile({ name: file.name, size: file.size ?? 0, mimeType: file.mimeType });
         if (!validation.valid) {
-          alert(validation.message);
+          Toast.show({ type: 'error', position: 'top', text1: 'Fichier invalide', text2: validation.message });
           continue;
         }
         const processedFile: FileItem = { uri: file.uri, name: file.name, mimeType: file.mimeType, isNew: true };

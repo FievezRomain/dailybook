@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
-import { ActivityIndicator, FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from 'react-native-paper';
 import { setBadgeCountAsync } from 'expo-notifications';
@@ -62,9 +63,12 @@ export default function NotificationScreen({ navigation }: AppStackScreenProps<'
 
   if (isFetching && !notifications.length) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-        <ActivityIndicator animating size="large" />
-      </View>
+      <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+        <TopTabSecondary message1="Vos" message2="Notifications" />
+        <View style={{ paddingHorizontal: 20, paddingTop: 16 }}>
+          <ListSkeleton count={5} variant="notification" />
+        </View>
+      </LinearGradient>
     );
   }
 

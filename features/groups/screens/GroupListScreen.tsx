@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
+import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,9 +23,12 @@ export default function GroupListScreen({ navigation }: AppStackScreenProps<'Gro
 
   if (isLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-        <ActivityIndicator animating size="large" />
-      </View>
+      <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+        <TopTabSecondary message1="Vos" message2="Groupes" />
+        <View style={{ paddingHorizontal: 20, paddingTop: 16 }}>
+          <ListSkeleton count={5} variant="group" />
+        </View>
+      </LinearGradient>
     );
   }
 

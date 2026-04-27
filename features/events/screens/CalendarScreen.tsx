@@ -167,7 +167,22 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
             )}
             ListEmptyComponent={
               <View style={styles.listEventContainer}>
-                <ModalDefaultNoValue text={filter ? 'Aucun événement correspond à ce filtre' : "Vous n'avez aucun événement pour cette date"} />
+                {filter ? (
+                  <ModalDefaultNoValue text="Aucun événement correspond à ce filtre" />
+                ) : (
+                  <View style={{ alignItems: 'center', paddingVertical: 32 }}>
+                    <MaterialCommunityIcons name="calendar-blank-outline" size={52} color={colors.secondary_roux} />
+                    <Text style={{ marginTop: 14, fontSize: 16, fontFamily: fonts.bodyMedium.fontFamily, color: colors.default_dark, textAlign: 'center' }}>Aucun événement prévu ce jour</Text>
+                    <Text style={{ marginTop: 6, fontSize: 13, color: colors.secondary_roux, textAlign: 'center', fontFamily: fonts.default?.fontFamily }}>Planifiez une sortie ?</Text>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('EventEntry' as any)}
+                      style={{ marginTop: 18, backgroundColor: colors.primary, borderRadius: 12, paddingHorizontal: 24, paddingVertical: 10 }}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={{ color: '#fff', fontFamily: fonts.bodyMedium.fontFamily, fontSize: 14 }}>Ajouter un événement</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             }
           />

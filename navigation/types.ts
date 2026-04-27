@@ -23,6 +23,20 @@ export type AppStackParamList = {
   GroupList: undefined;
   GroupDetail: { groupId: string };
   Notification: undefined;
+  // ── Animals ──────────────────────────────────────────────────────────────
+  AnimalDetail: { animalId: number };
+  AnimalAddWizard: undefined;
+  // ── Events wizard ────────────────────────────────────────────────────────
+  EventEntry: undefined;
+  EventAI: { prefilled?: string } | undefined;
+  EventWizardType: undefined;
+  EventWizardForm: { eventType: string; prefilled?: Record<string, unknown> } | undefined;
+  EventWizardAnimals: { formData: Record<string, unknown> };
+  EventWizardOptions: { formData: Record<string, unknown> };
+  // ── Notes / Objectifs ────────────────────────────────────────────────────
+  NoteAI: undefined;
+  ObjectifList: undefined;
+  ObjectifAdd: undefined;
 };
 
 // ─── Auth Stack ───────────────────────────────────────────────────────────────

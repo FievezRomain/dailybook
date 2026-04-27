@@ -3,7 +3,8 @@ import { View, Text, ActivityIndicator, Dimensions, TouchableOpacity, StyleSheet
 import { Image } from 'expo-image';
 import Carousel from 'react-native-reanimated-carousel';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { getFileUrl, uploadFile, deleteFile } from '../../../services/aws/FileStorageService';
+import { uploadFile, deleteFile } from '../../../services/aws/FileStorageService';
+import { useAnimalImageUrl } from '../../../hooks/queries/useAnimalImageUrl';
 
 import { getAnimalBodyPictures, addAnimalBodyPicture, deleteAnimalBodyPicture } from '../../../services/api/AnimalsService';
 import { isSameMonth } from 'date-fns';
@@ -28,17 +29,7 @@ const CarouselImageItem = ({
   textFontBold: object;
   textFontRegular: object;
 }) => {
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (item.filename) {
-      getFileUrl(item.filename, 'animal', item.idanimal ?? '')
-        .then((u) => setImageUrl(u))
-        .catch((err: unknown) => {
-          if (__DEV__) console.warn('[AnimalImageCarousel] getFileUrl failed', err);
-        });
-    }
-  }, [item.filename, item.idanimal]);
+  const imageUrl = useAnimalImageUrl(item.filename, item.idanimal);
 
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>

@@ -11,7 +11,7 @@ import StatistiquesBloc from '../components/StatistiquesBloc';
 import ObjectifsBloc from '../../objectifs/components/ObjectifsBloc';
 import { useAnimalsQuery, ANIMALS_KEY } from '../../../hooks/queries/useAnimalsQuery';
 import { GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
-import type { TabScreenProps } from '../../../navigation/types';
+import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 
 export default function StatsAndObjectifsScreen({ navigation }: TabScreenProps<'Performance'>) {
   const { colors, fonts } = useAppTheme();
@@ -53,9 +53,12 @@ export default function StatsAndObjectifsScreen({ navigation }: TabScreenProps<'
 
   if (refreshing) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-        <ActivityIndicator animating size="large" />
-      </View>
+      <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+        <TopTab message1="Mes" message2="Performances" />
+        <View style={{ paddingHorizontal: 16, paddingTop: 20 }}>
+          <ListSkeleton count={4} variant="event" />
+        </View>
+      </LinearGradient>
     );
   }
 

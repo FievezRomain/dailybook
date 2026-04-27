@@ -31,6 +31,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './stores/useAuthStore';
 import { useThemeStore } from './stores/useThemeStore';
 import { RootNavigator } from './navigation/RootNavigator';
+import { useOnboarding } from './features/onboarding/hooks/useOnboarding';
+import OnboardingSpotlight from './features/onboarding/components/OnboardingSpotlight';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -45,6 +47,10 @@ const IconComponent = (props: any) => <MaterialCommunityIcons {...props} />;
 
 function ThemedApp() {
   const isDark = useThemeStore((s) => s.isDark);
+  const user = useAuthStore((s) => s.user);
+  const { isCompleted } = useOnboarding();
+  const showOnboarding = !!user && isCompleted === false;
+
   return (
     <PaperProvider
       theme={isDark ? darkTheme : lightTheme}
@@ -52,6 +58,7 @@ function ThemedApp() {
     >
       <StatusBar style={isDark ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
       <RootNavigator />
+      <OnboardingSpotlight visible={showOnboarding} />
     </PaperProvider>
   );
 }

@@ -22,3 +22,14 @@ export { default as ContactScreen }            from '../features/contacts/screen
 export { default as NotificationScreen }       from '../features/notifications/screens/NotificationScreen';
 export { default as GroupListScreen }          from '../features/groups/screens/GroupListScreen';
 export { default as GroupDetailScreen }        from '../features/groups/screens/GroupDetailScreen';
+export { default as AnimalDetailScreen }       from '../features/animals/screens/AnimalDetailScreen';
+export { default as AnimalAddWizardScreen }    from '../features/animals/screens/AnimalAddWizardScreen';
+export { default as EventEntryScreen }         from '../features/events/screens/EventEntryScreen';
+export { default as EventAIScreen }            from '../features/events/screens/EventAIScreen';
+export { default as EventTypeScreen }          from '../features/events/screens/EventTypeScreen';
+export { default as EventFormScreen }          from '../features/events/screens/EventFormScreen';
+export { default as EventAnimalsScreen }       from '../features/events/screens/EventAnimalsScreen';
+export { default as EventOptionsScreen }       from '../features/events/screens/EventOptionsScreen';
+export { default as NoteAIScreen }             from '../features/notes/screens/NoteAIScreen';
+export { default as ObjectifListScreen }       from '../features/objectifs/screens/ObjectifListScreen';
+export { default as ObjectifAddScreen }        from '../features/objectifs/screens/ObjectifAddScreen';

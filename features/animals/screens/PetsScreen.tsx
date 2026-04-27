@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { View, Text, StyleSheet, Animated, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { useFocusEffect } from '@react-navigation/native';
 import { useQueryClient } from '@tanstack/react-query';
@@ -16,6 +17,7 @@ import LoggerService from '../../../services/logs/LoggerService';
 import { useAnimalsQuery, useAnimalMutations, ANIMALS_KEY } from '../../../hooks/queries/useAnimalsQuery';
 import { GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import type { TabScreenProps } from '../../../navigation/types';
+import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 
 export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
   const { colors, fonts } = useAppTheme();
@@ -98,8 +100,8 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
       <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
         <TopTab message1="Mes" message2="Animaux" />
         {refreshing ? (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-            <ActivityIndicator animating size="large" />
+          <View style={{ paddingHorizontal: 16, paddingTop: 20 }}>
+            <ListSkeleton count={4} variant="animal" />
           </View>
         ) : (
           <FlatList
@@ -108,6 +110,17 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
             renderItem={null}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />}
             ListHeaderComponent={
+              animaux.length === 0 ? (
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 80, paddingHorizontal: 30 }}>
+                  <FontAwesome6 name="horse" size={52} color={colors.quaternary} />
+                  <Text style={{ fontSize: 18, color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily, textAlign: 'center', marginTop: 20 }}>
+                    Votre premier cheval vous attend 🐴
+                  </Text>
+                  <Text style={{ fontSize: 14, color: colors.secondary, fontFamily: fonts.default.fontFamily, textAlign: 'center', marginTop: 8 }}>
+                    Ajoutez un animal pour commencer à tenir son journal.
+                  </Text>
+                </View>
+              ) : (
               <>
                 <View style={{ alignContent: 'flex-start', justifyContent: 'flex-start', alignItems: 'flex-start', marginTop: 20 }}>
                   <AnimalsPicker
@@ -120,6 +133,18 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
                     setDate={() => {}}
                   />
                 </View>
+                {selected[0] && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      Haptics.selectionAsync().catch(() => undefined);
+                      (navigation as any).navigate('AnimalDetail', { animalId: selected[0].id });
+                    }}
+                    style={{ alignSelf: 'flex-end', marginRight: 20, marginBottom: 4, flexDirection: 'row', alignItems: 'center' }}
+                  >
+                    <Text style={{ fontSize: 13, color: colors.accent, fontFamily: fonts.default.fontFamily }}>Voir la fiche</Text>
+                    <Entypo name="chevron-right" size={14} color={colors.accent} />
+                  </TouchableOpacity>
+                )}
                 <View style={styles.rubriqueContainer}>
                   <View style={styles.iconsContainer}>
                     <TouchableOpacity style={{ width: '33.3%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} onPress={() => { setActiveRubrique(0); moveSeparator(0); }}>
@@ -142,6 +167,7 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
                 {selected[0] && activeRubrique === 1 && <AnimalBody animal={selected[0]} onModify={onModify} />}
                 {selected[0] && activeRubrique === 2 && <MedicalBook animal={selected[0]} navigation={navigation} />}
               </>
+              )
             }
           />
         )}
