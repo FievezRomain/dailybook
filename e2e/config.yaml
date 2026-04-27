@@ -1,0 +1,9 @@
+appId: com.vascoandco.vasco.ios
+---
+# Maestro global config
+# Run flows with: maestro test e2e/flows/
+# Requires MAESTRO_TEST_EMAIL and MAESTRO_TEST_PASSWORD env vars
+env:
+  TEST_EMAIL: ${MAESTRO_TEST_EMAIL}
+  TEST_PASSWORD: ${MAESTRO_TEST_PASSWORD}
+  APP_ID: com.vascoandco.vasco.ios

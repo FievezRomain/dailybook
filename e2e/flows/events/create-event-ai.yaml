@@ -1,0 +1,26 @@
+appId: com.vascoandco.vasco.ios
+name: Events - create an event using AI assistant
+---
+- runFlow: ../auth/login.yaml
+
+- tapOn:
+    id: "tab-events"
+
+- tapOn:
+    id: "fab-add-event"
+
+- tapOn:
+    id: "btn-ai-event"
+
+- assertVisible: "Assistant IA"
+
+- tapOn:
+    id: "input-ai-prompt"
+- inputText: "Séance de dressage vendredi prochain à 10h"
+
+- tapOn: "Générer"
+
+- assertVisible:
+    id: "ai-event-preview"
+
+- tapOn: "Enregistrer"

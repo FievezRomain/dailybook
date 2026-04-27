@@ -7,7 +7,10 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eas-build-pre-install": "echo $AWS_EXPORTS | base64 --decode > aws-exports.js"
+    "eas-build-pre-install": "echo $AWS_EXPORTS | base64 --decode > aws-exports.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch",
+    "test:e2e": "maestro test e2e/flows/"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.637.0",

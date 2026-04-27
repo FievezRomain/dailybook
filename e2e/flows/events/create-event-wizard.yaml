@@ -1,0 +1,26 @@
+appId: com.vascoandco.vasco.ios
+name: Events - create an event via wizard
+---
+- runFlow: ../auth/login.yaml
+
+- tapOn:
+    id: "tab-events"
+
+- tapOn:
+    id: "fab-add-event"
+
+- assertVisible: "Quel type d'événement"
+
+- tapOn: "Soins"
+
+- tapOn: "Suivant"
+
+- tapOn:
+    id: "input-event-titre"
+- inputText: "Vermifuge printemps"
+
+- tapOn: "Suivant"
+
+- tapOn: "Enregistrer"
+
+- assertVisible: "Vermifuge printemps"

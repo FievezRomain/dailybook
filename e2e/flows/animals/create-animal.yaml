@@ -1,0 +1,34 @@
+appId: com.vascoandco.vasco.ios
+name: Animals - create a new animal
+---
+- runFlow: ../auth/login.yaml
+
+- tapOn:
+    id: "tab-animals"
+
+- tapOn:
+    id: "fab-add-animal"
+
+- assertVisible: "Ajouter un animal"
+
+- tapOn:
+    id: "input-nom"
+- inputText: "Tornado"
+
+- tapOn:
+    id: "input-espece"
+- tapOn: "Cheval"
+
+- tapOn:
+    id: "input-race"
+- inputText: "Lusitanien"
+
+- tapOn:
+    id: "input-sexe"
+- tapOn: "Mâle"
+
+- tapOn: "Suivant"
+
+- tapOn: "Enregistrer"
+
+- assertVisible: "Tornado"

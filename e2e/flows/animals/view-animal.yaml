@@ -1,0 +1,18 @@
+appId: com.vascoandco.vasco.ios
+name: Animals - view animal details
+---
+- runFlow: ../auth/login.yaml
+
+- tapOn:
+    id: "tab-animals"
+
+- assertVisible:
+    id: "animal-list"
+
+- tapOn:
+    id: "animal-card-0"
+
+- assertVisible:
+    id: "animal-detail-screen"
+
+- assertVisible: "Fiche"

@@ -1,0 +1,24 @@
+appId: com.vascoandco.vasco.ios
+name: Notes - create a new note
+---
+- runFlow: ../auth/login.yaml
+
+- tapOn:
+    id: "tab-notes"
+
+- tapOn:
+    id: "fab-add-note"
+
+- assertVisible: "Nouvelle note"
+
+- tapOn:
+    id: "input-note-titre"
+- inputText: "Observation du jour"
+
+- tapOn:
+    id: "input-note-contenu"
+- inputText: "Tornado semble un peu moins en forme, à surveiller."
+
+- tapOn: "Enregistrer"
+
+- assertVisible: "Observation du jour"
