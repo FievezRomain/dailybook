@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import variables from "../../../styles/Variables";
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { Entypo, FontAwesome6 } from '@expo/vector-icons';
 import ModalSubMenuAnimalActions from './ModalSubMenuAnimalActions';
 import ModalAnimal from './ModalAnimal';
@@ -32,7 +31,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
       setModalReportDeathVisible(true);
     }
 
-    const styles = StyleSheet.create({
+    const styles = {
       headerCard:{
           alignItems: "flex-end", 
           marginRight: 20, 
@@ -43,10 +42,10 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
           flex: 1
         },
         title:{
-          color: colors.default_dark,
+          color: colors.textPrimary,
         },
         errorInput: {
-          color: "red"
+          color: colors.error
         },
         loaderEvent: {
           width: 200,
@@ -59,7 +58,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
           zIndex: 9,
           width: "100%",
           height: "100%",
-          backgroundColor: "#000000b8",
+          backgroundColor: colors.overlay,
           paddingTop: 50
         },
         textButton:{
@@ -68,7 +67,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
         registerButton: {
           marginBottom: 20,
           marginTop: 10,
-          backgroundColor: (variables as any).bouton,
+          backgroundColor: colors.primary,
           borderRadius: 10
         },
         imagePrez:{
@@ -76,7 +75,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
           width: "100%"
         },
         screenContainer:{
-          backgroundColor: (variables as any).fond,
+          backgroundColor: colors.background,
         },
         contentContainer:{
           display: "flex",
@@ -92,7 +91,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
           resizeMode: "cover",
           position: "absolute",
           justifyContent: "center",
-          backgroundColor:  colors.onSurface
+          backgroundColor:  colors.surfaceVariant
         },
         form: {
           backgroundColor: colors.background, 
@@ -101,7 +100,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
           borderRadius: 10, 
           top: -35, 
           zIndex: 0,
-          shadowColor: colors.default_dark,
+          shadowColor: colors.textPrimary,
           shadowOpacity: 0.1,
           elevation: 1,
           shadowRadius:5,
@@ -127,8 +126,8 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
           marginBottom: 15,
           borderRadius: 5,
           paddingLeft: 15,
-          backgroundColor: colors.quaternary,
-          color: colors.default_dark,
+          backgroundColor: colors.surfaceVariant,
+          color: colors.textPrimary,
           alignSelf: "baseline"
         },
         inputTextArea: {
@@ -138,8 +137,8 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
           borderRadius: 5,
           paddingLeft: 15,
           paddingRight: 15,
-          backgroundColor: colors.quaternary,
-          color: colors.default_dark,
+          backgroundColor: colors.surfaceVariant,
+          color: colors.textPrimary,
         },
         avatar: {
           width: 60,
@@ -168,7 +167,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
         }
-    });
+    } as const;
 
     return(
         <>
@@ -195,9 +194,9 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
             />
               <View style={{display: "flex", flexDirection: "column", alignItems: "center", zIndex: 1, width: "50%", alignSelf: "center"}}>
                   {animal.image !== null ?
-                      <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: colors.default_dark}} source={{uri:  fileStorageService.getFileUrl( animal.image, firebaseUser?.uid ?? '' ) }} cachePolicy="disk" />
+                      <Image style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, borderColor: colors.textPrimary}} source={{uri:  fileStorageService.getFileUrl( animal.image, firebaseUser?.uid ?? '' ) }} cachePolicy="disk" />
                   :
-                      <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: colors.default_dark, borderColor: colors.default_dark, justifyContent: "center", alignItems: "center"}}>
+                      <View style={{height: 90, width: 90, borderRadius: 50, borderWidth: 0.1, backgroundColor: colors.surfaceVariant, borderColor: colors.border, justifyContent: "center", alignItems: "center"}}>
                           <Text style={[{color: colors.background, fontSize: 50}, styles.textFontBold]}>{animal.nom[0]}</Text>
                       </View>
                   }
@@ -206,14 +205,14 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                 
                   <View style={styles.headerCard}>
                       <TouchableOpacity onPress={() => setModalSubMenuAnimalActionsVisible(true)} disabled={animal.provenance === "group"}>
-                          <Entypo name='dots-three-horizontal' size={20} color={animal.provenance === "group" ? colors.background : colors.default_dark}/>
+                          <Entypo name='dots-three-horizontal' size={20} color={animal.provenance === "group" ? colors.textDisabled : colors.textPrimary}/>
                       </TouchableOpacity>
                   </View>
                   
                   <View style={styles.formContainer}>
                     {isValidString(animal.nom) && 
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom de l'animal :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Nom de l'animal :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Vasco"
@@ -225,7 +224,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.espece) && 
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Espèce :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Espèce :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Cheval"
@@ -237,7 +236,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.datenaissance) && 
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de naissance :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Date de naissance :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 01/01/1900"
@@ -252,7 +251,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.datedeces) && 
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de décès :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Date de décès :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 01/01/1900"
@@ -267,7 +266,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.numeroidentification) &&
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Numéro identification :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Numéro identification :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : XXXXXXXXX"
@@ -279,7 +278,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.datearrivee) && 
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date d'arrivée :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Date d'arrivée :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 01/01/1900"
@@ -294,7 +293,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.datedepart) && 
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Date de départ :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Date de départ :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : 01/01/1900"
@@ -309,7 +308,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.race) &&
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Race :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Race :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Fjord"
@@ -321,7 +320,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.sexe) &&
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Sexe :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Sexe :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Mâle"
@@ -333,7 +332,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.couleur) &&
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Couleur :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Couleur :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Isabelle"
@@ -345,7 +344,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.nompere) &&
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom du père :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Nom du père :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Esgard"
@@ -357,7 +356,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.nommere) &&
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Nom de la mère :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Nom de la mère :</Text>
                         <TextInput
                             style={[styles.input, styles.textFontRegular]}
                             placeholder="Exemple : Sherry"
@@ -369,7 +368,7 @@ const InformationsAnimals = ({ animal = {} as any, onModify, onDelete }: any) =>
                     }
                     {isValidString(animal.informations) &&
                       <View style={styles.inputContainer}>
-                        <Text style={[{color: colors.default_dark}, styles.textInput, styles.textFontRegular]}>Informations supplémentaires :</Text>
+                        <Text style={[{color: colors.textPrimary}, styles.textInput, styles.textFontRegular]}>Informations supplémentaires :</Text>
                         <TextInput
                             style={[styles.inputTextArea, styles.textFontRegular]}
                             multiline={true}

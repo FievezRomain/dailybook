@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { Divider } from 'react-native-paper';
+import { AppDivider } from '../../ui';
 import ModalEditGeneric from './ModalEditGeneric';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 
@@ -52,7 +52,7 @@ const ModalSubMenuAvatarPicker = ({
               <Text style={[styles.textActionButton, styles.textFontMedium]}>Choisir une photo de la librairie</Text>
             </View>
           </TouchableOpacity>
-          <Divider style={{ height: 1 }} />
+          <AppDivider />
           <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleCameraPick)}>
             <View style={styles.informationsActionButton}>
               <Entypo name="camera" size={20} />

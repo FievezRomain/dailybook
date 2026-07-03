@@ -29,7 +29,7 @@ const CustomRichTextEditor: React.FC<CustomRichTextEditorProps> = ({
   onSave,
   initialContent = '',
 }) => {
-  const { colors, fonts } = useAppTheme();
+  const { colors } = useAppTheme();
   const webviewRef = useRef<WebView>(null);
   const [activeFormats, setActiveFormats] = useState<string[]>([]);
 
@@ -63,14 +63,26 @@ const CustomRichTextEditor: React.FC<CustomRichTextEditorProps> = ({
 
   const handleMessage = (event: { nativeEvent: { data: string } }) => {
     try {
-      const data = JSON.parse(event.nativeEvent.data);
-      if (data.formatStates) {
-        setActiveFormats(data.formatStates);
-      } else if (typeof data === 'string') {
-        onSave(data);
+      const parsed = JSON.parse(event.nativeEvent.data) as {
+        type?: 'content' | 'formatStates' | 'ready';
+        html?: string;
+        formatStates?: string[];
+      };
+      switch (parsed.type) {
+        case 'content':
+          if (typeof parsed.html === 'string') onSave(parsed.html);
+          break;
+        case 'formatStates':
+          if (Array.isArray(parsed.formatStates)) setActiveFormats(parsed.formatStates);
+          break;
+        case 'ready':
+          break;
+        default:
+          // Unknown message type — ignore silently to avoid information leak
+          break;
       }
     } catch {
-      onSave(event.nativeEvent.data);
+      // Malformed payload — ignore (no fallback to raw string for security)
     }
   };
 
@@ -158,16 +170,16 @@ const CustomRichTextEditor: React.FC<CustomRichTextEditorProps> = ({
             ['justifyLeft','justifyCenter','justifyRight'].forEach(j => {
               if (document.queryCommandState(j)) formatStates.push(j);
             });
-            window.ReactNativeWebView.postMessage(JSON.stringify({ formatStates }));
-            window.ReactNativeWebView.postMessage(editor.innerHTML);
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'formatStates', formatStates }));
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'content', html: editor.innerHTML }));
           };
           window.postEditorState = postUpdate;
           editor.addEventListener('input', postUpdate);
           document.addEventListener('selectionchange', postUpdate);
-          document.addEventListener('message', function(event) { eval(event.data); });
           window.onload = function () {
             document.getElementById('editor').focus();
             window.scrollTo(0, 0);
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'ready' }));
           };
         </script>
       </body>
@@ -227,12 +239,14 @@ const CustomRichTextEditor: React.FC<CustomRichTextEditorProps> = ({
       </View>
       <WebView
         ref={webviewRef}
-        originWhitelist={['*']}
+        originWhitelist={['about:blank']}
         onMessage={handleMessage}
         onLoadEnd={handleLoadEnd}
         style={styles.webview}
         javaScriptEnabled
-        domStorageEnabled
+        domStorageEnabled={false}
+        allowFileAccess={false}
+        allowUniversalAccessFromFileURLs={false}
         automaticallyAdjustContentInsets={false}
         keyboardDisplayRequiresUserAction={false}
         androidLayerType="hardware"

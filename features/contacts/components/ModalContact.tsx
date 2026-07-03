@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useForm } from 'react-hook-form';
 import { createContact, updateContact } from '../../../services/api/ContactService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import LoggerService from '../../../services/logs/LoggerService';
-import { Divider } from 'react-native-paper';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { AppDivider, AppSheet } from '../../../shared/components/ui';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
 
 interface ModalContactProps {
   isVisible: boolean;
@@ -20,9 +21,17 @@ interface ModalContactProps {
 
 const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModify = undefined }: ModalContactProps) => {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('contacts');
+  const { t: tc } = useTranslation('common');
   const { firebaseUser } = useAuthStore();
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
   const [loading, setLoading] = useState(false);
+  const sheetRef = useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    if (isVisible) sheetRef.current?.present();
+    else sheetRef.current?.dismiss();
+  }, [isVisible]);
 
   useEffect(() => {
     if (isVisible) initValues();
@@ -55,44 +64,44 @@ const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModif
     }
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     form: { width: '100%', paddingBottom: 40 },
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { alignItems: 'center', width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, alignSelf: 'baseline' },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.textPrimary },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.surfaceVariant, color: colors.textPrimary, alignSelf: 'baseline' },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
-    <ModalEditGeneric isVisible={isVisible} setVisible={setVisible} arrayHeight={['90%']}>
+    <AppSheet ref={sheetRef} snapPoints={['90%']} keyboardBehavior="extend" onDismiss={closeModal}>
       <View style={styles.form}>
         <View style={styles.containerActionsButtons}>
           <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
+            <Text style={[{ color: colors.textSecondary }, styles.textFontRegular]}>{tc('cancel')}</Text>
           </TouchableOpacity>
           <View style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Contact</Text>
+            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.textPrimary }]}>{t('modalTitle')}</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
             {loading ? (
-              <ActivityIndicator size={10} color={colors.default_dark} />
+              <ActivityIndicator size={10} color={colors.textPrimary} />
             ) : (
-              <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>
-                {actionType === 'modify' ? 'Modifier' : 'Créer'}
+              <Text style={[{ color: colors.textPrimary }, styles.textFontRegular]}>
+                {actionType === 'modify' ? tc('edit') : tc('create')}
               </Text>
             )}
           </TouchableOpacity>
         </View>
-        <Divider />
+        <AppDivider />
         <KeyboardAwareScrollView style={{ height: '100%' }}>
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
-              <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{ color: 'red' }}>*</Text></Text>
-              {errors.nom && <Text style={{ color: 'red' }}>Nom obligatoire</Text>}
+              <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{ color: colors.error }}>*</Text></Text>
+              {errors.nom && <Text style={{ color: colors.error }}>{t('nameRequired')}</Text>}
               <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : John Doe" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('nom', text)} defaultValue={watch('nom')} {...register('nom', { required: true })} />
             </View>
             <View style={styles.inputContainer}>
@@ -110,7 +119,7 @@ const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModif
           </View>
         </KeyboardAwareScrollView>
       </View>
-    </ModalEditGeneric>
+    </AppSheet>
   );
 };
 

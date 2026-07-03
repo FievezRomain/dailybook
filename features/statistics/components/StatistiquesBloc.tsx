@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+﻿import React, { useEffect, useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, Feather, MaterialIcons } from '@expo/vector-icons';
 import { TouchableOpacity } from "react-native";
 import OfferInformations from '../../../shared/components/common/OfferInformations';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { useCurrentUser } from '../../../hooks/useCurrentUser';
 import { useThemeStore } from '../../../stores/useThemeStore';
-import { IconButton } from 'react-native-paper';
+import { AppIconButton } from '../../../shared/components/ui';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import StatePicker from '../../../shared/components/inputs/StatePicker';
 import ChartWithLoader from '../../../shared/components/charts/ChartWithLoader';
@@ -41,8 +41,8 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
     const [itemStatistique, setItemStatistique] = useState<StatItemKey>('depense');
     const ChartComponent = chartComponents[itemStatistique as StatItemKey];
     const arrayState = [
-        {value: 'Mois', label: 'Mois', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
-        {value: 'Année', label: 'Année', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'Mois', label: 'Mois', checkedColor: colors.textPrimary, uncheckedColor: colors.surfaceVariant, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'Année', label: 'Année', checkedColor: colors.textPrimary, uncheckedColor: colors.surfaceVariant, style: {borderRadius: 5}, rippleColor: "transparent"},
       ];
     const [temporality, setTemporality] = useState<Temporality>('Mois');
     const chartConfig: Record<StatItemKey, ChartConfig> = {
@@ -67,22 +67,22 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
         poids: {
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => colors.default_dark,
-            labelColor: (opacity = 1) => colors.default_dark,
+            color: (opacity = 1) => colors.textPrimary,
+            labelColor: (opacity = 1) => colors.textPrimary,
             decimalPlaces: 2,
         },
         taille: {
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => colors.default_dark,
-            labelColor: (opacity = 1) => colors.default_dark,
+            color: (opacity = 1) => colors.textPrimary,
+            labelColor: (opacity = 1) => colors.textPrimary,
             decimalPlaces: 2,
         },
         alimentation: {
             backgroundGradientFromOpacity: 0,
             backgroundGradientToOpacity: 0,
-            color: (opacity = 1) => colors.default_dark,
-            labelColor: (opacity = 1) => colors.default_dark,
+            color: (opacity = 1) => colors.textPrimary,
+            labelColor: (opacity = 1) => colors.textPrimary,
             decimalPlaces: 2,
         },
         concours: {
@@ -130,41 +130,41 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
 
         if( isDarkTheme ){
             if( opacity <= 0.2 ){
-                return hexToRgba(colors.quaternary, opacity+0.1);
+                return hexToRgba(colors.surfaceVariant, opacity+0.1);
             }
             if( opacity <= 0.4 ){
-                return hexToRgba(colors.quaternary, opacity+0.1);
+                return hexToRgba(colors.surfaceVariant, opacity+0.1);
             }
             if( opacity <= 0.6 ){
-                return hexToRgba(colors.quaternary, opacity+0.1);
+                return hexToRgba(colors.surfaceVariant, opacity+0.1);
             }
             if( opacity <= 0.7 ){
-                return hexToRgba(colors.quaternary, opacity+0.1);
+                return hexToRgba(colors.surfaceVariant, opacity+0.1);
             }
             if( opacity <= 0.8 ){
-                return hexToRgba(colors.quaternary, opacity+0.1);
+                return hexToRgba(colors.surfaceVariant, opacity+0.1);
             }
             if( opacity <= 1 ){
-                return hexToRgba(colors.default_dark, opacity);
+                return hexToRgba(colors.textPrimary, opacity);
             }
         } else {
             if( opacity <= 0.15 ){
                 return isDarkTheme ? hexToRgba(colors.secondary, opacity) : colors.secondary;
             }
             if( opacity <= 0.2 ){
-                return hexToRgba(colors.accent, opacity+0.1);
+                return hexToRgba(colors.primary, opacity+0.1);
             }
             if( opacity <= 0.4 ){
-                return hexToRgba(colors.accent, opacity+0.1);
+                return hexToRgba(colors.primary, opacity+0.1);
             }
             if( opacity <= 0.6 ){
-                return hexToRgba(colors.accent, opacity+0.1);
+                return hexToRgba(colors.primary, opacity+0.1);
             }
             if( opacity <= 0.7 ){
-                return hexToRgba(colors.accent, opacity+0.1);
+                return hexToRgba(colors.primary, opacity+0.1);
             }
             if( opacity <= 0.8 ){
-                return hexToRgba(colors.accent, opacity+0.1);
+                return hexToRgba(colors.primary, opacity+0.1);
             }
             if( opacity <= 1 ){
                 return hexToRgba(colors.text, opacity);
@@ -217,7 +217,7 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
         setItemStatistique(value);
     }
 
-    const styles = StyleSheet.create({
+    const styles = {
         statistiquesContainer:{
             marginTop: 10,
             justifyContent: "center",
@@ -225,12 +225,12 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
         bottomBar: {
             width: '100%',
             height: 0.4,
-            backgroundColor: colors.default_dark,
+            backgroundColor: colors.textPrimary,
         },
         midBar: {
             width: 0.4,
             borderRightWidth: 0.4,
-            borderRightColor: colors.default_dark,
+            borderRightColor: colors.textPrimary,
         },
         composantContainer:{
             marginLeft: 10,
@@ -246,7 +246,7 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
             marginBottom: 10,
         },
         title:{
-            color: colors.quaternary,
+            color: colors.surfaceVariant,
             marginLeft: 10,
         },
         statistiqueIndicatorContainer:{
@@ -273,10 +273,10 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
             zIndex: 1,
         },
         itemIconDefault:{
-            color: colors.quaternary,
+            color: colors.surfaceVariant,
         },
         itemIconSelected:{
-            color: colors.default_dark,
+            color: colors.textPrimary,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -292,7 +292,7 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
             justifyContent: "center",
             alignItems: "center"
         }
-    });
+    } as const;
 
     return (
         <>
@@ -301,17 +301,17 @@ const StatistiquesBloc = ({ selectedAnimal }: StatistiquesBlocProps) =>{
                     arrayState={arrayState}
                     handleChange={onTemporalityChange}
                     defaultState={temporality}
-                    color={hexToRgba(colors.quaternary, 1) ?? undefined}
+                    color={hexToRgba(colors.surfaceVariant, 1) ?? undefined}
                 />
             </View>
             {isPremium &&
                 <View style={styles.dateContainer}>
                     <TouchableOpacity onPress={() => changeDates(-1)}>
-                        <IconButton icon={"chevron-left"} size={30} iconColor={colors.default_dark} />
+                        <AppIconButton icon={"chevron-left"} size={30} color={colors.textPrimary} />
                     </TouchableOpacity>
-                    <Text style={[styles.textFontRegular, {color: colors.default_dark}]}>{getDateToDisplay()}</Text>
+                    <Text style={[styles.textFontRegular, {color: colors.textPrimary}]}>{getDateToDisplay()}</Text>
                     <TouchableOpacity onPress={() => changeDates(1)}>
-                        <IconButton icon={"chevron-right"} size={30} iconColor={colors.default_dark} />
+                        <AppIconButton icon={"chevron-right"} size={30} color={colors.textPrimary} />
                     </TouchableOpacity>
                 </View>
             }

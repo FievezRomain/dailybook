@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { Divider } from 'react-native-paper';
+import { AppDivider } from '../../../shared/components/ui';
 import Toast from 'react-native-toast-message';
 import TopTab from '../../../shared/components/common/TopTab';
 import ModalEvents from '../components/ModalEvents';
@@ -31,17 +31,17 @@ export default function ActionScreen({ navigation }: TabScreenProps<'Action' ext
     setEventModalVisible(true);
   };
 
-  const styles = StyleSheet.create({
-    iconAction: { color: colors.default_dark, paddingRight: 10 },
-    iconButton: { marginRight: 20, color: colors.default_dark },
+  const styles = {
+    iconAction: { color: colors.textPrimary, paddingRight: 10 },
+    iconButton: { marginRight: 20, color: colors.textPrimary },
     informationsButtonContainer: { flexDirection: 'row', alignItems: 'center', paddingLeft: 30 },
     touchableOpacityButtonContent: { flexDirection: 'row', width: '100%', justifyContent: 'space-between', paddingBottom: 10, paddingTop: 10 },
     formContainer: { paddingTop: 10, paddingBottom: 10 },
-    form: { alignItems: 'center', justifyContent: 'center', marginLeft: 'auto', marginRight: 'auto', borderRadius: 10, paddingTop: 10, shadowColor: colors.default_dark, shadowOpacity: 0.1, marginTop: 50, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
+    form: { alignItems: 'center', justifyContent: 'center', marginLeft: 'auto', marginRight: 'auto', borderRadius: 10, paddingTop: 10, shadowColor: colors.textPrimary, shadowOpacity: 0.1, marginTop: 50, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
     groupButton: { backgroundColor: colors.background, marginBottom: 10 },
     button: {},
     textFontRegular: { fontFamily: fonts.default?.fontFamily },
-  });
+  } as const;
 
   const row = (icon: React.ReactNode, label: string, onPress: () => void) => (
     <View style={styles.button}>
@@ -53,7 +53,7 @@ export default function ActionScreen({ navigation }: TabScreenProps<'Action' ext
           </View>
           <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
         </View>
-        <Divider />
+        <AppDivider />
       </TouchableOpacity>
     </View>
   );
@@ -66,7 +66,7 @@ export default function ActionScreen({ navigation }: TabScreenProps<'Action' ext
       <ModalContact actionType="create" isVisible={isContactModalVisible} setVisible={setContactModalVisible} onModify={() => toastSuccess("Création d'un contact réussi")} />
       <ModalNote actionType="create" isVisible={isNoteModalVisible} setVisible={setNoteModalVisible} onModify={() => toastSuccess("Création d'une note réussi")} />
       <ModalAnimal actionType="create" isVisible={isAnimalModalVisible} setVisible={setAnimalModalVisible} onModify={() => toastSuccess("Création d'un animal réussi")} />
-      <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+      <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
         <View style={{ alignContent: 'center', justifyContent: 'center', alignItems: 'center' }}>
           <View style={styles.form}>
             <ScrollView style={{ width: '100%' }} persistentScrollbar>
@@ -76,7 +76,7 @@ export default function ActionScreen({ navigation }: TabScreenProps<'Action' ext
                 </View>
                 <View style={styles.groupButton}>
                   {row(<Entypo name="compass" size={20} style={styles.iconButton} />, 'Balade', () => openModalEvent('balade'))}
-                  {row(<Entypo name="traffic-cone" size={20} style={styles.iconButton} />, 'Entraînement', () => openModalEvent('entrainement'))}
+                  {row(<Entypo name="traffic-cone" size={20} style={styles.iconButton} />, 'Entraénement', () => openModalEvent('entrainement'))}
                   {row(<FontAwesome name="trophy" size={20} style={styles.iconButton} />, 'Concours', () => openModalEvent('concours'))}
                   {row(<FontAwesome name="stethoscope" size={20} style={styles.iconButton} />, 'Rendez-vous médical', () => openModalEvent('rdv'))}
                   {row(<FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton} />, 'Soin', () => openModalEvent('soins'))}

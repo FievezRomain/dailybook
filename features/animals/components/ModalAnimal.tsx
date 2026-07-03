@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import Toast from 'react-native-toast-message';
 import { useForm } from 'react-hook-form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { Divider } from 'react-native-paper';
+import { AppDivider } from '../../../shared/components/ui';
 import Constants from 'expo-constants';
 import { createAnimal, updateAnimal } from '../../../services/api/AnimalsService';
 import { useAuthStore } from '../../../stores/useAuthStore';
@@ -12,20 +12,22 @@ import AvatarPicker from '../../../shared/components/inputs/AvatarPicker';
 import LoggerService from '../../../services/logs/LoggerService';
 import FileStorageService from '../../../services/aws/FileStorageService';
 import DropdawnList from '../../../shared/components/inputs/DropdawnList';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import AppSheet from '../../../shared/components/ui/AppSheet';
 import instanceDateUtils from '../../../shared/utils/DateUtils';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { ModalAnimalProps } from '../types';
+import { useTranslation } from 'react-i18next';
 
 const especeList = [
   { label: 'Chat', value: 'Chat' }, { label: 'Chien', value: 'Chien' }, { label: 'Poisson', value: 'Poisson' },
   { label: 'Oiseaux', value: 'Oiseaux' }, { label: 'Lapin', value: 'Lapin' }, { label: 'Rongeur', value: 'Rongeur' },
   { label: 'Reptile', value: 'Reptile' }, { label: 'Furet', value: 'Furet' }, { label: 'Cheval', value: 'Cheval' },
-  { label: 'Poney', value: 'Poney' }, { label: 'Âne', value: 'Âne' }, { label: 'Mulet et bardot', value: 'Mulet et bardot' },
+  { label: 'Poney', value: 'Poney' }, { label: 'éne', value: 'éne' }, { label: 'Mulet et bardot', value: 'Mulet et bardot' },
   { label: 'Poule', value: 'Poule' }, { label: 'Canard', value: 'Canard' }, { label: 'Cochon', value: 'Cochon' },
-  { label: 'Chèvre', value: 'Chèvre' }, { label: 'Mouton', value: 'Mouton' }, { label: 'Bovin', value: 'Bovin' },
+  { label: 'Chévre', value: 'Chévre' }, { label: 'Mouton', value: 'Mouton' }, { label: 'Bovin', value: 'Bovin' },
   { label: 'Dinde', value: 'Dinde' }, { label: 'Oie', value: 'Oie' }, { label: 'Caille', value: 'Caille' },
-  { label: 'Écureuil', value: 'Écureuil' }, { label: 'Amphibien', value: 'Amphibien' }, { label: 'Insecte', value: 'Insecte' },
+  { label: 'écureuil', value: 'écureuil' }, { label: 'Amphibien', value: 'Amphibien' }, { label: 'Insecte', value: 'Insecte' },
   { label: 'Crustacé', value: 'Crustacé' }, { label: 'Arachnide', value: 'Arachnide' },
   { label: 'Lama et alpaga', value: 'Lama et alpaga' }, { label: 'Autruche et émeu', value: 'Autruche et émeu' }, { label: 'Autre', value: 'Autre' },
 ];
@@ -38,6 +40,8 @@ const unitsList = [
 
 const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = undefined }: ModalAnimalProps) => {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('animals');
+  const { t: tc } = useTranslation('common');
   const { firebaseUser } = useAuthStore();
   const { register, handleSubmit, formState: { errors }, setValue, setError, getValues, watch, clearErrors } = useForm();
   const [image, setImage] = useState<string | null>(null);
@@ -52,10 +56,14 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
   const [espece, setEspece] = useState<string | undefined>(undefined);
   const [unity, setUnity] = useState<string | undefined>(undefined);
   const scrollRef = useRef<any>(null);
+  const sheetRef = useRef<BottomSheetModal>(null);
   const fileStorageService = new FileStorageService();
 
   useEffect(() => { if (animal?.id !== undefined) initValuesAnimal(); }, [animal]);
   useEffect(() => { setValue('espece', espece); }, [espece]);
+  useEffect(() => {
+    if (isVisible) { sheetRef.current?.present(); } else { sheetRef.current?.dismiss(); }
+  }, [isVisible]);
 
   const initValuesAnimal = () => {
     if (!animal) return;
@@ -103,7 +111,7 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
     if (data[attribute] != undefined) {
       const numericValue = parseFloat(data[attribute].replace(',', '.').replace(' ', ''));
       if (isNaN(numericValue)) {
-        Toast.show({ position: 'top', type: 'error', text1: 'Problème de format sur l\'attribut ' + attribute, text2: 'Seul les chiffres, virgule et point sont acceptés' });
+        Toast.show({ position: 'top', type: 'error', text1: 'Probléme de format sur l\'attribut ' + attribute, text2: 'Seul les chiffres, virgule et point sont acceptés' });
         return false;
       } else { data[attribute] = numericValue; }
     }
@@ -122,7 +130,7 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
     for (const field of ['datenaissance','datearrivee','datedepart']) {
       if (data[field] != null && data[field] !== undefined) {
         if (data[field].length !== 10 || !instanceDateUtils.isDateValid(instanceDateUtils.dateFormatter(data[field], 'dd/MM/yyyy', '/') ?? '')) {
-          Toast.show({ position: 'top', type: 'error', text1: 'Problème de format de date' });
+          Toast.show({ position: 'top', type: 'error', text1: 'Probléme de format de date' });
           setLoading(false); return;
         }
         data[field] = instanceDateUtils.dateFormatter(data[field], 'dd/MM/yyyy', '/');
@@ -164,55 +172,55 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
     return String(new Date(d).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     form: { width: '100%', paddingBottom: 40 },
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, alignSelf: 'baseline' },
-    inputTextArea: { height: 100, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, paddingRight: 15, backgroundColor: colors.quaternary, color: colors.default_dark },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.textPrimary },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.surfaceVariant, color: colors.textPrimary, alignSelf: 'baseline' },
+    inputTextArea: { height: 100, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, paddingRight: 15, backgroundColor: colors.surfaceVariant, color: colors.textPrimary },
     containerDate: { flexDirection: 'column', alignSelf: 'flex-start', width: '100%' },
     imageContainer: { flexDirection: 'row', alignSelf: 'flex-start', marginTop: 5 },
     avatar: { width: 60, height: 60, borderRadius: 50, borderWidth: 2, zIndex: 1 },
-    errorInput: { color: 'red' },
+    errorInput: { color: colors.error },
     separatorForm: { width: '100%', marginBottom: 20, marginTop: 10, height: 0.5, backgroundColor: colors.text },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
     <>
-      <ModalEditGeneric isVisible={isVisible} setVisible={setVisible} arrayHeight={['90%']} scrollInside={false}>
+      <AppSheet ref={sheetRef} snapPoints={['90%']} onDismiss={() => setVisible(false)}>
         <View style={styles.form}>
           <View style={styles.containerActionsButtons}>
             <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
-              <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
+              <Text style={[{ color: colors.textSecondary }, styles.textFontRegular]}>{tc('cancel')}</Text>
             </TouchableOpacity>
             <View style={{ width: '33.33%', alignItems: 'center' }}>
-              <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Animal</Text>
+              <Text style={[styles.textFontBold, { fontSize: 16, color: colors.textPrimary }]}>{t('modalTitle')}</Text>
             </View>
             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-              {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : actionType === 'modify' ? <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Modifier</Text> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Créer</Text>}
+              {loading ? <ActivityIndicator size={10} color={colors.textPrimary} /> : actionType === 'modify' ? <Text style={[{ color: colors.textPrimary }, styles.textFontRegular]}>{tc('edit')}</Text> : <Text style={[{ color: colors.textPrimary }, styles.textFontRegular]}>{tc('create')}</Text>}
             </TouchableOpacity>
           </View>
-          <Divider />
+          <AppDivider />
           <KeyboardAwareScrollView ref={scrollRef} enableOnAndroid={true} enableResetScrollToCoords={false}>
             <View style={styles.formContainer}>
               <View>
                 <View style={styles.inputContainer}>
-                  <Text style={[styles.textInput, styles.textFontRegular]}>Nom de l'animal : <Text style={{ color: 'red' }}>*</Text></Text>
-                  {errors.nom && <Text style={[styles.errorInput, styles.textFontRegular]}>Nom obligatoire</Text>}
+                  <Text style={[styles.textInput, styles.textFontRegular]}>Nom de l'animal : <Text style={{ color: colors.error }}>*</Text></Text>
+                  {errors.nom && <Text style={[styles.errorInput, styles.textFontRegular]}>{t('nameRequired')}</Text>}
                   <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Vasco" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('nom', text)} defaultValue={getValues('nom') ?? ''} {...register('nom', { required: true })} />
                 </View>
                 <View style={styles.inputContainer}>
-                  <Text style={[styles.textInput, styles.textFontRegular]}>Espèce : <Text style={{ color: 'red' }}>*</Text></Text>
-                  {errors.espece && <Text style={[styles.errorInput, styles.textFontRegular]}>Espèce obligatoire</Text>}
+                  <Text style={[styles.textInput, styles.textFontRegular]}>Espéce : <Text style={{ color: colors.error }}>*</Text></Text>
+                  {errors.espece && <Text style={[styles.errorInput, styles.textFontRegular]}>{t('speciesRequired')}</Text>}
                   <DropdawnList list={especeList} setValue={(value) => { setEspece(value); if (value) clearErrors('espece'); }} value={espece ?? ''} />
                 </View>
               </View>
-              <Divider />
+              <AppDivider />
               <View style={{ paddingTop: 10 }}>
                 <View style={[styles.inputContainer, { marginBottom: 10 }]}>
                   <Text style={[styles.textInput, styles.textFontRegular]}>Image :</Text>
@@ -260,7 +268,7 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
                 )}
                 <View style={styles.inputContainer}>
                   <Text style={[styles.textInput, styles.textFontRegular]}>Sexe :</Text>
-                  <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Mâle" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('sexe', text)} defaultValue={getValues('sexe')} />
+                  <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Méle" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('sexe', text)} defaultValue={getValues('sexe')} />
                 </View>
                 {actionType === 'create' && (
                   <>
@@ -286,11 +294,11 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
                   <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Isabelle" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('couleur', text)} defaultValue={getValues('couleur')} />
                 </View>
                 <View style={styles.inputContainer}>
-                  <Text style={[styles.textInput, styles.textFontRegular]}>Nom du père :</Text>
+                  <Text style={[styles.textInput, styles.textFontRegular]}>Nom du pére :</Text>
                   <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Esgard" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('nompere', text)} defaultValue={getValues('nompere')} />
                 </View>
                 <View style={styles.inputContainer}>
-                  <Text style={[styles.textInput, styles.textFontRegular]}>Nom de la mère :</Text>
+                  <Text style={[styles.textInput, styles.textFontRegular]}>Nom de la mére :</Text>
                   <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Sherry" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('nommere', text)} defaultValue={getValues('nommere')} />
                 </View>
                 <View style={styles.inputContainer}>
@@ -301,7 +309,7 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
             </View>
           </KeyboardAwareScrollView>
         </View>
-      </ModalEditGeneric>
+      </AppSheet>
     </>
   );
 };

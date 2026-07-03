@@ -1,44 +1,44 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, Image, TextInput, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import Constants from 'expo-constants';
+import { useTranslation } from 'react-i18next';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { authService } from '../../../services/auth/FirebaseAuthService';
 import { getFirebaseError } from '../../../shared/utils/FirebaseErrorUtils';
 import { register as apiRegister } from '../../../services/api/AuthService';
 import Back from '../../../shared/components/common/Back';
-import Button from '../../../shared/components/inputs/Button';
+import Button from '../../../shared/components/ui/AppButton';
+import SocialAuthButtons from '../components/SocialAuthButtons';
 import type { AuthStackScreenProps } from '../../../navigation/types';
+import { signUpSchema, type SignUpInput } from '../../../business/validators/auth';
 
 const wallpaper_login = require('../../../assets/wallpaper_login.png');
 
-type FormData = { email: string; prenom: string; password: string; password_confirm: string };
-
 export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Register'>) {
   const { colors, fonts } = useAppTheme();
-  const [evenPassword, setEvenPassword] = useState(true);
-  const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm<FormData>();
+  const { t } = useTranslation('auth');
+  const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm<SignUpInput>({
+    resolver: zodResolver(signUpSchema),
+    defaultValues: { email: '', prenom: '', password: '', password_confirm: '' },
+  });
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const submitRegister = async (data: FormData) => {
+  const submitRegister = async (data: SignUpInput) => {
     if (loading) return;
     try {
       setLoading(true);
-      if (data.password !== data.password_confirm) {
-        setEvenPassword(false);
-        return;
-      }
-      setEvenPassword(true);
 
       await authService.signUp(data.email.trim(), data.password, data.prenom);
 
       await apiRegister({ email: data.email, prenom: data.prenom });
       navigation.navigate('VerifyEmail');
-      Toast.show({ type: 'success', position: 'top', text1: 'Enregistrement réussi' });
+      Toast.show({ type: 'success', position: 'top', text1: t('registrationSuccess') });
     } catch (err) {
       Toast.show({ type: 'error', position: 'top', text1: getFirebaseError(err) });
     } finally {
@@ -46,19 +46,19 @@ export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Regis
     }
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     textInput: { alignSelf: 'flex-start', marginLeft: 35, marginBottom: 10 },
     image: { flex: 1, height: '100%', width: '100%', resizeMode: 'cover', position: 'absolute', justifyContent: 'center' },
     register: { flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
     form: { paddingTop: 50, alignItems: 'center', backgroundColor: colors.surface, justifyContent: 'center', width: '90%', top: -(Constants.statusBarHeight + 10), borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
-    title: { top: -(Constants.statusBarHeight + 10), color: colors.default_dark, fontSize: 30, letterSpacing: 2, marginBottom: 20 },
-    input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: 'black' },
+    title: { top: -(Constants.statusBarHeight + 10), color: colors.textPrimary, fontSize: 30, letterSpacing: 2, marginBottom: 20 },
+    input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.surfaceVariant, color: 'black' },
     registerButton: { marginBottom: 20, marginTop: 10, borderRadius: 10 },
     textButton: { color: 'white' },
-    errorInput: { color: 'red', textAlign: 'center' },
+    errorInput: { color: colors.error, textAlign: 'center' },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
-  });
+  } as const;
 
   return (
     <>
@@ -66,10 +66,10 @@ export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Regis
       <View style={{ height: '100%', width: '100%', paddingTop: Constants.statusBarHeight + 10 }}>
         <Back isWithBackground />
         <KeyboardAwareScrollView contentContainerStyle={styles.register}>
-          <Text style={[styles.title, styles.textFontRegular]}>S'inscrire</Text>
+          <Text style={[styles.title, styles.textFontRegular]}>{t('signUpTitle')}</Text>
           <View style={styles.form}>
-            {errors.email && <Text style={[styles.errorInput, styles.textFontRegular]}>Email obligatoire</Text>}
-            <Text style={[styles.textInput, styles.textFontRegular]}>Email :</Text>
+            {errors.email && <Text style={[styles.errorInput, styles.textFontRegular]}>{t((errors.email.message ?? 'errors.emailRequired') as never)}</Text>}
+            <Text style={[styles.textInput, styles.textFontRegular]}>{t('emailLabel')}</Text>
             <TextInput
               style={[styles.input, styles.textFontRegular]}
               placeholder="Email"
@@ -77,20 +77,20 @@ export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Regis
               autoCapitalize="none"
               keyboardType="email-address"
               onChangeText={(text) => setValue('email', text)}
-              {...register('email', { required: true, pattern: { value: /\S+@\S+\.\S+/, message: 'Email invalide' } })}
+              {...register('email')}
             />
-            {errors.prenom && <Text style={[styles.errorInput, styles.textFontRegular]}>Prénom obligatoire</Text>}
-            <Text style={[styles.textInput, styles.textFontRegular]}>Prénom :</Text>
+            {errors.prenom && <Text style={[styles.errorInput, styles.textFontRegular]}>{t((errors.prenom.message ?? 'firstNameRequired') as never)}</Text>}
+            <Text style={[styles.textInput, styles.textFontRegular]}>{t('firstNameLabel')}</Text>
             <TextInput
               style={[styles.input, styles.textFontRegular]}
-              placeholder="Votre prénom"
+              placeholder={t('firstNamePlaceholder')}
               placeholderTextColor={colors.secondary}
               onChangeText={(text) => setValue('prenom', text)}
               defaultValue={getValues('prenom')}
-              {...register('prenom', { required: true })}
+              {...register('prenom')}
             />
-            {errors.password && <Text style={[styles.errorInput, styles.textFontRegular]}>Le mot de passe doit contenir au moins 6 caractères</Text>}
-            <Text style={[styles.textInput, styles.textFontRegular]}>Mot de passe :</Text>
+            {errors.password && <Text style={[styles.errorInput, styles.textFontRegular]}>{t((errors.password.message ?? 'errors.passwordTooShort') as never)}</Text>}
+            <Text style={[styles.textInput, styles.textFontRegular]}>{t('passwordLabel')}</Text>
             <View style={[{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 10 }, styles.input]}>
               <TextInput
                 style={[styles.textFontRegular, { width: '90%' }]}
@@ -99,24 +99,23 @@ export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Regis
                 secureTextEntry={!isPasswordVisible}
                 onChangeText={(text) => setValue('password', text)}
                 defaultValue={getValues('password')}
-                {...register('password', { required: true, minLength: 6 })}
+                {...register('password')}
               />
               <TouchableOpacity onPress={() => setIsPasswordVisible((v) => !v)} style={{ alignSelf: 'center' }}>
                 <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={22} />
               </TouchableOpacity>
             </View>
-            {errors.password_confirm && <Text style={[styles.errorInput, styles.textFontRegular]}>Confirmation du mot de passe obligatoire</Text>}
-            {!evenPassword && <Text style={[styles.errorInput, styles.textFontRegular]}>Mots de passe différents</Text>}
-            <Text style={[styles.textInput, styles.textFontRegular]}>Confirmation du mot de passe :</Text>
+            {errors.password_confirm && <Text style={[styles.errorInput, styles.textFontRegular]}>{t((errors.password_confirm.message ?? 'errors.passwordMismatch') as never)}</Text>}
+            <Text style={[styles.textInput, styles.textFontRegular]}>{t('confirmPasswordLabel')}</Text>
             <View style={[{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 10 }, styles.input]}>
               <TextInput
                 style={[styles.textFontRegular, { width: '90%' }]}
-                placeholder="Confirmation mot de passe"
+                placeholder={t('confirmPasswordPlaceholder')}
                 placeholderTextColor={colors.secondary}
                 secureTextEntry={!isPasswordVisible}
                 onChangeText={(text) => setValue('password_confirm', text)}
                 defaultValue={getValues('password_confirm')}
-                {...register('password_confirm', { required: true })}
+                {...register('password_confirm')}
               />
               <TouchableOpacity onPress={() => setIsPasswordVisible((v) => !v)} style={{ alignSelf: 'center' }}>
                 <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={22} />
@@ -125,7 +124,7 @@ export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Regis
             <View style={styles.registerButton}>
               {!loading ? (
                 <Button onPress={handleSubmit(submitRegister)} type="quaternary" size="m">
-                  <Text style={[styles.textButton, styles.textFontMedium]}>S'enregistrer</Text>
+                  <Text style={[styles.textButton, styles.textFontMedium]}>{t('registerButton')}</Text>
                 </Button>
               ) : (
                 <Button type="quaternary" size="m">
@@ -133,6 +132,7 @@ export default function SignUpScreen({ navigation }: AuthStackScreenProps<'Regis
                 </Button>
               )}
             </View>
+            <SocialAuthButtons onSuccess={() => navigation.navigate('Loading')} />
           </View>
         </KeyboardAwareScrollView>
       </View>

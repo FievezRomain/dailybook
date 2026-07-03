@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+﻿import React, { useEffect } from 'react';
+import { View, Image, Text } from 'react-native';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import Constants from 'expo-constants';
 import { useAuthStore } from '../../../stores/useAuthStore';
@@ -36,7 +36,7 @@ export default function LoadingScreen({ navigation }: AuthStackScreenProps<'Load
     }
   }, [isLoading, isAuthenticated, firebaseUser, animaux, navigation]);
 
-  const styles = StyleSheet.create({
+  const styles = {
     loaderEvent: { width: 150, height: 150 },
     loadingEvent: {
       height: '100%',
@@ -45,14 +45,14 @@ export default function LoadingScreen({ navigation }: AuthStackScreenProps<'Load
       justifyContent: 'center',
     },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
-  });
+  } as const;
 
   return (
     <View style={styles.loadingEvent}>
       <Image style={styles.loaderEvent} source={require('../../../assets/loader.gif')} />
       <View style={{ position: 'absolute', bottom: 0, marginBottom: 50 }}>
         <View style={{ flexDirection: 'row' }}>
-          <Text style={[{ color: colors.quaternary, fontSize: 22 }, styles.textFontRegular]}>From</Text>
+          <Text style={[{ color: colors.surfaceVariant, fontSize: 22 }, styles.textFontRegular]}>From</Text>
           <Text style={[{ color: colors.neutral, fontSize: 22 }, styles.textFontRegular]}> Vasco & Co</Text>
         </View>
         <View style={{ flexDirection: 'column' }}>

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+﻿import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import { deleteAnimalHistory } from '../../../services/api/AnimalsService';
 import Toast from 'react-native-toast-message';
 import ModalManageBodyAnimal from './ModalManageBodyAnimal';
 import LoggerService from '../../../services/logs/LoggerService';
-import { Divider } from 'react-native-paper';
+import { AppDivider } from '../../../shared/components/ui';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
 import Feather from '@expo/vector-icons/Feather';
 import ModalSubMenuPhysiqueActions from './ModalSubMenuPhysiqueActions';
@@ -66,12 +66,12 @@ const PhysiqueCard = ({
 
   const getYearText = (date: string): number => new Date(date).getFullYear();
 
-  const styles = StyleSheet.create({
+  const styles = {
     container: {
       backgroundColor: colors.background,
       borderRadius: 5,
       marginBottom: 10,
-      shadowColor: colors.default_dark,
+      shadowColor: colors.textPrimary,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -79,7 +79,7 @@ const PhysiqueCard = ({
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
     <>
@@ -109,14 +109,14 @@ const PhysiqueCard = ({
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', borderTopStartRadius: 5, borderTopEndRadius: 5, padding: 10 }}>
             <View>
-              <Text style={[{ color: colors.default_dark }, styles.textFontBold]}>
+              <Text style={[{ color: colors.textPrimary }, styles.textFontBold]}>
                 {currentPhysique.type !== 'quantity' || currentPhysique.unity === null
                   ? currentPhysique.value
                   : `${currentPhysique.value} ${currentPhysique.unity}`}
               </Text>
             </View>
             <TouchableOpacity onPress={onPressOptions}>
-              <Entypo name="dots-three-horizontal" size={20} color={colors.default_dark} />
+              <Entypo name="dots-three-horizontal" size={20} color={colors.textPrimary} />
             </TouchableOpacity>
           </View>
         </View>

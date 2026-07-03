@@ -1,0 +1,13 @@
+{
+  "title": "Wish list",
+  "addWish": "Add a wish",
+  "noWish": "No wishes yet",
+  "name": "Name",
+  "price": "Price",
+  "link": "Link",
+  "acquired": "Acquired",
+  "notAcquired": "Not acquired",
+  "saved": "Wish saved ✓",
+  "deleted": "Wish deleted",
+  "deleteWish": "Delete this wish?"
+}

@@ -1,7 +1,8 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import React, { useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity } from "react-native";
 import { SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { Divider } from 'react-native-paper';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { AppDivider, AppSheet } from '../../../shared/components/ui';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface ModalSubMenuNoteActionsProps {
@@ -14,49 +15,55 @@ interface ModalSubMenuNoteActionsProps {
 
 const ModalSubMenuNoteActions = ({ modalVisible, setModalVisible, note, handleModify, handleDelete }: ModalSubMenuNoteActionsProps) => {
   const { colors, fonts } = useAppTheme();
+  const sheetRef = useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    if (modalVisible) sheetRef.current?.present();
+    else sheetRef.current?.dismiss();
+  }, [modalVisible]);
 
   const onAction = (event: () => void) => {
     setModalVisible(false);
     event();
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     textActionButton: { marginLeft: 15 },
     informationsActionButton: { flexDirection: 'row', alignItems: 'center', marginLeft: 10 },
-    actionButtonContainer: { width: '90%', borderRadius: 10, marginTop: 5, backgroundColor: colors.quaternary, flexDirection: 'column', justifyContent: 'space-evenly', marginBottom: 15 },
+    actionButtonContainer: { width: '90%', borderRadius: 10, marginTop: 5, backgroundColor: colors.surfaceVariant, flexDirection: 'column', justifyContent: 'space-evenly', marginBottom: 15 },
     actionButton: { padding: 20 },
     card: { justifyContent: 'space-evenly', alignItems: 'center' },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
-    <ModalEditGeneric isVisible={modalVisible} setVisible={setModalVisible} arrayHeight={['25%']}>
+    <AppSheet ref={sheetRef} snapPoints={['28%']} onDismiss={() => setModalVisible(false)}>
       <View style={styles.card}>
         <View style={{ alignItems: 'center' }}>
-          <Text style={[styles.textFontRegular, { color: colors.default_dark }]}>Gérer la note</Text>
+          <Text style={[styles.textFontRegular, { color: colors.textPrimary }]}>Gérer la note</Text>
           {note !== null && (
-            <Text style={[{ fontSize: 12 }, styles.textFontBold, { color: colors.default_dark }]}>{note.titre}</Text>
+            <Text style={[{ fontSize: 12 }, styles.textFontBold, { color: colors.textPrimary }]}>{note.titre}</Text>
           )}
         </View>
         <View style={styles.actionButtonContainer}>
           <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
             <View style={styles.informationsActionButton}>
-              <SimpleLineIcons name="pencil" size={20} />
-              <Text style={[styles.textActionButton, styles.textFontMedium]}>Modifier</Text>
+              <SimpleLineIcons name="pencil" size={20} color={colors.textPrimary} />
+              <Text style={[styles.textActionButton, styles.textFontMedium, { color: colors.textPrimary }]}>Modifier</Text>
             </View>
           </TouchableOpacity>
-          <Divider style={{ height: 1 }} />
+          <AppDivider />
           <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
             <View style={styles.informationsActionButton}>
-              <AntDesign name="delete" size={20} />
-              <Text style={[styles.textActionButton, styles.textFontMedium]}>Supprimer</Text>
+              <AntDesign name="delete" size={20} color={colors.error} />
+              <Text style={[styles.textActionButton, styles.textFontMedium, { color: colors.error }]}>Supprimer</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
-    </ModalEditGeneric>
+    </AppSheet>
   );
 };
 

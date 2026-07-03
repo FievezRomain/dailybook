@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+﻿import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
 import { Ionicons, Entypo } from '@expo/vector-icons';
 import ModalSubMenuNoteActions from './ModalSubMenuNoteActions';
 import ModalNote from './ModalNote';
@@ -66,17 +66,17 @@ const NoteCard = ({
     return trimmedText.length >= length ? `${trimmedText}...` : trimmedText;
   };
 
-  const htmlStyles = StyleSheet.create({
+  const htmlStyles = {
     p: { fontSize: 14 },
     a: { fontWeight: 'bold' },
-  });
+  } as const;
 
-  const styles = StyleSheet.create({
+  const styles = {
     card: {
       flexDirection: 'column',
       width: '100%',
       marginBottom: 10,
-      shadowColor: colors.default_dark,
+      shadowColor: colors.textPrimary,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -84,7 +84,7 @@ const NoteCard = ({
     },
     header: {
       flexDirection: 'row',
-      backgroundColor: colors.quaternary,
+      backgroundColor: colors.surfaceVariant,
       padding: 10,
       justifyContent: 'space-between',
       borderTopEndRadius: 5,
@@ -100,7 +100,7 @@ const NoteCard = ({
     },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
-  });
+  } as const;
 
   return (
     <>
@@ -130,12 +130,12 @@ const NoteCard = ({
           <Text style={styles.textFontBold}>{note.titre}</Text>
           <View style={styles.icons}>
             {focus ? (
-              <Ionicons name="chevron-up" size={20} color={colors.default_dark} />
+              <Ionicons name="chevron-up" size={20} color={colors.textPrimary} />
             ) : (
-              <Ionicons name="chevron-down" size={20} color={colors.default_dark} />
+              <Ionicons name="chevron-down" size={20} color={colors.textPrimary} />
             )}
             <TouchableOpacity onPress={onPressOptions}>
-              <Entypo name="dots-three-horizontal" size={20} color={colors.default_dark} style={{ marginLeft: 10 }} />
+              <Entypo name="dots-three-horizontal" size={20} color={colors.textPrimary} style={{ marginLeft: 10 }} />
             </TouchableOpacity>
           </View>
         </View>

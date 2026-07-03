@@ -1,9 +1,12 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import { useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Feather, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { Divider } from 'react-native-paper';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { AppDivider } from '../../../shared/components/ui';
+import AppSheet from '../../../shared/components/ui/AppSheet';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { Event } from '../../../models/Event';
+import { useTranslation } from 'react-i18next';
 
 interface ModalSubMenuEventActionsProps {
   modalVisible: boolean;
@@ -17,73 +20,73 @@ interface ModalSubMenuEventActionsProps {
 
 const ModalSubMenuEventActions = ({ modalVisible, setModalVisible, event, handleModify, handleDelete, handleDeleteAll, handleShare }: ModalSubMenuEventActionsProps) => {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('events');
+  const { t: tc } = useTranslation('common');
+  const sheetRef = useRef<BottomSheetModal>(null);
 
-  const onAction = (e: () => void) => {
+  useEffect(() => {
+    if (modalVisible) { sheetRef.current?.present(); } else { sheetRef.current?.dismiss(); }
+  }, [modalVisible]);
+
+  const onAction = (action: () => void) => {
     setModalVisible(false);
-    e();
+    action();
   };
 
-  const styles = StyleSheet.create({
-    textActionButton: { marginLeft: 15 },
-    informationsActionButton: { flexDirection: 'row', alignItems: 'center', marginLeft: 10 },
-    actionButtonContainer: { width: '90%', borderRadius: 10, marginTop: 15, backgroundColor: colors.quaternary, flexDirection: 'column', justifyContent: 'space-evenly', marginBottom: 15 },
-    actionButton: { padding: 15 },
-    card: { justifyContent: 'space-evenly', alignItems: 'center' },
-    disabledButton: { backgroundColor: colors.secondary, borderTopStartRadius: 5, borderTopEndRadius: 5 },
-    disabledText: { color: colors.quaternary },
-    textFontRegular: { fontFamily: fonts.default.fontFamily },
-    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
-  });
+  const styles = {
+    card: { paddingHorizontal: 20, paddingBottom: 20, alignItems: 'center' as const },
+    title: { fontSize: 15, color: colors.textPrimary, marginBottom: 12 },
+    actionButtonContainer: { width: '100%', borderRadius: 12, backgroundColor: colors.surfaceVariant, overflow: 'hidden' as const },
+    actionButton: { padding: 15, flexDirection: 'row' as const, alignItems: 'center' as const },
+    iconStyle: { marginRight: 12, color: colors.textPrimary },
+    disabledIcon: { marginRight: 12, color: colors.textDisabled },
+    actionLabel: { fontFamily: fonts.bodyMedium.fontFamily, color: colors.textPrimary },
+    disabledLabel: { fontFamily: fonts.bodyMedium.fontFamily, color: colors.textDisabled },
+    destructiveLabel: { fontFamily: fonts.bodyMedium.fontFamily, color: colors.error },
+    destructiveIcon: { marginRight: 12, color: colors.error },
+  } as const;
 
   const isRecurring = event.eventtype === 'soins' || event.eventtype === 'balade';
   const hasParent = event.idparent !== null && event.idparent !== undefined;
-  const height = (isRecurring && hasParent) ? ['35%'] : ['30%'];
+  const snapHeight = (isRecurring && hasParent) ? '38%' : '32%';
 
   return (
-    <ModalEditGeneric isVisible={modalVisible} setVisible={setModalVisible} arrayHeight={height}>
+    <AppSheet ref={sheetRef} snapPoints={[snapHeight]} onDismiss={() => setModalVisible(false)}>
       <View style={styles.card}>
-        <Text style={[styles.textFontRegular, { color: colors.default_dark }]}>Gérer l'événement</Text>
+        <Text style={[styles.title, { fontFamily: fonts.default.fontFamily }]}>{t('manageEvent')}</Text>
         <View style={styles.actionButtonContainer}>
-          <TouchableOpacity style={[styles.actionButton, styles.disabledButton]}>
-            <View style={styles.informationsActionButton}>
-              <Feather name="share-2" size={20} style={styles.disabledText} />
-              <Text style={[styles.textActionButton, styles.disabledText, styles.textFontMedium]}>Partager (bientôt disponible)</Text>
-            </View>
+          <TouchableOpacity style={styles.actionButton} disabled>
+            <Feather name="share-2" size={20} style={styles.disabledIcon} />
+            <Text style={styles.disabledLabel}>{t('shareSoon')}</Text>
           </TouchableOpacity>
-          <Divider style={{ height: 1 }} />
+          <AppDivider />
           <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleModify)}>
-            <View style={styles.informationsActionButton}>
-              <SimpleLineIcons name="pencil" size={20} />
-              <Text style={[styles.textActionButton, styles.textFontMedium]}>Modifier</Text>
-            </View>
+            <SimpleLineIcons name="pencil" size={20} style={styles.iconStyle} />
+            <Text style={styles.actionLabel}>{tc('edit')}</Text>
           </TouchableOpacity>
           {(!isRecurring || (isRecurring && hasParent)) && (
             <>
-              <Divider style={{ height: 1 }} />
+              <AppDivider />
               <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDelete)}>
-                <View style={styles.informationsActionButton}>
-                  <AntDesign name="delete" size={20} />
-                  <Text style={[styles.textActionButton, styles.textFontMedium]}>Supprimer</Text>
-                </View>
+                <AntDesign name="delete" size={20} style={styles.destructiveIcon} />
+                <Text style={styles.destructiveLabel}>{tc('delete')}</Text>
               </TouchableOpacity>
             </>
           )}
           {isRecurring && (
             <>
-              <Divider style={{ height: 1 }} />
+              <AppDivider />
               <TouchableOpacity style={styles.actionButton} onPress={() => onAction(handleDeleteAll)}>
-                <View style={styles.informationsActionButton}>
-                  <AntDesign name="delete" size={20} />
-                  <Text style={[styles.textActionButton, styles.textFontMedium]}>
-                    Supprimer les {event.eventtype === 'balade' ? 'balades' : 'soins'} {event.nom !== null && event.nom !== undefined && event.nom.substring(0, 15)}{event.nom !== null && event.nom !== undefined && event.nom.length > 15 && '...'}
-                  </Text>
-                </View>
+                <AntDesign name="delete" size={20} style={styles.destructiveIcon} />
+                <Text style={styles.destructiveLabel}>
+                  {t(event.eventtype === 'balade' ? 'deleteAllWalks' : 'deleteAllCares', { suffix: event.nom ? ` ${event.nom.substring(0, 15)}${event.nom.length > 15 ? 'é' : ''}` : '' })}
+                </Text>
               </TouchableOpacity>
             </>
           )}
         </View>
       </View>
-    </ModalEditGeneric>
+    </AppSheet>
   );
 };
 

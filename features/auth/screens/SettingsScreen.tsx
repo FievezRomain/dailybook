@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView } from 'react-native';
+﻿import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Linking, ScrollView } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
-import { Divider, IconButton } from 'react-native-paper';
+import { AppDivider, AppIconButton } from '../../../shared/components/ui';
 import { useNavigation } from '@react-navigation/native';
 import { authService } from '../../../services/auth/FirebaseAuthService';
 import * as ImagePicker from 'expo-image-picker';
@@ -20,12 +20,15 @@ import { useThemeStore } from '../../../stores/useThemeStore';
 import ImageUtils from '../../../shared/utils/ImageUtils';
 import type { AppNavigationProp } from '../../../navigation/types';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../../shared/components/ui/LanguageSwitcher';
 
 const imageUtils = new ImageUtils();
 
 export default function SettingsScreen() {
   const navigation = useNavigation<AppNavigationProp>();
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('auth');
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
   const user = useAuthStore((s) => s.user);
   const signOutUser = useAuthStore((s) => s.signOutUser);
@@ -59,14 +62,14 @@ export default function SettingsScreen() {
     const filename = uriImage.split('/').pop() ?? 'photo.jpg';
     const fileURL = await uploadFile(uriImage, filename, 'image/jpeg', 'user', firebaseUser?.uid ?? '');
     await authService.updateProfile({ photoURL: fileURL });
-    Toast.show({ type: 'success', position: 'top', text1: 'Photo mise à jour' });
+    Toast.show({ type: 'success', position: 'top', text1: t('photoUpdated') });
   };
 
   const takePhotoAsync = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') { alert('Permission caméra refusée'); return; }
+    if (status !== 'granted') { alert(t('permissionCamera')); return; }
     const result = await ImagePicker.launchCameraAsync({ allowsEditing: true, quality: 1 });
-    Toast.show({ type: 'info', position: 'top', text1: 'Modification en cours...' });
+    Toast.show({ type: 'info', position: 'top', text1: t('modifyLoading') });
     if (!result.canceled) {
       const uri = await imageUtils.compressImage(result.assets[0].uri);
       if (uri !== previousImage) await saveNewPhoto(uri);
@@ -76,9 +79,9 @@ export default function SettingsScreen() {
 
   const pickImageAsync = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') { alert("Permission bibliothèque refusée"); return; }
+    if (status !== 'granted') { alert(t('permissionLibrary')); return; }
     const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, quality: 1 });
-    Toast.show({ type: 'info', position: 'top', text1: 'Modification en cours...' });
+    Toast.show({ type: 'info', position: 'top', text1: t('modifyLoading') });
     if (!result.canceled) {
       const uri = await imageUtils.compressImage(result.assets[0].uri);
       if (uri !== previousImage) await saveNewPhoto(uri);
@@ -87,10 +90,10 @@ export default function SettingsScreen() {
   };
 
   const handleUserModified = () => {
-    setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Modification de vos informations réussie' }), 350);
+    setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: t('modifySuccess') }), 350);
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     settings: { flexDirection: 'column' },
     title: { fontSize: 25 },
     avatar: { width: 100, height: 100, borderRadius: 50, borderWidth: 3, borderColor: colors.background, alignSelf: 'center', top: 25, zIndex: 1, backgroundColor: colors.background },
@@ -98,42 +101,42 @@ export default function SettingsScreen() {
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
     informationsUserContainer: { alignItems: 'center' },
-    buttonEditUserImage: { height: 30, width: 30, backgroundColor: colors.accent, zIndex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 30, marginLeft: 70 },
-    titleContainer: { color: colors.quaternary, marginLeft: 20, fontFamily: fonts.labelMedium?.fontFamily, fontSize: 16, paddingVertical: 10 },
-    abonnementContainer: { paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15, backgroundColor: colors.accent, marginTop: 10, marginBottom: 20 },
+    buttonEditUserImage: { height: 30, width: 30, backgroundColor: colors.primary, zIndex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 30, marginLeft: 70 },
+    titleContainer: { color: colors.surfaceVariant, marginLeft: 20, fontFamily: fonts.labelMedium?.fontFamily, fontSize: 16, paddingVertical: 10 },
+    abonnementContainer: { paddingHorizontal: 15, paddingVertical: 5, borderRadius: 15, backgroundColor: colors.primary, marginTop: 10, marginBottom: 20 },
     contentContainer: { flex: 1 },
     email: { fontSize: 14 },
-  });
+  } as const;
 
   const row = (icon: string, label: string, onPress: () => void) => (
     <>
       <TouchableOpacity style={{ paddingHorizontal: 10, flexDirection: 'row', justifyContent: 'space-between' }} onPress={onPress}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <IconButton icon={icon} iconColor={colors.accent} size={20} />
-          <Text style={[styles.textFontMedium, { fontSize: 16, color: colors.default_dark }]}>{label}</Text>
+          <AppIconButton icon={icon} color={colors.primary} size={20} />
+          <Text style={[styles.textFontMedium, { fontSize: 16, color: colors.textPrimary }]}>{label}</Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <IconButton icon="chevron-right" iconColor={colors.accent} size={20} />
+          <AppIconButton icon="chevron-right" color={colors.primary} size={20} />
         </View>
       </TouchableOpacity>
-      <Divider />
+      <AppDivider />
     </>
   );
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <TopTabSecondary message1="Mon" message2="Compte" />
       <ScrollView style={styles.contentContainer}>
         <ModalValidation
-          displayedText="Êtes-vous sûr de vouloir vous déconnecter ?"
-          title="Demande de déconnexion"
+          displayedText={t('disconnectConfirmText')}
+          title={t('disconnectTitle')}
           visible={modalVisible}
           setVisible={setModalVisible}
           onConfirm={disconnect}
         />
         <ModalValidation
-          displayedText="Êtes-vous sûr de vouloir supprimer votre compte ?"
-          title="Demande de suppression de compte"
+          displayedText={t('deleteAccountConfirmText')}
+          title={t('deleteAccountTitle')}
           visible={modalVerifDeleteAccountVisible}
           onConfirm={handleDeleteAccount}
           setVisible={setModalVerifDeleteAccountVisible}
@@ -164,12 +167,12 @@ export default function SettingsScreen() {
               </View>
             )}
             <TouchableOpacity style={styles.buttonEditUserImage} onPress={() => setModalSubMenuAvatarPickerVisible(true)}>
-              <IconButton icon="pencil" size={20} iconColor={colors.background} />
+              <AppIconButton icon="pencil" size={20} color={colors.background} />
             </TouchableOpacity>
-            <Text style={[styles.title, styles.textFontBold, { color: colors.default_dark }]}>
+            <Text style={[styles.title, styles.textFontBold, { color: colors.textPrimary }]}>
               {firebaseUser?.displayName?.slice(0, 17) ?? ''}
             </Text>
-            <Text style={[styles.email, styles.textFontRegular, { color: colors.default_dark }]}>
+            <Text style={[styles.email, styles.textFontRegular, { color: colors.textPrimary }]}>
               {firebaseUser?.email ?? ''}
             </Text>
             {user && (
@@ -182,25 +185,33 @@ export default function SettingsScreen() {
           </View>
 
           <View>
-            <Text style={styles.titleContainer}>Paramètres</Text>
+            <Text style={styles.titleContainer}>{t('settings')}</Text>
             <View style={{ backgroundColor: colors.background }}>
-              {row('key', 'Changer mon mot de passe', () => setModalModificationPasswordVisible(true))}
-              {row('card-account-details', 'Changer mon nom', () => setModalModificationNameVisible(true))}
+              {row('key', t('changePassword'), () => setModalModificationPasswordVisible(true))}
+              {row('card-account-details', t('changeName'), () => setModalModificationNameVisible(true))}
+              <View style={{ paddingHorizontal: 10, paddingVertical: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <AppIconButton icon="translate" color={colors.primary} size={20} />
+                  <Text style={[styles.textFontMedium, { fontSize: 16, color: colors.textPrimary }]}>{t('language')}</Text>
+                </View>
+                <LanguageSwitcher compact />
+              </View>
+              <AppDivider />
             </View>
           </View>
 
           <View>
-            <Text style={styles.titleContainer}>Informations</Text>
+            <Text style={styles.titleContainer}>{t('sectionInfo')}</Text>
             <View style={{ backgroundColor: colors.background }}>
-              {row('cellphone', 'Gérer mon abonnement', () => navigation.navigate('DiscoverPremium'))}
-              {row('help-circle', 'Support utilisateur', () =>
+              {row('cellphone', t('manageSubscription'), () => navigation.navigate('DiscoverPremium'))}
+              {row('help-circle', t('support'), () =>
                 Linking.openURL('mailto:contact.vascoandco@gmail.com').catch((e) =>
                   LoggerService.log('Error opening email: ' + e.message)
                 )
               )}
-              {row('invert-colors', `Passer en mode ${isDark ? 'clair' : 'sombre'}`, toggleTheme)}
-              {row('account-remove', 'Supprimer mon compte', () => setModalVerifDeleteAccountVisible(true))}
-              {row('logout', 'Déconnexion', () => setModalVisible(true))}
+              {row('invert-colors', isDark ? t('toggleLight') : t('toggleDark'), toggleTheme)}
+              {row('account-remove', t('deleteAccount'), () => setModalVerifDeleteAccountVisible(true))}
+              {row('logout', t('logout'), () => setModalVisible(true))}
             </View>
           </View>
         </View>

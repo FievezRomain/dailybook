@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
-import { Divider } from 'react-native-paper';
+import { AppDivider } from '../ui';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import Toast from 'react-native-toast-message';
 import ModalEditGeneric from './common/ModalEditGeneric';
@@ -15,6 +15,7 @@ import ModalGroup from '../../../features/groups/components/ModalGroup';
 import { useCalendarUIStore } from '../../../stores/useCalendarUIStore';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { useCurrentUser } from '../../../hooks/useCurrentUser';
+import { useTranslation } from 'react-i18next';
 import type { AppNavigationProp } from '../../../navigation/types';
 
 interface ModalCreateProps {
@@ -27,6 +28,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
   const { colors, fonts } = useAppTheme();
   const { user } = useAuthStore();
   const { hasRole } = useCurrentUser();
+  const { t } = useTranslation('common');
   const isPremium = hasRole('premium');
   const [isEventModalVisible, setEventModalVisible] = useState(false);
   const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
@@ -38,9 +40,14 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
   const [event, setEvent] = useState<any>({});
   const { selectedDate: date } = useCalendarUIStore();
 
+  const openAfterMenuClose = (openModal: () => void) => {
+    setModalVisible(false);
+    setTimeout(openModal, 180);
+  };
+
   const openModalEvent = (typeEvent: string) => {
     setEvent({ eventtype: typeEvent });
-    setEventModalVisible(true);
+    openAfterMenuClose(() => setEventModalVisible(true));
   };
 
   const handleCreateContact = () => { setModalVisible(false); setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Création d\'un contact réussi' }), 300); };
@@ -71,41 +78,55 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
 
   return (
     <>
-      <ModalEditGeneric isVisible={isVisible} setVisible={setModalVisible} arrayHeight={['90%']} handleStyle={styles.handleStyleModal}>
+      {isEventModalVisible && (
         <ModalEvents actionType="create" isVisible={isEventModalVisible} setVisible={setEventModalVisible} event={event} onModify={handleCreateEvent} date={date} />
+      )}
+      {isObjectifModalVisible && (
         <ModalObjectif actionType="create" isVisible={isObjectifModalVisible} setVisible={setObjectifModalVisible} onModify={handleCreateObjectif} />
+      )}
+      {isWishModalVisible && (
         <ModalWish actionType="create" isVisible={isWishModalVisible} setVisible={setWishModalVisible} onModify={handleCreateWish} />
+      )}
+      {isContactModalVisible && (
         <ModalContact actionType="create" isVisible={isContactModalVisible} setVisible={setContactModalVisible} onModify={handleCreateContact} />
+      )}
+      {isNoteModalVisible && (
         <ModalNote actionType="create" isVisible={isNoteModalVisible} setVisible={setNoteModalVisible} onModify={handleCreateNote} />
+      )}
+      {isAnimalModalVisible && (
         <ModalAnimal actionType="create" isVisible={isAnimalModalVisible} setVisible={setAnimalModalVisible} onModify={handleCreateAnimal} />
+      )}
+      {isGroupModalVisible && (
         <ModalGroup actionType="create" isVisible={isGroupModalVisible} setVisible={setGroupModalVisible} onModify={handleCreateGroup} />
+      )}
+      <ModalEditGeneric isVisible={isVisible} setVisible={setModalVisible} arrayHeight={['90%']} handleStyle={styles.handleStyleModal}>
         <View style={{ display: 'flex', alignContent: 'center', backgroundColor: colors.onSurface, flex: 1 }}>
           <View style={styles.form}>
             <View style={styles.formContainer}>
               <View style={styles.groupButton}>
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => setAnimalModalVisible(true)}>
+                  <TouchableOpacity onPress={() => openAfterMenuClose(() => setAnimalModalVisible(true))}>
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome name="paw" size={20} style={styles.iconButton} />
-                        <Text style={[styles.textFontRegular, styles.titleButton]}>Animal</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>{t('createMenu.animal')}</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
                     </View>
-                    <Divider />
+                    <AppDivider />
                   </TouchableOpacity>
                 </View>
               </View>
 
               <View style={styles.groupButton}>
                 {[
-                  { label: 'Balade', type: 'balade', Icon: () => <Entypo name="compass" size={20} style={styles.iconButton} /> },
-                  { label: 'Entraînement', type: 'entrainement', Icon: () => <Entypo name="traffic-cone" size={20} style={styles.iconButton} /> },
-                  { label: 'Concours', type: 'concours', Icon: () => <FontAwesome name="trophy" size={20} style={styles.iconButton} /> },
-                  { label: 'Rendez-vous médical', type: 'rdv', Icon: () => <FontAwesome name="stethoscope" size={20} style={styles.iconButton} /> },
-                  { label: 'Soin', type: 'soins', Icon: () => <FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton} /> },
-                  { label: 'Dépense', type: 'depense', Icon: () => <FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton} /> },
-                  { label: 'Autre', type: 'autre', Icon: () => <FontAwesome6 name="check-circle" size={20} style={styles.iconButton} /> },
+                  { label: t('createMenu.walk'), type: 'balade', Icon: () => <Entypo name="compass" size={20} style={styles.iconButton} /> },
+                  { label: t('createMenu.training'), type: 'entrainement', Icon: () => <Entypo name="traffic-cone" size={20} style={styles.iconButton} /> },
+                  { label: t('createMenu.competition'), type: 'concours', Icon: () => <FontAwesome name="trophy" size={20} style={styles.iconButton} /> },
+                  { label: t('createMenu.medicalAppointment'), type: 'rdv', Icon: () => <FontAwesome name="stethoscope" size={20} style={styles.iconButton} /> },
+                  { label: t('createMenu.care'), type: 'soins', Icon: () => <FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton} /> },
+                  { label: t('createMenu.expense'), type: 'depense', Icon: () => <FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton} /> },
+                  { label: t('createMenu.other'), type: 'autre', Icon: () => <FontAwesome6 name="check-circle" size={20} style={styles.iconButton} /> },
                 ].map(({ label, type, Icon }) => (
                   <View key={type} style={styles.button}>
                     <TouchableOpacity onPress={() => openModalEvent(type)}>
@@ -116,7 +137,7 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
                         </View>
                         <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
                       </View>
-                      <Divider />
+                      <AppDivider />
                     </TouchableOpacity>
                   </View>
                 ))}
@@ -124,72 +145,72 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
 
               <View style={styles.groupButton}>
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => setObjectifModalVisible(true)}>
+                  <TouchableOpacity onPress={() => openAfterMenuClose(() => setObjectifModalVisible(true))}>
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <SimpleLineIcons name="target" size={20} style={styles.iconButton} />
-                        <Text style={[styles.textFontRegular, styles.titleButton]}>Objectif</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>{t('createMenu.goal')}</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
                     </View>
-                    <Divider />
+                    <AppDivider />
                   </TouchableOpacity>
                 </View>
               </View>
 
               <View style={styles.groupButton}>
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => setWishModalVisible(true)}>
+                  <TouchableOpacity onPress={() => openAfterMenuClose(() => setWishModalVisible(true))}>
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome name="heart" size={20} style={styles.iconButton} />
-                        <Text style={[styles.textFontRegular, styles.titleButton]}>Souhait</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>{t('createMenu.wish')}</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
                     </View>
-                    <Divider />
+                    <AppDivider />
                   </TouchableOpacity>
                 </View>
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => setContactModalVisible(true)}>
+                  <TouchableOpacity onPress={() => openAfterMenuClose(() => setContactModalVisible(true))}>
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <AntDesign name="contacts" size={20} style={styles.iconButton} />
-                        <Text style={[styles.textFontRegular, styles.titleButton]}>Contact</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>{t('createMenu.contact')}</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
                     </View>
-                    <Divider />
+                    <AppDivider />
                   </TouchableOpacity>
                 </View>
                 <View style={styles.button}>
-                  <TouchableOpacity onPress={() => setNoteModalVisible(true)}>
+                  <TouchableOpacity onPress={() => openAfterMenuClose(() => setNoteModalVisible(true))}>
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <SimpleLineIcons name="note" size={20} style={styles.iconButton} />
-                        <Text style={[styles.textFontRegular, styles.titleButton]}>Note</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>{t('createMenu.note')}</Text>
                       </View>
                       <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
                     </View>
-                    <Divider />
+                    <AppDivider />
                   </TouchableOpacity>
                 </View>
               </View>
 
               <View style={styles.groupButton}>
                 <View style={styles.button}>
-                  <TouchableOpacity disabled={!isPremium} onPress={() => setGroupModalVisible(true)}>
+                  <TouchableOpacity disabled={!isPremium} onPress={() => openAfterMenuClose(() => setGroupModalVisible(true))}>
                     <View style={styles.touchableOpacityButtonContent}>
                       <View style={styles.informationsButtonContainer}>
                         <FontAwesome name="group" size={20} style={styles.iconButton} />
-                        <Text style={[styles.textFontRegular, styles.titleButton]}>Groupe</Text>
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>{t('createMenu.group')}</Text>
                       </View>
                       <View style={styles.actionButtonContainer}>
-                        {!isPremium && <View style={styles.premiumOverlay}><Text style={styles.premiumText}>Premium</Text></View>}
+                        {!isPremium && <View style={styles.premiumOverlay}><Text style={styles.premiumText}>{t('createMenu.premium')}</Text></View>}
                         <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
                       </View>
                     </View>
-                    <Divider />
+                    <AppDivider />
                   </TouchableOpacity>
                 </View>
               </View>

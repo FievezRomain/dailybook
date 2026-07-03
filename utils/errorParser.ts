@@ -1,6 +1,11 @@
-import axios, { type AxiosError } from 'axios';
+import type axiosType from 'axios';
+import type { AxiosError } from 'axios';
 import { AppErrorCode } from '../types/AppErrorCode';
 import type { ApiError } from '../types/ApiError';
+
+type AxiosModule = typeof axiosType & { default?: typeof axiosType };
+const axiosModule = require('axios') as AxiosModule;
+const axios = axiosModule.default ?? axiosModule;
 
 export interface ParsedError {
   code: AppErrorCode;

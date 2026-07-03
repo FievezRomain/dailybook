@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
+﻿import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList } from 'react-native';
 import ObjectifCard from './ObjectifCard';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -10,7 +10,7 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
     const { data: animaux = [] } = useAnimalsQuery();
     const { colors, fonts } = useAppTheme();
 
-    const styles = StyleSheet.create({
+    const styles = {
         objectifsInProgressContainer:{
             width: "100%",
             paddingTop: 10,
@@ -25,7 +25,7 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
             paddingRight: 20,
         },
         title:{
-            color: colors.default_dark,
+            color: colors.textPrimary,
             fontSize : 16,
         },
         icon:{
@@ -48,13 +48,13 @@ const ObjectifsInProgressBloc = ({ objectifs, handleObjectifChange, handleObject
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
         }
-    });
+    } as const;
 
     return(
         <>
             <View style={styles.objectifsInProgressContainer}>
                 <View style={styles.headerContainer}>
-                    <SimpleLineIcons name="target" size={20} color={colors.default_dark} style={styles.icon}/>
+                    <SimpleLineIcons name="target" size={20} color={colors.textPrimary} style={styles.icon}/>
                     <Text style={[styles.title, styles.textFontBold]}>Objectifs en cours</Text>
                 </View>
                 <View>

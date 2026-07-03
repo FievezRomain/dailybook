@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { Icon } from 'react-native-paper';
+import { View, Text, TouchableOpacity, TextInput } from 'react-native';
+import { AppIcon } from '../../../shared/components/ui';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import ModalManageBodyAnimal from './ModalManageBodyAnimal';
 import AnimalImageCarousel from './AnimalImageCarousel';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
 
 const AnimalBody = ({ animal, onModify }: { animal: any; onModify: () => void }) => {
   const { user } = useAuthStore();
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('animals');
   const [isBodyManageModalVisible, setBodyManageModalVisible] = useState(false);
   const [item, setItem] = useState<string | undefined>(undefined);
 
@@ -22,20 +24,20 @@ const AnimalBody = ({ animal, onModify }: { animal: any; onModify: () => void })
     setBodyManageModalVisible(true);
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     card: {
       backgroundColor: colors.background,
       width: '100%',
       paddingLeft: 20,
       paddingVertical: 25,
       borderRadius: 5,
-      shadowColor: colors.default_dark,
+      shadowColor: colors.textPrimary,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
       marginBottom: 20,
     },
-    text: { color: colors.default_dark },
+    text: { color: colors.textPrimary },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textInput: { alignSelf: 'flex-start', marginBottom: 5 },
     input: {
@@ -44,8 +46,8 @@ const AnimalBody = ({ animal, onModify }: { animal: any; onModify: () => void })
       marginBottom: 10,
       borderRadius: 5,
       paddingLeft: 15,
-      backgroundColor: colors.quaternary,
-      color: colors.default_dark,
+      backgroundColor: colors.surfaceVariant,
+      color: colors.textPrimary,
       alignSelf: 'baseline',
     },
     iconUpdate: { height: 40, width: '20%', justifyContent: 'center', alignItems: 'center' },
@@ -55,10 +57,10 @@ const AnimalBody = ({ animal, onModify }: { animal: any; onModify: () => void })
       marginBottom: 20,
       marginLeft: 20,
     },
-    title: { color: colors.default_dark, fontSize: 16, marginLeft: 10 },
+    title: { color: colors.textPrimary, fontSize: 16, marginLeft: 10 },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
     <>
@@ -74,15 +76,15 @@ const AnimalBody = ({ animal, onModify }: { animal: any; onModify: () => void })
         {(user as any)?.abonnement?.libelle === 'Premium' && (
           <>
             <View style={styles.headerContainer}>
-              <Icon source="camera-burst" size={25} color={colors.default_dark} />
-              <Text style={[styles.title, styles.textFontBold]}>Évolution physique</Text>
+              <AppIcon name="camera-burst" size={25} color={colors.textPrimary} />
+              <Text style={[styles.title, styles.textFontBold]}>évolution physique</Text>
             </View>
             <AnimalImageCarousel animalId={animal.id} />
           </>
         )}
         <View style={styles.headerContainer}>
-          <Icon source="clipboard-pulse-outline" size={25} color={colors.default_dark} />
-          <Text style={[styles.title, styles.textFontBold]}>Informations physique</Text>
+          <AppIcon name="clipboard-pulse-outline" size={25} color={colors.textPrimary} />
+          <Text style={[styles.title, styles.textFontBold]}>{t('bodyTitle')}</Text>
         </View>
         <View style={{ width: '90%', alignSelf: 'center' }}>
           <View style={styles.card}>
@@ -97,7 +99,7 @@ const AnimalBody = ({ animal, onModify }: { animal: any; onModify: () => void })
                   editable={false}
                 />
                 <TouchableOpacity style={styles.iconUpdate} onPress={() => openModal('taille')}>
-                  <Icon source="update" size={25} color={colors.default_dark} />
+                  <AppIcon name="update" size={25} color={colors.textPrimary} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -112,7 +114,7 @@ const AnimalBody = ({ animal, onModify }: { animal: any; onModify: () => void })
                   editable={false}
                 />
                 <TouchableOpacity style={styles.iconUpdate} onPress={() => openModal('poids')}>
-                  <Icon source="update" size={25} color={colors.default_dark} />
+                  <AppIcon name="update" size={25} color={colors.textPrimary} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -127,7 +129,7 @@ const AnimalBody = ({ animal, onModify }: { animal: any; onModify: () => void })
                   editable={false}
                 />
                 <TouchableOpacity style={styles.iconUpdate} onPress={() => openModal('food')}>
-                  <Icon source="update" size={25} color={colors.default_dark} />
+                  <AppIcon name="update" size={25} color={colors.textPrimary} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -146,7 +148,7 @@ const AnimalBody = ({ animal, onModify }: { animal: any; onModify: () => void })
                   editable={false}
                 />
                 <TouchableOpacity style={styles.iconUpdate} onPress={() => openModal('quantity')}>
-                  <Icon source="update" size={25} color={colors.default_dark} />
+                  <AppIcon name="update" size={25} color={colors.textPrimary} />
                 </TouchableOpacity>
               </View>
             </View>

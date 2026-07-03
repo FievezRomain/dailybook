@@ -9,10 +9,15 @@
  * Aucun autre fichier ne doit créer d'instance axios ni définir axios.defaults.
  */
 
-import axios from 'axios';
+import type axiosType from 'axios';
 import { authService } from '../auth/FirebaseAuthService';
-import { useAuthStore } from '../../stores/useAuthStore';
+// useAuthStore importé en lazy dans l'intercepteur 401 pour casser le cycle :
+// AuthService → httpClient → useAuthStore → AuthService
 import { env } from '../../config/env';
+
+type AxiosModule = typeof axiosType & { default?: typeof axiosType };
+const axiosModule = require('axios') as AxiosModule;
+const axios = axiosModule.default ?? axiosModule;
 
 const httpClient = axios.create({
   baseURL: env.API_URL,
@@ -44,6 +49,8 @@ httpClient.interceptors.response.use(
     const status = error?.response?.status;
 
     if (status === 401) {
+      // require() lazy : évalué uniquement à l'appel, jamais au chargement du module
+      const { useAuthStore } = require('../../stores/useAuthStore') as typeof import('../../stores/useAuthStore');
       useAuthStore.getState().signOutUser();
       return Promise.reject(
         new Error("Session expirée. Veuillez vous reconnecter."),

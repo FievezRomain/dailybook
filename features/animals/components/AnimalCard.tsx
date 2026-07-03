@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ActivityIndicator, Icon } from 'react-native-paper';
+﻿import React, { useEffect, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator } from 'react-native';
+import { AppIcon } from '../../../shared/components/ui';
 import { getFileUrl } from '../../../services/aws/FileStorageService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { useGroupForm } from '../../groups/hooks/useGroupForm';
@@ -76,11 +77,11 @@ const AnimalCard = ({
       return (
         <>
           <TouchableOpacity style={{ marginRight: 20 }} onPress={handleSubmit(refuseAnimal)}>
-            <Icon source="close" size={30} color={colors.error} />
+            <AppIcon name="close" size={30} color={colors.error} />
           </TouchableOpacity>
           {userRole === 'manager' && (
             <TouchableOpacity onPress={handleSubmit(acceptAnimal)}>
-              <Icon source="check" size={30} color={colors.accent} />
+              <AppIcon name="check" size={30} color={colors.primary} />
             </TouchableOpacity>
           )}
         </>
@@ -89,19 +90,19 @@ const AnimalCard = ({
     if (animalState === 'accepted' && (userRole === 'manager' || currentAnimal.provenance === 'owner')) {
       return (
         <TouchableOpacity onPress={() => setModalValidationVisible(true)}>
-          <Icon source="exit-to-app" size={30} color={colors.error} />
+          <AppIcon name="exit-to-app" size={30} color={colors.error} />
         </TouchableOpacity>
       );
     }
     return null;
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     card: {
       backgroundColor: colors.background,
       marginBottom: 10,
       borderRadius: 5,
-      shadowColor: colors.default_dark,
+      shadowColor: colors.textPrimary,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -124,7 +125,7 @@ const AnimalCard = ({
       borderRadius: 50,
       justifyContent: 'center',
       alignItems: 'center',
-      shadowColor: colors.default_dark,
+      shadowColor: colors.textPrimary,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -135,15 +136,15 @@ const AnimalCard = ({
       borderRadius: 50,
       alignItems: 'center',
       justifyContent: 'center',
-      shadowColor: colors.default_dark,
+      shadowColor: colors.textPrimary,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
     },
     avatarText: { textAlign: 'center', color: colors.background, fontSize: 30 },
     informationsAnimal: { marginLeft: 10 },
-    infoText: { color: colors.default_dark },
-  });
+    infoText: { color: colors.textPrimary },
+  } as const;
 
   return (
     <>
@@ -163,7 +164,7 @@ const AnimalCard = ({
               </View>
             ) : (
               <View style={styles.containerAvatarWithoutImage}>
-                <View style={[styles.avatar, { backgroundColor: colors.quaternary }]}>
+                <View style={[styles.avatar, { backgroundColor: colors.surfaceVariant }]}>
                   <Text style={[styles.avatarText, styles.textFontRegular]}>{currentAnimal.nom?.[0]}</Text>
                 </View>
               </View>

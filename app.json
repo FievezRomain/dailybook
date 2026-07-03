@@ -28,6 +28,7 @@
       "bundleIdentifier": "com.vascoandco.vasco.ios",
       "googleServicesFile": "./GoogleService-Info.plist",
       "buildNumber": "1.2.3",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
         "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
@@ -100,7 +101,14 @@
       ],
       "expo-tracking-transparency",
       "expo-localization",
-      "expo-updates"
+      "expo-updates",
+      "expo-apple-authentication",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.592615799562-hjtrr6anli4uhkqudlp46d4v0pdo7v4i"
+        }
+      ]
     ]
   }
 }

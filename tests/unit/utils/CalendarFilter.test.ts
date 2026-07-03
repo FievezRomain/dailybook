@@ -1,4 +1,4 @@
-import { CalendarFilter } from '../../../business/models/CalendarFilter';
+import { CalendarFilter } from '../../../features/events/models/CalendarFilter';
 import type { Event } from '../../../models/Event';
 
 const makeEvent = (overrides: Partial<Event> = {}): Event =>

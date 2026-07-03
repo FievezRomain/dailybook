@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, Modal, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
-import Button from '../../inputs/Button';
+import Button from '../../ui/AppButton';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 import instanceDateUtils from '../../../utils/DateUtils';
 

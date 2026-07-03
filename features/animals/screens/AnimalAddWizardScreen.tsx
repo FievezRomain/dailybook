@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -8,7 +8,7 @@ import { Entypo } from '@expo/vector-icons';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { useAnimalWizardStore } from '../../../stores/useAnimalWizardStore';
 import { useAnimalMutations } from '../../../hooks/queries/useAnimalsQuery';
-import Button from '../../../shared/components/inputs/Button';
+import Button from '../../../shared/components/ui/AppButton';
 import type { AppStackScreenProps } from '../../../navigation/types';
 
 const STEPS = [
@@ -99,27 +99,27 @@ export default function AnimalAddWizardScreen({ navigation }: AppStackScreenProp
 
   const currentStep = STEPS[step];
 
-  const styles = StyleSheet.create({
+  const styles = {
     container: { flex: 1 },
     header: { paddingTop: 56, paddingHorizontal: 20, paddingBottom: 12 },
-    progressTrack: { height: 3, backgroundColor: colors.quaternary, borderRadius: 2, marginTop: 16 },
-    progressFill: { height: 3, backgroundColor: colors.accent, borderRadius: 2 },
+    progressTrack: { height: 3, backgroundColor: colors.surfaceVariant, borderRadius: 2, marginTop: 16 },
+    progressFill: { height: 3, backgroundColor: colors.primary, borderRadius: 2 },
     stepLabel: { fontSize: 12, color: colors.secondary, fontFamily: fonts.default.fontFamily, marginTop: 6 },
     backBtn: { padding: 4 },
-    title: { fontSize: 22, color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily, marginTop: 32, marginHorizontal: 20 },
+    title: { fontSize: 22, color: colors.textPrimary, fontFamily: fonts.bodyLarge.fontFamily, marginTop: 32, marginHorizontal: 20 },
     form: { marginHorizontal: 20, marginTop: 24 },
     label: { fontSize: 13, color: colors.secondary, fontFamily: fonts.default.fontFamily, marginBottom: 4, marginTop: 16 },
-    input: { backgroundColor: colors.quaternary, borderRadius: 8, padding: 14, color: colors.default_dark, fontFamily: fonts.default.fontFamily, fontSize: 16 },
+    input: { backgroundColor: colors.surfaceVariant, borderRadius: 8, padding: 14, color: colors.textPrimary, fontFamily: fonts.default.fontFamily, fontSize: 16 },
     footer: { padding: 20, paddingBottom: 40 },
-  });
+  } as const;
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.container}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={goBack} style={styles.backBtn}>
-            <Entypo name="chevron-left" size={24} color={colors.default_dark} />
+            <Entypo name="chevron-left" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <View style={styles.progressTrack}>
             <Animated.View style={[styles.progressFill, progressStyle]} />

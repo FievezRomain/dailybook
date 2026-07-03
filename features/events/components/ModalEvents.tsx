@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, Keyboard } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Keyboard } from 'react-native';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
-import { Divider } from 'react-native-paper';
+import { AppDivider } from '../../../shared/components/ui';
 import { AntDesign, Entypo, Ionicons } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { isBefore, isEqual, startOfDay } from 'date-fns';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import AppSheet from '../../../shared/components/ui/AppSheet';
 import ModalAnimals from '../../animals/components/ModalSelectAnimals';
 import ModalDropdown from '../../../shared/components/modals/inputs/ModalDropdown';
 import ModalNotifications from '../../../shared/components/modals/inputs/ModalNotifications';
@@ -28,13 +29,25 @@ import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useEventsQuery } from '../../../hooks/queries/useEventsQuery';
 import { useGroupsQuery } from '../../../hooks/queries/useGroupsQuery';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
 import * as Haptics from 'expo-haptics';
 import { ModalEventsProps } from '../types';
+import {
+  EVENT_TYPE_LIST,
+  NOTIF_LIST,
+  NOTIF_OPTIONS_LIST,
+  EXPENSE_CATEGORY_LIST,
+  FREQUENCY_LIST,
+} from '../constants';
+import { getColorByEventType, hexToRgba, checkNumericFormat } from '../utils/eventHelpers';
 
 const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onModify = undefined, date = null }: ModalEventsProps) => {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('events');
+  const { t: tc } = useTranslation('common');
   const { firebaseUser, user } = useAuthStore();
   const accountType = (user as any)?.abonnement?.libelle;
+  const sheetRef = useRef<BottomSheetModal>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalDropdownVisible, setModalDropdownVisible] = useState(false);
   const [modalDropdownNotifVisible, setModalDropdownNotifVisible] = useState(false);
@@ -59,43 +72,41 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
   const scrollRef = useRef<any>(null);
   const fileStorageService = new FileStorageService();
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
+  const initializedEventKeyRef = useRef<string | null>(null);
 
-  const list = [
-    { title: 'Balade', id: 'balade' }, { title: 'Entraînement', id: 'entrainement' }, { title: 'Concours', id: 'concours' },
-    { title: 'Rendez-vous', id: 'rdv' }, { title: 'Soin', id: 'soins' }, { title: 'Autre', id: 'autre' }, { title: 'Dépense', id: 'depense' },
-  ];
-  const listNotif = [
-    { title: 'Aucune notification', id: 'None' }, { title: 'Notification le jour J', id: 'JourJ' }, { title: 'Notification la veille', id: 'Veille' },
-  ];
-  const listOptionsNotif = [
-    { title: 'Aucune option supplémentaire', id: 'None' }, { title: 'Me rappeler l\'événement dans 1 an', id: 'Annee' },
-  ];
-  const listCategorieDepense = [
-    { title: 'Alimentation', id: 'alimentation' }, { title: 'Équipement', id: 'equipement' }, { title: 'Accessoire', id: 'accessoire' },
-    { title: 'Service de garde / Pension', id: 'garde' }, { title: 'Formation', id: 'formation' }, { title: 'Assurance', id: 'assurance' },
-    { title: 'Balade', id: 'balade' }, { title: 'Entraînement', id: 'entrainement' }, { title: 'Concours', id: 'concours' },
-    { title: 'Rendez-vous', id: 'rdv' }, { title: 'Soin', id: 'soins' }, { title: 'Autre', id: 'autre' },
-  ];
-  const listFrequency = [
-    { title: 'Le jour J', id: 'tlj2' }, { title: 'Tous les jours', id: 'tlj' }, { title: 'Toutes les semaines', id: 'tls' },
-    { title: 'Toutes les 2 semaines', id: 'tl2s' }, { title: 'Tous les mois', id: 'tlm' },
-  ];
+  const list = EVENT_TYPE_LIST;
+  const listNotif = NOTIF_LIST;
+  const listOptionsNotif = NOTIF_OPTIONS_LIST;
+  const listCategorieDepense = EXPENSE_CATEGORY_LIST;
+  const listFrequency = FREQUENCY_LIST;
   const arrayState = [
-    { value: 'À faire', label: 'À faire', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: { borderRadius: 5 }, rippleColor: 'transparent' },
-    { value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: { borderRadius: 5 }, rippleColor: 'transparent' },
+    { value: 'é faire', label: 'é faire', checkedColor: colors.primary, uncheckedColor: colors.surfaceVariant, style: { borderRadius: 5 }, rippleColor: 'transparent' },
+    { value: 'Terminé', label: 'Terminé', checkedColor: colors.primary, uncheckedColor: colors.surfaceVariant, style: { borderRadius: 5 }, rippleColor: 'transparent' },
   ];
 
   useEffect(() => {
-    if (isVisible) {
-      initValuesEvent(event);
-      if (event?.idparent != null) getEvents();
-    }
+    if (isVisible) { sheetRef.current?.present(); } else { sheetRef.current?.dismiss(); }
   }, [isVisible]);
 
   useEffect(() => {
+    if (!isVisible) {
+      initializedEventKeyRef.current = null;
+      return;
+    }
+
+    const eventKey = `${actionType}:${event?.id ?? 'new'}:${event?.eventtype ?? ''}:${date ?? ''}`;
+    if (initializedEventKeyRef.current === eventKey) return;
+
+    initializedEventKeyRef.current = eventKey;
     initValuesEvent(event);
     if (event?.idparent != null) getEvents();
-  }, [animaux]);
+  }, [actionType, date, event?.eventtype, event?.id, event?.idparent, isVisible]);
+
+  useEffect(() => {
+    if (!isVisible || actionType === 'create') return;
+    initValuesEvent(event);
+    if (event?.idparent != null) getEvents();
+  }, [animaux, isVisible]);
 
   const getEvents = async () => {
     const eventParent = (events as any[]).filter(e => e.id === event?.idparent);
@@ -137,8 +148,8 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
     }
     setValue('eventtype', evt.eventtype);
     const eventTypeSelected = list.find(item => item.id === evt.eventtype);
-    if (eventTypeSelected) setEventType(eventTypeSelected);
-    else setEventType(false);
+    if (eventTypeSelected) setEventTypeRaw(eventTypeSelected);
+    else setEventTypeRaw(false);
     setValue('frequencevalue', evt.frequencevalue);
     if (evt.frequencevalue) {
       switch (evt.frequencevalue) {
@@ -161,7 +172,7 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
       const found = listOptionsNotif.find(e => e.id === evt.rappelnotification);
       if (found) setOptionNotifType(found);
     }
-    setValue('state', evt.state === undefined ? 'À faire' : evt.state);
+    setValue('state', evt.state === undefined ? 'é faire' : evt.state);
     setValue('todisplay', evt.todisplay === undefined ? true : evt.todisplay);
     setValue('idparent', evt.idparent);
     if (actionType === 'create' && date !== null) { setValue('dateevent', new Date(date).toISOString().split('T')[0]); onChangeDate('dateevent', date); }
@@ -182,7 +193,7 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
     const sel = startOfDay(typeof selectedDate === 'string' ? new Date(selectedDate) : selectedDate);
     if (isEqual(sel, today)) return;
     if (isBefore(sel, today)) { handleStateChange('Terminé'); setNotifType({ title: 'Aucune notification', id: 'None' }); setValue('notif', 'None'); }
-    else { handleStateChange('À faire'); setNotifType({ title: 'Notification le jour J', id: 'JourJ' }); setValue('notif', 'JourJ'); }
+    else { handleStateChange('é faire'); setNotifType({ title: 'Notification le jour J', id: 'JourJ' }); setValue('notif', 'JourJ'); }
   };
 
   const handleRatingChange = (value: number) => setValue('note', value);
@@ -197,28 +208,7 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
 
   const closeModal = () => { resetValues(); setVisible(false); };
 
-  const checkNumericFormat = (data: any, attribute: string) => {
-    if (data[attribute] != undefined) {
-      const numericValue = parseFloat(String(data[attribute]).replace(',', '.').replace(' ', ''));
-      if (isNaN(numericValue)) { Toast.show({ position: 'top', type: 'error', text1: 'Problème de format sur l\'attribut ' + attribute, text2: 'Seul les chiffres, virgule et point sont acceptés' }); return false; }
-      else data[attribute] = numericValue;
-    }
-    return true;
-  };
-
-  const getColorByEventType = (type: string | undefined) => {
-    if (!type) return undefined;
-    const map: Record<string, any> = { depense: colors.quaternary, balade: colors.accent, soins: colors.neutral, concours: colors.primary, entrainement: colors.tertiary, autre: colors.error, rdv: colors.text };
-    return map[type];
-  };
-
-  const hexToRgba = (hex: string | undefined, opacity: number) => {
-    if (!hex) return null;
-    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, (_m: string, r: string, g: string, b: string) => r + r + g + g + b + b);
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${opacity})` : null;
-  };
+  const checkNumericFormatLocal = (data: Record<string, unknown>, attribute: string) => checkNumericFormat(data, attribute);
 
   const onDocumentsChange = (documents: any) => setValue('documents', documents);
   const markFileAsDeleted = (filename: string) => {
@@ -270,10 +260,10 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
       if (data.nom === undefined) { complete = false; Toast.show({ type: 'error', position: 'top', text1: 'Veuillez saisir un nom d\'événement' }); }
       if (eventType === false) { complete = false; Toast.show({ type: 'error', position: 'top', text1: 'Veuillez saisir un type d\'événement' }); }
       else {
-        if (eventType.id === 'soins' && data.datefinsoins !== undefined && new Date(data.dateevent) > new Date(data.datefinsoins)) { complete = false; Toast.show({ type: 'error', position: 'top', text1: 'Date de fin de traitement postérieure à la date d\'évènement' }); }
-        if (eventType.id === 'balade' && data.datefinbalade !== undefined && new Date(data.dateevent) > new Date(data.datefinbalade)) { complete = false; Toast.show({ type: 'error', position: 'top', text1: 'Date de fin de balade postérieure à la date d\'évènement' }); }
+        if (eventType.id === 'soins' && data.datefinsoins !== undefined && new Date(data.dateevent) > new Date(data.datefinsoins)) { complete = false; Toast.show({ type: 'error', position: 'top', text1: 'Date de fin de traitement postérieure é la date d\'événement' }); }
+        if (eventType.id === 'balade' && data.datefinbalade !== undefined && new Date(data.dateevent) > new Date(data.datefinbalade)) { complete = false; Toast.show({ type: 'error', position: 'top', text1: 'Date de fin de balade postérieure é la date d\'événement' }); }
       }
-      if (!checkNumericFormat(data, 'depense') || !checkNumericFormat(data, 'dossart') || !checkNumericFormat(data, 'placement')) complete = false;
+      if (!checkNumericFormatLocal(data, 'depense') || !checkNumericFormatLocal(data, 'dossart') || !checkNumericFormatLocal(data, 'placement')) complete = false;
       if (complete === true) {
         if (notifType === false) data.notif = 'JourJ';
         if (frequence === false) data.frequencevalue = 'tlj';
@@ -302,59 +292,73 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
     } catch (error: any) { LoggerService.log('Erreur lors de l\'enregistrement/modification d\'un event : ' + error.message); }
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     inputToggleContainer: { display: 'flex', flexDirection: 'row', width: '100%', marginBottom: 15 },
     form: { width: '100%', paddingBottom: 40 },
     containerActionsButtons: { flexDirection: 'row', alignItems: 'center', paddingBottom: 15, paddingTop: 5, backgroundColor: eventType ? hexToRgba(getColorByEventType(eventType.id), 0.3) ?? undefined : colors.background },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, alignSelf: 'baseline' },
-    inputTextArea: { height: 100, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, paddingRight: 15, backgroundColor: colors.quaternary, color: colors.default_dark },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.textPrimary },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.surfaceVariant, color: colors.textPrimary, alignSelf: 'baseline' },
+    inputTextArea: { height: 100, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, paddingRight: 15, backgroundColor: colors.surfaceVariant, color: colors.textPrimary },
     containerDate: { flexDirection: 'column', alignSelf: 'flex-start', width: '100%', marginBottom: 15 },
     containerAnimaux: { display: 'flex', flexDirection: 'row', flexWrap: 'wrap' },
     badgeAnimal: { padding: 10 },
-    containerBadgeAnimal: { borderRadius: 5, backgroundColor: colors.quaternary, marginRight: 5, marginBottom: 5 },
-    errorInput: { color: 'red' },
-    disabled: { backgroundColor: colors.onSurface },
-    disabledText: { color: colors.quaternary },
-    handleStyleModal: { backgroundColor: eventType ? hexToRgba(getColorByEventType(eventType.id), 0.3) ?? undefined : colors.background, borderTopEndRadius: 15, borderTopStartRadius: 15 },
-    handleIndicatorStyle: { backgroundColor: getColorByEventType(eventType?.id) },
+    containerBadgeAnimal: { borderRadius: 5, backgroundColor: colors.surfaceVariant, marginRight: 5, marginBottom: 5 },
+    errorInput: { color: colors.error },
+    disabled: { backgroundColor: colors.surfaceVariant },
+    disabledText: { color: colors.textDisabled },
     premiumOverlay: { position: 'absolute', top: 30, right: 5, backgroundColor: colors.primary, borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2, zIndex: 2 },
     premiumText: { fontSize: 10, color: colors.background, fontFamily: fonts.bodySmall.fontFamily },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
     <>
-      <ModalEditGeneric isVisible={isVisible} setVisible={setVisible} arrayHeight={['90%']} handleStyle={styles.handleStyleModal} handleIndicatorStyle={styles.handleIndicatorStyle} scrollInside={false}>
-        <ModalAnimals modalVisible={modalVisible} setModalVisible={setModalVisible} setAnimaux={undefined} animaux={getSelectableAnimals()} selected={selected} setSelected={setSelected} setValue={setValue} valueName="animaux" />
-        <ModalDropdown list={list} modalVisible={modalDropdownVisible} setModalVisible={setModalDropdownVisible} setState={setEventType} state={eventType} setValue={setValue} valueName="eventtype" />
-        <ModalDropdown list={listNotif} modalVisible={modalDropdownNotifVisible} setModalVisible={setModalDropdownNotifVisible} setState={setNotifType} state={notifType} setValue={setValue} valueName="notif" />
-        <ModalDropdown list={listOptionsNotif} modalVisible={modalOptionNotifications} setModalVisible={setModalOptionNotifications} setState={setOptionNotifType} state={optionNotifType} setValue={setValue} valueName="optionnotif" />
-        <ModalDropdown list={listCategorieDepense} modalVisible={modalCategorieDepense} setModalVisible={setModalCategorieDepense} setState={setCategorieDepense} state={categorieDepense} setValue={setValue} valueName="categoriedepense" modalHeight="50%" />
-        <ModalDropdown list={listFrequency} modalVisible={modalFrequence} setModalVisible={setModalFrequence} setState={setFrequence} state={frequence} setValue={setValue} valueName="frequencevalue" />
-        <ModalNotifications modalVisible={modalNotifications} setModalVisible={setModalNotifications} notifications={notifications} setNotifications={setNotifications} eventType={eventType} />
-        <ModalMultiSelect list={getSelectableGroup()} onChange={onGroupsSelectedChange} onClose={() => setModalMultiSelectGroupVisible(false)} visible={modalMultiSelectGroupVisible} valueKey="id" labelKey="name" selected={watch('shared_groups')} customizable={false} />
+      <AppSheet ref={sheetRef} snapPoints={['90%']} onDismiss={() => setVisible(false)} keyboardBehavior="extend">
+        {modalVisible && (
+          <ModalAnimals modalVisible={modalVisible} setModalVisible={setModalVisible} setAnimaux={undefined} animaux={getSelectableAnimals()} selected={selected} setSelected={setSelected} setValue={setValue} valueName="animaux" />
+        )}
+        {modalDropdownVisible && (
+          <ModalDropdown list={list} modalVisible={modalDropdownVisible} setModalVisible={setModalDropdownVisible} setState={setEventType} state={eventType} setValue={setValue} valueName="eventtype" />
+        )}
+        {modalDropdownNotifVisible && (
+          <ModalDropdown list={listNotif} modalVisible={modalDropdownNotifVisible} setModalVisible={setModalDropdownNotifVisible} setState={setNotifType} state={notifType} setValue={setValue} valueName="notif" />
+        )}
+        {modalOptionNotifications && (
+          <ModalDropdown list={listOptionsNotif} modalVisible={modalOptionNotifications} setModalVisible={setModalOptionNotifications} setState={setOptionNotifType} state={optionNotifType} setValue={setValue} valueName="optionnotif" />
+        )}
+        {modalCategorieDepense && (
+          <ModalDropdown list={listCategorieDepense} modalVisible={modalCategorieDepense} setModalVisible={setModalCategorieDepense} setState={setCategorieDepense} state={categorieDepense} setValue={setValue} valueName="categoriedepense" modalHeight="50%" />
+        )}
+        {modalFrequence && (
+          <ModalDropdown list={listFrequency} modalVisible={modalFrequence} setModalVisible={setModalFrequence} setState={setFrequence} state={frequence} setValue={setValue} valueName="frequencevalue" />
+        )}
+        {modalNotifications && (
+          <ModalNotifications modalVisible={modalNotifications} setModalVisible={setModalNotifications} notifications={notifications} setNotifications={setNotifications} eventType={eventType} />
+        )}
+        {modalMultiSelectGroupVisible && (
+          <ModalMultiSelect list={getSelectableGroup()} onChange={onGroupsSelectedChange} onClose={() => setModalMultiSelectGroupVisible(false)} visible={modalMultiSelectGroupVisible} valueKey="id" labelKey="name" selected={watch('shared_groups')} customizable={false} />
+        )}
         <View style={styles.form}>
           <View style={styles.containerActionsButtons}>
             <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
-              <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Annuler</Text>
+              <Text style={[{ color: colors.textPrimary }, styles.textFontRegular]}>{tc('cancel')}</Text>
             </TouchableOpacity>
             <View style={{ width: '33.33%', alignItems: 'center' }}>
               <Text style={[styles.textFontBold, { color: getColorByEventType(eventType?.id), fontSize: 16 }]}>{eventType && eventType.title}</Text>
             </View>
             <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-              {loading ? <ActivityIndicator size={16} color={colors.default_dark} /> : actionType === 'modify' ? <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Modifier</Text> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Créer</Text>}
+              {loading ? <ActivityIndicator size={16} color={colors.textPrimary} /> : actionType === 'modify' ? <Text style={[{ color: colors.textPrimary }, styles.textFontRegular]}>{tc('edit')}</Text> : <Text style={[{ color: colors.textPrimary }, styles.textFontRegular]}>{tc('create')}</Text>}
             </TouchableOpacity>
           </View>
-          <Divider />
+          <AppDivider />
           <KeyboardAwareScrollView ref={scrollRef} keyboardShouldPersistTaps="handled" enableOnAndroid={true} extraScrollHeight={10} enableResetScrollToCoords={false}>
             <View style={styles.formContainer}>
               <Text style={[styles.textInput, styles.textFontRegular]}>Status de l'événement :</Text>
               <View style={styles.inputToggleContainer}>
-                <StatePicker arrayState={arrayState} handleChange={handleStateChange} defaultState={watch('state') === undefined ? 'À faire' : watch('state')} color={colors.quaternary} />
+                <StatePicker arrayState={arrayState} handleChange={handleStateChange} defaultState={watch('state') === undefined ? 'é faire' : watch('state')} color={colors.surfaceVariant} />
               </View>
               {actionType === 'modify' && eventType && (eventType.id === 'soins' || eventType.id === 'balade') ? (
                 <View style={styles.inputContainer}>
@@ -363,12 +367,12 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
                 </View>
               ) : (
                 <View style={styles.containerDate}>
-                  <Text style={[styles.textInput, styles.textFontRegular]}>Date : {convertDateToText('dateevent')} <Text style={{ color: 'red' }}>*</Text></Text>
+                  <Text style={[styles.textInput, styles.textFontRegular]}>Date : {convertDateToText('dateevent')} <Text style={{ color: colors.error }}>*</Text></Text>
                   <CalendarPicker onDayChange={onChangeDate} propertyName="dateevent" defaultDate={getValues('dateevent')} />
                 </View>
               )}
               <View style={styles.inputContainer}>
-                <Text style={[styles.textInput, styles.textFontRegular]}>Animaux : <Text style={{ color: 'red' }}>*</Text></Text>
+                <Text style={[styles.textInput, styles.textFontRegular]}>Animaux : <Text style={{ color: colors.error }}>*</Text></Text>
                 <TouchableOpacity style={styles.textInput} disabled={(animaux as any[]).length > 0 ? false : true} onPress={() => { Keyboard.dismiss(); setModalVisible(true); }}>
                   <View style={styles.containerAnimaux}>
                     {(animaux as any[]).length === 0 && <View><Text style={[styles.badgeAnimal, styles.errorInput, styles.textFontRegular]}>Pour ajouter un événement vous devez d'abord créer un animal</Text></View>}
@@ -378,30 +382,30 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
                 </TouchableOpacity>
               </View>
               <View style={styles.inputContainer}>
-                <Text style={[styles.textInput, styles.textFontRegular]}>Nom de l'événement : <Text style={{ color: 'red' }}>*</Text></Text>
-                {errors.nom && <Text style={[styles.errorInput, styles.textFontRegular]}>Nom obligatoire</Text>}
+                <Text style={[styles.textInput, styles.textFontRegular]}>Nom de l'événement : <Text style={{ color: colors.error }}>*</Text></Text>
+                {errors.nom && <Text style={[styles.errorInput, styles.textFontRegular]}>{t('nameRequired')}</Text>}
                 <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Rendez-vous vétérinaire" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('nom', text)} defaultValue={getValues('nom')} {...register('nom', { required: true })} />
               </View>
               {eventType && eventType.id === 'soins' && (
                 <View style={styles.containerDate}>
-                  <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText('datefinsoins')} <Text style={{ color: 'red' }}>*</Text></Text>
+                  <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText('datefinsoins')} <Text style={{ color: colors.error }}>*</Text></Text>
                   <CalendarPicker onDayChange={onChangeDate} propertyName="datefinsoins" defaultDate={watch('datefinsoins')} />
                 </View>
               )}
               {eventType && eventType.id === 'balade' && (
                 <View style={styles.containerDate}>
-                  <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText('datefinbalade')} <Text style={{ color: 'red' }}>*</Text></Text>
+                  <Text style={[styles.textInput, styles.textFontRegular]}>Date de fin : {convertDateToText('datefinbalade')} <Text style={{ color: colors.error }}>*</Text></Text>
                   <CalendarPicker onDayChange={onChangeDate} propertyName="datefinbalade" defaultDate={watch('datefinbalade')} />
                 </View>
               )}
-              <Divider />
+              <AppDivider />
               <View style={[styles.inputContainer, { marginBottom: 15, marginTop: 15 }]}>
                 <Text style={[styles.textInput, styles.textFontRegular]}>Heure de début : </Text>
                 <TimePicker setValue={setValue} valueName="heuredebutevent" defaultValue={dateEvent} />
               </View>
               <View style={styles.inputContainer}>
                 <Text style={[styles.textInput, styles.textFontRegular]}>Lieu de l'événement :</Text>
-                <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Écurie de la Pomme" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('lieu', text)} defaultValue={getValues('lieu')} />
+                <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : écurie de la Pomme" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('lieu', text)} defaultValue={getValues('lieu')} />
               </View>
               <View style={styles.inputContainer}>
                 <Text style={[styles.textInput, styles.textFontRegular]}>Partager aux groupes :</Text>
@@ -472,7 +476,7 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
               )}
               <View style={styles.inputContainer}>
                 <Text style={[styles.textInput, styles.textFontRegular]}>Commentaire :</Text>
-                <TextInput style={[styles.inputTextArea, styles.textFontRegular]} multiline={true} numberOfLines={4} maxLength={2000} placeholder="Exemple : Ça s'est très bien passé" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('commentaire', text)} defaultValue={getValues('commentaire')} onFocus={() => { if (Constants.platform?.ios) setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100); }} />
+                <TextInput style={[styles.inputTextArea, styles.textFontRegular]} multiline={true} numberOfLines={4} maxLength={2000} placeholder="Exemple : éa s'est trés bien passé" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('commentaire', text)} defaultValue={getValues('commentaire')} onFocus={() => { if (Constants.platform?.ios) setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100); }} />
               </View>
               <View style={styles.inputContainer}>
                 <Text style={[styles.textInput, styles.textFontRegular]}>Notifications :</Text>
@@ -486,14 +490,14 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
                 <Text style={[styles.textInput, styles.textFontRegular]}>Rappel :</Text>
                 <TouchableOpacity style={styles.textInput} onPress={() => { Keyboard.dismiss(); setModalOptionNotifications(true); }}>
                   <View style={styles.containerAnimaux}>
-                    {optionNotifType === false ? <View style={[styles.containerBadgeAnimal, { width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 15 }]}><View style={{ width: '90%' }}><Text style={[styles.badgeAnimal, styles.textFontRegular, { color: colors.secondary }]}>Aucun rappel</Text></View><Ionicons name="chevron-down" size={20} /></View> : <View style={[styles.containerBadgeAnimal, { width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 15 }]}><View style={{ width: '90%' }}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{optionNotifType.title}</Text></View><Ionicons name="chevron-down" size={20} /></View>}
+                    {optionNotifType === false ? <View style={[styles.containerBadgeAnimal, { width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 15 }]}><View style={{ width: '90%' }}><Text style={[styles.badgeAnimal, styles.textFontRegular, { color: colors.secondary }]}>{t('noReminder')}</Text></View><Ionicons name="chevron-down" size={20} /></View> : <View style={[styles.containerBadgeAnimal, { width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 15 }]}><View style={{ width: '90%' }}><Text style={[styles.badgeAnimal, styles.textFontRegular]}>{optionNotifType.title}</Text></View><Ionicons name="chevron-down" size={20} /></View>}
                   </View>
                 </TouchableOpacity>
               </View>
             </View>
           </KeyboardAwareScrollView>
         </View>
-      </ModalEditGeneric>
+      </AppSheet>
     </>
   );
 };

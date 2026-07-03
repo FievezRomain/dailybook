@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { getEventDocumentUrl } from "../../../services/api/EventService";
 import { getFileUrl, openDocumentWithCache } from "../../../services/aws/FileStorageService";
-import { Divider } from "react-native-paper";
+import { AppDivider } from '../ui';
 import { FontAwesome } from "@expo/vector-icons";
 import ModalEditGeneric from '../modals/common/ModalEditGeneric';
 import { WebView } from "react-native-webview";
@@ -130,7 +130,7 @@ const ModalSubMenu: React.FC<ModalSubMenuProps> = ({ visible, setVisible, onActi
               </Text>
             </View>
           </TouchableOpacity>
-          <Divider style={{ height: 1 }} />
+          <AppDivider />
           <TouchableOpacity style={styles.actionButton} onPress={() => onAction("download")}>
             <View style={styles.informationsActionButton}>
               <FontAwesome name="download" size={20} />

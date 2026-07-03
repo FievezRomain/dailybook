@@ -22,7 +22,7 @@ export function useNoteForm(actionType: string, note: Record<string, unknown> = 
     setLoading(true);
     try {
       if (actionType === 'modify') {
-        const response = await updateNote(String(data.id), { titre: String(data.titre ?? ''), note: String(data.note ?? '') });
+        const response = await updateNote(String(data.id), { id: Number(data.id), titre: String(data.titre ?? ''), note: String(data.note ?? '') });
         onSuccess?.(response);
       } else {
         await createNote({ titre: String(data.titre ?? ''), note: String(data.note ?? '') });

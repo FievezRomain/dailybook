@@ -1,4 +1,4 @@
-import { Event, EventType } from "../../models/Event";
+import { Event, EventType } from "../../../models/Event";
 
 export class CalendarFilter {
   date?: Date;

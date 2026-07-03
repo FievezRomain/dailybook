@@ -27,4 +27,8 @@ export const env = {
 
   // Sentry — activer uniquement en production via if (!env.IS_DEV)
   SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN ?? '',
+
+  // OAuth — Google webClientId requis pour Google Sign-In via Firebase
+  GOOGLE_WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '',
+  GOOGLE_IOS_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? '',
 } as const;

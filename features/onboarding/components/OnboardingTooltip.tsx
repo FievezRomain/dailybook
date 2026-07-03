@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -34,7 +34,7 @@ export default function OnboardingTooltip({ step, onNext, onSkip, isLast }: Prop
       shadowRadius: 12,
       shadowOffset: { width: 0, height: 4 },
     }, animStyle]}>
-      <Text style={{ fontSize: 18, fontFamily: fonts.bodyLarge.fontFamily, color: colors.default_dark, marginBottom: 8 }}>{step.title}</Text>
+      <Text style={{ fontSize: 18, fontFamily: fonts.bodyLarge.fontFamily, color: colors.textPrimary, marginBottom: 8 }}>{step.title}</Text>
       <Text style={{ fontSize: 14, fontFamily: fonts.default?.fontFamily, color: colors.secondary_roux, lineHeight: 20 }}>{step.description}</Text>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 20 }}>
         <TouchableOpacity onPress={onSkip} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>

@@ -49,7 +49,7 @@ describe('useGroupForm', () => {
     expect(result.current.members).toHaveLength(2);
   });
 
-  it('removeMemberField removes the member at given index', () => {
+  it('removeMember removes the member at given index', () => {
     const { result } = renderHook(
       () => useGroupForm(mockSetValue, mockOnModify, mockCloseModal),
       { wrapper: createQueryWrapper() },
@@ -57,7 +57,7 @@ describe('useGroupForm', () => {
 
     act(() => { result.current.addMember(); });
     act(() => { result.current.updateMembers(0, 'alice@test.com'); });
-    act(() => { result.current.removeMemberField(0); });
+    act(() => { result.current.removeMember(0); });
 
     expect(result.current.members).toHaveLength(1);
     expect(result.current.members[0]).toBe('');

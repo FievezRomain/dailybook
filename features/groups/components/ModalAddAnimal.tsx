@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+﻿import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { Divider } from 'react-native-paper';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
-import { ActivityIndicator, StyleSheet, TouchableOpacity, View, Text, FlatList } from 'react-native';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import { AppDivider, AppSheet } from '../../../shared/components/ui';
+import { ActivityIndicator, TouchableOpacity, View, Text, FlatList } from 'react-native';
 import { useGroupForm } from '../hooks/useGroupForm';
 import ItemAnimalPicker from '../../../shared/components/inputs/ItemAnimalPicker';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -19,6 +19,12 @@ const ModalAddAnimal = ({ isVisible, setVisible, group = {}, onModify = undefine
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
 
   const closeModal = () => setVisible(false);
+  const sheetRef = useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    if (isVisible) sheetRef.current?.present();
+    else sheetRef.current?.dismiss();
+  }, [isVisible]);
 
   const { initializeGroup, resetGroupValues, submitGroup, animaux, selected, setSelected, checkSelected, modalSelectAnimalsIsVisible, setModalSelectAnimalsIsVisible, members, addMember, updateMembers, removeMember, loading } = useGroupForm(setValue, onModify, closeModal);
 
@@ -53,29 +59,29 @@ const ModalAddAnimal = ({ isVisible, setVisible, group = {}, onModify = undefine
     return [];
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     form: { width: '100%', paddingBottom: 40, flex: 1 },
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContentContainer: { flex: 1, paddingHorizontal: 10 },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
-    <ModalEditGeneric isVisible={isVisible} setVisible={setVisible} arrayHeight={['90%']} scrollInside={false}>
+    <AppSheet ref={sheetRef} snapPoints={['90%']} onDismiss={closeModal}>
       <View style={styles.form}>
         <View style={styles.containerActionsButtons}>
           <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
+            <Text style={[{ color: colors.textSecondary }, styles.textFontRegular]}>Annuler</Text>
           </TouchableOpacity>
           <View style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Groupe</Text>
+            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.textPrimary }]}>Groupe</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-            {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Inviter</Text>}
+            {loading ? <ActivityIndicator size={10} color={colors.textPrimary} /> : <Text style={[{ color: colors.textPrimary }, styles.textFontRegular]}>Inviter</Text>}
           </TouchableOpacity>
         </View>
-        <Divider />
+        <AppDivider />
         <View style={styles.formContentContainer}>
           <FlatList
             data={getAnimals()}
@@ -95,7 +101,7 @@ const ModalAddAnimal = ({ isVisible, setVisible, group = {}, onModify = undefine
           />
         </View>
       </View>
-    </ModalEditGeneric>
+    </AppSheet>
   );
 };
 

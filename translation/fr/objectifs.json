@@ -1,0 +1,23 @@
+{
+  "title": "Objectifs",
+  "addObjectif": "Ajouter un objectif",
+  "noObjectif": "Aucun objectif pour le moment. Fixez-vous un défi !",
+  "name": "Objectif",
+  "description": "Description",
+  "dueDate": "Date limite",
+  "status": "Statut",
+  "animal": "Animal",
+  "saved": "Objectif enregistré ✓",
+  "deleted": "Objectif supprimé",
+  "completed": "Objectif atteint ! Bravo 🏆",
+  "deleteObjectif": "Supprimer cet objectif ?",
+  "statuses": {
+    "todo": "À faire",
+    "inProgress": "En cours",
+    "done": "Atteint"
+  },
+  "addButton": "+ Ajouter",
+  "noObjectifYet": "Aucun objectif pour l'instant",
+  "noObjectifSubtext": "Fixez-vous un premier cap !",
+  "steps": "{{done}}/{{total}} étapes"
+}

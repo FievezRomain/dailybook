@@ -1,8 +1,12 @@
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+
 import * as Font from 'expo-font';
 import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import * as Sentry from '@sentry/react-native';
 import { env } from './config/env';
+
+// i18n must be imported before any component that uses translations
+import './config/i18n';
 
 // Sentry actif uniquement en production (__DEV__ = false)
 if (!env.IS_DEV && env.SENTRY_DSN) {
@@ -14,6 +18,30 @@ if (!env.IS_DEV && env.SENTRY_DSN) {
     attachStacktrace: true,
     beforeSend(event) {
       if (__DEV__) return null;
+
+      // Redact PII (emails, tokens, passwords) from messages, exceptions and request payloads
+      const redactString = (s?: string): string | undefined => {
+        if (!s) return s;
+        return s
+          .replace(/[\w.+-]+@[\w-]+\.[\w.-]+/g, '[email]')
+          .replace(/Bearer\s+[A-Za-z0-9._-]+/gi, 'Bearer [token]')
+          .replace(/(password|pwd|secret|token|idToken)["':\s]+[^"',\s}]+/gi, '$1=[redacted]');
+      };
+
+      if (event.message) event.message = redactString(event.message)!;
+      event.exception?.values?.forEach((v) => {
+        if (v.value) v.value = redactString(v.value);
+      });
+      event.breadcrumbs?.forEach((b) => {
+        if (b.message) b.message = redactString(b.message);
+      });
+      if (event.request?.data && typeof event.request.data === 'object') {
+        const data = event.request.data as Record<string, unknown>;
+        ['password', 'password_confirm', 'currentPassword', 'newPassword', 'confirmPassword', 'token', 'idToken']
+          .forEach((k) => {
+            if (k in data) data[k] = '[redacted]';
+          });
+      }
       return event;
     },
   });
@@ -22,11 +50,13 @@ if (!env.IS_DEV && env.SENTRY_DSN) {
 import { StatusBar } from 'expo-status-bar';
 import Toast from 'react-native-toast-message';
 import { initTrackingActivity } from "./services/api/AuthService";
-import { Provider as PaperProvider } from 'react-native-paper';
+import { initSocialAuth } from './services/auth/initSocialAuth';
+import { TamaguiProvider, Theme } from 'tamagui';
+import tamaguiConfig from './theme/tamagui.config';
+
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { darkTheme, lightTheme } from "./theme/theme";
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Updates from 'expo-updates';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuthStore } from './stores/useAuthStore';
 import { useThemeStore } from './stores/useThemeStore';
@@ -37,29 +67,37 @@ import OnboardingSpotlight from './features/onboarding/components/OnboardingSpot
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // données considérées fraîches pendant 5 min
-      retry: 2,
+      staleTime: 5 * 60 * 1000,
+      retry: (failureCount, error) => {
+        const { parseApiError } = require('./utils/errorParser');
+        const parsed = parseApiError(error);
+        if (!parsed.isNetworkError && !parsed.isAuthError) return false;
+        return failureCount < 2;
+      },
+    },
+    mutations: {
+      retry: 0,
     },
   },
 });
 
-const IconComponent = (props: any) => <MaterialCommunityIcons {...props} />;
-
 function ThemedApp() {
   const isDark = useThemeStore((s) => s.isDark);
+  const themeName = isDark === true ? 'dark' : 'light';
   const user = useAuthStore((s) => s.user);
-  const { isCompleted } = useOnboarding();
+  const { isCompleted, complete, skip } = useOnboarding();
   const showOnboarding = !!user && isCompleted === false;
 
   return (
-    <PaperProvider
-      theme={isDark ? darkTheme : lightTheme}
-      settings={{ icon: IconComponent }}
-    >
-      <StatusBar style={isDark ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
-      <RootNavigator />
-      <OnboardingSpotlight visible={showOnboarding} />
-    </PaperProvider>
+    <TamaguiProvider config={tamaguiConfig} defaultTheme={themeName}>
+      <Theme name={themeName}>
+        <BottomSheetModalProvider>
+          <StatusBar style={isDark ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
+          <RootNavigator />
+          <OnboardingSpotlight visible={showOnboarding} onComplete={complete} onSkip={skip} />
+        </BottomSheetModalProvider>
+      </Theme>
+    </TamaguiProvider>
   );
 }
 
@@ -76,25 +114,27 @@ function App() {
       await loadFonts();
       setFontsLoaded(true);
       initTrackingActivity();
+      initSocialAuth();
 
-      // Vérification et téléchargement des OTA
-      try {
-        const update = await Updates.checkForUpdateAsync();
-        if (update.isAvailable) {
-          setIsUpdating(true);
-          await Updates.fetchUpdateAsync();
-          Toast.show({
-            type: 'info',
-            position: 'top',
-            text1: 'Mise à jour disponible',
-            text2: "Une nouvelle version a été téléchargée. L'application va redémarrer.",
-          });
-          await Updates.reloadAsync();
+      if (!__DEV__) {
+        try {
+          const update = await Updates.checkForUpdateAsync();
+          if (update.isAvailable) {
+            setIsUpdating(true);
+            await Updates.fetchUpdateAsync();
+            Toast.show({
+              type: 'info',
+              position: 'top',
+              text1: 'Mise à jour disponible',
+              text2: "Une nouvelle version a été téléchargée. L'application va redémarrer.",
+            });
+            await Updates.reloadAsync();
+          }
+        } catch (error) {
+          console.warn('Erreur lors de la vérification OTA:', error);
+        } finally {
+          setIsUpdating(false);
         }
-      } catch (error) {
-        if (__DEV__) console.warn('Erreur lors de la vérification OTA:', error);
-      } finally {
-        setIsUpdating(false);
       }
     };
 
@@ -113,6 +153,9 @@ function App() {
     });
 
   const styles = StyleSheet.create({
+    appContainer: {
+      flex: 1,
+    },
     loaderContainer: {
       flex: 1,
       justifyContent: 'center',
@@ -139,11 +182,43 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <GestureHandlerRootView>
+      <GestureHandlerRootView style={styles.appContainer}>
         <ThemedApp />
       </GestureHandlerRootView>
     </QueryClientProvider>
   );
 }
 
-export default Sentry.wrap(App);
+export default !env.IS_DEV && env.SENTRY_DSN ? Sentry.wrap(App) : App;
+/**
+console.log("ICI1")
+
+function ThemedApp() {
+  const isDark = useThemeStore((s) => s.isDark);
+  const user = useAuthStore((s) => s.user);
+  const { isCompleted, complete, skip } = useOnboarding();
+  const showOnboarding = !!user && isCompleted === false;
+  console.log("ICIII")
+
+  return (
+    <TamaguiProvider config={tamaguiConfig} defaultTheme={isDark ? 'dark' : 'light'}>
+      <Theme name={isDark ? 'dark' : 'light'}>
+          <StatusBar style={isDark ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
+          <RootNavigator />
+      </Theme>
+    </TamaguiProvider>
+  );
+}
+
+console.log("ICI App - fontsLoaded:", true);
+function App() {
+  console.log("ICIII")
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>OK</Text>
+    </View>
+  );
+}
+
+export default App;
+**/

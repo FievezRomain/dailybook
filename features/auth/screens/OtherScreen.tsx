@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+﻿import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { IconButton } from 'react-native-paper';
+import { AppIconButton } from '../../../shared/components/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import TopTab from '../../../shared/components/common/TopTab';
 import { useGroupsQuery, GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import type { TabScreenProps } from '../../../navigation/types';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
 
 type ButtonItem = {
   id: string | number;
@@ -25,6 +26,7 @@ const BASE_BUTTONS: ButtonItem[] = [
 
 export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('groups');
   const queryClient = useQueryClient();
   const { data: groups, isFetching } = useGroupsQuery();
   const [buttons, setButtons] = useState<ButtonItem[]>(BASE_BUTTONS);
@@ -40,7 +42,7 @@ export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
             params: { groupId: group.id },
             disabled: false,
           }))
-        : [{ id: 'group-default', icon: 'account-group', label: 'Vous retrouverez vos groupes ici', screen: 'GroupDetail', disabled: true }];
+        : [{ id: 'group-default', icon: 'account-group', label: t('noGroupsYet'), screen: 'GroupDetail', disabled: true }];
 
     setButtons([...BASE_BUTTONS, ...groupButtons]);
   }, [groups]);
@@ -49,7 +51,7 @@ export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
     queryClient.invalidateQueries({ queryKey: GROUPS_KEY });
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     container: { padding: 10 },
     row: { justifyContent: 'space-between' },
     button: {
@@ -69,12 +71,12 @@ export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
     label: {
       fontSize: 16,
       fontFamily: fonts.bodyMedium.fontFamily,
-      color: colors.default_dark,
+      color: colors.textPrimary,
       marginTop: 5,
       textAlign: 'center',
       paddingHorizontal: 10,
     },
-  });
+  } as const;
 
   if (isFetching) {
     return (
@@ -85,7 +87,7 @@ export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
   }
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <TopTab message1="Mes" message2="Autre" />
       <FlatList
         data={buttons}
@@ -95,7 +97,7 @@ export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
             style={[styles.button, item.disabled && { opacity: 0.5 }]}
             disabled={item.disabled}
           >
-            <IconButton icon={item.icon} iconColor={colors.default_dark} size={30} />
+            <AppIconButton icon={item.icon} color={colors.textPrimary} size={30} />
             <Text style={styles.label}>{item.label}</Text>
           </TouchableOpacity>
         )}
@@ -104,7 +106,7 @@ export default function OtherScreen({ navigation }: TabScreenProps<'Autre'>) {
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.container}
         refreshControl={
-          <RefreshControl refreshing={isFetching} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.default_dark} />
+          <RefreshControl refreshing={isFetching} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.textPrimary} />
         }
       />
     </LinearGradient>

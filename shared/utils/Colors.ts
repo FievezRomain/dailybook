@@ -1,10 +1,10 @@
 import chroma from 'chroma-js';
-import variables from '../../styles/Variables';
+import { palette } from '../../theme/tokens';
 
 const appPalette = [
-  variables.alezan,
-  variables.bai,
-  variables.bai_brun,
+  palette.alezan,
+  palette.baie,
+  palette.baieBrun,
 ];
 
 export const generateRandomColor = (): string =>

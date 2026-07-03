@@ -1,21 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl, TextInput, TouchableOpacity } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, FlatList, ActivityIndicator, RefreshControl, TextInput, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { useFocusEffect } from '@react-navigation/native';
-import { useQueryClient } from '@tanstack/react-query';
-import { Calendar, CalendarUtils, LocaleConfig } from 'react-native-calendars';
+import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import TopTab from '../../../shared/components/common/TopTab';
 import EventCard from '../../../shared/components/cards/EventCard';
 import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
 import ModalFilterCalendar from '../components/ModalFilterCalendar';
 import Toast from 'react-native-toast-message';
-import { CalendarFilter } from '../../../business/models/CalendarFilter';
-import { getEventTypeDot, convertDateToText, buildMarkedDates } from '../../../shared/utils/EventUtils';
-import { useEventsQuery, EVENTS_KEY } from '../../../hooks/queries/useEventsQuery';
-import { GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
+import { convertDateToText } from '../../../shared/utils/EventUtils';
+import { useCalendarLogic, INITIAL_DATE } from '../hooks/useCalendarLogic';
 import type { TabScreenProps } from '../../../navigation/types';
+import { useTranslation } from 'react-i18next';
 
 LocaleConfig.locales['fr'] = {
   monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
@@ -26,97 +23,48 @@ LocaleConfig.locales['fr'] = {
 };
 LocaleConfig.defaultLocale = 'fr';
 
-const INITIAL_DATE = new Date().toISOString().split('T')[0];
-
 export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrier'>) {
   const { colors, fonts } = useAppTheme();
-  const queryClient = useQueryClient();
-  const { data: events = [] } = useEventsQuery();
-  const [eventsCurrentDateSelected, setEventsCurrentDateSelected] = useState<any[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
-  const [marked, setMarked] = useState<Record<string, any>>({});
-  const [filter, setFilter] = useState<CalendarFilter | null>(null);
-  const [selectedDate, setSelectedDate] = useState(INITIAL_DATE);
-  const [modalFilterVisible, setModalFilterVisible] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
-
-  useFocusEffect(useCallback(() => { /* intentionally blank */ }, []));
+  const { t } = useTranslation('events');
+  const [modalFilterVisible, setModalFilterVisible] = React.useState(false);
+  const {
+    eventsCurrentDateSelected,
+    filteredEvents,
+    marked,
+    filter,
+    selectedDate,
+    refreshing,
+    setFilter,
+    setSelectedDate,
+    onRefresh,
+    onDayPress,
+    handleSearch,
+    deleteSearchText,
+  } = useCalendarLogic(colors);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('blur', () => setSelectedDate(INITIAL_DATE));
     return unsubscribe;
-  }, [navigation]);
-
-  useEffect(() => {
-    setupMarkedDates(true);
-    changeEventsCurrentDateSelected(selectedDate);
-  }, [events]);
-
-  useEffect(() => {
-    applyFilter();
-  }, [filter, events]);
-
-  const applyFilter = () => {
-    if (filter) setFilteredEvents(filter.filter(events));
-  };
-
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await queryClient.invalidateQueries({ queryKey: GROUPS_KEY });
-    await queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
-    setRefreshing(false);
-  };
-
-  const setupMarkedDates = (isInit: boolean) => {
-    setMarked(buildMarkedDates(events, selectedDate, colors, isInit));
-  };
-
-  const changeEventsCurrentDateSelected = (date: string) => {
-    setEventsCurrentDateSelected(events.filter((item: any) => item.dateevent === date));
-  };
-
-  const onDayPress = (day: string) => {
-    setFilter(null);
-    setSelectedDate(day);
-    const newMarked = { ...marked };
-    Object.values(newMarked).forEach((v) => (v.selected = false));
-    if (!newMarked[day]) {
-      newMarked[day] = { selected: true, disableTouchEvent: false, selectedColor: colors.accent, selectedTextColor: 'white', dots: [] };
-    } else {
-      newMarked[day].selected = true;
-    }
-    setMarked(newMarked);
-    changeEventsCurrentDateSelected(day);
-  };
+  }, [navigation, setSelectedDate]);
 
   const handleEventsChange = () => {
-    setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: "Modification d'un événement" }), 350);
+    setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: t('modifySuccess') }), 350);
   };
 
-  const handleSearch = (query: string) => {
-    if (filter) setFilter(new CalendarFilter(filter.date, filter.animals, filter.eventType, query));
-    else setFilter(new CalendarFilter(undefined, undefined, undefined, query));
-  };
-
-  const deleteSearchText = () => {
-    if (!filter?.date && !filter?.animals && !filter?.eventType) setFilter(null);
-    else if (filter) setFilter(new CalendarFilter(filter.date, filter.animals, filter.eventType, undefined));
-  };
-
-  const styles = StyleSheet.create({
+  const styles = {
     calendarContainer: { marginTop: 10, width: '90%', alignSelf: 'center', borderRadius: 5, backgroundColor: colors.background },
-    calendar: { borderRadius: 5, shadowColor: colors.default_dark, shadowOpacity: 0.1, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, backgroundColor: colors.background },
+    calendar: { borderRadius: 5, shadowColor: colors.textPrimary, shadowOpacity: 0.1, elevation: 1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, backgroundColor: colors.background },
     listEventContainer: { alignSelf: 'center', width: '90%', marginBottom: 5 },
     selectedDateContainer: { marginTop: 10, padding: 2, width: '100%', marginBottom: 10 },
-    selectedDateText: { textAlign: 'center', color: colors.default_dark },
+    selectedDateText: { textAlign: 'center', color: colors.textPrimary },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
-  });
+  } as const;
 
   return (
     <>
       <ModalFilterCalendar modalVisible={modalFilterVisible} setModalVisible={setModalFilterVisible} setFilter={setFilter} filter={filter ?? undefined} />
-      <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+          <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
         <TopTab message1="Mon" message2="Calendrier" />
         {refreshing ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
@@ -126,21 +74,21 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
           <FlatList
             data={filter ? filteredEvents : eventsCurrentDateSelected}
             keyExtractor={(item) => item.id.toString()}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.textPrimary} />}
             ListHeaderComponent={
               <>
-                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background, alignSelf: 'center', width: '90%', justifyContent: 'space-between', padding: 10, borderRadius: 5, shadowColor: colors.default_dark, elevation: 1, shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, marginTop: 20 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background, alignSelf: 'center', width: '90%', justifyContent: 'space-between', padding: 10, borderRadius: 5, shadowColor: colors.textPrimary, elevation: 1, shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 }, marginTop: 20 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <Ionicons name="search-outline" size={16} color={colors.default_dark} />
-                    <TextInput placeholder="Recherche" style={[{ marginLeft: 5, width: '80%', color: colors.default_dark }, styles.textFontRegular]} placeholderTextColor={colors.default_dark} value={filter?.text ?? ''} onChangeText={handleSearch} />
+                    <Ionicons name="search-outline" size={16} color={colors.textPrimary} />
+                    <TextInput placeholder={t('search')} style={[{ marginLeft: 5, width: '80%', color: colors.textPrimary }, styles.textFontRegular]} placeholderTextColor={colors.textSecondary} value={filter?.text ?? ''} onChangeText={handleSearch} />
                     {filter?.text && (
                       <TouchableOpacity onPress={deleteSearchText}>
-                        <AntDesign name="close" size={16} color={colors.default_dark} />
+                        <AntDesign name="close" size={16} color={colors.textPrimary} />
                       </TouchableOpacity>
                     )}
                   </View>
                   <TouchableOpacity onPress={() => setModalFilterVisible(true)}>
-                    {filter ? <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.default_dark} /> : <Ionicons name="filter" size={20} color={colors.default_dark} />}
+                    {filter ? <MaterialCommunityIcons name="filter-variant-plus" size={21} color={colors.textPrimary} /> : <Ionicons name="filter" size={20} color={colors.textPrimary} />}
                   </TouchableOpacity>
                 </View>
                 <View style={styles.calendarContainer}>
@@ -148,7 +96,7 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
                     style={styles.calendar}
                     firstDay={1}
                     monthFormat="MMMM yyyy"
-                    theme={{ arrowColor: colors.accent, todayTextColor: colors.tertiary, selectedDayTextColor: 'white', selectedDayBackgroundColor: colors.accent, calendarBackground: 'transparent', dayTextColor: colors.accent, textDayHeaderTextColor: colors.accent, textSectionTitleColor: colors.accent, monthTextColor: colors.accent } as any}
+                    theme={{ arrowColor: colors.primary, todayTextColor: colors.textSecondary, selectedDayTextColor: 'white', selectedDayBackgroundColor: colors.primary, calendarBackground: 'transparent', dayTextColor: colors.primary, textDayHeaderTextColor: colors.primary, textSectionTitleColor: colors.primary, monthTextColor: colors.primary } as any}
                     enableSwipeMonths
                     onDayPress={(day) => onDayPress(day.dateString)}
                     markingType="multi-dot"
@@ -156,7 +104,7 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
                   />
                 </View>
                 <View style={styles.selectedDateContainer}>
-                  <Text style={[styles.selectedDateText, styles.textFontMedium]}>{filter ? 'Résultats du filtre' : convertDateToText(selectedDate)}</Text>
+                  <Text style={[styles.selectedDateText, styles.textFontMedium]}>{filter ? t('filterResults') : convertDateToText(selectedDate)}</Text>
                 </View>
               </>
             }
@@ -168,18 +116,18 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
             ListEmptyComponent={
               <View style={styles.listEventContainer}>
                 {filter ? (
-                  <ModalDefaultNoValue text="Aucun événement correspond à ce filtre" />
+                  <ModalDefaultNoValue text={t('filterNoResult')} />
                 ) : (
                   <View style={{ alignItems: 'center', paddingVertical: 32 }}>
                     <MaterialCommunityIcons name="calendar-blank-outline" size={52} color={colors.secondary_roux} />
-                    <Text style={{ marginTop: 14, fontSize: 16, fontFamily: fonts.bodyMedium.fontFamily, color: colors.default_dark, textAlign: 'center' }}>Aucun événement prévu ce jour</Text>
-                    <Text style={{ marginTop: 6, fontSize: 13, color: colors.secondary_roux, textAlign: 'center', fontFamily: fonts.default?.fontFamily }}>Planifiez une sortie ?</Text>
+                    <Text style={{ marginTop: 14, fontSize: 16, fontFamily: fonts.bodyMedium.fontFamily, color: colors.textPrimary, textAlign: 'center' }}>{t('noDayEvent')}</Text>
+                    <Text style={{ marginTop: 6, fontSize: 13, color: colors.secondary_roux, textAlign: 'center', fontFamily: fonts.default?.fontFamily }}>{t('planTrip')}</Text>
                     <TouchableOpacity
                       onPress={() => navigation.navigate('EventEntry' as any)}
                       style={{ marginTop: 18, backgroundColor: colors.primary, borderRadius: 12, paddingHorizontal: 24, paddingVertical: 10 }}
                       activeOpacity={0.8}
                     >
-                      <Text style={{ color: '#fff', fontFamily: fonts.bodyMedium.fontFamily, fontSize: 14 }}>Ajouter un événement</Text>
+                      <Text style={{ color: '#fff', fontFamily: fonts.bodyMedium.fontFamily, fontSize: 14 }}>{t('addEvent')}</Text>
                     </TouchableOpacity>
                   </View>
                 )}

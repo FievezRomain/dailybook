@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, TextInput, StyleSheet, KeyboardAvoidingView } from 'react-native';
-import Button from '../../inputs/Button';
+import Button from '../../ui/AppButton';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 
 interface ModalFrequencyInputProps {

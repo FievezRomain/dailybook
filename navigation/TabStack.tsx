@@ -1,160 +1,196 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
-import { BottomNavigation, IconButton } from 'react-native-paper';
-import Constants from 'expo-constants';
+import { BlurView } from 'expo-blur';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { TabParamList } from './types';
 import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, OtherScreen } from './screens';
 import { useAppTheme } from '../theme/useAppTheme';
+import { tabBarBlurIntensity } from '../theme/tokens';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
-export default function TabStack() {
-  const { colors } = useAppTheme();
+// ---------------------------------------------------------------------------
+// Tab item definition
+// ---------------------------------------------------------------------------
+type TabIcon = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
 
+interface TabItemConfig {
+  name: keyof TabParamList;
+  label: string;
+  icon: TabIcon;
+  iconFocused: TabIcon;
+}
+
+const TAB_ITEMS: TabItemConfig[] = [
+  { name: 'Accueil',      label: 'Accueil',       icon: 'home-outline',      iconFocused: 'home' },
+  { name: 'Performance',  label: 'Performances',  icon: 'chart-bar',         iconFocused: 'chart-bar' },
+  { name: 'Calendrier',   label: 'Calendrier',    icon: 'calendar-outline',  iconFocused: 'calendar' },
+  { name: 'Animaux',      label: 'Animaux',       icon: 'paw-outline',       iconFocused: 'paw' },
+  { name: 'Autre',        label: 'Plus',          icon: 'menu',              iconFocused: 'menu' },
+];
+
+// ---------------------------------------------------------------------------
+// Single tab item with spring animation
+// ---------------------------------------------------------------------------
+interface TabItemProps {
+  config: TabItemConfig;
+  focused: boolean;
+  onPress: () => void;
+}
+
+function TabItem({ config, focused, onPress }: TabItemProps) {
+  const { colors, tokens } = useAppTheme();
+  const scale = useSharedValue(1);
+
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePressIn = () => { scale.value = withSpring(0.88, { damping: 15, stiffness: 300 }); };
+  const handlePressOut = () => { scale.value = withSpring(1, { damping: 12, stiffness: 200 }); };
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      style={styles.tabItem}
+      activeOpacity={1}
+      accessibilityRole="button"
+      accessibilityLabel={config.label}
+      accessibilityState={{ selected: focused }}
+    >
+      <Animated.View style={[styles.tabItemInner, animStyle]}>
+        {focused && (
+          <View style={[styles.indicator, { backgroundColor: colors.primary }]} />
+        )}
+        <MaterialCommunityIcons
+          name={focused ? config.iconFocused : config.icon}
+          size={24}
+          color={focused ? colors.primary : colors.textSecondary}
+        />
+        <Text
+          style={[
+            styles.label,
+            {
+              color: focused ? colors.primary : colors.textSecondary,
+              fontFamily: tokens.fonts.medium,
+            },
+          ]}
+          numberOfLines={1}
+        >
+          {config.label}
+        </Text>
+      </Animated.View>
+    </TouchableOpacity>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Custom blur tab bar
+// ---------------------------------------------------------------------------
+function BlurTabBar({ navigation, state, descriptors, insets }: any) {
+  const { colors, isDark } = useAppTheme();
+  const safeInsets = useSafeAreaInsets();
+  const bottomPad = Math.max(safeInsets.bottom, insets.bottom ?? 0);
+
+  return (
+    <View style={[styles.tabBarWrapper, { paddingBottom: bottomPad }]}>
+      {Platform.OS === 'ios' ? (
+        <BlurView
+          intensity={tabBarBlurIntensity}
+          tint={isDark ? 'dark' : 'light'}
+          style={StyleSheet.absoluteFill}
+        />
+      ) : (
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: isDark ? colors.background : colors.surface }]} />
+      )}
+      <View style={[styles.separator, { backgroundColor: colors.border }]} />
+      <View style={styles.tabRow}>
+        {state.routes.map((route: any, index: number) => {
+          const focused = state.index === index;
+          const config = TAB_ITEMS[index];
+          if (!config) return null;
+
+          return (
+            <TabItem
+              key={route.key}
+              config={config}
+              focused={focused}
+              onPress={() =>
+                navigation.dispatch({
+                  ...CommonActions.navigate(route.name, route.params),
+                  target: state.key,
+                })
+              }
+            />
+          );
+        })}
+      </View>
+    </View>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// TabStack
+// ---------------------------------------------------------------------------
+export default function TabStack() {
   return (
     <Tab.Navigator
       screenOptions={{ headerShown: false }}
-      tabBar={({ navigation, state, descriptors, insets }) => (
-        <BottomNavigation.Bar
-          navigationState={state}
-          safeAreaInsets={insets}
-          onTabPress={({ route, preventDefault }) => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
-            if (event.defaultPrevented) {
-              preventDefault();
-            } else {
-              navigation.dispatch({
-                ...CommonActions.navigate(route.name, route.params),
-                target: state.key,
-              });
-            }
-          }}
-          renderIcon={({ route, focused }) => {
-            const { options } = descriptors[route.key];
-            if (!options.tabBarIcon) return null;
-            return (
-              <View style={styles.iconContainer}>
-                {options.tabBarIcon({
-                  focused,
-                  color: focused ? colors.secondaryContainer : colors.default_dark,
-                  size: focused ? 28 : 24,
-                })}
-              </View>
-            );
-          }}
-          renderLabel={({ route, focused }) => {
-            const { options } = descriptors[route.key];
-            const label =
-              options.tabBarLabel !== undefined
-                ? options.tabBarLabel
-                : options.title ?? route.name;
-            return (
-              <Text style={[styles.label, { color: focused ? colors.accent : colors.default_dark, marginTop: -10 }]}>
-                {label as string}
-              </Text>
-            );
-          }}
-          style={{
-            height: Constants.platform?.ios ? 80 : 70,
-            backgroundColor: colors.background,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: -2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
-            elevation: 8,
-          }}
-          activeColor={colors.accent}
-          inactiveColor={colors.onSurface}
-          activeIndicatorStyle={{
-            backgroundColor: colors.accent,
-            height: 2,
-            marginBottom: 55,
-          }}
-        />
-      )}
+      tabBar={(props) => <BlurTabBar {...props} />}
     >
-      <Tab.Screen
-        name="Accueil"
-        component={WelcomeScreen}
-        options={{
-          tabBarLabel: 'Accueil',
-          tabBarIcon: ({ color, size }) => (
-            <View style={styles.iconContainer}>
-              <IconButton icon="home" iconColor={color} size={size} />
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Performance"
-        component={StatsScreen}
-        options={{
-          tabBarLabel: 'Performances',
-          tabBarIcon: ({ color, size }) => (
-            <View style={styles.iconContainer}>
-              <IconButton icon="chart-bar" iconColor={color} size={size} />
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Calendrier"
-        component={CalendarScreen}
-        options={{
-          tabBarLabel: 'Calendrier',
-          tabBarIcon: ({ color, size }) => (
-            <View style={styles.iconContainer}>
-              <IconButton icon="calendar" iconColor={color} size={size} />
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Animaux"
-        component={PetsScreen}
-        options={{
-          tabBarLabel: 'Animaux',
-          tabBarIcon: ({ color, size }) => (
-            <View style={styles.iconContainer}>
-              <IconButton icon="paw" iconColor={color} size={size} />
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Autre"
-        component={OtherScreen}
-        options={{
-          tabBarLabel: 'Autre',
-          tabBarIcon: ({ color, size }) => (
-            <View style={styles.iconContainer}>
-              <IconButton icon="menu" iconColor={color} size={size} />
-            </View>
-          ),
-        }}
-      />
+      <Tab.Screen name="Accueil"     component={WelcomeScreen}  options={{ tabBarLabel: 'Accueil' }} />
+      <Tab.Screen name="Performance" component={StatsScreen}    options={{ tabBarLabel: 'Performances' }} />
+      <Tab.Screen name="Calendrier"  component={CalendarScreen} options={{ tabBarLabel: 'Calendrier' }} />
+      <Tab.Screen name="Animaux"     component={PetsScreen}     options={{ tabBarLabel: 'Animaux' }} />
+      <Tab.Screen name="Autre"       component={OtherScreen}    options={{ tabBarLabel: 'Plus' }} />
     </Tab.Navigator>
   );
 }
 
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
-  iconContainer: {
+  tabBarWrapper: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    overflow: 'hidden',
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    width: '100%',
+  },
+  tabRow: {
+    flexDirection: 'row',
+    height: 60,
+  },
+  tabItem: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center',
-    alignContent: 'center',
-    transform: [{ translateY: -15 }],
+  },
+  tabItemInner: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 2,
+  },
+  indicator: {
+    position: 'absolute',
+    top: -28,
+    height: 2,
+    width: 24,
+    borderRadius: 1,
   },
   label: {
     fontSize: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+    letterSpacing: 0.1,
   },
 });

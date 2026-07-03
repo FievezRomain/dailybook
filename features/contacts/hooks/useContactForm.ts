@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
 import { createContact, updateContact } from '../../../services/api/ContactService';
 import { useAuthStore } from '../../../stores/useAuthStore';
+import { CreateContactPayload, UpdateContactPayload } from '../types';
 import LoggerService from '../../../services/logs/LoggerService';
 
 export function useContactForm(actionType: string, contact: Record<string, unknown> = {}, onSuccess?: (data?: unknown) => void) {
@@ -28,10 +29,10 @@ export function useContactForm(actionType: string, contact: Record<string, unkno
     data['emailproprietaire'] = firebaseUser?.email ?? '';
     try {
       if (actionType === 'modify') {
-        const response = await updateContact(String(data.id), data);
+        const response = await updateContact(String(data.id), data as unknown as UpdateContactPayload);
         onSuccess?.(response);
       } else {
-        await createContact(data);
+        await createContact(data as unknown as CreateContactPayload);
         onSuccess?.();
       }
       resetValues();

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Modal, View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import Button from '../../inputs/Button';
+import Button from '../../ui/AppButton';
 import DateTimePicker from 'react-native-modal-datetime-picker';
 import { AntDesign } from '@expo/vector-icons';
 import { useAppTheme } from '../../../../theme/useAppTheme';

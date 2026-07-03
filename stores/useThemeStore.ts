@@ -28,6 +28,16 @@ export const useThemeStore = create<ThemeState>()(
     {
       name: 'theme-storage',
       storage: createJSONStorage(() => AsyncStorage),
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as Partial<ThemeState> | undefined;
+        const theme = persisted?.theme === 'dark' ? 'dark' : 'light';
+        return {
+          ...currentState,
+          ...persisted,
+          theme,
+          isDark: theme === 'dark',
+        };
+      },
     },
   ),
 );

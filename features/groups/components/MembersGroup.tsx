@@ -1,8 +1,8 @@
-import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+﻿import React from 'react';
+import { FlatList, Text, View } from 'react-native';
 import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
 import MemberCard from './MemberCard';
-import { Icon } from 'react-native-paper';
+import { AppIcon } from '../../../shared/components/ui';
 import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface MemberList {
@@ -21,7 +21,7 @@ const MembersGroup = ({
 }) => {
   const { colors, fonts } = useAppTheme();
 
-  const styles = StyleSheet.create({
+  const styles = {
     containerHeader: {
       paddingBottom: 10,
       flexDirection: 'row',
@@ -30,14 +30,14 @@ const MembersGroup = ({
     container: { paddingVertical: 10 },
     title: { marginLeft: 5 },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
     <>
       {members !== undefined && members.type === 'pending' && (
         <View style={styles.container}>
           <View style={styles.containerHeader}>
-            <Icon source="clock-outline" size={20} color={colors.default_dark} />
+            <AppIcon name="clock-outline" size={20} color={colors.textPrimary} />
             <Text style={[styles.title, styles.textFontBold]}>Utilisateurs en attente</Text>
           </View>
           <FlatList
@@ -53,7 +53,7 @@ const MembersGroup = ({
       {members && members.type === 'accepted' && (
         <View style={styles.container}>
           <View style={styles.containerHeader}>
-            <Icon source="format-list-bulleted" size={20} color={colors.default_dark} />
+            <AppIcon name="format-list-bulleted" size={20} color={colors.textPrimary} />
             <Text style={[styles.title, styles.textFontBold]}>Membres du groupe</Text>
           </View>
           <FlatList

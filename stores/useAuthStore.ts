@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authService } from '../services/auth/FirebaseAuthService';
 import type { AuthUser } from '../services/auth/IAuthService';
-import { secureStorage } from '../utils/secureStorage';
 import { getMe } from '../services/api/AuthService';
 import { UserProfile } from '../models/User';
 
@@ -29,14 +29,18 @@ export const useAuthStore = create<AuthState>()(
        * Retourne la fonction d'unsubscribe à appeler au démontage.
        */
       initAuth: () => {
-        const unsubscribe = authService.onAuthStateChanged(async (authUser) => {
+        const unsubscribe = authService.onAuthStateChanged((authUser) => {
           if (authUser) {
-            try {
-              const profile = await getMe();
-              set({ firebaseUser: authUser, user: profile, isAuthenticated: true, isLoading: false });
-            } catch {
-              set({ firebaseUser: authUser, user: null, isAuthenticated: true, isLoading: false });
-            }
+            set((state) => ({
+              firebaseUser: authUser,
+              user: state.user,
+              isAuthenticated: true,
+              isLoading: false,
+            }));
+
+            void getMe()
+              .then((profile) => set({ user: profile }))
+              .catch(() => undefined);
           } else {
             set({ firebaseUser: null, user: null, isAuthenticated: false, isLoading: false });
           }
@@ -53,7 +57,7 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => secureStorage),
+      storage: createJSONStorage(() => AsyncStorage),
       // On ne persiste que le profil utilisateur, pas les objets auth
       partialize: (state) => ({ user: state.user, isAuthenticated: state.isAuthenticated }),
     },

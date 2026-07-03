@@ -9,7 +9,7 @@ import { parseNote } from '../../../services/api/AiService';
 import { useNoteMutations } from '../../../hooks/queries/useNotesQuery';
 import type { AppStackScreenProps } from '../../../navigation/types';
 import type { AiParseResult } from '../../../services/api/AiService';
-import Button from '../../../shared/components/inputs/Button';
+import Button from '../../../shared/components/ui/AppButton';
 
 export default function NoteAIScreen({ navigation }: AppStackScreenProps<'NoteAI'>) {
   const { colors, fonts } = useAppTheme();
@@ -49,19 +49,19 @@ export default function NoteAIScreen({ navigation }: AppStackScreenProps<'NoteAI
   };
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <View style={{ paddingTop: 56, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12 }}>
-          <Entypo name="chevron-left" size={24} color={colors.default_dark} />
+          <Entypo name="chevron-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={{ fontSize: 22, color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily }}>Note par IA 🤖</Text>
+        <Text style={{ fontSize: 22, color: colors.textPrimary, fontFamily: fonts.bodyLarge.fontFamily }}>Note par IA ??</Text>
       </View>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 48 }}>
         <Text style={{ fontSize: 14, color: colors.secondary, fontFamily: fonts.default?.fontFamily, marginBottom: 10 }}>
           Décrivez votre note librement, l'IA l'organisera pour vous.
         </Text>
         <TextInput
-          style={{ backgroundColor: colors.background, borderRadius: 12, padding: 14, fontSize: 15, color: colors.default_dark, fontFamily: fonts.default?.fontFamily, minHeight: 120, textAlignVertical: 'top', borderWidth: 1, borderColor: colors.onSurface }}
+          style={{ backgroundColor: colors.background, borderRadius: 12, padding: 14, fontSize: 15, color: colors.textPrimary, fontFamily: fonts.default?.fontFamily, minHeight: 120, textAlignVertical: 'top', borderWidth: 1, borderColor: colors.surfaceVariant }}
           placeholder="Ex: Rappeler de contacter le vétérinaire pour Isis, la jument grise..."
           placeholderTextColor={colors.secondary}
           value={text}
@@ -78,12 +78,12 @@ export default function NoteAIScreen({ navigation }: AppStackScreenProps<'NoteAI
         )}
         {preview && (
           <View style={{ backgroundColor: colors.background, borderRadius: 14, padding: 18, marginTop: 24, elevation: 2 }}>
-            <Text style={{ fontSize: 16, fontFamily: fonts.bodyMedium.fontFamily, color: colors.default_dark, marginBottom: 12 }}>Aperçu de la note</Text>
+            <Text style={{ fontSize: 16, fontFamily: fonts.bodyMedium.fontFamily, color: colors.textPrimary, marginBottom: 12 }}>Aperéu de la note</Text>
             {Object.entries(preview).map(([k, v]) =>
               v != null && String(v).trim() !== '' ? (
                 <View key={k} style={{ flexDirection: 'row', marginBottom: 6 }}>
                   <Text style={{ fontSize: 13, color: colors.secondary, fontFamily: fonts.bodyMedium.fontFamily, width: 110 }}>{k}</Text>
-                  <Text style={{ fontSize: 13, color: colors.default_dark, fontFamily: fonts.default?.fontFamily, flex: 1 }}>{String(v)}</Text>
+                  <Text style={{ fontSize: 13, color: colors.textPrimary, fontFamily: fonts.default?.fontFamily, flex: 1 }}>{String(v)}</Text>
                 </View>
               ) : null,
             )}

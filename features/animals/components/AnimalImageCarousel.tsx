@@ -1,5 +1,5 @@
-﻿import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, ActivityIndicator, Dimensions, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import Carousel from 'react-native-reanimated-carousel';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -53,10 +53,10 @@ const CarouselImageItem = ({
           alignItems: 'center',
         }}
       >
-        <Text style={[textFontBold, { color: 'white', fontSize: 20 }]}>×</Text>
+        <Text style={[textFontBold, { color: '#fff', fontSize: 20 }]}>✕</Text>
       </TouchableOpacity>
       <View style={{ position: 'absolute', bottom: 8, left: 30, backgroundColor: 'rgba(0,0,0,0.4)', padding: 4, borderRadius: 5 }}>
-        <Text style={[textFontRegular, { color: 'white', fontSize: 12 }]}>
+        <Text style={[textFontRegular, { color: '#fff', fontSize: 12 }]}>
           {new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'long', year: 'numeric' }).format(
             new Date(item.date_enregistrement),
           )}
@@ -127,7 +127,7 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
     Toast.show({ type: 'success', position: 'top', text1: "Suppression d'une photo réussie" });
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     button: {
       marginTop: 15,
       alignSelf: 'center',
@@ -138,7 +138,7 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   if (loading) {
     return (
@@ -152,7 +152,7 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
     return (
       <View style={{ marginBottom: 20 }}>
         <View style={{ width: '90%', alignSelf: 'center' }}>
-          <ModalDefaultNoValue text="Vous n'avez aucune photo à afficher." />
+          <ModalDefaultNoValue text="Vous n'avez aucune photo é afficher." />
         </View>
         <AvatarPicker
           onChange={handleAddImage}
@@ -162,10 +162,10 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
               disabled={currentMonthCount >= LIMIT_PICTURE_BY_MONTH}
               style={[
                 styles.button,
-                { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.secondary : colors.accent },
+                { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.secondary : colors.primary },
               ]}
             >
-              <Text style={[styles.textFontRegular, { textTransform: 'uppercase', color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? 'gray' : 'white' }]}>
+              <Text style={[styles.textFontRegular, { textTransform: 'uppercase', color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.textDisabled : colors.textOnPrimary }]}>
                 {currentMonthCount >= LIMIT_PICTURE_BY_MONTH
                   ? 'Limite de photos atteinte ce mois-ci'
                   : 'Ajouter une photo pour ce mois'}
@@ -180,7 +180,7 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
   return (
     <>
       <ModalValidation
-        displayedText="Êtes-vous sûr de vouloir supprimer cette image ?"
+        displayedText="étes-vous sér de vouloir supprimer cette image ?"
         title="Suppression d'une image"
         onConfirm={handleDeleteImage}
         setVisible={setModalConfirmDeleteVisible}
@@ -215,7 +215,7 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
                   height: 8,
                   borderRadius: 4,
                   marginHorizontal: 4,
-                  backgroundColor: dotIndex === currentIndex ? colors.accent : colors.tertiary,
+                  backgroundColor: dotIndex === currentIndex ? colors.primary : colors.border,
                 }}
               />
             );
@@ -230,10 +230,10 @@ const AnimalImageCarousel = ({ animalId }: { animalId: string }) => {
                 disabled={currentMonthCount >= LIMIT_PICTURE_BY_MONTH}
                 style={[
                   styles.button,
-                  { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.secondary : colors.accent },
+                  { backgroundColor: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.secondary : colors.primary },
                 ]}
               >
-                <Text style={[styles.textFontRegular, { color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? 'gray' : 'white' }]}>
+                <Text style={[styles.textFontRegular, { color: currentMonthCount >= LIMIT_PICTURE_BY_MONTH ? colors.textDisabled : colors.textOnPrimary }]}>
                   {currentMonthCount >= LIMIT_PICTURE_BY_MONTH
                     ? 'Limite de photos atteinte ce mois-ci'
                     : 'Ajouter une photo pour ce mois'}

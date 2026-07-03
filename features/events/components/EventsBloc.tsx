@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { FontAwesome6, FontAwesome, MaterialIcons, SimpleLineIcons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, FlatList } from 'react-native';
 import CompletionBar from '../../../shared/components/common/CompletionBar';
 import EventCard from '../../../shared/components/cards/EventCard';
 import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
 
 const EventsBloc = ({ navigation, events, handleEventsChange }: any) => {
     const { colors, fonts } = useAppTheme();
+    const { t } = useTranslation('events');
     const [eventsToday, setEventsToday] = useState<any[]>([]);
     const [eventsUpcoming, setEventsUpcoming] = useState<any[]>([]);
     const [eventsExceeded, setEventsExceeded] = useState<any[]>([]);
@@ -94,7 +96,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }: any) => {
         setPercentEventsDone(done === 0 ? 0 : Math.round((done / total) * 100));
     }
 
-    const styles = StyleSheet.create({
+    const styles = {
         container:{
             width: "100%",
             alignItems: "center",
@@ -118,7 +120,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }: any) => {
             paddingRight: 20,
         },
         title:{
-            color: colors.default_dark,
+            color: colors.textPrimary,
             fontSize: 16,
         },
         icon:{
@@ -146,7 +148,7 @@ const EventsBloc = ({ navigation, events, handleEventsChange }: any) => {
             width: 25, 
             height: 25,  
             borderRadius: 60, 
-            borderBlockColor: colors.default_dark, 
+            borderBlockColor: colors.textPrimary, 
             borderWidth: 0.2
         },
         dateContainer:{
@@ -170,24 +172,24 @@ const EventsBloc = ({ navigation, events, handleEventsChange }: any) => {
             padding: 5, 
             borderRadius: 60, 
             marginRight: 10, 
-            borderColor: colors.default_dark,
+            borderColor: colors.textPrimary,
             borderWidth: 0.2,
             alignItems: "center",
-            shadowColor: colors.default_dark,
+            shadowColor: colors.textPrimary,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowRadius: 5,
             shadowOffset: {width: 0, height: 2}
         },
         overdueIndicator:{
-            color: colors.default_dark, 
+            color: colors.textPrimary, 
             fontSize: 12,
         },
         inputStateContainerDefault:{
             backgroundColor: colors.background,
         },
         inputStateContainerSelected:{
-            backgroundColor: colors.default_dark,
+            backgroundColor: colors.textPrimary,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -199,15 +201,15 @@ const EventsBloc = ({ navigation, events, handleEventsChange }: any) => {
             fontFamily: fonts.bodyLarge.fontFamily
         }
     
-    });
+    } as const;
 
     return(
         <>
         <View style={styles.container}>
             <View style={styles.eventTodayContainer}>
                 <View style={styles.headerContainer}>
-                    <FontAwesome name='check-circle' size={20} color={colors.default_dark} style={styles.icon} />
-                    <Text style={[styles.title, styles.textFontBold]}>Tâches</Text>
+                    <FontAwesome name='check-circle' size={20} color={colors.textPrimary} style={styles.icon} />
+                    <Text style={[styles.title, styles.textFontBold]}>{t('tasks')}</Text>
                 </View>
                 <View>
                     {(eventsExceeded.length !== 0 || eventsToday.length !== 0) &&
@@ -275,8 +277,8 @@ const EventsBloc = ({ navigation, events, handleEventsChange }: any) => {
 
             <View style={styles.eventUpcomingContainer}>
                 <View style={styles.headerContainer}>
-                    <FontAwesome name='calendar' size={20} color={colors.default_dark} style={styles.icon}/>
-                    <Text style={[styles.title, styles.textFontBold]}>Événements à venir</Text>
+                    <FontAwesome name='calendar' size={20} color={colors.textPrimary} style={styles.icon}/>
+                    <Text style={[styles.title, styles.textFontBold]}>{t('upcomingEvents')}</Text>
                 </View>
                 <View>
                     <FlatList

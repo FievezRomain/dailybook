@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import * as Haptics from 'expo-haptics';
-import { View, Text, StyleSheet, FlatList, Dimensions, Linking, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Dimensions, Linking, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -16,6 +16,11 @@ import { useWishesQuery, useWishMutations } from '../../../hooks/queries/useWish
 import { useAuthStore } from '../../../stores/useAuthStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
 import { Wish } from '../../../models/Wish';
+import type { UpdateWishPayload } from '../types';
+
+type Props = AppStackScreenProps<'Wish'>;
+
+export default function WishScreen({ navigation }: Props) {
   const { colors, fonts } = useAppTheme();
   const { data: wishes = [] } = useWishesQuery();
   const { update, remove } = useWishMutations();
@@ -33,7 +38,7 @@ import { Wish } from '../../../models/Wish';
 
   const confirmDelete = () => {
     if (!selectedWish) return;
-    remove.mutate(selectedWish.id, {
+    remove.mutate(String(selectedWish.id), {
       onSuccess: () => {
         setSelectedWish(null);
         setModalValidationDeleteVisible(false);
@@ -47,27 +52,27 @@ import { Wish } from '../../../models/Wish';
   const changeState = (wish: Wish) => {
     Haptics.selectionAsync().catch(() => undefined);
     update.mutate(
-      { id: wish.id, body: { ...wish, acquis: !wish.acquis } },
+      { id: String(wish.id), body: { ...wish, acquis: !wish.acquis } as unknown as UpdateWishPayload },
       { onError: (err: any) => Toast.show({ type: 'error', position: 'top', text1: err.message }) }
     );
   };
 
   const getOrderedWishes = () => [...wishes].sort((a: Wish, b: Wish) => Number(a.acquis) - Number(b.acquis));
 
-  const styles = StyleSheet.create({
+  const styles = {
     container: { flex: 1, marginTop: 20 },
     itemContainer: { flex: 1, margin: 5 },
     itemContainerSecondColumn: { marginTop: Dimensions.get('window').width * 0.05 },
     image: { width: '100%', aspectRatio: 1, borderRadius: 10 },
-    title: { color: colors.default_dark, marginTop: 5 },
+    title: { color: colors.textPrimary, marginTop: 5 },
     labelContainer: { position: 'absolute', top: 10, left: 10, flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background, padding: 5, borderRadius: 5, zIndex: 1 },
-    price: { marginLeft: 5, color: colors.accent, fontSize: 12 },
-    textFontRegular: { fontFamily: fonts.default.fontFamily, color: colors.default_dark },
+    price: { marginLeft: 5, color: colors.primary, fontSize: 12 },
+    textFontRegular: { fontFamily: fonts.default.fontFamily, color: colors.textPrimary },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <TopTabSecondary message1="Vos" message2="Souhaits" />
       <ModalSubMenuWishActions
         modalVisible={modalSubMenuWishVisible}
@@ -82,7 +87,7 @@ import { Wish } from '../../../models/Wish';
         actionType="modify"
         isVisible={modalWishVisible}
         setVisible={setModalWishVisible}
-        wish={selectedWish}
+        wish={selectedWish ?? undefined}
         onModify={(wish?: Wish) => {
           setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: "Modification d'un souhait" }), 300);
           if (wish) setSelectedWish(wish);
@@ -114,13 +119,13 @@ import { Wish } from '../../../models/Wish';
                       cachePolicy="disk"
                     />
                   ) : (
-                    <View style={[{ backgroundColor: colors.quaternary, alignItems: 'center', justifyContent: 'center' }, styles.image]}>
+                    <View style={[{ backgroundColor: colors.surfaceVariant, alignItems: 'center', justifyContent: 'center' }, styles.image]}>
                       <MaterialIcons name="no-photography" size={50} />
                     </View>
                   )}
                   {item.prix != null && (
                     <View style={styles.labelContainer}>
-                      <Entypo name="price-tag" size={16} color={colors.accent} />
+                      <Entypo name="price-tag" size={16} color={colors.primary} />
                       <Text style={[styles.price, styles.textFontRegular]}>{item.prix} €</Text>
                     </View>
                   )}
@@ -135,7 +140,7 @@ import { Wish } from '../../../models/Wish';
                   ) : (
                     <TouchableOpacity
                       onPress={() => changeState(item)}
-                      style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 5, paddingHorizontal: 8, borderRadius: 20, backgroundColor: item.acquis ? colors.minor : colors.tertiary, marginLeft: 8 }}
+                      style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 5, paddingHorizontal: 8, borderRadius: 20, backgroundColor: item.acquis ? colors.minor : colors.textSecondary, marginLeft: 8 }}
                     >
                       <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: item.acquis ? colors.primary : colors.secondary, alignItems: 'center', justifyContent: 'center', marginRight: 6 }}>
                         {item.acquis && <Entypo name="check" size={14} color={colors.background} />}

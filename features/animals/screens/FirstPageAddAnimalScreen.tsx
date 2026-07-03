@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import Button from '../../../shared/components/inputs/Button';
+import Button from '../../../shared/components/ui/AppButton';
 import ModalAnimal from '../components/ModalAnimal';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import type { AuthStackScreenProps } from '../../../navigation/types';
+import { useTranslation } from 'react-i18next';
 
 const wallpaper = require('../../../assets/wallpaper_first_add_animal.jpg');
 
 export default function FirstPageAddAnimalScreen({ navigation }: AuthStackScreenProps<'FirstPageAddAnimal'>) {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('animals');
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
   const [modalAnimalVisible, setModalAnimalVisible] = useState(false);
 
@@ -17,7 +19,7 @@ export default function FirstPageAddAnimalScreen({ navigation }: AuthStackScreen
     navigation.navigate('App', { screen: 'Tab', params: { screen: 'Accueil' } });
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     image: {
       flex: 1,
       height: '100%',
@@ -29,7 +31,7 @@ export default function FirstPageAddAnimalScreen({ navigation }: AuthStackScreen
     },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
-  });
+  } as const;
 
   return (
     <>
@@ -43,13 +45,12 @@ export default function FirstPageAddAnimalScreen({ navigation }: AuthStackScreen
       <View style={{ width: '100%', height: '100%', alignItems: 'center' }}>
         <View style={{ width: '80%', marginTop: 200, marginBottom: 50 }}>
           <Text style={[{ fontSize: 20, textAlign: 'center' }, styles.textFontRegular]}>
-            Bienvenue {firebaseUser?.displayName ?? ''}, moi c'est Vasco et pour commencer l'aventure,
-            je te propose d'ajouter un animal.
+            {t('welcomeVasco', { name: firebaseUser?.displayName ?? '' })}
           </Text>
         </View>
         <View style={{ width: '60%' }}>
           <Button size="m" type="primary" onPress={() => setModalAnimalVisible(true)}>
-            <Text style={styles.textFontMedium}>J'enregistre un animal</Text>
+            <Text style={styles.textFontMedium}>{t('registerFirst')}</Text>
           </Button>
         </View>
       </View>

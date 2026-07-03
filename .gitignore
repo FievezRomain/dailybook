@@ -20,7 +20,21 @@ web-build/
 aws-exports.js
 
 # Variables d'environnement — ne pas commiter les fichiers avec de vraies valeurs
+.env
+.env.*
+!.env.example
 .env.dev
 .env.prod
 # .env.example est commité intentionnellement (pas de vraies valeurs)
+
+# Credentials sensibles (Apple, Google service accounts, etc.)
+credentials.json
+credentials/
+*.p12
+*.keystore
+service-account*.json
+
+# Note : google-services.json et GoogleService-Info.plist contiennent des identifiants
+# Firebase publics par design (API key client = pas un secret). Ils sont actuellement trackés.
+# Si vous décidez de les sortir, voir docs/security.md (procédure git rm --cached).
 

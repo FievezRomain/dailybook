@@ -1,0 +1,23 @@
+{
+  "title": "Contacts",
+  "addContact": "Add a contact",
+  "noContact": "No contacts yet",
+  "name": "Name",
+  "phone": "Phone",
+  "email": "Email",
+  "role": "Role",
+  "saved": "Contact saved ✓",
+  "deleted": "Contact deleted",
+  "deleteContact": "Delete this contact?",
+  "invite": "Invite to follow {{name}}",
+  "nameRequired": "Name required",
+  "modalTitle": "Contact",
+  "manageContact": "Manage contact",
+  "roles": {
+    "vet": "Vet",
+    "farrier": "Farrier",
+    "trainer": "Trainer",
+    "owner": "Owner",
+    "other": "Other"
+  }
+}

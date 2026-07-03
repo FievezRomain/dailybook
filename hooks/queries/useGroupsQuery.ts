@@ -59,7 +59,7 @@ export function useGroupMutations() {
         ...body,
         id: -1,
         members: [],
-        animals: body.animals ?? [],
+        animals: [],
         syncing: true,
       };
       queryClient.setQueryData<Group[]>(GROUPS_KEY, (prev = []) => [optimistic, ...prev]);

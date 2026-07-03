@@ -1,26 +1,33 @@
+import type { AuthStackScreenProps } from '../../../navigation/types';
+import { View, Text, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
+import { useTranslation } from 'react-i18next';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { authService } from '../../../services/auth/FirebaseAuthService';
 import { getFirebaseError } from '../../../shared/utils/FirebaseErrorUtils';
-import Button from '../../../shared/components/inputs/Button';
-import type { AuthStackScreenProps } from '../../../navigation/types';
+import Button from '../../../shared/components/ui/AppButton';
+import SocialAuthButtons from '../components/SocialAuthButtons';
+import { signInSchema, type SignInInput } from '../../../business/validators/auth';
 
 const wallpaper_login = require('../../../assets/wallpaper_login.png');
 
-type FormData = { email: string; password: string };
-
 export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login'>) {
   const { colors, fonts } = useAppTheme();
-  const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm<FormData>();
+  const { t } = useTranslation('auth');
+  const { register, handleSubmit, formState: { errors }, setValue, getValues } = useForm<SignInInput>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: { email: '', password: '' },
+  });
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const submitLogin = async (data: FormData) => {
+  const submitLogin = async (data: SignInInput) => {
     try {
       setLoading(true);
       await authService.signIn(data.email.trim(), data.password);
@@ -35,42 +42,42 @@ export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login
   const handlePasswordReset = async () => {
     const email = getValues('email');
     if (!email) {
-      Toast.show({ type: 'error', position: 'top', text1: 'Veuillez saisir votre adresse e-mail' });
+      Toast.show({ type: 'error', position: 'top', text1: t('enterEmailFirst') });
       return;
     }
     try {
       await authService.sendPasswordResetEmail(email.trim());
-      Toast.show({ type: 'success', position: 'top', text1: 'Un e-mail vous a été envoyé' });
+      Toast.show({ type: 'success', position: 'top', text1: t('emailSent') });
     } catch (error) {
       Toast.show({ type: 'error', position: 'top', text1: getFirebaseError(error) });
     }
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     textInput: { alignSelf: 'flex-start', marginLeft: 35, marginBottom: 10 },
-    image: { flex: 1, height: '100%', width: '100%', resizeMode: 'cover', position: 'absolute', justifyContent: 'center', backgroundColor: colors.onSurface },
+    image: { flex: 1, height: '100%', width: '100%', resizeMode: 'cover', position: 'absolute', justifyContent: 'center', backgroundColor: colors.surfaceVariant },
     login: { flex: 1, flexDirection: 'column', alignItems: 'center', justifyContent: 'center' },
     form: { paddingTop: 50, alignItems: 'center', backgroundColor: colors.surface, justifyContent: 'center', width: '90%', borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
     title: { fontSize: 30, letterSpacing: 2, marginBottom: 20 },
-    input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: 'black' },
-    clickableText: { marginLeft: 5, color: colors.onSurface, alignSelf: 'flex-end', justifyContent: 'flex-end', textTransform: 'uppercase' },
+    input: { height: 40, width: '80%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.surfaceVariant, color: 'black' },
+    clickableText: { marginLeft: 5, color: colors.surfaceVariant, alignSelf: 'flex-end', justifyContent: 'flex-end', textTransform: 'uppercase' },
     forgetPassword: { flexDirection: 'row', marginBottom: 50 },
     loginButton: { marginBottom: 20, marginTop: 10, backgroundColor: colors.secondary, borderRadius: 10 },
     registerButton: { marginBottom: 30, marginTop: 10, borderRadius: 10 },
     textButton: { color: 'white', textTransform: 'uppercase' },
-    errorInput: { color: 'red' },
+    errorInput: { color: colors.error },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
-  });
+  } as const;
 
   return (
     <>
       <Image style={styles.image} source={wallpaper_login} />
       <KeyboardAwareScrollView contentContainerStyle={styles.login}>
-        <Text style={[styles.title, styles.textFontRegular]}>Connexion</Text>
+        <Text style={[styles.title, styles.textFontRegular]}>{t('signInTitle')}</Text>
         <View style={styles.form}>
-          {errors.email && <Text style={[styles.errorInput, styles.textFontRegular]}>Identifiant obligatoire</Text>}
-          <Text style={[styles.textInput, styles.textFontRegular]}>Identifiant :</Text>
+          {errors.email && <Text style={[styles.errorInput, styles.textFontRegular]}>{t((errors.email.message ?? 'errors.emailRequired') as never)}</Text>}
+          <Text style={[styles.textInput, styles.textFontRegular]}>{t('emailLabel')}</Text>
           <TextInput
             style={[styles.input, styles.textFontRegular]}
             placeholder="Email"
@@ -78,10 +85,10 @@ export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login
             autoCapitalize="none"
             keyboardType="email-address"
             onChangeText={(text) => setValue('email', text)}
-            {...register('email', { required: true, pattern: { value: /\S+@\S+\.\S+/, message: 'Email invalide' } })}
+            {...register('email')}
           />
-          {errors.password && <Text style={[styles.errorInput, styles.textFontRegular]}>Mot de passe obligatoire</Text>}
-          <Text style={[styles.textInput, styles.textFontRegular]}>Mot de passe :</Text>
+          {errors.password && <Text style={[styles.errorInput, styles.textFontRegular]}>{t((errors.password.message ?? 'errors.passwordRequired') as never)}</Text>}
+          <Text style={[styles.textInput, styles.textFontRegular]}>{t('passwordLabel')}</Text>
           <View style={[{ flexDirection: 'row', justifyContent: 'space-between', paddingRight: 10 }, styles.input]}>
             <TextInput
               style={[styles.textFontRegular, { width: '90%' }]}
@@ -90,7 +97,7 @@ export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login
               secureTextEntry={!isPasswordVisible}
               onChangeText={(text) => setValue('password', text)}
               defaultValue={getValues('password')}
-              {...register('password', { required: true })}
+              {...register('password')}
             />
             <TouchableOpacity onPress={() => setIsPasswordVisible((v) => !v)} style={{ alignSelf: 'center' }}>
               <MaterialIcons name={isPasswordVisible ? 'visibility' : 'visibility-off'} size={22} />
@@ -100,7 +107,7 @@ export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login
           <View style={styles.loginButton}>
             {!loading ? (
               <Button onPress={handleSubmit(submitLogin)} type="quaternary" size="l">
-                <Text style={[styles.textButton, styles.textFontMedium]}>Je me connecte</Text>
+                <Text style={[styles.textButton, styles.textFontMedium]}>{t('loginButton')}</Text>
               </Button>
             ) : (
               <Button type="quaternary" size="m">
@@ -111,15 +118,17 @@ export default function SignInScreen({ navigation }: AuthStackScreenProps<'Login
 
           <View style={styles.forgetPassword}>
             <TouchableOpacity onPress={handlePasswordReset}>
-              <Text style={[styles.clickableText, styles.textFontMedium]}>Mot de passe oublié ?</Text>
+              <Text style={[styles.clickableText, styles.textFontMedium]}>{t('forgotPassword')}</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.registerButton}>
             <Button onPress={() => navigation.navigate('Register')} type="primary" size="m">
-              <Text style={[styles.textButton, styles.textFontMedium]}>Pas de compte ? S'inscrire</Text>
+              <Text style={[styles.textButton, styles.textFontMedium]}>{t('noAccountRegister')}</Text>
             </Button>
           </View>
+
+          <SocialAuthButtons onSuccess={() => navigation.navigate('Loading')} />
         </View>
       </KeyboardAwareScrollView>
     </>

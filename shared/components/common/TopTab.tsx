@@ -1,12 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import Constants from 'expo-constants';
+import { BlurView } from 'expo-blur';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { FontAwesome5, Ionicons } from '@expo/vector-icons';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { Image } from 'expo-image';
-import { Badge, Divider } from 'react-native-paper';
+import { AppBadge } from '../ui';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { fontSizes, fonts as fontTokens } from '../../../theme/tokens';
 import { getNotifications } from '../../../services/api/NotificationService';
 
 interface TopTabProps {
@@ -14,6 +16,7 @@ interface TopTabProps {
   message2?: string;
   withBackground?: boolean;
   withLogo?: boolean;
+  largeTitle?: boolean;
 }
 
 const TopTab: React.FC<TopTabProps> = ({
@@ -21,8 +24,10 @@ const TopTab: React.FC<TopTabProps> = ({
   message2,
   withBackground = false,
   withLogo = false,
+  largeTitle = false,
 }) => {
-  const { colors, fonts } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
+  const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { firebaseUser } = useAuthStore();
   const [nbNotifications, setNbNotifications] = useState(0);
@@ -38,95 +43,107 @@ const TopTab: React.FC<TopTabProps> = ({
     setNbNotifications(response.unreadCount);
   };
 
-  const styles = StyleSheet.create({
-    topTabContainer: {
-      paddingTop:
-        Constants.platform?.ios
-          ? (Constants.statusBarHeight ?? 0) + 10
-          : (Constants.statusBarHeight ?? 0) + 10,
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingLeft: withLogo ? 10 : 30,
-      paddingRight: 30,
-      paddingBottom: 10,
-    },
-    textContainer: { flex: 1 },
-    imageContainer: {
-      flex: 1,
-      gap: 20,
-      justifyContent: 'flex-end',
-      alignSelf: 'center',
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    name: { fontSize: 18 },
-    avatar: {
-      width: 40,
-      height: 40,
-      borderRadius: 30,
-      borderColor: colors.accent,
-      borderWidth: 0.5,
-    },
-    text: { color: withBackground || !withLogo ? colors.default_dark : colors.background },
-    textFontRegular: { fontFamily: fonts.default.fontFamily },
-    textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
-  });
+  const textColor = withBackground || !withLogo ? colors.primaryDark : colors.background;
 
   return (
-    <View>
-      <View style={styles.topTabContainer}>
+    <BlurView
+      intensity={withBackground ? 0 : 20}
+      tint={isDark ? 'dark' : 'light'}
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top + 10,
+          borderBottomColor: colors.border,
+          backgroundColor: withBackground ? colors.background : 'transparent',
+        },
+      ]}
+    >
+      <View style={styles.row}>
         <View style={styles.textContainer}>
-          {withBackground || withLogo ? (
-            withBackground ? (
-              <View style={{ marginTop: -5 }}>
-                <Text style={[styles.text, styles.textFontRegular]}>{message1}</Text>
-                <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
-              </View>
-            ) : (
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: -5 }}>
-                <Image source={require('../../../assets/logo.png')} style={{ height: 45, width: 45 }} />
-                <Text style={[styles.textFontMedium, { color: colors.accent, fontSize: 25 }]}>
-                  VASCO
-                </Text>
-              </View>
-            )
+          {withLogo ? (
+            <View style={styles.logoRow}>
+              <Image source={require('../../../assets/logo.png')} style={styles.logo} />
+              <Text style={[styles.logoText, { color: colors.primary }]}>VASCO</Text>
+            </View>
+          ) : largeTitle ? (
+            <View style={{ marginTop: -4 }}>
+              {message1 ? (
+                <Text style={[styles.subtitle, { color: textColor }]}>{message1}</Text>
+              ) : null}
+              <Text style={[styles.largeTitleText, { color: textColor }]}>{message2}</Text>
+            </View>
           ) : (
-            <Text style={[styles.name, styles.text, styles.textFontBold]}>{message2}</Text>
+            <Text style={[styles.title, { color: textColor }]}>{message2}</Text>
           )}
         </View>
-        <View style={styles.imageContainer}>
+        <View style={styles.actions}>
           <TouchableOpacity onPress={() => navigation.navigate('Notification' as never)}>
-            <Ionicons name="notifications" size={25} color={colors.default_dark} />
+            <Ionicons name="notifications" size={25} color={textColor} />
             {nbNotifications > 0 && (
-              <Badge style={{ position: 'absolute', left: 15, bottom: 10 }} size={20} visible>
-                {nbNotifications}
-              </Badge>
+              <AppBadge
+                label={String(nbNotifications)}
+                variant="primary"
+                style={{ position: 'absolute', left: 15, bottom: 10 }}
+              />
             )}
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('Settings' as never)}>
-            {firebaseUser &&
-            firebaseUser.photoURL !== undefined &&
-            firebaseUser.photoURL !== null ? (
-              <Image
-                style={styles.avatar}
-                source={{ uri: `${firebaseUser.photoURL}` }}
-                cachePolicy="disk"
-              />
+          <TouchableOpacity onPress={() => navigation.navigate('Settings' as never)} style={{ marginLeft: 16 }}>
+            {firebaseUser?.photoURL ? (
+              <Image style={styles.avatar} source={{ uri: firebaseUser.photoURL }} cachePolicy="disk" />
             ) : (
               <View style={{ paddingVertical: 10 }}>
-                <FontAwesome5 size={20} color={colors.default_dark} name="user-alt" />
+                <FontAwesome5 size={20} color={textColor} name="user-alt" />
               </View>
             )}
           </TouchableOpacity>
         </View>
       </View>
-      {!withBackground && (
-        <Divider style={{ height: 0.4, backgroundColor: colors.quaternary }} />
-      )}
-    </View>
+    </BlurView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    paddingBottom: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  textContainer: { flex: 1 },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: fontSizes.xl,
+    fontFamily: fontTokens.bold,
+  },
+  largeTitleText: {
+    fontSize: fontSizes.xl,
+    fontFamily: fontTokens.bold,
+  },
+  subtitle: {
+    fontSize: fontSizes.sm,
+    fontFamily: fontTokens.regular,
+  },
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: -4,
+  },
+  logo: { height: 45, width: 45 },
+  logoText: {
+    fontFamily: fontTokens.semiBold,
+    fontSize: 25,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+});
 
 export default TopTab;

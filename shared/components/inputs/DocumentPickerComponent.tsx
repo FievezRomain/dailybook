@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import * as DocumentPicker from 'expo-document-picker';
 import { View, Text, StyleSheet, TouchableOpacity, Keyboard } from 'react-native';
 import Toast from 'react-native-toast-message';
-import { Divider } from 'react-native-paper';
+import { AppDivider } from '../ui';
 import { Entypo, FontAwesome } from '@expo/vector-icons';
 import validateFile from '../../utils/validateFile';
 import ImageUtils from '../../utils/ImageUtils';
@@ -75,7 +75,7 @@ const ModalSubMenuDocumentPicker: React.FC<ModalSubMenuProps> = ({
               </Text>
             </View>
           </TouchableOpacity>
-          <Divider style={{ height: 1 }} />
+          <AppDivider />
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => onAction(handleDocumentPick)}
@@ -87,7 +87,7 @@ const ModalSubMenuDocumentPicker: React.FC<ModalSubMenuProps> = ({
               </Text>
             </View>
           </TouchableOpacity>
-          <Divider style={{ height: 1 }} />
+          <AppDivider />
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => onAction(handleCameraPick)}
@@ -148,6 +148,33 @@ const DocumentPickerComponent: React.FC<DocumentPickerComponentProps> = ({
               ? `Maximum ${MAX_FILES} fichiers. Vous en avez déjà ${value.length}.`
               : `Maximum ${MAX_FILES} fichiers autorisés.`,
           });
+          return;
+        }
+        const uriImageCompressed = await imageUtils.compressImage(result.assets[0].uri);
+        onChange([
+          ...value,
+          {
+            uri: uriImageCompressed,
+            name: result.assets[0].fileName ?? '',
+            mimeType: result.assets[0].mimeType,
+            isNew: true,
+          },
+        ]);
+      }
+
+      setModalSubMenuVisible(false);
+    } catch (error) {
+      LoggerService.log(
+        "Erreur lors de la sélection d'une image depuis la librairie : " + (error as Error).message,
+      );
+    }
+  };
+
+  const takePhotoAsync = async () => {
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== 'granted') {
+        Toast.show({ type: 'info', position: 'top', text1: "Accès à la caméra requis", text2: "Veuillez autoriser l'accès à la caméra dans les réglages." });
         return;
       }
 
@@ -183,7 +210,7 @@ const DocumentPickerComponent: React.FC<DocumentPickerComponentProps> = ({
       }
 
       setModalSubMenuVisible(false);
-    } catch (error: unknown) {
+    } catch (error) {
       LoggerService.log(
         "Erreur lors de la sélection d'une image depuis la caméra : " + (error as Error).message,
       );
@@ -235,7 +262,7 @@ const DocumentPickerComponent: React.FC<DocumentPickerComponentProps> = ({
       if (validatedAndProcessedFiles.length === 0) return;
 
       onChange([...value, ...validatedAndProcessedFiles]);
-    } catch (error: unknown) {
+    } catch (error) {
       LoggerService.log(
         'Erreur lors de la sélection de document :' + (error as Error).message,
       );

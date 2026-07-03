@@ -10,7 +10,7 @@ import { useObjectifMutations } from '../../../hooks/queries/useObjectifsQuery';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import type { AppStackScreenProps } from '../../../navigation/types';
 import type { SubTaskPayload } from '../types';
-import Button from '../../../shared/components/inputs/Button';
+import Button from '../../../shared/components/ui/AppButton';
 
 const TOTAL_STEPS = 2;
 
@@ -61,20 +61,20 @@ export default function ObjectifAddScreen({ navigation }: AppStackScreenProps<'O
     );
   };
 
-  const inputStyle = { backgroundColor: colors.background, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, color: colors.default_dark, fontFamily: fonts.default?.fontFamily, borderWidth: 1, borderColor: colors.onSurface };
+  const inputStyle = { backgroundColor: colors.background, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, color: colors.textPrimary, fontFamily: fonts.default?.fontFamily, borderWidth: 1, borderColor: colors.surfaceVariant };
   const labelStyle = { fontSize: 13, color: colors.secondary, fontFamily: fonts.bodyMedium.fontFamily, marginBottom: 4, marginTop: 14 };
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <View style={{ paddingTop: 56, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
         <TouchableOpacity onPress={() => step > 0 ? goToStep(step - 1) : navigation.goBack()} style={{ marginRight: 12 }}>
-          <Entypo name="chevron-left" size={24} color={colors.default_dark} />
+          <Entypo name="chevron-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={{ fontSize: 22, color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily }}>
+        <Text style={{ fontSize: 22, color: colors.textPrimary, fontFamily: fonts.bodyLarge.fontFamily }}>
           {step === 0 ? 'Nouvel objectif' : 'Détails & étapes'}
         </Text>
       </View>
-      <View style={{ height: 6, backgroundColor: colors.onSurface, borderRadius: 3, marginHorizontal: 20, marginBottom: 24, overflow: 'hidden' }}>
+      <View style={{ height: 6, backgroundColor: colors.surfaceVariant, borderRadius: 3, marginHorizontal: 20, marginBottom: 24, overflow: 'hidden' }}>
         <Animated.View style={[{ height: '100%', backgroundColor: colors.primary, borderRadius: 3 }, progressAnim]} />
       </View>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}>
@@ -84,8 +84,8 @@ export default function ObjectifAddScreen({ navigation }: AppStackScreenProps<'O
             <TextInput style={inputStyle} placeholder="Ex: Améliorer le galop de Naya" placeholderTextColor={colors.secondary} value={title} onChangeText={setTitle} />
             <Text style={[labelStyle, { marginTop: 20 }]}>Quel(s) cheval(aux) ?</Text>
             {animals.map((a) => (
-              <TouchableOpacity key={a.id} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderColor: colors.onSurface }} onPress={() => toggleAnimal(a.id)}>
-                <Text style={{ flex: 1, fontFamily: fonts.default?.fontFamily, color: colors.default_dark, fontSize: 15 }}>{a.nom}</Text>
+              <TouchableOpacity key={a.id} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderColor: colors.surfaceVariant }} onPress={() => toggleAnimal(a.id)}>
+                <Text style={{ flex: 1, fontFamily: fonts.default?.fontFamily, color: colors.textPrimary, fontSize: 15 }}>{a.nom}</Text>
                 {selectedAnimals.includes(a.id) && <Ionicons name="checkmark-circle" size={22} color={colors.primary} />}
               </TouchableOpacity>
             ))}
@@ -105,7 +105,7 @@ export default function ObjectifAddScreen({ navigation }: AppStackScreenProps<'O
             <Text style={[labelStyle, { marginTop: 20 }]}>Sous-étapes</Text>
             {etapes.map((e, i) => (
               <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <TextInput style={[inputStyle, { flex: 1 }]} placeholder={`Étape ${i + 1}`} placeholderTextColor={colors.secondary} value={e} onChangeText={(v) => updateEtape(i, v)} />
+                <TextInput style={[inputStyle, { flex: 1 }]} placeholder={`étape ${i + 1}`} placeholderTextColor={colors.secondary} value={e} onChangeText={(v) => updateEtape(i, v)} />
                 {etapes.length > 1 && (
                   <TouchableOpacity onPress={() => removeEtape(i)} style={{ padding: 8, marginLeft: 6 }}>
                     <Ionicons name="close-circle" size={20} color={colors.secondary} />

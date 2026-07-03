@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
-import { Divider } from 'react-native-paper';
+import { AppDivider, AppSheet } from '../../../shared/components/ui';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { Image } from 'expo-image';
 import { AntDesign, Entypo, FontAwesome } from '@expo/vector-icons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { createWish, updateWish } from '../../../services/api/WishService';
 import { Wish } from '../../../models/Wish';
+import { CreateWishPayload, UpdateWishPayload } from '../types';
 import LoggerService from '../../../services/logs/LoggerService';
 import FileStorageService from '../../../services/aws/FileStorageService';
 import AvatarPicker from '../../../shared/components/inputs/AvatarPicker';
@@ -19,17 +20,22 @@ interface ModalWishProps {
   isVisible: boolean;
   setVisible: (v: boolean) => void;
   actionType: string;
-  wish?: Wish;
-  onModify?: (data?: Wish) => void;
+  wish?: Wish;  onModify?: (data?: Wish) => void;
 }
 
-const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = undefined }: ModalWishProps) => {
+const ModalWish = ({ isVisible, setVisible, actionType, wish, onModify = undefined }: ModalWishProps) => {
   const { colors, fonts } = useAppTheme();
   const { firebaseUser } = useAuthStore();
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm();
   const [loading, setLoading] = useState(false);
   const [imageUri, setImageUri] = useState<string | undefined>(undefined);
   const [avatarPickerVisible, setAvatarPickerVisible] = useState(false);
+  const sheetRef = useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    if (isVisible) sheetRef.current?.present();
+    else sheetRef.current?.dismiss();
+  }, [isVisible]);
 
   useEffect(() => { if (isVisible) initValues(); }, [isVisible]);
 
@@ -39,7 +45,7 @@ const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = un
     if (actionType === 'create') {
       setValue('nom', ''); setValue('url', ''); setValue('prix', ''); setValue('destinataire', ''); setValue('image', undefined); setImageUri(undefined);
     } else {
-      setValue('id', wish.id); setValue('nom', wish.nom); setValue('url', wish.url); setValue('prix', wish.prix?.toString() ?? ''); setValue('destinataire', wish.destinataire); setValue('image', wish.image); setImageUri(wish.image);
+      setValue('id', wish?.id); setValue('nom', wish?.nom); setValue('url', wish?.url); setValue('prix', wish?.prix?.toString() ?? ''); setValue('destinataire', wish?.destinataire); setValue('image', wish?.image); setImageUri(wish?.image);
     }
   };
 
@@ -52,22 +58,22 @@ const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = un
   const submitRegister = async (data: Record<string, unknown>) => {
     if (loading) return;
     setLoading(true);
-    if (data.prix && !checkNumericFormat(data.prix)) {
+    if (data.prix && !checkNumericFormat(String(data.prix))) {
       Toast.show({ type: 'error', position: 'top', text1: 'Format du prix incorrect', text2: 'Seul les chiffres, virgule et point sont acceptés' });
       setLoading(false); return;
     }
-    if (data.prix) data.prix = parseFloat(data.prix.replace(',', '.'));
+    if (data.prix) data.prix = parseFloat((data.prix as string).replace(',', '.'));
     data['email'] = firebaseUser?.email ?? '';
     try {
-      if (imageUri && imageUri !== wish.image) {
+      if (imageUri && imageUri !== wish?.image) {
         const uploadedUrl = await FileStorageService.uploadImage(imageUri, `wishes/${data.email}`);
         data['image'] = uploadedUrl;
       }
       if (actionType === 'modify') {
-        const reponse = await updateWish(String(data.id), data);
+        const reponse = await updateWish(String(data.id), data as unknown as UpdateWishPayload);
         closeModal(); onModify?.(reponse);
       } else {
-        await createWish(data);
+        await createWish(data as unknown as CreateWishPayload);
         closeModal(); onModify?.();
       }
     } catch (err: any) {
@@ -78,49 +84,49 @@ const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = un
     }
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     form: { width: '100%', paddingBottom: 40, flex: 1 },
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { alignItems: 'center', width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.default_dark },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark },
+    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.textPrimary },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.surfaceVariant, color: colors.textPrimary },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
     imageContainer: { alignItems: 'center', marginBottom: 15 },
     imagePreview: { width: 100, height: 100, borderRadius: 10, marginBottom: 8 },
-  });
+  } as const;
 
   return (
-    <ModalEditGeneric isVisible={isVisible} setVisible={setVisible} arrayHeight={['90%']}>
+    <AppSheet ref={sheetRef} snapPoints={['90%']} keyboardBehavior="extend" onDismiss={closeModal}>
       <AvatarPicker onChange={(uri) => { setImageUri(uri); setValue('image', uri); }} />
       <View style={styles.form}>
         <View style={styles.containerActionsButtons}>
           <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
+            <Text style={[{ color: colors.textSecondary }, styles.textFontRegular]}>Annuler</Text>
           </TouchableOpacity>
           <View style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.default_dark }]}>Souhait</Text>
+            <Text style={[styles.textFontBold, { fontSize: 16, color: colors.textPrimary }]}>Souhait</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-            {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>{actionType === 'modify' ? 'Modifier' : 'Créer'}</Text>}
+            {loading ? <ActivityIndicator size={10} color={colors.textPrimary} /> : <Text style={[{ color: colors.textPrimary }, styles.textFontRegular]}>{actionType === 'modify' ? 'Modifier' : 'Créer'}</Text>}
           </TouchableOpacity>
         </View>
-        <Divider />
+        <AppDivider />
         <KeyboardAwareScrollView keyboardShouldPersistTaps="handled" enableOnAndroid={true} extraScrollHeight={10} enableResetScrollToCoords={false}>
           <View style={styles.formContainer}>
             <View style={styles.imageContainer}>
-              {imageUri ? <Image source={{ uri: imageUri }} style={styles.imagePreview} contentFit="cover" /> : <View style={[styles.imagePreview, { backgroundColor: colors.quaternary, justifyContent: 'center', alignItems: 'center' }]}><FontAwesome name="image" size={30} color={colors.secondary} /></View>}
+              {imageUri ? <Image source={{ uri: imageUri }} style={styles.imagePreview} contentFit="cover" /> : <View style={[styles.imagePreview, { backgroundColor: colors.surfaceVariant, justifyContent: 'center', alignItems: 'center' }]}><FontAwesome name="image" size={30} color={colors.secondary} /></View>}
               <TouchableOpacity onPress={() => setAvatarPickerVisible(true)}>
                 <Text style={[styles.textFontRegular, { color: colors.primary }]}>{imageUri ? 'Modifier l\'image' : 'Ajouter une image'}</Text>
               </TouchableOpacity>
               {imageUri && <TouchableOpacity onPress={() => { setImageUri(undefined); setValue('image', undefined); }} style={{ marginTop: 5 }}>
-                <Text style={[styles.textFontRegular, { color: 'red' }]}>Supprimer l'image</Text>
+                <Text style={[styles.textFontRegular, { color: colors.error }]}>Supprimer l'image</Text>
               </TouchableOpacity>}
             </View>
             <View style={styles.inputContainer}>
-              <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{ color: 'red' }}>*</Text></Text>
-              {errors.nom && <Text style={{ color: 'red' }}>Nom obligatoire</Text>}
+              <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{ color: colors.error }}>*</Text></Text>
+              {errors.nom && <Text style={{ color: colors.error }}>Nom obligatoire</Text>}
               <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Mon souhait" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('nom', text)} defaultValue={watch('nom')} {...register('nom', { required: true })} />
             </View>
             <View style={styles.inputContainer}>
@@ -138,7 +144,7 @@ const ModalWish = ({ isVisible, setVisible, actionType, wish = {}, onModify = un
           </View>
         </KeyboardAwareScrollView>
       </View>
-    </ModalEditGeneric>
+    </AppSheet>
   );
 };
 

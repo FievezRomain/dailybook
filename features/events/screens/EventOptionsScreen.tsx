@@ -9,7 +9,7 @@ import { useEventMutations } from '../../../hooks/queries/useEventsQuery';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
 import type { CreateEventPayload } from '../types';
-import Button from '../../../shared/components/inputs/Button';
+import Button from '../../../shared/components/ui/AppButton';
 
 export default function EventOptionsScreen({ route, navigation }: AppStackScreenProps<'EventWizardOptions'>) {
   const { colors, fonts } = useAppTheme();
@@ -51,18 +51,18 @@ export default function EventOptionsScreen({ route, navigation }: AppStackScreen
 
   const OptionRow = ({ label, value, onToggle }: { label: string; value: boolean; onToggle: (v: boolean) => void }) => (
     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.background, borderRadius: 14, paddingHorizontal: 16, paddingVertical: 14, marginBottom: 10 }}>
-      <Text style={{ fontSize: 15, fontFamily: fonts.bodyMedium.fontFamily, color: colors.default_dark }}>{label}</Text>
-      <Switch value={value} onValueChange={onToggle} thumbColor={value ? colors.primary : colors.onSurface} trackColor={{ false: colors.onSurface, true: colors.primary + '80' }} />
+      <Text style={{ fontSize: 15, fontFamily: fonts.bodyMedium.fontFamily, color: colors.textPrimary }}>{label}</Text>
+      <Switch value={value} onValueChange={onToggle} thumbColor={value ? colors.primary : colors.surfaceVariant} trackColor={{ false: colors.surfaceVariant, true: colors.primary + '80' }} />
     </View>
   );
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <View style={{ paddingTop: 56, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12 }}>
-          <Entypo name="chevron-left" size={24} color={colors.default_dark} />
+          <Entypo name="chevron-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={{ fontSize: 22, color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily }}>Options</Text>
+        <Text style={{ fontSize: 22, color: colors.textPrimary, fontFamily: fonts.bodyLarge.fontFamily }}>Options</Text>
       </View>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}>
         <OptionRow

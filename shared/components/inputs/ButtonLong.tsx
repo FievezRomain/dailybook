@@ -11,8 +11,8 @@ interface ButtonLongProps {
 const ButtonLong: React.FC<ButtonLongProps> = ({ children, type, onPress }) => {
   const { colors } = useAppTheme();
 
-  let backgroundColor = colors.background;
-  let color = colors.default_dark;
+  let backgroundColor: string = colors.background;
+  let color: string = colors.default_dark;
 
   if (type === 'primary') {
     backgroundColor = colors.primary;

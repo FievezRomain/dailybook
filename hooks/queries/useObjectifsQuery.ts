@@ -22,16 +22,16 @@ export function useObjectifMutations() {
     onMutate: async (body) => {
       await queryClient.cancelQueries({ queryKey: OBJECTIFS_KEY });
       const snapshot = queryClient.getQueryData<Objectif[]>(OBJECTIFS_KEY);
-      const optimistic: Objectif = {
-        ...body,
+      const optimisticItem: Objectif = {
         id: -1,
+        title: body.title,
         animaux: body.animaux ?? [],
         sousetapes: [],
-        datedebut: new Date(),
-        datefin: new Date(),
+        datedebut: new Date(body.datedebut ?? Date.now()),
+        datefin: new Date(body.datefin ?? Date.now()),
         syncing: true,
       };
-      queryClient.setQueryData<Objectif[]>(OBJECTIFS_KEY, (prev = []) => [optimistic, ...prev]);
+      queryClient.setQueryData<Objectif[]>(OBJECTIFS_KEY, (prev = []) => [optimisticItem, ...prev]);
       return { snapshot };
     },
     onError: async (_err, _vars, ctx) => {
@@ -51,7 +51,7 @@ export function useObjectifMutations() {
       await queryClient.cancelQueries({ queryKey: OBJECTIFS_KEY });
       const snapshot = queryClient.getQueryData<Objectif[]>(OBJECTIFS_KEY);
       queryClient.setQueryData<Objectif[]>(OBJECTIFS_KEY, (prev = []) =>
-        prev.map((item) => (item.id === Number(id) ? { ...item, ...body, syncing: true } : item)),
+        prev.map((item) => (item.id === Number(id) ? { ...item, ...body, syncing: true } as unknown as Objectif : item)),
       );
       return { snapshot };
     },

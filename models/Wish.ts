@@ -4,7 +4,12 @@ export type Wish = {
     destinataire: string;
     acquis: boolean;
     url?: string;
-    prix?: number;
+    /**
+     * Le backend stocke le prix en `str` (Pydantic `prix: str | None`).
+     * Conserver le type string côté mobile pour rester aligné.
+     * Les conversions numériques (parseFloat) restent locales aux composants.
+     */
+    prix?: string | null;
     image?: string;
     previousimage?: string;
     /** UI-only — true pendant la sync optimiste */

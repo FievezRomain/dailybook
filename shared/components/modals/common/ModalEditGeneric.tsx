@@ -1,6 +1,5 @@
-import React, { useState, useCallback, useRef } from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { Portal } from 'react-native-paper';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
+import { View, TouchableOpacity, StyleSheet, Modal } from 'react-native';
 import BottomSheet, { BottomSheetScrollView, useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
 import Toast from 'react-native-toast-message';
 import { useAppTheme } from '../../../../theme/useAppTheme';
@@ -28,50 +27,52 @@ const ModalEditGeneric = ({
   const [isOpen, setOpen] = useState(false);
   const { colors } = useAppTheme();
 
+  const snapPoints = useMemo(() => arrayHeight, [arrayHeight.join('|')]);
+
+  const handlePressOverModal = useCallback(() => {
+    bottomSheet.current?.close();
+    setTimeout(() => setOpen(false), 80);
+  }, []);
+
   React.useEffect(() => {
     if (!isVisible) {
       handlePressOverModal();
     } else {
-      setOpen(true);
+      setOpen((open) => (open ? open : true));
     }
-  }, [isVisible]);
-
-  const handlePressOverModal = useCallback(() => {
-    bottomSheet?.current?.close();
-    setTimeout(() => setOpen(false), 150);
-  }, []);
+  }, [handlePressOverModal, isVisible]);
 
   const styles = StyleSheet.create({
     contentContainer: { flex: 1 },
   });
 
   const animationConfigs = useBottomSheetSpringConfigs({
-    stiffness: 150,
-    damping: 20,
+    stiffness: 220,
+    damping: 28,
     mass: 1,
     overshootClamping: false,
-    restSpeedThreshold: 0.3,
-    restDisplacementThreshold: 0.3,
   });
 
   if (!isVisible && !isOpen) return null;
 
   return (
-    <Portal>
-      <Portal><Toast /></Portal>
+    <Modal transparent statusBarTranslucent animationType="none" visible={isVisible || isOpen}>
+      <Toast />
       <View style={{ height: '100%', width: '100%' }}>
         <TouchableOpacity style={{ flex: 1 }} onPress={handlePressOverModal} />
         <BottomSheet
           ref={bottomSheet}
-          snapPoints={arrayHeight}
-          index={arrayHeight.length - 1}
+          snapPoints={snapPoints}
+          index={snapPoints.length - 1}
           enableDynamicSizing={false}
           containerStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
           enablePanDownToClose={true}
           enableOverDrag={true}
           enableContentPanningGesture={scrollInside}
           animationConfigs={animationConfigs}
-          onClose={() => setVisible(false)}
+          onClose={() => {
+            if (isVisible) setVisible(false);
+          }}
           handleStyle={handleStyle ?? undefined}
           handleIndicatorStyle={handleIndicatorStyle ?? undefined}
           backgroundStyle={{ backgroundColor: colors.background }}
@@ -81,7 +82,7 @@ const ModalEditGeneric = ({
           </BottomSheetScrollView>
         </BottomSheet>
       </View>
-    </Portal>
+    </Modal>
   );
 };
 

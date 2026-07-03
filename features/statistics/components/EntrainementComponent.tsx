@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { ActivityIndicator, View, Text, StyleSheet, FlatList, TouchableOpacity, SectionList } from 'react-native';
-import { IconButton } from 'react-native-paper';
+﻿import React, { useState, useEffect, useRef } from 'react';
+import { ActivityIndicator, View, Text, FlatList, TouchableOpacity, SectionList } from 'react-native';
+import { AppIconButton } from '../../../shared/components/ui';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import EventCard from '../../../shared/components/cards/EventCard';
 import Toast from "react-native-toast-message";
@@ -158,7 +158,7 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
     }
     
 
-    const styles = StyleSheet.create({
+    const styles = {
         container:{
             width: "90%",
             alignSelf: "center"
@@ -181,7 +181,7 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
             padding: 10,
             borderRadius: 8,
             marginBottom: 10,
-            shadowColor: colors.default_dark,
+            shadowColor: colors.textPrimary,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowRadius: 5,
@@ -201,9 +201,9 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
             alignItems: "center"
         },
         textColor:{
-            color: colors.default_dark
+            color: colors.textPrimary
         },
-    })
+    } as const;
 
     if( loading ){
         return <ActivityIndicator size="large" />;
@@ -233,9 +233,9 @@ const EntrainementComponent = ({ data, chartConfig, chartParameters }: EventChar
                                 </View>
                                 <View style={styles.categorieContainer}>
                                 {expandedDate === item.date ?
-                                    <IconButton icon={"chevron-up"} size={20} iconColor={colors.default_dark} />
+                                    <AppIconButton icon={"chevron-up"} size={20} color={colors.textPrimary} />
                                 :
-                                    <IconButton icon={"chevron-down"} size={20} iconColor={colors.default_dark} />
+                                    <AppIconButton icon={"chevron-down"} size={20} color={colors.textPrimary} />
                                 }
                                 </View>
                                 

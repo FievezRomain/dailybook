@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Image, FlatList } from 'react-native';
 import StatePicker from '../../../shared/components/inputs/StatePicker';
 import EventCard from '../../../shared/components/cards/EventCard';
 import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
@@ -13,8 +13,8 @@ const MedicalBook = ({ animal, navigation }: any) => {
     const [eventsSoins, setEventsSoins] = useState<any[]>([]);
     const [eventsRdv, setEventsRdv] = useState<any[]>([]);
     const arrayState = [
-        {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
-        {value: 'Soins', label: 'Soins', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'Rendez-vous', label: 'Rendez-vous', checkedColor: colors.textPrimary, uncheckedColor: colors.surfaceVariant, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'Soins', label: 'Soins', checkedColor: colors.textPrimary, uncheckedColor: colors.surfaceVariant, style: {borderRadius: 5}, rippleColor: "transparent"},
       ];
     const { data: events = [] } = useEventsQuery();
 
@@ -69,7 +69,7 @@ const MedicalBook = ({ animal, navigation }: any) => {
         }), 350);
     }
 
-    const styles = StyleSheet.create({
+    const styles = {
         eventContainer:{
             display: "flex",
             flexDirection: "row",
@@ -84,7 +84,7 @@ const MedicalBook = ({ animal, navigation }: any) => {
         textFontBold:{
             fontFamily: fonts.bodyLarge.fontFamily
         }
-    });
+    } as const;
 
     return(
         <>
@@ -94,7 +94,7 @@ const MedicalBook = ({ animal, navigation }: any) => {
                         arrayState={arrayState}
                         handleChange={handleStateChange}
                         defaultState={typeEvent === undefined ? "Rendez-vous" : typeEvent}
-                        color={colors.quaternary}
+                        color={colors.surfaceVariant}
                     />
                 </View>
                 

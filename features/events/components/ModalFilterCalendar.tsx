@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { useTranslation } from 'react-i18next';
+import AppSheet from '../../../shared/components/ui/AppSheet';
 import AnimalsPicker from '../../../shared/components/inputs/AnimalsPicker';
-import { CalendarFilter } from '../../../business/models/CalendarFilter';
+import { CalendarFilter } from '../models/CalendarFilter';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { Animal } from '../../../models/Animal';
 
@@ -27,13 +29,19 @@ const typesList = [
 
 const ModalFilterCalendar = ({ modalVisible, setModalVisible, setFilter, filter }: ModalFilterCalendarProps) => {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('events');
+  const { t: tc } = useTranslation('common');
   const { register, handleSubmit, setValue, watch } = useForm();
   const { data: animauxData } = useAnimalsQuery();
   const [animaux, setAnimaux] = useState<Animal[]>([]);
   const [selectedAnimals, setSelectedAnimals] = useState<Animal[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
+  const sheetRef = useRef<BottomSheetModal>(null);
 
   useEffect(() => { if (animauxData) setAnimaux(animauxData); }, [animauxData]);
+  useEffect(() => {
+    if (modalVisible) { sheetRef.current?.present(); } else { sheetRef.current?.dismiss(); }
+  }, [modalVisible]);
   useEffect(() => {
     if (modalVisible) {
       setSelectedAnimals((filter?.animals ?? []) as any[]);
@@ -56,39 +64,39 @@ const ModalFilterCalendar = ({ modalVisible, setModalVisible, setFilter, filter 
 
   const reset = () => { setSelectedAnimals([]); setSelectedTypes([]); setValue('animaux', []); };
 
-  const styles = StyleSheet.create({
+  const styles = {
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingBottom: 15, paddingTop: 5 },
-    bottomBar: { height: 1, backgroundColor: colors.quaternary, marginHorizontal: 20, marginBottom: 10 },
+    bottomBar: { height: 1, backgroundColor: colors.border, marginHorizontal: 20, marginBottom: 10 },
     contentCard: { paddingHorizontal: 20, paddingBottom: 20 },
     filtersContainer: { marginTop: 10 },
-    filterTitle: { fontSize: 15, marginBottom: 8, color: colors.default_dark },
+    filterTitle: { fontSize: 15, marginBottom: 8, color: colors.textPrimary },
     itemContainer: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 5 },
-    item: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: colors.quaternary, marginRight: 8, marginBottom: 8 },
-    selected: { backgroundColor: colors.accent },
-    title: { fontSize: 13, color: colors.default_dark },
-    actionText: { color: colors.default_dark, fontSize: 16 },
-    cancelText: { color: colors.tertiary, fontSize: 16 },
-    headerTitle: { fontSize: 16, color: colors.default_dark },
+    item: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: colors.surfaceVariant, marginRight: 8, marginBottom: 8 },
+    selected: { backgroundColor: colors.primary },
+    title: { fontSize: 13, color: colors.textPrimary },
+    actionText: { color: colors.textPrimary, fontSize: 16 },
+    cancelText: { color: colors.textSecondary, fontSize: 16 },
+    headerTitle: { fontSize: 16, color: colors.textPrimary },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
-    <ModalEditGeneric isVisible={modalVisible} setVisible={setModalVisible} arrayHeight={['50%']}>
+    <AppSheet ref={sheetRef} snapPoints={['50%']} onDismiss={() => setModalVisible(false)} scrollable>
       <View style={styles.containerActionsButtons}>
         <TouchableOpacity onPress={() => setModalVisible(false)}>
-          <Text style={[styles.cancelText, styles.textFontRegular]}>Annuler</Text>
+          <Text style={[styles.cancelText, styles.textFontRegular]}>{tc('cancel')}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={reset}>
-          <Text style={[styles.actionText, styles.textFontRegular]}>Réinitialiser</Text>
+          <Text style={[styles.actionText, styles.textFontRegular]}>{t('reset')}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={sendFilter}>
-          <Text style={[styles.actionText, styles.textFontBold]}>Appliquer</Text>
+          <Text style={[styles.actionText, styles.textFontBold]}>{t('apply')}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.bottomBar} />
       <View style={styles.contentCard}>
-        <Text style={[styles.headerTitle, styles.textFontBold]}>Filtrer les événements</Text>
+        <Text style={[styles.headerTitle, styles.textFontBold]}>{t('filterTitle')}</Text>
         <View style={styles.filtersContainer}>
           <AnimalsPicker animaux={animaux} mode="multiple" selected={selectedAnimals} setSelected={setSelectedAnimals} setValue={setValue} valueName="animaux" />
           <View>
@@ -103,7 +111,7 @@ const ModalFilterCalendar = ({ modalVisible, setModalVisible, setFilter, filter 
           </View>
         </View>
       </View>
-    </ModalEditGeneric>
+    </AppSheet>
   );
 };
 

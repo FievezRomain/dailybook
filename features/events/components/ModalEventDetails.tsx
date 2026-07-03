@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, FlatList } from 'react-native';
 import { Image } from 'expo-image';
 import { Entypo, FontAwesome6, FontAwesome } from '@expo/vector-icons';
 import RatingInput from '../../../shared/components/inputs/RatingInput';
@@ -10,7 +10,10 @@ import LoggerService from '../../../services/logs/LoggerService';
 import FileStorageService from '../../../services/aws/FileStorageService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { useTranslation } from 'react-i18next';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import AppSheet from '../../../shared/components/ui/AppSheet';
+import { eventTypeColors } from '../../../theme/tokens';
 import Constants from 'expo-constants';
 import instanceDateUtils from '../../../shared/utils/DateUtils';
 import DocumentButton from '../../../shared/components/common/DocumentButton';
@@ -27,13 +30,17 @@ interface ModalEventDetailsProps {
 
 const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, handleEventsChange }: ModalEventDetailsProps) => {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('events');
+  const { t: tc } = useTranslation('common');
   const { firebaseUser } = useAuthStore();
   const fileStorageService = new FileStorageService();
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [localEvent, setLocalEvent] = useState<any>(event ?? undefined);
+  const sheetRef = useRef<BottomSheetModal>(null);
 
+  useEffect(() => { if (isVisible) { sheetRef.current?.present(); } else { sheetRef.current?.dismiss(); } }, [isVisible]);
   useEffect(() => { setLocalEvent(event ?? undefined); }, [isVisible]);
 
   const closeModal = () => setVisible(false);
@@ -42,8 +49,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
 
   const getColorEventType = () => {
     if (event === undefined) return;
-    const map: Record<string, string> = { depense: colors.quaternary, balade: colors.accent, soins: colors.neutral, concours: colors.primary, entrainement: colors.tertiary, autre: colors.error, rdv: colors.text };
-    return map[event.eventtype];
+    return (eventTypeColors as Record<string, string>)[event.eventtype];
   };
 
   const getTitleEventType = () => {
@@ -118,14 +124,12 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
 
   const handleInputChange = (key: string, value: unknown) => setLocalEvent((prev: any) => prev ? ({ ...prev, [key]: value }) : prev);
 
-  const textColor = useLightText() ? colors.background : colors.default_dark;
+  const textColor = useLightText() ? colors.background : colors.textPrimary;
   const eventColor = getColorEventType();
 
-  const styles = StyleSheet.create({
+  const styles = {
     form: { width: '100%', paddingBottom: 40 },
     containerActionsButtons: { flexDirection: 'row', paddingBottom: 15, backgroundColor: eventColor },
-    handleStyleModal: { backgroundColor: eventColor, borderTopEndRadius: 15, borderTopStartRadius: 15, marginBottom: -1 },
-    handleIndicatorStyle: { backgroundColor: colors.background },
     tableauPrimaryInfos: { paddingVertical: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     tableauSecondaryInfo: { paddingVertical: 10, justifyContent: 'center', alignItems: 'center', width: '100%' },
     tableauInfos: { marginLeft: 30, marginTop: 10 },
@@ -134,14 +138,14 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
     avatarText: { color: colors.background, textAlign: 'center' as const },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-    colorTextBlack: { color: colors.default_dark },
+    colorTextBlack: { color: colors.textPrimary },
     colorTextWhite: { color: colors.background },
-    input: { backgroundColor: colors.quaternary, padding: 10, borderRadius: 5, color: colors.default_dark },
-  });
+    input: { backgroundColor: colors.surfaceVariant, padding: 10, borderRadius: 5, color: colors.textPrimary },
+  } as const;
 
   const getTextEventType = () => {
     const textStyle = useLightText() ? styles.colorTextWhite : styles.colorTextBlack;
-    const overdueColor = useLightText() ? colors.background : colors.accent;
+    const overdueColor = useLightText() ? colors.background : colors.primary;
     return (
       <>
         <Text style={[textStyle, styles.textFontBold]}>{event?.nom}</Text>
@@ -152,16 +156,16 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
   };
 
   return (
-    <ModalEditGeneric isVisible={isVisible} setVisible={setVisible} arrayHeight={['90%']} handleStyle={styles.handleStyleModal} handleIndicatorStyle={styles.handleIndicatorStyle}>
+    <AppSheet ref={sheetRef} snapPoints={['90%']} onDismiss={() => setVisible(false)}>
       <View style={styles.containerActionsButtons}>
         <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
-          <Text style={[{ color: colors.background }, styles.textFontRegular]}>Annuler</Text>
+          <Text style={[{ color: colors.background }, styles.textFontRegular]}>{tc('cancel')}</Text>
         </TouchableOpacity>
         <View style={{ width: '33.33%', alignItems: 'center' }}>
           <Text style={[styles.textFontBold, { color: colors.background }]}>{getTitleEventType()}</Text>
         </View>
         <TouchableOpacity onPress={() => handleModifyEvent()} style={{ width: '33.33%', alignItems: 'center' }}>
-          {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.background }, styles.textFontRegular]}>Enregistrer</Text>}
+          {loading ? <ActivityIndicator size={10} color={colors.textPrimary} /> : <Text style={[{ color: colors.background }, styles.textFontRegular]}>{tc('save')}</Text>}
         </TouchableOpacity>
       </View>
       <View style={[styles.tableauPrimaryInfos, { backgroundColor: hexToRgba(eventColor ?? '', 0.5) ?? undefined }]}>
@@ -174,7 +178,7 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             if (!animal) return null;
             return (
               <View key={animal.id} style={{ marginRight: -3 }}>
-                <View style={{ height: 25, width: 25, backgroundColor: colors.default_dark, borderRadius: 15, justifyContent: 'center' }}>
+                <View style={{ height: 25, width: 25, backgroundColor: colors.textPrimary, borderRadius: 15, justifyContent: 'center' }}>
                   {animal.image != null ? <Image style={styles.avatar} source={{ uri: fileStorageService.getFileUrl(animal.image, firebaseUser?.uid ?? '') }} cachePolicy="disk" /> : <Text style={[styles.avatarText, styles.textFontRegular]}>{animal.nom[0]}</Text>}
                 </View>
               </View>
@@ -213,11 +217,11 @@ const ModalEventDetails = ({ event = undefined, isVisible, setVisible, animaux, 
             </View>
           )}
           {(event?.eventtype === 'rdv' || event?.eventtype === 'soins') && (
-            <FlatList data={(event as any).documents} keyExtractor={(_item: any, index: number) => index.toString()} ListHeaderComponent={<Text style={[styles.textFontRegular, { color: colors.default_dark }]}>Documents :</Text>} ListEmptyComponent={<Text style={{ color: colors.default_dark }}>Aucun document lié à l'événement</Text>} numColumns={3} scrollEnabled={false} renderItem={({ item }) => <DocumentButton item={item} event={event as any} />} columnWrapperStyle={{ justifyContent: 'space-around' }} style={{ paddingTop: 10, paddingRight: 30 }} />
+            <FlatList data={(event as any).documents} keyExtractor={(_item: any, index: number) => index.toString()} ListHeaderComponent={<Text style={[styles.textFontRegular, { color: colors.textPrimary }]}>{t('documentsLabel')}</Text>} ListEmptyComponent={<Text style={{ color: colors.textPrimary }}>{t('noDocument')}</Text>} numColumns={3} scrollEnabled={false} renderItem={({ item }) => <DocumentButton item={item} event={event as any} />} columnWrapperStyle={{ justifyContent: 'space-around' }} style={{ paddingTop: 10, paddingRight: 30 }} />
           )}
         </View>
       </KeyboardAwareScrollView>
-    </ModalEditGeneric>
+    </AppSheet>
   );
 };
 

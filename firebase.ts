@@ -2,7 +2,7 @@ import { initializeApp, FirebaseApp } from 'firebase/app';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore – getReactNativePersistence is available at runtime in RN but missing from TS types
 import { initializeAuth, getReactNativePersistence, Auth } from "firebase/auth";
-import { secureStorage } from './utils/secureStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { env } from './config/env';
 
 const firebaseConfig = {
@@ -29,7 +29,7 @@ const getFirebaseAuth = (): Auth => {
   if (!auth) {
     const firebaseApp = getFirebaseApp();
     auth = initializeAuth(firebaseApp, {
-      persistence: getReactNativePersistence(secureStorage)
+      persistence: getReactNativePersistence(AsyncStorage),
     });
   }
   return auth;

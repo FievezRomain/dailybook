@@ -33,6 +33,25 @@ export default [
       'react-hooks/exhaustive-deps': 'warn',
       'security/detect-object-injection': 'warn',
       'no-console': 'warn',
+      // Block react-native-paper imports outside shared/ — enforce migration to Tamagui
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'react-native-paper',
+              message: 'Use components from shared/components/ui/ instead of react-native-paper.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  // Allow react-native-paper in shared/ (bridge components during migration)
+  {
+    files: ['shared/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': 'off',
     },
   },
 ];

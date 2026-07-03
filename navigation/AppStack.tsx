@@ -1,6 +1,5 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useNavigationState, type NavigationState, type PartialState } from '@react-navigation/native';
 import type { AppStackParamList } from './types';
 import TabStack from './TabStack';
 import {
@@ -29,47 +28,64 @@ import AddingButton from '../shared/components/inputs/AddingButton';
 
 const Stack = createNativeStackNavigator<AppStackParamList>();
 
-const HIDDEN_FAB_ROUTES = ['Settings', 'Account', 'DiscoverPremium'];
-
-function getActiveRouteName(state: NavigationState | PartialState<NavigationState>): string | null {
-  if (!state?.routes?.length) return null;
-  const route = state.routes[state.index ?? 0];
-  if (route.state) return getActiveRouteName(route.state as NavigationState);
-  return route.name;
+function withFab<P extends object>(Screen: React.ComponentType<P>, showFab = true) {
+  return function ScreenWithFab(props: P) {
+    return (
+      <>
+        <Screen {...props} />
+        {showFab && <AddingButton />}
+      </>
+    );
+  };
 }
 
-export function AppStack({ navigation }: { navigation?: any }) {
-  const currentRouteName = useNavigationState((state) => getActiveRouteName(state));
-  const showFAB = !HIDDEN_FAB_ROUTES.includes(currentRouteName ?? '');
+const TabWithFab = withFab(TabStack);
+const SettingsWithoutFab = withFab(SettingsScreen, false);
+const NoteWithFab = withFab(NoteScreen);
+const ContactWithFab = withFab(ContactScreen);
+const WishWithFab = withFab(WishScreen);
+const DiscoverPremiumWithoutFab = withFab(DiscoverPremiumScreen, false);
+const AccountWithoutFab = withFab(AccountScreen, false);
+const GroupListWithFab = withFab(GroupListScreen);
+const GroupDetailWithFab = withFab(GroupDetailScreen);
+const NotificationWithFab = withFab(NotificationScreen);
+const AnimalDetailWithFab = withFab(AnimalDetailScreen);
+const AnimalAddWizardWithFab = withFab(AnimalAddWizardScreen);
+const EventEntryWithFab = withFab(EventEntryScreen);
+const EventAIWithFab = withFab(EventAIScreen);
+const EventTypeWithFab = withFab(EventTypeScreen);
+const EventFormWithFab = withFab(EventFormScreen);
+const EventAnimalsWithFab = withFab(EventAnimalsScreen);
+const EventOptionsWithFab = withFab(EventOptionsScreen);
+const NoteAIWithFab = withFab(NoteAIScreen);
+const ObjectifListWithFab = withFab(ObjectifListScreen);
+const ObjectifAddWithFab = withFab(ObjectifAddScreen);
 
+export function AppStack() {
   return (
-    <>
-      <Stack.Navigator>
-        <Stack.Screen name="Tab" component={TabStack} options={{ headerShown: false }} />
-        <Stack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Note" component={NoteScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Wish" component={WishScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="DiscoverPremium" component={DiscoverPremiumScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Account" component={AccountScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="GroupList" component={GroupListScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="GroupDetail" component={GroupDetailScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Notification" component={NotificationScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="AnimalDetail" component={AnimalDetailScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="AnimalAddWizard" component={AnimalAddWizardScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="EventEntry" component={EventEntryScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="EventAI" component={EventAIScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="EventWizardType" component={EventTypeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="EventWizardForm" component={EventFormScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="EventWizardAnimals" component={EventAnimalsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="EventWizardOptions" component={EventOptionsScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="NoteAI" component={NoteAIScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="ObjectifList" component={ObjectifListScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="ObjectifAdd" component={ObjectifAddScreen} options={{ headerShown: false }} />
-      </Stack.Navigator>
-
-      {showFAB && <AddingButton navigation={navigation} />}
-    </>
+    <Stack.Navigator>
+      <Stack.Screen name="Tab" component={TabWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="Settings" component={SettingsWithoutFab} options={{ headerShown: false }} />
+      <Stack.Screen name="Note" component={NoteWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="Contact" component={ContactWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="Wish" component={WishWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="DiscoverPremium" component={DiscoverPremiumWithoutFab} options={{ headerShown: false }} />
+      <Stack.Screen name="Account" component={AccountWithoutFab} options={{ headerShown: false }} />
+      <Stack.Screen name="GroupList" component={GroupListWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="GroupDetail" component={GroupDetailWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="Notification" component={NotificationWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="AnimalDetail" component={AnimalDetailWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="AnimalAddWizard" component={AnimalAddWizardWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="EventEntry" component={EventEntryWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="EventAI" component={EventAIWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="EventWizardType" component={EventTypeWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="EventWizardForm" component={EventFormWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="EventWizardAnimals" component={EventAnimalsWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="EventWizardOptions" component={EventOptionsWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="NoteAI" component={NoteAIWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="ObjectifList" component={ObjectifListWithFab} options={{ headerShown: false }} />
+      <Stack.Screen name="ObjectifAdd" component={ObjectifAddWithFab} options={{ headerShown: false }} />
+    </Stack.Navigator>
   );
 }
 

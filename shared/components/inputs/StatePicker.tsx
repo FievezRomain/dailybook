@@ -1,7 +1,6 @@
-import React from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { SegmentedButtons } from 'react-native-paper';
 
 interface StateOption {
   value: string;
@@ -22,25 +21,64 @@ const StatePicker: React.FC<StatePickerProps> = ({
   defaultState,
   color,
 }) => {
-  const { colors, fonts } = useAppTheme();
-
-  const styles = StyleSheet.create({
-    container: { flex: 1, alignItems: 'center' },
-  });
+  const { colors, fonts, tokens } = useAppTheme();
+  const activeColor = color ?? colors.primary;
 
   return (
     <SafeAreaView style={styles.container}>
-      <SegmentedButtons
-        value={defaultState ?? ''}
-        onValueChange={handleChange}
-        buttons={arrayState}
-        theme={{
-          colors: { secondaryContainer: color ?? colors.quaternary },
-          fonts: { labelLarge: fonts.labelMedium },
-        }}
-      />
+      <View style={[styles.row, { borderColor: activeColor }]}>
+        {arrayState.map((option, index) => {
+          const isSelected = option.value === defaultState;
+          const isFirst = index === 0;
+          const isLast = index === arrayState.length - 1;
+          return (
+            <TouchableOpacity
+              key={option.value}
+              onPress={() => handleChange(option.value)}
+              style={[
+                styles.segment,
+                {
+                  backgroundColor: isSelected ? activeColor : 'transparent',
+                  borderRightWidth: isLast ? 0 : 0.5,
+                  borderRightColor: activeColor,
+                  borderTopLeftRadius: isFirst ? 8 : 0,
+                  borderBottomLeftRadius: isFirst ? 8 : 0,
+                  borderTopRightRadius: isLast ? 8 : 0,
+                  borderBottomRightRadius: isLast ? 8 : 0,
+                },
+              ]}
+            >
+              <Text
+                style={{
+                  fontFamily: fonts.bodyMedium.fontFamily,
+                  fontSize: 13,
+                  color: isSelected ? colors.background : activeColor,
+                }}
+              >
+                {option.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: { alignItems: 'center' },
+  row: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  segment: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default StatePicker;

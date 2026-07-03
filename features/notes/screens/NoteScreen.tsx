@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput, TouchableOpacity } from 'react-native';
+﻿import React, { useState } from 'react';
+import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -8,9 +8,11 @@ import NoteCard from '../components/NoteCard';
 import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
 import { useNotesQuery, useNoteMutations } from '../../../hooks/queries/useNotesQuery';
 import type { AppStackScreenProps } from '../../../navigation/types';
+import { useTranslation } from 'react-i18next';
 
 export default function NoteScreen({ navigation }: AppStackScreenProps<'Note'>) {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('notes');
   const { data: notes = [] } = useNotesQuery();
   const { update, remove } = useNoteMutations();
   const [searchQuery, setSearchQuery] = useState('');
@@ -25,23 +27,23 @@ export default function NoteScreen({ navigation }: AppStackScreenProps<'Note'>) 
       })
     : notes;
 
-  const styles = StyleSheet.create({
+  const styles = {
     container: { flex: 1 },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <TopTabSecondary message1="Vos" message2="Notes" />
       <View style={styles.container}>
-        <View style={{ flexDirection: 'row', alignContent: 'center', alignItems: 'center', backgroundColor: colors.background, marginBottom: 10, marginTop: 20, alignSelf: 'center', width: '90%', justifyContent: 'space-between', padding: 10, borderRadius: 5, shadowColor: colors.default_dark, elevation: 1, shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } }}>
+        <View style={{ flexDirection: 'row', alignContent: 'center', alignItems: 'center', backgroundColor: colors.background, marginBottom: 10, marginTop: 20, alignSelf: 'center', width: '90%', justifyContent: 'space-between', padding: 10, borderRadius: 5, shadowColor: colors.textPrimary, elevation: 1, shadowOpacity: 0.1, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-            <Ionicons name="search-outline" size={16} color={colors.default_dark} />
+            <Ionicons name="search-outline" size={16} color={colors.textPrimary} />
             <TextInput
-              placeholder="Recherche"
-              style={[{ marginLeft: 5, width: '100%', color: colors.default_dark }, styles.textFontRegular]}
-              placeholderTextColor={colors.default_dark}
+              placeholder={t('searchPlaceholder')}
+              style={[{ marginLeft: 5, width: '100%', color: colors.textPrimary }, styles.textFontRegular]}
+              placeholderTextColor={colors.textPrimary}
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
@@ -56,8 +58,8 @@ export default function NoteScreen({ navigation }: AppStackScreenProps<'Note'>) 
           ) : (
             <>
               {searchQuery.length > 0 && (
-                <Text style={{ marginBottom: 10, textAlign: 'center', color: colors.default_dark }}>
-                  Résultats de la recherche "{searchQuery}"
+                <Text style={{ marginBottom: 10, textAlign: 'center', color: colors.textPrimary }}>
+                  {t('searchResults', { query: searchQuery })}
                 </Text>
               )}
               <FlatList

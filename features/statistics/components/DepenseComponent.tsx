@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import PieChartComponent from '../../../shared/components/charts/PieChartComponent';
-import { ActivityIndicator, View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { IconButton } from 'react-native-paper';
+import { ActivityIndicator, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { AppIconButton } from '../../../shared/components/ui';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import EventCard from '../../../shared/components/cards/EventCard';
 import Toast from "react-native-toast-message";
@@ -43,7 +43,7 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }: EventChartComp
         setExpandedCategory(expandedCategory === category ? null : category);
     };
 
-    const styles = StyleSheet.create({
+    const styles = {
         container:{
             width: "90%",
             alignSelf: "center"
@@ -55,7 +55,7 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }: EventChartComp
             fontFamily: fonts.bodyMedium.fontFamily
         },
         textColor:{
-            color: colors.default_dark
+            color: colors.textPrimary
         },
         listEventContainer: {
             display: "flex",
@@ -69,7 +69,7 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }: EventChartComp
             padding: 10,
             borderRadius: 8,
             marginBottom: 10,
-            shadowColor: colors.default_dark,
+            shadowColor: colors.textPrimary,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowRadius: 5,
@@ -92,7 +92,7 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }: EventChartComp
             paddingLeft: 15,
             paddingRight: 15,
         },
-    })
+    } as const;
 
     if( loading ){
         return <ActivityIndicator size="large" />;
@@ -120,9 +120,9 @@ const DepenseComponent = ({ data, chartConfig, chartParameters }: EventChartComp
                                 </View>
                                 <View style={styles.categorieContainer}>
                                     {expandedCategory === item.name ?
-                                        <IconButton icon={"chevron-up"} size={20} iconColor={colors.default_dark} />
+                                        <AppIconButton icon={"chevron-up"} size={20} color={colors.textPrimary} />
                                     :
-                                        <IconButton icon={"chevron-down"} size={20} iconColor={colors.default_dark} />
+                                        <AppIconButton icon={"chevron-down"} size={20} color={colors.textPrimary} />
                                     }
                                     <Text style={[styles.text, styles.textColor]}>{item.exact_value} €</Text>
                                 </View>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { Image } from 'expo-image';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -8,17 +8,18 @@ import Toast from 'react-native-toast-message';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
 import InputTextInLine from '../../../shared/components/inputs/InputTextInLine';
 import AvatarPicker from '../../../shared/components/inputs/AvatarPicker';
-import Button from '../../../shared/components/inputs/Button';
+import Button from '../../../shared/components/ui/AppButton';
 import LoggerService from '../../../services/logs/LoggerService';
 import { uploadFile } from '../../../services/aws/FileStorageService';
 import { updateMe } from '../../../services/api/AuthService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
+import { useTranslation } from 'react-i18next';
 
 export default function AccountScreen({ navigation }: AppStackScreenProps<'Account'>) {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('common');
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
-
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const [displayName, setDisplayName] = useState(firebaseUser?.displayName ?? '');
@@ -61,12 +62,12 @@ export default function AccountScreen({ navigation }: AppStackScreenProps<'Accou
     }
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
-  });
+  } as const;
 
   return (
-    <View style={{ backgroundColor: colors.onSurface, height: '100%', justifyContent: 'space-between' }}>
+    <View style={{ backgroundColor: colors.surfaceVariant, height: '100%', justifyContent: 'space-between' }}>
       <View>
         <KeyboardAwareScrollView>
           <TopTabSecondary message1="Mon" message2="Compte" />
@@ -96,10 +97,10 @@ export default function AccountScreen({ navigation }: AppStackScreenProps<'Accou
       </View>
       <View style={{ width: '70%', alignSelf: 'center', marginBottom: 50 }}>
         {loading ? (
-          <ActivityIndicator size={30} color={colors.default_dark} />
+          <ActivityIndicator size={30} color={colors.textPrimary} />
         ) : (
           <Button isLong type="primary" size="m" onPress={submitModifications}>
-            <Text style={styles.textFontMedium}>Enregistrer</Text>
+            <Text style={styles.textFontMedium}>{t('save')}</Text>
           </Button>
         )}
       </View>

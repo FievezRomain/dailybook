@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import ModalEditGeneric from "../common/ModalEditGeneric";
-import Button from "../../inputs/Button";
+import Button from "../../ui/AppButton";
 import { useAppTheme } from "../../../../theme/useAppTheme";
 
 type ModalMultiSelectProps<T> = {

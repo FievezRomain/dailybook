@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -7,11 +7,13 @@ import Toast from 'react-native-toast-message';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { parseEvent } from '../../../services/api/AiService';
-import Button from '../../../shared/components/inputs/Button';
+import Button from '../../../shared/components/ui/AppButton';
+import { useTranslation } from 'react-i18next';
 import type { AppStackScreenProps } from '../../../navigation/types';
 
 export default function EventAIScreen({ navigation }: AppStackScreenProps<'EventAI'>) {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('events');
   const setFormData = useEventWizardStore((s) => s.setFormData);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,7 +21,7 @@ export default function EventAIScreen({ navigation }: AppStackScreenProps<'Event
 
   const handleParse = async () => {
     if (!text.trim()) {
-      Toast.show({ type: 'error', position: 'top', text1: 'Décrivez votre événement d\'abord' });
+      Toast.show({ type: 'error', position: 'top', text1: t('aiDescribeFirst') });
       return;
     }
     setLoading(true);
@@ -28,7 +30,7 @@ export default function EventAIScreen({ navigation }: AppStackScreenProps<'Event
       setPreview(result.parsed);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
     } catch {
-      Toast.show({ type: 'error', position: 'top', text1: "L'IA n'a pas pu analyser votre texte" });
+      Toast.show({ type: 'error', position: 'top', text1: t('aiParseError') });
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
     } finally {
       setLoading(false);
@@ -41,29 +43,29 @@ export default function EventAIScreen({ navigation }: AppStackScreenProps<'Event
     navigation.navigate('EventWizardAnimals', { formData: preview });
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     container: { flex: 1 },
     header: { paddingTop: 56, paddingHorizontal: 20, paddingBottom: 16, flexDirection: 'row', alignItems: 'center' },
-    title: { fontSize: 22, color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily, flex: 1 },
+    title: { fontSize: 22, color: colors.textPrimary, fontFamily: fonts.bodyLarge.fontFamily, flex: 1 },
     body: { paddingHorizontal: 20, flex: 1 },
     hint: { fontSize: 13, color: colors.secondary, fontFamily: fonts.default.fontFamily, marginBottom: 12 },
-    textArea: { backgroundColor: colors.quaternary, borderRadius: 12, padding: 16, color: colors.default_dark, fontFamily: fonts.default.fontFamily, fontSize: 16, minHeight: 120, textAlignVertical: 'top' },
+    textArea: { backgroundColor: colors.surfaceVariant, borderRadius: 12, padding: 16, color: colors.textPrimary, fontFamily: fonts.default.fontFamily, fontSize: 16, minHeight: 120, textAlignVertical: 'top' },
     previewCard: { backgroundColor: colors.background, borderRadius: 12, padding: 16, marginTop: 20, elevation: 2, shadowOpacity: 0.08, shadowRadius: 6, shadowOffset: { width: 0, height: 2 } },
-    previewTitle: { fontSize: 15, fontFamily: fonts.bodyMedium.fontFamily, color: colors.default_dark, marginBottom: 8 },
+    previewTitle: { fontSize: 15, fontFamily: fonts.bodyMedium.fontFamily, color: colors.textPrimary, marginBottom: 8 },
     previewRow: { flexDirection: 'row', marginBottom: 4 },
     previewKey: { fontSize: 13, color: colors.secondary, fontFamily: fonts.default.fontFamily, width: 120 },
-    previewVal: { fontSize: 13, color: colors.default_dark, fontFamily: fonts.default.fontFamily, flex: 1 },
+    previewVal: { fontSize: 13, color: colors.textPrimary, fontFamily: fonts.default.fontFamily, flex: 1 },
     footer: { padding: 20, paddingBottom: 40 },
-  });
+  } as const;
 
   const previewEntries = preview ? Object.entries(preview).filter(([, v]) => v !== undefined && v !== null && v !== '') : [];
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.container}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.container}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12 }}>
-            <Entypo name="chevron-left" size={24} color={colors.default_dark} />
+            <Entypo name="chevron-left" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.title}>Dictée intelligente</Text>
           <MaterialCommunityIcons name="robot-outline" size={24} color={colors.primary} />

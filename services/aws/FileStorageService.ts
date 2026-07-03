@@ -1,13 +1,13 @@
-import httpClient from '../api/httpClient';
 import LoggerService from '../logs/LoggerService';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
+import { FileService, type RessourceType } from '../api/FileService';
 
 /**
  * Upload un fichier directement vers S3 via une URL présignée obtenue du back-end.
  * Les credentials AWS ne sont jamais exposés côté client.
  *
- * @returns L'URL publique du fichier uploadé, ou undefined en cas d'erreur
+ * @returns Le s3Path du fichier uploadé, ou undefined en cas d'erreur
  */
 export async function uploadFile(
   fileUri: string,
@@ -17,24 +17,16 @@ export async function uploadFile(
   ressourceId: string,
 ): Promise<string | undefined> {
   try {
-    // 1. Demander une URL présignée au back
-    const { upload_url, file_url } = await httpClient
-      .post('/files/upload-url', { fileName, contentType, ressourceType, ressourceId })
-      .then((r) => r.data);
-
-    // 2. Lire le fichier et l'uploader directement sur S3
-    const response = await fetch(fileUri);
-    const blob = await response.blob();
-
-    await fetch(upload_url, {
-      method: 'PUT',
-      headers: { 'Content-Type': contentType },
-      body: blob,
-    });
-
-    return file_url;
+    return await FileService.upload(
+      fileUri,
+      fileName,
+      contentType,
+      ressourceType as RessourceType,
+      ressourceId,
+    );
   } catch (error: unknown) {
-    LoggerService.log(`Erreur pendant le téléchargement d'un fichier : ${(error as Error).message}`);
+    const message = error instanceof Error ? error.message : String(error);
+    LoggerService.log(`Erreur pendant le téléchargement d'un fichier : ${message}`);
     return undefined;
   }
 }
@@ -47,10 +39,7 @@ export async function getFileUrl(
   ressourceType: string,
   ressourceId: string,
 ): Promise<string> {
-  const response = await httpClient.get(`/files/${filename}`, {
-    params: { ressourceType, ressourceId },
-  });
-  return response.data;
+  return FileService.getDownloadUrl(filename, ressourceType as RessourceType, ressourceId);
 }
 
 /**
@@ -61,9 +50,7 @@ export async function deleteFile(
   ressourceType: string,
   ressourceId: string,
 ): Promise<void> {
-  await httpClient.delete(`/files/${filename}`, {
-    params: { ressourceType, ressourceId },
-  });
+  await FileService.deleteFile(filename, ressourceType as RessourceType, ressourceId);
 }
 
 /**

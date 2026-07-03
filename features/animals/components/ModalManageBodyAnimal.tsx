@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
-import { Divider } from 'react-native-paper';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { AppDivider } from '../../../shared/components/ui';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import AppSheet from '../../../shared/components/ui/AppSheet';
 import CalendarPicker from '../../../shared/components/modals/inputs/ModalDatePicker';
 import { createAnimalHistory, updateAnimalHistory } from '../../../services/api/AnimalsService';
 import LoggerService from '../../../services/logs/LoggerService';
 import DropdawnList from '../../../shared/components/inputs/DropdawnList';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { useTranslation } from 'react-i18next';
 
 interface ModalManageBodyAnimalProps {
   isVisible: boolean;
@@ -23,9 +25,11 @@ interface ModalManageBodyAnimalProps {
 
 const ModalManageBodyAnimal = ({ isVisible, setVisible, actionType, animal = {}, item, infos, onModify = undefined }: ModalManageBodyAnimalProps) => {
   const { colors, fonts } = useAppTheme();
+  const { t } = useTranslation('animals');
+  const { t: tc } = useTranslation('common');
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch, clearErrors, setError } = useForm();
-  const [arrayHeight, setArrayHeight] = useState('35%');
   const [loading, setLoading] = useState(false);
+  const sheetRef = useRef<BottomSheetModal>(null);
   const unitsList = [
     { label: 'g', value: 'g' }, { label: 'kg', value: 'kg' }, { label: 'mg', value: 'mg' },
     { label: 'q', value: 'q' }, { label: 't', value: 't' }, { label: 'L', value: 'L' },
@@ -33,7 +37,10 @@ const ModalManageBodyAnimal = ({ isVisible, setVisible, actionType, animal = {},
   ];
   const [unity, setUnity] = useState<string | undefined>(undefined);
 
-  useEffect(() => { setArrayHeight('35%'); initValues(); }, [isVisible]);
+  useEffect(() => { initValues(); }, [isVisible]);
+  useEffect(() => {
+    if (isVisible) { sheetRef.current?.present(); } else { sheetRef.current?.dismiss(); }
+  }, [isVisible]);
   useEffect(() => { setValue('unity', unity); }, [unity]);
 
   const initValues = () => {
@@ -51,7 +58,7 @@ const ModalManageBodyAnimal = ({ isVisible, setVisible, actionType, animal = {},
   const checkNumericFormat = (data: any, attribute: string) => {
     if (data[attribute] != undefined) {
       const numericValue = parseFloat(data[attribute].replace(',', '.').replace(' ', ''));
-      if (isNaN(numericValue)) { Toast.show({ position: 'top', type: 'error', text1: 'Problème de format sur la valeur', text2: 'Seul les chiffres, virgule et point sont acceptés' }); return false; }
+      if (isNaN(numericValue)) { Toast.show({ position: 'top', type: 'error', text1: 'Probléme de format sur la valeur', text2: 'Seul les chiffres, virgule et point sont acceptés' }); return false; }
       else { data[attribute] = numericValue; }
     }
     return true;
@@ -81,47 +88,47 @@ const ModalManageBodyAnimal = ({ isVisible, setVisible, actionType, animal = {},
   const getInput = () => {
     const commonProps = { style: [styles.input, styles.textFontRegular], keyboardType: 'decimal-pad' as const, inputMode: 'decimal' as const, placeholderTextColor: colors.secondary, onChangeText: (text: string) => setValue('value', text), defaultValue: watch('value') ?? '', ...register('value', { required: true }) };
     switch (item) {
-      case 'taille': return <><Text style={[styles.textInput, styles.textFontRegular]}>Taille (cm) : <Text style={{ color: 'red' }}>*</Text></Text>{errors.value && <Text style={{ color: 'red' }}>Taille obligatoire</Text>}<TextInput {...commonProps} placeholder="Exemple : 140" /></>;
-      case 'poids': return <><Text style={[styles.textInput, styles.textFontRegular]}>Poids (kg) : <Text style={{ color: 'red' }}>*</Text></Text>{errors.value && <Text style={{ color: 'red' }}>Poids obligatoire</Text>}<TextInput {...commonProps} placeholder="Exemple : 400" /></>;
-      case 'food': return <><Text style={[styles.textInput, styles.textFontRegular]}>Nom alimentation : <Text style={{ color: 'red' }}>*</Text></Text>{errors.value && <Text style={{ color: 'red' }}>Nom alimentation obligatoire</Text>}<TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Granulés X" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('value', text)} defaultValue={watch('value') ?? ''} {...register('value', { required: true })} /></>;
-      case 'quantity': return <><Text style={[styles.textInput, styles.textFontRegular]}>Quantité : <Text style={{ color: 'red' }}>*</Text></Text>{(errors.value || errors.unity) && <Text style={{ color: 'red' }}>Quantité obligatoire</Text>}<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><View style={{ width: '55%' }}><TextInput {...commonProps} placeholder="Exemple : 200" /></View><View style={{ width: '40%' }}><DropdawnList list={unitsList} setValue={(value) => { setUnity(value); if (value) clearErrors('unity'); }} value={unity ?? ''} /></View></View></>;
+      case 'taille': return <><Text style={[styles.textInput, styles.textFontRegular]}>{t('heightLabel')} <Text style={{ color: colors.error }}>*</Text></Text>{errors.value && <Text style={{ color: colors.error }}>{t('heightRequired')}</Text>}<TextInput {...commonProps} placeholder="Exemple : 140" /></>;
+      case 'poids': return <><Text style={[styles.textInput, styles.textFontRegular]}>{t('weightLabel')} <Text style={{ color: colors.error }}>*</Text></Text>{errors.value && <Text style={{ color: colors.error }}>{t('weightRequired')}</Text>}<TextInput {...commonProps} placeholder="Exemple : 400" /></>;
+      case 'food': return <><Text style={[styles.textInput, styles.textFontRegular]}>{t('foodLabel')} <Text style={{ color: colors.error }}>*</Text></Text>{errors.value && <Text style={{ color: colors.error }}>{t('foodRequired')}</Text>}<TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Granulés X" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('value', text)} defaultValue={watch('value') ?? ''} {...register('value', { required: true })} /></>;
+      case 'quantity': return <><Text style={[styles.textInput, styles.textFontRegular]}>Quantité : <Text style={{ color: colors.error }}>*</Text></Text>{(errors.value || errors.unity) && <Text style={{ color: colors.error }}>Quantité obligatoire</Text>}<View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><View style={{ width: '55%' }}><TextInput {...commonProps} placeholder="Exemple : 200" /></View><View style={{ width: '40%' }}><DropdawnList list={unitsList} setValue={(value) => { setUnity(value); if (value) clearErrors('unity'); }} value={unity ?? ''} /></View></View></>;
       default: return null;
     }
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     form: { width: '100%', paddingBottom: 40 },
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
     formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
     inputContainer: { width: '100%' },
     textInput: { alignSelf: 'flex-start', marginBottom: 5 },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.quaternary, color: colors.default_dark, alignSelf: 'baseline' },
+    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.surfaceVariant, color: colors.textPrimary, alignSelf: 'baseline' },
     containerDate: { flexDirection: 'column', alignSelf: 'flex-start', width: '100%', marginBottom: 15 },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
-    <ModalEditGeneric isVisible={isVisible} setVisible={setVisible} arrayHeight={[arrayHeight]}>
+    <AppSheet ref={sheetRef} snapPoints={['70%']} onDismiss={() => setVisible(false)} keyboardBehavior="extend">
       <View style={styles.form}>
         <View style={styles.containerActionsButtons}>
           <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[{ color: colors.tertiary }, styles.textFontRegular]}>Annuler</Text>
+            <Text style={[{ color: colors.textSecondary }, styles.textFontRegular]}>{tc('cancel')}</Text>
           </TouchableOpacity>
           <View style={{ width: '33.33%', alignItems: 'center' }}>
-            <Text style={[styles.textFontBold]}>Physique</Text>
+            <Text style={[styles.textFontBold]}>{t('physique')}</Text>
           </View>
           <TouchableOpacity onPress={handleSubmit(submitRegister)} style={{ width: '33.33%', alignItems: 'center' }}>
-            {loading ? <ActivityIndicator size={10} color={colors.default_dark} /> : <Text style={[{ color: colors.default_dark }, styles.textFontRegular]}>Enregistrer</Text>}
+            {loading ? <ActivityIndicator size={10} color={colors.textPrimary} /> : <Text style={[{ color: colors.textPrimary }, styles.textFontRegular]}>{tc('save')}</Text>}
           </TouchableOpacity>
         </View>
-        <Divider />
-        <KeyboardAwareScrollView enableResetScrollToCoords={false} enableAutomaticScroll={false} contentContainerStyle={{ height: '100%' }} onKeyboardWillShow={() => setArrayHeight('70%')} onKeyboardWillHide={() => setArrayHeight('35%')}>
+        <AppDivider />
+        <KeyboardAwareScrollView enableResetScrollToCoords={false} enableAutomaticScroll={false} contentContainerStyle={{ height: '100%' }}>
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <View style={styles.containerDate}>
-                <Text style={[styles.textInput, styles.textFontRegular]}>Date : {convertDateToText('datemodification')} <Text style={{ color: 'red' }}>*</Text></Text>
+                <Text style={[styles.textInput, styles.textFontRegular]}>Date : {convertDateToText('datemodification')} <Text style={{ color: colors.error }}>*</Text></Text>
                 <CalendarPicker onDayChange={(propertyName, selectedDate) => setValue('datemodification', selectedDate)} propertyName="datemodification" defaultDate={getValues('datemodification')} />
               </View>
               {getInput()}
@@ -129,7 +136,7 @@ const ModalManageBodyAnimal = ({ isVisible, setVisible, actionType, animal = {},
           </View>
         </KeyboardAwareScrollView>
       </View>
-    </ModalEditGeneric>
+    </AppSheet>
   );
 };
 

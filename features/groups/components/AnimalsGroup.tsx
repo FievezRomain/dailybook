@@ -1,8 +1,8 @@
-import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+﻿import React from 'react';
+import { FlatList, Text, View } from 'react-native';
 import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
 import AnimalCard from '../../animals/components/AnimalCard';
-import { Icon } from 'react-native-paper';
+import { AppIcon } from '../../../shared/components/ui';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useAppTheme } from '../../../theme/useAppTheme';
 
@@ -37,21 +37,21 @@ const AnimalsGroup = ({
     return animals.items.filter((animal: any) => pendingAnimalsIds.includes(animal.id));
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     containerHeader: { paddingBottom: 10, flexDirection: 'row', alignItems: 'center' },
     container: { paddingVertical: 10 },
-    title: { marginLeft: 5, color: colors.default_dark },
+    title: { marginLeft: 5, color: colors.textPrimary },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-  });
+  } as const;
 
   return (
     <>
       {canSeePendingAnimals() && (
         <View style={styles.container}>
           <View style={styles.containerHeader}>
-            <Icon source="clock-outline" size={20} color={colors.default_dark} />
+            <AppIcon name="clock-outline" size={20} color={colors.textPrimary} />
             <Text style={[styles.title, styles.textFontBold]}>Animaux en attente</Text>
           </View>
           <View>
@@ -69,7 +69,7 @@ const AnimalsGroup = ({
       {animals && animals.type === 'accepted' && (
         <View style={styles.container}>
           <View style={styles.containerHeader}>
-            <Icon source="format-list-bulleted" size={20} color={colors.default_dark} />
+            <AppIcon name="format-list-bulleted" size={20} color={colors.textPrimary} />
             <Text style={[styles.title, styles.textFontBold]}>Animaux du groupe</Text>
           </View>
           <View>

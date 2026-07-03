@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo } from '@expo/vector-icons';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
-import Button from '../../../shared/components/inputs/Button';
+import Button from '../../../shared/components/ui/AppButton';
 
 type FieldConfig = {
   key: string;
@@ -90,18 +90,18 @@ export default function EventFormScreen({ route, navigation }: AppStackScreenPro
     navigation.navigate('EventWizardAnimals', { formData: { eventType, ...formData, ...updated } });
   };
 
-  const s = StyleSheet.create({
+  const s = {
     label: { fontSize: 13, color: colors.secondary, fontFamily: fonts.bodyMedium.fontFamily, marginBottom: 4, marginTop: 14 },
-    input: { backgroundColor: colors.background, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, fontFamily: fonts.default?.fontFamily, color: colors.default_dark, borderWidth: 1, borderColor: colors.onSurface },
-  });
+    input: { backgroundColor: colors.background, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, fontFamily: fonts.default?.fontFamily, color: colors.textPrimary, borderWidth: 1, borderColor: colors.surfaceVariant },
+  } as const;
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <View style={{ paddingTop: 56, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginRight: 12 }}>
-          <Entypo name="chevron-left" size={24} color={colors.default_dark} />
+          <Entypo name="chevron-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
-        <Text style={{ fontSize: 22, color: colors.default_dark, fontFamily: fonts.bodyLarge.fontFamily }}>Détails de l'événement</Text>
+        <Text style={{ fontSize: 22, color: colors.textPrimary, fontFamily: fonts.bodyLarge.fontFamily }}>Détails de l'événement</Text>
       </View>
       <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 48 }}>
         {fields.map((field) => (

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import Button from '../../inputs/Button';
+import Button from '../../ui/AppButton';
 import { useAuthStore } from '../../../../stores/useAuthStore';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 import ModalEditGeneric from './ModalEditGeneric';

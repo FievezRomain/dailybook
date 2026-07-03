@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native';
+﻿import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, ScrollView, FlatList } from 'react-native';
 import { FontAwesome6, FontAwesome, MaterialCommunityIcons, Entypo, SimpleLineIcons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useObjectifsQuery, OBJECTIFS_KEY } from '../../../hooks/queries/useObjectifsQuery';
@@ -22,8 +22,8 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }: any) =>{
     const [modalObjectifVisible, setModalObjectifVisible] = useState(false);
     const [modalManageTasksVisible, setModalManageTasksVisible] = useState(false);
     const arrayState = [
-        {value: 'En cours', label: 'En cours', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
-        {value: 'Terminé', label: 'Terminé', checkedColor: colors.default_dark, uncheckedColor: colors.quaternary, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'En cours', label: 'En cours', checkedColor: colors.textPrimary, uncheckedColor: colors.surfaceVariant, style: {borderRadius: 5}, rippleColor: "transparent"},
+        {value: 'Terminé', label: 'Terminé', checkedColor: colors.textPrimary, uncheckedColor: colors.surfaceVariant, style: {borderRadius: 5}, rippleColor: "transparent"},
     ];
     const [temporality, setTemporality] = useState('En cours');
 
@@ -78,7 +78,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }: any) =>{
         setTemporality(value);
     };
 
-    const styles = StyleSheet.create({
+    const styles = {
         headerObjectif:{
             display: "flex",
             flexDirection: "row",
@@ -110,7 +110,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }: any) =>{
             marginBottom: 10,
         },
         title:{
-            color: colors.quaternary,
+            color: colors.surfaceVariant,
             marginLeft: 10,
         },
         statistiqueIndicatorContainer:{
@@ -135,10 +135,10 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }: any) =>{
             zIndex: 1,
         },
         itemIconDefault:{
-            color: colors.quaternary,
+            color: colors.surfaceVariant,
         },
         itemIconSelected:{
-            color: colors.default_dark,
+            color: colors.textPrimary,
         },
         textFontRegular:{
             fontFamily: fonts.default.fontFamily
@@ -154,7 +154,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }: any) =>{
             flexDirection: "row",
             width: "100%"
         },
-    });
+    } as const;
 
     return (
         <>
@@ -190,7 +190,7 @@ const ObjectifsBloc = ({ animaux, selectedAnimal, navigation }: any) =>{
                         arrayState={arrayState}
                         handleChange={onTemporalityChange}
                         defaultState={temporality}
-                        color={hexToRgba(colors.quaternary, 1) ?? undefined}
+                        color={hexToRgba(colors.surfaceVariant, 1) ?? undefined}
                     />
                 }
                 ListEmptyComponent={

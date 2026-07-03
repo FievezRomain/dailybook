@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Dimensions, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
+﻿import React, { useState, useCallback } from 'react';
+import { View, Text, Dimensions, FlatList, RefreshControl, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { useFocusEffect } from '@react-navigation/native';
@@ -58,11 +58,11 @@ export default function WelcomeScreen({ navigation }: TabScreenProps<'Accueil'>)
     return day.charAt(0).toUpperCase() + day.slice(1);
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     svgCurve: { position: 'absolute', width: Dimensions.get('window').width },
     summaryContainer: { marginTop: 15, marginLeft: 20 },
-    summary: { fontSize: 20, color: colors.default_dark },
-  });
+    summary: { fontSize: 20, color: colors.textPrimary },
+  } as const;
 
   const content = refreshing ? (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
@@ -73,7 +73,7 @@ export default function WelcomeScreen({ navigation }: TabScreenProps<'Accueil'>)
       data={[]}
       keyExtractor={() => 'key'}
       renderItem={null}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.default_dark} />}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.textPrimary} />}
       ListHeaderComponent={
         <>
           <View style={styles.summaryContainer}>
@@ -98,7 +98,7 @@ export default function WelcomeScreen({ navigation }: TabScreenProps<'Accueil'>)
   );
 
   return (
-    <LinearGradient colors={[colors.background, colors.onSurface]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+    <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
         <TopTab message1="Bienvenue" message2="" withBackground={false} withLogo />
         {content}

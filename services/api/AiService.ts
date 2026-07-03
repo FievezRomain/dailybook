@@ -23,13 +23,13 @@ export interface AiParseResponse {
 }
 
 export async function parseEvent(text: string): Promise<AiParseResponse> {
-  return httpClient.post<AiParseResponse>('/ai/parse', { type: 'event', text }).then((r) => r.data);
+  return httpClient.post<AiParseResponse>('/ai/parse/event', { text }).then((r) => r.data);
 }
 
 export async function parseNote(text: string): Promise<AiParseResponse> {
-  return httpClient.post<AiParseResponse>('/ai/parse', { type: 'note', text }).then((r) => r.data);
+  return httpClient.post<AiParseResponse>('/ai/parse/note', { text }).then((r) => r.data);
 }
 
 export async function parseObjectif(text: string): Promise<AiParseResponse> {
-  return httpClient.post<AiParseResponse>('/ai/parse', { type: 'objectif', text }).then((r) => r.data);
+  return httpClient.post<AiParseResponse>('/ai/parse/objectif', { text }).then((r) => r.data);
 }

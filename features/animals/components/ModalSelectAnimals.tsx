@@ -1,8 +1,10 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import Button from '../../../shared/components/inputs/Button';
+import { useRef, useEffect } from 'react';
+import { View, Text, TouchableOpacity } from "react-native";
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
+import Button from '../../../shared/components/ui/AppButton';
 import AnimalsPicker from '../../../shared/components/inputs/AnimalsPicker';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import ModalEditGeneric from '../../../shared/components/modals/common/ModalEditGeneric';
+import { AppSheet } from '../../../shared/components/ui';
 
 interface ModalSelectAnimalsProps {
   modalVisible: boolean;
@@ -18,14 +20,20 @@ interface ModalSelectAnimalsProps {
 
 const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, selected, setSelected, setValue, valueName, displayAnimalsShared = true }: ModalSelectAnimalsProps) => {
   const { colors, fonts } = useAppTheme();
+  const sheetRef = useRef<BottomSheetModal>(null);
 
-  const styles = StyleSheet.create({
+  useEffect(() => {
+    if (modalVisible) sheetRef.current?.present();
+    else sheetRef.current?.dismiss();
+  }, [modalVisible]);
+
+  const styles = {
     buttonContainer: { flexDirection: 'row', justifyContent: 'space-around', marginTop: 5, marginBottom: 20 },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
-  });
+  } as const;
 
   return (
-    <ModalEditGeneric isVisible={modalVisible} setVisible={setModalVisible} scrollInside={false} arrayHeight={['25%']}>
+    <AppSheet ref={sheetRef} snapPoints={['25%']} onDismiss={() => setModalVisible(false)}>
       <View style={{ paddingVertical: 5 }}>
         <AnimalsPicker
           animaux={animaux}
@@ -42,7 +50,7 @@ const ModalAnimals = ({ modalVisible, setModalVisible, setAnimaux, animaux, sele
           <Text style={styles.textFontMedium}>OK</Text>
         </Button>
       </View>
-    </ModalEditGeneric>
+    </AppSheet>
   );
 };
 

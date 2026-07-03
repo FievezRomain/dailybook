@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { Image } from 'expo-image';
 import { useAuthStore } from '../../../../stores/useAuthStore';
 import { getFileUrl } from '../../../../services/aws/FileStorageService';
@@ -45,7 +45,7 @@ const RdvCard = ({
   const { colors, fonts } = useAppTheme();
   const { firebaseUser } = useAuthStore();
 
-  const styles = StyleSheet.create({
+  const styles = {
     eventTextContainer: { flexDirection: 'column' },
     eventTitle: { marginBottom: 10, fontSize: 16 },
     avatarText: { color: colors.background, textAlign: 'center' },
@@ -57,8 +57,8 @@ const RdvCard = ({
     textFontRegular: { fontFamily: fonts.default.fontFamily },
     textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
-    text: { color: colors.default_dark },
-  });
+    text: { color: colors.textPrimary },
+  } as const;
 
   const getAnimalById = (id: number) => animaux.find((a) => a.id === id);
   const isValidString = (str: unknown): boolean => str !== null && str !== undefined && String(str).trim() !== '';
@@ -77,7 +77,7 @@ const RdvCard = ({
                 if (!animal) return null;
                 return (
                   <View key={animal.id} style={{ marginRight: -3 }}>
-                    <View style={{ height: 20, width: 20, backgroundColor: colors.default_dark, borderRadius: 10, justifyContent: 'center' }}>
+                    <View style={{ height: 20, width: 20, backgroundColor: colors.textPrimary, borderRadius: 10, justifyContent: 'center' }}>
                       <AnimalAvatar animal={animal} avatarStyle={styles.avatar} avatarTextStyle={styles.avatarText} textFontRegular={styles.textFontRegular} />
                     </View>
                   </View>
@@ -90,7 +90,7 @@ const RdvCard = ({
         {isValidString(eventInfos.heuredebutevent) && (
           <View style={{ paddingRight: 5, paddingBottom: 5 }}>
             <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}>
-              <Text style={[{ fontStyle: 'italic', color: colors.default_dark }, styles.textFontRegular]}>Heure de début : </Text>
+              <Text style={[{ fontStyle: 'italic', color: colors.textPrimary }, styles.textFontRegular]}>Heure de début : </Text>
               {eventInfos.heuredebutevent}
             </Text>
           </View>
@@ -98,7 +98,7 @@ const RdvCard = ({
         {isValidString(eventInfos.lieu) && (
           <View style={{ paddingRight: 5, paddingBottom: 5 }}>
             <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}>
-              <Text style={[{ fontStyle: 'italic', color: colors.default_dark }, styles.textFontRegular]}>Lieu : </Text>
+              <Text style={[{ fontStyle: 'italic', color: colors.textPrimary }, styles.textFontRegular]}>Lieu : </Text>
               {eventInfos.lieu}
             </Text>
           </View>
@@ -106,7 +106,7 @@ const RdvCard = ({
         {isValidString(eventInfos.specialiste) && (
           <View style={{ paddingRight: 5, paddingBottom: 5 }}>
             <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}>
-              <Text style={[{ fontStyle: 'italic', color: colors.default_dark }, styles.textFontRegular]}>Spécialiste : </Text>
+              <Text style={[{ fontStyle: 'italic', color: colors.textPrimary }, styles.textFontRegular]}>Spécialiste : </Text>
               {eventInfos.specialiste}
             </Text>
           </View>
@@ -114,7 +114,7 @@ const RdvCard = ({
         {eventInfos.depense != null && (
           <View style={{ paddingRight: 5, paddingBottom: 5 }}>
             <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}>
-              <Text style={[{ fontStyle: 'italic', color: colors.default_dark }, styles.textFontRegular]}>Dépense : </Text>
+              <Text style={[{ fontStyle: 'italic', color: colors.textPrimary }, styles.textFontRegular]}>Dépense : </Text>
               {eventInfos.depense != null ? eventInfos.depense.toFixed(2) : ''} euros
             </Text>
           </View>
@@ -122,7 +122,7 @@ const RdvCard = ({
         {isValidString(eventInfos.commentaire) && (
           <View style={{ paddingRight: 5, paddingBottom: 5 }}>
             <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}>
-              <Text style={[{ fontStyle: 'italic', color: colors.default_dark }, styles.textFontRegular]}>Commentaire : </Text>
+              <Text style={[{ fontStyle: 'italic', color: colors.textPrimary }, styles.textFontRegular]}>Commentaire : </Text>
               {eventInfos.commentaire}
             </Text>
           </View>
@@ -130,7 +130,7 @@ const RdvCard = ({
         {eventInfos.created_by != null && eventInfos.created_by.email !== firebaseUser?.email && (
           <View>
             <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}>
-              <Text style={[{ fontStyle: 'italic', color: colors.default_dark }, styles.textFontRegular]}>Créer par : </Text>
+              <Text style={[{ fontStyle: 'italic', color: colors.textPrimary }, styles.textFontRegular]}>Créer par : </Text>
               {eventInfos.created_by?.name}
             </Text>
           </View>
@@ -138,7 +138,7 @@ const RdvCard = ({
         {eventInfos.made_by !== null && !!eventInfos.shared_groups && (
           <View>
             <Text style={[styles.eventCommentaire, styles.text, styles.textFontRegular]}>
-              <Text style={[{ fontStyle: 'italic', color: colors.default_dark }, styles.textFontRegular]}>Fait par : </Text>
+              <Text style={[{ fontStyle: 'italic', color: colors.textPrimary }, styles.textFontRegular]}>Fait par : </Text>
               {eventInfos.made_by?.name}
             </Text>
           </View>

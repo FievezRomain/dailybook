@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { ActivityIndicator, Icon } from 'react-native-paper';
+﻿import React, { useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator } from 'react-native';
+import { AppIcon } from '../../../shared/components/ui';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
@@ -65,7 +66,7 @@ const MemberCard = ({
     if (memberState === 'pending' && userRole === 'manager' && member.email !== firebaseUser?.email) {
       return (
         <TouchableOpacity onPress={handleSubmit(refuseMember)}>
-          <Icon source="close" size={30} color={colors.error} />
+          <AppIcon name="close" size={30} color={colors.error} />
         </TouchableOpacity>
       );
     }
@@ -76,19 +77,19 @@ const MemberCard = ({
     ) {
       return (
         <TouchableOpacity onPress={() => setModalValidationVisible(true)}>
-          <Icon source="exit-to-app" size={30} color={colors.error} />
+          <AppIcon name="exit-to-app" size={30} color={colors.error} />
         </TouchableOpacity>
       );
     }
     return null;
   };
 
-  const styles = StyleSheet.create({
+  const styles = {
     card: {
       backgroundColor: colors.background,
       marginBottom: 10,
       borderRadius: 5,
-      shadowColor: colors.default_dark,
+      shadowColor: colors.textPrimary,
       shadowOpacity: 0.1,
       elevation: 1,
       shadowOffset: { width: 0, height: 1 },
@@ -102,7 +103,7 @@ const MemberCard = ({
       justifyContent: 'space-between',
     },
     itemsContainer: { flexDirection: 'row', alignItems: 'center' },
-  });
+  } as const;
 
   return (
     <>

@@ -80,4 +80,16 @@ export interface IAuthService {
    * Retourne le token Firebase courant (pour injection dans les headers HTTP).
    */
   getIdToken(forceRefresh?: boolean): Promise<string | null>;
+
+  /**
+   * Connexion via Google (OAuth). Récupère un idToken puis échange via Firebase.
+   * Nécessite la configuration `webClientId` (Google) au démarrage de l'app.
+   */
+  signInWithGoogle(): Promise<AuthUser>;
+
+  /**
+   * Connexion via Apple (OAuth, iOS uniquement).
+   * Lève une erreur si appelé sur Android ou si Apple Sign-In est indisponible.
+   */
+  signInWithApple(): Promise<AuthUser>;
 }

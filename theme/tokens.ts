@@ -57,6 +57,17 @@ export const lineHeights = {
 // ---------------------------------------------------------------------------
 // Espacements
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Structural constants (mode-independent)
+// ---------------------------------------------------------------------------
+export const borderHairline = 0.5;
+export const tabBarBlurIntensity = 80;
+export const glassBlurIntensity = 18;
+export const glassBackgroundLight = 'rgba(255,255,255,0.15)';
+export const glassBackgroundDark = 'rgba(30,20,10,0.4)';
+export const glassBorderLight = 'rgba(255,255,255,0.3)';
+export const glassBorderDark = 'rgba(255,255,255,0.08)';
+
 export const spacing = {
   xs: 4,
   sm: 8,
@@ -145,6 +156,10 @@ export const lightTokens = {
   // Overlay
   overlay: 'rgba(0,0,0,0.4)',
 
+  // Glassmorphism
+  glassBackground: glassBackgroundLight,
+  glassBorder: glassBorderLight,
+
   // Tokens structurels (identiques light/dark)
   fonts,
   fontSizes,
@@ -152,6 +167,9 @@ export const lightTokens = {
   spacing,
   radii,
   shadows,
+  borderHairline,
+  tabBarBlurIntensity,
+  glassBlurIntensity,
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -185,12 +203,29 @@ export const darkTokens = {
 
   overlay: 'rgba(0,0,0,0.6)',
 
+  // Glassmorphism
+  glassBackground: glassBackgroundDark,
+  glassBorder: glassBorderDark,
+
   fonts,
   fontSizes,
   lineHeights,
   spacing,
   radii,
   shadows,
+  borderHairline,
+  tabBarBlurIntensity,
+  glassBlurIntensity,
 } as const;
 
 export type AppTokens = typeof lightTokens;
+
+export const eventTypeColors = {
+  soins: '#E57373',
+  rdv: '#64B5F6',
+  balade: '#81C784',
+  entrainement: '#FFB74D',
+  concours: '#CE93D8',
+  depense: '#4DB6AC',
+  autre: '#A1887F',
+} as const;

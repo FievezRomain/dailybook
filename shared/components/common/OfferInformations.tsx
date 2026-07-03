@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { Fontisto, AntDesign } from '@expo/vector-icons';
-import Button from '../inputs/Button';
+import Button from '../ui/AppButton';
 import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface OfferInformationsProps {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Modal, View, Text, TouchableOpacity } from 'react-native';
-import Button from '../../inputs/Button';
+import Button from '../../ui/AppButton';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 
 interface ModalVerifProps {

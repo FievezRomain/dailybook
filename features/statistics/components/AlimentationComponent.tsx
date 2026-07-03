@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { IconButton } from 'react-native-paper';
+﻿import React, { useState, useEffect } from 'react';
+import { ActivityIndicator, View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { AppIconButton } from '../../../shared/components/ui';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import EventCard from '../../../shared/components/cards/EventCard';
 import Toast from "react-native-toast-message";
@@ -8,6 +8,7 @@ import LineChartComponent from '../../../shared/components/charts/LineChartCompo
 import PhysiqueCard from '../../animals/components/PhysiqueCard';
 import { PhysiqueChartComponentProps } from '../types';
 import { PhysiqueStatisticsData, HistoryEntry } from '../../../models/Statistics';
+import { AnimalHistoryItem } from '../../animals/types';
 
 type GroupedHistoryEntry = { date: string; history: HistoryEntry[] };
 
@@ -121,7 +122,7 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
         return expandedDate === item.date;
     }
 
-    const styles = StyleSheet.create({
+    const styles = {
         container:{
             width: "90%",
             alignSelf: "center"
@@ -144,7 +145,7 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
             padding: 10,
             borderRadius: 5,
             marginBottom: 10,
-            shadowColor: colors.default_dark,
+            shadowColor: colors.textPrimary,
             shadowOpacity: 0.1,
             elevation: 1,
             shadowRadius: 5,
@@ -164,9 +165,9 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
             alignItems: "center"
         },
         textColor:{
-            color: colors.default_dark
+            color: colors.textPrimary
         },
-    })
+    } as const;
 
     if( loading ){
         return <ActivityIndicator size="large" />;
@@ -190,9 +191,9 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
                                 </View>
                                 <View style={styles.categorieContainer}>
                                 {expandedDate === item.date ?
-                                    <IconButton icon={"chevron-up"} size={20} iconColor={colors.default_dark} />
+                                    <AppIconButton icon={"chevron-up"} size={20} color={colors.textPrimary} />
                                 :
-                                    <IconButton icon={"chevron-down"} size={20} iconColor={colors.default_dark} />
+                                    <AppIconButton icon={"chevron-down"} size={20} color={colors.textPrimary} />
                                 }
                                 </View>
                                 
@@ -208,7 +209,7 @@ const AlimentationComponent = ({ data, chartConfig, chartParameters, forceUpdate
                                         infos={item}
                                         handlePhysiqueChange={handleEventsChange}
                                         handlePhysiqueDelete={handleEventsDelete}
-                                        itemType={item.type}
+                                        itemType={item.type as AnimalHistoryItem}
                                     />
                                 )}
                             />

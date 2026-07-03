@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
@@ -9,7 +9,7 @@ export default function DiscoverPremiumScreen({ navigation }: AppStackScreenProp
   const { colors } = useAppTheme();
 
   return (
-    <View style={{ backgroundColor: colors.onSurface }}>
+    <View style={{ backgroundColor: colors.surfaceVariant }}>
       <View style={{ height: '100%', width: '90%', alignSelf: 'center', display: 'flex' }}>
         <TopTabSecondary message1="Découvrez" message2="L'offre premium" />
         <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>

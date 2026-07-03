@@ -43,7 +43,7 @@ export function useEventMutations() {
       await queryClient.cancelQueries({ queryKey: EVENTS_KEY });
       const snapshot = queryClient.getQueryData<Event[]>(EVENTS_KEY);
       queryClient.setQueryData<Event[]>(EVENTS_KEY, (prev = []) =>
-        prev.map((item) => (item.id === Number(id) ? { ...item, ...body, syncing: true } as Event : item)),
+        prev.map((item) => (item.id === Number(id) ? { ...item, ...body, syncing: true } as unknown as Event : item)),
       );
       return { snapshot };
     },
@@ -65,7 +65,7 @@ export function useEventMutations() {
       await queryClient.cancelQueries({ queryKey: EVENTS_KEY });
       const snapshot = queryClient.getQueryData<Event[]>(EVENTS_KEY);
       queryClient.setQueryData<Event[]>(EVENTS_KEY, (prev = []) =>
-        prev.map((item) => (item.id === Number(id) ? { ...item, ...body, syncing: true } as Event : item)),
+        prev.map((item) => (item.id === Number(id) ? { ...item, ...body, syncing: true } as unknown as Event : item)),
       );
       return { snapshot };
     },
