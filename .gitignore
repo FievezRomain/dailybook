@@ -1,6 +1,8 @@
 node_modules/
 .expo/
+.tamagui/
 dist/
+coverage/
 npm-debug.*
 *.jks
 *.p8
@@ -18,6 +20,7 @@ web-build/
 .metro-health-check*
 
 aws-exports.js
+aws-exports.txt
 
 # Variables d'environnement — ne pas commiter les fichiers avec de vraies valeurs
 .env
@@ -37,4 +40,3 @@ service-account*.json
 # Note : google-services.json et GoogleService-Info.plist contiennent des identifiants
 # Firebase publics par design (API key client = pas un secret). Ils sont actuellement trackés.
 # Si vous décidez de les sortir, voir docs/security.md (procédure git rm --cached).
-
