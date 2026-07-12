@@ -2,268 +2,77 @@
 applyTo: "**/*.ts,**/*.tsx"
 ---
 
-# Gestion d'erreurs — Mobile MyDailyBook
+# Gestion Des Erreurs
 
-## Contrat d'erreur — format attendu de l'API
+## Intention
 
-```typescript
-// types/ApiError.ts
-export interface ApiErrorDetail {
-  field: string;
-  message: string;
-}
+Une erreur doit etre comprehensible pour l'utilisateur et exploitable pour l'equipe. Les erreurs techniques ne doivent pas fuiter dans l'UI, mais elles doivent rester tracables via logs, Sentry et contexte minimal.
 
-export interface ApiError {
-  code: AppErrorCode;
-  message: string;
-  details: ApiErrorDetail[];
-}
+## Sources de verite
 
-export interface ApiErrorResponse {
-  success: false;
-  error: ApiError;
-}
-```
+- Parser centralise : `utils/errorParser.ts`
+- Feedback utilisateur : `hooks/useErrorToast.ts` et composants d'etat partages
+- Logs techniques : `services/logs/LoggerService.ts`
+- Erreurs API : types dans `types/ApiError.ts` et `types/AppErrorCode.ts`
 
----
+## Pattern reseau obligatoire
 
-## Codes d'erreur sémantiques
+Toute surface qui depend d'une query ou mutation doit gerer explicitement :
+- `loading` : skeleton ou etat transitoire utile ;
+- `error` : message humain + retry si possible ;
+- `empty` : etat vide actionnable ;
+- `data` : rendu nominal.
 
-```typescript
-// types/AppErrorCode.ts
-export enum AppErrorCode {
-  UNAUTHORIZED        = "UNAUTHORIZED",
-  TOKEN_EXPIRED       = "TOKEN_EXPIRED",
-  FORBIDDEN           = "FORBIDDEN",
-  NOT_FOUND           = "NOT_FOUND",
-  CONFLICT            = "CONFLICT",
-  VALIDATION_ERROR    = "VALIDATION_ERROR",
-  QUOTA_EXCEEDED      = "QUOTA_EXCEEDED",
-  FEATURE_UNAVAILABLE = "FEATURE_UNAVAILABLE",
-  INTERNAL_ERROR      = "INTERNAL_ERROR",
-  NETWORK_ERROR       = "NETWORK_ERROR",   // Erreur réseau côté client
-}
-```
+Un spinner plein ecran sans issue est accepte uniquement pendant le bootstrap initial. Pour une liste ou un dashboard, afficher au moins la structure de l'ecran, meme si une section charge.
 
----
+## React Query
 
-## `utils/errorParser.ts` — Parser centralisé
+Les hooks React Query doivent :
+- typer les donnees de retour quand l'inference n'est pas claire ;
+- invalider les query keys concernees ;
+- rollback les optimistic updates ;
+- ne pas retry automatiquement les mutations ;
+- ne pas masquer une erreur definitive.
 
-```typescript
-// utils/errorParser.ts
-import axios, { AxiosError } from 'axios';
-import { AppErrorCode, ApiError } from '../types';
+Les erreurs de query sont affichees dans l'ecran ou un composant d'etat. Les erreurs de mutation sont gerees dans le hook ou dans le formulaire appelant.
 
-export interface ParsedError {
-  code: AppErrorCode;
-  message: string;
-  details: { field: string; message: string }[];
-  isNetworkError: boolean;
-  isAuthError: boolean;
-  isQuotaError: boolean;
-}
+## Messages utilisateur
 
-export function parseApiError(error: unknown): ParsedError {
-  if (axios.isAxiosError(error)) {
-    const axiosError = error as AxiosError<{ success: false; error: ApiError }>;
+Preferer un message localise, court et humain :
+- "Impossible de charger les groupes. Reessayer"
+- "Votre session a expire. Reconnectez-vous"
+- "Cette action n'est pas disponible avec votre offre"
 
-    // Erreur réseau (pas de réponse)
-    if (!axiosError.response) {
-      return {
-        code: AppErrorCode.NETWORK_ERROR,
-        message: 'Impossible de rejoindre le serveur. Vérifiez votre connexion.',
-        details: [],
-        isNetworkError: true,
-        isAuthError: false,
-        isQuotaError: false,
-      };
-    }
+Le backend peut fournir un message, mais l'app garde le droit d'utiliser un fallback UX localise pour la coherence, la traduction et la securite. Ne jamais afficher de stack trace, code HTTP brut ou payload technique.
 
-    const apiError = axiosError.response.data?.error;
-    if (apiError) {
-      return {
-        code: apiError.code,
-        message: apiError.message,
-        details: apiError.details ?? [],
-        isNetworkError: false,
-        isAuthError: apiError.code === AppErrorCode.UNAUTHORIZED || apiError.code === AppErrorCode.TOKEN_EXPIRED,
-        isQuotaError: apiError.code === AppErrorCode.QUOTA_EXCEEDED,
-      };
-    }
-  }
+## Validation formulaire
 
-  return {
-    code: AppErrorCode.INTERNAL_ERROR,
-    message: 'Une erreur inattendue s\'est produite.',
-    details: [],
-    isNetworkError: false,
-    isAuthError: false,
-    isQuotaError: false,
-  };
-}
-```
+- Les validations client passent par Zod + React Hook Form.
+- Les erreurs de champs s'affichent inline.
+- Une erreur de validation ne doit pas declencher un toast global si le champ est visible.
+- Les erreurs serveur avec details de champs doivent etre mappees sur le formulaire quand c'est possible.
 
----
+## Logging
 
-## `hooks/useErrorToast.ts` — Toast pour erreurs réseau/serveur
+Utiliser `LoggerService` pour les erreurs techniques. Le contexte doit aider sans exposer de PII :
+- feature ;
+- operation ;
+- id metier non sensible si utile ;
+- etat de flux ;
+- code d'erreur parse.
 
-```typescript
-// hooks/useErrorToast.ts
-import { useCallback } from 'react';
-import { useSnackbar } from '../shared/components/SnackbarProvider'; // ou Zustand store toast
-import { ParsedError, AppErrorCode } from '../utils/errorParser';
+Ne jamais logger token, mot de passe, email complet quand ce n'est pas necessaire, document brut ou contenu personnel long.
 
-export function useErrorToast() {
-  const { show } = useSnackbar();
+## Erreurs auth et permission
 
-  const showError = useCallback((error: ParsedError, onRetry?: () => void) => {
-    // Erreurs de validation → affichage inline, pas de toast
-    if (error.code === AppErrorCode.VALIDATION_ERROR) return;
+- `401` ou session expiree : deconnexion centralisee et retour login.
+- Permission refusee : expliquer pourquoi la permission est utile et proposer une sortie.
+- Quota/offre : ce n'est pas une erreur technique, c'est un prompt d'upgrade contextuel.
 
-    // Quota → prompt upgrade, pas un toast d'erreur
-    if (error.isQuotaError) {
-      show({ message: error.message, action: { label: 'Voir les offres', onPress: () => { /* navigation upgrade */ } } });
-      return;
-    }
+## Regles strictes
 
-    show({
-      message: error.message,
-      action: onRetry ? { label: 'Réessayer', onPress: onRetry } : undefined,
-      duration: 4000,
-    });
-  }, [show]);
-
-  return { showError };
-}
-```
-
----
-
-## Configuration React Query — retry + gestion globale
-
-```typescript
-// App.tsx ou providers/QueryProvider.tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { parseApiError } from '../utils/errorParser';
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: (failureCount, error) => {
-        const parsed = parseApiError(error);
-        // Ne pas retry sur les erreurs 4xx (sauf réseau)
-        if (!parsed.isNetworkError && !parsed.isAuthError) return false;
-        return failureCount < 2; // 2 tentatives silencieuses
-      },
-      staleTime: 1000 * 60 * 5, // 5 minutes
-    },
-    mutations: {
-      retry: 0, // Pas de retry automatique sur les mutations
-    },
-  },
-});
-```
-
----
-
-## Utilisation dans les hooks de mutation — pattern complet
-
-```typescript
-// features/notes/hooks/useCreateNote.ts
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { parseApiError } from '../../../utils/errorParser';
-import { useErrorToast } from '../../../hooks/useErrorToast';
-
-export function useCreateNote() {
-  const queryClient = useQueryClient();
-  const { showError } = useErrorToast();
-
-  return useMutation({
-    mutationFn: NoteService.create,
-
-    // Optimistic update immédiat
-    onMutate: async (newNote) => {
-      await queryClient.cancelQueries({ queryKey: ['notes'] });
-      const previous = queryClient.getQueryData(['notes']);
-      queryClient.setQueryData(['notes'], (old: Note[]) => [
-        { ...newNote, id: 'temp-' + Date.now(), syncing: true },
-        ...(old ?? []),
-      ]);
-      return { previous };
-    },
-
-    onError: (error, _, context) => {
-      // Rollback optimistic update
-      queryClient.setQueryData(['notes'], context?.previous);
-      const parsed = parseApiError(error);
-      showError(parsed, () => { /* la mutation sera relancée manuellement */ });
-    },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
-    },
-  });
-}
-```
-
----
-
-## Erreurs de validation de formulaire — affichage inline
-
-```typescript
-// features/animals/components/AnimalForm.tsx
-import { useForm } from 'react-hook-form';
-import { parseApiError } from '../../../utils/errorParser';
-
-export function AnimalForm() {
-  const { setError, formState: { errors } } = useForm<AnimalFormData>();
-
-  const handleSubmit = async (data: AnimalFormData) => {
-    try {
-      await AnimalService.create(data);
-    } catch (err) {
-      const parsed = parseApiError(err);
-
-      if (parsed.details.length > 0) {
-        // Mapper les erreurs sur les champs du formulaire
-        parsed.details.forEach(({ field, message }) => {
-          setError(field as keyof AnimalFormData, { message });
-        });
-      }
-      // Si pas de details → toast via showError
-    }
-  };
-
-  return (
-    <TextInput ... />
-    {errors.name && <Text style={styles.fieldError}>{errors.name.message}</Text>}
-  );
-}
-```
-
----
-
-## Comportement par code d'erreur
-
-| Code | Comportement mobile |
-|------|-------------------|
-| `UNAUTHORIZED` | Déconnexion + redirect vers login |
-| `TOKEN_EXPIRED` | Tentative refresh silencieux, puis login si échec |
-| `FORBIDDEN` | Toast "Accès non autorisé" |
-| `NOT_FOUND` | Toast discret ou composant "introuvable" dans la vue |
-| `VALIDATION_ERROR` | Erreurs inline sous les champs (pas de toast) |
-| `QUOTA_EXCEEDED` | Bottom sheet upgrade (pas un toast d'erreur) |
-| `FEATURE_UNAVAILABLE` | Prompt upgrade contextuel |
-| `NETWORK_ERROR` | Toast + bouton "Réessayer" après 2 retries automatiques |
-| `INTERNAL_ERROR` | Toast générique + bouton "Réessayer" |
-
----
-
-## Règles absolues
-
-- Jamais de `catch` vide — toujours parser et gérer l'erreur
-- Les erreurs `VALIDATION_ERROR` vont **toujours** sur les champs inline, jamais en toast
-- Les erreurs réseau/500 vont **toujours** en toast avec bouton "Réessayer" après 2 retries auto
-- Le bouton "Réessayer" est visible **uniquement** après échec définitif (après les 2 retries silencieux)
-- `QUOTA_EXCEEDED` n'est jamais affiché comme une erreur — c'est un prompt d'upgrade
-- Les messages d'erreur exposés à l'utilisateur viennent **toujours** du champ `message` de l'API — jamais de string hardcodée sauf fallback réseau
+- Pas de `catch {}` vide.
+- Pas de `alert` natif pour une erreur applicative.
+- Pas de retour `null` silencieux en cas d'erreur.
+- Pas de retry infini.
+- Pas de message technique expose a l'utilisateur.

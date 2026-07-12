@@ -1,83 +1,85 @@
-# MyDailyBook — Mobile (React Native / Expo)
+# MyDailyBook Mobile - Instructions Generales
 
-## Contexte
-Application mobile de journal personnel à thématique équestre. Exposée au grand public.
-Application critique : sécurité, performance et UX sont des priorités non négociables.
+## Mission
 
-## Stack exact
-- React Native 0.81.5 + Expo SDK 54 + EAS Build
-- TypeScript 5.9 (strict mode)
-- Firebase 10.12 — auth client (encapsulé dans `services/auth/AuthService.ts`)
-- @tanstack/react-query 5 — server state (`hooks/queries/`)
-- Zustand 5 — UI state (`stores/`)
-- React Native Paper 5 — UI components (thème dans `theme/`)
-- React Navigation 6 — routing (`navigation/`)
-- React Hook Form 7 + Zod — validation formulaires
-- Axios — HTTP via `services/api/httpClient.ts` uniquement
-- react-native-reanimated 4 — animations
-- Expo SecureStore — stockage sécurisé
+MyDailyBook Mobile est une application Expo / React Native pour suivre la vie des chevaux : animaux, calendrier, soins, notes, objectifs, contacts, groupes, statistiques et aides IA discretes.
 
-## Architecture feature-based (obligatoire)
+Toute contribution doit viser trois objectifs :
+- une UX simple, chaleureuse et premium ;
+- une architecture facile a faire evoluer ;
+- un comportement facile a debugger en cas d'incident.
 
-```
+Les instructions de `.github/instructions/` sont la source de verite pour les agents. Si elles contredisent l'etat reel du code, corriger l'instruction ou signaler l'ecart avant de propager un mauvais pattern.
+
+## Stack cible
+
+- React Native + Expo + EAS Build
+- TypeScript strict
+- Tamagui + tokens maison dans `theme/`
+- React Navigation pour le routing
+- TanStack React Query dans `hooks/queries/` pour le server state
+- Zustand dans `stores/` pour l'etat UI global ou les wizards locaux
+- React Hook Form + Zod pour les formulaires
+- Axios uniquement via `services/api/httpClient.ts`
+- Firebase Auth encapsule dans `services/auth/`
+- Expo SecureStore pour les secrets et tokens
+- Sentry via `services/logs/LoggerService.ts`
+- Maestro pour les flows E2E critiques
+
+## Architecture de reference
+
+```text
 features/{domain}/
-├── components/    # Composants UI du domaine
-├── hooks/         # Logique, state et side-effects du domaine
-├── screens/       # Écrans React Navigation
-└── types.ts       # Types TypeScript du domaine
+  components/    UI du domaine
+  hooks/         logique locale, formulaires, orchestration metier
+  screens/       ecrans React Navigation
+  types.ts       types specifiques au domaine
+
+hooks/queries/   hooks React Query par domaine
+services/api/    appels HTTP purs
+services/auth/   adapter auth
+services/*/      adapters externes
+stores/          etat UI global, auth, theme, wizards
+shared/          composants et utilitaires transverses
+theme/           tokens, theme Tamagui, hook useAppTheme
+navigation/      routes, stacks, types
 ```
 
-Domaines existants : animals, auth, contacts, events, groups, notes, notifications, objectifs, statistics, wishes
+Domaines principaux : `animals`, `auth`, `contacts`, `events`, `groups`, `notes`, `notifications`, `objectifs`, `statistics`, `wishes`, `onboarding`.
 
-## Couches applicatives
+## Regles fondamentales
 
-| Couche | Responsabilité | Dossier |
-|--------|---------------|---------|
-| Screens | Orchestration, navigation | `features/{domain}/screens/` |
-| Components | Affichage pur, props typées | `features/{domain}/components/` |
-| Hooks | Logique métier, state local | `features/{domain}/hooks/` |
-| Queries | React Query hooks | `hooks/queries/` |
-| Services | Appels HTTP | `services/api/` |
-| Stores | State global UI | `stores/` |
-| Tokens | Design system | `theme/tokens.ts` |
+- Un flux metier = un chemin principal. Ne pas creer deux interfaces concurrentes pour la meme action.
+- Les composants affichent et emettent des callbacks ; ils ne font pas d'appels HTTP directs.
+- Les screens orchestrent navigation et composition ; ils ne contiennent pas de logique metier lourde.
+- Les hooks de feature gerent les formulaires, les calculs locaux et l'orchestration.
+- Les hooks React Query dans `hooks/queries/` gerent cache, mutations, optimistic update et invalidation.
+- Les services dans `services/api/` ne font que parler au backend.
+- Toute valeur visuelle vient des tokens ou d'une exception documentee.
+- Tout etat reseau expose clairement `loading`, `error`, `empty`, `data`.
+- Toute erreur doit etre utile pour l'utilisateur et tracable pour l'equipe.
 
-## Règles fondamentales
+## UX/UI cible
 
-### Data fetching
-- TOUJOURS `useQuery` / `useMutation` (@tanstack/react-query)
-- JAMAIS `useEffect` + `axios` ou `fetch` directement dans un composant
-- Les hooks React Query vivent dans `hooks/queries/use{Domain}Queries.ts`
+L'interface doit etre moderne, calme et premium : surfaces chaudes, glass/blur quand cela aide la lecture, profondeur douce, micro-interactions courtes et iconographie metier coherente.
 
-### State management
-- State serveur → React Query
-- State UI global (auth, thème, drawers) → Zustand (`stores/`)
-- State local d'un composant → `useState`
-- React Context : uniquement pour des wizards multi-steps ou state très localisé
+Eviter les effets gratuits, les visuels generiques d'IA, les emojis decoratifs, les pictogrammes de technologie et les gradients artificiels. Une fonctionnalite IA doit apparaitre comme une aide contextuelle elegante : suggestion, pre-remplissage, reformulation, resume ou analyse, jamais comme un univers visuel separe.
 
-### Réseau
-- UNIQUEMENT via `services/api/httpClient.ts`
-- Chaque domaine a son service : `services/api/{Domain}Service.ts`
-- Ne jamais appeler `axios.create()` ou `fetch()` en dehors du httpClient
+## Migration du legacy
 
-### Authentification
-- Encapsulée dans `services/auth/AuthService.ts` uniquement
-- Les composants et screens n'importent JAMAIS `firebase/auth` directement
-- Interface `IAuthService` maintenue pour la vendor independence
-
-### Design system
-- TOUJOURS via les tokens : `theme/tokens.ts` → `theme/lightTheme.ts` / `theme/darkTheme.ts`
-- Utiliser le hook `useAppTheme()` pour accéder aux couleurs, fonts, spacing
-- JAMAIS de couleur, font ou spacing hardcodé dans un composant ou un style
+Le code existant contient encore des patterns anciens. Pour chaque modification :
+- ne pas ajouter de nouveau legacy ;
+- corriger les ecarts proches du code touche quand c'est raisonnable ;
+- eviter les grands refactors sans besoin metier clair ;
+- documenter les decisions qui changent une convention.
 
 ## Anti-patterns stricts
 
-- `fetch()` ou `axios.create()` dans les composants ou features → NON
-- Couleurs, polices, spacings hardcodés → NON
-- `AsyncStorage` pour des données sensibles (tokens, credentials) → NON (utiliser SecureStore)
-- Logique métier dans les écrans → NON (extraire dans un hook)
-- `any` TypeScript sans commentaire justificatif → NON
-- Import direct de `firebase/auth` hors de `services/auth/` → NON
-- Nouvelle librairie sans discussion préalable → NON
-
-## Technologies à NE PAS ajouter sans justification
-Redux, MobX, Apollo, styled-components, nouvelles libs d'animation, react-native-paper alternative
+- Appel direct a `fetch`, `axios` ou un service API depuis un composant UI.
+- Import direct de SDK externe dans une feature quand un adapter existe.
+- `any` sans justification ou sans plan de typage progressif.
+- Couleurs, spacing ou font hardcodes dans du nouveau code UI.
+- Spinner plein ecran sans issue claire, sauf bootstrap initial.
+- Flux de creation/edition duplique.
+- Message d'erreur technique expose a l'utilisateur.
+- Secret, token ou credential dans le repo ou le workspace partage.

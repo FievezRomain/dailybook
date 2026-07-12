@@ -2,232 +2,97 @@
 applyTo: "**/*.tsx,features/**,navigation/**"
 ---
 
-# MyDailyBook — UX Philosophy (Mobile)
+# Philosophie UX
 
-## Identité de l'expérience
+## Identite
 
-MyDailyBook est à la fois un **carnet de vie intime** et un **outil professionnel sobre**. L'expérience doit évoquer :
-- La **douceur du monde équestre** : matières chaudes, lumière naturelle, nature
-- La **confiance d'un outil fiable** : rapide, lisible, jamais surprenant
-- Le **plaisir de la trace** : chaque saisie doit sembler légère et valorisante
+MyDailyBook est un carnet equestre moderne : doux, fiable, rapide. L'utilisateur doit sentir que l'app respecte son temps et ses donnees.
 
----
+L'experience doit etre :
+- claire : une hierarchie evidente ;
+- calme : pas de surcharge visuelle ;
+- premium : finitions sobres, glass/blur maitrise, micro-interactions utiles ;
+- humaine : messages simples, jamais techniques ;
+- debuggable : aucun etat bloque ou opaque.
 
-## Règle fondamentale : 1 écran = 1 question = 1 CTA
+## Regle de focus
 
-Chaque écran ne pose qu'une seule question à l'utilisateur et n'a qu'une seule action principale.
+Pour les flux de saisie, viser : une etape = une intention = une action principale.
 
-```tsx
-// ✅ Correct — focus unique
-<Screen>
-  <HeroPhoto animal={animal} />
-  <AnimalName>{animal.name}</AnimalName>
-  <PrimaryButton onPress={addNote}>Ajouter une observation</PrimaryButton>
-</Screen>
+Cela ne veut pas dire qu'une liste ou un dashboard ne peut avoir qu'un bouton. Cela veut dire :
+- un CTA principal evident ;
+- des actions secondaires visuellement calmes ;
+- pas de menu de 8 actions sans regroupement ;
+- pas de formulaire long impose d'un coup ;
+- pas de double chemin pour la meme action.
 
-// ❌ Interdit — surcharge cognitive
-<Screen>
-  <AnimalCard />
-  <QuickStats />
-  <RecentNotesList />
-  <UpcomingEventsList />
-  <FloatingActionMenu items={[...8 actions]} />
-</Screen>
-```
+## Listes et dashboards
 
----
+Les ecrans de consultation peuvent afficher plusieurs informations si la hierarchie est nette :
+- resume en haut ;
+- contenu principal au centre ;
+- actions secondaires dans un menu ou header ;
+- empty state actionnable ;
+- chargement par section si possible.
 
-## Ce que Copilot ne doit JAMAIS concevoir
+Ne jamais bloquer tout un ecran si une section secondaire charge ou echoue.
 
-| Interdit | Alternative |
-|----------|------------|
-| Formulaires à plus de 4 champs visibles simultanément | Formulaires multi-étapes avec progression |
-| Messages d'erreur techniques (`Error 422`, stack traces) | Messages humains : "Quelque chose ne s'est pas passé comme prévu 🐴" |
-| Modales bloquantes avec 3+ boutons | Bottom Sheet avec 1-2 actions claires |
-| Tableaux de données brutes | Cards contextuelles avec données highlighted |
-| Navigation avec plus de 5 items dans la tab bar | Tab bar 4 items + "Plus" si nécessaire |
-| Loading spinners sans contexte | Skeleton screens avec forme approximative du contenu |
-| Boutons `Annuler` / `Confirmer` sans contexte | Labels d'action : "Supprimer Éclair" / "Garder Éclair" |
-| Alertes système natives (`Alert.alert`) pour du feedback | Toast / Snackbar avec haptic |
-| Polices < 14sp sur mobile | 14sp minimum, 16sp recommandé pour le corps |
-| Couleurs uniquement pour transmettre une information | Toujours doubler avec une icône ou un texte |
+## Formulaires
 
----
+- Maximum 3-4 champs visibles par etape pour les flux importants.
+- Utiliser des wizards ou bottom sheets quand le formulaire est long.
+- Les champs doivent avoir labels clairs, erreurs inline et valeurs preservees au retour.
+- Le CTA doit decrire l'action : `Creer l'evenement`, `Enregistrer le soin`, `Inviter le membre`.
+- Eviter `OK`, `Valider`, `Envoyer` quand le contexte peut etre plus precis.
 
-## Photo héros — Règle d'or
+## Chargement
 
-Chaque profil animal a une **photo héros plein-format** en haut de son écran de détail.
-- Hauteur recommandée : 40% de l'écran
-- Dégradé bas-en-haut depuis `rgba(0,0,0,0.6)` pour la lisibilité du nom
-- Fallback : placeholder illustré (silhouette cheval, palette isabelle/alezan)
-- Pas de texte sur la photo sans le dégradé de protection
+- Bootstrap initial : spinner accepte.
+- Liste, detail, dashboard : skeleton ou structure visible.
+- Mutation : feedback local sur le bouton ou l'item concerne.
+- Aucun spinner infini sans retry, message ou echappatoire.
 
-```tsx
-// ✅ Pattern photo héros
-<ImageBackground source={{ uri: animal.photoUrl }} style={styles.hero}>
-  <LinearGradient colors={['transparent', 'rgba(0,0,0,0.65)']} style={styles.gradient}>
-    <Text style={styles.heroName}>{animal.name}</Text>
-  </LinearGradient>
-</ImageBackground>
-```
+## Feedback
 
----
+- Succes : discret, court, non intrusif.
+- Erreur : humaine, actionnable, sans details techniques.
+- Suppression : confirmation claire avec le nom de l'objet si possible.
+- Quota/offre : expliquer la limite et proposer la suite, ne pas culpabiliser.
+- Haptics : selection, succes, erreur, pas sur chaque navigation.
 
-## Onboarding — Composant Maison
+## IA invisible et utile
 
-L'onboarding mobile utilise un **composant maison** basé sur Reanimated 4 + `expo-blur`.
-**Aucune librairie externe** (react-native-spotlight-tour ou similaires).
+Les fonctions IA doivent reduire l'effort :
+- pre-remplir un formulaire ;
+- reformuler une note ;
+- resumer un historique ;
+- extraire des informations depuis un texte ;
+- suggerer une categorisation.
 
-### Structure
-```
-features/onboarding/
-├── components/
-│   ├── OnboardingSpotlight.tsx   — spotlight + BlurView overlay
-│   ├── OnboardingTooltip.tsx     — bulle de conseil animée
-│   └── OnboardingStep.tsx        — étape avec progression
-├── hooks/
-│   └── useOnboarding.ts          — état, flag SecureStore, navigation entre étapes
-└── types.ts
-```
+Elles doivent rester integrees a l'interface metier. Eviter les visuels de technologie, les mascottes, les emojis decoratifs et les labels qui donnent l'impression d'une app generique d'IA. Preferer une microcopie sobre : `Analyser le texte`, `Proposer un resume`, `Pre-remplir`.
 
-### Comportement
-- **Flag de stockage** : `SecureStore.setItemAsync('onboarding_completed', 'true')`
-- 4 étapes interactives maximum (pas de scroll infini)
-- Skip disponible à tout moment (haut droite)
-- Chaque étape highlight un seul élément UI via `measure()` + overlay avec trou
-- Réactivable depuis les Settings : `SecureStore.deleteItemAsync('onboarding_completed')`
+## Navigation
 
-```typescript
-// features/onboarding/hooks/useOnboarding.ts
-export function useOnboarding() {
-  const [isVisible, setIsVisible] = useState(false);
+- Tab bar : maximum 5 items.
+- Les actions rarement utilisees vont dans Plus/Autre ou dans un menu contextuel.
+- Le bouton flottant de creation doit mener a un flux clair, pas a une liste confuse de formulaires concurrents.
+- Les routes doivent etre previsibles et typees.
 
-  useEffect(() => {
-    SecureStore.getItemAsync('onboarding_completed').then(val => {
-      if (!val) setIsVisible(true);
-    });
-  }, []);
+## Accessibilite minimale
 
-  const complete = useCallback(async () => {
-    await SecureStore.setItemAsync('onboarding_completed', 'true');
-    setIsVisible(false);
-  }, []);
+- Taille tactile minimum 44 dp.
+- Texte lisible, pas de police sous 14sp pour du contenu.
+- Contraste suffisant, surtout avec blur/glass.
+- Toute icone sans texte visible a un `accessibilityLabel`.
+- Ne jamais utiliser uniquement la couleur pour transmettre une information.
 
-  return { isVisible, complete };
-}
-```
+## Anti-patterns
 
-### Animation du spotlight
-- Entrée : `withSpring` (stiffness 150, damping 20)
-- Transition entre étapes : `withTiming` 300ms ease-in-out
-- Sortie : `withTiming` 200ms + `runOnJS(onComplete)()`
-
----
-
-## Haptics — Retour physique systématique
-
-Utiliser `expo-haptics` pour renforcer les interactions clés :
-
-```typescript
-import * as Haptics from 'expo-haptics';
-
-// Confirmation d'action (note sauvegardée, animal ajouté)
-Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-// Sélection dans une liste, tap sur un item
-Haptics.selectionAsync();
-
-// Erreur de validation
-Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-
-// Long press, drag & drop
-Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-```
-
-- Toujours wrapper dans un `try/catch` silencieux (certains appareils/simulateurs ne supportent pas)
-- Ne pas ajouter de haptic sur les navigations ou les modales
-
----
-
-## Optimistic UI — Règle
-
-Pour toutes les mutations (création, mise à jour, suppression) :
-- Mettre à jour le cache React Query **immédiatement** avant la réponse serveur
-- Rollback automatique si la mutation échoue
-- Afficher un indicateur subtil (couleur atténuée, opacité 0.6) pendant la synchronisation
-
-```typescript
-// hooks/queries/useNotesMutations.ts
-const createNote = useMutation({
-  mutationFn: NoteService.create,
-  onMutate: async (newNote) => {
-    await queryClient.cancelQueries({ queryKey: ['notes'] });
-    const previous = queryClient.getQueryData(['notes']);
-    queryClient.setQueryData(['notes'], (old) => [{ ...newNote, id: 'temp', syncing: true }, ...old]);
-    return { previous };
-  },
-  onError: (_, __, context) => {
-    queryClient.setQueryData(['notes'], context.previous);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-  },
-  onSuccess: () => {
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    queryClient.invalidateQueries({ queryKey: ['notes'] });
-  },
-});
-```
-
----
-
-## Design Émotionnel — Nature & Bien-être
-
-### Palette de référence (tokens)
-- Baie `#956540` — action principale, liens, boutons CTA
-- Alezan `#CE9871` — surface secondaire, cartes, tags
-- Isabelle `#C9B69F` — fond léger, zones de repos visuel
-- Baie-cerise `#B07161` — hover, états actifs
-- Palomino `#F6E6CE` — fond très clair, mode jour
-
-### Règles visuelles
-- **Zéro couleur froide pure** (bleu cobalt, vert vif, rouge sang) sans justification produit
-- Les surfaces **respirent** : `padding` généreux (minimum 16px), espaces blancs assumés
-- Les **animations** imitent la nature : spring physics (`withSpring`), pas de linear
-- Préférer les **arrondis prononcés** : `borderRadius: 16` pour les cards, `24` pour les modales
-- **Glassmorphism** sur les overlays uniquement : `expo-blur` + `backgroundColor: rgba(white, 0.15)`
-
-### Micro-copie — Ton chaleureux
-
-| Situation | ❌ Interdit | ✅ Recommandé |
-|-----------|------------|--------------|
-| Note sauvegardée | "Enregistré" | "Observation ajoutée ✓" |
-| Champ vide | "Ce champ est requis" | "Le nom de votre cheval ?" |
-| Erreur réseau | "Network error 503" | "Impossible de rejoindre le serveur. On réessaie ?" |
-| Aucun animal | "Aucun résultat" | "Votre premier cheval vous attend 🐴" |
-| Suppression | "Êtes-vous sûr ?" | "Supprimer Éclair définitivement ?" |
-| Quota atteint (free) | "Plan limit reached" | "Vous avez atteint la limite du plan gratuit. Voir les offres →" |
-| Note créée (optimistic) | (spinner) | Ajout instantané, petit badge "•" syncing |
-| Photo uploadée | "Upload success" | "Belle photo ! 📸" |
-| Connexion rétablie | "Online" | "De retour en ligne ✓" |
-| Chargement initial | (blanc) | Skeleton animé en tons isabelle |
-| Objectif atteint | "Goal completed" | "Objectif atteint ! Bravo 🏆" |
-| Session expirée | "401 Unauthorized" | "Votre session a expiré. Reconnectez-vous" |
-| Partage | "Share" | "Partager le profil d'Éclair" |
-| Ajout contact | "Add" | "Inviter à suivre Éclair" |
-| Profil incomplet | "Complete profile" | "Ajoutez une photo pour personnaliser le profil" |
-| Calendrier vide | "No events" | "Aucun événement prévu. Planifiez une sortie ?" |
-| Export réussi | "Done" | "Fichier prêt à partager" |
-| Dark mode activé | "Dark mode on" | (changement silencieux, pas de toast) |
-| Biométrie activée | "Enabled" | "Connexion rapide activée ✓" |
-| Rappel créé | "Reminder set" | "Je vous rappelle le {date} 🔔" |
-
----
-
-## Anti-patterns UX stricts
-
-- `ActivityIndicator` en plein écran sans skeleton → NON (except premier boot)
-- Scroll horizontal caché sans indicateur visuel → NON
-- Bouton "Retour" dans une modale bottom sheet → NON (swipe down suffit)
-- Texte d'action générique ("OK", "Valider", "Envoyer") → NON (toujours contextuel)
-- Formulaire qui réinitialise à la navigation retour → NON (persister avec `useRef` ou Zustand)
-- Notifications push sans opt-in explicite et justifié → NON
-- Accès caméra/micro sans explication préalable dans l'UI → NON (avant le prompt système)
+- Spinner plein ecran pour une section secondaire.
+- Modale bloquante avec trop d'actions.
+- Menu de creation sans hierarchie.
+- Formulaire dense sur mobile.
+- Action destructive sans confirmation claire.
+- Message technique utilisateur.
+- Effet visuel sans role UX.
+- Fonction IA presentee comme un produit separe au lieu d'une aide integree.

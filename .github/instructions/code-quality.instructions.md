@@ -2,77 +2,65 @@
 applyTo: "**/*.ts,**/*.tsx"
 ---
 
-# Qualité du code — Mobile MyDailyBook
+# Qualite Code TypeScript
+
+## Principes
+
+Le code doit etre lisible sous stress. Un bug de production doit pouvoir etre localise rapidement sans deviner ou se cache la logique. Preferer des fichiers simples, des types explicites et des effets bien delimites.
 
 ## TypeScript
-- Mode strict : pas de `any` sans commentaire justificatif `// eslint-disable-next-line @typescript-eslint/no-explicit-any — raison`
-- Pas d'`as` (type assertion) sans vérification préalable à l'exécution
-- Types explicites sur les props de composants, les retours de fonctions publiques, et les paramètres
-- Pas de `!` (non-null assertion) sans garantie — préférer l'optional chaining `?.`
 
-## Taille et cohésion des fichiers
-- Composant : max ~150 lignes. Au-delà, extraire un sous-composant ou un hook
-- Hook : max ~100 lignes. Au-delà, découper en hooks plus petits
-- Service : max ~80 lignes. Un service = un domaine HTTP
-- Fichiers de types : regrouper par domaine, éviter les fichiers fourre-tout
+- `strict` reste actif.
+- Eviter `any`. Si un `any` est temporairement necessaire, ajouter un commentaire expliquant pourquoi et quelle limite il protege.
+- Eviter les assertions `as` quand une verification runtime peut etre faite.
+- Eviter `!` sauf garantie locale evidente.
+- Typer les props, les retours de hooks publics, les DTO et les params de navigation.
+- Les types partages vivent dans `models/` ou `types/`; les types de domaine vivent dans `features/{domain}/types.ts`.
 
-## Réutilisabilité
-- Si une logique est dupliquée 2 fois → créer un hook ou une fonction utilitaire
-- Si un composant est utilisé dans 2+ features → déplacer dans `shared/components/`
-- Si un style est dupliqué → créer un token dans `theme/tokens.ts`
+## Strategie progressive pour le legacy
+
+Le code existant peut contenir du legacy. Pour toute zone touchee :
+- ne pas introduire de nouvel `any` non justifie ;
+- remplacer les types les plus proches quand cela ne declenche pas un refactor massif ;
+- isoler les conversions `unknown -> type metier` dans un helper ou un hook ;
+- ne pas corriger tout le repo dans une PR non dediee.
+
+## Taille et cohesion
+
+- Composant UI : viser moins de 150 lignes.
+- Hook : viser moins de 120 lignes.
+- Service API : rester centre sur un domaine.
+- Extraire quand une fonction a deux raisons de changer.
+- Eviter les composants qui melangent layout, validation, mutation, upload et feedback.
 
 ## Imports
-- Ordre : React/RN → librairies tierces → modules internes (par profondeur décroissante) → types
-- Pas d'imports relatifs profonds (../../..) — utiliser les alias configurés dans `tsconfig.json`
-- Pas d'import de barrel (`index.ts`) sauf pour les exports publics d'une feature
 
-## Nommage
-- Composants : `PascalCase` — `AnimalCard`, `EventFormDrawer`
-- Hooks : `camelCase` prefixé `use` — `useAnimalForm`, `useEventList`
-- Services : `PascalCase` + suffix `Service` — `AnimalsService`
-- Constants : `SCREAMING_SNAKE_CASE` pour les constantes globales
-- Types/Interfaces : `PascalCase`, préférer `type` à `interface` sauf pour les objets extensibles
+- Utiliser les alias TypeScript (`@features`, `@shared`, `@services`, etc.) pour eviter les chemins profonds quand le fichier est deja migre.
+- Ne pas importer un SDK externe dans une feature si un service adapter existe.
+- Ne pas importer `services/api/*` dans un composant UI ; passer par un hook.
+- Les barrels `index.ts` servent aux API publiques, pas a masquer une structure confuse.
 
-## Composants purs
-- Un composant ne doit pas déclencher de side-effects directement — déléguer à un hook
-- Les callbacks (`onPress`, `onChange`) sont passés en props, jamais hardcodés dans le composant
-- Éviter les props drilling > 2 niveaux — utiliser un hook ou un store Zustand
+## Side effects
 
-## Gestion d'erreurs
-- Les erreurs React Query sont gérées au niveau du hook (retour `isError`, `error`)
-- Afficher un composant d'erreur explicite (pas juste `null` ou un écran blanc)
-- Ne pas swallower les erreurs silencieusement avec un `catch` vide
-- Les erreurs inattendues remontent via le composant `<ErrorBoundary>` de `shared/`
+- Pas de side effect dans le rendu.
+- Les appels reseau passent par React Query ou par un hook dedie.
+- Les subscriptions et timers doivent etre nettoyes.
+- Les `catch` silencieux sont interdits sauf cas explicitement non critique et commente.
+- Les logs directs sont interdits hors dev local ; utiliser `LoggerService`.
 
-## Dead code
-- Pas de code commenté laissé dans la codebase — utiliser git pour l'historique
-- Pas de `console.log` en production — utiliser `if (__DEV__) console.log()`
-- Supprimer les imports inutilisés (ESLint le détecte automatiquement)
+## UI et styles
 
-## Synchronisation docs & config — règle obligatoire
+- Tout nouveau style doit utiliser les tokens via `useAppTheme()` ou Tamagui.
+- Pas de couleur, spacing ou font hardcode sans exception documentee.
+- Les styles dupliques doivent devenir un composant shared, un token ou un helper.
+- L'UI doit exposer des etats `loading`, `error`, `empty`, `data` quand elle depend du reseau.
 
-Toute modification de code qui impacte l'un des éléments suivants **doit être accompagnée** d'une mise à jour des fichiers concernés dans le **même commit** :
+## Debug first
 
-| Modification | Fichiers à mettre à jour |
-|-------------|--------------------------|
-| Ajout / suppression d'une permission (caméra, micro, localisation, notifications…) | `app.json` (`expo.android.permissions`, `expo.ios.infoPlist`), `eas.json` si build profile impacté, `README.md` section permissions |
-| Ajout / mise à jour d'une lib (`package.json`) | `README.md` section stack, `docs/` si impact architectural |
-| Nouveau domaine ou nouvelle feature | `docs/architecture.md`, structure dans `README.md` |
-| Nouvelle variable d'environnement | `config/env.ts`, `.env.example`, `README.md` section config |
-| Nouveau flux d'authentification ou de navigation | `docs/authentication.md` ou fichier doc équivalent |
-| Changement de comportement offline / synchronisation | `README.md`, doc technique associée |
+Nommer les choses pour les retrouver :
+- `createEventMutation` plutot que `mutation`;
+- `isSavingProfile` plutot que `loading`;
+- `eventDraft` plutot que `data`;
+- `handleRetryGroups` plutot qu'un callback inline opaque.
 
-### Checklist commit "breaking change config"
-```
-[ ] app.json mis à jour (permissions, plugins Expo)
-[ ] eas.json mis à jour si profil de build impacté
-[ ] README.md reflète l'état actuel
-[ ] docs/ à jour si architecture ou flux modifié
-[ ] .env.example à jour si nouvelle variable
-```
-
-### Règle pour Copilot
-Quand tu génères du code qui :
-- Utilise `expo-camera`, `expo-location`, `expo-media-library`, `expo-contacts`, `expo-notifications` ou tout module natif avec permission → **rappeler de mettre à jour `app.json`**
-- Ajoute une nouvelle lib → **rappeler de mettre à jour `README.md`**
-- Crée un nouveau domaine dans `features/` → **rappeler de mettre à jour `docs/architecture.md`**
+Un bon changement laisse un chemin clair entre action utilisateur, mutation, erreur et feedback.

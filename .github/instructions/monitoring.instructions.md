@@ -2,226 +2,86 @@
 applyTo: "**/*.ts,**/*.tsx"
 ---
 
-# Monitoring Sentry — Mobile MyDailyBook
+# Monitoring Et Logs
 
-## Initialisation enrichie
+## Intention
 
-```typescript
-// App.tsx
-import * as Sentry from '@sentry/react-native';
-import { env } from './config/env';
+Le monitoring doit aider a comprendre les incidents sans collecter trop de donnees. Il doit repondre a : quelle feature, quelle operation, quel etat, quel type d'erreur, quelle version.
 
-if (!env.IS_DEV && env.SENTRY_DSN) {
-  Sentry.init({
-    dsn: env.SENTRY_DSN,
-    environment: env.APP_ENV,              // 'production' | 'staging'
-    release: `mydailybook@${env.APP_VERSION}+${env.BUILD_NUMBER}`,
-    tracesSampleRate: 0.2,                 // 20% des transactions — pas 100%
-    debug: false,
-    enableAutoSessionTracking: true,
-    attachStacktrace: true,
-    beforeSend(event) {
-      // Ne pas envoyer les erreurs de dev escapées accidentellement
-      if (__DEV__) return null;
-      return event;
-    },
-  });
-}
+## Sentry
 
-export default Sentry.wrap(App);
+Sentry est initialise dans `App.tsx` uniquement si `!env.IS_DEV && env.SENTRY_DSN`.
+
+Configuration cible :
+- `dsn` depuis `config/env.ts`;
+- `environment` derive de la config build si disponible ;
+- `release` basee sur version + build si disponible ;
+- traces limitees en production ;
+- pas d'event envoye en dev.
+
+Si des champs comme `APP_ENV`, `APP_VERSION` ou `BUILD_NUMBER` sont ajoutes, mettre aussi a jour `config/env.ts`, `.env.example` et la documentation projet.
+
+## LoggerService
+
+Les features ne doivent pas appeler Sentry directement. Utiliser `services/logs/LoggerService.ts`.
+
+Attendu :
+- `LoggerService.log` ou methode equivalente pour warning/message ;
+- `LoggerService.error` si elle existe ou a creer lors d'une prochaine refonte ;
+- contexte minimal et non sensible ;
+- propagation de l'erreur apres log quand React Query ou le formulaire doit la gerer.
+
+## Contexte utilisateur
+
+Le contexte utilisateur Sentry est gere dans `services/auth/`. Ne pas appeler `Sentry.setUser` depuis un composant ou une feature.
+
+Donnees autorisees :
+- id interne stable si disponible ;
+- role principal si non sensible ;
+- jamais de token ;
+- email uniquement si necessaire au support et autorise par la politique produit.
+
+## Breadcrumbs utiles
+
+Tracer les actions qui aident vraiment au diagnostic :
+- creation, edition, suppression d'un animal ;
+- creation ou edition d'un evenement ;
+- creation d'une note ;
+- changement de role/offre visible ;
+- debut et resultat d'une aide IA ;
+- erreur de permission ;
+- echec d'upload.
+
+Eviter les breadcrumbs de bruit : chaque tap, chaque rendu, chaque navigation secondaire.
+
+Format recommande :
+```ts
+LoggerService.breadcrumb?.('events', 'create_started', {
+  eventType,
+  hasAnimals: selectedAnimalIds.length > 0,
+});
 ```
 
-Variables d'environnement requises dans `config/env.ts` :
-```typescript
-APP_ENV: z.enum(['development', 'staging', 'production']),
-APP_VERSION: z.string(),       // ex: "1.4.2"
-BUILD_NUMBER: z.string(),      // ex: "47"
-SENTRY_DSN: z.string().optional(),
-```
+## Tags par operation
 
----
+Quand une operation est tracee, utiliser des tags stables :
+- `feature`: `events`, `animals`, `notes`, etc.
+- `operation`: `create`, `update`, `delete`, `upload`, `parse`
+- `screen`: nom de route si utile
+- `app_mode`: `development`, `staging`, `production` si disponible
 
-## Contexte utilisateur — `setUser` obligatoire
+## PII et secrets
 
-```typescript
-// services/auth/AuthService.ts
-import * as Sentry from '@sentry/react-native';
+Interdit dans logs, Sentry context, breadcrumbs :
+- token Firebase ;
+- mot de passe ;
+- cle API ou secret ;
+- document utilisateur brut ;
+- note complete ;
+- contenu IA complet si personnel.
 
-class FirebaseAuthService implements IAuthService {
+Preferer des booleens, tailles, IDs non sensibles et codes d'erreur.
 
-  async signIn(email: string, password: string): Promise<AuthResult> {
-    const result = await signInWithEmailAndPassword(auth, email, password);
-    const token = await result.user.getIdTokenResult();
+## Console
 
-    // ✅ Identifier l'utilisateur dans Sentry dès la connexion
-    Sentry.setUser({
-      id: token.claims.internal_id as string,  // UUID interne stable
-      email: result.user.email ?? undefined,
-    });
-
-    return result;
-  }
-
-  async signOut(): Promise<void> {
-    await firebaseSignOut(auth);
-    // ✅ Effacer le contexte utilisateur à la déconnexion
-    Sentry.setUser(null);
-  }
-}
-```
-
----
-
-## Tags sémantiques — filtrage dans Sentry Dashboard
-
-```typescript
-// Définir les tags au démarrage de session (après auth)
-Sentry.setTag('app_version', env.APP_VERSION);
-Sentry.setTag('platform', Platform.OS);           // 'ios' | 'android'
-Sentry.setTag('environment', env.APP_ENV);
-
-// Tags sur les opérations métier (dans les mutations React Query)
-Sentry.setTag('operation', 'note.create');
-Sentry.setTag('feature', 'notes');
-
-// Tags sur les rôles (après récupération du token)
-const roles = token.claims.roles as string[];
-Sentry.setTag('user_role', roles[0] ?? 'free');   // rôle principal
-```
-
----
-
-## Breadcrumbs — reconstituer le parcours avant le crash
-
-Ajouter des breadcrumbs sur les **actions clés** de l'utilisateur :
-
-```typescript
-// utils/monitoring.ts
-import * as Sentry from '@sentry/react-native';
-
-export function trackAction(category: string, message: string, data?: Record<string, unknown>) {
-  Sentry.addBreadcrumb({
-    category,
-    message,
-    data,
-    level: 'info',
-  });
-}
-
-// Utilisation dans les hooks de mutation
-// features/notes/hooks/useCreateNote.ts
-onMutate: async (newNote) => {
-  trackAction('notes', 'Creating note', { animal_id: newNote.animal_id });
-  // ...
-},
-onSuccess: () => {
-  trackAction('notes', 'Note created successfully');
-},
-onError: (error) => {
-  trackAction('notes', 'Note creation failed', { error: String(error) });
-},
-```
-
-Actions à tracer systématiquement :
-- Création / modification / suppression d'un animal
-- Création / modification / suppression d'une note
-- Création d'un événement
-- Navigation entre écrans principaux (navigation `onFocus`)
-- Appels à l'IA (début + résultat)
-- Erreurs de synchronisation offline
-
----
-
-## Capture d'exception enrichie — `LoggerService`
-
-```typescript
-// services/LoggerService.ts
-import * as Sentry from '@sentry/react-native';
-
-class LoggerService {
-  error(message: string, error: unknown, context?: Record<string, unknown>): void {
-    if (__DEV__) {
-      console.error(message, error);
-      return;
-    }
-
-    Sentry.withScope((scope) => {
-      if (context) {
-        scope.setContext('additional_context', context);
-      }
-      scope.setTag('logger', 'LoggerService');
-      Sentry.captureException(error instanceof Error ? error : new Error(String(error)));
-    });
-  }
-
-  warn(message: string, data?: Record<string, unknown>): void {
-    if (__DEV__) {
-      console.warn(message, data);
-      return;
-    }
-    Sentry.captureMessage(message, { level: 'warning', extra: data });
-  }
-}
-
-export const logger = new LoggerService();
-```
-
-Usage dans les services :
-```typescript
-// ✅ Correct
-try {
-  await AnimalService.create(data);
-} catch (err) {
-  logger.error('Failed to create animal', err, { data });
-  throw err; // Propager pour que React Query gère le rollback
-}
-
-// ❌ Interdit
-Sentry.captureException(err); // Appel direct sans contexte
-console.error(err);           // En production, silencieux pour Sentry
-```
-
----
-
-## Source Maps — configuration EAS
-
-```json
-// eas.json — activer hermes source maps
-{
-  "build": {
-    "production": {
-      "env": {
-        "SENTRY_ORG": "mydailybook",
-        "SENTRY_PROJECT": "mydailybook-mobile"
-      }
-    }
-  }
-}
-```
-
-```javascript
-// app.json / app.config.js — plugin Sentry
-{
-  "plugins": [
-    [
-      "@sentry/react-native/expo",
-      {
-        "organization": "mydailybook",
-        "project": "mydailybook-mobile"
-      }
-    ]
-  ]
-}
-```
-
-> Rappel doc sync : ajouter `@sentry/react-native/expo` dans `app.json` plugins.
-
----
-
-## Règles absolues
-
-- `Sentry.setUser()` : appelé **uniquement** dans `services/auth/AuthService.ts` — jamais dans les composants
-- `Sentry.captureException()` : **toujours** via `logger.error()` — jamais en appel direct dans les features
-- `tracesSampleRate` : **maximum 0.2** en production — la valeur 1.0 génère du bruit et un coût inutile
-- `release` : format `mydailybook@{version}+{buildNumber}` — permet de lier les erreurs aux déploiements
-- `environment` : obligatoire pour distinguer staging et production dans le dashboard
+`console.log`, `console.warn`, `console.error` sont reserves au debug local temporaire et doivent etre proteges par `__DEV__` ou remplaces par `LoggerService` avant merge.

@@ -1,184 +1,133 @@
 ---
-applyTo: "**/*.tsx,features/**,theme/**"
+applyTo: "**/*.tsx,features/**,theme/**,shared/components/**"
 ---
 
-# Design System & UI/UX — Mobile MyDailyBook
+# Design System Et Direction UI
 
-## Charte graphique — Palette équestre
-La charte est basée sur les robes de chevaux. Tonalités chaudes, naturelles, terrestres.
+## Direction
 
-```
-Palette brute (ne pas utiliser directement dans les composants)
-  baie         #956540   ← brun-roux, couleur primaire
-  alezan       #CE9871   ← cuivré clair, accent chaud
-  isabelle     #C9B69F   ← beige doré, surfaces
-  aubere       #BAA89B   ← gris rosé, neutres
-  rouan        #D3CCC9   ← gris clair, fonds
-  baie-brun    #694233   ← brun foncé, textes forts
-  baie-cerise  #B07161   ← rouge-brun, erreurs/destructif
-  palomino     #F6E6CE   ← crème, fonds secondaires
-```
+MyDailyBook doit paraitre moderne, chaleureux et premium. L'interface s'inspire du monde equestre sans devenir thematique ou decorative : tons naturels, matieres douces, lisibilite, profondeur subtile.
 
-## Design tokens — `theme/tokens.ts` (source unique de vérité)
+La modernite vient de la precision :
+- glass/blur quand il aide a separer les plans ;
+- surfaces legeres ;
+- ombres douces ;
+- transitions courtes ;
+- iconographie metier coherente ;
+- feedback tactile discret.
 
-```typescript
-// theme/tokens.ts
+Elle ne vient pas d'effets gratuits, de visuels generiques d'IA, d'emojis decoratifs, de gradients artificiels ou de pictogrammes technologiques hors contexte.
 
-// Niveau 1 — Palette brute
-export const palette = {
-  baie:        '#956540',
-  alezan:      '#CE9871',
-  isabelle:    '#C9B69F',
-  aubere:      '#BAA89B',
-  rouan:       '#D3CCC9',
-  baieBrun:    '#694233',
-  baieCerise:  '#B07161',
-  palomino:    '#F6E6CE',
-  white:       '#FFFFFF',
-  black:       '#1E1E1E',
-  transparent: 'transparent',
-} as const;
+## Stack UI officielle
 
-// Niveau 2 — Tokens sémantiques (SEULS utilisables dans les composants)
-export const semantic = {
-  // Couleurs
-  primary:          palette.baie,
-  primaryLight:     palette.alezan,
-  primaryDark:      palette.baieBrun,
-  surface:          palette.rouan,
-  surfaceVariant:   palette.isabelle,
-  background:       palette.white,
-  backgroundPaper:  palette.palomino,
-  textPrimary:      palette.black,
-  textSecondary:    palette.aubere,
-  error:            palette.baieCerise,
-  success:          palette.alezan,
+- Tamagui pour la couche UI cible.
+- Tokens maison dans `theme/tokens.ts`.
+- Theme Tamagui dans `theme/tamagui.config.ts`.
+- Acces theme via `theme/useAppTheme.ts`.
+- Composants applicatifs dans `shared/components/ui`.
 
-  // Typographie
-  fontBody:    'Quicksand-Regular',
-  fontMedium:  'Quicksand-Medium',
-  fontBold:    'Quicksand-Bold',
+Tout nouveau composant doit utiliser ces couches au lieu de valeurs brutes.
 
-  // Spacing (multiple de 4)
-  spaceXs:  4,
-  spaceSm:  8,
-  spaceMd:  16,
-  spaceLg:  24,
-  spaceXl:  32,
-  space2xl: 48,
+## Palette equestre
 
-  // Border radius
-  radiusSm: 8,
-  radiusMd: 12,
-  radiusLg: 20,
-  radiusFull: 999,
+La palette brute vit dans `theme/tokens.ts` et ne doit pas etre utilisee directement dans les composants.
 
-  // Élévations / ombres
-  shadowSm: { shadowColor: palette.baieBrun, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 4, elevation: 2 },
-  shadowMd: { shadowColor: palette.baieBrun, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.12, shadowRadius: 8, elevation: 4 },
-} as const;
+Couleurs de reference :
+- baie : brun-roux principal ;
+- alezan : accent chaud ;
+- isabelle : beige dore ;
+- aubere : neutre rose/gris ;
+- rouan : fond clair ;
+- baieBrun : texte fort ;
+- baieCerise : danger/destructif ;
+- palomino : fond doux.
+
+Les couleurs froides pures sont reservees aux graphiques ou statuts clairement justifies et doivent passer par des tokens semantiques dedies.
+
+## Tokens
+
+Utiliser les tokens pour :
+- couleurs ;
+- spacing ;
+- radius ;
+- typographie ;
+- ombres ;
+- intensite de blur ;
+- overlays ;
+- tailles recurrentes.
+
+Exemple attendu :
+```tsx
+const { colors, tokens } = useAppTheme();
+
+<View
+  style={{
+    backgroundColor: colors.surface,
+    borderRadius: tokens.radii.lg,
+    padding: tokens.spacing.md,
+  }}
+/>
 ```
 
-`theme/lightTheme.ts` et `theme/darkTheme.ts` importent **uniquement** depuis `tokens.ts` pour configurer React Native Paper.
+## Effets modernes autorises
 
-## Règle absolue
-**JAMAIS de valeur brute dans les composants ou StyleSheet.**
-```typescript
-// ❌ Interdit
-const styles = StyleSheet.create({ container: { backgroundColor: '#956540', padding: 16 } });
+Glass/blur :
+- bottom sheets ;
+- overlays sur photo ;
+- headers flottants ;
+- menus contextuels ;
+- tab bar.
 
-// ✅ Correct
-const { colors, spacing } = useAppTheme();
-const styles = StyleSheet.create({ container: { backgroundColor: colors.primary, padding: spacing.md } });
-```
+Conditions :
+- contraste lisible ;
+- pas sur un contenu dense ;
+- pas sur les CTA principaux si cela nuit a l'accessibilite ;
+- toujours avec fallback Android si necessaire.
 
-## Effets visuels modernes
+Profondeur :
+- ombres faibles et coherentes ;
+- elevation utile pour distinguer interaction ou plan ;
+- pas d'empilement de cartes dans des cartes.
 
-### Glassmorphism (modales, drawers, cartes en overlay)
-```typescript
-import { BlurView } from 'expo-blur';
+Animations :
+- 150-300 ms pour transitions simples ;
+- spring doux pour feedback tactile ;
+- pas d'animation qui retarde une action ;
+- Reanimated pour les interactions importantes ;
+- haptics sur validation, selection, succes ou erreur quand utile.
 
-<BlurView intensity={18} tint="light" style={styles.glassCard}>
-  {children}
-</BlurView>
+## Iconographie
 
-const styles = StyleSheet.create({
-  glassCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: semantic.radiusLg,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    overflow: 'hidden',
-  },
-});
-```
-Utiliser sur : les modales d'action, les cartes en overlay sur image, les headers de section.
+Utiliser un set stable, prioritairement `@expo/vector-icons` avec une famille coherente par surface.
 
-### Neumorphisme léger (cartes, badges, boutons de profil)
-```typescript
-const styles = StyleSheet.create({
-  neuCard: {
-    backgroundColor: semantic.backgroundPaper,
-    borderRadius: semantic.radiusMd,
-    // Ombre claire en haut à gauche
-    shadowColor: palette.white,
-    shadowOffset: { width: -3, height: -3 },
-    shadowOpacity: 0.8,
-    shadowRadius: 6,
-    // Combiner avec une ombre sombre en bas à droite via une View imbriquée
-  },
-});
-```
-Utiliser avec parcimonie : cartes profil, badges de statut. Jamais sur les éléments interactifs principaux (problème d'accessibilité).
+Les icones doivent representer l'action ou le domaine :
+- calendrier ;
+- animal ;
+- note ;
+- soin ;
+- objectif ;
+- contact ;
+- groupe ;
+- document.
 
-### Micro-animations — react-native-reanimated 4
+Eviter les pictos de technologie, les mascottes, les symboles spectaculaires et les visuels generiques pour les fonctions IA. Une aide IA peut utiliser une icone sobre comme `edit` ou `text-search` uniquement si elle reste coherente avec la marque et validee produit ; preferer souvent une action textuelle claire.
 
-**Transitions de liste :**
-```typescript
-import Animated, { FadeInDown, FadeOutUp, LinearTransition } from 'react-native-reanimated';
+## Exceptions admises
 
-// Chaque item de la liste
-<Animated.View entering={FadeInDown.delay(index * 60).springify()} layout={LinearTransition}>
-  <AnimalCard animal={animal} />
-</Animated.View>
-```
+Les valeurs brutes sont admises uniquement pour :
+- gradients de protection sur photo hero ;
+- overlays `rgba` standardises ;
+- couleurs de chart passees par tokens de chart ;
+- valeurs imposees par une librairie externe ;
+- prototypes temporaires marques clairement.
 
-**Boutons — feedback tactile :**
-```typescript
-import { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+Quand une exception devient recurrente, creer un token.
 
-const scale = useSharedValue(1);
-const animStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
+## Migration
 
-const onPressIn = () => { scale.value = withSpring(0.96) };
-const onPressOut = () => { scale.value = withSpring(1) };
-```
-
-**Transitions d'écran :** utiliser les animations natives React Navigation — ne pas réinventer.
-
-**Apparition d'écran (skeleton → contenu) :**
-```typescript
-import { FadeIn } from 'react-native-reanimated';
-
-<Animated.View entering={FadeIn.duration(300)}>
-  <ScreenContent />
-</Animated.View>
-```
-
-## Composants UI — bonnes pratiques
-- Utiliser les composants React Native Paper en priorité (Button, Card, TextInput, FAB, Chip...)
-- Override le style via le système de thème Paper (`theme.colors.primary`) — jamais via style inline
-- Bottom sheet via `@gorhom/bottom-sheet` pour tous les formulaires et actions contextuelles
-- Les icônes viennent uniquement de `@expo/vector-icons` (MaterialCommunityIcons en priorité pour la cohérence)
-- Images distantes : toujours via les URLs signées de l'API, jamais d'URL S3 directe
-
-## Accessibilité minimale
-- `accessibilityLabel` sur TOUS les éléments pressables sans texte visible
-- `accessibilityRole` sur les boutons, titres, images
-- Contraste minimum 4.5:1 entre texte et fond
-- Taille tactile minimum 44x44 dp
-
-## Responsive
-- Utiliser `Dimensions.get('window')` uniquement si vraiment nécessaire
-- Préférer les `flex` et `percentage` pour les layouts
-- Tester sur iPhone SE (375px) et iPhone 15 Pro Max (430px) comme extrêmes
+Pour le legacy :
+- ne pas tout refondre dans une PR fonctionnelle ;
+- ne pas ajouter de nouveau hardcode ;
+- convertir les styles proches du code touche ;
+- deplacer les patterns reutilisables dans `shared/components/ui`;
+- supprimer les alias de couleurs legacy quand plus aucun composant ne les utilise.

@@ -2,43 +2,94 @@
 applyTo: "**/*.ts,**/*.tsx"
 ---
 
-# Sécurité — Mobile MyDailyBook
+# Securite Mobile
 
-## Stockage des données sensibles
-- `expo-secure-store` pour TOUT ce qui est sensible : tokens, clés, identifiants
-- `AsyncStorage` autorisé uniquement pour les préférences non sensibles (thème, langue, config UI)
-- Ne JAMAIS stocker un Firebase ID token, refresh token ou clé API dans AsyncStorage
-- Ne JAMAIS logger des données personnelles, tokens ou credentials — en production ET en dev, utiliser `if (__DEV__)` pour tout log contenant des données utilisateur
+## Principes
+
+La securite doit etre simple, explicite et difficile a contourner par accident. Les features ne manipulent pas directement les secrets, tokens ou SDK sensibles.
+
+## Secrets et identifiants publics
+
+Secrets interdits dans le repo et dans le workspace partage :
+- mot de passe ;
+- cle privee ;
+- keystore password ;
+- token ;
+- refresh token ;
+- fichier de credentials service account ;
+- fichier `.env` avec vraies valeurs.
+
+Certains identifiants Firebase client peuvent etre publics par nature, mais ils doivent rester controles et documentes. Ne pas confondre "pas un secret" avec "sans risque" : les restrictions cote Firebase/Google Cloud doivent etre configurees.
+
+## Variables d'environnement
+
+- Les variables client Expo utilisent `EXPO_PUBLIC_*`.
+- `config/env.ts` est le seul point d'entree cote app.
+- Eviter les fallbacks de production hardcodes ; preferer `.env.example` + validation claire.
+- Ne jamais logger la config complete.
+
+## Stockage local
+
+Utiliser SecureStore pour :
+- tokens ;
+- credentials ;
+- secrets ;
+- flags sensibles ;
+- tout element qui donne acces a un compte ou une ressource privee.
+
+AsyncStorage est acceptable pour :
+- theme ;
+- langue ;
+- preferences UI ;
+- cache non sensible ;
+- etat d'onboarding non critique.
+
+Si un store persiste `isAuthenticated` ou un profil utilisateur, verifier que cela ne devient pas une source d'autorisation. L'autorite reste le token/session reelle.
 
 ## Authentification
-- Le Firebase ID token est injecté automatiquement par l'interceptor dans `services/api/httpClient.ts` — ne pas le dupliquer ailleurs
-- Toujours passer par `AuthService.signOut()` pour déconnecter — il révoque le token côté Firebase et vide le SecureStore
-- Ne jamais manipuler le token Firebase directement dans les composants ou écrans
-- En cas de 401 reçu de l'API, l'interceptor httpClient déclenche automatiquement le signOut — ne pas gérer ce cas à nouveau dans les composants
 
-## Validation des inputs
-- TOUJOURS valider les données utilisateur avec un schéma Zod avant d'envoyer une requête
-- Schémas Zod co-localisés avec leur formulaire dans `features/{domain}/`
-- Utiliser `zodResolver` avec React Hook Form — ne jamais bypasser la validation côté client
-- Valider aussi les paramètres de navigation reçus (ils peuvent être altérés)
+- Firebase Auth est encapsule dans `services/auth/`.
+- Les features ne doivent pas importer `firebase/auth`.
+- Les composants ne manipulent pas les tokens.
+- Le token est injecte par `services/api/httpClient.ts`.
+- Le sign out passe par le service auth et nettoie le contexte local.
 
-## Permissions Expo
-- Demander uniquement les permissions strictement nécessaires à la fonctionnalité en cours
-- Demander au moment de l'utilisation, jamais au démarrage de l'application
-- Toujours gérer le cas `denied` avec un message utilisateur clair et un chemin vers les paramètres système
-- Ne jamais bloquer l'UI en attendant indéfiniment une permission
+## Permissions
 
-## Données sensibles dans le code source
-- Aucune clé API, secret, UID ou URL S3 brute dans le code source ou les commentaires
-- Les variables d'environnement sont dans `config/env.ts` via `expo-constants` — jamais de valeur de prod hardcodée
-- Vérifier que `.gitignore` inclut `google-services.json`, `GoogleService-Info.plist` et `credentials/`
+Demander une permission au moment ou l'utilisateur lance l'action concernee, pas au demarrage.
 
-## Requêtes réseau
-- Toutes les requêtes HTTP passent par `services/api/httpClient.ts` sans exception
-- Ne pas construire d'URL manuellement avec des données utilisateur non sanitisées
-- Les réponses API sont typées strictement — ne pas assigner à `any` sans conversion explicite et validée
-- Les URLs signées pour les fichiers S3 sont récupérées via l'API backend — jamais construites côté client
+Avant le prompt systeme :
+- expliquer pourquoi la permission est utile ;
+- gerer `denied` sans bloquer l'app ;
+- proposer une alternative ou un lien vers les reglages si pertinent.
 
-## Navigation & données exposées
-- Ne jamais passer de données sensibles (token, password, données personnelles complètes) en paramètre de navigation
-- Passer uniquement des IDs ou des clés de référence dans les paramètres de navigation
+Toute permission ajoutee doit etre refletee dans `app.json` et documentee.
+
+## Donnees et logs
+
+Ne jamais logger :
+- token ;
+- mot de passe ;
+- contenu personnel complet ;
+- document brut ;
+- URL signee longue ;
+- payload d'auth.
+
+Les logs techniques utilisent `LoggerService` avec contexte minimal.
+
+## Reseau et fichiers
+
+- HTTP uniquement via `httpClient`.
+- Les URLs signees sont obtenues via l'API.
+- Ne pas construire d'URL S3 manuellement dans une feature.
+- Les uploads passent par un service dedie.
+- Valider les fichiers avant upload : taille, type, extension, source.
+
+## Checklist rapide
+
+Avant merge :
+- aucun secret dans `git status` ou `git diff` ;
+- pas de SDK sensible importe dans une feature ;
+- permissions justifiees ;
+- logs sans PII ;
+- stockage local adapte a la sensibilite.
