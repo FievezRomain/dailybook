@@ -33,6 +33,7 @@
   "darkModeOff": "Light mode on",
   "createMenu": {
     "animal": "Animal",
+    "event": "Event",
     "walk": "Walk",
     "training": "Training",
     "competition": "Competition",

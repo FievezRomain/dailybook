@@ -1,8 +1,8 @@
 import React, { type ReactNode } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import * as Sentry from '@sentry/react-native';
 import { AppErrorCode } from '../../types/AppErrorCode';
 import { parseApiError } from '../../utils/errorParser';
+import LoggerService from '../../services/logs/LoggerService';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -25,14 +25,11 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo): void {
-    if (__DEV__) {
-      console.warn('[ErrorBoundary] Caught error:', error.message, info.componentStack);
-      return;
-    }
-    Sentry.withScope((scope) => {
-      scope.setTag('boundary', 'ErrorBoundary');
-      scope.setContext('component_stack', { stack: info.componentStack });
-      Sentry.captureException(error);
+    LoggerService.error('ErrorBoundary caught render error', error, {
+      feature: 'app',
+      operation: 'render',
+      boundary: 'ErrorBoundary',
+      componentStack: info.componentStack,
     });
   }
 
@@ -53,7 +50,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     const message =
       parsed.code !== AppErrorCode.INTERNAL_ERROR
         ? parsed.message
-        : "Quelque chose ne s'est pas passé comme prévu 🐴";
+        : 'Une erreur est survenue. Reessayez dans un instant.';
 
     return (
       <View style={styles.container}>

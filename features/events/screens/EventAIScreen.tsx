@@ -68,7 +68,7 @@ export default function EventAIScreen({ navigation }: AppStackScreenProps<'Event
             <Entypo name="chevron-left" size={24} color={colors.textPrimary} />
           </TouchableOpacity>
           <Text style={styles.title}>Dictée intelligente</Text>
-          <MaterialCommunityIcons name="robot-outline" size={24} color={colors.primary} />
+          <MaterialCommunityIcons name="calendar-search" size={24} color={colors.primary} />
         </View>
 
         <ScrollView style={styles.body} keyboardShouldPersistTaps="handled">
@@ -103,7 +103,7 @@ export default function EventAIScreen({ navigation }: AppStackScreenProps<'Event
             </Button>
           ) : (
             <Button type="primary" size="l" isLong isUppercase={false} onPress={handleParse} disabled={loading}>
-              {loading ? <ActivityIndicator size="small" color="#fff" /> : 'Analyser 🤖'}
+              {loading ? <ActivityIndicator size="small" color={colors.textOnPrimary} /> : 'Analyser le texte'}
             </Button>
           )}
         </View>

@@ -1,6 +1,6 @@
 ﻿import React, { useState } from 'react';
 import * as Haptics from 'expo-haptics';
-import { View, Text, FlatList, Dimensions, Linking, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, Dimensions, Linking, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -10,19 +10,19 @@ import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
 import ModalSubMenuWishActions from '../components/ModalSubMenuWishActions';
 import ModalWish from '../components/ModalWish';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
-import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
-import { getFileUrl } from '../../../services/aws/FileStorageService';
 import { useWishesQuery, useWishMutations } from '../../../hooks/queries/useWishesQuery';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
 import { Wish } from '../../../models/Wish';
 import type { UpdateWishPayload } from '../types';
+import { AppEmptyState, AppErrorState } from '../../../shared/components/ui';
+import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 
 type Props = AppStackScreenProps<'Wish'>;
 
 export default function WishScreen({ navigation }: Props) {
   const { colors, fonts } = useAppTheme();
-  const { data: wishes = [] } = useWishesQuery();
+  const { data: wishes = [], isLoading, isError, refetch } = useWishesQuery();
   const { update, remove } = useWishMutations();
   const firebaseUser = useAuthStore((s) => s.firebaseUser);
 
@@ -101,9 +101,17 @@ export default function WishScreen({ navigation }: Props) {
         title="Suppression d'un souhait"
       />
       <View style={styles.container}>
-        {wishes.length === 0 ? (
+        {isLoading ? (
           <View style={{ paddingHorizontal: 20 }}>
-            <ModalDefaultNoValue text="Aucun souhait enregistré" />
+            <ListSkeleton count={4} variant="wish" />
+          </View>
+        ) : isError ? (
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <AppErrorState message="Impossible de charger les souhaits." onRetry={() => void refetch()} />
+          </View>
+        ) : wishes.length === 0 ? (
+          <View style={{ paddingHorizontal: 20 }}>
+            <AppEmptyState icon="gift-outline" title="Aucun souhait enregistré" description="Ajoutez vos envies pour les suivre simplement." />
           </View>
         ) : (
           <FlatList
@@ -135,19 +143,16 @@ export default function WishScreen({ navigation }: Props) {
                     <Text style={[styles.title, styles.textFontBold]} numberOfLines={1}>{item.nom}</Text>
                     <Text style={styles.textFontRegular} numberOfLines={1}>{item.destinataire}</Text>
                   </View>
-                  {update.isPending ? (
-                    <ActivityIndicator size="small" />
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() => changeState(item)}
-                      style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 5, paddingHorizontal: 8, borderRadius: 20, backgroundColor: item.acquis ? colors.minor : colors.textSecondary, marginLeft: 8 }}
-                    >
-                      <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: item.acquis ? colors.primary : colors.secondary, alignItems: 'center', justifyContent: 'center', marginRight: 6 }}>
-                        {item.acquis && <Entypo name="check" size={14} color={colors.background} />}
-                      </View>
-                      <MaterialCommunityIcons name={item.acquis ? 'gift-open' : 'gift'} size={18} color={item.acquis ? colors.primary : colors.secondary} />
-                    </TouchableOpacity>
-                  )}
+                  <TouchableOpacity
+                    disabled={update.isPending}
+                    onPress={() => changeState(item)}
+                    style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 5, paddingHorizontal: 8, borderRadius: 20, backgroundColor: item.acquis ? colors.minor : colors.textSecondary, marginLeft: 8, opacity: update.isPending ? 0.6 : 1 }}
+                  >
+                    <View style={{ width: 20, height: 20, borderRadius: 10, backgroundColor: item.acquis ? colors.primary : colors.secondary, alignItems: 'center', justifyContent: 'center', marginRight: 6 }}>
+                      {item.acquis && <Entypo name="check" size={14} color={colors.background} />}
+                    </View>
+                    <MaterialCommunityIcons name={item.acquis ? 'gift-open' : 'gift'} size={18} color={item.acquis ? colors.primary : colors.secondary} />
+                  </TouchableOpacity>
                 </View>
               </View>
             )}

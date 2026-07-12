@@ -47,7 +47,7 @@ export default function EventEntryScreen({ navigation }: AppStackScreenProps<'Ev
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.card, { backgroundColor: colors.background, elevation: 2, shadowOpacity: 0.1, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } }]} onPress={startAI}>
-          <MaterialCommunityIcons name="robot-outline" size={32} color={colors.primary} />
+          <MaterialCommunityIcons name="text-search" size={32} color={colors.primary} />
           <View style={styles.cardText}>
             <Text style={styles.cardTitle}>{t('aiTitleFull')}</Text>
             <Text style={styles.cardSub}>{t('aiEntrySub')}</Text>

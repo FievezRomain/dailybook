@@ -184,9 +184,9 @@ const lightTheme = {
 
 const darkTheme = {
   background: palette.black,
-  backgroundHover: '#2A1A10',
-  backgroundPress: '#3D2519',
-  backgroundFocus: '#3D2519',
+  backgroundHover: palette.darkPaper,
+  backgroundPress: palette.darkWarm,
+  backgroundFocus: palette.darkWarm,
   backgroundStrong: palette.darkSurface,
   backgroundTransparent: 'transparent',
 
@@ -196,26 +196,26 @@ const darkTheme = {
   colorFocus: palette.palomino,
   colorTransparent: 'transparent',
 
-  borderColor: '#4A3020',
+  borderColor: palette.darkWarmRaised,
   borderColorHover: palette.baieCerise,
   borderColorFocus: palette.alezan,
   borderColorPress: palette.alezan,
 
-  shadowColor: '#000',
-  shadowColorHover: '#000',
+  shadowColor: palette.black,
+  shadowColorHover: palette.black,
 
   // Semantic
   primary: palette.alezan,
   primaryLight: palette.isabelle,
   primaryDark: palette.baie,
   surface: palette.darkSurface,
-  surfaceVariant: '#3D2519',
-  surfaceDim: '#4A3020',
-  backgroundPaper: '#2A1A10',
+  surfaceVariant: palette.darkWarm,
+  surfaceDim: palette.darkWarmRaised,
+  backgroundPaper: palette.darkPaper,
   textPrimary: palette.palomino,
   textSecondary: palette.aubere,
   textOnPrimary: palette.baieBrun,
-  textDisabled: '#5C4A3A',
+  textDisabled: palette.darkTextDisabled,
   error: palette.baieCerise,
   success: palette.alezan,
   warning: palette.isabelle,

@@ -7,6 +7,8 @@ import { addColorsToData } from '../../utils/Colors';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { StatisticsData } from '../../../models/Statistics';
 import { StatItemKey, ChartConfig, StatisticsQueryPayload } from '../../../features/statistics/types';
+import LoggerService from '../../../services/logs/LoggerService';
+import { parseApiError } from '../../../utils/errorParser';
 
 const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParameters }: {
   ChartComponent: React.ComponentType<any>;
@@ -56,7 +58,13 @@ const ChartWithLoader = ({ ChartComponent, chartType, chartConfig, chartParamete
       setData(result ?? null);
       currentChartComponent.current = ChartComponent;
     } catch (error) {
-      console.error(error);
+      const parsed = parseApiError(error);
+      LoggerService.error('Statistics chart load failed', error, {
+        feature: 'statistics',
+        operation: 'load_chart',
+        chartType,
+        errorCode: parsed.code,
+      });
     } finally {
       setLoading(false);
     }

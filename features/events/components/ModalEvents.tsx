@@ -20,18 +20,18 @@ import StatePicker from '../../../shared/components/inputs/StatePicker';
 import TimePicker from '../../../shared/components/inputs/TimePicker';
 import DocumentPickerComponent from '../../../shared/components/inputs/DocumentPickerComponent';
 import FilesList from '../../../shared/components/common/FilesList';
-import { createEvent, updateEvent } from '../../../services/api/EventService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import LoggerService from '../../../services/logs/LoggerService';
 import FileStorageService from '../../../services/aws/FileStorageService';
 import instanceDateUtils from '../../../shared/utils/DateUtils';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
-import { useEventsQuery } from '../../../hooks/queries/useEventsQuery';
+import { useEventMutations, useEventsQuery } from '../../../hooks/queries/useEventsQuery';
 import { useGroupsQuery } from '../../../hooks/queries/useGroupsQuery';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { useTranslation } from 'react-i18next';
 import * as Haptics from 'expo-haptics';
 import { ModalEventsProps } from '../types';
+import type { CreateEventPayload, UpdateEventPayload } from '../types';
 import {
   EVENT_TYPE_LIST,
   NOTIF_LIST,
@@ -69,6 +69,7 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
   const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const { data: events = [] } = useEventsQuery();
+  const { create, update } = useEventMutations();
   const scrollRef = useRef<any>(null);
   const fileStorageService = new FileStorageService();
   const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
@@ -284,12 +285,23 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
         }
         if (data.state === 'Terminé' && !data.made_by) data.made_by = { email: firebaseUser?.email ?? '' };
         if (actionType === 'modify') {
-          updateEvent(data.id, data).then(() => { resetValues(); closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la MAJ d\'un event : ' + err.message); setLoading(false); });
+          await update.mutateAsync({ id: String(data.id), body: data as UpdateEventPayload });
+          resetValues();
+          closeModal();
+          onModify?.();
         } else {
-          createEvent(data).then(() => { closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la création d\'un event : ' + err.message); setLoading(false); });
+          await create.mutateAsync(data as CreateEventPayload);
+          closeModal();
+          onModify?.();
         }
+        setLoading(false);
       } else setLoading(false);
-    } catch (error: any) { LoggerService.log('Erreur lors de l\'enregistrement/modification d\'un event : ' + error.message); }
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Erreur inconnue';
+      Toast.show({ type: 'error', position: 'top', text1: message });
+      LoggerService.log('Erreur lors de l\'enregistrement/modification d\'un event : ' + message);
+      setLoading(false);
+    }
   };
 
   const styles = {
@@ -316,7 +328,7 @@ const ModalEvents = ({ isVisible, setVisible, actionType, event = undefined, onM
 
   return (
     <>
-      <AppSheet ref={sheetRef} snapPoints={['90%']} onDismiss={() => setVisible(false)} keyboardBehavior="extend">
+      <AppSheet ref={sheetRef} snapPoints={['90%']} scrollable={false} onDismiss={() => setVisible(false)} keyboardBehavior="extend">
         {modalVisible && (
           <ModalAnimals modalVisible={modalVisible} setModalVisible={setModalVisible} setAnimaux={undefined} animaux={getSelectableAnimals()} selected={selected} setSelected={setSelected} setValue={setValue} valueName="animaux" />
         )}

@@ -1,7 +1,8 @@
 /** @jest-environment jsdom */
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useContactForm } from '../useContactForm';
 import * as ContactService from '../../../../services/api/ContactService';
+import { createQueryWrapper } from '../../../../tests/utils/queryWrapper';
 
 jest.mock('../../../../services/api/ContactService');
 jest.mock('../../../../stores/useAuthStore', () => ({
@@ -17,7 +18,7 @@ describe('useContactForm', () => {
   });
 
   it('returns form, loading=false and callbacks on init', () => {
-    const { result } = renderHook(() => useContactForm('create'));
+    const { result } = renderHook(() => useContactForm('create'), { wrapper: createQueryWrapper() });
     expect(result.current.form).toBeDefined();
     expect(result.current.loading).toBe(false);
     expect(typeof result.current.submit).toBe('function');
@@ -30,10 +31,10 @@ describe('useContactForm', () => {
     const onSuccess = jest.fn();
     const onClose = jest.fn();
 
-    const { result } = renderHook(() => useContactForm('create', {}, onSuccess));
+    const { result } = renderHook(() => useContactForm('create', {}, onSuccess), { wrapper: createQueryWrapper() });
 
     await act(async () => {
-      await result.current.submit({ nom: 'Dupont', prenom: 'Jean' }, onClose);
+      await result.current.submit({ nom: 'Dupont', profession: 'Ostéopathe' }, onClose);
     });
 
     expect(mockedCreateContact).toHaveBeenCalledWith(
@@ -49,7 +50,7 @@ describe('useContactForm', () => {
     const onSuccess = jest.fn();
     const onClose = jest.fn();
 
-    const { result } = renderHook(() => useContactForm('modify', { id: 5 }, onSuccess));
+    const { result } = renderHook(() => useContactForm('modify', { id: 5 }, onSuccess), { wrapper: createQueryWrapper() });
 
     await act(async () => {
       await result.current.submit({ id: 5, nom: 'Martin' }, onClose);
@@ -63,7 +64,7 @@ describe('useContactForm', () => {
     let resolveCreate!: (v: any) => void;
     mockedCreateContact.mockImplementation(() => new Promise((res) => { resolveCreate = res; }));
 
-    const { result } = renderHook(() => useContactForm('create'));
+    const { result } = renderHook(() => useContactForm('create'), { wrapper: createQueryWrapper() });
     const onClose = jest.fn();
 
     act(() => {
@@ -71,6 +72,7 @@ describe('useContactForm', () => {
     });
 
     expect(result.current.loading).toBe(true);
+    await waitFor(() => expect(mockedCreateContact).toHaveBeenCalled());
 
     await act(async () => {
       resolveCreate(undefined);
@@ -81,7 +83,7 @@ describe('useContactForm', () => {
 
   it('initValues populates form fields from contact', () => {
     const contact = { id: 1, nom: 'Dupont', profession: 'Véto', telephone: '0600000000' };
-    const { result } = renderHook(() => useContactForm('modify', contact));
+    const { result } = renderHook(() => useContactForm('modify', contact), { wrapper: createQueryWrapper() });
 
     act(() => {
       result.current.initValues();
@@ -95,7 +97,7 @@ describe('useContactForm', () => {
     mockedCreateContact.mockRejectedValue(new Error('Erreur'));
     const onClose = jest.fn();
 
-    const { result } = renderHook(() => useContactForm('create'));
+    const { result } = renderHook(() => useContactForm('create'), { wrapper: createQueryWrapper() });
 
     await act(async () => {
       await result.current.submit({ nom: 'Test' }, onClose);

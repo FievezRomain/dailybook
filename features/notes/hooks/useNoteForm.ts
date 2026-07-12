@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
-import { createNote, updateNote } from '../../../services/api/NoteService';
+import { useNoteMutations } from '../../../hooks/queries/useNotesQuery';
 import LoggerService from '../../../services/logs/LoggerService';
+import { parseApiError } from '../../../utils/errorParser';
+import { CreateNotePayload, UpdateNotePayload } from '../types';
+import type { Note } from '../../../models/Note';
 
-export function useNoteForm(actionType: string, note: Record<string, unknown> = {}, onSuccess?: (data?: unknown) => void) {
-  const form = useForm({ defaultValues: note });
+export type NoteFormValues = Partial<Note>;
+
+export function useNoteForm(actionType: string, note: NoteFormValues = {}, onSuccess?: (data?: unknown) => void) {
+  const form = useForm<NoteFormValues>({ defaultValues: note });
   const { setValue, reset } = form;
   const [loading, setLoading] = useState(false);
+  const { create, update } = useNoteMutations();
 
   const initValues = () => {
     setValue('id', note.id);
@@ -17,23 +23,38 @@ export function useNoteForm(actionType: string, note: Record<string, unknown> = 
 
   const resetValues = () => reset({});
 
-  const submit = async (data: Record<string, unknown>, onClose: () => void) => {
+  const submit = async (data: NoteFormValues, onClose: () => void) => {
     if (loading) return;
     setLoading(true);
     try {
       if (actionType === 'modify') {
-        const response = await updateNote(String(data.id), { id: Number(data.id), titre: String(data.titre ?? ''), note: String(data.note ?? '') });
+        const body: UpdateNotePayload = {
+          id: Number(data.id),
+          titre: String(data.titre ?? ''),
+          note: String(data.note ?? ''),
+        };
+        const response = await update.mutateAsync({ id: String(data.id), body });
         onSuccess?.(response);
       } else {
-        await createNote({ titre: String(data.titre ?? ''), note: String(data.note ?? '') });
+        const body: CreateNotePayload = {
+          titre: String(data.titre ?? ''),
+          note: String(data.note ?? ''),
+        };
+        await create.mutateAsync(body);
         onSuccess?.();
       }
       resetValues();
       onClose();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      Toast.show({ type: 'error', position: 'top', text1: message });
-      LoggerService.log('useNoteForm error: ' + message);
+      const parsed = parseApiError(err);
+      Toast.show({ type: 'error', position: 'top', text1: parsed.message });
+      LoggerService.error('Note form submit failed', err, {
+        feature: 'notes',
+        operation: actionType === 'modify' ? 'update' : 'create',
+        errorCode: parsed.code,
+        hasId: data.id != null,
+        hasTitle: Boolean(data.titre),
+      });
     } finally {
       setLoading(false);
     }

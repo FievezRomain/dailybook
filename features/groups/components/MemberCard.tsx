@@ -9,15 +9,16 @@ import { useGroupForm } from '../hooks/useGroupForm';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
 import { useNavigation } from '@react-navigation/native';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import type { AppNavigationProp } from '../../../navigation/types';
 
 interface Member {
   email: string;
-  [key: string]: any;
+  user_id?: number;
+  role?: string;
 }
 
 interface Group {
-  id: string;
-  [key: string]: any;
+  id: string | number;
 }
 
 const MemberCard = ({
@@ -33,9 +34,9 @@ const MemberCard = ({
 }) => {
   const { colors } = useAppTheme();
   const { firebaseUser } = useAuthStore();
-  const { handleSubmit, setValue } = useForm();
+  const { handleSubmit, setValue } = useForm<Record<string, unknown>>();
   const [modalValidationVisible, setModalValidationVisible] = useState(false);
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<AppNavigationProp>();
 
   const onModify = () => {
     Toast.show({ type: 'success', position: 'top', text1: 'Modification du groupe' });
@@ -43,19 +44,20 @@ const MemberCard = ({
 
   const { submitGroup, loading } = useGroupForm(setValue, onModify, () => {});
 
-  const refuseMember = async (data: any) => {
+  const refuseMember = async (data: Record<string, unknown>) => {
     data.status = 'declined';
     data.id = group.id;
     data.email = member.email;
     submitGroup(data, 'respondMember');
   };
 
-  const deleteMember = async (data: any) => {
+  const deleteMember = async (data: Record<string, unknown>) => {
     data.id = group.id;
     data.email = member.email;
+    data.user_id = member.user_id;
     setModalValidationVisible(false);
     if (member.email === firebaseUser?.email) {
-      navigation.navigate('Autre');
+      navigation.navigate('Tab', { screen: 'Autre' });
     }
     submitGroup(data, 'deleteMember');
   };

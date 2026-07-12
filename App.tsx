@@ -4,6 +4,7 @@ import * as Font from 'expo-font';
 import { useEffect, useState } from "react";
 import * as Sentry from '@sentry/react-native';
 import { env } from './config/env';
+import LoggerService from './services/logs/LoggerService';
 
 // i18n must be imported before any component that uses translations
 import './config/i18n';
@@ -53,6 +54,7 @@ import { initTrackingActivity } from "./services/api/AuthService";
 import { initSocialAuth } from './services/auth/initSocialAuth';
 import { TamaguiProvider, Theme } from 'tamagui';
 import tamaguiConfig from './theme/tamagui.config';
+import { lightTokens } from './theme/tokens';
 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -92,7 +94,7 @@ function ThemedApp() {
     <TamaguiProvider config={tamaguiConfig} defaultTheme={themeName}>
       <Theme name={themeName}>
         <BottomSheetModalProvider>
-          <StatusBar style={isDark ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
+          <StatusBar style={isDark ? "light" : "dark"} translucent backgroundColor={lightTokens.overlays.transparent} />
           <RootNavigator />
           <OnboardingSpotlight visible={showOnboarding} onComplete={complete} onSkip={skip} />
         </BottomSheetModalProvider>
@@ -131,7 +133,10 @@ function App() {
             await Updates.reloadAsync();
           }
         } catch (error) {
-          console.warn('Erreur lors de la vérification OTA:', error);
+          LoggerService.error('OTA update check failed', error, {
+            feature: 'app',
+            operation: 'ota_update_check',
+          });
         } finally {
           setIsUpdating(false);
         }
@@ -160,19 +165,19 @@ function App() {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#fff',
+      backgroundColor: lightTokens.surface,
     },
     loaderText: {
-      marginTop: 10,
-      fontSize: 16,
-      color: '#333',
+      marginTop: lightTokens.spacing.sm,
+      fontSize: lightTokens.fontSizes.md,
+      color: lightTokens.textPrimary,
     },
   });
 
   if (!fontsLoaded || isUpdating) {
     return (
       <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#956540" />
+        <ActivityIndicator size="large" color={lightTokens.primary} />
         <Text style={styles.loaderText}>
           {isUpdating ? "Téléchargement de la mise à jour…" : "Chargement…"}
         </Text>
@@ -190,35 +195,3 @@ function App() {
 }
 
 export default !env.IS_DEV && env.SENTRY_DSN ? Sentry.wrap(App) : App;
-/**
-console.log("ICI1")
-
-function ThemedApp() {
-  const isDark = useThemeStore((s) => s.isDark);
-  const user = useAuthStore((s) => s.user);
-  const { isCompleted, complete, skip } = useOnboarding();
-  const showOnboarding = !!user && isCompleted === false;
-  console.log("ICIII")
-
-  return (
-    <TamaguiProvider config={tamaguiConfig} defaultTheme={isDark ? 'dark' : 'light'}>
-      <Theme name={isDark ? 'dark' : 'light'}>
-          <StatusBar style={isDark ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
-          <RootNavigator />
-      </Theme>
-    </TamaguiProvider>
-  );
-}
-
-console.log("ICI App - fontsLoaded:", true);
-function App() {
-  console.log("ICIII")
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>OK</Text>
-    </View>
-  );
-}
-
-export default App;
-**/

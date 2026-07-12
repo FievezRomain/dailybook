@@ -41,7 +41,7 @@ export default function EventOptionsScreen({ route, navigation }: AppStackScreen
         reset();
         Toast.show({ type: 'success', text1: 'Événement créé !', position: 'top' });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
-        navigation.navigate('Tab' as any);
+        navigation.navigate('Tab', { screen: 'Calendrier' });
       },
       onError: () => {
         Toast.show({ type: 'error', text1: 'Erreur lors de la création', position: 'top' });

@@ -1,32 +1,35 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
-import Toast from 'react-native-toast-message';
-import { useForm } from 'react-hook-form';
-import { createContact, updateContact } from '../../../services/api/ContactService';
-import { useAuthStore } from '../../../stores/useAuthStore';
-import LoggerService from '../../../services/logs/LoggerService';
-import { AppDivider, AppSheet } from '../../../shared/components/ui';
+import React, { useEffect, useRef } from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useAppTheme } from '../../../theme/useAppTheme';
 import { useTranslation } from 'react-i18next';
+import { AppDivider, AppInput, AppSheet } from '../../../shared/components/ui';
+import { useAppTheme } from '../../../theme/useAppTheme';
+import { ContactFormValues, useContactForm } from '../hooks/useContactForm';
+import type { Contact } from '../../../models/Contact';
 
 interface ModalContactProps {
   isVisible: boolean;
   setVisible: (v: boolean) => void;
   actionType: string;
-  contact?: any;
-  onModify?: (data?: any) => void;
+  contact?: Partial<Contact>;
+  onModify?: (data?: unknown) => void;
 }
 
 const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModify = undefined }: ModalContactProps) => {
   const { colors, fonts } = useAppTheme();
   const { t } = useTranslation('contacts');
   const { t: tc } = useTranslation('common');
-  const { firebaseUser } = useAuthStore();
-  const { register, handleSubmit, formState: { errors }, setValue, getValues, watch } = useForm();
-  const [loading, setLoading] = useState(false);
+  const { form, loading, initValues, resetValues, submit } = useContactForm(actionType, contact, onModify);
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = form;
   const sheetRef = useRef<BottomSheetModal>(null);
+
+  useEffect(() => {
+    register('nom', { required: true });
+    register('profession');
+    register('telephone');
+    register('email');
+  }, [register]);
 
   useEffect(() => {
     if (isVisible) sheetRef.current?.present();
@@ -39,45 +42,25 @@ const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModif
 
   const closeModal = () => setVisible(false);
 
-  const resetValues = () => {
-    setValue('id', undefined); setValue('nom', undefined); setValue('profession', undefined);
-    setValue('telephone', undefined); setValue('email', undefined); setValue('emailproprietaire', undefined);
+  const submitRegister = async (data: ContactFormValues) => {
+    await submit(data, () => {
+      resetValues();
+      closeModal();
+    });
   };
 
-  const initValues = () => {
-    setValue('id', contact.id); setValue('nom', contact.nom); setValue('profession', contact.profession);
-    setValue('telephone', contact.telephone); setValue('email', contact.email); setValue('emailproprietaire', contact.emailproprietaire);
-  };
-
-  const submitRegister = async (data: any) => {
-    if (loading) return;
-    setLoading(true);
-    data['emailproprietaire'] = firebaseUser?.email ?? '';
-    if (actionType === 'modify') {
-      updateContact(String(data.id), data)
-        .then((reponse) => { onModify?.(reponse); resetValues(); closeModal(); setLoading(false); })
-        .catch((err) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la MAJ d\'un contact : ' + err.message); setLoading(false); });
-    } else {
-      createContact(data)
-        .then(() => { resetValues(); closeModal(); onModify?.(); setLoading(false); })
-        .catch((err) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la création d\'un contact : ' + err.message); setLoading(false); });
-    }
-  };
+  const fieldValue = (name: keyof ContactFormValues) => String(watch(name) ?? '');
 
   const styles = {
     form: { width: '100%', paddingBottom: 40 },
     containerActionsButtons: { flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', paddingBottom: 15, paddingTop: 5 },
-    formContainer: { paddingLeft: 30, paddingRight: 30, paddingTop: 10, paddingBottom: 10 },
-    inputContainer: { alignItems: 'center', width: '100%' },
-    textInput: { alignSelf: 'flex-start', marginBottom: 5, color: colors.textPrimary },
-    input: { height: 40, width: '100%', marginBottom: 15, borderRadius: 5, paddingLeft: 15, backgroundColor: colors.surfaceVariant, color: colors.textPrimary, alignSelf: 'baseline' },
+    formContainer: { paddingLeft: 14, paddingRight: 14, paddingTop: 18, paddingBottom: 10, gap: 14 },
     textFontRegular: { fontFamily: fonts.default.fontFamily },
-    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
     textFontBold: { fontFamily: fonts.bodyLarge.fontFamily },
   } as const;
 
   return (
-    <AppSheet ref={sheetRef} snapPoints={['90%']} keyboardBehavior="extend" onDismiss={closeModal}>
+    <AppSheet ref={sheetRef} snapPoints={['88%']} keyboardBehavior="extend" scrollable={false} onDismiss={closeModal}>
       <View style={styles.form}>
         <View style={styles.containerActionsButtons}>
           <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>
@@ -97,25 +80,43 @@ const ModalContact = ({ isVisible, setVisible, actionType, contact = {}, onModif
           </TouchableOpacity>
         </View>
         <AppDivider />
-        <KeyboardAwareScrollView style={{ height: '100%' }}>
+        <KeyboardAwareScrollView keyboardShouldPersistTaps="handled" enableOnAndroid={true} extraScrollHeight={10} enableResetScrollToCoords={false}>
           <View style={styles.formContainer}>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.textInput, styles.textFontRegular]}>Nom : <Text style={{ color: colors.error }}>*</Text></Text>
-              {errors.nom && <Text style={{ color: colors.error }}>{t('nameRequired')}</Text>}
-              <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : John Doe" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('nom', text)} defaultValue={watch('nom')} {...register('nom', { required: true })} />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.textInput, styles.textFontRegular]}>Profession : </Text>
-              <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : Vétérinaire" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('profession', text)} defaultValue={watch('profession')} />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.textInput, styles.textFontRegular]}>Numéro de téléphone : </Text>
-              <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : 0606060606" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('telephone', text)} defaultValue={watch('telephone')} />
-            </View>
-            <View style={styles.inputContainer}>
-              <Text style={[styles.textInput, styles.textFontRegular]}>Email : </Text>
-              <TextInput style={[styles.input, styles.textFontRegular]} placeholder="Exemple : test@gmail.com" placeholderTextColor={colors.secondary} onChangeText={(text) => setValue('email', text)} defaultValue={watch('email')} />
-            </View>
+            <AppInput
+              label={t('fields.name', { defaultValue: 'Nom' })}
+              required
+              error={errors.nom ? t('nameRequired') : undefined}
+              placeholder="Exemple : John Doe"
+              value={fieldValue('nom')}
+              onChangeText={(text) => setValue('nom', text, { shouldValidate: true })}
+              autoCapitalize="words"
+              returnKeyType="next"
+            />
+            <AppInput
+              label={t('fields.profession', { defaultValue: 'Profession' })}
+              placeholder="Exemple : Vétérinaire"
+              value={fieldValue('profession')}
+              onChangeText={(text) => setValue('profession', text)}
+              autoCapitalize="sentences"
+              returnKeyType="next"
+            />
+            <AppInput
+              label={t('fields.phone', { defaultValue: 'Numéro de téléphone' })}
+              placeholder="Exemple : 0606060606"
+              value={fieldValue('telephone')}
+              onChangeText={(text) => setValue('telephone', text)}
+              keyboardType="phone-pad"
+              textContentType="telephoneNumber"
+            />
+            <AppInput
+              label={t('fields.email', { defaultValue: 'Email' })}
+              placeholder="Exemple : test@gmail.com"
+              value={fieldValue('email')}
+              onChangeText={(text) => setValue('email', text)}
+              keyboardType="email-address"
+              textContentType="emailAddress"
+              autoCapitalize="none"
+            />
           </View>
         </KeyboardAwareScrollView>
       </View>

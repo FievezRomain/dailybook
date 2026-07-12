@@ -4,23 +4,25 @@ import { Ionicons, Entypo } from '@expo/vector-icons';
 import ModalSubMenuNoteActions from './ModalSubMenuNoteActions';
 import ModalNote from './ModalNote';
 import Toast from 'react-native-toast-message';
-import { deleteNote } from '../../../services/api/NoteService';
 import LoggerService from '../../../services/logs/LoggerService';
 // @ts-ignore - react-native-htmlview has no type declarations
 import HTMLView from 'react-native-htmlview';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
+import { useNoteMutations } from '../../../hooks/queries/useNotesQuery';
+import type { Note } from '../../../models/Note';
 
 const NoteCard = ({
   note,
   handleNoteChange,
   handleNoteDelete,
 }: {
-  note: any;
-  handleNoteChange: (note: any) => void;
-  handleNoteDelete: (note: any) => void;
+  note: Note;
+  handleNoteChange: (note: Note) => void;
+  handleNoteDelete: (note: Note) => void;
 }) => {
   const { colors, fonts } = useAppTheme();
+  const { remove } = useNoteMutations();
   const [focus, setFocus] = useState(false);
   const [modalSubMenuNoteVisible, setModalSubMenuNoteVisible] = useState(false);
   const [modalNote, setModaleNote] = useState(false);
@@ -29,27 +31,33 @@ const NoteCard = ({
   const handleDelete = () => setModalValidationDeleteVisible(true);
 
   const confirmDelete = () => {
-    deleteNote(note.id)
-      .then(() => {
+    remove.mutate(String(note.id), {
+      onSuccess: () => {
         Toast.show({ type: 'success', position: 'top', text1: "Suppression d'une note réussie" });
         handleNoteDelete(note);
-      })
-      .catch((err: any) => {
-        Toast.show({ type: 'error', position: 'top', text1: err.message });
-        LoggerService.log("Erreur lors de la suppression d'une note : " + err.message);
-      });
+        setModalValidationDeleteVisible(false);
+      },
+      onError: (err: unknown) => {
+        const message = err instanceof Error ? err.message : 'Erreur inconnue';
+        Toast.show({ type: 'error', position: 'top', text1: message });
+        LoggerService.log("Erreur lors de la suppression d'une note : " + message);
+      },
+    });
   };
 
   const onPressOptions = () => setModalSubMenuNoteVisible(true);
   const handleModify = () => setModaleNote(true);
 
-  const onModify = (noteModified: any) => {
+  const onModify = (noteModified: unknown) => {
     setTimeout(
       () => Toast.show({ type: 'success', position: 'top', text1: "Modification d'une note" }),
       300,
     );
-    handleNoteChange(noteModified);
+    if (isNote(noteModified)) handleNoteChange(noteModified);
   };
+
+  const isNote = (value: unknown): value is Note =>
+    typeof value === 'object' && value !== null && 'id' in value && 'titre' in value && 'note' in value;
 
   const getPreviewHTML = (htmlContent: string, length: number): string => {
     if (!htmlContent) return '';

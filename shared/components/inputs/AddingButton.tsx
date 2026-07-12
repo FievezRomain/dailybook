@@ -39,6 +39,7 @@ const AddingButton: React.FC<AddingButtonProps> = () => {
       <ModalCreate navigation={navigation} isVisible={isModalVisible} setModalVisible={setModalVisible} />
       <Animated.View style={[styles.fab, animStyle, { backgroundColor: colors.primary, bottom: insets.bottom + 76 }]}>
         <TouchableOpacity
+          testID="fab-add-event"
           onPress={handleFabPress}
           onPressIn={onPressIn}
           onPressOut={onPressOut}

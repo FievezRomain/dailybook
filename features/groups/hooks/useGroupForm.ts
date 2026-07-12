@@ -4,6 +4,7 @@ import { useGroupMutations } from "../../../hooks/queries/useGroupsQuery";
 import Toast from "react-native-toast-message";
 import LoggerService from "../../../services/logs/LoggerService";
 import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
+import { parseApiError } from "../../../utils/errorParser";
 
 type SetValue = (name: string, value: unknown) => void;
 
@@ -125,9 +126,17 @@ export const useGroupForm = (
       await closeModal();
       onModify?.(response);
     } catch (err: unknown) {
-      console.log(err);
-      Toast.show({ type: "error", position: "top", text1: (err as Error).message });
-      LoggerService.log("Erreur lors de la " + actionType + " d'un group : " + (err as Error).message);
+      const parsed = parseApiError(err);
+      Toast.show({ type: "error", position: "top", text1: parsed.message });
+      LoggerService.error("Group form submit failed", err, {
+        feature: "groups",
+        operation: actionType,
+        errorCode: parsed.code,
+        hasId: data.id != null,
+        memberCount: Array.isArray(data.members) ? data.members.length : undefined,
+        selectedAnimalCount: selected.length,
+        status: typeof data.status === "string" ? data.status : undefined,
+      });
     }
   };
 

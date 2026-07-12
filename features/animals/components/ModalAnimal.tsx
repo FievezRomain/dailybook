@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { AppDivider } from '../../../shared/components/ui';
 import Constants from 'expo-constants';
-import { createAnimal, updateAnimal } from '../../../services/api/AnimalsService';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import AvatarPicker from '../../../shared/components/inputs/AvatarPicker';
 import LoggerService from '../../../services/logs/LoggerService';
@@ -18,6 +17,8 @@ import instanceDateUtils from '../../../shared/utils/DateUtils';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { ModalAnimalProps } from '../types';
 import { useTranslation } from 'react-i18next';
+import { useAnimalMutations } from '../../../hooks/queries/useAnimalsQuery';
+import type { CreateAnimalPayload, UpdateAnimalPayload } from '../types';
 
 const especeList = [
   { label: 'Chat', value: 'Chat' }, { label: 'Chien', value: 'Chien' }, { label: 'Poisson', value: 'Poisson' },
@@ -58,6 +59,7 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
   const scrollRef = useRef<any>(null);
   const sheetRef = useRef<BottomSheetModal>(null);
   const fileStorageService = new FileStorageService();
+  const { create, update } = useAnimalMutations();
 
   useEffect(() => { if (animal?.id !== undefined) initValuesAnimal(); }, [animal]);
   useEffect(() => { setValue('espece', espece); }, [espece]);
@@ -145,10 +147,24 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
         data.image = filename;
       }
     }
-    if (actionType === 'modify') {
-      updateAnimal(data.id, data).then((response) => { resetValues(); closeModal(); onModify?.(response); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la MAJ d\'un animal : ' + err.message); setLoading(false); });
-    } else {
-      createAnimal(data).then(() => { resetValues(); closeModal(); onModify?.(); setLoading(false); }).catch((err: any) => { Toast.show({ type: 'error', position: 'top', text1: err.message }); LoggerService.log('Erreur lors de la création d\'un animal : ' + err.message); setLoading(false); });
+    try {
+      if (actionType === 'modify') {
+        const response = await update.mutateAsync({ id: String(data.id), body: data as UpdateAnimalPayload });
+        resetValues();
+        closeModal();
+        onModify?.(response);
+      } else {
+        await create.mutateAsync(data as CreateAnimalPayload);
+        resetValues();
+        closeModal();
+        onModify?.();
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Erreur inconnue';
+      Toast.show({ type: 'error', position: 'top', text1: message });
+      LoggerService.log('Erreur lors de l\'enregistrement d\'un animal : ' + message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -192,7 +208,7 @@ const ModalAnimal = ({ isVisible, setVisible, actionType, animal, onModify = und
 
   return (
     <>
-      <AppSheet ref={sheetRef} snapPoints={['90%']} onDismiss={() => setVisible(false)}>
+      <AppSheet ref={sheetRef} snapPoints={['90%']} scrollable={false} onDismiss={() => setVisible(false)}>
         <View style={styles.form}>
           <View style={styles.containerActionsButtons}>
             <TouchableOpacity onPress={closeModal} style={{ width: '33.33%', alignItems: 'center' }}>

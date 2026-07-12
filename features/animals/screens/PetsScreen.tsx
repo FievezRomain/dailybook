@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { View, Text, Animated, TouchableOpacity, FlatList, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, Text, Animated, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, FontAwesome6, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -20,12 +20,18 @@ import { GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import type { TabScreenProps } from '../../../navigation/types';
 import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 import type { Animal } from '../../../models/Animal';
+import { AppEmptyState, AppErrorState } from '../../../shared/components/ui';
 
 export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
   const { colors, fonts } = useAppTheme();
   const { t } = useTranslation('animals');
   const queryClient = useQueryClient();
-  const { data: animaux = [], isFetching } = useAnimalsQuery();
+  const {
+    data: animaux = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useAnimalsQuery();
   const { remove } = useAnimalMutations();
   const [selected, setSelected] = useState<Animal[]>([]);
   const [activeRubrique, setActiveRubrique] = useState(0);
@@ -64,8 +70,7 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
       onSuccess: () => {
         const remaining = animaux.filter((a) => a.id !== selected[0].id);
         if (remaining.length === 0) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- cross-navigator navigation
-        (navigation as any).navigate('FirstPageAddAnimal');
+          navigation.navigate('AnimalAddWizard');
         } else {
           setSelected([remaining[0]]);
         }
@@ -105,9 +110,13 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
       />
       <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
         <TopTab message1="Mes" message2="Animaux" />
-        {refreshing ? (
+        {isLoading || refreshing ? (
           <View style={{ paddingHorizontal: 16, paddingTop: 20 }}>
             <ListSkeleton count={4} variant="animal" />
+          </View>
+        ) : isError ? (
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <AppErrorState message="Impossible de charger les animaux." onRetry={() => void refetch()} />
           </View>
         ) : (
           <FlatList
@@ -117,15 +126,7 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.textPrimary} />}
             ListHeaderComponent={
               animaux.length === 0 ? (
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', marginTop: 80, paddingHorizontal: 30 }}>
-                  <FontAwesome6 name="horse" size={52} color={colors.border} />
-                  <Text style={{ fontSize: 18, color: colors.textPrimary, fontFamily: fonts.bodyLarge.fontFamily, textAlign: 'center', marginTop: 20 }}>
-                    {t('noAnimal')}
-                  </Text>
-                  <Text style={{ fontSize: 14, color: colors.secondary, fontFamily: fonts.default.fontFamily, textAlign: 'center', marginTop: 8 }}>
-                    {t('noAnimalSub')}
-                  </Text>
-                </View>
+                <AppEmptyState icon="horse" title={t('noAnimal')} description={t('noAnimalSub')} />
               ) : (
               <>
                 <View style={{ alignContent: 'flex-start', justifyContent: 'flex-start', alignItems: 'flex-start', marginTop: 20 }}>
@@ -143,8 +144,7 @@ export default function PetsScreen({ navigation }: TabScreenProps<'Animaux'>) {
                   <TouchableOpacity
                     onPress={() => {
                       Haptics.selectionAsync().catch(() => undefined);
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- cross-navigator navigation
-                      (navigation as any).navigate('AnimalDetail', { animalId: selected[0].id });
+                      navigation.navigate('AnimalDetail', { animalId: selected[0].id });
                     }}
                     style={{ alignSelf: 'flex-end', marginRight: 20, marginBottom: 4, flexDirection: 'row', alignItems: 'center' }}
                   >

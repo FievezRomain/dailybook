@@ -4,21 +4,15 @@ import { AppIconButton } from '../../../shared/components/ui';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons, FontAwesome, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { useAppTheme } from '../../../theme/useAppTheme';
-
-interface Group {
-  id: number;
-  name: string;
-  nb_animaux?: number;
-  nb_members?: number;
-  [key: string]: any;
-}
+import type { AppNavigationProp } from '../../../navigation/types';
+import type { Group } from '../../../models/Group';
 
 const GroupCard = ({ group }: { group: Group }) => {
   const { colors, fonts } = useAppTheme();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<AppNavigationProp>();
 
   const handlePress = () => {
-    navigation.navigate('GroupDetail', { group });
+    navigation.navigate('GroupDetail', { groupId: String(group.id) });
   };
 
   const styles = {

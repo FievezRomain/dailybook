@@ -31,7 +31,7 @@ export default function LoadingScreen({ navigation }: AuthStackScreenProps<'Load
         navigation.navigate('App', { screen: 'Tab', params: { screen: 'Accueil' } });
       } else if (animaux !== undefined) {
         // Only navigate when query has finished (animaux not undefined)
-        (navigation as any).navigate('FirstPageAddAnimal');
+        navigation.navigate('FirstPageAddAnimal');
       }
     }
   }, [isLoading, isAuthenticated, firebaseUser, animaux, navigation]);

@@ -20,16 +20,16 @@ export interface ParsedError {
 type ApiErrorBody = { success: false; error: ApiError };
 
 const MESSAGES: Record<AppErrorCode, string> = {
-  [AppErrorCode.UNAUTHORIZED]: 'Votre session a expiré. Reconnectez-vous.',
-  [AppErrorCode.TOKEN_EXPIRED]: 'Votre session a expiré. Reconnectez-vous.',
-  [AppErrorCode.FORBIDDEN]: "Vous n'avez pas accès à cette ressource.",
-  [AppErrorCode.NOT_FOUND]: "Cette ressource est introuvable.",
-  [AppErrorCode.CONFLICT]: "Un conflit est survenu. Vérifiez vos données.",
-  [AppErrorCode.VALIDATION_ERROR]: 'Certains champs sont invalides. Vérifiez votre saisie.',
-  [AppErrorCode.QUOTA_EXCEEDED]: 'Vous avez atteint la limite du plan gratuit. Voir les offres →',
-  [AppErrorCode.FEATURE_UNAVAILABLE]: "Cette fonctionnalité n'est pas disponible sur votre plan.",
-  [AppErrorCode.INTERNAL_ERROR]: "Quelque chose ne s'est pas passé comme prévu 🐴",
-  [AppErrorCode.NETWORK_ERROR]: 'Impossible de rejoindre le serveur. On réessaie ?',
+  [AppErrorCode.UNAUTHORIZED]: 'Votre session a expire. Reconnectez-vous.',
+  [AppErrorCode.TOKEN_EXPIRED]: 'Votre session a expire. Reconnectez-vous.',
+  [AppErrorCode.FORBIDDEN]: "Vous n'avez pas acces a cette ressource.",
+  [AppErrorCode.NOT_FOUND]: 'Cette ressource est introuvable.',
+  [AppErrorCode.CONFLICT]: 'Un conflit est survenu. Verifiez vos donnees.',
+  [AppErrorCode.VALIDATION_ERROR]: 'Certains champs sont invalides. Verifiez votre saisie.',
+  [AppErrorCode.QUOTA_EXCEEDED]: 'Vous avez atteint la limite du plan gratuit. Voir les offres.',
+  [AppErrorCode.FEATURE_UNAVAILABLE]: "Cette fonctionnalite n'est pas disponible sur votre plan.",
+  [AppErrorCode.INTERNAL_ERROR]: 'Une erreur est survenue. Reessayez dans un instant.',
+  [AppErrorCode.NETWORK_ERROR]: 'Impossible de rejoindre le serveur. Reessayez dans un instant.',
 };
 
 export function parseApiError(error: unknown): ParsedError {
@@ -54,11 +54,11 @@ export function parseApiError(error: unknown): ParsedError {
         ? (body.error.code as AppErrorCode)
         : statusToCode(axiosError.response.status);
 
-    const details = body?.error?.details ?? [];
+    const details = Array.isArray(body?.error?.details) ? body.error.details : [];
 
     return {
       code: apiCode,
-      message: body?.error?.message || MESSAGES[apiCode],
+      message: getSafeUserMessage(apiCode, body?.error?.message),
       details,
       isNetworkError: false,
       isAuthError: apiCode === AppErrorCode.UNAUTHORIZED || apiCode === AppErrorCode.TOKEN_EXPIRED,
@@ -76,6 +76,14 @@ export function parseApiError(error: unknown): ParsedError {
     isQuotaError: false,
     isValidationError: false,
   };
+}
+
+function getSafeUserMessage(code: AppErrorCode, apiMessage?: string): string {
+  if (!apiMessage || code === AppErrorCode.INTERNAL_ERROR) {
+    return MESSAGES[code];
+  }
+
+  return apiMessage;
 }
 
 function statusToCode(status: number): AppErrorCode {

@@ -22,6 +22,10 @@ export const palette = {
   defaultLight: '#F4F4F4',
   white: '#FFFFFF',
   black: '#1E1E1E',
+  darkPaper: '#2A1A10',
+  darkWarm: '#3D2519',
+  darkWarmRaised: '#4A3020',
+  darkTextDisabled: '#5C4A3A',
   darkSurface: '#333333',
   transparent: 'transparent',
 } as const;
@@ -67,6 +71,42 @@ export const glassBackgroundLight = 'rgba(255,255,255,0.15)';
 export const glassBackgroundDark = 'rgba(30,20,10,0.4)';
 export const glassBorderLight = 'rgba(255,255,255,0.3)';
 export const glassBorderDark = 'rgba(255,255,255,0.08)';
+
+export const overlays = {
+  transparent: 'rgba(0,0,0,0)',
+  scrimLight: 'rgba(0,0,0,0.4)',
+  scrimDark: 'rgba(0,0,0,0.6)',
+  heroGradientTo: 'rgba(0,0,0,0.65)',
+  heroControl: 'rgba(0,0,0,0.3)',
+  onImageStrong: 'rgba(255,255,255,0.9)',
+  onImageMuted: 'rgba(255,255,255,0.8)',
+} as const;
+
+export const blur = {
+  tabBar: tabBarBlurIntensity,
+  glass: glassBlurIntensity,
+} as const;
+
+export const chartColors = {
+  baie: palette.baie,
+  alezan: palette.alezan,
+  isabelle: palette.isabelle,
+  aubere: palette.aubere,
+  cerise: palette.baieCerise,
+  warmDark: palette.baieBrun,
+  warmDarkTo: palette.darkWarm,
+  coolBalance: '#6F8F8A',
+} as const;
+
+export const eventTypeColors = {
+  soins: palette.baieCerise,
+  rdv: '#7C5F52',
+  balade: '#8C7A4F',
+  entrainement: palette.alezan,
+  concours: palette.baie,
+  depense: '#A66A3F',
+  autre: palette.aubere,
+} as const;
 
 export const spacing = {
   xs: 4,
@@ -151,14 +191,20 @@ export const lightTokens = {
 
   // Graphiques
   chartBackground: palette.baieBrun,
-  chartBackgroundTo: '#3D2519',
+  chartBackgroundTo: palette.darkWarm,
+  chartColors,
 
   // Overlay
-  overlay: 'rgba(0,0,0,0.4)',
+  overlay: overlays.scrimLight,
+  overlays,
 
   // Glassmorphism
   glassBackground: glassBackgroundLight,
   glassBorder: glassBorderLight,
+  blur,
+
+  // Domaines metier
+  eventTypeColors,
 
   // Tokens structurels (identiques light/dark)
   fonts,
@@ -177,10 +223,10 @@ export const lightTokens = {
 // ---------------------------------------------------------------------------
 export const darkTokens = {
   background: palette.black,
-  backgroundPaper: '#2A1A10',
+  backgroundPaper: palette.darkPaper,
   surface: palette.darkSurface,
-  surfaceVariant: '#3D2519',
-  surfaceDim: '#4A3020',
+  surfaceVariant: palette.darkWarm,
+  surfaceDim: palette.darkWarmRaised,
 
   primary: palette.alezan,
   primaryLight: palette.isabelle,
@@ -189,23 +235,29 @@ export const darkTokens = {
   textPrimary: palette.palomino,
   textSecondary: palette.aubere,
   textOnPrimary: palette.baieBrun,
-  textDisabled: '#5C4A3A',
+  textDisabled: palette.darkTextDisabled,
 
   error: palette.baieCerise,
   success: palette.alezan,
   warning: palette.isabelle,
 
-  border: '#4A3020',
+  border: palette.darkWarmRaised,
   borderFocus: palette.alezan,
 
-  chartBackground: '#2A1A10',
+  chartBackground: palette.darkPaper,
   chartBackgroundTo: '#1A0D08',
+  chartColors,
 
-  overlay: 'rgba(0,0,0,0.6)',
+  overlay: overlays.scrimDark,
+  overlays,
 
   // Glassmorphism
   glassBackground: glassBackgroundDark,
   glassBorder: glassBorderDark,
+  blur,
+
+  // Domaines metier
+  eventTypeColors,
 
   fonts,
   fontSizes,
@@ -219,13 +271,3 @@ export const darkTokens = {
 } as const;
 
 export type AppTokens = typeof lightTokens;
-
-export const eventTypeColors = {
-  soins: '#E57373',
-  rdv: '#64B5F6',
-  balade: '#81C784',
-  entrainement: '#FFB74D',
-  concours: '#CE93D8',
-  depense: '#4DB6AC',
-  autre: '#A1887F',
-} as const;

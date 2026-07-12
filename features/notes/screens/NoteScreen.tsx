@@ -5,20 +5,21 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
 import NoteCard from '../components/NoteCard';
-import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
-import { useNotesQuery, useNoteMutations } from '../../../hooks/queries/useNotesQuery';
+import { useNotesQuery } from '../../../hooks/queries/useNotesQuery';
 import type { AppStackScreenProps } from '../../../navigation/types';
 import { useTranslation } from 'react-i18next';
+import type { Note } from '../../../models/Note';
+import { AppEmptyState, AppErrorState } from '../../../shared/components/ui';
+import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 
 export default function NoteScreen({ navigation }: AppStackScreenProps<'Note'>) {
   const { colors, fonts } = useAppTheme();
   const { t } = useTranslation('notes');
-  const { data: notes = [] } = useNotesQuery();
-  const { update, remove } = useNoteMutations();
+  const { data: notes = [], isLoading, isError, refetch } = useNotesQuery();
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredNotes = searchQuery
-    ? notes.filter((note: any) => {
+    ? notes.filter((note: Note) => {
         const q = searchQuery.toLowerCase();
         return (
           (note.titre && note.titre.toLowerCase().includes(q)) ||
@@ -53,8 +54,12 @@ export default function NoteScreen({ navigation }: AppStackScreenProps<'Note'>) 
           </TouchableOpacity>
         </View>
         <View style={{ width: '90%', alignSelf: 'center', flex: 1 }}>
-          {notes.length === 0 ? (
-            <ModalDefaultNoValue text="Aucune note enregistrée" />
+          {isLoading ? (
+            <ListSkeleton count={5} variant="note" />
+          ) : isError ? (
+            <AppErrorState message="Impossible de charger les notes." onRetry={() => void refetch()} />
+          ) : notes.length === 0 ? (
+            <AppEmptyState icon="note-outline" title="Aucune note enregistrée" description="Ajoutez une note pour garder une trace utile." />
           ) : (
             <>
               {searchQuery.length > 0 && (
@@ -64,12 +69,12 @@ export default function NoteScreen({ navigation }: AppStackScreenProps<'Note'>) 
               )}
               <FlatList
                 data={filteredNotes}
-                keyExtractor={(item: any) => item.id.toString()}
+                keyExtractor={(item: Note) => item.id.toString()}
                 renderItem={({ item }) => (
                   <NoteCard
                     note={item}
-                    handleNoteChange={(n: any) => update.mutate({ id: n.id, body: n })}
-                    handleNoteDelete={(n: any) => remove.mutate(n.id)}
+                    handleNoteChange={() => undefined}
+                    handleNoteDelete={() => undefined}
                   />
                 )}
                 numColumns={1}

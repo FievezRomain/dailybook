@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Entypo, Ionicons } from '@expo/vector-icons';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 import Toast from 'react-native-toast-message';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -10,12 +10,13 @@ import { useObjectifMutations } from '../../../hooks/queries/useObjectifsQuery';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import type { AppStackScreenProps } from '../../../navigation/types';
 import type { SubTaskPayload } from '../types';
+import AppInput from '../../../shared/components/ui/AppInput';
 import Button from '../../../shared/components/ui/AppButton';
 
 const TOTAL_STEPS = 2;
 
 export default function ObjectifAddScreen({ navigation }: AppStackScreenProps<'ObjectifAdd'>) {
-  const { colors, fonts } = useAppTheme();
+  const { colors, fonts, tokens } = useAppTheme();
   const [step, setStep] = useState(0);
   const [title, setTitle] = useState('');
   const [selectedAnimals, setSelectedAnimals] = useState<number[]>([]);
@@ -25,9 +26,9 @@ export default function ObjectifAddScreen({ navigation }: AppStackScreenProps<'O
   const [etapes, setEtapes] = useState<string[]>(['']);
   const { data: animals = [] } = useAnimalsQuery();
   const { create } = useObjectifMutations();
-  const progressWidth = useSharedValue(0);
+  const progressWidth = useSharedValue(50);
 
-  const progressAnim = useAnimatedStyle(() => ({ width: `${progressWidth.value}%` as any }));
+  const progressAnim = useAnimatedStyle(() => ({ width: `${progressWidth.value}%` }));
 
   const goToStep = async (next: number) => {
     progressWidth.value = withTiming(((next + 1) / TOTAL_STEPS) * 100, { duration: 300 });
@@ -37,90 +38,113 @@ export default function ObjectifAddScreen({ navigation }: AppStackScreenProps<'O
 
   const toggleAnimal = async (id: number) => {
     await Haptics.selectionAsync().catch(() => undefined);
-    setSelectedAnimals((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+    setSelectedAnimals((prev) => (prev.includes(id) ? prev.filter((value) => value !== id) : [...prev, id]));
   };
 
   const addEtape = () => setEtapes((prev) => [...prev, '']);
-  const removeEtape = (i: number) => setEtapes((prev) => prev.filter((_, idx) => idx !== i));
-  const updateEtape = (i: number, val: string) => setEtapes((prev) => prev.map((e, idx) => idx === i ? val : e));
+  const removeEtape = (index: number) => setEtapes((prev) => prev.filter((_, idx) => idx !== index));
+  const updateEtape = (index: number, value: string) => setEtapes((prev) => prev.map((etape, idx) => (idx === index ? value : etape)));
 
   const onSubmit = () => {
+    const today = new Date().toISOString().split('T')[0];
     const sousetapes: SubTaskPayload[] = etapes
-      .filter((e) => e.trim() !== '')
-      .map((e, i) => ({ etape: e, state: 'todo', order: i }));
+      .filter((etape) => etape.trim() !== '')
+      .map((etape, order) => ({ etape, state: 'todo', order }));
 
     create.mutate(
-      { title, datedebut: datedebut || new Date().toISOString().split('T')[0], datefin: datefin || new Date().toISOString().split('T')[0], animaux: selectedAnimals, temporalityobjectif: temporalite || undefined, sousetapes },
+      {
+        title,
+        datedebut: datedebut || today,
+        datefin: datefin || today,
+        animaux: selectedAnimals,
+        temporalityobjectif: temporalite || undefined,
+        sousetapes,
+      },
       {
         onSuccess: () => {
-          Toast.show({ type: 'success', text1: 'Objectif créé !', position: 'top' });
+          Toast.show({ type: 'success', text1: 'Objectif cree', position: 'top' });
           navigation.goBack();
         },
-        onError: () => Toast.show({ type: 'error', text1: 'Erreur lors de la création', position: 'top' }),
+        onError: () => Toast.show({ type: 'error', text1: "Erreur lors de la creation de l'objectif", position: 'top' }),
       },
     );
   };
 
-  const inputStyle = { backgroundColor: colors.background, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, color: colors.textPrimary, fontFamily: fonts.default?.fontFamily, borderWidth: 1, borderColor: colors.surfaceVariant };
-  const labelStyle = { fontSize: 13, color: colors.secondary, fontFamily: fonts.bodyMedium.fontFamily, marginBottom: 4, marginTop: 14 };
+  const styles = {
+    inputGroup: { gap: tokens.spacing.md },
+    animalRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderColor: colors.surfaceVariant },
+    animalName: { flex: 1, fontFamily: fonts.default.fontFamily, color: colors.textPrimary, fontSize: 15 },
+    addStepButton: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
+  } as const;
 
   return (
     <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <View style={{ paddingTop: 56, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-        <TouchableOpacity onPress={() => step > 0 ? goToStep(step - 1) : navigation.goBack()} style={{ marginRight: 12 }}>
+        <TouchableOpacity onPress={() => (step > 0 ? goToStep(step - 1) : navigation.goBack())} style={{ marginRight: 12 }} accessibilityLabel="Revenir">
           <Entypo name="chevron-left" size={24} color={colors.textPrimary} />
         </TouchableOpacity>
         <Text style={{ fontSize: 22, color: colors.textPrimary, fontFamily: fonts.bodyLarge.fontFamily }}>
-          {step === 0 ? 'Nouvel objectif' : 'Détails & étapes'}
+          {step === 0 ? 'Nouvel objectif' : 'Details et etapes'}
         </Text>
       </View>
       <View style={{ height: 6, backgroundColor: colors.surfaceVariant, borderRadius: 3, marginHorizontal: 20, marginBottom: 24, overflow: 'hidden' }}>
         <Animated.View style={[{ height: '100%', backgroundColor: colors.primary, borderRadius: 3 }, progressAnim]} />
       </View>
-      <ScrollView contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}>
         {step === 0 && (
-          <>
-            <Text style={labelStyle}>Titre de l'objectif *</Text>
-            <TextInput style={inputStyle} placeholder="Ex: Améliorer le galop de Naya" placeholderTextColor={colors.secondary} value={title} onChangeText={setTitle} />
-            <Text style={[labelStyle, { marginTop: 20 }]}>Quel(s) cheval(aux) ?</Text>
-            {animals.map((a) => (
-              <TouchableOpacity key={a.id} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderColor: colors.surfaceVariant }} onPress={() => toggleAnimal(a.id)}>
-                <Text style={{ flex: 1, fontFamily: fonts.default?.fontFamily, color: colors.textPrimary, fontSize: 15 }}>{a.nom}</Text>
-                {selectedAnimals.includes(a.id) && <Ionicons name="checkmark-circle" size={22} color={colors.primary} />}
+          <View style={styles.inputGroup}>
+            <AppInput
+              label="Titre de l'objectif"
+              required
+              placeholder="Ex: Ameliorer le galop de Naya"
+              value={title}
+              onChangeText={setTitle}
+            />
+            <Text style={{ fontSize: 13, color: colors.secondary, fontFamily: fonts.bodyMedium.fontFamily }}>Chevaux concernes</Text>
+            {animals.map((animal) => (
+              <TouchableOpacity key={animal.id} style={styles.animalRow} onPress={() => toggleAnimal(animal.id)}>
+                <Text style={styles.animalName}>{animal.nom}</Text>
+                {selectedAnimals.includes(animal.id) && <Ionicons name="checkmark-circle" size={22} color={colors.primary} />}
               </TouchableOpacity>
             ))}
-            <View style={{ marginTop: 32 }}>
-              <Button onPress={() => goToStep(1)} isUppercase={false} disabled={!title.trim() || selectedAnimals.length === 0}>Suivant</Button>
+            <View style={{ marginTop: 24 }}>
+              <Button onPress={() => goToStep(1)} isUppercase={false} disabled={!title.trim() || selectedAnimals.length === 0}>
+                Definir les details
+              </Button>
             </View>
-          </>
+          </View>
         )}
         {step === 1 && (
-          <>
-            <Text style={labelStyle}>Date de début (YYYY-MM-DD)</Text>
-            <TextInput style={inputStyle} placeholder={new Date().toISOString().split('T')[0]} placeholderTextColor={colors.secondary} value={datedebut} onChangeText={setDatedebut} />
-            <Text style={labelStyle}>Date de fin (YYYY-MM-DD)</Text>
-            <TextInput style={inputStyle} placeholder={new Date().toISOString().split('T')[0]} placeholderTextColor={colors.secondary} value={datefin} onChangeText={setDatefin} />
-            <Text style={labelStyle}>Temporalité (optionnel)</Text>
-            <TextInput style={inputStyle} placeholder="Ex: Hebdomadaire, avant la saison..." placeholderTextColor={colors.secondary} value={temporalite} onChangeText={setTemporalite} />
-            <Text style={[labelStyle, { marginTop: 20 }]}>Sous-étapes</Text>
-            {etapes.map((e, i) => (
-              <View key={i} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <TextInput style={[inputStyle, { flex: 1 }]} placeholder={`étape ${i + 1}`} placeholderTextColor={colors.secondary} value={e} onChangeText={(v) => updateEtape(i, v)} />
+          <View style={styles.inputGroup}>
+            <AppInput label="Date de debut" placeholder={new Date().toISOString().split('T')[0]} value={datedebut} onChangeText={setDatedebut} />
+            <AppInput label="Date de fin" placeholder={new Date().toISOString().split('T')[0]} value={datefin} onChangeText={setDatefin} />
+            <AppInput label="Temporalite" placeholder="Ex: Hebdomadaire, avant la saison..." value={temporalite} onChangeText={setTemporalite} />
+            <Text style={{ fontSize: 13, color: colors.secondary, fontFamily: fonts.bodyMedium.fontFamily }}>Sous-etapes</Text>
+            {etapes.map((etape, index) => (
+              <View key={index} style={{ flexDirection: 'row', alignItems: 'center', gap: tokens.spacing.sm }}>
+                <AppInput
+                  containerStyle={{ flex: 1 }}
+                  placeholder={`Etape ${index + 1}`}
+                  value={etape}
+                  onChangeText={(value) => updateEtape(index, value)}
+                />
                 {etapes.length > 1 && (
-                  <TouchableOpacity onPress={() => removeEtape(i)} style={{ padding: 8, marginLeft: 6 }}>
+                  <TouchableOpacity onPress={() => removeEtape(index)} style={{ padding: 8 }} accessibilityLabel="Retirer l'etape">
                     <Ionicons name="close-circle" size={20} color={colors.secondary} />
                   </TouchableOpacity>
                 )}
               </View>
             ))}
-            <TouchableOpacity onPress={addEtape} style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+            <TouchableOpacity onPress={addEtape} style={styles.addStepButton}>
               <Ionicons name="add-circle-outline" size={20} color={colors.primary} />
-              <Text style={{ marginLeft: 6, color: colors.primary, fontFamily: fonts.bodyMedium.fontFamily, fontSize: 14 }}>Ajouter une étape</Text>
+              <Text style={{ marginLeft: 6, color: colors.primary, fontFamily: fonts.bodyMedium.fontFamily, fontSize: 14 }}>Ajouter une etape</Text>
             </TouchableOpacity>
-            <View style={{ marginTop: 32 }}>
-              <Button onPress={onSubmit} isUppercase={false} disabled={create.isPending}>Créer l'objectif</Button>
+            <View style={{ marginTop: 24 }}>
+              <Button onPress={onSubmit} isUppercase={false} disabled={create.isPending}>
+                {create.isPending ? 'Creation...' : "Creer l'objectif"}
+              </Button>
             </View>
-          </>
+          </View>
         )}
       </ScrollView>
     </LinearGradient>

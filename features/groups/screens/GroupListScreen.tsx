@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { View, Text, FlatList, RefreshControl } from 'react-native';
+import { View, FlatList, RefreshControl } from 'react-native';
 import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -9,12 +9,14 @@ import GroupCard from '../components/GroupCard';
 import { useGroupsQuery, GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import type { AppStackScreenProps } from '../../../navigation/types';
 import { useTranslation } from 'react-i18next';
+import { AppEmptyState, AppErrorState } from '../../../shared/components/ui';
+import type { Group } from '../../../models/Group';
 
 export default function GroupListScreen({ navigation }: AppStackScreenProps<'GroupList'>) {
   const { colors } = useAppTheme();
   const { t } = useTranslation('groups');
   const queryClient = useQueryClient();
-  const { data: groups = [], isLoading, isFetching } = useGroupsQuery();
+  const { data: groups = [], isLoading, isError, refetch } = useGroupsQuery();
   const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = async () => {
@@ -34,19 +36,30 @@ export default function GroupListScreen({ navigation }: AppStackScreenProps<'Gro
     );
   }
 
+  if (isError) {
+    return (
+      <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
+        <TopTabSecondary message1={t('titlePart1')} message2={t('title')} />
+        <View style={{ flex: 1, justifyContent: 'center' }}>
+          <AppErrorState message="Impossible de charger les groupes." onRetry={() => void refetch()} />
+        </View>
+      </LinearGradient>
+    );
+  }
+
   return (
     <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <TopTabSecondary message1={t('titlePart1')} message2={t('title')} />
       <FlatList
         data={groups}
-        keyExtractor={(item: any) => item.id.toString()}
+        keyExtractor={(item: Group) => item.id.toString()}
         renderItem={({ item }) => <GroupCard group={item} />}
         contentContainerStyle={{ padding: 16 }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} tintColor={colors.primary} />
         }
         ListEmptyComponent={
-          <Text style={{ textAlign: 'center', marginTop: 20, color: colors.textPrimary }}>{t('noGroup')}</Text>
+          <AppEmptyState icon="account-group-outline" title={t('noGroup')} description="Créez un groupe pour partager animaux et événements." />
         }
       />
     </LinearGradient>

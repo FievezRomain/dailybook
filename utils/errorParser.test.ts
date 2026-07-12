@@ -118,6 +118,33 @@ describe('parseApiError', () => {
       const result = parseApiError(makeAxiosError(401, body as any));
       expect(result.code).toBe(AppErrorCode.UNAUTHORIZED);
     });
+
+    it('does not expose backend messages for internal errors', () => {
+      const body = {
+        success: false,
+        error: {
+          code: AppErrorCode.INTERNAL_ERROR,
+          message: 'SQL failed on table users',
+          details: [],
+        },
+      };
+      const result = parseApiError(makeAxiosError(500, body));
+      expect(result.message).not.toContain('SQL');
+      expect(result.message).toMatch(/erreur/i);
+    });
+
+    it('ignores malformed details', () => {
+      const body = {
+        success: false,
+        error: {
+          code: AppErrorCode.VALIDATION_ERROR,
+          message: 'Invalide',
+          details: { field: 'nom', message: 'Requis' },
+        },
+      };
+      const result = parseApiError(makeAxiosError(422, body as any));
+      expect(result.details).toEqual([]);
+    });
   });
 
   describe('non-Axios errors', () => {

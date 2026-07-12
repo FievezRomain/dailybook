@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
+import { FontAwesome, MaterialIcons, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 import { AppDivider } from '../ui';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import Toast from 'react-native-toast-message';
 import ModalEditGeneric from './common/ModalEditGeneric';
-import ModalEvents from '../../../features/events/components/ModalEvents';
 import ModalObjectif from '../../../features/objectifs/components/ModalObjectif';
 import ModalWish from '../../../features/wishes/components/ModalWish';
 import ModalContact from '../../../features/contacts/components/ModalContact';
 import ModalNote from '../../../features/notes/components/ModalNote';
 import ModalAnimal from '../../../features/animals/components/ModalAnimal';
 import ModalGroup from '../../../features/groups/components/ModalGroup';
-import { useCalendarUIStore } from '../../../stores/useCalendarUIStore';
-import { useAuthStore } from '../../../stores/useAuthStore';
 import { useCurrentUser } from '../../../hooks/useCurrentUser';
 import { useTranslation } from 'react-i18next';
 import type { AppNavigationProp } from '../../../navigation/types';
@@ -26,35 +23,29 @@ interface ModalCreateProps {
 
 const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProps) => {
   const { colors, fonts } = useAppTheme();
-  const { user } = useAuthStore();
   const { hasRole } = useCurrentUser();
   const { t } = useTranslation('common');
   const isPremium = hasRole('premium');
-  const [isEventModalVisible, setEventModalVisible] = useState(false);
   const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
   const [isWishModalVisible, setWishModalVisible] = useState(false);
   const [isContactModalVisible, setContactModalVisible] = useState(false);
   const [isNoteModalVisible, setNoteModalVisible] = useState(false);
   const [isAnimalModalVisible, setAnimalModalVisible] = useState(false);
   const [isGroupModalVisible, setGroupModalVisible] = useState(false);
-  const [event, setEvent] = useState<any>({});
-  const { selectedDate: date } = useCalendarUIStore();
 
   const openAfterMenuClose = (openModal: () => void) => {
     setModalVisible(false);
     setTimeout(openModal, 180);
   };
 
-  const openModalEvent = (typeEvent: string) => {
-    setEvent({ eventtype: typeEvent });
-    openAfterMenuClose(() => setEventModalVisible(true));
+  const openEventWizard = () => {
+    openAfterMenuClose(() => navigation?.navigate('EventEntry'));
   };
 
   const handleCreateContact = () => { setModalVisible(false); setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Création d\'un contact réussi' }), 300); };
   const handleCreateNote = () => { setModalVisible(false); setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Création d\'une note réussi' }), 300); };
   const handleCreateWish = () => { setModalVisible(false); setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Création d\'un souhait réussi' }), 300); };
   const handleCreateAnimal = () => { setModalVisible(false); setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Création d\'un animal réussi' }), 300); };
-  const handleCreateEvent = () => { setModalVisible(false); setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Création d\'un événement réussi' }), 300); };
   const handleCreateObjectif = () => { setModalVisible(false); setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Création d\'un objectif réussi' }), 300); };
   const handleCreateGroup = () => { setModalVisible(false); setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: 'Création d\'un groupe réussi' }), 300); };
 
@@ -78,9 +69,6 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
 
   return (
     <>
-      {isEventModalVisible && (
-        <ModalEvents actionType="create" isVisible={isEventModalVisible} setVisible={setEventModalVisible} event={event} onModify={handleCreateEvent} date={date} />
-      )}
       {isObjectifModalVisible && (
         <ModalObjectif actionType="create" isVisible={isObjectifModalVisible} setVisible={setObjectifModalVisible} onModify={handleCreateObjectif} />
       )}
@@ -119,28 +107,18 @@ const ModalCreate = ({ isVisible, setModalVisible, navigation }: ModalCreateProp
               </View>
 
               <View style={styles.groupButton}>
-                {[
-                  { label: t('createMenu.walk'), type: 'balade', Icon: () => <Entypo name="compass" size={20} style={styles.iconButton} /> },
-                  { label: t('createMenu.training'), type: 'entrainement', Icon: () => <Entypo name="traffic-cone" size={20} style={styles.iconButton} /> },
-                  { label: t('createMenu.competition'), type: 'concours', Icon: () => <FontAwesome name="trophy" size={20} style={styles.iconButton} /> },
-                  { label: t('createMenu.medicalAppointment'), type: 'rdv', Icon: () => <FontAwesome name="stethoscope" size={20} style={styles.iconButton} /> },
-                  { label: t('createMenu.care'), type: 'soins', Icon: () => <FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton} /> },
-                  { label: t('createMenu.expense'), type: 'depense', Icon: () => <FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton} /> },
-                  { label: t('createMenu.other'), type: 'autre', Icon: () => <FontAwesome6 name="check-circle" size={20} style={styles.iconButton} /> },
-                ].map(({ label, type, Icon }) => (
-                  <View key={type} style={styles.button}>
-                    <TouchableOpacity onPress={() => openModalEvent(type)}>
-                      <View style={styles.touchableOpacityButtonContent}>
-                        <View style={styles.informationsButtonContainer}>
-                          <Icon />
-                          <Text style={[styles.textFontRegular, styles.titleButton]}>{label}</Text>
-                        </View>
-                        <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
+                <View style={styles.button}>
+                  <TouchableOpacity onPress={openEventWizard}>
+                    <View style={styles.touchableOpacityButtonContent}>
+                      <View style={styles.informationsButtonContainer}>
+                        <MaterialIcons name="event-note" size={20} style={styles.iconButton} />
+                        <Text style={[styles.textFontRegular, styles.titleButton]}>{t('createMenu.event')}</Text>
                       </View>
-                      <AppDivider />
-                    </TouchableOpacity>
-                  </View>
-                ))}
+                      <MaterialIcons name="keyboard-arrow-right" size={25} style={styles.iconAction} />
+                    </View>
+                    <AppDivider />
+                  </TouchableOpacity>
+                </View>
               </View>
 
               <View style={styles.groupButton}>

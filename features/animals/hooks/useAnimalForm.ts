@@ -3,6 +3,7 @@ import { initValuesAnimal, resetValues } from "../../../shared/utils/AnimalHelpe
 import Toast from "react-native-toast-message";
 import { uploadFile } from "../../../services/aws/FileStorageService";
 import LoggerService from "../../../services/logs/LoggerService";
+import { parseApiError } from "../../../utils/errorParser";
 import { CreateAnimalPayload, UpdateAnimalPayload } from '../types';
 import instanceDateUtils from "../../../shared/utils/DateUtils";
 
@@ -59,8 +60,17 @@ export const useAnimalForm = (
       closeModal();
       onModify(response);
     } catch (err: unknown) {
-      Toast.show({ type: "error", position: "top", text1: (err as Error).message });
-      LoggerService.log("Erreur lors de la " + actionType + " d'un animal : " + (err as Error).message);
+      const parsed = parseApiError(err);
+      Toast.show({ type: "error", position: "top", text1: parsed.message });
+      LoggerService.error("Animal form submit failed", err, {
+        feature: "animals",
+        operation: actionType === "modify" ? "update" : "create",
+        errorCode: parsed.code,
+        hasId: data.id != null,
+        hasImage: Boolean(data.image),
+        hasBirthDate: Boolean(data.datenaissance),
+        hasDeathDate: Boolean(data.datedeces),
+      });
     }
   };
 

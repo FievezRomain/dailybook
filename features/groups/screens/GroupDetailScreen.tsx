@@ -16,6 +16,7 @@ import ModalValidation from '../../../shared/components/modals/common/ModalValid
 import { useGroupsQuery, useGroupMutations, GROUPS_KEY } from '../../../hooks/queries/useGroupsQuery';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import type { AppStackScreenProps } from '../../../navigation/types';
+import type { Group } from '../../../models/Group';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { AppIcon } from '../../../shared/components/ui';
 import { useTranslation } from 'react-i18next';
@@ -29,7 +30,13 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
   const { data: groups = [] } = useGroupsQuery();
   const { remove: removeGroup } = useGroupMutations();
 
-  const group = (groups as any[]).find((g) => g.id === groupId) ?? {};
+  type GroupDetail = Group & {
+    data?: {
+      animals?: unknown[];
+      members?: Array<{ type: string; items?: Array<{ email?: string; role?: string }> }>;
+    };
+  };
+  const group = groups.find((g) => String(g.id) === groupId) as GroupDetail | undefined;
 
   const [refreshing, setRefreshing] = useState(false);
   const [activeRubrique, setActiveRubrique] = useState(0);
@@ -54,8 +61,8 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
   };
 
   const getUserRoleFromGroup = () => {
-    const acceptedSection = group?.data?.members?.find((m: any) => m.type === 'accepted');
-    const member = acceptedSection?.items?.find((m: any) => m.email === firebaseUser?.email);
+    const acceptedSection = group?.data?.members?.find((m) => m.type === 'accepted');
+    const member = acceptedSection?.items?.find((m) => m.email === firebaseUser?.email);
     return member?.role;
   };
 
@@ -65,7 +72,8 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
 
   const onDelete = async () => {
     navigation.navigate('Tab', { screen: 'Accueil' });
-    removeGroup.mutate(group.id, {
+    if (!group) return;
+    removeGroup.mutate(String(group.id), {
       onSuccess: () => setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: t('deleted') }), 350),
     });
   };
@@ -110,18 +118,18 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
             <Entypo name="info" size={20} color={colors.textPrimary} style={{ marginRight: 5 }} />
             <Text style={[styles.textFontBold, { color: colors.textPrimary }]}>{t('informations')}</Text>
           </View>
-          <ModalDefaultNoValue text={group.informations ?? t('noInformation')} />
+          <ModalDefaultNoValue text={group?.informations ?? t('noInformation')} />
         </View>
       </View>
       <View style={styles.rubriqueContainer}>
         <View style={styles.iconsContainer}>
           <TouchableOpacity style={{ width: '50%', alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }} onPress={() => setActiveRubrique(0)}>
             <MaterialCommunityIcons name="paw" size={20} color={activeRubrique === 0 ? colors.textPrimary : colors.surfaceVariant} style={{ marginRight: 5 }} />
-            <Text style={[{ color: activeRubrique === 0 ? colors.textPrimary : colors.surfaceVariant }, styles.textFontMedium]}>{t('animalsTab', { count: group.nb_animaux ?? 0 })}</Text>
+            <Text style={[{ color: activeRubrique === 0 ? colors.textPrimary : colors.surfaceVariant }, styles.textFontMedium]}>{t('animalsTab', { count: group?.nb_animaux ?? 0 })}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={{ width: '50%', alignItems: 'center', flexDirection: 'row', justifyContent: 'center' }} onPress={() => setActiveRubrique(1)}>
             <MaterialIcons name="person" size={20} color={activeRubrique === 1 ? colors.textPrimary : colors.surfaceVariant} style={{ marginRight: 5 }} />
-            <Text style={[{ color: activeRubrique === 1 ? colors.textPrimary : colors.surfaceVariant }, styles.textFontMedium]}>{t('membersTab', { count: group.nb_members ?? 0 })}</Text>
+            <Text style={[{ color: activeRubrique === 1 ? colors.textPrimary : colors.surfaceVariant }, styles.textFontMedium]}>{t('membersTab', { count: group?.nb_members ?? 0 })}</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.separatorFix} />
@@ -138,9 +146,9 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.item}>
       {activeRubrique === 0 ? (
-        <AnimalsGroup animals={item} userRole={getUserRoleFromGroup()} group={group} />
+        <AnimalsGroup animals={item} userRole={getUserRoleFromGroup() ?? ''} group={group} />
       ) : (
-        <MembersGroup members={item} userRole={getUserRoleFromGroup()} group={group} />
+        <MembersGroup members={item} userRole={getUserRoleFromGroup() ?? ''} group={group} />
       )}
     </View>
   );
@@ -152,7 +160,7 @@ export default function GroupDetailScreen({ navigation, route }: AppStackScreenP
       <ModalGroup actionType="modify" isVisible={modalGroupVisible} setVisible={setModalGroupVisible} group={group} onModify={onModify} />
       <ModalValidation displayedText={t('deleteConfirm')} title={t('deleteTitle')} onConfirm={onDelete} setVisible={setModalGroupValidationVisible} visible={modalGroupValidationVisible} />
       <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
-        <TopTabSecondary message1={t('titlePart1')} message2={group.name ?? ''} btnList={getActionsComponents()} />
+        <TopTabSecondary message1={t('titlePart1')} message2={group?.name ?? ''} btnList={getActionsComponents()} />
         {refreshing ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
             <ActivityIndicator animating size="large" />

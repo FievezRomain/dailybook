@@ -1,18 +1,19 @@
 import React, { useEffect } from 'react';
-import { View, Text, FlatList, ActivityIndicator, RefreshControl, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, RefreshControl, TextInput, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import TopTab from '../../../shared/components/common/TopTab';
 import EventCard from '../../../shared/components/cards/EventCard';
-import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
 import ModalFilterCalendar from '../components/ModalFilterCalendar';
 import Toast from 'react-native-toast-message';
 import { convertDateToText } from '../../../shared/utils/EventUtils';
 import { useCalendarLogic, INITIAL_DATE } from '../hooks/useCalendarLogic';
 import type { TabScreenProps } from '../../../navigation/types';
 import { useTranslation } from 'react-i18next';
+import { AppEmptyState, AppErrorState } from '../../../shared/components/ui';
+import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 
 LocaleConfig.locales['fr'] = {
   monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
@@ -24,7 +25,7 @@ LocaleConfig.locales['fr'] = {
 LocaleConfig.defaultLocale = 'fr';
 
 export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrier'>) {
-  const { colors, fonts } = useAppTheme();
+  const { colors, fonts, tokens } = useAppTheme();
   const { t } = useTranslation('events');
   const [modalFilterVisible, setModalFilterVisible] = React.useState(false);
   const {
@@ -34,9 +35,12 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
     filter,
     selectedDate,
     refreshing,
+    isLoadingEvents,
+    isErrorEvents,
     setFilter,
     setSelectedDate,
     onRefresh,
+    retryEvents,
     onDayPress,
     handleSearch,
     deleteSearchText,
@@ -66,9 +70,13 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
       <ModalFilterCalendar modalVisible={modalFilterVisible} setModalVisible={setModalFilterVisible} setFilter={setFilter} filter={filter ?? undefined} />
           <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
         <TopTab message1="Mon" message2="Calendrier" />
-        {refreshing ? (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-            <ActivityIndicator animating size="large" />
+        {isLoadingEvents ? (
+          <View style={{ paddingHorizontal: tokens.spacing.lg, paddingTop: tokens.spacing.xl }}>
+            <ListSkeleton count={4} variant="event" />
+          </View>
+        ) : isErrorEvents ? (
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <AppErrorState message="Impossible de charger le calendrier." onRetry={retryEvents} />
           </View>
         ) : (
           <FlatList
@@ -96,7 +104,7 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
                     style={styles.calendar}
                     firstDay={1}
                     monthFormat="MMMM yyyy"
-                    theme={{ arrowColor: colors.primary, todayTextColor: colors.textSecondary, selectedDayTextColor: 'white', selectedDayBackgroundColor: colors.primary, calendarBackground: 'transparent', dayTextColor: colors.primary, textDayHeaderTextColor: colors.primary, textSectionTitleColor: colors.primary, monthTextColor: colors.primary } as any}
+                    theme={{ arrowColor: colors.primary, todayTextColor: colors.textSecondary, selectedDayTextColor: colors.textOnPrimary, selectedDayBackgroundColor: colors.primary, calendarBackground: tokens.overlays.transparent, dayTextColor: colors.primary, textDayHeaderTextColor: colors.primary, textSectionTitleColor: colors.primary, monthTextColor: colors.primary } as any}
                     enableSwipeMonths
                     onDayPress={(day) => onDayPress(day.dateString)}
                     markingType="multi-dot"
@@ -116,20 +124,19 @@ export default function CalendarScreen({ navigation }: TabScreenProps<'Calendrie
             ListEmptyComponent={
               <View style={styles.listEventContainer}>
                 {filter ? (
-                  <ModalDefaultNoValue text={t('filterNoResult')} />
+                  <AppEmptyState
+                    icon="filter-off-outline"
+                    title={t('filterNoResult')}
+                    description="Essayez d'ajuster vos filtres ou votre recherche."
+                  />
                 ) : (
-                  <View style={{ alignItems: 'center', paddingVertical: 32 }}>
-                    <MaterialCommunityIcons name="calendar-blank-outline" size={52} color={colors.secondary_roux} />
-                    <Text style={{ marginTop: 14, fontSize: 16, fontFamily: fonts.bodyMedium.fontFamily, color: colors.textPrimary, textAlign: 'center' }}>{t('noDayEvent')}</Text>
-                    <Text style={{ marginTop: 6, fontSize: 13, color: colors.secondary_roux, textAlign: 'center', fontFamily: fonts.default?.fontFamily }}>{t('planTrip')}</Text>
-                    <TouchableOpacity
-                      onPress={() => navigation.navigate('EventEntry' as any)}
-                      style={{ marginTop: 18, backgroundColor: colors.primary, borderRadius: 12, paddingHorizontal: 24, paddingVertical: 10 }}
-                      activeOpacity={0.8}
-                    >
-                      <Text style={{ color: '#fff', fontFamily: fonts.bodyMedium.fontFamily, fontSize: 14 }}>{t('addEvent')}</Text>
-                    </TouchableOpacity>
-                  </View>
+                  <AppEmptyState
+                    icon="calendar-blank-outline"
+                    title={t('noDayEvent')}
+                    description={t('planTrip')}
+                    ctaLabel={t('addEvent')}
+                    onCta={() => navigation.navigate('EventEntry')}
+                  />
                 )}
               </View>
             }

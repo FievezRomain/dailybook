@@ -28,9 +28,12 @@ export type UseCalendarLogicReturn = {
   filter: CalendarFilter | null;
   selectedDate: string;
   refreshing: boolean;
+  isLoadingEvents: boolean;
+  isErrorEvents: boolean;
   setFilter: (filter: CalendarFilter | null) => void;
   setSelectedDate: (date: string) => void;
   onRefresh: () => Promise<void>;
+  retryEvents: () => void;
   onDayPress: (date: string) => void;
   handleSearch: (query: string) => void;
   deleteSearchText: () => void;
@@ -38,7 +41,12 @@ export type UseCalendarLogicReturn = {
 
 export function useCalendarLogic(colors: CalendarColors): UseCalendarLogicReturn {
   const queryClient = useQueryClient();
-  const { data: events = [] } = useEventsQuery();
+  const {
+    data: events = [],
+    isLoading: isLoadingEvents,
+    isError: isErrorEvents,
+    refetch: refetchEvents,
+  } = useEventsQuery();
   const [eventsCurrentDateSelected, setEventsCurrentDateSelected] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [marked, setMarked] = useState<MarkedDates>({});
@@ -66,6 +74,10 @@ export function useCalendarLogic(colors: CalendarColors): UseCalendarLogicReturn
     await queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
     setRefreshing(false);
   }, [queryClient]);
+
+  const retryEvents = useCallback(() => {
+    void refetchEvents();
+  }, [refetchEvents]);
 
   const onDayPress = useCallback((day: string) => {
     setFilter(null);
@@ -114,9 +126,12 @@ export function useCalendarLogic(colors: CalendarColors): UseCalendarLogicReturn
     filter,
     selectedDate,
     refreshing,
+    isLoadingEvents,
+    isErrorEvents,
     setFilter,
     setSelectedDate,
     onRefresh,
+    retryEvents,
     onDayPress,
     handleSearch,
     deleteSearchText,

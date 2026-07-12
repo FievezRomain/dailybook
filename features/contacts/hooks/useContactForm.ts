@@ -1,16 +1,21 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
-import { createContact, updateContact } from '../../../services/api/ContactService';
+import { useContactMutations } from '../../../hooks/queries/useContactsQuery';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { CreateContactPayload, UpdateContactPayload } from '../types';
 import LoggerService from '../../../services/logs/LoggerService';
+import { parseApiError } from '../../../utils/errorParser';
+import type { Contact } from '../../../models/Contact';
 
-export function useContactForm(actionType: string, contact: Record<string, unknown> = {}, onSuccess?: (data?: unknown) => void) {
+export type ContactFormValues = Partial<Contact>;
+
+export function useContactForm(actionType: string, contact: ContactFormValues = {}, onSuccess?: (data?: unknown) => void) {
   const { firebaseUser } = useAuthStore();
-  const form = useForm({ defaultValues: contact });
+  const form = useForm<ContactFormValues>({ defaultValues: contact });
   const { setValue, reset } = form;
   const [loading, setLoading] = useState(false);
+  const { create, update } = useContactMutations();
 
   const initValues = () => {
     setValue('id', contact.id);
@@ -23,24 +28,40 @@ export function useContactForm(actionType: string, contact: Record<string, unkno
 
   const resetValues = () => reset({});
 
-  const submit = async (data: Record<string, unknown>, onClose: () => void) => {
+  const buildPayload = (data: ContactFormValues): CreateContactPayload => ({
+    nom: data.nom ?? '',
+    profession: data.profession,
+    telephone: data.telephone,
+    email: data.email,
+    emailproprietaire: firebaseUser?.email ?? '',
+  });
+
+  const submit = async (data: ContactFormValues, onClose: () => void) => {
     if (loading) return;
     setLoading(true);
-    data['emailproprietaire'] = firebaseUser?.email ?? '';
     try {
+      const payload = buildPayload(data);
       if (actionType === 'modify') {
-        const response = await updateContact(String(data.id), data as unknown as UpdateContactPayload);
+        const body: UpdateContactPayload = { ...payload, id: Number(data.id) };
+        const response = await update.mutateAsync({ id: String(data.id), body });
         onSuccess?.(response);
       } else {
-        await createContact(data as unknown as CreateContactPayload);
+        await create.mutateAsync(payload);
         onSuccess?.();
       }
       resetValues();
       onClose();
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Erreur inconnue';
-      Toast.show({ type: 'error', position: 'top', text1: message });
-      LoggerService.log('useContactForm error: ' + message);
+      const parsed = parseApiError(err);
+      Toast.show({ type: 'error', position: 'top', text1: parsed.message });
+      LoggerService.error('Contact form submit failed', err, {
+        feature: 'contacts',
+        operation: actionType === 'modify' ? 'update' : 'create',
+        errorCode: parsed.code,
+        hasId: data.id != null,
+        hasPhone: Boolean(data.telephone),
+        hasEmail: Boolean(data.email),
+      });
     } finally {
       setLoading(false);
     }

@@ -30,17 +30,42 @@ export default function AppHeader({
   const inner = (
     <>
       <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.65)']}
-        style={styles.gradient}
+        colors={[tokens.overlays.transparent, tokens.overlays.heroGradientTo]}
+        style={[
+          styles.gradient,
+          {
+            paddingHorizontal: tokens.spacing.lg,
+            paddingBottom: tokens.spacing.md,
+          },
+        ]}
       >
         <Text
-          style={[styles.title, { fontFamily: fonts.bodyLarge.fontFamily }]}
+          style={[
+            styles.title,
+            {
+              color: colors.textOnPrimary,
+              fontFamily: fonts.bodyLarge.fontFamily,
+              fontSize: tokens.fontSizes.xxl,
+              marginBottom: tokens.spacing.xs,
+            },
+          ]}
           numberOfLines={1}
         >
           {title}
         </Text>
         {subtitle ? (
-          <Text style={[styles.subtitle, { fontFamily: fonts.default.fontFamily }]} numberOfLines={1}>
+          <Text
+            style={[
+              styles.subtitle,
+              {
+                color: tokens.overlays.onImageMuted,
+                fontFamily: fonts.default.fontFamily,
+                fontSize: tokens.fontSizes.sm,
+                marginBottom: tokens.spacing.xs / 2,
+              },
+            ]}
+            numberOfLines={1}
+          >
             {subtitle}
           </Text>
         ) : null}
@@ -48,12 +73,20 @@ export default function AppHeader({
 
       {onBack ? (
         <TouchableOpacity
-          style={styles.backButton}
+          style={[
+            styles.backButton,
+            {
+              left: tokens.spacing.md,
+              backgroundColor: tokens.overlays.heroControl,
+              borderRadius: tokens.radii.xl,
+              padding: tokens.spacing.sm,
+            },
+          ]}
           onPress={onBack}
           accessibilityRole="button"
           accessibilityLabel="Retour"
         >
-          <Entypo name="chevron-left" size={22} color="#fff" />
+          <Entypo name="chevron-left" size={22} color={colors.textOnPrimary} />
         </TouchableOpacity>
       ) : null}
 
@@ -74,7 +107,7 @@ export default function AppHeader({
   return (
     <View style={[heroStyle, { overflow: 'hidden' }]}>
       <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.primary, justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ fontSize: 80, color: 'rgba(255,255,255,0.9)', fontFamily: fonts.bodyLarge.fontFamily }}>
+        <Text style={{ fontSize: 80, color: tokens.overlays.onImageStrong, fontFamily: fonts.bodyLarge.fontFamily }}>
           {title[0]?.toUpperCase()}
         </Text>
       </View>
@@ -87,26 +120,14 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
     justifyContent: 'flex-end',
-    paddingHorizontal: 20,
-    paddingBottom: 16,
   },
   title: {
-    fontSize: 24,
-    color: '#fff',
-    marginBottom: 4,
   },
   subtitle: {
-    fontSize: 14,
-    color: 'rgba(255,255,255,0.8)',
-    marginBottom: 2,
   },
   backButton: {
     position: 'absolute',
     top: 50,
-    left: 16,
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    borderRadius: 20,
-    padding: 8,
     zIndex: 10,
   },
   rightAction: {

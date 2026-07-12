@@ -1,5 +1,5 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -8,12 +8,14 @@ import {
   type BottomSheetBackdropProps,
   type BottomSheetModalProps,
 } from '@gorhom/bottom-sheet';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppTheme } from '../../../theme/useAppTheme';
 
 interface AppSheetProps extends Omit<BottomSheetModalProps, 'children'> {
   children: React.ReactNode;
   /** Use bottom-sheet scroll view instead of fixed view (for long content). Default: true */
   scrollable?: boolean;
+  contentContainerStyle?: StyleProp<ViewStyle>;
   /** Provide fixed snap points or default to dynamic height. Default: ['50%', '90%'] */
   snapPoints?: (string | number)[];
 }
@@ -27,8 +29,9 @@ interface AppSheetProps extends Omit<BottomSheetModalProps, 'children'> {
  *   ref.current?.present();
  */
 const AppSheet = forwardRef<BottomSheetModal, AppSheetProps>(
-  ({ children, scrollable = true, snapPoints = ['50%', '90%'], ...rest }, ref) => {
+  ({ children, scrollable = true, snapPoints = ['50%', '90%'], contentContainerStyle, ...rest }, ref) => {
     const { colors, tokens } = useAppTheme();
+    const insets = useSafeAreaInsets();
     const stableSnapPoints = useMemo(() => snapPoints, [snapPoints.join('|')]);
 
     const renderBackdrop = useCallback(
@@ -70,13 +73,23 @@ const AppSheet = forwardRef<BottomSheetModal, AppSheetProps>(
         {scrollable ? (
           <BottomSheetScrollView
             style={styles.scrollContent}
-            contentContainerStyle={styles.scrollContainer}
+            contentContainerStyle={[
+              styles.scrollContainer,
+              { paddingBottom: Math.max(insets.bottom, 16) + 24 },
+              contentContainerStyle,
+            ]}
             keyboardShouldPersistTaps="handled"
           >
             {children}
           </BottomSheetScrollView>
         ) : (
-          <BottomSheetView style={styles.viewContent}>
+          <BottomSheetView
+            style={[
+              styles.viewContent,
+              { paddingBottom: Math.max(insets.bottom, 16) + 24 },
+              contentContainerStyle,
+            ]}
+          >
             {children}
           </BottomSheetView>
         )}
@@ -89,7 +102,7 @@ AppSheet.displayName = 'AppSheet';
 export default AppSheet;
 
 const styles = StyleSheet.create({
-  viewContent: { flex: 1, paddingHorizontal: 16, paddingBottom: 32 },
+  viewContent: { flex: 1, paddingHorizontal: 16 },
   scrollContent: { flex: 1 },
-  scrollContainer: { paddingHorizontal: 16, paddingBottom: 32 },
+  scrollContainer: { paddingHorizontal: 16 },
 });

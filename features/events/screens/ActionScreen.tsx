@@ -4,31 +4,31 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome6, FontAwesome, MaterialIcons, Entypo, SimpleLineIcons, AntDesign } from '@expo/vector-icons';
 import { AppDivider } from '../../../shared/components/ui';
 import Toast from 'react-native-toast-message';
-import TopTab from '../../../shared/components/common/TopTab';
-import ModalEvents from '../components/ModalEvents';
 import ModalObjectif from '../../objectifs/components/ModalObjectif';
 import ModalWish from '../../wishes/components/ModalWish';
 import ModalContact from '../../contacts/components/ModalContact';
 import ModalNote from '../../notes/components/ModalNote';
 import ModalAnimal from '../../animals/components/ModalAnimal';
-import type { TabScreenProps } from '../../../navigation/types';
+import type { AppNavigationProp } from '../../../navigation/types';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 
 const toastSuccess = (text1: string) => setTimeout(() => Toast.show({ type: 'success', position: 'top', text1 }), 300);
 
-export default function ActionScreen({ navigation }: TabScreenProps<'Action' extends keyof any ? any : any>) {
+export default function ActionScreen({ navigation }: { navigation: AppNavigationProp }) {
   const { colors, fonts } = useAppTheme();
-  const [isEventModalVisible, setEventModalVisible] = useState(false);
   const [isObjectifModalVisible, setObjectifModalVisible] = useState(false);
   const [isWishModalVisible, setWishModalVisible] = useState(false);
   const [isContactModalVisible, setContactModalVisible] = useState(false);
   const [isNoteModalVisible, setNoteModalVisible] = useState(false);
   const [isAnimalModalVisible, setAnimalModalVisible] = useState(false);
-  const [event, setEvent] = useState<any>(undefined);
+  const resetEventWizard = useEventWizardStore((s) => s.reset);
+  const setEventWizardField = useEventWizardStore((s) => s.setField);
 
-  const openModalEvent = (typeEvent: string) => {
-    setEvent({ eventtype: typeEvent } as any);
-    setEventModalVisible(true);
+  const openEventWizard = (typeEvent: string) => {
+    resetEventWizard();
+    setEventWizardField('eventType', typeEvent);
+    navigation.navigate('EventWizardForm', { eventType: typeEvent });
   };
 
   const styles = {
@@ -60,7 +60,6 @@ export default function ActionScreen({ navigation }: TabScreenProps<'Action' ext
 
   return (
     <>
-      <ModalEvents actionType="create" isVisible={isEventModalVisible} setVisible={setEventModalVisible} event={event} onModify={() => toastSuccess("Création d'un événement réussi")} />
       <ModalObjectif actionType="create" isVisible={isObjectifModalVisible} setVisible={setObjectifModalVisible} onModify={() => toastSuccess("Création d'un objectif réussi")} />
       <ModalWish actionType="create" isVisible={isWishModalVisible} setVisible={setWishModalVisible} onModify={() => toastSuccess("Création d'un souhait réussi")} />
       <ModalContact actionType="create" isVisible={isContactModalVisible} setVisible={setContactModalVisible} onModify={() => toastSuccess("Création d'un contact réussi")} />
@@ -75,13 +74,13 @@ export default function ActionScreen({ navigation }: TabScreenProps<'Action' ext
                   {row(<FontAwesome name="paw" size={20} style={styles.iconButton} />, 'Animal', () => setAnimalModalVisible(true))}
                 </View>
                 <View style={styles.groupButton}>
-                  {row(<Entypo name="compass" size={20} style={styles.iconButton} />, 'Balade', () => openModalEvent('balade'))}
-                  {row(<Entypo name="traffic-cone" size={20} style={styles.iconButton} />, 'Entraénement', () => openModalEvent('entrainement'))}
-                  {row(<FontAwesome name="trophy" size={20} style={styles.iconButton} />, 'Concours', () => openModalEvent('concours'))}
-                  {row(<FontAwesome name="stethoscope" size={20} style={styles.iconButton} />, 'Rendez-vous médical', () => openModalEvent('rdv'))}
-                  {row(<FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton} />, 'Soin', () => openModalEvent('soins'))}
-                  {row(<FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton} />, 'Dépense', () => openModalEvent('depense'))}
-                  {row(<FontAwesome6 name="check-circle" size={20} style={styles.iconButton} />, 'Autre', () => openModalEvent('autre'))}
+                  {row(<Entypo name="compass" size={20} style={styles.iconButton} />, 'Balade', () => openEventWizard('balade'))}
+                  {row(<Entypo name="traffic-cone" size={20} style={styles.iconButton} />, 'Entraénement', () => openEventWizard('entrainement'))}
+                  {row(<FontAwesome name="trophy" size={20} style={styles.iconButton} />, 'Concours', () => openEventWizard('concours'))}
+                  {row(<FontAwesome name="stethoscope" size={20} style={styles.iconButton} />, 'Rendez-vous médical', () => openEventWizard('rdv'))}
+                  {row(<FontAwesome6 name="hand-holding-medical" size={20} style={styles.iconButton} />, 'Soin', () => openEventWizard('soins'))}
+                  {row(<FontAwesome6 name="money-bill-wave" size={20} style={styles.iconButton} />, 'Dépense', () => openEventWizard('depense'))}
+                  {row(<FontAwesome6 name="check-circle" size={20} style={styles.iconButton} />, 'Autre', () => openEventWizard('autre'))}
                 </View>
                 <View style={styles.groupButton}>
                   {row(<SimpleLineIcons name="target" size={20} style={styles.iconButton} />, 'Objectif', () => setObjectifModalVisible(true))}

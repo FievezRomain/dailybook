@@ -8,23 +8,25 @@ import TopTabSecondary from '../../../shared/components/common/TopTabSecondary';
 import ModalSubMenuContactActions from '../components/ModalSubMenuContactActions';
 import ModalContact from '../components/ModalContact';
 import ModalValidation from '../../../shared/components/modals/common/ModalValidation';
-import ModalDefaultNoValue from '../../../shared/components/modals/common/ModalDefaultNoValue';
 import LoggerService from '../../../services/logs/LoggerService';
 import { useContactsQuery, useContactMutations } from '../../../hooks/queries/useContactsQuery';
 import type { AppStackScreenProps } from '../../../navigation/types';
+import type { Contact } from '../../../models/Contact';
+import { AppEmptyState, AppErrorState } from '../../../shared/components/ui';
+import { ListSkeleton } from '../../../shared/components/skeletons/CardSkeleton';
 
 export default function ContactScreen({ navigation }: AppStackScreenProps<'Contact'>) {
   const { colors, fonts } = useAppTheme();
-  const sectionListRef = useRef<any>(null);
-  const { data: contacts = [] } = useContactsQuery();
+  const sectionListRef = useRef<SectionList<Contact>>(null);
+  const { data: contacts = [], isLoading, isError, refetch } = useContactsQuery();
   const { remove } = useContactMutations();
 
   const [modalSubMenuVisible, setModalSubMenuVisible] = useState(false);
-  const [contactFocus, setContactFocus] = useState<any>({});
+  const [contactFocus, setContactFocus] = useState<Contact | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalValidationDeleteVisible, setModalValidationDeleteVisible] = useState(false);
 
-  const groupedContacts = contacts.reduce((acc: Record<string, any[]>, contact: any) => {
+  const groupedContacts = contacts.reduce((acc: Record<string, Contact[]>, contact: Contact) => {
     if (contact?.nom) {
       const firstLetter = contact.nom[0].toUpperCase();
       if (!acc[firstLetter]) acc[firstLetter] = [];
@@ -51,20 +53,21 @@ export default function ContactScreen({ navigation }: AppStackScreenProps<'Conta
   const sendEmail = (email: string) =>
     Linking.openURL(`mailto:${email}`).catch((err) => LoggerService.log('Error opening email app: ' + err.message));
 
-  const focusContact = (contact: any) => {
+  const focusContact = (contact: Contact) => {
     setContactFocus(contact);
     setModalSubMenuVisible(true);
   };
 
   const confirmDelete = () => {
-    remove.mutate(contactFocus.id, {
+    if (!contactFocus) return;
+    remove.mutate(String(contactFocus.id), {
       onSuccess: () => {
         Toast.show({ type: 'success', position: 'top', text1: "Suppression d'un contact réussi" });
-        setContactFocus({});
+        setContactFocus(null);
         setModalValidationDeleteVisible(false);
         setModalSubMenuVisible(false);
       },
-      onError: (err: any) => {
+      onError: (err: Error) => {
         Toast.show({ type: 'error', position: 'top', text1: err.message });
       },
     });
@@ -87,7 +90,7 @@ export default function ContactScreen({ navigation }: AppStackScreenProps<'Conta
     <LinearGradient colors={[colors.background, colors.surfaceVariant]} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={{ flex: 1 }}>
       <TopTabSecondary message1="Vos" message2="Contacts" />
       <ModalSubMenuContactActions
-        contact={contactFocus}
+        contact={contactFocus ?? undefined}
         modalVisible={modalSubMenuVisible}
         setModalVisible={setModalSubMenuVisible}
         handleModify={() => setModalVisible(true)}
@@ -97,10 +100,12 @@ export default function ContactScreen({ navigation }: AppStackScreenProps<'Conta
         actionType="modify"
         isVisible={modalVisible}
         setVisible={setModalVisible}
-        contact={contactFocus}
-        onModify={(contact: any) => {
+        contact={contactFocus ?? undefined}
+        onModify={(contact?: unknown) => {
           setTimeout(() => Toast.show({ type: 'success', position: 'top', text1: "Modification d'un contact" }), 300);
-          setContactFocus(contact);
+          if (contact && typeof contact === 'object') {
+            setContactFocus(contact as Contact);
+          }
         }}
       />
       <ModalValidation
@@ -111,16 +116,24 @@ export default function ContactScreen({ navigation }: AppStackScreenProps<'Conta
         title="Suppression d'un contact"
       />
       <View style={{ flex: 1 }}>
-        {contacts.length === 0 ? (
+        {isLoading ? (
           <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
-            <ModalDefaultNoValue text="Aucun contact enregistré" />
+            <ListSkeleton count={6} variant="contact" />
+          </View>
+        ) : isError ? (
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <AppErrorState message="Impossible de charger les contacts." onRetry={() => void refetch()} />
+          </View>
+        ) : contacts.length === 0 ? (
+          <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
+            <AppEmptyState icon="card-account-phone-outline" title="Aucun contact enregistré" description="Ajoutez vos contacts utiles pour les retrouver vite." />
           </View>
         ) : (
           <>
             <SectionList
               ref={sectionListRef}
               sections={sections}
-              keyExtractor={(item: any, index) => item.nom + index}
+              keyExtractor={(item: Contact, index) => item.nom + index}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.itemContainer} onPress={() => focusContact(item)}>
                   <View style={{ width: '70%' }}>

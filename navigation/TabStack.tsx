@@ -1,6 +1,7 @@
 import React from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { CommonActions } from '@react-navigation/native';
 import { BlurView } from 'expo-blur';
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -9,7 +10,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import type { TabParamList } from './types';
 import { WelcomeScreen, PetsScreen, CalendarScreen, StatsScreen, OtherScreen } from './screens';
 import { useAppTheme } from '../theme/useAppTheme';
-import { tabBarBlurIntensity } from '../theme/tokens';
 
 const Tab = createBottomTabNavigator<TabParamList>();
 
@@ -93,8 +93,8 @@ function TabItem({ config, focused, onPress }: TabItemProps) {
 // ---------------------------------------------------------------------------
 // Custom blur tab bar
 // ---------------------------------------------------------------------------
-function BlurTabBar({ navigation, state, descriptors, insets }: any) {
-  const { colors, isDark } = useAppTheme();
+function BlurTabBar({ navigation, state, insets }: BottomTabBarProps) {
+  const { colors, tokens, isDark } = useAppTheme();
   const safeInsets = useSafeAreaInsets();
   const bottomPad = Math.max(safeInsets.bottom, insets.bottom ?? 0);
 
@@ -102,7 +102,7 @@ function BlurTabBar({ navigation, state, descriptors, insets }: any) {
     <View style={[styles.tabBarWrapper, { paddingBottom: bottomPad }]}>
       {Platform.OS === 'ios' ? (
         <BlurView
-          intensity={tabBarBlurIntensity}
+          intensity={tokens.blur.tabBar}
           tint={isDark ? 'dark' : 'light'}
           style={StyleSheet.absoluteFill}
         />
@@ -111,7 +111,7 @@ function BlurTabBar({ navigation, state, descriptors, insets }: any) {
       )}
       <View style={[styles.separator, { backgroundColor: colors.border }]} />
       <View style={styles.tabRow}>
-        {state.routes.map((route: any, index: number) => {
+        {state.routes.map((route, index) => {
           const focused = state.index === index;
           const config = TAB_ITEMS[index];
           if (!config) return null;
