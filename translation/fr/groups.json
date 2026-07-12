@@ -12,6 +12,8 @@
   "deleted": "Groupe supprimé",
   "deleteGroup": "Supprimer ce groupe ?",
   "noGroupsYet": "Vous retrouverez vos groupes ici",
+  "groupsLoading": "Chargement des groupes...",
+  "groupsLoadError": "Impossible de charger les groupes. Les autres raccourcis restent disponibles.",
   "titlePart1": "Vos",
   "informations": "Informations",
   "noInformation": "Aucune information",

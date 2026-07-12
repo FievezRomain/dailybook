@@ -12,6 +12,8 @@
   "deleted": "Group deleted",
   "deleteGroup": "Delete this group?",
   "noGroupsYet": "Your groups will appear here",
+  "groupsLoading": "Loading groups...",
+  "groupsLoadError": "Unable to load groups. Other shortcuts remain available.",
   "titlePart1": "Your",
   "informations": "Information",
   "noInformation": "No information",
