@@ -1,18 +1,25 @@
 appId: com.vascoandco.vasco.ios
-name: Animals - view animal details
+name: Animaux — workspace et mesure datée
 ---
 - runFlow: ../auth/login.yaml
-
 - tapOn:
-    id: "tab-animals"
-
+    id: "main-tabs-animals"
 - assertVisible:
-    id: "animal-list"
-
-- tapOn:
-    id: "animal-card-0"
-
+    id: "animals-workspace"
+- assertVisible: "Infos"
+- tapOn: "Corps"
+- assertVisible: "Dernières mesures"
+- tapOn: "Ajouter une mesure"
 - assertVisible:
-    id: "animal-detail-screen"
-
-- assertVisible: "Fiche"
+    id: "animal-measurement-sheet"
+- tapOn: "Valeur"
+- inputText: "12,8"
+- hideKeyboard
+- tapOn: "Enregistrer la mesure"
+- extendedWaitUntil:
+    visible: "12.8 kg"
+    timeout: 20000
+- tapOn: "Poids,.*"
+- assertVisible:
+    id: "animal-poids-history"
+- assertVisible: "12.8 kg"

@@ -6,7 +6,7 @@ applyTo: "**/*.tsx,features/**,navigation/**"
 
 ## Identite
 
-MyDailyBook est un carnet equestre moderne : doux, fiable, rapide. L'utilisateur doit sentir que l'app respecte son temps et ses donnees.
+Vasco est un carnet moderne pour tous les animaux : doux, fiable et rapide. L'utilisateur doit sentir que l'app respecte son temps, ses animaux et ses donnees. Les maquettes Figma Vasco et `docs/design-handoff.md` constituent la reference visuelle.
 
 L'experience doit etre :
 - claire : une hierarchie evidente ;

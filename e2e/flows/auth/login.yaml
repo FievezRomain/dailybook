@@ -1,19 +1,16 @@
 appId: com.vascoandco.vasco.ios
-name: Login - successful authentication
+name: Auth — connexion Vasco
 ---
 - launchApp:
     clearState: true
 
-- assertVisible: "Se connecter"
-
-- tapOn:
-    id: "input-email"
-- inputText: ${TEST_EMAIL}
-
-- tapOn:
-    id: "input-password"
-- inputText: ${TEST_PASSWORD}
-
+- assertVisible: "Connexion"
+- tapOn: "Adresse e-mail"
+- inputText: ${MAESTRO_TEST_EMAIL}
+- tapOn: "Mot de passe"
+- inputText: ${MAESTRO_TEST_PASSWORD}
+- hideKeyboard
 - tapOn: "Se connecter"
-
-- assertVisible: "Tableau de bord"
+- extendedWaitUntil:
+    visible: "Vasco"
+    timeout: 20000

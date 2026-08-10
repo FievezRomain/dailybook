@@ -19,8 +19,11 @@ type AxiosModule = typeof axiosType & { default?: typeof axiosType };
 const axiosModule = require('axios') as AxiosModule;
 const axios = axiosModule.default ?? axiosModule;
 
+export const HTTP_TIMEOUT_MS = 10_000;
+
 const httpClient = axios.create({
   baseURL: env.API_URL,
+  timeout: HTTP_TIMEOUT_MS,
 });
 
 // ─── Request : injection automatique du token Firebase ───────────────────────

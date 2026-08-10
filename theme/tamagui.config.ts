@@ -1,276 +1,51 @@
-import { createTamagui, createTokens, createFont } from '@tamagui/core';
 import { createAnimations } from '@tamagui/animations-react-native';
-import { palette, spacing, radii, fontSizes } from './tokens';
+import { createFont, createTamagui, createTokens } from '@tamagui/core';
+import { darkColors, lightColors } from './semantic';
+import { palette } from './primitives';
+import { radii, spacing, typography } from './scales';
 
-// ─── Animations ──────────────────────────────────────────────────────────────
 const animations = createAnimations({
-  spring: {
-    type: 'spring',
-    damping: 22,
-    mass: 1,
-    stiffness: 200,
-  },
-  gentle: {
-    type: 'spring',
-    damping: 20,
-    mass: 1,
-    stiffness: 120,
-  },
-  quick: {
-    type: 'spring',
-    damping: 30,
-    mass: 0.8,
-    stiffness: 280,
-  },
-  bouncy: {
-    type: 'spring',
-    damping: 15,
-    mass: 1,
-    stiffness: 180,
-  },
-  slow: {
-    type: 'spring',
-    damping: 25,
-    mass: 1.2,
-    stiffness: 80,
-  },
+  quick: { type: 'spring', damping: 30, mass: 0.8, stiffness: 280 },
+  standard: { type: 'spring', damping: 22, mass: 1, stiffness: 200 },
+  gentle: { type: 'spring', damping: 20, mass: 1, stiffness: 120 },
 } as const);
 
-// ─── Fonts ───────────────────────────────────────────────────────────────────
-const quicksandFont = createFont({
-  family: 'Quicksand-Regular',
-  size: {
-    1: fontSizes.xs,
-    2: fontSizes.sm,
-    3: fontSizes.md,
-    4: fontSizes.lg,
-    5: fontSizes.xl,
-    6: fontSizes.xxl,
-    7: fontSizes.xxxl,
-    true: fontSizes.md,
-  },
-  lineHeight: {
-    1: 16,
-    2: 20,
-    3: 22,
-    4: 26,
-    5: 28,
-    6: 32,
-    7: 38,
-    true: 22,
-  },
-  weight: {
-    1: '300',
-    2: '400',
-    3: '500',
-    4: '600',
-    5: '700',
-    true: '400',
-  },
+const quicksand = createFont({
+  family: typography.fonts.regular,
+  size: { 1: 11, 2: 13, 3: 15, 4: 17, 5: 20, 6: 24, 7: 30, true: 15 },
+  lineHeight: { 1: 18, 2: 18, 3: 22, 4: 26, 5: 26, 6: 32, 7: 32, true: 22 },
+  weight: { 1: '300', 2: '400', 3: '500', 4: '600', 5: '700', true: '400' },
   face: {
-    300: { normal: 'Quicksand-Light' },
-    400: { normal: 'Quicksand-Regular' },
-    500: { normal: 'Quicksand-Medium' },
-    600: { normal: 'Quicksand-SemiBold' },
-    700: { normal: 'Quicksand-Bold' },
+    300: { normal: typography.fonts.light },
+    400: { normal: typography.fonts.regular },
+    500: { normal: typography.fonts.medium },
+    600: { normal: typography.fonts.semiBold },
+    700: { normal: typography.fonts.bold },
   },
 });
 
-// ─── Tokens ──────────────────────────────────────────────────────────────────
 const tokens = createTokens({
-  color: {
-    // Palette brute (préfixe $ implicite dans Tamagui)
-    baie: palette.baie,
-    alezan: palette.alezan,
-    isabelle: palette.isabelle,
-    aubere: palette.aubere,
-    rouan: palette.rouan,
-    baieBrun: palette.baieBrun,
-    baieCerise: palette.baieCerise,
-    palomino: palette.palomino,
-    gris: palette.gris,
-    white: palette.white,
-    black: palette.black,
-    darkSurface: palette.darkSurface,
-    transparent: 'transparent',
-  },
-  space: {
-    0: 0,
-    0.5: 2,
-    1: spacing.xs,
-    2: spacing.sm,
-    3: 12,
-    4: spacing.md,
-    5: 20,
-    6: spacing.lg,
-    7: 28,
-    8: spacing.xl,
-    10: spacing.xxl,
-    true: spacing.md,
-  },
-  size: {
-    0: 0,
-    1: spacing.xs,
-    2: spacing.sm,
-    3: 12,
-    4: spacing.md,
-    5: 20,
-    6: spacing.lg,
-    7: 28,
-    8: spacing.xl,
-    10: spacing.xxl,
-    true: spacing.md,
-  },
-  radius: {
-    0: 0,
-    1: radii.xs,
-    2: radii.sm,
-    3: radii.md,
-    4: radii.lg,
-    5: radii.xl,
-    6: radii.modal,
-    10: radii.full,
-    true: radii.md,
-  },
-  zIndex: {
-    0: 0,
-    1: 10,
-    2: 20,
-    3: 30,
-    4: 40,
-    5: 50,
-  },
+  color: { ...palette, transparent: 'transparent' },
+  space: { 0: 0, 1: spacing.xs, 2: spacing.sm, 3: 12, 4: spacing.md, 5: 20, 6: spacing.lg, 7: 28, 8: spacing.xl, 10: spacing.xxl, true: spacing.md },
+  size: { 0: 0, 1: spacing.xs, 2: spacing.sm, 3: 12, 4: spacing.md, 5: 20, 6: spacing.lg, 7: 28, 8: spacing.xl, 10: spacing.xxl, true: spacing.md },
+  radius: { 0: 0, 1: radii.xs, 2: radii.sm, 3: radii.md, 4: radii.lg, 5: radii.xl, 6: radii.modal, 10: radii.full, true: radii.md },
+  zIndex: { 0: 0, 1: 10, 2: 20, 3: 30, 4: 40, 5: 50 },
 });
 
-// ─── Themes ──────────────────────────────────────────────────────────────────
-const lightTheme = {
-  background: palette.defaultLight,
-  backgroundHover: palette.gris,
-  backgroundPress: palette.rouan,
-  backgroundFocus: palette.rouan,
-  backgroundStrong: palette.white,
-  backgroundTransparent: 'transparent',
-
-  color: palette.baieBrun,
-  colorHover: palette.baie,
-  colorPress: palette.baieBrun,
-  colorFocus: palette.baieBrun,
-  colorTransparent: 'transparent',
-
-  borderColor: palette.rouan,
-  borderColorHover: palette.isabelle,
-  borderColorFocus: palette.baie,
-  borderColorPress: palette.baie,
-
-  shadowColor: palette.baieBrun,
-  shadowColorHover: palette.baieBrun,
-
-  // Semantic
-  primary: palette.baie,
-  primaryLight: palette.alezan,
-  primaryDark: palette.baieBrun,
-  surface: palette.white,
-  surfaceVariant: palette.gris,
-  surfaceDim: palette.rouan,
-  backgroundPaper: palette.palomino,
-  textPrimary: palette.baieBrun,
-  textSecondary: palette.aubere,
-  textOnPrimary: palette.white,
-  textDisabled: palette.aubere,
-  error: palette.baieCerise,
-  success: palette.alezan,
-  warning: palette.isabelle,
-};
-
-const darkTheme = {
-  background: palette.black,
-  backgroundHover: palette.darkPaper,
-  backgroundPress: palette.darkWarm,
-  backgroundFocus: palette.darkWarm,
-  backgroundStrong: palette.darkSurface,
-  backgroundTransparent: 'transparent',
-
-  color: palette.palomino,
-  colorHover: palette.alezan,
-  colorPress: palette.palomino,
-  colorFocus: palette.palomino,
-  colorTransparent: 'transparent',
-
-  borderColor: palette.darkWarmRaised,
-  borderColorHover: palette.baieCerise,
-  borderColorFocus: palette.alezan,
-  borderColorPress: palette.alezan,
-
-  shadowColor: palette.black,
-  shadowColorHover: palette.black,
-
-  // Semantic
-  primary: palette.alezan,
-  primaryLight: palette.isabelle,
-  primaryDark: palette.baie,
-  surface: palette.darkSurface,
-  surfaceVariant: palette.darkWarm,
-  surfaceDim: palette.darkWarmRaised,
-  backgroundPaper: palette.darkPaper,
-  textPrimary: palette.palomino,
-  textSecondary: palette.aubere,
-  textOnPrimary: palette.baieBrun,
-  textDisabled: palette.darkTextDisabled,
-  error: palette.baieCerise,
-  success: palette.alezan,
-  warning: palette.isabelle,
-};
-
-// ─── Config ──────────────────────────────────────────────────────────────────
-const tamaguiConfig = createTamagui({
+const config = createTamagui({
   animations,
-  fonts: {
-    heading: quicksandFont,
-    body: quicksandFont,
-    mono: quicksandFont,
-  },
+  fonts: { body: quicksand, heading: quicksand },
   tokens,
-  themes: {
-    light: lightTheme,
-    dark: darkTheme,
-  },
-  // Disable web-only features for RN
+  themes: { light: lightColors, dark: darkColors },
   media: {},
   shorthands: {
-    p: 'padding',
-    px: 'paddingHorizontal',
-    py: 'paddingVertical',
-    pt: 'paddingTop',
-    pb: 'paddingBottom',
-    pl: 'paddingLeft',
-    pr: 'paddingRight',
-    m: 'margin',
-    mx: 'marginHorizontal',
-    my: 'marginVertical',
-    mt: 'marginTop',
-    mb: 'marginBottom',
-    ml: 'marginLeft',
-    mr: 'marginRight',
-    f: 'flex',
-    fd: 'flexDirection',
-    fw: 'flexWrap',
-    ai: 'alignItems',
-    jc: 'justifyContent',
-    bg: 'backgroundColor',
-    br: 'borderRadius',
-    bw: 'borderWidth',
-    bc: 'borderColor',
-    w: 'width',
-    h: 'height',
-    mw: 'maxWidth',
-    mh: 'maxHeight',
+    p: 'padding', px: 'paddingHorizontal', py: 'paddingVertical',
+    m: 'margin', mx: 'marginHorizontal', my: 'marginVertical',
+    bg: 'backgroundColor', br: 'borderRadius', bw: 'borderWidth', bc: 'borderColor',
+    w: 'width', h: 'height', f: 'flex', ai: 'alignItems', jc: 'justifyContent',
   } as const,
 });
 
-export type AppConfig = typeof tamaguiConfig;
-
-declare module 'tamagui' {
-  interface TamaguiCustomConfig extends AppConfig {}
-}
-
-export default tamaguiConfig;
+export type AppConfig = typeof config;
+declare module 'tamagui' { interface TamaguiCustomConfig extends AppConfig {} }
+export default config;

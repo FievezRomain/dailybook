@@ -1,0 +1,8 @@
+import { Pressable, Text, View } from 'react-native';
+import { componentTokens } from '../../../../theme/componentTokens';
+import { radii, typography } from '../../../../theme/scales';
+import { useAppTheme } from '../../../../theme/useAppTheme';
+
+export interface PeriodOption<T extends string = string> { value: T; label: string }
+export interface PeriodSelectorProps<T extends string = string> { options: readonly PeriodOption<T>[]; value: T; onChange: (value: T) => void; accessibilityLabel?: string; testID?: string }
+export function PeriodSelector<T extends string>({ options, value, onChange, accessibilityLabel = 'Période du graphique', testID }: PeriodSelectorProps<T>) { const { colors } = useAppTheme(); return <View accessibilityRole="radiogroup" accessibilityLabel={accessibilityLabel} testID={testID} style={{ width: '100%', maxWidth: componentTokens.content.periodSelector.width, height: componentTokens.content.periodSelector.height, flexDirection: 'row', gap: 4, padding: 4, borderRadius: radii.pill, backgroundColor: colors.surfaceVariant }}>{options.map((option) => { const selected = option.value === value; return <Pressable key={option.value} accessibilityRole="radio" accessibilityLabel={option.label} accessibilityState={{ selected, checked: selected }} onPress={() => onChange(option.value)} style={{ flex: 1, height: componentTokens.content.periodSelector.itemHeight, alignItems: 'center', justifyContent: 'center', borderRadius: radii.pill, backgroundColor: selected ? colors.surface : colors.transparent }}><Text style={{ color: selected ? colors.textPrimary : colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, lineHeight: 18, letterSpacing: 0.1 }}>{option.label}</Text></Pressable>; })}</View>; }

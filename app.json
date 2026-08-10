@@ -70,6 +70,10 @@
         "style": "dark-content"
       }
     },
+    "androidNavigationBar": {
+      "backgroundColor": "#FFFFFF",
+      "barStyle": "dark-content"
+    },
     "web": {
       "favicon": "./assets/icon.png"
     },

@@ -5,8 +5,11 @@ import {
   UpdateAnimalPayload,
   AnimalHistoryPayload,
   AnimalHistoryItem,
+  BodyPicturePayload,
+  AnimalHistoryRecord,
 } from '../../features/animals/types';
 import { Animal } from '../../models/Animal';
+import { FileService } from './FileService';
 
 const _crud = createCrudService<Animal, CreateAnimalPayload, UpdateAnimalPayload>('/animals');
 
@@ -21,8 +24,8 @@ export async function createAnimalHistory(animalId: string, body: AnimalHistoryP
   await httpClient.post(`/animals/${animalId}/history`, body);
 }
 
-export async function updateAnimalHistory(animalId: string, body: AnimalHistoryPayload): Promise<void> {
-  await httpClient.put(`/animals/${animalId}/history`, body);
+export async function updateAnimalHistory(animalId: string, item: AnimalHistoryItem, historyId: string, body: AnimalHistoryPayload): Promise<void> {
+  await httpClient.put(`/animals/${animalId}/history/${item}/${historyId}`, body);
 }
 
 export async function deleteAnimalHistory(
@@ -37,14 +40,20 @@ export async function deleteAnimalHistory(
 
 export async function getAnimalBodyPictures(animalId: string) {
   const response = await httpClient.get(`/animals/${animalId}/body-pictures`);
+  const pictures = Array.isArray(response.data) ? response.data : [];
+  return Promise.all(pictures.map(async (picture: BodyPicturePayload & { id?: number }) => ({
+    ...picture,
+    url: await FileService.getDownloadUrl(picture.filename, 'animal', animalId),
+  })));
+}
+
+export async function getAnimalHistory(animalId: string, item: AnimalHistoryItem): Promise<AnimalHistoryRecord[]> {
+  const response = await httpClient.get(`/animals/${animalId}/history/${item}`);
   return response.data;
 }
 
-export async function addAnimalBodyPicture(animalId: string, body: FormData) {
-  const response = await httpClient.post(`/animals/${animalId}/body-pictures`, body, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-    transformRequest: (data) => data,
-  });
+export async function addAnimalBodyPicture(animalId: string, body: BodyPicturePayload) {
+  const response = await httpClient.post(`/animals/${animalId}/body-pictures`, body);
   return response.data;
 }
 

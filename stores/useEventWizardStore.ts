@@ -12,6 +12,11 @@ export interface EventWizardFormData {
   optionnotif?: string;
   shared_groups?: number[];
   documents?: unknown[];
+  state?: string;
+  idparent?: number;
+  frequencetype?: string;
+  frequencevalue?: string;
+  rappelnotification?: string;
   [key: string]: unknown;
 }
 

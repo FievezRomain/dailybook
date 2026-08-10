@@ -1,18 +1,26 @@
-// Events feature — public API
-export { default as CalendarScreen } from './screens/CalendarScreen';
-export { default as ActionScreen } from './screens/ActionScreen';
-export { default as EventEntryScreen } from './screens/EventEntryScreen';
-export { default as EventAIScreen } from './screens/EventAIScreen';
-export { default as EventTypeScreen } from './screens/EventTypeScreen';
-export { default as EventFormScreen } from './screens/EventFormScreen';
-export { default as EventAnimalsScreen } from './screens/EventAnimalsScreen';
-export { default as EventOptionsScreen } from './screens/EventOptionsScreen';
-
-export { default as EventsBloc } from './components/EventsBloc';
-export { default as ModalEventDetails } from './components/ModalEventDetails';
-export { default as ModalEvents } from './components/ModalEvents';
-export { default as ModalFilterCalendar } from './components/ModalFilterCalendar';
-
 export { useEventForm } from './hooks/useEventForm';
-
 export type { ActionType, CreateEventPayload } from './types';
+export { AgendaScreen } from './screens/AgendaScreen';
+export type { AgendaScreenProps } from './screens/AgendaScreen';
+export { DayAgendaScreen } from './screens/DayAgendaScreen';
+export type { DayAgendaScreenProps } from './screens/DayAgendaScreen';
+export { EventDetailScreen } from './screens/EventDetailScreen';
+export type { EventDetailScreenProps } from './screens/EventDetailScreen';
+export { EventCreateEntryScreen } from './screens/EventCreateEntryScreen';
+export type { EventCreateEntryScreenProps } from './screens/EventCreateEntryScreen';
+export { EventCreateTypeScreen, eventCreateTypes } from './screens/EventCreateTypeScreen';
+export type { EventCreateTypeScreenProps } from './screens/EventCreateTypeScreen';
+export { EventCreateDetailsScreen } from './screens/EventCreateDetailsScreen';
+export type { EventCreateDetailsScreenProps } from './screens/EventCreateDetailsScreen';
+export { canContinueEventDetails, eventDetailsConfigs, getEventDetailsConfig } from './eventDetailsConfig';
+export { EventCreateAnimalsScreen } from './screens/EventCreateAnimalsScreen';
+export type { EventCreateAnimalsScreenProps } from './screens/EventCreateAnimalsScreen';
+export { formatAnimalAge, getAnimalSelectionCta, getAnimalSelectionSubtitle, toggleEventAnimal } from './eventAnimalsUtils';
+export { EventCreateOptionsScreen } from './screens/EventCreateOptionsScreen';
+export type { EventCreateOptionsScreenProps } from './screens/EventCreateOptionsScreen';
+export { EventCreateSuccessScreen } from './screens/EventCreateSuccessScreen';
+export type { EventCreateSuccessScreenProps } from './screens/EventCreateSuccessScreen';
+export { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getReminderLabel, getSelectedAnimalNames, reminderOptions } from './eventCreationUtils';
+export { EventCreateAiDescriptionScreen } from './screens/EventCreateAiDescriptionScreen';
+export { EventCreateAiReviewScreen } from './screens/EventCreateAiReviewScreen';
+export { isPremiumSubscription, normalizeAiEvent } from './eventAiUtils';

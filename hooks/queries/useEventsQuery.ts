@@ -99,5 +99,15 @@ export function useEventMutations() {
     },
   });
 
-  return { create, update, patch, remove };
+  const deleteDocument = useMutation({
+    mutationFn: ({ eventId, filename }: { eventId: string; filename: string }) => EventService.deleteEventDocument(eventId, filename),
+    onSuccess: invalidate,
+  });
+
+  const attachDocument = useMutation({
+    mutationFn: ({ eventId, filename }: { eventId: string; filename: string }) => EventService.attachEventDocument(eventId, filename),
+    onSuccess: invalidate,
+  });
+
+  return { create, update, patch, remove, attachDocument, deleteDocument };
 }

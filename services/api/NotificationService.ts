@@ -1,8 +1,19 @@
 import httpClient from './httpClient';
+import type { Notification } from '../../models/Notification';
 
-export async function getNotifications() {
+export interface NotificationsResponse {
+  notifications?: Notification[];
+  unreadCount?: number;
+}
+
+export function normalizeNotifications(data: Notification[] | NotificationsResponse | null | undefined): Notification[] {
+  if (Array.isArray(data)) return data;
+  return Array.isArray(data?.notifications) ? data.notifications : [];
+}
+
+export async function getNotifications(): Promise<Notification[]> {
   const response = await httpClient.get('/notifications');
-  return response.data;
+  return normalizeNotifications(response.data);
 }
 
 export async function markAllAsRead() {

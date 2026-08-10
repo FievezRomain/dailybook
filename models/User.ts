@@ -5,4 +5,5 @@ export type UserProfile = {
   expotoken?: string;
   timezone?: string;
   filename?: string;
+  subscription?: string;
 };

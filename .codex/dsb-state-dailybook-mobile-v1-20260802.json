@@ -1,0 +1,836 @@
+{
+  "runId": "dailybook-mobile-v1-20260802",
+  "fileKey": "y3EnZKYhqQju194UkyLoO7",
+  "phase": "phase3",
+  "step": "screens-settings",
+  "sourcePolicy": "Existing mobile front is functional inventory only; do not reuse its UI, UX, component architecture, or visual patterns as a design baseline.",
+  "entities": {
+    "collections": {
+      "primitives": "VariableCollectionId:107:2",
+      "color": "VariableCollectionId:107:3",
+      "spacing": "VariableCollectionId:107:5",
+      "radius": "VariableCollectionId:107:6",
+      "typography": "VariableCollectionId:107:7",
+      "material": "VariableCollectionId:107:8",
+      "component": "VariableCollectionId:122:2"
+    },
+    "variables": {
+      "count": 131,
+      "aliasCount": 66,
+      "validation": "PASS"
+    },
+    "pages": {
+      "cover": "0:1",
+      "gettingStarted": "114:2",
+      "foundations": "114:3",
+      "actions": "114:5",
+      "forms": "114:6",
+      "navigation": "114:7",
+      "content": "114:8",
+      "feedback": "114:9",
+      "overlays": "114:10",
+      "patterns": "114:12",
+      "authScreens": "114:14",
+      "homeScreens": "114:15",
+      "eventScreens": "114:16",
+      "animalScreens": "114:17",
+      "performanceScreens": "114:18",
+      "noteScreens": "114:19",
+      "groupScreens": "114:20",
+      "notificationScreens": "114:21",
+      "wishScreens": "114:19",
+      "settingsScreens": "114:22",
+      "prototypes": "114:24"
+    },
+    "components": {
+      "Icon/Plus": "120:7",
+      "Icon/Microphone": "288:50",
+      "Button": "125:2",
+      "Button/Destructive": "128:29",
+      "Button/Icon": "129:83",
+      "FAB": "133:77",
+      "Progress/Spinner": "134:20",
+      "Progress/Paw Loader": "136:50",
+      "Button/Loading": "138:68",
+      "Text Link": "141:86",
+      "Chip": "142:146",
+      "Input/Text Field": "145:55",
+      "Input/Text Area": "148:43",
+      "Selection/Checkbox": "149:42",
+      "Selection/Radio": "149:61",
+      "Selection/Switch": "149:80",
+      "Icon/Chevron Down": "150:2",
+      "Input/Select": "150:55",
+      "Icon/Search": "151:12",
+      "Icon/Close": "151:16",
+      "Icon/Eye": "151:27",
+      "Input/Search": "151:88",
+      "Input/Password": "151:199",
+      "Icon/Calendar": "152:61",
+      "Icon/Clock": "152:65",
+      "Icon/Minus": "152:69",
+      "Input/Date Time": "152:202",
+      "Input/Number Stepper": "152:243",
+      "Input/Slider": "154:202",
+      "Selection/Option Card": "157:154",
+      "Icon/Upload": "158:109",
+      "Icon/Check": "158:112",
+      "Icon/Medical": "230:50",
+      "Icon/Trophy": "230:57",
+      "Icon/Euro": "230:64",
+      "Input/Media Upload": "158:144",
+      "Icon/Home": "162:2",
+      "Icon/Paw": "162:5",
+      "Icon/Profile": "162:12",
+      "Icon/Arrow Left": "162:16",
+      "Icon/Bell": "162:19",
+      "Icon/Tracking": "166:138",
+      "Icon/More Grid": "166:141",
+      "Navigation/Bottom Bar": "162:238",
+      "Navigation/Top Bar": "162:303",
+      "Navigation/Tab Bar": "164:186",
+      "Navigation/Progress Steps": "164:262"
+      ,"Navigation/Linear Progress": "252:3245"
+      ,"Selection/Animal Selector Item": "252:140"
+      ,"Selection/Animal Selector More": "458:23853"
+      ,"Selection/Animal History Toggle": "470:166"
+      ,"Avatar": "169:206"
+      ,"Badge/Notification": "170:220"
+      ,"Icon/Info": "171:2"
+      ,"Icon/Warning": "171:6"
+      ,"Feedback/Snackbar": "171:62"
+      ,"Feedback/Banner": "171:147"
+      ,"Feedback/Status Badge": "171:172"
+      ,"Feedback/Empty State": "172:93"
+      ,"Feedback/Skeleton": "172:120"
+      ,"Content/Card": "175:14"
+      ,"Content/List Item": "175:535"
+      ,"Content/Metric Card": "175:554"
+      ,"Content/Event Card": "175:681"
+      ,"Content/Linked Animals": "178:18"
+      ,"Chart/Period Selector": "179:96"
+      ,"Chart/Tooltip": "179:571"
+      ,"Chart/Data Visualization": "180:217"
+      ,"Overlay/Bottom Sheet": "184:70"
+      ,"Overlay/Dialog": "184:665"
+      ,"Overlay/Action Menu": "184:696"
+      ,"Overlay/Action Sheet": "306:54"
+      ,"Overlay/Form Sheet Surface": "417:6"
+      ,"Overlay/Selection Modal": "185:110"
+      ,"Overlay/Calendar Picker": "188:310"
+      ,"Overlay/Calendar Inline": "243:2"
+      ,"Overlay/Time Picker": "189:74"
+      ,"Overlay/Media Viewer": "190:46"
+      ,"Content/Animal Card": "196:92"
+      ,"Content/Objective Card": "196:585"
+      ,"Content/Note Card": "196:608"
+      ,"Content/Group Card": "196:627"
+      ,"Content/Contact Card": "199:86"
+      ,"Content/Wish Card": "199:579"
+      ,"Content/Notification Item": "199:619"
+      ,"Content/File Item": "200:128"
+    },
+    "patterns": {
+      "List Exploration": "203:2",
+      "Guided Form": "204:98",
+      "Multi Selection": "204:668",
+      "Async States": "204:741",
+      "Documentation": "207:228"
+    },
+    "screens": {
+      "Auth/Welcome": "210:2",
+      "Auth/Sign In Default": "210:35",
+      "Auth/Sign In Error": "210:103",
+      "Auth/Sign In Loading": "210:187",
+      "Auth/Register Identity": "211:103",
+      "Auth/Register Security": "211:159",
+      "Auth/Verify Email": "211:231",
+      "Auth/Forgot Password": "211:262",
+      "Auth/App Loading": "211:303",
+      "Auth/Register Method": "217:197",
+      "Auth/Documentation": "213:202"
+      ,"Home/Overview Default": "224:2"
+      ,"Home/Overview Scrolled": "224:162"
+      ,"Home/Overview Loading": "224:310"
+      ,"Home/Overview Empty": "224:392"
+      ,"Home/Overview Error": "224:474"
+      ,"Home/Overview Glass Default": "234:438"
+      ,"Home/Overview Glass Scrolled": "234:591"
+      ,"Home/Documentation": "226:368"
+      ,"Events/Calendar Solid": "236:2"
+      ,"Events/Calendar No Events": "456:2387"
+      ,"Events/Calendar No Events Glass": "456:2563"
+      ,"Events/Calendar No Events Dark": "456:2734"
+      ,"Events/Day Agenda": "236:278"
+      ,"Events/Create Entry": "236:500"
+      ,"Events/Create Type": "236:613"
+      ,"Events/Create Details Soins": "237:448"
+      ,"Events/Create Details Rendez-vous": "241:842"
+      ,"Events/Create Details Balade": "241:974"
+      ,"Events/Create Details Entraînement": "241:1083"
+      ,"Events/Create Details Concours": "241:1192"
+      ,"Events/Create Details Dépense": "241:1307"
+      ,"Events/Create Details Autre": "241:1416"
+      ,"Events/Create Animals": "237:582"
+      ,"Events/Create Options": "237:684"
+      ,"Events/Create Success": "237:769"
+      ,"Events/Create AI Description": "237:855"
+      ,"Events/Create AI Review": "237:902"
+      ,"Events/Calendar Glass": "238:685"
+      ,"Events/Detail": "238:924"
+      ,"Events/Documentation": "239:2335"
+      ,"Events/Detail Actions Menu": "274:3949"
+      ,"Events/Detail Delete Confirmation": "274:3971"
+      ,"Events/Edit Soins": "274:3992"
+      ,"Animals/Documentation": "251:619"
+      ,"Animals/Workspace Infos": "253:619"
+      ,"Animals/Workspace Health": "253:785"
+      ,"Animals/Workspace Body": "253:942"
+      ,"Animals/Workspace Gallery": "253:1099"
+      ,"Animals/Workspace Infos Glass": "256:1248"
+      ,"Animals/Create Complete Profile": "254:976"
+      ,"Animals/Create Complete Dates": "254:1036"
+      ,"Animals/Create Complete Identity": "254:1092"
+      ,"Animals/Create Complete Origins": "254:1156"
+      ,"Animals/Create Complete Body Food": "254:1212"
+      ,"Animals/Create Complete Notes Review": "254:1284"
+      ,"Animals/Workspace Actions Menu": "277:4202"
+      ,"Animals/Workspace Report Departure": "277:4238"
+      ,"Animals/Workspace Report Death": "277:4271"
+      ,"Animals/Workspace Delete Confirmation": "277:4306"
+      ,"Animals/Edit Profile": "277:4339"
+      ,"Animals/Add Measurement": "444:1945"
+      ,"Animals/Add Measurement Dark": "444:2079"
+      ,"Animals/Add Measurement Error": "445:20823"
+      ,"Animals/Measurement Saved": "445:20873"
+      ,"Animals/Measurements History Weight": "446:2289"
+      ,"Animals/Measurements History Height": "446:2336"
+      ,"Animals/Workspace Body Glass": "447:2352"
+      ,"Animals/Workspace Selector Expanded": "459:23983"
+      ,"Animals/Workspace Selector Expanded Dark": "459:24079"
+      ,"Animals/Workspace Selector Expanded Glass": "459:24175"
+      ,"Animals/Add Measurement Glass": "447:2432"
+      ,"Performance/Objectifs Overview": "263:2"
+      ,"Performance/Statistics Overview": "263:124"
+      ,"Performance/Statistic Weight": "263:244"
+      ,"Performance/Statistic Walks": "263:301"
+      ,"Performance/Statistic Expenses": "263:358"
+      ,"Performance/Add Measurement": "263:415"
+      ,"Performance/Objective Detail": "263:476"
+      ,"Performance/Create Objective Details": "265:322"
+      ,"Performance/Create Objective Animals Steps": "265:383"
+      ,"Performance/Create Objective Review": "265:442"
+      ,"Performance/Objectifs Empty": "265:485"
+      ,"Performance/Statistics Loading": "265:619"
+      ,"Performance/Statistics Overview Glass": "265:740"
+      ,"Performance/Documentation": "266:671"
+      ,"Performance/Objective Detail Actions Menu": "274:4148"
+      ,"Performance/Objective Detail Delete Confirmation": "274:4183"
+      ,"Performance/Edit Objective": "274:4218"
+      ,"Notes/List Default": "282:2"
+      ,"Notes/Search Results": "282:171"
+      ,"Notes/List Empty": "282:282"
+      ,"Notes/List Loading": "282:378"
+      ,"Notes/Detail": "282:489"
+      ,"Notes/Detail Actions Menu": "282:516"
+      ,"Notes/Detail Delete Confirmation": "282:533"
+      ,"Notes/Create": "282:550"
+      ,"Notes/Edit": "282:588"
+      ,"Notes/Voice Recording": "282:626"
+      ,"Notes/Voice Processing": "282:659"
+      ,"Notes/Voice Review": "282:687"
+      ,"Notes/Create Success": "282:715"
+      ,"Notes/List Glass": "283:522"
+      ,"Notes/Documentation": "283:684"
+      ,"Notes/Create Entry": "292:592"
+      ,"Groups/List Default": "298:2"
+      ,"Groups/List Empty": "298:161"
+      ,"Groups/List Loading": "298:259"
+      ,"Groups/Detail Animals": "298:366"
+      ,"Groups/Detail Members": "298:420"
+      ,"Groups/Detail Actions Menu": "298:474"
+      ,"Groups/Delete Confirmation": "298:502"
+      ,"Groups/Create Details": "298:529"
+      ,"Groups/Create Members": "298:573"
+      ,"Groups/Create Animals": "298:623"
+      ,"Groups/Create Review": "298:675"
+      ,"Groups/Invitation": "298:718"
+      ,"Groups/Add Member": "298:749"
+      ,"Groups/Member Actions": "299:456"
+      ,"Groups/Remove Member Confirmation": "299:503"
+      ,"Groups/Animal Share Actions": "299:545"
+      ,"Groups/List Glass": "299:577"
+      ,"Groups/Documentation": "299:734"
+      ,"Notifications/List Default": "311:2"
+      ,"Notifications/List Empty": "311:110"
+      ,"Notifications/List Loading": "311:175"
+      ,"Notifications/List Error": "311:245"
+      ,"Notifications/Invitation Actions": "312:269"
+      ,"Notifications/List Glass": "312:362"
+      ,"Notifications/Documentation": "312:523"
+      ,"Contacts/List Default": "317:639"
+      ,"Contacts/Detail": "317:734"
+      ,"Contacts/Create": "317:806"
+      ,"Contacts/List Empty": "317:877"
+      ,"Contacts/List Loading": "317:942"
+      ,"Contacts/List Error": "317:1012"
+      ,"Contacts/Detail Actions": "319:985"
+      ,"Contacts/Edit": "319:1035"
+      ,"Contacts/Delete Confirmation": "319:1057"
+      ,"Contacts/List Glass": "319:1088"
+      ,"Contacts/Documentation": "319:1236"
+      ,"Wishes/List Default": "326:586"
+      ,"Wishes/Create": "326:600"
+      ,"Wishes/Detail": "326:621"
+      ,"Wishes/Detail Actions": "326:634"
+      ,"Wishes/List Empty": "326:649"
+      ,"Wishes/List Loading": "326:655"
+      ,"Wishes/List Glass": "326:663"
+      ,"Wishes/Edit": "326:677"
+      ,"Wishes/Delete Confirmation": "326:698"
+      ,"Wishes/List Error": "326:719"
+      ,"Settings/Overview": "331:2"
+      ,"Settings/Profile": "331:192"
+      ,"Settings/Appearance": "331:308"
+      ,"Settings/Notification Preferences": "331:429"
+      ,"Settings/Security": "331:552"
+      ,"Settings/Data & Privacy": "332:332"
+      ,"Settings/Subscription & Support": "332:493"
+      ,"Settings/Change Password": "332:626"
+      ,"Settings/Logout Confirmation": "332:739"
+      ,"Settings/Delete Account Confirmation": "332:761"
+      ,"Settings/Overview Glass": "332:783"
+      ,"Settings/Documentation": "332:969"
+      ,"Prototypes/User Journey Index": "354:2"
+    },
+    "styles": {
+      "textCount": 12,
+      "effectCount": 4,
+      "backgroundSolidLight": "S:c97477e3149d3fe571b4d1e17afa6c48a99693e7,",
+      "backgroundSolidDark": "S:e284ea7cc0eb8ea614ec12f25f5dbadb1a137d28,",
+      "backgroundGlassLight": "S:1b86b854d2bf431b4ca684e0fbade730274862e8,",
+      "backgroundGlassDark": "S:a9f50fd0b8da9919db6b0f5397f0af733bfd3bef,",
+      "validation": "PASS"
+    }
+  },
+  "pendingValidations": [],
+  "completedSteps": [
+    "phase0",
+    "phase1/collections",
+    "phase1/primitives",
+    "phase1/semantics-light",
+    "phase1/semantics-dark",
+    "phase1/dimensions",
+    "phase1/typography",
+    "phase1/styles",
+    "phase1/validation",
+    "phase1",
+    "phase1/pro-color-migration",
+    "phase1/pro-color-validation",
+    "phase2/pages",
+    "phase2/cover",
+    "phase2/getting-started",
+    "phase2/foundations-colors-light",
+    "phase2/foundations-colors-dark",
+    "phase2/foundations-typography",
+    "phase2/foundations-geometry-effects",
+    "phase2/visual-validation",
+    "phase2",
+    "phase3/icon-plus-created",
+    "phase3/icon-plus-validated",
+    "phase3/icon-plus-approved",
+    "phase3/button-docs",
+    "phase3/button-base",
+    "phase3/button-variants",
+    "phase3/button-properties",
+    "phase3/button-validated",
+    "phase3/button-approved",
+    "phase3/button-destructive-token",
+    "phase3/button-destructive-created",
+    "phase3/button-destructive-validated",
+    "phase3/button-destructive-approved",
+    "phase3/button-icon-created",
+    "phase3/button-icon-contrast-fixed",
+    "phase3/button-icon-validated",
+    "phase3/icon-plus-centering-fixed",
+    "phase3/button-icon-revalidated",
+    "phase3/button-icon-approved",
+    "phase3/fab-created",
+    "phase3/fab-validated",
+    "phase3/fab-approved",
+    "phase3/spinner-tokens",
+    "phase3/spinner-created",
+    "phase3/spinner-validated",
+    "phase3/spinner-approved",
+    "phase3/animal-runner-created",
+    "phase3/animal-runner-motion-authored",
+    "phase3/animal-runner-video-exported",
+    "phase3/animal-runner-approved",
+    "phase3/button-loading-created",
+    "phase3/button-loading-text-autosize-fixed",
+    "phase3/button-loading-validated",
+    "phase3/button-loading-approved",
+    "phase3/text-link-created",
+    "phase3/text-link-validated",
+    "phase3/text-link-approved",
+    "phase3/chip-created",
+    "phase3/chip-selected-distinction-fixed",
+    "phase3/chip-validated",
+    "phase3/chip-approved",
+    "phase3/text-field-tokens",
+    "phase3/text-field-created",
+    "phase3/text-field-error-message-fixed",
+    "phase3/text-field-validated",
+    "phase3/text-field-error-surface-created",
+    "phase3/text-field-error-contrast-refined",
+    "phase3/text-field-revalidated",
+    "phase3/text-field-approved",
+    "phase3/text-area-token",
+    "phase3/text-area-created",
+    "phase3/text-area-validated",
+    "phase3/text-area-approved",
+    "phase3/selection-control-tokens",
+    "phase3/checkbox-created",
+    "phase3/radio-created",
+    "phase3/switch-created",
+    "phase3/selection-controls-validated",
+    "phase3/icon-chevron-down-created",
+    "phase3/select-created",
+    "phase3/select-validated",
+    "phase3/selection-controls-approved",
+    "phase3/form-icons-search-close-eye-created",
+    "phase3/search-created",
+    "phase3/search-validated",
+    "phase3/password-created",
+    "phase3/password-validated",
+    "phase3/search-password-approved",
+    "phase3/form-icons-calendar-clock-minus-created",
+    "phase3/date-time-created",
+    "phase3/number-stepper-created",
+    "phase3/slider-created",
+    "phase3/option-card-created",
+    "phase3/form-icons-upload-check-created",
+    "phase3/media-upload-created",
+    "phase3/advanced-form-properties-fixed",
+    "phase3/advanced-form-controls-validated",
+    "phase3/option-card-selection-softened",
+    "phase3/number-stepper-spacing-fixed",
+    "phase3/form-icon-sources-moved-to-actions",
+    "phase3/forms-review-fixes-validated",
+    "phase3/advanced-form-controls-approved",
+    "phase3/navigation-icons-created",
+    "phase3/bottom-bar-created",
+    "phase3/top-bar-created",
+    "phase3/tab-bar-created",
+    "phase3/progress-steps-created",
+    "phase3/navigation-svg-wrappers-fixed",
+    "phase3/progress-step-circles-fixed",
+    "phase3/navigation-core-validated",
+    "phase3/bottom-bar-five-destination-architecture",
+    "phase3/bottom-bar-rebind-fixed",
+    "phase3/bottom-bar-five-destination-validated",
+    "phase3/avatar-created",
+    "phase3/avatar-fixed-size",
+    "phase3/top-bar-account-navigation-updated",
+    "phase3/top-bar-account-navigation-validated",
+    "phase3/navigation-core-approved",
+    "phase3/notification-badge-created",
+    "phase3/top-bar-notification-states-created",
+    "phase3/top-bar-notification-states-validated",
+    "phase3/feedback-icons-created",
+    "phase3/snackbar-created",
+    "phase3/banner-created",
+    "phase3/status-badge-created",
+    "phase3/empty-state-created",
+    "phase3/skeleton-created",
+    "phase3/feedback-core-validated",
+    "phase3/feedback-docs-created",
+    "phase3/status-badge-width-fixed",
+    "phase3/skeleton-motion-authored",
+    "phase3/skeleton-motion-exported",
+    "phase3/feedback-review-fixes-validated",
+    "phase3/content-card-created",
+    "phase3/content-list-item-created",
+    "phase3/content-metric-card-created",
+    "phase3/content-event-card-created",
+    "phase3/content-documentation-created",
+    "phase3/content-nested-surface-fix",
+    "phase3/content-core-validated",
+    "phase3/animal-reference-created",
+    "phase3/event-card-linked-animals-added",
+    "phase3/event-card-information-density-validated",
+    "phase3/chart-period-selector-created",
+    "phase3/chart-tooltip-created",
+    "phase3/chart-data-visualization-created",
+    "phase3/chart-selected-states-created",
+    "phase3/chart-documentation-created",
+    "phase3/chart-tooltip-contrast-fixed",
+    "phase3/content-charts-validated",
+    "phase3/overlay-bottom-sheet-created",
+    "phase3/overlay-dialog-created",
+    "phase3/overlay-action-menu-created",
+    "phase3/overlay-selection-modal-created",
+    "phase3/overlay-documentation-created",
+    "phase3/overlay-core-validated",
+    "phase3/overlay-calendar-picker-created",
+    "phase3/overlay-time-picker-created",
+    "phase3/overlay-media-viewer-created",
+    "phase3/overlay-media-viewer-background-fixed",
+    "phase3/overlay-pickers-media-validated",
+    "phase3/time-picker-free-minute-selection-added",
+    "phase3/time-picker-keyboard-entry-added",
+    "phase3/time-picker-shortcut-state-normalized",
+    "phase3/time-picker-free-minute-selection-validated",
+    "phase3/time-picker-hour-wheel-added",
+    "phase3/time-picker-hour-keyboard-segment-added",
+    "phase3/time-picker-independent-hour-minute-validated",
+    "phase3/animal-card-created",
+    "phase3/objective-card-created",
+    "phase3/note-card-created",
+    "phase3/group-card-created",
+    "phase3/domain-cards-documentation-created",
+    "phase3/domain-cards-validated",
+    "phase3/contact-card-created",
+    "phase3/wish-card-created",
+    "phase3/notification-item-created",
+    "phase3/file-item-created",
+    "phase3/domain-cards-2-documentation-created",
+    "phase3/domain-cards-2-validated",
+    "phase3/wish-card-optional-price-variants-added",
+    "phase3/wish-card-price-documentation-updated",
+    "phase3/wish-card-price-variants-validated",
+    "phase3/pattern-list-exploration-created",
+    "phase3/pattern-guided-form-created",
+    "phase3/pattern-multi-selection-created",
+    "phase3/pattern-async-states-created",
+    "phase3/pattern-core-documented",
+    "phase3/pattern-core-validated",
+    "phase4/auth-welcome-created",
+    "phase4/auth-sign-in-states-created",
+    "phase4/auth-register-flow-created",
+    "phase4/auth-verify-email-created",
+    "phase4/auth-forgot-password-created",
+    "phase4/auth-loading-created",
+    "phase4/auth-flow-documented",
+    "phase4/auth-screens-validated",
+    "phase3/animal-runner-converted-to-paw-loader",
+    "phase3/paw-loader-sequential-motion-authored",
+    "phase3/paw-loader-instances-updated",
+    "phase4/auth-register-social-methods-added",
+    "phase4/auth-social-registration-documented",
+    "phase4/auth-review-fixes-validated"
+    ,"phase3/paw-loader-geometry-centered"
+    ,"phase3/paw-loader-duration-extended-to-2s"
+    ,"phase4/auth-visible-brand-renamed-to-vasco"
+    ,"phase4/auth-paw-loader-instance-sizing-fixed"
+    ,"phase4/home-overview-created"
+    ,"phase4/home-scrolled-state-created"
+    ,"phase4/home-loading-state-created"
+    ,"phase4/home-empty-state-created"
+    ,"phase4/home-error-state-created"
+    ,"phase4/home-content-contextualized"
+    ,"phase4/home-interactions-documented"
+    ,"phase4/home-screens-validated"
+    ,"phase3/top-bar-app-logo-added"
+    ,"phase3/top-bar-root-layout-stabilized"
+    ,"phase3/event-type-icons-created"
+    ,"phase3/event-card-icons-added"
+    ,"phase3/event-card-icon-layout-fixed"
+    ,"phase4/home-statistics-removed"
+    ,"phase4/home-layout-rebalanced"
+    ,"phase4/home-review-fixes-validated"
+    ,"phase4/home-glass-default-created"
+    ,"phase4/home-glass-scrolled-created"
+    ,"phase4/adaptive-glass-solid-policy-documented"
+    ,"phase4/home-glass-variants-validated"
+    ,"phase4/events-calendar-created"
+    ,"phase4/events-day-agenda-created"
+    ,"phase4/events-entry-created"
+    ,"phase4/events-type-selection-created"
+    ,"phase4/events-details-created"
+    ,"phase4/events-animal-selection-created"
+    ,"phase4/events-options-created"
+    ,"phase4/events-success-created"
+    ,"phase4/events-ai-description-created"
+    ,"phase4/events-ai-review-created"
+    ,"phase4/events-detail-created"
+    ,"phase4/events-calendar-glass-created"
+    ,"phase4/events-wizard-navigation-focused"
+    ,"phase4/events-documentation-created"
+    ,"phase4/events-screens-validated"
+    ,"phase3/calendar-event-dot-indicators-added"
+    ,"phase4/events-calendar-spacing-fixed"
+    ,"phase4/events-entry-overlap-fixed"
+    ,"phase4/events-form-soins-specialized"
+    ,"phase4/events-form-rendez-vous-created"
+    ,"phase4/events-form-balade-created"
+    ,"phase4/events-form-entrainement-created"
+    ,"phase4/events-form-concours-created"
+    ,"phase4/events-form-depense-created"
+    ,"phase4/events-form-autre-created"
+    ,"phase4/events-type-field-matrix-documented"
+    ,"phase4/events-completeness-review-validated"
+    ,"phase3/calendar-inline-selected-component-created"
+    ,"phase4/events-calendar-inline-selection-enabled"
+    ,"phase4/events-calendar-preview-overflow-added"
+    ,"phase4/events-day-agenda-reframed-as-full-list"
+    ,"phase4/events-calendar-glass-inline-updated"
+    ,"phase4/events-inline-date-selection-documented"
+    ,"phase4/events-calendar-ux-review-validated"
+    ,"phase4/animals-list-solid-created"
+    ,"phase4/animals-list-glass-created"
+    ,"phase4/animals-list-empty-created"
+    ,"phase4/animals-list-loading-created"
+    ,"phase4/animals-detail-info-created"
+    ,"phase4/animals-detail-health-created"
+    ,"phase4/animals-detail-body-created"
+    ,"phase4/animals-detail-gallery-created"
+    ,"phase4/animals-create-identity-created"
+    ,"phase4/animals-create-origins-created"
+    ,"phase4/animals-create-morphology-created"
+    ,"phase4/animals-create-measures-created"
+    ,"phase4/animals-detail-tab-spacing-fixed"
+    ,"phase4/animals-body-metrics-contextualized"
+    ,"phase4/animals-documentation-created"
+    ,"phase4/animals-screens-validated"
+    ,"phase3/animal-selector-item-created"
+    ,"phase3/animal-selector-gradient-gap-validated"
+    ,"phase3/linear-progress-six-step-created"
+    ,"phase4/animals-integrated-workspace-created"
+    ,"phase4/animals-horizontal-selector-added"
+    ,"phase4/animals-workspace-glass-rebuilt"
+    ,"phase4/animals-complete-create-profile-created"
+    ,"phase4/animals-complete-create-dates-created"
+    ,"phase4/animals-complete-create-identity-created"
+    ,"phase4/animals-complete-create-origins-created"
+    ,"phase4/animals-complete-create-body-food-created"
+    ,"phase4/animals-complete-create-notes-review-created"
+    ,"phase4/animals-complete-field-matrix-documented"
+    ,"phase4/animals-integrated-workspace-validated"
+    ,"phase4/animals-complete-create-flow-validated"
+    ,"phase4/animals-obsolete-screens-removed"
+    ,"phase4/animals-body-size-field-moved-to-own-row"
+    ,"phase4/animals-body-food-layout-revalidated"
+    ,"phase4/animals-user-approved"
+    ,"phase4/performance-objectives-overview-created"
+    ,"phase4/performance-statistics-overview-created"
+    ,"phase4/performance-statistic-detail-pattern-created"
+    ,"phase4/performance-weight-detail-created"
+    ,"phase4/performance-walks-detail-created"
+    ,"phase4/performance-expenses-detail-created"
+    ,"phase4/performance-add-measurement-created"
+    ,"phase4/performance-objective-detail-created"
+    ,"phase4/performance-create-objective-flow-created"
+    ,"phase4/performance-empty-state-created"
+    ,"phase4/performance-loading-state-created"
+    ,"phase4/performance-glass-overview-created"
+    ,"phase4/performance-bottom-navigation-tracking-fixed"
+    ,"phase4/performance-documentation-created"
+    ,"phase4/performance-screens-validated"
+    ,"phase3/objective-card-linked-animals-added"
+    ,"phase3/objective-card-linked-animals-validated"
+    ,"phase3/chart-period-selector-day-month-one-five-years"
+    ,"phase4/performance-period-instances-normalized"
+    ,"phase4/performance-objective-cards-linked-animals-added"
+    ,"phase4/animals-selector-active-history-order-added"
+    ,"phase4/animals-selector-order-documented"
+    ,"phase4/animals-glass-navigation-material-fixed"
+    ,"phase4/review-fixes-objectives-stats-animals-validated"
+    ,"phase3/animal-reference-promoted-to-linked-animals"
+    ,"phase3/objective-card-linked-animals-replaced-by-shared-component"
+    ,"phase4/performance-objective-overview-linked-animals-componentized"
+    ,"phase4/performance-objective-detail-actions-completed"
+    ,"phase4/performance-objective-edit-screen-created"
+    ,"phase4/performance-objective-delete-confirmation-created"
+    ,"phase4/events-detail-actions-menu-created"
+    ,"phase4/events-edit-screen-created"
+    ,"phase4/events-delete-confirmation-created"
+    ,"phase4/event-objective-detail-actions-documented"
+    ,"phase4/shared-linked-animals-and-detail-actions-validated"
+    ,"phase4/performance-objective-detail-buttons-simplified"
+    ,"phase4/performance-objective-step-autosave-documented-in-screen"
+    ,"phase4/performance-objective-overflow-trigger-added"
+    ,"phase4/events-new-action-screens-moved-to-free-row"
+    ,"phase4/animals-actions-trigger-added-to-all-workspace-tabs"
+    ,"phase4/animals-actions-menu-created"
+    ,"phase4/animals-report-departure-confirmation-created"
+    ,"phase4/animals-report-death-flow-created"
+    ,"phase4/animals-delete-confirmation-created"
+    ,"phase4/animals-edit-profile-created"
+    ,"phase4/animals-actions-and-event-layout-validated"
+    ,"phase4/objective-cards-overflow-trigger-added-to-all"
+    ,"phase4/objective-detail-overlay-variants-synchronized"
+    ,"phase4/event-detail-overflow-trigger-added"
+    ,"phase4/event-detail-secondary-buttons-removed"
+    ,"phase4/event-detail-overlay-variants-synchronized"
+    ,"phase4/entity-detail-overflow-pattern-validated"
+    ,"phase4/overflow-dots-rebuilt-as-centered-geometry"
+    ,"phase4/action-triggers-moved-below-overlay-scrims"
+    ,"phase4/action-bottom-sheets-bottom-corners-squared"
+    ,"phase4/event-objective-animal-action-sheets-revalidated"
+    ,"phase4/performance-user-approved"
+    ,"phase4/notes-list-default-created"
+    ,"phase4/notes-search-results-created"
+    ,"phase4/notes-empty-state-created"
+    ,"phase4/notes-loading-state-created"
+    ,"phase4/notes-detail-created"
+    ,"phase4/notes-detail-actions-created"
+    ,"phase4/notes-delete-confirmation-created"
+    ,"phase4/notes-create-edit-created"
+    ,"phase4/notes-ai-flow-created"
+    ,"phase4/notes-success-created"
+    ,"phase4/notes-glass-list-created"
+    ,"phase4/notes-documentation-created"
+    ,"phase4/notes-pinned-card-overrides-fixed"
+    ,"phase4/notes-screens-validated"
+    ,"phase3/microphone-icon-component-created"
+    ,"phase4/notes-ai-entry-removed"
+    ,"phase4/notes-voice-entry-added"
+    ,"phase4/notes-voice-recording-created"
+    ,"phase4/notes-voice-processing-created"
+    ,"phase4/notes-voice-review-created"
+    ,"phase4/notes-voice-documentation-updated"
+    ,"phase4/notes-voice-flow-validated"
+    ,"phase4/notes-standalone-voice-button-removed"
+    ,"phase4/notes-create-entry-bottom-sheet-created"
+    ,"phase4/notes-plus-unifies-text-and-voice-entry"
+    ,"phase4/notes-recording-microphone-optically-centered"
+    ,"phase4/notes-create-entry-and-recording-validated"
+    ,"phase4/notes-create-entry-manual-sheet-removed"
+    ,"phase4/notes-create-entry-rebuilt-with-bottom-sheet-component"
+    ,"phase4/notes-create-entry-component-linkage-validated"
+    ,"phase4/notes-recording-microphone-instance-rescaled"
+    ,"phase4/notes-recording-microphone-centers-verified"
+    ,"phase4/notes-user-approved"
+    ,"phase4/groups-list-states-created"
+    ,"phase4/groups-detail-animals-created"
+    ,"phase4/groups-detail-members-created"
+    ,"phase4/groups-management-actions-created"
+    ,"phase4/groups-delete-confirmation-created"
+    ,"phase4/groups-create-flow-created"
+    ,"phase4/groups-invitation-created"
+    ,"phase4/groups-add-member-created"
+    ,"phase4/groups-member-actions-created"
+    ,"phase4/groups-remove-member-confirmation-created"
+    ,"phase4/groups-animal-share-actions-created"
+    ,"phase4/groups-glass-list-created"
+    ,"phase4/groups-documentation-created"
+    ,"phase4/groups-screens-validated"
+    ,"phase3/action-sheet-member-shared-animal-created"
+    ,"phase3/action-sheet-handle-centered"
+    ,"phase4/groups-action-sheets-rebuilt-from-vasco-system"
+    ,"phase4/groups-user-approved"
+    ,"phase4/notifications-list-states-created"
+    ,"phase4/notifications-direct-invitation-actions-created"
+    ,"phase4/notifications-glass-list-created"
+    ,"phase4/notifications-documentation-created"
+    ,"phase3/action-sheet-contact-wish-variants-created"
+    ,"phase4/contacts-complete-flow-created"
+    ,"phase4/contacts-glass-and-documentation-created"
+    ,"phase4/wishes-complete-flow-created"
+    ,"phase4/wishes-glass-and-documentation-created"
+    ,"phase4/contacts-review-fixes-applied"
+    ,"phase4/wishes-integrated-into-notes-wishes-page"
+    ,"phase4/wishes-review-fixes-validated"
+    ,"phase4/settings-overview-and-preferences-created"
+    ,"phase4/settings-security-privacy-subscription-created"
+    ,"phase4/settings-sensitive-confirmations-created"
+    ,"phase4/settings-glass-and-documentation-created"
+    ,"phase3/global-app-background-paint-styles-created"
+    ,"phase4/global-solid-glass-backgrounds-applied-to-139-screens"
+    ,"phase4/global-navigation-materials-normalized"
+    ,"phase4/global-background-sample-validation"
+    ,"phase4/notifications-contacts-wishes-settings-user-approved"
+    ,"phase3/global-glass-dark-paint-style-created"
+    ,"phase4/home-dark-reference-created-and-validated"
+    ,"phase4/dark-variants-generated-for-139-screens"
+    ,"phase3/neutral-text-tokens-light-dark-created"
+    ,"phase3/semantic-text-colors-modernized"
+    ,"phase3/objective-card-linked-animals-deduplicated"
+    ,"phase3/objective-card-end-date-preserved"
+    ,"phase4/home-today-upcoming-sections-created"
+    ,"phase4/home-light-dark-glass-synchronized"
+    ,"phase5/user-journey-index-created"
+    ,"phase5/prototype-flow01-screens-cloned"
+    ,"phase5/prototype-flow01-home-agenda-detail-create-wired"
+    ,"phase5/prototype-flow01-back-navigation-wired"
+    ,"phase5/prototype-flow01-reactions-and-home-visual-validated"
+    ,"phase5/prototype-flow02-guided-and-ai-core-screens-cloned"
+    ,"phase5/prototype-flow02-guided-and-ai-core-paths-wired"
+    ,"phase5/prototype-flow02-back-navigation-wired"
+    ,"phase5/prototype-flow02-all-event-type-forms-cloned"
+    ,"phase5/prototype-flow02-all-event-types-wired"
+    ,"phase5/prototype-flow02-reactions-and-key-screens-validated"
+    ,"phase5/prototype-flow03-animal-workspace-and-create-screens-cloned"
+    ,"phase5/prototype-flow03-animal-tabs-and-actions-wired"
+    ,"phase5/prototype-flow03-animal-create-and-edit-wired"
+    ,"phase5/prototype-flow03-sensitive-actions-and-confirmations-wired"
+    ,"phase5/prototype-flow03-create-animal-fab-added"
+    ,"phase5/prototype-flow03-reactions-and-key-screens-validated"
+    ,"phase4/animal-body-latest-dated-measurements-applied-light-dark"
+    ,"phase5/prototype-animal-body-latest-dated-measurements-applied"
+    ,"phase5/prototype-flow04-global-create-menu-created"
+    ,"phase5/prototype-flow04-event-animal-note-objective-contact-wish-linked"
+    ,"phase5/prototype-flow04-home-agenda-animal-fabs-centralized"
+    ,"phase5/prototype-flow04-contextual-back-navigation-added"
+    ,"phase5/prototype-flow04-menu-and-animal-body-visuals-validated"
+    ,"phase5/prototype-flow04-global-create-menu-enriched-with-rich-options"
+    ,"phase5/prototype-flow04-rich-menu-visual-validated"
+    ,"phase5/prototype-flow05-complete-event-edit-actions-created"
+    ,"phase5/prototype-flow05-event-details-animals-options-wired"
+    ,"phase5/prototype-flow06-complete-six-section-animal-edit-created"
+    ,"phase5/prototype-flow06-animal-edit-prefilled-and-wired"
+    ,"phase5/prototype-flow05-flow06-back-navigation-added"
+    ,"phase5/prototype-complete-edit-key-screens-validated"
+    ,"phase5/entity-action-menu-rich-pattern-established"
+    ,"phase5/event-animal-objective-note-action-menus-enriched"
+    ,"phase5/contact-wish-group-action-menus-confirmed-rich-baseline"
+    ,"phase5/creation-linear-progress-standard-adopted"
+    ,"phase5/event-creation-progress-harmonized"
+    ,"phase5/creation-large-primary-buttons-normalized"
+    ,"phase5/action-menu-and-creation-harmonization-visual-validation"
+    ,"phase5/action-menu-icons-replaced-with-semantic-icons"
+    ,"phase5/global-create-icons-replaced-with-entity-icons"
+    ,"phase4/original-event-animal-objective-note-action-menus-enriched-light-dark"
+    ,"phase4/original-event-progress-steps-replaced-with-linear-progress-22"
+    ,"phase5/remaining-prototype-progress-steps-replaced-with-linear-progress-9"
+    ,"phase5/prototype-progress-steps-zero-remaining-after-replacement"
+    ,"phase4/dark-rich-action-menu-container-fills-corrected"
+    ,"phase4/phase5-source-and-prototype-menu-progress-sync-validated"
+    ,"phase5/rich-menu-icon-boxes-centered-global-and-entity-menus"
+    ,"phase4/original-rich-menu-icon-boxes-centered-light-dark"
+    ,"phase5/wish-icon-optically-centered-with-euro-symbol"
+    ,"phase5/menu-icon-centering-visual-validation"
+    ,"phase4/wishes-contacts-groups-guided-create-edit-harmonized-light-dark"
+    ,"phase3/premium-gate-shared-component-created"
+    ,"phase4/premium-locked-states-and-free-premium-comparison-created"
+    ,"phase5/guided-flows-and-premium-access-prototypes-synchronized"
+    ,"phase4/home-section-empty-states-light-dark-glass-created"
+    ,"phase4/fab-and-event-choice-surfaces-corrected"
+    ,"phase3/form-sheet-surface-component-created"
+    ,"phase4/entity-create-edit-screens-migrated-to-form-sheets"
+    ,"phase5/form-sheet-prototypes-synchronized"
+    ,"phase4/form-sheet-handoff-documentation-updated"
+    ,"phase3/overlays-legacy-surface-bindings-removed"
+    ,"phase3/overlays-page-overlaps-removed"
+    ,"phase3/overlays-catalogue-revalidated"
+    ,"phase3/bottom-bar-floating-geometry-created"
+    ,"phase4/global-floating-bottom-bar-instances-synchronized"
+    ,"phase4/animal-dated-weight-height-measurement-flow-created"
+    ,"phase5/animal-measurement-history-prototypes-wired"
+    ,"phase5/floating-bottom-bar-and-measurements-validated"
+    ,"phase4/home-intro-and-quick-actions-removed"
+    ,"phase4/agenda-no-events-light-dark-glass-created"
+    ,"phase3/animal-selector-more-component-created"
+    ,"phase4/animal-selector-progressive-disclosure-applied"
+    ,"phase4/animal-workspace-three-tabs-and-health-history-applied"
+    ,"phase4/ghost-entity-action-triggers-applied"
+    ,"phase3/bottom-bar-navigation-order-updated"
+    ,"phase5/home-agenda-animals-prototypes-synchronized"
+    ,"phase3/animal-selector-plus-minus-variants-created"
+    ,"phase3/animal-form-history-toggle-created"
+    ,"phase4/animal-form-progressive-history-applied"
+    ,"phase4/event-animal-selection-chevrons-removed"
+    ,"phase5/animal-form-history-prototypes-wired"
+  ]
+}

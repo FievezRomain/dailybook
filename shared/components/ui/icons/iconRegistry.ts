@@ -1,0 +1,52 @@
+import type { ComponentProps } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+type GlyphName = ComponentProps<typeof MaterialCommunityIcons>['name'];
+
+export const iconRegistry = {
+  add: 'plus',
+  remove: 'minus',
+  close: 'close',
+  back: 'arrow-left',
+  next: 'chevron-right',
+  expand: 'chevron-down',
+  search: 'magnify',
+  calendar: 'calendar-blank-outline',
+  time: 'clock-outline',
+  home: 'home-outline',
+  agenda: 'calendar-month-outline',
+  animals: 'paw-outline',
+  tracking: 'chart-line',
+  more: 'view-grid-outline',
+  moreHorizontal: 'dots-horizontal',
+  profile: 'account-outline',
+  notifications: 'bell-outline',
+  info: 'information-outline',
+  warning: 'alert-outline',
+  success: 'check',
+  error: 'alert-circle-outline',
+  upload: 'tray-arrow-up',
+  visibilityOn: 'eye-outline',
+  visibilityOff: 'eye-off-outline',
+  medical: 'medical-bag',
+  trophy: 'trophy-outline',
+  expense: 'currency-eur',
+  microphone: 'microphone-outline',
+  edit: 'pencil-outline',
+  delete: 'trash-can-outline',
+  share: 'share-variant-outline',
+  download: 'download-outline',
+  retry: 'refresh',
+  file: 'file-outline',
+  filePdf: 'file-pdf-box',
+  image: 'image-outline',
+  duplicate: 'content-copy',
+  lock: 'lock-outline',
+  event: 'calendar-outline',
+  note: 'note-text-outline',
+  objective: 'chart-bar',
+  contact: 'account-outline',
+  wish: 'currency-eur',
+} as const satisfies Record<string, GlyphName>;
+
+export type VascoIconName = keyof typeof iconRegistry;

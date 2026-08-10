@@ -6,6 +6,7 @@ import {
   UpdateAnimalPayload,
   AnimalHistoryPayload,
   AnimalHistoryItem,
+  BodyPicturePayload,
 } from '../../features/animals/types';
 import { Animal } from '../../models/Animal';
 
@@ -23,6 +24,14 @@ export function useAnimalBodyPicturesQuery(animalId: string) {
     queryKey: ['animals', animalId, 'body-pictures'],
     queryFn: () => AnimalsService.getAnimalBodyPictures(animalId),
     enabled: !!animalId,
+  });
+}
+
+export function useAnimalHistoryQuery(animalId: string, item: AnimalHistoryItem) {
+  return useQuery({
+    queryKey: ['animals', animalId, 'history', item],
+    queryFn: () => AnimalsService.getAnimalHistory(animalId, item),
+    enabled: Boolean(animalId),
   });
 }
 
@@ -94,16 +103,26 @@ export function useAnimalMutations() {
   const createHistory = useMutation({
     mutationFn: ({ animalId, body }: { animalId: string; body: AnimalHistoryPayload }) =>
       AnimalsService.createAnimalHistory(animalId, body),
-    onSuccess: () => invalidate(),
+    onSuccess: async (_, { animalId, body }) => {
+      await Promise.all([
+        invalidate(),
+        queryClient.invalidateQueries({ queryKey: ['animals', animalId, 'history', body.item] }),
+      ]);
+    },
     onError: async () => {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
     },
   });
 
   const updateHistory = useMutation({
-    mutationFn: ({ animalId, body }: { animalId: string; body: AnimalHistoryPayload }) =>
-      AnimalsService.updateAnimalHistory(animalId, body),
-    onSuccess: () => invalidate(),
+    mutationFn: ({ animalId, historyId, body }: { animalId: string; historyId: string; body: AnimalHistoryPayload }) =>
+      AnimalsService.updateAnimalHistory(animalId, body.item, historyId, body),
+    onSuccess: async (_, { animalId, body }) => {
+      await Promise.all([
+        invalidate(),
+        queryClient.invalidateQueries({ queryKey: ['animals', animalId, 'history', body.item] }),
+      ]);
+    },
     onError: async () => {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
     },
@@ -119,14 +138,19 @@ export function useAnimalMutations() {
       item: AnimalHistoryItem;
       historyId: string;
     }) => AnimalsService.deleteAnimalHistory(animalId, item, historyId),
-    onSuccess: () => invalidate(),
+    onSuccess: async (_, { animalId, item }) => {
+      await Promise.all([
+        invalidate(),
+        queryClient.invalidateQueries({ queryKey: ['animals', animalId, 'history', item] }),
+      ]);
+    },
     onError: async () => {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
     },
   });
 
   const addBodyPicture = useMutation({
-    mutationFn: ({ animalId, body }: { animalId: string; body: FormData }) =>
+    mutationFn: ({ animalId, body }: { animalId: string; body: BodyPicturePayload }) =>
       AnimalsService.addAnimalBodyPicture(animalId, body),
     onSuccess: (_, { animalId }) =>
       queryClient.invalidateQueries({ queryKey: ['animals', animalId, 'body-pictures'] }),
@@ -136,8 +160,10 @@ export function useAnimalMutations() {
   });
 
   const deleteBodyPicture = useMutation({
-    mutationFn: (pictureId: string) => AnimalsService.deleteAnimalBodyPicture(pictureId),
-    onSuccess: () => invalidate(),
+    mutationFn: ({ pictureId }: { animalId: string; pictureId: string }) => AnimalsService.deleteAnimalBodyPicture(pictureId),
+    onSuccess: async (_, { animalId }) => {
+      await queryClient.invalidateQueries({ queryKey: ['animals', animalId, 'body-pictures'] });
+    },
     onError: async () => {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
     },

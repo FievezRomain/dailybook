@@ -1,84 +1,37 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Image } from 'react-native';
-import { useAppTheme } from '../../../theme/useAppTheme';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useEffect, useState } from 'react';
+import { Linking, Text, View } from 'react-native';
+import { Banner, Button, Icon } from '../../../shared/components/ui';
 import { authService } from '../../../services/auth/FirebaseAuthService';
-import Toast from 'react-native-toast-message';
-import Constants from 'expo-constants';
-import { useTranslation } from 'react-i18next';
-import Button from '../../../shared/components/ui/AppButton';
-import { useAuthStore } from '../../../stores/useAuthStore';
-import type { AuthStackScreenProps } from '../../../navigation/types';
+import { radii, spacing, typography } from '../../../theme/scales';
+import { useAppTheme } from '../../../theme/useAppTheme';
+import { AuthScreen } from '../components/AuthScreen';
+import { TextLink } from '../components/TextLink';
+import type { AuthStackParamList } from '../navigation';
+import { useRegistrationDraft } from '../stores/useRegistrationDraft';
 
-const wallpaper_login = require('../../../assets/wallpaper_login.png');
+export type VerifyEmailScreenProps = NativeStackScreenProps<AuthStackParamList, 'VerifyEmail'>;
 
-export default function VerifyEmailScreen({ navigation }: AuthStackScreenProps<'VerifyEmail'>) {
-  const { colors, fonts } = useAppTheme();
-  const { t } = useTranslation('auth');
-  const firebaseUser = useAuthStore((s) => s.firebaseUser);
-  const [canResend, setCanResend] = useState(false);
-  const [timer, setTimer] = useState(120);
-
-  const handleResendVerificationEmail = async () => {
-    if (firebaseUser && canResend) {
-      await authService.sendEmailVerification();
-      setCanResend(false);
-      setTimer(120);
-      Toast.show({ type: 'success', position: 'top', text1: t('emailSent') });
-    }
+export function VerifyEmailScreen({ navigation }: VerifyEmailScreenProps) {
+  const { colors } = useAppTheme();
+  const email = useRegistrationDraft((state) => state.email) || authService.getCurrentUser()?.email || 'votre adresse';
+  const [seconds, setSeconds] = useState(42);
+  const [message, setMessage] = useState<string>();
+  useEffect(() => { if (seconds <= 0) return; const timer = setTimeout(() => setSeconds((value) => value - 1), 1000); return () => clearTimeout(timer); }, [seconds]);
+  const resend = async () => {
+    try { await authService.sendEmailVerification(); setSeconds(42); setMessage('Un nouvel e-mail de vérification a été envoyé.'); }
+    catch { setMessage('Envoi impossible pour le moment. Réessayez dans quelques instants.'); }
   };
-
-  useEffect(() => {
-    if (timer > 0) {
-      const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-      return () => clearInterval(interval);
-    } else {
-      setCanResend(true);
-    }
-  }, [timer]);
-
-  useEffect(() => { setTimer(120); }, []);
-
-  const styles = {
-    image: { flex: 1, height: '100%', width: '100%', resizeMode: 'cover', position: 'absolute', justifyContent: 'center' },
-    register: { flex: 1, flexDirection: 'column', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 80 },
-    form: { marginTop: 100, padding: 10, alignItems: 'center', justifyContent: 'center', width: '90%', borderRadius: 10, marginLeft: 'auto', marginRight: 'auto' },
-    title: { top: -(Constants.statusBarHeight + 10), color: colors.secondary, fontSize: 30, letterSpacing: 2, marginBottom: 20 },
-    textFontMedium: { fontFamily: fonts.bodyMedium.fontFamily },
-  } as const;
-
-  return (
-    <>
-      <Image style={styles.image} source={wallpaper_login} />
-      <View style={{ height: '100%', width: '100%', paddingTop: Constants.statusBarHeight + 10 }}>
-        <KeyboardAwareScrollView contentContainerStyle={styles.register}>
-          <View style={{ padding: 40, marginBottom: 30 }}>
-            <Text style={[{ textAlign: 'center', textTransform: 'uppercase', fontSize: 16 }, styles.textFontMedium]}>
-              {t('verifyEmailBody')}
-            </Text>
-          </View>
-          <View style={{ width: '70%', alignSelf: 'center' }}>
-            <View style={{ shadowColor: colors.textPrimary, shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: { width: 0, height: 1 } }}>
-              {!canResend ? (
-                <Button size="m" type="secondary">
-                  <Text style={[styles.textFontMedium, { color: colors.surfaceVariant }]}>
-                    {t('resendEmailCountdown', { timer })}
-                  </Text>
-                </Button>
-              ) : (
-                <Button onPress={handleResendVerificationEmail} size="m" type="primary">
-                  <Text style={styles.textFontMedium}>{t('resendEmailButton')}</Text>
-                </Button>
-              )}
-            </View>
-            <View style={{ marginTop: 10, shadowColor: colors.textPrimary, shadowOpacity: 0.1, elevation: 1, shadowRadius: 1, shadowOffset: { width: 0, height: 1 } }}>
-              <Button onPress={() => navigation.navigate('Login')} size="m" type="quaternary">
-                <Text style={styles.textFontMedium}>{t('loginButton')}</Text>
-              </Button>
-            </View>
-          </View>
-        </KeyboardAwareScrollView>
-      </View>
-    </>
-  );
+  return <AuthScreen scroll={false} centered testID="auth-verify-email" contentStyle={{ gap: spacing.md, paddingTop: 28 }}>
+    <View style={{ height: 72 }} />
+    <View accessibilityElementsHidden style={{ padding: 14, borderRadius: radii.full, backgroundColor: colors.surfaceVariant }}><Icon name="animals" size="lg" color={colors.primary} /></View>
+    <Text accessibilityRole="header" style={{ width: '100%', color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 32, letterSpacing: -0.2, textAlign: 'center' }}>Vérifiez votre e-mail</Text>
+    <Text style={{ width: '100%', color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.lg, lineHeight: 26, textAlign: 'center' }}>Étape 3 sur 3 · Nous avons envoyé un lien à {email}. Ouvrez-le pour activer votre compte.</Text>
+    <View style={{ flex: 1, minHeight: 48 }} />
+    {message ? <Banner tone="info" title="Vérification" message={message} onDismiss={() => setMessage(undefined)} /> : null}
+    <Button label="Ouvrir mon application e-mail" onPress={() => void Linking.openURL('mailto:')} size="large" fullWidth />
+    <Button label="Renvoyer l’e-mail" onPress={() => void resend()} variant="secondary" fullWidth disabled={seconds > 0} />
+    <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20, textAlign: 'center' }}>{seconds > 0 ? `Nouvel envoi possible dans 00:${String(seconds).padStart(2, '0')}` : 'Vous pouvez demander un nouvel envoi'}</Text>
+    <TextLink label="Modifier l’adresse e-mail" onPress={() => navigation.navigate('RegisterIdentity')} />
+  </AuthScreen>;
 }

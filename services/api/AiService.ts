@@ -23,7 +23,12 @@ export interface AiParseResponse {
 }
 
 export async function parseEvent(text: string): Promise<AiParseResponse> {
-  return httpClient.post<AiParseResponse>('/ai/parse/event', { text }).then((r) => r.data);
+  const response = await httpClient.post<AiParseResult | AiParseResponse>('/ai/parse/event', { text });
+  const data = response.data;
+  if ('parsed' in data && data.parsed && typeof data.parsed === 'object') {
+    return { parsed: data.parsed as AiParseResult, raw_text: typeof data.raw_text === 'string' ? data.raw_text : text };
+  }
+  return { parsed: data as AiParseResult, raw_text: text };
 }
 
 export async function parseNote(text: string): Promise<AiParseResponse> {

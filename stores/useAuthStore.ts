@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { authService } from '../services/auth/FirebaseAuthService';
 import type { AuthUser } from '../services/auth/IAuthService';
-import { getMe } from '../services/api/AuthService';
+import { getMe, login } from '../services/api/AuthService';
 import { UserProfile } from '../models/User';
 
 interface AuthState {
@@ -38,7 +38,8 @@ export const useAuthStore = create<AuthState>()(
               isLoading: false,
             }));
 
-            void getMe()
+            void login({ timezone: Intl.DateTimeFormat().resolvedOptions().timeZone })
+              .then(async (session) => ({ ...(await getMe()), subscription: session.subscription }))
               .then((profile) => set({ user: profile }))
               .catch(() => undefined);
           } else {

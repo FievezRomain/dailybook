@@ -20,3 +20,11 @@ export async function getEventDocumentUrl(eventId: string, filename: string): Pr
   const response = await httpClient.get(`/events/${eventId}/documents/${filename}`);
   return response.data;
 }
+
+export async function deleteEventDocument(eventId: string, filename: string): Promise<void> {
+  await httpClient.delete(`/events/${eventId}/documents/${encodeURIComponent(filename)}`);
+}
+
+export async function attachEventDocument(eventId: string, filename: string): Promise<void> {
+  await httpClient.post(`/events/${eventId}/documents/${encodeURIComponent(filename)}`);
+}

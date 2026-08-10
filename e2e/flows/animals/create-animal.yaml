@@ -1,34 +1,58 @@
 appId: com.vascoandco.vasco.ios
-name: Animals - create a new animal
+name: Animaux — création persistante et abandon protégé
 ---
 - runFlow: ../auth/login.yaml
-
 - tapOn:
-    id: "tab-animals"
+    id: "main-tabs-animals"
+- assertVisible:
+    id: "animals-workspace"
 
+# Une saisie modifiée ne peut pas être perdue par le bouton Retour.
 - tapOn:
-    id: "fab-add-animal"
+    id: "animals-infos-add"
+- assertVisible:
+    id: "animal-form-sheet"
+- tapOn: "Nom de l’animal"
+- inputText: "Brouillon Maestro"
+- hideKeyboard
+- tapOn: "Retour"
+- assertVisible: "Abandonner les modifications ?"
+- tapOn: "Continuer"
+- assertVisible: "Brouillon Maestro"
+- tapOn: "Retour"
+- tapOn: "Abandonner"
+- assertVisible:
+    id: "animals-workspace"
 
-- assertVisible: "Ajouter un animal"
-
+# Parcours complet dans une seule Form Sheet.
 - tapOn:
-    id: "input-nom"
-- inputText: "Tornado"
-
-- tapOn:
-    id: "input-espece"
+    id: "animals-infos-add"
+- tapOn: "Nom de l’animal"
+- inputText: "Tornado Maestro"
+- hideKeyboard
+- tapOn: "Espèce"
 - tapOn: "Cheval"
-
-- tapOn:
-    id: "input-race"
-- inputText: "Lusitanien"
-
-- tapOn:
-    id: "input-sexe"
-- tapOn: "Mâle"
-
-- tapOn: "Suivant"
-
-- tapOn: "Enregistrer"
-
-- assertVisible: "Tornado"
+- tapOn: "Confirmer"
+- tapOn: "Continuer"
+- assertVisible: "Étape 2 sur 6"
+- tapOn: "Continuer"
+- assertVisible: "Étape 3 sur 6"
+- tapOn: "Continuer"
+- assertVisible: "Étape 4 sur 6"
+- tapOn: "Continuer"
+- assertVisible: "Étape 5 sur 6"
+- tapOn: "Alimentation"
+- inputText: "Foin"
+- hideKeyboard
+- tapOn: "Quantité"
+- inputText: "8"
+- hideKeyboard
+- tapOn: "Unité"
+- tapOn: "kg"
+- tapOn: "Confirmer"
+- tapOn: "Continuer"
+- assertVisible: "Étape 6 sur 6"
+- tapOn: "Créer le profil"
+- extendedWaitUntil:
+    visible: "Tornado Maestro"
+    timeout: 20000

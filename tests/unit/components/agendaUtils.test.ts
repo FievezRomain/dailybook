@@ -1,0 +1,5 @@
+import { eventsForDate, formatAgendaDay, formatAgendaEmptyMessage, formatAgendaMonth } from '../../../features/events/agendaUtils';
+import { tabs } from '../../../features/home/mainTabs';
+import type { Event } from '../../../models/Event';
+const event = (id: number, dateevent: string, time: string): Event => ({ id, nom: `E${id}`, dateevent, heuredebutevent: time, animaux: [], eventtype: 'soins' });
+describe('agendaUtils', () => { it('filtre et trie une journée', () => expect(eventsForDate([event(2, '2026-08-09', '11:00'), event(1, '2026-08-09', '09:00'), event(3, '2026-08-10', '08:00')], '2026-08-09').map(({ id }) => id)).toEqual([1, 2])); it('formate le mois, le jour et l’état vide en français', () => { expect(formatAgendaMonth('2026-08-09')).toBe('Août 2026'); expect(formatAgendaDay('2026-08-09')).toBe('dimanche 9 août'); expect(formatAgendaEmptyMessage('2026-08-09')).toBe('Rien de prévu pour le dimanche 9 août.'); }); it('conserve l’ordre Figma de la navigation principale', () => { expect(tabs.map(({ id }) => id)).toEqual(['home', 'tracking', 'agenda', 'animals', 'more']); }); });

@@ -5,6 +5,9 @@ export interface AnimalWizardFormData {
   espece?: string;
   race?: string;
   datenaissance?: string;
+  datearrivee?: string;
+  datedepart?: string;
+  datedeces?: string;
   sexe?: string;
   couleur?: string;
   poids?: string;
@@ -12,7 +15,11 @@ export interface AnimalWizardFormData {
   nompere?: string;
   nommere?: string;
   image?: string;
-  [key: string]: unknown;
+  numeroidentification?: string;
+  food?: string;
+  quantity?: string;
+  unity?: string;
+  informations?: string;
 }
 
 interface AnimalWizardState {
@@ -23,6 +30,7 @@ interface AnimalWizardState {
   prevStep: () => void;
   setField: (key: string, value: unknown) => void;
   setFormData: (data: Partial<AnimalWizardFormData>) => void;
+  replaceFormData: (data: AnimalWizardFormData) => void;
   reset: () => void;
 }
 
@@ -39,6 +47,8 @@ export const useAnimalWizardStore = create<AnimalWizardState>()((set) => ({
 
   setFormData: (data) =>
     set((s) => ({ formData: { ...s.formData, ...data } })),
+
+  replaceFormData: (formData) => set({ step: 0, formData }),
 
   reset: () => set({ step: 0, formData: {} }),
 }));

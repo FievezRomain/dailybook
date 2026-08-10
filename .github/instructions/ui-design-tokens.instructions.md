@@ -6,7 +6,7 @@ applyTo: "**/*.tsx,features/**,theme/**,shared/components/**"
 
 ## Direction
 
-MyDailyBook doit paraitre moderne, chaleureux et premium. L'interface s'inspire du monde equestre sans devenir thematique ou decorative : tons naturels, matieres douces, lisibilite, profondeur subtile.
+Vasco doit paraitre moderne, chaleureux et premium. L'interface couvre tous les animaux sans devenir thematique ou decorative : tons naturels, matieres douces, lisibilite et profondeur subtile. Les maquettes Figma Vasco et `docs/design-handoff.md` constituent la reference visuelle.
 
 La modernite vient de la precision :
 - glass/blur quand il aide a separer les plans ;
@@ -28,9 +28,9 @@ Elle ne vient pas d'effets gratuits, de visuels generiques d'IA, d'emojis decora
 
 Tout nouveau composant doit utiliser ces couches au lieu de valeurs brutes.
 
-## Palette equestre
+## Palette historique et semantique
 
-La palette brute vit dans `theme/tokens.ts` et ne doit pas etre utilisee directement dans les composants.
+La palette brute vit dans `theme/tokens.ts` et ne doit pas etre utilisee directement dans les composants. Certains noms de primitives sont historiques ; ils ne signifient pas que l'interface doit adopter une direction equestre.
 
 Couleurs de reference :
 - baie : brun-roux principal ;

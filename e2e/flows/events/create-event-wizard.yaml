@@ -1,26 +1,38 @@
 appId: com.vascoandco.vasco.ios
-name: Events - create an event via wizard
+name: Events — parcours critique de création guidée
 ---
 - runFlow: ../auth/login.yaml
 
-- tapOn:
-    id: "tab-events"
-
-- tapOn:
-    id: "fab-add-event"
-
-- assertVisible: "Quel type d'événement"
-
+- tapOn: "Agenda"
+- assertVisible: "Aujourd’hui"
+- tapOn: "Créer"
+- tapOn: "Événement"
+- assertVisible: "Comment souhaitez-vous commencer ?"
+- tapOn: "Création guidée"
+- assertVisible: "Que souhaitez-vous organiser ?"
 - tapOn: "Soins"
 
-- tapOn: "Suivant"
+- assertVisible: "Étape 2 sur 4"
+- tapOn: "Intitulé des soins"
+- inputText: "Vermifuge Maestro"
+- hideKeyboard
+- tapOn: "Date, Choisir une date"
+- tapOn: "15"
+- tapOn: "Confirmer"
+- tapOn: "Choisir les animaux"
 
+- assertVisible: "Étape 3 sur 4"
 - tapOn:
-    id: "input-event-titre"
-- inputText: "Vermifuge printemps"
+    id: "event-animal-.*"
+    index: 0
+- tapOn:
+    id: "event-animals-continue"
 
-- tapOn: "Suivant"
-
-- tapOn: "Enregistrer"
-
-- assertVisible: "Vermifuge printemps"
+- assertVisible: "Étape 4 sur 4"
+- tapOn: "Enregistrer l’événement"
+- extendedWaitUntil:
+    visible: "Événement enregistré"
+    timeout: 20000
+- assertVisible: "Vermifuge Maestro"
+- tapOn: "Voir dans l’agenda"
+- assertVisible: "Agenda"

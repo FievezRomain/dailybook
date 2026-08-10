@@ -40,9 +40,18 @@ export type BodyPicturePayload = {
 export type AnimalHistoryPayload = {
   idAnimal: number;
   item: AnimalHistoryItem;
-  value: number;
+  value: string | number;
   unity?: string;
   datemodification?: string;
+};
+
+export type AnimalHistoryRecord = {
+  id: number;
+  idanimal: number;
+  value: string | number;
+  unity?: string;
+  datemodification: string;
+  item?: AnimalHistoryItem;
 };
 
 /** Props de ModalAnimal — remplace l'ancien `animal?: any` et `actionType: string`. */
