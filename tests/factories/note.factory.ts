@@ -6,7 +6,9 @@ export function createMockNote(overrides: Record<string, unknown> = {}) {
     id,
     titre: `Note_${id}`,
     note: 'Observation du jour',
-    date_creation: '2025-01-15',
+    is_pinned: false,
+    created_at: '2025-01-15T10:00:00Z',
+    updated_at: null,
     ...overrides,
   };
 }

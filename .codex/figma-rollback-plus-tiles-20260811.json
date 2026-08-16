@@ -1,0 +1,15 @@
+{
+  "fileKey": "y3EnZKYhqQju194UkyLoO7",
+  "createdAt": "2026-08-11",
+  "scope": "Remove the Plus section heading and convert navigation rows into a two-by-two tile grid",
+  "rollbackStatus": "ready",
+  "rollbackPage": "510:2",
+  "backupMapping": {
+    "498:20": "510:3",
+    "500:6": "510:18",
+    "500:213": "510:30",
+    "500:420": "510:42",
+    "501:25227": "510:54"
+  },
+  "rollbackInstructions": "Replace the shared component, three Plus source screens and Plus prototype with their exact mapped backups from page 510:2. Preserve the existing page positions and Home-to-Plus prototype link."
+}

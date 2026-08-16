@@ -9,10 +9,10 @@ import { useAppTheme } from '../../../theme/useAppTheme';
 import { getLinkedAnimals, getObjectiveProgress } from '../../home/homeUtils';
 import { duplicateObjectivePayload, isObjectiveStepDone, toggleObjectiveStepPayload } from '../objectiveUtils';
 
-export function ObjectiveDetailScreen({ objective, animals, onBack, onEdit, onDeleted, onDuplicated }: { objective: Objectif; animals: readonly Animal[]; onBack: () => void; onEdit: () => void; onDeleted: () => void; onDuplicated: (id?: number) => void }) {
+export function ObjectiveDetailScreen({ objective, animals, initialActionsOpen = false, onBack, onEdit, onDeleted, onDuplicated }: { objective: Objectif; animals: readonly Animal[]; initialActionsOpen?: boolean; onBack: () => void; onEdit: () => void; onDeleted: () => void; onDuplicated: (id?: number) => void }) {
   const { colors } = useAppTheme();
   const mutations = useObjectifMutations();
-  const [actionsOpen, setActionsOpen] = useState(false);
+  const [actionsOpen, setActionsOpen] = useState(initialActionsOpen);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const progress = getObjectiveProgress(objective);
   const linked = getLinkedAnimals(objective.animaux, animals);

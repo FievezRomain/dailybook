@@ -2,7 +2,7 @@ import { Text, View } from 'react-native';
 import { radii, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 
-export type StatusBadgeTone = 'info' | 'success' | 'warning' | 'error';
+export type StatusBadgeTone = 'neutral' | 'info' | 'success' | 'warning' | 'error';
 export type StatusBadgeSize = 'small' | 'medium';
 
 export interface StatusBadgeProps {

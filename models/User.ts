@@ -6,4 +6,5 @@ export type UserProfile = {
   timezone?: string;
   filename?: string;
   subscription?: string;
+  daily_reminder_enabled?: boolean;
 };

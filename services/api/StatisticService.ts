@@ -1,9 +1,9 @@
 import httpClient from './httpClient';
-import { StatType, StatisticsQueryPayload } from '../../features/statistics/types';
+import type { StatType, StatisticsQueryPayload, StatisticsResponseMap } from '../../features/statistics/types';
 
-export async function getStatistics(type: StatType, parameters: StatisticsQueryPayload) {
+export async function getStatistics<T extends StatType>(type: T, parameters: StatisticsQueryPayload): Promise<StatisticsResponseMap[T]> {
   const response = await httpClient.post(`/statistics/${type}`, parameters);
-  return response.data;
+  return response.data as StatisticsResponseMap[T];
 }
 
 // Raccourcis par type — conservés pour compatibilité avec les appels existants

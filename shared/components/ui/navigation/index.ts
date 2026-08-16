@@ -1,5 +1,7 @@
 export { BottomBar } from './BottomBar';
 export type { BottomBarItem, BottomBarProps } from './BottomBar';
+export { PlusHubItem } from './PlusHubItem';
+export type { PlusHubItemProps } from './PlusHubItem';
 export { LinearProgress } from './LinearProgress';
 export type { LinearProgressProps } from './LinearProgress';
 export { ProgressSteps } from './ProgressSteps';

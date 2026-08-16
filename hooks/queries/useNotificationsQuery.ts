@@ -36,5 +36,37 @@ export function useNotificationMutations() {
     },
   });
 
-  return { markAllAsRead };
+  const setRead = useMutation({
+    mutationFn: ({ id, isRead }: { id: number; isRead: boolean }) => NotificationService.setRead(id, isRead),
+    onMutate: async ({ id, isRead }) => {
+      await queryClient.cancelQueries({ queryKey: NOTIFICATIONS_KEY });
+      const snapshot = queryClient.getQueryData<Notification[]>(NOTIFICATIONS_KEY);
+      queryClient.setQueryData<Notification[]>(NOTIFICATIONS_KEY, (prev = []) =>
+        prev.map((item) => item.id === id ? { ...item, is_read: isRead, syncing: true } : item),
+      );
+      return { snapshot };
+    },
+    onError: async (_error, _variables, context) => {
+      if (context?.snapshot) queryClient.setQueryData(NOTIFICATIONS_KEY, context.snapshot);
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
+    },
+    onSuccess: invalidate,
+  });
+
+  const remove = useMutation({
+    mutationFn: NotificationService.deleteNotification,
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: NOTIFICATIONS_KEY });
+      const snapshot = queryClient.getQueryData<Notification[]>(NOTIFICATIONS_KEY);
+      queryClient.setQueryData<Notification[]>(NOTIFICATIONS_KEY, (prev = []) => prev.filter((item) => item.id !== id));
+      return { snapshot };
+    },
+    onError: async (_error, _variables, context) => {
+      if (context?.snapshot) queryClient.setQueryData(NOTIFICATIONS_KEY, context.snapshot);
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
+    },
+    onSuccess: invalidate,
+  });
+
+  return { markAllAsRead, setRead, remove };
 }

@@ -1,0 +1,24 @@
+{
+  "fileKey": "y3EnZKYhqQju194UkyLoO7",
+  "createdAt": "2026-08-10",
+  "scope": "Home, Agenda, animal selector/workspace, entity action triggers and bottom navigation order",
+  "rollbackStatus": "ready",
+  "rollbackPage": "455:2",
+  "backupCloneIds": [
+    "455:3", "455:164", "455:183", "455:202", "455:221", "455:231",
+    "455:241", "455:251", "455:280", "455:304", "455:331", "455:352",
+    "455:381", "455:405", "455:432", "455:453", "455:480", "455:507",
+    "455:537", "455:561"
+  ],
+  "sourceNodeIds": [
+    "162:238", "224:2", "234:438", "349:779", "236:2", "238:685",
+    "349:9996", "253:619", "253:785", "253:942", "253:1099", "349:8438",
+    "349:8528", "349:8639", "349:8741", "447:2352", "359:2926", "359:2873",
+    "359:2902", "359:2952"
+  ],
+  "createdNodeIds": [
+    "458:23853", "456:2387", "456:2563", "456:2734", "459:23983",
+    "459:24079", "459:24175", "461:5386", "461:5465"
+  ],
+  "rollbackInstructions": "Replace each modified source node with its matching clone on rollbackPage, then remove the created nodes listed above. Preserve IDs recorded in the Figma page labels when reconnecting prototype links."
+}

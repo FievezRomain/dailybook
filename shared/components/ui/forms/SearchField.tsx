@@ -23,6 +23,7 @@ export function SearchField({
       {...props}
       value={value}
       label={label}
+      labelHidden
       helperText={noResults ? noResultsText : props.helperText}
       leading={<Icon name="search" size="sm" />}
       trailing={hasQuery && onClear ? (

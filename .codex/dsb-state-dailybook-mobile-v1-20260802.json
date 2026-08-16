@@ -41,6 +41,7 @@
       "wishScreens": "114:19",
       "settingsScreens": "114:22",
       "prototypes": "114:24"
+      ,"plusScreens": "496:2"
     },
     "components": {
       "Icon/Plus": "120:7",
@@ -90,6 +91,7 @@
       "Navigation/Top Bar": "162:303",
       "Navigation/Tab Bar": "164:186",
       "Navigation/Progress Steps": "164:262"
+      ,"Navigation/Plus Hub Item": "498:20"
       ,"Navigation/Linear Progress": "252:3245"
       ,"Selection/Animal Selector Item": "252:140"
       ,"Selection/Animal Selector More": "458:23853"
@@ -301,6 +303,10 @@
       ,"Settings/Delete Account Confirmation": "332:761"
       ,"Settings/Overview Glass": "332:783"
       ,"Settings/Documentation": "332:969"
+      ,"Plus/Hub Light": "500:6"
+      ,"Plus/Hub Glass": "500:213"
+      ,"Plus/Hub Dark": "500:420"
+      ,"Plus/Hub Prototype": "501:25227"
       ,"Prototypes/User Journey Index": "354:2"
     },
     "styles": {
@@ -832,5 +838,19 @@
     ,"phase4/animal-form-progressive-history-applied"
     ,"phase4/event-animal-selection-chevrons-removed"
     ,"phase5/animal-form-history-prototypes-wired"
+    ,"phase2/plus-page-created"
+    ,"phase3/plus-hub-item-created"
+    ,"phase4/plus-hub-light-glass-dark-created"
+    ,"phase5/plus-hub-prototype-wired"
+    ,"phase2/plus-page-moved-into-screens-section"
+    ,"phase3/plus-hub-item-moved-to-navigation-components"
+    ,"phase3/plus-hub-icons-moved-to-actions-components"
+    ,"phase4/plus-notifications-and-settings-duplicates-removed"
+    ,"phase5/plus-prototype-repositioned-and-revalidated"
+    ,"phase3/plus-hub-item-converted-to-tile"
+    ,"phase4/plus-vos-espaces-heading-removed"
+    ,"phase4/plus-two-by-two-tile-grid-created"
+    ,"phase5/plus-tile-prototype-synchronized"
+    ,"phase4/plus-tagline-simplified"
   ]
 }

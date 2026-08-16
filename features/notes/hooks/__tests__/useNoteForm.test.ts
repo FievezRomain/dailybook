@@ -48,13 +48,13 @@ describe('useNoteForm', () => {
     const onSuccess = jest.fn();
     const onClose = jest.fn();
 
-    const { result } = renderHook(() => useNoteForm('modify', { id: 3 }, onSuccess), { wrapper: createQueryWrapper() });
+    const { result } = renderHook(() => useNoteForm('modify', { id: 3, is_pinned: true }, onSuccess), { wrapper: createQueryWrapper() });
 
     await act(async () => {
       await result.current.submit({ id: 3, titre: 'Modifiée', note: 'Détail' }, onClose);
     });
 
-    expect(mockedUpdateNote).toHaveBeenCalledWith('3', { id: 3, titre: 'Modifiée', note: 'Détail' });
+    expect(mockedUpdateNote).toHaveBeenCalledWith('3', { id: 3, titre: 'Modifiée', note: 'Détail', is_pinned: true });
     expect(onSuccess).toHaveBeenCalledWith(updated);
   });
 

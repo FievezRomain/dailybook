@@ -26,7 +26,7 @@ export function SignInScreen({ navigation }: SignInScreenProps) {
     {errors.form ? <Banner tone="error" title="Connexion impossible" message={errors.form} blocking /> : null}
     <TextField label="Adresse e-mail" helperText="Adresse utilisée pour votre compte" errorMessage={errors.email} placeholder="vous@exemple.fr" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" textContentType="emailAddress" returnKeyType="next" editable={!loading} />
     <PasswordField label="Mot de passe" helperText="12 caractères minimum" errorMessage={errors.password ?? (errors.form ? 'E-mail ou mot de passe incorrect' : undefined)} placeholder="Votre mot de passe" value={password} onChangeText={setPassword} textContentType="password" returnKeyType="done" onSubmitEditing={() => void signIn(email, password)} editable={!loading} />
-    <TextLink label="Mot de passe oublié ?" onPress={() => navigation.navigate('ForgotPassword')} />
+    <View style={{ marginTop: spacing.sm, marginBottom: spacing.lg }}><TextLink label="Mot de passe oublié ?" onPress={() => navigation.navigate('ForgotPassword', { initialEmail: email })} /></View>
     <Button label="Se connecter" onPress={() => void signIn(email, password)} size="large" fullWidth loading={loading} />
     <TextLink label="Pas encore de compte ? S’inscrire" onPress={() => navigation.navigate('RegisterMethod')} />
   </AuthScreen>;

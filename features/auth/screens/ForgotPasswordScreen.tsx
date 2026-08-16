@@ -1,7 +1,7 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
-import { Banner, Button, TextField } from '../../../shared/components/ui';
+import { Banner, Button, IconButton, TextField } from '../../../shared/components/ui';
 import { emailSchema } from '../../../business/validators/auth';
 import { authService } from '../../../services/auth/FirebaseAuthService';
 import { spacing, typography } from '../../../theme/scales';
@@ -11,9 +11,9 @@ import type { AuthStackParamList } from '../navigation';
 
 export type ForgotPasswordScreenProps = NativeStackScreenProps<AuthStackParamList, 'ForgotPassword'>;
 
-export function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps) {
+export function ForgotPasswordScreen({ navigation, route }: ForgotPasswordScreenProps) {
   const { colors } = useAppTheme();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(route.params?.initialEmail ?? '');
   const [error, setError] = useState<string>();
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,6 +26,7 @@ export function ForgotPasswordScreen({ navigation }: ForgotPasswordScreenProps) 
     finally { setLoading(false); }
   };
   return <AuthScreen scroll={false} testID="auth-forgot-password" contentStyle={{ gap: spacing.md, paddingTop: 28 }}>
+    <IconButton icon="back" accessibilityLabel="Retour à la connexion" variant="ghost" onPress={() => navigation.goBack()} />
     <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 32, letterSpacing: -0.2 }}>Mot de passe oublié ?</Text>
     <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.md, lineHeight: typography.lineHeights.normal }}>Indiquez votre adresse e-mail. Nous vous enverrons un lien sécurisé pour choisir un nouveau mot de passe.</Text>
     <View style={{ height: spacing.sm }} />

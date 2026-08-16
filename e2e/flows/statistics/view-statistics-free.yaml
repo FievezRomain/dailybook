@@ -1,0 +1,22 @@
+appId: com.vascoandco.vasco.ios
+name: Statistiques - verrou Premium contextualise
+---
+- runFlow: ../auth/login.yaml
+
+- tapOn:
+    id: "main-tabs-tracking"
+- assertVisible:
+    id: "tracking-screen"
+- tapOn: "Statistiques"
+- assertVisible:
+    id: "statistics-premium-required"
+- assertVisible: "Statistiques"
+- tapOn: "Comparer les offres"
+- assertVisible:
+    id: "statistics-plans-comparison"
+- assertVisible: "Choisissez votre expérience"
+- assertVisible: "Gratuit"
+- assertVisible: "Premium"
+- tapOn: "Je continue avec la version gratuite"
+- assertVisible:
+    id: "tracking-screen"

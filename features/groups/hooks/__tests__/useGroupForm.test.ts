@@ -7,7 +7,7 @@ jest.mock('../../../../hooks/queries/useGroupsQuery', () => ({
   useGroupMutations: () => ({
     create: { isPending: false, mutateAsync: jest.fn().mockResolvedValue({ id: 1, nom: 'Groupe test' }) },
     update: { isPending: false, mutateAsync: jest.fn().mockResolvedValue({ id: 1 }) },
-    inviteMembers: { isPending: false },
+    inviteMembers: { isPending: false, mutateAsync: jest.fn().mockResolvedValue(undefined) },
     respondInvitation: { isPending: false, mutateAsync: jest.fn().mockResolvedValue(undefined) },
     proposeAnimal: { isPending: false },
     respondAnimalShare: { isPending: false },
@@ -80,7 +80,7 @@ describe('useGroupForm', () => {
     );
 
     await act(async () => {
-      await result.current.submitGroup({ nom: 'Écurie du Soleil', members: [] }, 'create');
+      await result.current.submitGroup({ name: 'Écurie du Soleil', members: ['membre@test.com'] }, 'create');
     });
 
     expect(mockCloseModal).toHaveBeenCalledTimes(1);

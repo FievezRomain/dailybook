@@ -1,11 +1,8 @@
 export type CreateContactPayload = {
   nom: string;
-  profession?: string;
-  telephone?: string;
-  email?: string;
+  profession?: string | null;
+  telephone?: string | null;
   email_contact?: string;
-  emailproprietaire?: string;
-  adresse?: string;
 };
 
 export type UpdateContactPayload = CreateContactPayload & { id: number };

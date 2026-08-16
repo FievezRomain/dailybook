@@ -6,7 +6,7 @@ export const isObjectiveStepDone = (state: string) => doneStates.includes(String
 const apiDate = (value: Date) => new Date(value).toISOString().slice(0, 10);
 
 export function objectiveToPayload(objective: Objectif): UpdateObjectifPayload {
-  return { id: objective.id, title: objective.title, temporalityobjectif: objective.temporalityobjectif, datedebut: apiDate(objective.datedebut), datefin: apiDate(objective.datefin), animaux: [...objective.animaux], sousetapes: objective.sousetapes.map((step) => ({ id: step.id, etape: step.etape, state: step.state, order: step.order })) };
+  return { id: objective.id, title: objective.title, datedebut: apiDate(objective.datedebut), datefin: apiDate(objective.datefin), animaux: [...objective.animaux], sousetapes: objective.sousetapes.map((step) => ({ id: step.id, etape: step.etape, state: step.state, order: step.order })) };
 }
 
 export function toggleObjectiveStepPayload(objective: Objectif, stepId: number): UpdateObjectifPayload {

@@ -24,7 +24,12 @@ export async function getMe(): Promise<UserProfile> {
 }
 
 export async function updateMe(user: UpdateUserPayload): Promise<UserProfile> {
-  const response = await httpClient.patch('/users/me', user);
+  await httpClient.patch('/users/me', user);
+  return getMe();
+}
+
+export async function updateNotificationPreferences(dailyReminderEnabled: boolean): Promise<{ daily_reminder_enabled: boolean }> {
+  const response = await httpClient.patch('/users/me/notification-preferences', { dailyReminderEnabled });
   return response.data;
 }
 

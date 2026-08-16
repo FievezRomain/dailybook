@@ -1,0 +1,10 @@
+appId: com.vascoandco.vasco.ios
+name: Objectifs - listes en cours et terminés
+---
+- runFlow: ../auth/login.yaml
+- tapOn:
+    id: "main-tabs-tracking"
+- assertVisible:
+    id: "tracking-screen"
+- tapOn: "Terminés"
+- tapOn: "En cours"

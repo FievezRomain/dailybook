@@ -16,6 +16,8 @@ const mockedGetNotifications = NotificationService.getNotifications as jest.Mock
 const mockedMarkAllAsRead = NotificationService.markAllAsRead as jest.MockedFunction<
   typeof NotificationService.markAllAsRead
 >;
+const mockedSetRead = NotificationService.setRead as jest.MockedFunction<typeof NotificationService.setRead>;
+const mockedDeleteNotification = NotificationService.deleteNotification as jest.MockedFunction<typeof NotificationService.deleteNotification>;
 
 describe('useNotificationsQuery', () => {
   beforeEach(() => { jest.clearAllMocks(); });
@@ -96,5 +98,41 @@ describe('useNotificationMutations — markAllAsRead', () => {
 
     resolveMarkRead(undefined);
     await waitFor(() => !mutResult.current.markAllAsRead.isPending);
+  });
+});
+
+describe('useNotificationMutations — individual actions', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  it('optimistically toggles read state and rolls back on failure', async () => {
+    const wrapper = createQueryWrapper();
+    mockedGetNotifications.mockResolvedValue([{ id: 1, message: 'A', is_read: false }] as any[]);
+    let rejectSetRead!: (error: Error) => void;
+    mockedSetRead.mockImplementation(() => new Promise((_resolve, reject) => { rejectSetRead = reject; }));
+    const { result: queryResult } = renderHook(() => useNotificationsQuery(), { wrapper });
+    const { result: mutationResult } = renderHook(() => useNotificationMutations(), { wrapper });
+    await waitFor(() => expect(queryResult.current.isSuccess).toBe(true));
+
+    act(() => mutationResult.current.setRead.mutate({ id: 1, isRead: true }));
+    await waitFor(() => expect(queryResult.current.data?.[0].is_read).toBe(true));
+    act(() => rejectSetRead(new Error('Network error')));
+    await waitFor(() => expect(mutationResult.current.setRead.isError).toBe(true));
+    expect(queryResult.current.data?.[0].is_read).toBe(false);
+  });
+
+  it('optimistically removes a notification and rolls back on failure', async () => {
+    const wrapper = createQueryWrapper();
+    mockedGetNotifications.mockResolvedValue([{ id: 1, message: 'A', is_read: false }] as any[]);
+    let rejectDelete!: (error: Error) => void;
+    mockedDeleteNotification.mockImplementation(() => new Promise((_resolve, reject) => { rejectDelete = reject; }));
+    const { result: queryResult } = renderHook(() => useNotificationsQuery(), { wrapper });
+    const { result: mutationResult } = renderHook(() => useNotificationMutations(), { wrapper });
+    await waitFor(() => expect(queryResult.current.isSuccess).toBe(true));
+
+    act(() => mutationResult.current.remove.mutate(1));
+    await waitFor(() => expect(queryResult.current.data).toEqual([]));
+    act(() => rejectDelete(new Error('Network error')));
+    await waitFor(() => expect(mutationResult.current.remove.isError).toBe(true));
+    expect(queryResult.current.data).toHaveLength(1);
   });
 });

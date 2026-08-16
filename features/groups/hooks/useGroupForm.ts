@@ -118,7 +118,7 @@ export const useGroupForm = (
       if (actionType === "deleteMember") {
         response = await mutations.removeMember.mutateAsync({
           groupId: String(data.id as number),
-          body: { user_id: data.user_id as number },
+          body: { email: data.email as string },
         });
       }
 

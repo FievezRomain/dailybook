@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 import type { Material } from '../../../../theme/materials';
 import { radii, spacing, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
@@ -29,10 +29,10 @@ export function GlobalCreateMenu({ open, onClose, onSelect, material = 'solid', 
   };
 
   return (
-    <VascoBottomSheet open={open} onClose={handleDismiss} title="Créer" description="Que souhaitez-vous ajouter ?" material={material} height={590} testID={testID}>
-      <View style={{ gap: spacing.sm }}>
+    <VascoBottomSheet open={open} onClose={handleDismiss} title="Créer" description="Que souhaitez-vous ajouter ?" material={material} height={680} testID={testID}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm, paddingBottom: spacing.sm }}>
         {globalCreateChoices.map((choice) => <CreateMenuItem key={choice.id} choice={choice} onPress={() => requestSelection(choice.id)} />)}
-      </View>
+      </ScrollView>
     </VascoBottomSheet>
   );
 }

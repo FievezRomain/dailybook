@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Toast from 'react-native-toast-message';
 import { useContactMutations } from '../../../hooks/queries/useContactsQuery';
-import { useAuthStore } from '../../../stores/useAuthStore';
 import { CreateContactPayload, UpdateContactPayload } from '../types';
 import LoggerService from '../../../services/logs/LoggerService';
 import { parseApiError } from '../../../utils/errorParser';
@@ -11,7 +10,6 @@ import type { Contact } from '../../../models/Contact';
 export type ContactFormValues = Partial<Contact>;
 
 export function useContactForm(actionType: string, contact: ContactFormValues = {}, onSuccess?: (data?: unknown) => void) {
-  const { firebaseUser } = useAuthStore();
   const form = useForm<ContactFormValues>({ defaultValues: contact });
   const { setValue, reset } = form;
   const [loading, setLoading] = useState(false);
@@ -32,8 +30,7 @@ export function useContactForm(actionType: string, contact: ContactFormValues = 
     nom: data.nom ?? '',
     profession: data.profession,
     telephone: data.telephone,
-    email: data.email,
-    emailproprietaire: firebaseUser?.email ?? '',
+    email_contact: data.email ?? undefined,
   });
 
   const submit = async (data: ContactFormValues, onClose: () => void) => {

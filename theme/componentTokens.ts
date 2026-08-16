@@ -64,6 +64,7 @@ export const componentTokens = {
     filePreviewSize: 52,
     animalSelector: { width: 88, height: 106, ringSize: 72, imageSize: 56 },
     metricCard: { width: 164, height: 132 },
+    statisticCard: { summaryHeight: 104, overviewHeight: 106 },
     periodSelector: { width: 300, height: 40, itemHeight: 32 },
     dataVisualization: { width: 344, height: 250, plotHeight: 174 },
   },

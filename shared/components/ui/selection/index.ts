@@ -8,5 +8,7 @@ export { Switch } from './Switch';
 export type { SwitchProps } from './Switch';
 export { AnimalSelectorItem } from './AnimalSelectorItem';
 export type { AnimalSelectorItemProps } from './AnimalSelectorItem';
+export { AnimalScopeItem } from './AnimalScopeItem';
+export type { AnimalScopeItemProps } from './AnimalScopeItem';
 export { AnimalSelectorMore } from './AnimalSelectorMore';
 export { AnimalHistoryToggle } from './AnimalHistoryToggle';

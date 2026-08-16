@@ -108,6 +108,13 @@
       "expo-updates",
       "expo-apple-authentication",
       [
+        "expo-audio",
+        {
+          "microphonePermission": "Vasco utilise le micro uniquement pour enregistrer la note vocale que vous choisissez de créer.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
         "@react-native-google-signin/google-signin",
         {
           "iosUrlScheme": "com.googleusercontent.apps.592615799562-hjtrr6anli4uhkqudlp46d4v0pdo7v4i"

@@ -20,3 +20,11 @@ export async function markAllAsRead() {
   const response = await httpClient.patch('/notifications');
   return response.data;
 }
+
+export async function setRead(id: number, isRead: boolean): Promise<void> {
+  await httpClient.patch(`/notifications/${id}`, { is_read: isRead });
+}
+
+export async function deleteNotification(id: number): Promise<void> {
+  await httpClient.delete(`/notifications/${id}`);
+}

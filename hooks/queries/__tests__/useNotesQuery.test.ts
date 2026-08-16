@@ -9,6 +9,7 @@ jest.mock('../../../services/api/NoteService');
 
 const mockedGetNotes = NoteService.getNotes as jest.MockedFunction<typeof NoteService.getNotes>;
 const mockedCreateNote = NoteService.createNote as jest.MockedFunction<typeof NoteService.createNote>;
+const mockedUpdateNote = NoteService.updateNote as jest.MockedFunction<typeof NoteService.updateNote>;
 const mockedDeleteNote = NoteService.deleteNote as jest.MockedFunction<typeof NoteService.deleteNote>;
 
 describe('useNotesQuery', () => {
@@ -115,5 +116,38 @@ describe('useNoteMutations — remove', () => {
     });
 
     expect(mockedDeleteNote).toHaveBeenCalledWith('1');
+  });
+});
+
+describe('useNoteMutations — update', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  it('applies pin state optimistically and sends it to NoteService', async () => {
+    const wrapper = createQueryWrapper();
+    const note = createMockNote({ id: 7, is_pinned: false });
+    mockedGetNotes.mockResolvedValue([note] as any);
+    let resolveUpdate!: (value: any) => void;
+    mockedUpdateNote.mockImplementation(() => new Promise((resolve) => { resolveUpdate = resolve; }));
+    const { result: queryResult } = renderHook(() => useNotesQuery(), { wrapper });
+    const { result: mutationResult } = renderHook(() => useNoteMutations(), { wrapper });
+    await waitFor(() => expect(queryResult.current.isSuccess).toBe(true));
+
+    act(() => {
+      mutationResult.current.update.mutate({
+        id: '7',
+        body: { id: 7, titre: note.titre, note: note.note, is_pinned: true },
+      });
+    });
+
+    await waitFor(() => expect(queryResult.current.data?.[0].is_pinned).toBe(true));
+    expect(mockedUpdateNote).toHaveBeenCalledWith('7', {
+      id: 7,
+      titre: note.titre,
+      note: note.note,
+      is_pinned: true,
+    });
+
+    resolveUpdate({ ...note, is_pinned: true });
+    await waitFor(() => expect(mutationResult.current.update.isPending).toBe(false));
   });
 });

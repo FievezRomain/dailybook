@@ -30,3 +30,7 @@ export function getLinkedAnimals(ids: readonly number[], animals: readonly Anima
 export function getObjectiveProgress(objective: Objectif) { if (!objective.sousetapes.length) return 0; const complete = objective.sousetapes.filter((step) => ['done', 'completed', 'termine', 'terminé', 'true'].includes(String(step.state).toLowerCase())).length; return complete / objective.sousetapes.length; }
 
 export function formatObjectiveEnd(dateValue: Date) { const date = new Date(dateValue); return `Fin · ${new Intl.DateTimeFormat('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }).format(date)}`; }
+
+export function formatObjectivePeriod(startValue: Date, endValue: Date) { const formatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }); return `Du ${formatter.format(new Date(startValue))} au ${formatter.format(new Date(endValue))}`; }
+
+export function getDailyTaskProgress(events: readonly Event[]) { const total = events.length; const done = events.filter((event) => ['done', 'completed', 'termine', 'terminé', 'true'].includes(String(event.state).toLowerCase())).length; return { total, done, progress: total ? done / total : 0 }; }

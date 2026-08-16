@@ -1,0 +1,14 @@
+{
+  "fileKey": "y3EnZKYhqQju194UkyLoO7",
+  "createdAt": "2026-08-11",
+  "scope": "Plus hub tagline copy update",
+  "rollbackStatus": "ready",
+  "rollbackPage": "515:2",
+  "backupMapping": {
+    "500:6": "515:3",
+    "500:213": "515:17",
+    "500:420": "515:31",
+    "501:25227": "515:45"
+  },
+  "rollbackInstructions": "Replace the three Plus source screens and the Plus prototype with their exact mapped backups from page 515:2."
+}

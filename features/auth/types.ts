@@ -10,5 +10,6 @@ export type RegisterPayload = {
 
 export type UpdateUserPayload = {
   newEmail?: string;
+  prenom?: string;
   image?: string;
 };

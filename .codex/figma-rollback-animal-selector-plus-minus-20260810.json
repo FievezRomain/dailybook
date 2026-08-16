@@ -1,0 +1,24 @@
+{
+  "fileKey": "y3EnZKYhqQju194UkyLoO7",
+  "createdAt": "2026-08-10",
+  "scope": "Animal selector plus/minus states and progressive history disclosure in create/edit forms",
+  "rollbackStatus": "ready",
+  "rollbackPage": "469:4130",
+  "backupMapping": {
+    "458:23853": "469:4131",
+    "237:582": "469:4140",
+    "349:10401": "469:4155",
+    "265:383": "469:4170",
+    "349:14367": "469:4185",
+    "298:623": "469:4200",
+    "349:15934": "469:4213",
+    "399:20163": "469:4226",
+    "400:21363": "469:4239",
+    "357:2845": "469:4252",
+    "368:2218": "469:4268",
+    "391:2647": "469:4284",
+    "399:20892": "469:4297"
+  },
+  "createdComponentIds": ["470:166"],
+  "rollbackInstructions": "Restore each source from its mapped backup clone, remove expanded sibling screens and the shared component 470:166, then reconnect prototype destinations to the restored collapsed frames."
+}

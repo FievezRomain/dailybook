@@ -1,0 +1,12 @@
+{
+  "fileKey": "y3EnZKYhqQju194UkyLoO7",
+  "createdAt": "2026-08-11",
+  "scope": "Dedicated Plus hub page, shared hub item component, three theme sources and prototype navigation",
+  "rollbackStatus": "ready",
+  "plusPage": "496:2",
+  "rollbackPage": "496:3",
+  "homeSource": "356:402",
+  "homeBackup": "501:25110",
+  "createdNodeIds": ["498:20", "500:6", "500:213", "500:420", "501:25227"],
+  "rollbackInstructions": "Remove the Plus source page 496:2 and prototype 501:25227, replace Home 356:402 with backup 501:25110 while preserving its prototype position, then remove rollback page 496:3."
+}

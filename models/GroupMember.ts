@@ -1,6 +1,6 @@
 export type GroupMember = {
-  user_id: number;
-  role: string;
+  user_id?: number | null;
+  role?: string | null;
   email: string;
-  prenom: string;
+  prenom?: string | null;
 };

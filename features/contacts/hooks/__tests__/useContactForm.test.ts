@@ -26,7 +26,7 @@ describe('useContactForm', () => {
     expect(typeof result.current.resetValues).toBe('function');
   });
 
-  it('submit (create) calls createContact and injects emailproprietaire', async () => {
+  it('submit (create) maps the contact email without sending owner identity', async () => {
     mockedCreateContact.mockResolvedValue(undefined as any);
     const onSuccess = jest.fn();
     const onClose = jest.fn();
@@ -34,12 +34,13 @@ describe('useContactForm', () => {
     const { result } = renderHook(() => useContactForm('create', {}, onSuccess), { wrapper: createQueryWrapper() });
 
     await act(async () => {
-      await result.current.submit({ nom: 'Dupont', profession: 'Ostéopathe' }, onClose);
+      await result.current.submit({ nom: 'Dupont', profession: 'Ostéopathe', email: 'contact@test.com' }, onClose);
     });
 
     expect(mockedCreateContact).toHaveBeenCalledWith(
-      expect.objectContaining({ nom: 'Dupont', emailproprietaire: 'owner@test.com' }),
+      expect.objectContaining({ nom: 'Dupont', email_contact: 'contact@test.com' }),
     );
+    expect(mockedCreateContact.mock.calls[0]?.[0]).not.toHaveProperty('emailproprietaire');
     expect(onSuccess).toHaveBeenCalledTimes(1);
     expect(onClose).toHaveBeenCalledTimes(1);
   });

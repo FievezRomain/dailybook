@@ -1,0 +1,20 @@
+appId: com.vascoandco.vasco.ios
+name: Agenda - recherche et filtres combinés
+---
+- runFlow: ../auth/login.yaml
+- tapOn: "Agenda"
+- assertVisible:
+    id: "events-agenda"
+- tapOn: "Rechercher un événement"
+- inputText: "veterinaire"
+- hideKeyboard
+- tapOn: "Filtrer les événements"
+- assertVisible:
+    id: "agenda-filters"
+- tapOn: "Rendez-vous"
+- tapOn: "Appliquer les filtres"
+- assertVisible:
+    id: "events-agenda"
+- tapOn: "Filtrer les événements, 1 filtre actif"
+- tapOn: "Tous les types"
+- tapOn: "Réinitialiser"

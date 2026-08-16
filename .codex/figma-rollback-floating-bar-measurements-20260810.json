@@ -1,0 +1,57 @@
+{
+  "fileKey": "y3EnZKYhqQju194UkyLoO7",
+  "createdAt": "2026-08-10",
+  "checkpointPageId": "434:2",
+  "checkpointPageName": "99 — Rollback · 2026-08-10 · Floating Bar & Measurements",
+  "backups": {
+    "Navigation/Bottom Bar": "434:3",
+    "Navigation/Bottom Bar Documentation": "434:164",
+    "Animals/Workspace Body Light": "434:171",
+    "Animals/Workspace Body Dark": "434:197",
+    "Performance/Add Measurement": "434:223",
+    "Prototype/Animals Body": "434:234",
+    "Prototype/Animal Actions": "434:260"
+  },
+  "originalSourceIds": [
+    "162:238",
+    "162:304",
+    "253:942",
+    "349:8639",
+    "263:415",
+    "359:2926",
+    "359:16120"
+  ],
+  "createdNodeIds": [
+    "441:1938",
+    "441:1944",
+    "444:1945",
+    "444:2079",
+    "445:20823",
+    "445:20873",
+    "446:2289",
+    "446:2336",
+    "447:2352",
+    "447:2432",
+    "448:5066",
+    "448:5103",
+    "448:5140",
+    "448:5168",
+    "448:5193",
+    "448:5222"
+  ],
+  "mutatedNodeIds": [
+    "162:238",
+    "162:304",
+    "253:942",
+    "349:8639",
+    "359:2926",
+    "373:2618"
+  ],
+  "bulkMutation": {
+    "scope": "All visible instances of Navigation/Bottom Bar on screen and prototype pages",
+    "count": 175,
+    "geometry": { "width": 358, "height": 72, "horizontalMargin": 16, "bottomMargin": 16 }
+  },
+  "rollbackStatus": "accepted-keep-as-archive",
+  "acceptedAt": "2026-08-10"
+}

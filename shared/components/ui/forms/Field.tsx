@@ -5,6 +5,7 @@ import { useAppTheme } from '../../../../theme/useAppTheme';
 
 export interface FieldProps {
   label: string;
+  labelHidden?: boolean;
   required?: boolean;
   helperText?: string;
   errorMessage?: string;
@@ -18,6 +19,7 @@ export interface FieldProps {
 
 export function Field({
   label,
+  labelHidden = false,
   required = false,
   helperText,
   errorMessage,
@@ -41,7 +43,7 @@ export function Field({
 
   return (
     <View style={[{ gap: spacing.xs, width: '100%' }, style]} testID={testID}>
-      <Text
+      {labelHidden ? null : <Text
         style={{
           color: statusColor,
           fontFamily: typography.fonts.medium,
@@ -50,7 +52,7 @@ export function Field({
         }}
       >
         {label}{required ? ' *' : ''}
-      </Text>
+      </Text>}
       {children}
       {(errorMessage || helperText) ? (
         <Text

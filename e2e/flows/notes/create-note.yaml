@@ -1,24 +1,32 @@
 appId: com.vascoandco.vasco.ios
-name: Notes - create a new note
+name: Notes - création d'une note écrite
 ---
 - runFlow: ../auth/login.yaml
 
 - tapOn:
-    id: "tab-notes"
+    id: "main-tabs-more"
+- assertVisible:
+    id: "notes-list"
 
 - tapOn:
-    id: "fab-add-note"
+    id: "notes-create"
 
-- assertVisible: "Nouvelle note"
+- assertVisible:
+    id: "note-form-sheet"
+- assertVisible: "Créer une note"
 
 - tapOn:
     id: "input-note-titre"
 - inputText: "Observation du jour"
+- hideKeyboard
 
 - tapOn:
     id: "input-note-contenu"
 - inputText: "Tornado semble un peu moins en forme, à surveiller."
+- hideKeyboard
 
-- tapOn: "Enregistrer"
+- tapOn: "Créer la note"
 
-- assertVisible: "Observation du jour"
+- extendedWaitUntil:
+    visible: "Observation du jour"
+    timeout: 20000

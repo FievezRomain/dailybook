@@ -1,11 +1,12 @@
 import { Image, type ImageStyle, type StyleProp } from 'react-native';
 
-export type BrandLoaderSize = 'compact' | 'regular' | 'full';
+export type BrandLoaderSize = 'compact' | 'regular' | 'full' | 'display';
 
 const dimensions: Record<BrandLoaderSize, number> = {
   compact: 20,
   regular: 48,
   full: 96,
+  display: 120,
 };
 
 export interface BrandLoaderProps {

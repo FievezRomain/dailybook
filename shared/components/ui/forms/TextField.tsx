@@ -13,6 +13,7 @@ import { Field } from './Field';
 
 export interface TextFieldProps extends Omit<TextInputProps, 'style'> {
   label: string;
+  labelHidden?: boolean;
   required?: boolean;
   helperText?: string;
   errorMessage?: string;
@@ -24,6 +25,7 @@ export interface TextFieldProps extends Omit<TextInputProps, 'style'> {
 
 export function TextField({
   label,
+  labelHidden = false,
   required,
   helperText,
   errorMessage,
@@ -47,6 +49,7 @@ export function TextField({
   return (
     <Field
       label={label}
+      labelHidden={labelHidden}
       required={required}
       helperText={helperText}
       errorMessage={errorMessage}

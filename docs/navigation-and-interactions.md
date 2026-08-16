@@ -25,11 +25,16 @@ Le prototype Figma reste la référence précise pour les hotspots et transition
 | Top bar | Avatar | Réglages / profil |
 | FAB | Tap | Menu global de création |
 
+`Autre` est un hub racine distinct de `Compte et réglages`. Il présente directement Groupes, Contacts, Notes et Souhaits dans une grille de tuiles 2 × 2, sans intertitre redondant. Groupes reste visible et identifié Premium ; pour un compte gratuit, son ouverture utilise le parcours Premium contextualisé. Notifications et Compte/Réglages ne sont pas répétés dans ce hub : leurs accès globaux restent respectivement la cloche et l’avatar de la Top Bar.
+
 ## 3. Home et Agenda
 
 Home sépare `Aujourd’hui`, `Prochains jours` et `Objectifs en cours`. Il n’affiche ni phrase d’introduction sous la salutation, ni bloc d’actions rapides. Un tap sur une Event Card ouvre le détail de l’événement. Un tap sur une Objective Card ouvre le détail de l’objectif.
 
 Dans Agenda :
+
+- la recherche instantanée et les filtres de type sont combinables et réinitialisables ;
+- tous les événements de la journée défilent naturellement, sans action `Voir plus` ;
 
 - sélectionner une date met à jour la liste située sous le calendrier sans changer d’écran ;
 - les événements sont indiqués dans le calendrier par leurs couleurs ;
@@ -100,6 +105,10 @@ Voix : autorisation micro → enregistrement → traitement → vérification du
 
 Souhait : liste → détail → menu d’actions. Création/modification en trois étapes : Informations → Options → Vérification. Prix, lien et destinataire sont optionnels. Aucune bottom bar dans ce wizard.
 
+La liste Souhaits utilise une grille décalée à deux colonnes dont les cartes s’adaptent au contenu sans troncature. Les états vides de Contacts, Groupes, Notes et Souhaits ne dupliquent pas l’action du FAB.
+
+Le menu global du FAB suit toujours cet ordre : Événement, Animal, Objectif, Note, Contact, Groupe, Souhait. Groupe conserve son contrôle Premium et Souhait utilise l’icône cœur.
+
 ## 9. Contacts et Groupes
 
 Contact : liste → détail → `…` → modifier/supprimer. Création/modification en trois étapes : Identité → Coordonnées → Vérification. Aucune bottom bar dans ce wizard.
@@ -111,6 +120,8 @@ Compte Premium : liste → détail Animaux/Membres. Actions : modifier le groupe
 ## 10. Notifications et Réglages
 
 Cloche → liste. Une invitation ouvre ses actions Accepter/Refuser. Les autres notifications ouvrent l’entité associée lorsqu’elle existe.
+
+Un compte Gratuit peut accepter ou refuser une invitation, rejoindre un groupe et consulter les groupes dont il fait partie. La création d’un groupe et les actions d’ajout de membres ou d’animaux restent Premium et ouvrent le parcours contextualisé.
 
 Avatar/Plus → Réglages : Profil, Apparence, Notifications, Sécurité, Données et confidentialité, Abonnement et support.
 

@@ -4,9 +4,9 @@ export type HistoryEntry = {
   id: number;
   idanimal: number;
   date: string;
-  value: number;
-  unity: string;
-  type: string;
+  value: number | string;
+  unity?: string;
+  type?: string;
 };
 
 export type ChartDataset = {
@@ -22,12 +22,12 @@ export type ChartData = {
 
 /** Item retourné par le backend pour les stats événementielles (balade, concours, dépense, entraînement). */
 export type StatisticItem = {
-  value: number;
-  exact_value: number;
-  name: string;
-  date: string;
-  count: number;
-  events: Event[];
+  value?: number;
+  exact_value?: number;
+  name?: string;
+  date?: string;
+  count?: number;
+  events?: Event[];
   /** Couleur ajoutée côté frontend pour le pie chart. */
   color?: string;
 };

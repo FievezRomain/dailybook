@@ -17,10 +17,11 @@ import {
 export const GROUPS_KEY = ['groups'] as const;
 export const INVITATIONS_KEY = ['invitations'] as const;
 
-export function useGroupsQuery() {
+export function useGroupsQuery(enabled = true) {
   return useQuery({
     queryKey: GROUPS_KEY,
     queryFn: GroupService.getGroups,
+    enabled,
   });
 }
 
@@ -36,6 +37,14 @@ export function useGroupAnimalsQuery(groupId: string) {
     queryKey: ['groups', groupId, 'animals'],
     queryFn: () => GroupService.getGroupAnimals(groupId),
     enabled: !!groupId,
+  });
+}
+
+export function usePendingAnimalSharesQuery(groupId: string, enabled = true) {
+  return useQuery({
+    queryKey: ['groups', groupId, 'animal-shares', 'pending'],
+    queryFn: () => GroupService.getPendingAnimalShares(groupId),
+    enabled: enabled && !!groupId,
   });
 }
 
@@ -58,8 +67,7 @@ export function useGroupMutations() {
       const optimistic: Group = {
         ...body,
         id: -1,
-        members: [],
-        animals: [],
+        data: { members: [], animals: [] },
         syncing: true,
       };
       queryClient.setQueryData<Group[]>(GROUPS_KEY, (prev = []) => [optimistic, ...prev]);
@@ -164,5 +172,14 @@ export function useGroupMutations() {
     onSuccess: invalidateAll,
   });
 
-  return { create, update, remove, inviteMembers, respondInvitation, proposeAnimal, respondAnimalShare, removeMember };
+  const removeAnimal = useMutation({
+    mutationFn: ({ groupId, animalId }: { groupId: string; animalId: string }) =>
+      GroupService.removeGroupAnimal(groupId, animalId),
+    onError: async () => {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
+    },
+    onSuccess: invalidateAll,
+  });
+
+  return { create, update, remove, inviteMembers, respondInvitation, proposeAnimal, respondAnimalShare, removeMember, removeAnimal };
 }

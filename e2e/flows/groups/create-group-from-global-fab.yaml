@@ -1,0 +1,8 @@
+appId: com.vascoandco.vasco.ios
+name: Groupe - création depuis le FAB global
+---
+- runFlow: ../auth/login.yaml
+- tapOn: "Créer"
+- tapOn: "Groupe"
+- assertVisible:
+    id: "groups-premium-required"

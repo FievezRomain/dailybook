@@ -9,6 +9,18 @@ export type StatType =
   | 'alimentations'
   | 'concours';
 
+export type StatisticsResponseMap = {
+  depenses: EventStatisticsData;
+  entrainements: EventStatisticsData;
+  balades: EventStatisticsData;
+  poids: PhysiqueStatisticsData;
+  tailles: PhysiqueStatisticsData;
+  alimentations: PhysiqueStatisticsData;
+  concours: EventStatisticsData;
+};
+
+export type StatisticDetailType = 'poids' | 'balades' | 'depenses' | 'entrainements' | 'concours';
+
 export type StatItemKey =
   | 'depense'
   | 'balade'
@@ -18,11 +30,10 @@ export type StatItemKey =
   | 'alimentation'
   | 'concours';
 
-export type Temporality = 'Mois' | 'Année';
+export type StatisticsPeriod = 'day' | 'month' | 'year' | 'fiveYears';
 
 export type StatisticsQueryPayload = {
   animaux: number[];
-  email: string;
   dateDebut: string;
   dateFin: string;
 };

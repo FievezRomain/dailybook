@@ -91,7 +91,7 @@ La bottom bar contient au maximum cinq destinations :
 - Animaux ;
 - Plus.
 
-`Suivi` regroupe Objectifs et Statistiques. `Plus` donne accès aux modules secondaires : Groupes, Contacts, Notes, Souhaits, Notifications et Réglages selon la structure montrée dans les maquettes.
+`Suivi` regroupe Objectifs et Statistiques. `Autre` donne accès aux modules secondaires : Groupes, Contacts, Notes et Souhaits selon la structure montrée dans les maquettes. Notifications et Réglages restent accessibles depuis la Top Bar.
 
 La bottom bar est une surface flottante superposée au contenu scrollable. Sur une largeur de référence de 390 px, elle mesure 358 px, conserve 16 px de marge latérale et reste à 16 px au-dessus de la safe area basse. Le contenu peut défiler derrière elle, mais son padding de fin doit permettre au dernier élément de remonter entièrement au-dessus de la barre. Solid et Glass utilisent exactement la même géométrie ; le fallback Solid remplace seulement le matériau.
 
@@ -146,6 +146,9 @@ Chaque liste ou écran distant doit prévoir :
 - skeleton pendant la lecture initiale ;
 - rafraîchissement local sans bloquer tout l’écran ;
 - état vide contextualisé sans bouton redondant avec le FAB ;
+- Agenda avec recherche et filtres combinables, date toujours visible sur les cartes et heure facultative ;
+- suivi visuel Animal visible mais verrouillé par une explication Premium contextualisée pour un compte Gratuit ;
+- menu global ordonné Événement, Animal, Objectif, Note, Contact, Groupe, Souhait.
 - état erreur humain avec `Réessayer` ;
 - feedback local pendant une mutation ;
 - snackbar ou confirmation discrète après succès.

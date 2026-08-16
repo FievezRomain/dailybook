@@ -7,7 +7,6 @@ export type SubTaskPayload = {
 
 export type CreateObjectifPayload = {
   title: string;
-  temporalityobjectif?: string;
   datedebut: string;
   datefin: string;
   animaux: number[];
