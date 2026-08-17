@@ -3,20 +3,21 @@ import { useStatisticsQuery } from '../../../hooks/queries/useStatisticsQuery';
 import { buildStatisticsQuery } from '../statisticsUtils';
 import type { StatisticsPeriod } from '../types';
 
-export function useStatisticsDashboard(period: StatisticsPeriod, animalIds: readonly number[]) {
+export function useStatisticsDashboard(period: StatisticsPeriod, animalIds: readonly number[], periodAnchor: Date) {
   const animalKey = animalIds.join(',');
   const parameters = useMemo(
-    () => buildStatisticsQuery(period, animalIds),
-    [animalKey, period],
+    () => buildStatisticsQuery(period, animalIds, periodAnchor),
+    [animalKey, period, periodAnchor],
   );
-  const poids = useStatisticsQuery('poids', parameters);
-  const tailles = useStatisticsQuery('tailles', parameters);
+  const singleAnimal = animalIds.length === 1;
+  const poids = useStatisticsQuery('poids', parameters, singleAnimal);
+  const tailles = useStatisticsQuery('tailles', parameters, singleAnimal);
   const balades = useStatisticsQuery('balades', parameters);
   const depenses = useStatisticsQuery('depenses', parameters);
   const entrainements = useStatisticsQuery('entrainements', parameters);
-  const alimentations = useStatisticsQuery('alimentations', parameters);
+  const alimentations = useStatisticsQuery('alimentations', parameters, singleAnimal);
   const concours = useStatisticsQuery('concours', parameters);
-  const queries = [poids, tailles, balades, depenses, entrainements, concours];
+  const queries = [balades, depenses, entrainements, concours, ...(singleAnimal ? [poids, tailles, alimentations] : [])];
 
   return {
     parameters,

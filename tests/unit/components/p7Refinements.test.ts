@@ -21,7 +21,22 @@ describe('P7.f visual refinements', () => {
 
   it('aggregates every animal when the Tous filter is active', () => {
     const source = read('features/objectifs/screens/TrackingScreen.tsx');
-    expect(source).toContain('selectedAnimalId == null ? animals.map((animal) => animal.id) : [selectedAnimalId]');
+    expect(source).toContain("statisticsAnimalSelection === 'all' ? animals.map((animal) => animal.id) : statisticsAnimalSelection");
     expect(source).toContain('animalIds={selectedAnimalIds}');
+  });
+
+  it('supports ordered multi-selection for statistics', () => {
+    const tracking = read('features/objectifs/screens/TrackingScreen.tsx');
+    const selector = read('shared/components/ui/selection/AnimalSelectorItem.tsx');
+    expect(tracking).toContain('selectionOrder={selectionOrder}');
+    expect(tracking).toContain("mode=\"multiple\"");
+    expect(selector).toContain('selectionOrder?: number');
+  });
+
+  it('reuses the event animal selection pattern for objectives', () => {
+    const source = read('features/objectifs/screens/ObjectiveFormSheetScreen.tsx');
+    expect(source).toContain('<Checkbox');
+    expect(source).toContain('<ListItem');
+    expect(source).toContain('objective-add-step');
   });
 });

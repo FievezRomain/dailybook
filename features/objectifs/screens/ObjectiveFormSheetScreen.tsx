@@ -1,24 +1,25 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useRef, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import type { Animal } from '../../../models/Animal';
 import type { Objectif } from '../../../models/Objectif';
 import { useObjectifMutations } from '../../../hooks/queries/useObjectifsQuery';
 import { useObjectiveWizardStore } from '../../../stores/useObjectiveWizardStore';
-import { AnimalHistoryToggle, AnimalSelectorItem, Banner, CalendarPicker, ControlledField, ControlledTextField, DateTimeField, FormSheet, LinearProgress, TextArea } from '../../../shared/components/ui';
+import { AnimalHistoryToggle, Avatar, Banner, Button, CalendarPicker, Checkbox, ControlledField, ControlledTextField, DateTimeField, FormSheet, IconButton, LinearProgress, ListItem, TextField } from '../../../shared/components/ui';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { parseApiError } from '../../../utils/errorParser';
 import { getAnimalPresence, sortAnimalsForWorkspace } from '../../animals/animalWorkspaceUtils';
-import { buildObjectivePayload, buildObjectiveUpdatePayload, objectiveDetailsSchema, objectiveToWizardForm, objectiveWizardFingerprint, stepsFromText } from '../objectiveFormUtils';
+import { getAnimalSelectionSubtitle } from '../../events/eventAnimalsUtils';
+import { buildObjectivePayload, buildObjectiveUpdatePayload, objectiveDetailsSchema, objectiveToDuplicateWizardForm, objectiveToWizardForm, objectiveWizardFingerprint } from '../objectiveFormUtils';
 
 type ObjectiveDetails = z.infer<typeof objectiveDetailsSchema>;
 type CalendarField = 'datedebut' | 'datefin';
 
 export interface ObjectiveFormSheetScreenProps {
-  mode: 'create' | 'edit';
+  mode: 'create' | 'edit' | 'duplicate';
   objective?: Objectif;
   animals: readonly Animal[];
   onClose: () => void;
@@ -42,18 +43,19 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
     resolver: zodResolver(objectiveDetailsSchema),
     defaultValues: { title: '', datedebut: '', datefin: '' },
   });
+  const duplicate = mode === 'duplicate' || (mode === 'create' && Boolean(objective));
 
   useEffect(() => {
     const key = `${mode}:${objective?.id ?? 'new'}`;
     if (initializedKey.current === key) return;
     initializedKey.current = key;
-    const initial = mode === 'edit' && objective
-      ? objectiveToWizardForm(objective)
+    const initial = (mode === 'edit' || duplicate) && objective
+      ? duplicate ? objectiveToDuplicateWizardForm(objective) : objectiveToWizardForm(objective)
       : { title: '', datedebut: '', datefin: '', animaux: [], sousetapes: [] };
     replaceFormData(initial);
     detailsForm.reset({ title: initial.title, datedebut: initial.datedebut, datefin: initial.datefin });
     setBaseline(objectiveWizardFingerprint(initial));
-  }, [detailsForm, mode, objective, replaceFormData]);
+  }, [detailsForm, duplicate, mode, objective, replaceFormData]);
 
   useEffect(() => detailsForm.watch((values) => {
     if (typeof values.title === 'string') setField('title', values.title);
@@ -66,9 +68,9 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
   const historicalAnimals = sortedAnimals.filter((animal) => getAnimalPresence(animal) === 'history');
   const selectedHistoricalAnimal = historicalAnimals.some((animal) => form.animaux.includes(animal.id));
   const visibleHistoricalAnimals = historyExpanded ? historicalAnimals : [];
+  const visibleAnimals = [...presentAnimals, ...visibleHistoricalAnimals];
   const dirty = baseline !== '' && objectiveWizardFingerprint(form) !== baseline;
   const pending = mutations.create.isPending || mutations.update.isPending;
-  const stepText = form.sousetapes.map((item) => item.label).join('\n');
 
   useEffect(() => {
     if (selectedHistoricalAnimal) setHistoryExpanded(true);
@@ -82,6 +84,9 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
       return;
     }
     if (step === 1) {
+      setField('sousetapes', form.sousetapes
+        .filter((item) => item.label.trim())
+        .map((item, index) => ({ ...item, label: item.label.trim(), order: index + 1 })));
       setStep(2);
       return;
     }
@@ -98,13 +103,22 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
   const toggleAnimal = (animalId: number) => setField('animaux', form.animaux.includes(animalId)
     ? form.animaux.filter((id) => id !== animalId)
     : [...form.animaux, animalId]);
+  const addStep = () => setField('sousetapes', [
+    ...form.sousetapes,
+    { label: '', state: 'todo', order: form.sousetapes.length + 1 },
+  ]);
+  const updateStep = (index: number, label: string) => setField('sousetapes', form.sousetapes.map((item, itemIndex) =>
+    itemIndex === index ? { ...item, label } : item));
+  const removeStep = (index: number) => setField('sousetapes', form.sousetapes
+    .filter((_, itemIndex) => itemIndex !== index)
+    .map((item, itemIndex) => ({ ...item, order: itemIndex + 1 })));
   const selectDate = (value: string) => {
     if (!calendarField) return;
     detailsForm.setValue(calendarField, value, { shouldDirty: true, shouldValidate: true });
   };
   const footerLabel = step === 2 ? (mode === 'edit' ? 'Enregistrer les modifications' : 'Créer l’objectif') : 'Continuer';
 
-  return <><FormSheet title={mode === 'edit' ? 'Modifier l’objectif' : 'Nouvel objectif'} onBack={() => step > 0 ? setStep(step - 1) : onClose()} onClose={onClose} dirty={dirty} confirmBackWhenDirty={step === 0} footerLabel={footerLabel} onFooterPress={() => void continueWizard()} footerDisabled={pending} footerLoading={pending} testID="objective-form-sheet">
+  return <><FormSheet title={mode === 'edit' ? 'Modifier l’objectif' : duplicate ? 'Dupliquer l’objectif' : 'Nouvel objectif'} onBack={() => step > 0 ? setStep(step - 1) : onClose()} onClose={onClose} dirty={dirty} confirmBackWhenDirty={step === 0} footerLabel={footerLabel} onFooterPress={() => void continueWizard()} footerDisabled={pending} footerLoading={pending} testID="objective-form-sheet">
     <LinearProgress current={step + 1} total={3} label={`Étape ${step + 1} sur 3`} />
     <View style={{ gap: spacing.xs, marginTop: spacing.md }}>
       <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: typography.lineHeights.loose }}>{step === 0 ? 'Définir le cap' : step === 1 ? 'Animaux & étapes' : 'Vérification'}</Text>
@@ -116,9 +130,23 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
       <ControlledField control={detailsForm.control} name="datefin">{({ value, errorMessage }) => <DateField label="Date de fin" value={value} errorMessage={errorMessage} onPress={() => setCalendarField('datefin')} />}</ControlledField>
     </> : null}
     {step === 1 ? <>
-      {sortedAnimals.length ? <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingVertical: spacing.sm }}><View style={{ flexDirection: 'row' }}>{presentAnimals.map((animal) => <AnimalSelectorItem key={animal.id} name={animal.nom} imageUrl={animal.image} selected={form.animaux.includes(animal.id)} onPress={() => toggleAnimal(animal.id)} testID={`objective-animal-${animal.id}`} />)}{visibleHistoricalAnimals.map((animal) => <AnimalSelectorItem key={animal.id} name={animal.nom} imageUrl={animal.image} selected={form.animaux.includes(animal.id)} onPress={() => toggleAnimal(animal.id)} testID={`objective-animal-${animal.id}`} />)}</View></ScrollView> : <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium }}>Aucun animal disponible. Vous pourrez en associer un plus tard.</Text>}
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>Sélectionnez un ou plusieurs animaux</Text>
+      {sortedAnimals.length ? <View accessibilityRole="list" style={{ gap: 10 }}>{visibleAnimals.map((animal) => { const selected = form.animaux.includes(animal.id); const subtitle = getAnimalSelectionSubtitle(animal); return <View key={animal.id} style={{ flexDirection: 'row', alignItems: 'center' }}><Checkbox value={selected} accessibilityLabel={`${selected ? 'Désélectionner' : 'Sélectionner'} ${animal.nom}`} onValueChange={() => toggleAnimal(animal.id)} /><View style={{ flex: 1 }}><ListItem testID={`objective-animal-${animal.id}`} title={animal.nom} subtitle={subtitle} leading={<Avatar initials={animal.nom} imageUrl={animal.image} accessibilityLabel={`Photo de ${animal.nom}`} size={40} decorative />} accessibilityLabel={`${animal.nom}, ${subtitle}, ${selected ? 'sélectionné' : 'non sélectionné'}`} accessibilityHint="Active ou désactive cet animal" onPress={() => toggleAnimal(animal.id)} /></View></View>; })}</View> : <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium }}>Aucun animal disponible. Vous pourrez en associer un plus tard.</Text>}
       {historicalAnimals.length ? <AnimalHistoryToggle expanded={historyExpanded} onPress={() => setHistoryExpanded((value) => !value)} testID="objective-animal-history" /> : null}
-      <TextArea label="Étapes" placeholder="Une étape par ligne…" value={stepText} helperText={`${form.sousetapes.length} étape${form.sousetapes.length > 1 ? 's' : ''}`} onChangeText={(value) => setField('sousetapes', stepsFromText(value, form.sousetapes))} />
+      <View style={{ gap: spacing.md }}>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Étapes (optionnel)</Text>
+        {form.sousetapes.map((item, index) => <TextField
+          key={item.id ?? `new-step-${index}`}
+          label={`Étape ${index + 1}`}
+          placeholder="Décrivez cette étape"
+          value={item.label}
+          maxLength={500}
+          onChangeText={(value) => updateStep(index, value)}
+          trailing={<IconButton icon="delete" accessibilityLabel={`Supprimer l’étape ${index + 1}`} variant="ghost" size="small" onPress={() => removeStep(index)} testID={`objective-remove-step-${index}`} />}
+          testID={`objective-step-${index}`}
+        />)}
+      </View>
+      <Button label="Ajouter une étape" icon="add" variant="secondary" fullWidth onPress={addStep} style={{ borderRadius: radii.lg }} testID="objective-add-step" />
     </> : null}
     {step === 2 ? <ObjectiveSummary form={form} animals={sortedAnimals} onEdit={() => setStep(0)} /> : null}
     {step === 2 ? <View style={{ padding: spacing.md, borderRadius: radii.lg, backgroundColor: colors.backgroundPaper }}><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Vasco suivra automatiquement la progression à partir des événements et mesures liés.</Text></View> : null}

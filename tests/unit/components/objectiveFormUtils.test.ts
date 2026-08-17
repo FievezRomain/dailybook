@@ -1,5 +1,5 @@
 import type { Objectif } from '../../../models/Objectif';
-import { buildObjectivePayload, objectiveDetailsSchema, objectiveToWizardForm, stepsFromText } from '../../../features/objectifs/objectiveFormUtils';
+import { buildObjectivePayload, objectiveDetailsSchema, objectiveToDuplicateWizardForm, objectiveToWizardForm, stepsFromText } from '../../../features/objectifs/objectiveFormUtils';
 
 const objective: Objectif = {
   id: 7,
@@ -27,7 +27,11 @@ describe('objective form contract', () => {
     const payload = buildObjectivePayload(form);
     expect(payload).not.toHaveProperty('temporalityobjectif');
     expect(payload).not.toHaveProperty('reminder');
-    expect(payload.sousetapes).toEqual([{ id: 9, etape: 'Faire 5 km', state: 'done', order: 1 }]);
+    expect(payload.sousetapes).toEqual([{ etape: 'Faire 5 km', state: 'done', order: 1 }]);
+  });
+
+  it('prefills duplication without reusing step ids or completion state', () => {
+    expect(objectiveToDuplicateWizardForm(objective).sousetapes).toEqual([{ label: 'Faire 5 km', state: 'todo', order: 1 }]);
   });
 
   it('preserves existing step ids by position while normalizing entered lines', () => {

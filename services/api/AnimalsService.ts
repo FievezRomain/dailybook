@@ -13,7 +13,17 @@ import { FileService } from './FileService';
 
 const _crud = createCrudService<Animal, CreateAnimalPayload, UpdateAnimalPayload>('/animals');
 
-export const getAnimals = _crud.getAll;
+export async function getAnimals(): Promise<Animal[]> {
+  const animals = await _crud.getAll();
+  return Promise.all(animals.map(async (animal) => {
+    if (!animal.image) return animal;
+    try {
+      return { ...animal, imageUrl: await FileService.getDownloadUrl(animal.image, 'animal', animal.id) };
+    } catch {
+      return animal;
+    }
+  }));
+}
 export const createAnimal = _crud.create;
 export const updateAnimal = _crud.update;
 export const deleteAnimal = _crud.remove;

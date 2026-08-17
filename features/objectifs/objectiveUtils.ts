@@ -2,7 +2,7 @@ import type { Objectif } from '../../models/Objectif';
 import type { CreateObjectifPayload, UpdateObjectifPayload } from './types';
 
 const doneStates = ['done', 'completed', 'termine', 'terminé', 'true'];
-export const isObjectiveStepDone = (state: string) => doneStates.includes(String(state).toLowerCase());
+export const isObjectiveStepDone = (state: string | boolean) => doneStates.includes(String(state).toLowerCase());
 const apiDate = (value: Date) => new Date(value).toISOString().slice(0, 10);
 
 export function objectiveToPayload(objective: Objectif): UpdateObjectifPayload {

@@ -1,29 +1,35 @@
-import { buildStatisticsQuery, getActivityHeatmapData, getEventChartData, getEventCount, getEventHistory, getEventTotal, getExpenseCategoryData, getHistoryTrend, getLatestNumericHistory, getPhysicalChartData, statisticsPeriodOptions } from '../statisticsUtils';
+import { buildStatisticsQuery, formatStatisticHistoryDate, formatStatisticsPeriodLabel, getActivityHeatmapData, getEventChartData, getEventCount, getEventHistory, getEventTotal, getExpenseCategoryData, getHistoryTrend, getLatestNumericHistory, getPhysicalChartData, groupExpenseEvents, groupStatisticEventsByDate, shiftStatisticsPeriodAnchor, statisticsPeriodOptions } from '../statisticsUtils';
 import type { EventStatisticsData, PhysiqueStatisticsData } from '../../../models/Statistics';
 
 describe('statisticsUtils', () => {
   const now = new Date(2026, 7, 10, 12);
 
-  it('exposes the four periods from the Statistics design', () => {
+  it('exposes the useful periods without the single-day view', () => {
     expect(statisticsPeriodOptions.map((option) => option.label)).toEqual([
-      'Jour',
       'Mois',
-      '1 an',
+      'Année',
       '5 ans',
     ]);
   });
 
   it.each([
-    ['day', '2026-08-10'],
-    ['month', '2026-07-11'],
-    ['year', '2025-08-10'],
-    ['fiveYears', '2021-08-10'],
-  ] as const)('maps %s to an ISO date range', (period, dateDebut) => {
+    ['month', '2026-08-01', '2026-08-31'],
+    ['year', '2026-01-01', '2026-12-31'],
+    ['fiveYears', '2022-01-01', '2026-12-31'],
+  ] as const)('maps %s to a calendar date range', (period, dateDebut, dateFin) => {
     expect(buildStatisticsQuery(period, [4, 8], now)).toEqual({
       animaux: [4, 8],
       dateDebut,
-      dateFin: '2026-08-10',
+      dateFin,
     });
+  });
+
+  it('labels and moves each selectable range', () => {
+    expect(formatStatisticsPeriodLabel('month', now)).toBe('août 2026');
+    expect(formatStatisticsPeriodLabel('year', now)).toBe('2026');
+    expect(formatStatisticsPeriodLabel('fiveYears', now)).toBe('2022 – 2026');
+    expect(shiftStatisticsPeriodAnchor('month', now, -1).getMonth()).toBe(6);
+    expect(shiftStatisticsPeriodAnchor('fiveYears', now, -1).getFullYear()).toBe(2021);
   });
 
   it('maps physical history to the latest value, trend and chart points', () => {
@@ -70,10 +76,46 @@ describe('statisticsUtils', () => {
       { date: '2026-08-08', value: 45, detail: 'Vétérinaire' },
     ]);
     expect(getExpenseCategoryData(data)).toEqual([{ label: 'Vétérinaire', value: 45 }]);
+    expect(groupStatisticEventsByDate(data)[0]?.[0]).toBe('2026-08-08');
   });
 
   it('builds activity heatmap values from dated occurrences, never distances', () => {
     const data: EventStatisticsData = { statistic: [{ date: '2026-08-03', exact_value: 12 }, { date: '2026-08-03', exact_value: 8 }] };
-    expect(getActivityHeatmapData(data).find((cell) => cell.row === 'L' && cell.column === '1')?.value).toBe(2);
+    expect(getActivityHeatmapData(data, 'month', { dateDebut: '2026-08-01', dateFin: '2026-08-31' }).find((cell) => cell.row.includes('août 2026') && cell.column === '3')?.value).toBe(2);
+  });
+
+  it('uses months and years for annual heatmaps', () => {
+    const data: EventStatisticsData = { statistic: [{ date: '2025-01-03' }, { date: '2025-01-09' }, { date: '2025-02-02' }] };
+    const heatmap = getActivityHeatmapData(data, 'fiveYears', { dateDebut: '2025-01-01', dateFin: '2026-12-31' });
+    expect(heatmap.some((cell) => cell.row === '2025' && cell.column.startsWith('janv') && cell.value === 2)).toBe(true);
+    expect(heatmap.some((cell) => cell.row === '2026')).toBe(true);
+  });
+
+  it('groups expense history by expense category, then by event type', () => {
+    const data: EventStatisticsData = { statistic: [{ events: [
+      { id: 1, nom: 'Engagement', dateevent: '2026-08-02', animaux: [4], eventtype: 'concours', depense: 30 } as never,
+      { id: 2, nom: 'Consultation', dateevent: '2026-08-03', animaux: [4], eventtype: 'depense', depense: 45, categoriedepense: 'Vétérinaire' },
+    ] }] };
+
+    expect(groupExpenseEvents(data).map(([label]) => label)).toEqual(['Concours', 'Vétérinaire']);
+    expect(getExpenseCategoryData(data)).toEqual([
+      { label: 'Concours', value: 30 },
+      { label: 'Vétérinaire', value: 45 },
+    ]);
+  });
+
+  it('merges expense groups regardless of case', () => {
+    const data: EventStatisticsData = { statistic: [{ events: [
+      { id: 1, nom: 'Soin 1', dateevent: '2026-08-02', animaux: [4], eventtype: 'depense', depense: 20, categoriedepense: 'soins' },
+      { id: 2, nom: 'Soin 2', dateevent: '2026-08-03', animaux: [4], eventtype: 'depense', depense: 30, categoriedepense: 'Soins' },
+    ] }] };
+
+    expect(groupExpenseEvents(data)).toHaveLength(1);
+    expect(groupExpenseEvents(data)[0]?.[0]).toBe('Soins');
+    expect(getExpenseCategoryData(data)).toEqual([{ label: 'Soins', value: 50 }]);
+  });
+
+  it('keeps the year visible in statistic history dates', () => {
+    expect(formatStatisticHistoryDate('2024-03-08')).toContain('2024');
   });
 });

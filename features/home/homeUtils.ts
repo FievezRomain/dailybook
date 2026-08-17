@@ -25,7 +25,7 @@ export function splitHomeEvents(events: readonly Event[], now = new Date()) {
   return { today: visible.filter((event) => { const date = getEventDate(event); return date >= start && date < end; }), upcoming: visible.filter((event) => getEventDate(event) >= end) };
 }
 
-export function getLinkedAnimals(ids: readonly number[], animals: readonly Animal[]) { return ids.map((id) => animals.find((animal) => animal.id === id)).filter((animal): animal is Animal => Boolean(animal)).map((animal) => ({ id: String(animal.id), name: animal.nom, imageUrl: animal.image })); }
+export function getLinkedAnimals(ids: readonly number[], animals: readonly Animal[]) { return ids.map((id) => animals.find((animal) => animal.id === id)).filter((animal): animal is Animal => Boolean(animal)).map((animal) => ({ id: String(animal.id), name: animal.nom, imageUrl: animal.imageUrl })); }
 
 export function getObjectiveProgress(objective: Objectif) { if (!objective.sousetapes.length) return 0; const complete = objective.sousetapes.filter((step) => ['done', 'completed', 'termine', 'terminé', 'true'].includes(String(step.state).toLowerCase())).length; return complete / objective.sousetapes.length; }
 

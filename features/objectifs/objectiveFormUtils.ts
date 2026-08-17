@@ -25,10 +25,15 @@ export function objectiveToWizardForm(objective: Objectif): ObjectiveWizardFormD
     sousetapes: objective.sousetapes.map((step) => ({
       id: step.id,
       label: step.etape,
-      state: step.state,
+      state: step.state === true ? 'done' : step.state === false ? 'todo' : step.state,
       order: step.order,
     })),
   };
+}
+
+export function objectiveToDuplicateWizardForm(objective: Objectif): ObjectiveWizardFormData {
+  const form = objectiveToWizardForm(objective);
+  return { ...form, sousetapes: form.sousetapes.map(({ label, order }) => ({ label, order, state: 'todo' })) };
 }
 
 export function stepsFromText(value: string, previous: readonly ObjectiveWizardStep[]): ObjectiveWizardStep[] {
@@ -49,7 +54,6 @@ export function buildObjectivePayload(form: ObjectiveWizardFormData): CreateObje
     datefin: form.datefin,
     animaux: [...form.animaux],
     sousetapes: form.sousetapes.map((step, index) => ({
-      id: step.id,
       etape: step.label,
       state: step.state,
       order: index + 1,
@@ -58,5 +62,5 @@ export function buildObjectivePayload(form: ObjectiveWizardFormData): CreateObje
 }
 
 export function buildObjectiveUpdatePayload(form: ObjectiveWizardFormData, id: number): UpdateObjectifPayload {
-  return { ...buildObjectivePayload(form), id };
+  return { ...buildObjectivePayload(form), id, sousetapes: form.sousetapes.map((step, index) => ({ id: step.id, etape: step.label, state: step.state, order: index + 1 })) };
 }

@@ -7,14 +7,14 @@ import { Icon, type VascoIconName } from '../icons';
 
 export type EmptyStateType = 'generic' | 'search' | 'offline' | 'permission';
 const defaults: Record<EmptyStateType, { icon: VascoIconName; title: string; message: string; actionLabel: string }> = {
-  generic: { icon: 'add', title: 'Rien à afficher', message: 'Le contenu apparaîtra ici dès qu’il sera disponible.', actionLabel: 'Ajouter' },
+  generic: { icon: 'empty', title: 'Rien à afficher', message: 'Le contenu apparaîtra ici dès qu’il sera disponible.', actionLabel: 'Ajouter' },
   search: { icon: 'search', title: 'Aucun résultat', message: 'Essayez un autre terme ou modifiez les filtres.', actionLabel: 'Effacer les filtres' },
   offline: { icon: 'warning', title: 'Connexion indisponible', message: 'Vérifiez votre connexion puis réessayez.', actionLabel: 'Réessayer' },
   permission: { icon: 'info', title: 'Autorisation nécessaire', message: 'Autorisez l’accès dans les réglages pour continuer.', actionLabel: 'Ouvrir les réglages' },
 };
 
-export interface EmptyStateProps { type?: EmptyStateType; title?: string; message?: string; actionLabel?: string; onAction?: () => void; style?: StyleProp<ViewStyle>; testID?: string }
-export function EmptyState({ type = 'generic', title, message, actionLabel, onAction, style, testID }: EmptyStateProps) { const content = defaults[type]; return <StateMessage icon={content.icon} title={title ?? content.title} message={message ?? content.message} actionLabel={actionLabel ?? content.actionLabel} onAction={onAction} style={style} testID={testID} />; }
+export interface EmptyStateProps { type?: EmptyStateType; icon?: VascoIconName; title?: string; message?: string; actionLabel?: string; onAction?: () => void; style?: StyleProp<ViewStyle>; testID?: string }
+export function EmptyState({ type = 'generic', icon, title, message, actionLabel, onAction, style, testID }: EmptyStateProps) { const content = defaults[type]; return <StateMessage icon={icon ?? content.icon} title={title ?? content.title} message={message ?? content.message} actionLabel={actionLabel ?? content.actionLabel} onAction={onAction} style={style} testID={testID} />; }
 
 export interface ErrorStateProps { title?: string; message?: string; actionLabel?: string; onRetry?: () => void; style?: StyleProp<ViewStyle>; testID?: string }
 export function ErrorState({ title = 'Une erreur est survenue', message = 'Impossible de charger le contenu. Réessayez dans un instant.', actionLabel = 'Réessayer', onRetry, style, testID }: ErrorStateProps) { return <StateMessage icon="error" title={title} message={message} actionLabel={actionLabel} onAction={onRetry} iconTone="error" style={style} testID={testID} />; }

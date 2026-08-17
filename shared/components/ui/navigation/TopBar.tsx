@@ -23,9 +23,9 @@ export function TopBar({ title, context = 'root', material = 'solid', scrolled =
       {context === 'detail' ? (
         <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={onBack} style={{ width: 24, height: 44, alignItems: 'center', justifyContent: 'center' }}><Icon name="back" size="lg" /></Pressable>
       ) : (
-        <Image accessibilityIgnoresInvertColors source={require('../../../../assets/logo.png')} resizeMode="contain" style={{ width: 24, height: 24 }} />
+        <Image accessibilityIgnoresInvertColors source={require('../../../../assets/logo.png')} resizeMode="contain" style={{ width: 36, height: 36 }} />
       )}
-      <Text numberOfLines={1} style={{ flex: 1, color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xl, lineHeight: typography.lineHeights.relaxed }} testID={testID}>{title}</Text>
+      <Text numberOfLines={1} accessibilityLabel={context === 'root' ? 'Vasco' : title} style={{ flex: 1, color: context === 'root' ? colors.primary : colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xl, lineHeight: typography.lineHeights.relaxed }} testID={testID}>{context === 'root' ? 'VASCO' : title}</Text>
       {trailing ?? (
         <>
           {onNotifications ? (

@@ -19,7 +19,7 @@ export type StatisticsResponseMap = {
   concours: EventStatisticsData;
 };
 
-export type StatisticDetailType = 'poids' | 'balades' | 'depenses' | 'entrainements' | 'concours';
+export type StatisticDetailType = 'poids' | 'taille' | 'alimentation' | 'balades' | 'depenses' | 'entrainements' | 'concours';
 
 export type StatItemKey =
   | 'depense'
@@ -30,7 +30,7 @@ export type StatItemKey =
   | 'alimentation'
   | 'concours';
 
-export type StatisticsPeriod = 'day' | 'month' | 'year' | 'fiveYears';
+export type StatisticsPeriod = 'month' | 'year' | 'fiveYears';
 
 export type StatisticsQueryPayload = {
   animaux: number[];

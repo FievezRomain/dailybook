@@ -2,7 +2,8 @@ import { normalizeProgress } from '../../../shared/components/ui/navigation/prog
 
 describe('normalizeProgress', () => {
   it('clamps current to the available steps', () => {
-    expect(normalizeProgress(0, 3)).toEqual({ current: 1, total: 3, ratio: 1 / 3 });
+    expect(normalizeProgress(0, 3)).toEqual({ current: 0, total: 3, ratio: 0 });
+    expect(normalizeProgress(-2, 3)).toEqual({ current: 0, total: 3, ratio: 0 });
     expect(normalizeProgress(8, 4)).toEqual({ current: 4, total: 4, ratio: 1 });
   });
   it('protects against invalid totals and decimals', () => {

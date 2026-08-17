@@ -59,9 +59,10 @@ export function useObjectifMutations() {
       if (ctx?.snapshot) queryClient.setQueryData(OBJECTIFS_KEY, ctx.snapshot);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
     },
-    onSuccess: async () => {
+    onSuccess: async (updated, { id }) => {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
-      await invalidate();
+      if (updated) queryClient.setQueryData<Objectif[]>(OBJECTIFS_KEY, (previous = []) => previous.map((item) => item.id === Number(id) ? updated : item));
+      else await invalidate();
     },
   });
 
@@ -85,5 +86,23 @@ export function useObjectifMutations() {
     },
   });
 
-  return { create, update, remove };
+  const updateSubtask = useMutation({
+    mutationFn: ({ objectiveId, subtaskId, state }: { objectiveId: string; subtaskId: number; state: boolean }) =>
+      ObjectifService.updateSubtaskState(objectiveId, subtaskId, state),
+    onMutate: async ({ objectiveId, subtaskId, state }) => {
+      await queryClient.cancelQueries({ queryKey: OBJECTIFS_KEY });
+      const snapshot = queryClient.getQueryData<Objectif[]>(OBJECTIFS_KEY);
+      queryClient.setQueryData<Objectif[]>(OBJECTIFS_KEY, (previous = []) => previous.map((objective) =>
+        objective.id === Number(objectiveId)
+          ? { ...objective, sousetapes: objective.sousetapes.map((step) => step.id === subtaskId ? { ...step, state } : step) }
+          : objective,
+      ));
+      return { snapshot };
+    },
+    onError: (_error, _variables, context) => {
+      if (context?.snapshot) queryClient.setQueryData(OBJECTIFS_KEY, context.snapshot);
+    },
+  });
+
+  return { create, update, updateSubtask, remove };
 }

@@ -1,7 +1,7 @@
 export type SubTaskPayload = {
   id?: number;
   etape: string;
-  state: string;
+  state: string | boolean;
   order: number;
 };
 

@@ -74,7 +74,7 @@ export function MainNavigator() {
     setRoute({ name: 'eventCreateEntry' });
   };
   const agenda = () => { resetWizard(); setTab('agenda'); setRoute({ name: 'root' }); };
-  const tracking = () => <TrackingScreen canAccessStatistics={isPremiumSubscription(user?.subscription)} onStatisticsLocked={() => setStatisticsGate(true)} onSelectTab={selectTab} onCreate={create} onCreateObjective={() => create('objective')} onOpenObjective={(objectiveId) => setRoute({ name: 'objective', objectiveId })} onObjectiveActions={(objectiveId) => setRoute({ name: 'objective', objectiveId, actionsOpen: true })} onNotifications={openNotifications} onAccount={openSettings} />;
+  const tracking = () => <TrackingScreen canAccessStatistics={isPremiumSubscription(user?.subscription)} onStatisticsLocked={() => setStatisticsGate(true)} onSelectTab={selectTab} onCreate={create} onCreateObjective={() => create('objective')} onOpenObjective={(objectiveId) => setRoute({ name: 'objective', objectiveId })} onOpenEvent={(eventId) => setRoute({ name: 'event', eventId })} onNotifications={openNotifications} onAccount={openSettings} />;
   const notes = () => <NotesListScreen onSelectTab={selectTab} onOpenNote={(noteId) => setRoute({ name: 'note', noteId })} onCreateNote={() => setRoute({ name: 'noteCreateChoice' })} onCreate={create} onNotifications={openNotifications} onAccount={openSettings} />;
   const wishes = () => <WishesListScreen activeMainTab={tab} onSelectTab={selectTab} onOpenWish={(wishId) => setRoute({ name: 'wish', wishId })} onCreateWish={() => setRoute({ name: 'wishForm', mode: 'create' })} onCreate={create} onNotifications={openNotifications} onAccount={openSettings} />;
   const contacts = () => <ContactsListScreen onSelectTab={selectTab} onOpenContact={(contactId) => setRoute({ name: 'contact', contactId })} onCreateContact={() => setRoute({ name: 'contactForm', mode: 'create' })} onCreate={create} onNotifications={openNotifications} onAccount={openSettings} />;
@@ -146,7 +146,7 @@ export function MainNavigator() {
   if (route.name === 'notes') return notes();
   if (route.name === 'objectiveForm') {
     const objective = route.objectiveId ? objectives.find((item) => item.id === route.objectiveId) : undefined;
-    const background = objective ? <ObjectiveDetailScreen objective={objective} animals={animals} onBack={() => setRoute({ name: 'root' })} onEdit={() => undefined} onDeleted={() => setRoute({ name: 'root' })} onDuplicated={(objectiveId) => objectiveId && setRoute({ name: 'objective', objectiveId })} /> : rootContext();
+    const background = objective ? <ObjectiveDetailScreen objective={objective} animals={animals} onBack={() => setRoute({ name: 'root' })} onEdit={() => undefined} onDeleted={() => setRoute({ name: 'root' })} onDuplicate={() => undefined} /> : rootContext();
     return <>{background}<FormSheetHost><ObjectiveFormSheetScreen mode={route.mode} objective={objective} animals={animals} onClose={() => { resetObjectiveWizard(); setRoute(objective ? { name: 'objective', objectiveId: objective.id } : { name: 'root' }); }} onSaved={(objectiveId) => { resetObjectiveWizard(); setTab('tracking'); setRoute(objectiveId ? { name: 'objective', objectiveId } : { name: 'root' }); }} /></FormSheetHost></>;
   }
   if (route.name === 'animalForm') {
@@ -180,7 +180,7 @@ export function MainNavigator() {
   if (route.name === 'objective') {
     const objective = objectives.find((item) => item.id === route.objectiveId);
     if (!objective) return tracking();
-    return <ObjectiveDetailScreen objective={objective} animals={animals} initialActionsOpen={route.actionsOpen} onBack={() => setRoute({ name: 'root' })} onEdit={() => setRoute({ name: 'objectiveForm', mode: 'edit', objectiveId: objective.id })} onDeleted={() => setRoute({ name: 'root' })} onDuplicated={(objectiveId) => objectiveId ? setRoute({ name: 'objective', objectiveId }) : setRoute({ name: 'root' })} />;
+    return <ObjectiveDetailScreen objective={objective} animals={animals} initialActionsOpen={route.actionsOpen} onBack={() => setRoute({ name: 'root' })} onEdit={() => setRoute({ name: 'objectiveForm', mode: 'edit', objectiveId: objective.id })} onDeleted={() => setRoute({ name: 'root' })} onDuplicate={() => setRoute({ name: 'objectiveForm', mode: 'create', objectiveId: objective.id })} />;
   }
   if (route.name === 'note') return <NoteDetailScreen noteId={route.noteId} onBack={() => setRoute({ name: 'root' })} onEdit={() => setRoute({ name: 'noteForm', mode: 'edit', noteId: route.noteId })} onDeleted={() => setRoute({ name: 'root' })} />;
   if (route.name === 'day') return <DayAgendaScreen date={route.date} onBack={() => setRoute({ name: 'root' })} onSelectTab={selectTab} onOpenEvent={(eventId) => setRoute({ name: 'event', eventId })} />;

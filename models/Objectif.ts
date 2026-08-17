@@ -1,7 +1,7 @@
 export type ObjectifEtape = {
     id: number;
     etape: string;
-    state: string;
+    state: string | boolean;
     order: number;
 }
 

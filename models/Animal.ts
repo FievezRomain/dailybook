@@ -18,6 +18,8 @@ export type Animal = {
     nommere?: string;
     numeroidentification?: string;
     image?: string;
+    /** URL de lecture signée, distincte du nom de fichier persistant `image`. */
+    imageUrl?: string;
     previousimage?: string;
     informations?: string;
     provenance?: string;
