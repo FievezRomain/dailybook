@@ -24,6 +24,7 @@ type BaseEvent = {
   lieu?: string;
   commentaire?: string;
   state?: string;
+  /** Pour un soin ou rendez-vous, indique sa présence dans le dossier médical. */
   todisplay?: boolean;
   idparent?: number;
   frequencetype?: string;

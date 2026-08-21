@@ -1,29 +1,31 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
 import { Pressable, Text, View } from "react-native";
 import { WebView, type WebViewMessageEvent } from "react-native-webview";
 
 import { radii, spacing, typography } from "../../../theme/scales";
 import { useAppTheme } from "../../../theme/useAppTheme";
 
-const editorHtml = `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><style>html,body{margin:0;padding:0;background:transparent}#editor{min-height:190px;padding:14px;outline:none;font:16px/1.5 sans-serif;word-break:break-word}h1,h2,h3{margin:8px 0}ul,ol{padding-left:24px}</style></head><body><div id="editor" contenteditable="true" role="textbox" aria-multiline="true"></div><script>
+const editorHtml = String.raw`<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><style>html,body{margin:0;padding:0;background:transparent}#editor{min-height:190px;padding:14px;outline:none;font:16px/1.5 sans-serif;word-break:break-word}h1,h2,h3{margin:8px 0}ul,ol{padding-left:24px}</style></head><body><div id="editor" contenteditable="true" role="textbox" aria-multiline="true"></div><script>
 const e=document.getElementById('editor');
 const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const inline=s=>esc(s).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/_([^_]+)_/g,'<em>$1</em>').replace(/\[([^\]]+)\]\(((?:https?:\\/\\/|mailto:|tel:)[^)]+)\)/gi,'<a href="$2">$1</a>');
+const inline=s=>esc(s).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/_([^_]+)_/g,'<em>$1</em>').replace(/\[([^\]]+)\]\(((?:https?:\/\/|mailto:|tel:)[^)]+)\)/gi,'<a href="$2">$1</a>');
 function setMarkdown(md){const rows=String(md||'').split(/\n/);let list=null,out='';for(const row of rows){let m;if((m=/^[-*] (.*)$/.exec(row))){if(list!=='ul'){if(list)out+='</'+list+'>';list='ul';out+='<ul>'}out+='<li>'+inline(m[1])+'</li>'}else if((m=/^\d+\. (.*)$/.exec(row))){if(list!=='ol'){if(list)out+='</'+list+'>';list='ol';out+='<ol>'}out+='<li>'+inline(m[1])+'</li>'}else{if(list){out+='</'+list+'>';list=null}if((m=/^(#{1,6}) (.*)$/.exec(row)))out+='<h'+m[1].length+'>'+inline(m[2])+'</h'+m[1].length+'>';else out+='<div>'+inline(row)+'</div>'}}if(list)out+='</'+list+'>';e.innerHTML=out}
 function nodeMd(n){if(n.nodeType===3)return n.nodeValue||'';if(n.nodeType!==1)return '';const tag=n.tagName.toLowerCase();if(['script','style','iframe','object','embed','img'].includes(tag))return '';const body=[...n.childNodes].map(nodeMd).join('');if(tag==='strong'||tag==='b')return '**'+body+'**';if(tag==='em'||tag==='i')return '_'+body+'_';if(/^h[1-6]$/.test(tag))return '\n\n'+'#'.repeat(Number(tag[1]))+' '+body+'\n\n';if(tag==='br')return '\n';if(tag==='li')return body; if(tag==='ul')return '\n'+[...n.children].map(x=>'- '+nodeMd(x)).join('\n')+'\n';if(tag==='ol')return '\n'+[...n.children].map((x,i)=>(i+1)+'. '+nodeMd(x)).join('\n')+'\n';if(tag==='a'){const h=n.getAttribute('href')||'';return /^(https?:|mailto:|tel:)/i.test(h)?'['+body+']('+h+')':body}if(tag==='div'||tag==='p')return body+'\n';return body}
 function emit(){const markdown=nodeMd(e).replace(/\n{3,}/g,'\n\n').trim();window.ReactNativeWebView.postMessage(JSON.stringify({type:'change',markdown}))}e.addEventListener('input',emit);window.editor={setMarkdown,command:(name,value)=>{e.focus();document.execCommand(name,false,value||null);emit()}};</script></body></html>`;
 
-export function RichNoteEditor({
-  value,
-  onChange,
-  errorMessage,
-  disabled = false,
-}: {
+export interface RichNoteEditorHandle { flush: () => void }
+
+export const RichNoteEditor = forwardRef<RichNoteEditorHandle, {
   value: string;
   onChange: (value: string) => void;
   errorMessage?: string;
   disabled?: boolean;
-}) {
+}>(function RichNoteEditor({
+  value,
+  onChange,
+  errorMessage,
+  disabled = false,
+}, forwardedRef) {
   const { colors } = useAppTheme();
   const webRef = useRef<WebView>(null);
   const ready = useRef(false);
@@ -48,6 +50,9 @@ export function RichNoteEditor({
     webRef.current?.injectJavaScript(
       `window.editor.command(${JSON.stringify(name)},${JSON.stringify(commandValue ?? null)});true;`,
     );
+  useImperativeHandle(forwardedRef, () => ({
+    flush: () => webRef.current?.injectJavaScript('emit();true;'),
+  }), []);
   const receive = (event: WebViewMessageEvent) => {
     try {
       const message = JSON.parse(event.nativeEvent.data) as {
@@ -179,4 +184,4 @@ export function RichNoteEditor({
       </Text>
     </View>
   );
-}
+});

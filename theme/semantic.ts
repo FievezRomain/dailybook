@@ -1,13 +1,13 @@
 import { alpha, palette } from './primitives';
 
 export const eventTypeColors = {
-  soins: palette.baieCerise,
-  rdv: palette.eventRdv,
-  balade: palette.eventBalade,
-  entrainement: palette.alezan,
-  concours: palette.baie,
-  depense: palette.eventDepense,
-  autre: palette.aubere,
+  soins: palette.isabelle,
+  rdv: palette.baieBrun,
+  balade: palette.baie,
+  entrainement: palette.aubere,
+  concours: palette.alezan,
+  depense: palette.rouan,
+  autre: palette.baieCerise,
 } as const;
 
 const shared = {

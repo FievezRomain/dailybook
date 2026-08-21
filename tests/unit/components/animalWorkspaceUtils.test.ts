@@ -57,6 +57,7 @@ describe('animalWorkspaceUtils', () => {
       { id: 12, nom: 'Balade', dateevent: '2026-10-01', animaux: [1], eventtype: 'balade', documents: [{ name: 'parc.jpg' }] },
       { id: 13, nom: 'Autre animal', dateevent: '2026-10-01', animaux: [2], eventtype: 'soins', documents: [{ name: 'autre.pdf' }] },
       { id: 14, idparent: 10, nom: 'Rappel vaccin', dateevent: '2027-09-01', animaux: [1], eventtype: 'soins', documents: [{ name: 'rappel.pdf' }] },
+      { id: 15, nom: 'Soin privé', dateevent: '2026-11-01', animaux: [1], eventtype: 'soins', todisplay: false, documents: [{ name: 'prive.pdf' }] },
     ] as Event[];
     expect(getAnimalMedicalEvents(events, 1).map(({ id }) => id)).toEqual([10, 11]);
     expect(getAnimalMedicalDocuments(events, 1)).toEqual([

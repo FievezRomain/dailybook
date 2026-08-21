@@ -13,6 +13,7 @@
  */
 
 import httpClient from './httpClient';
+import * as FileSystem from 'expo-file-system/legacy';
 import { prepareImageUpload, type ImageUploadKind } from '../../shared/utils/prepareImageUpload';
 
 const DOWNLOAD_URL_TTL_MS = 4 * 60 * 1000;
@@ -71,17 +72,15 @@ export const FileService = {
    * Upload binaire direct vers S3 via l'URL présignée.
    */
   async uploadToS3(upload: PresignedUpload, fileUri: string, contentType: string): Promise<void> {
-    const fileResponse = await fetch(fileUri);
-    const blob = await fileResponse.blob();
-    const body = new FormData();
-    Object.entries(upload.fields).forEach(([key, value]) => body.append(key, value));
-    body.append('file', blob as Blob, upload.filename);
-    const putResponse = await fetch(upload.url, {
-      method: 'POST',
-      body,
+    const result = await FileSystem.uploadAsync(upload.url, fileUri, {
+      httpMethod: 'POST',
+      uploadType: FileSystem.FileSystemUploadType.MULTIPART,
+      fieldName: 'file',
+      mimeType: contentType,
+      parameters: upload.fields,
     });
-    if (!putResponse.ok) {
-      throw new Error(`S3 upload failed: ${putResponse.status} ${putResponse.statusText}`);
+    if (result.status < 200 || result.status >= 300) {
+      throw new Error(`S3 upload failed: ${result.status}`);
     }
   },
 

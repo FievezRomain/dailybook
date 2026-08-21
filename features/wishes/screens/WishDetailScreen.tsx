@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Linking, Share, Text, View } from 'react-native';
+import { Linking, Platform, Share, Text, View } from 'react-native';
 import { Image } from 'expo-image';
 
 import { useNotificationsQuery } from '@hooks/queries/useNotificationsQuery';
@@ -80,9 +80,10 @@ export function WishDetailScreen({ wishId, activeTab = 'home', onBack, onEdit, o
     const price = getWishPriceValue(wish);
     const lines = [`Idée cadeau : ${wish.nom}`];
     if (price) lines.push(`Prix : ${price}`);
-    if (wish.url) lines.push(wish.url);
     try {
-      await Share.share({ title: wish.nom, message: lines.join('\n'), url: wish.url || undefined });
+      await Share.share(Platform.OS === 'ios'
+        ? { title: wish.nom, message: lines.join('\n'), url: wish.url || undefined }
+        : { title: wish.nom, message: [...lines, wish.url].filter(Boolean).join('\n') });
     } catch {
       setActionError('Le souhait n’a pas pu être partagé.');
     }

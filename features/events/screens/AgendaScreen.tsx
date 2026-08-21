@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { RefreshControl, Text, View } from "react-native";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
 import {
   useAgendaHighlightsQuery,
@@ -7,9 +7,14 @@ import {
 } from "../../../hooks/queries/useEventsQuery";
 import { useNotificationsQuery } from "../../../hooks/queries/useNotificationsQuery";
 import type { Notification } from "../../../models/Notification";
+import type { Animal } from "../../../models/Animal";
 import { useAuthStore } from "../../../stores/useAuthStore";
+import { useCalendarUIStore } from "../../../stores/useCalendarUIStore";
 import {
   Banner,
+  AnimalSelectorItem,
+  AnimalSelectorMore,
+  Button,
   BottomBar,
   Card,
   EmptyState,
@@ -44,13 +49,14 @@ import {
   formatAgendaEmptyMessage,
   groupAgendaHighlights,
 } from "../agendaUtils";
+import { getAnimalPresence, isSharedAnimal, sortAnimalsForWorkspace } from "../../animals/animalWorkspaceUtils";
 
 export interface AgendaScreenProps {
   material?: Material;
   onSelectTab: (tab: MainTabId) => void;
   onOpenDay: (date: string) => void;
   onOpenEvent: (id: number) => void;
-  onCreate: (target: GlobalCreateTarget) => void;
+  onCreate: (target: GlobalCreateTarget, selectedDate?: string) => void;
   onNotifications?: () => void;
   onAccount?: () => void;
 }
@@ -68,7 +74,9 @@ export function AgendaScreen({
   const eventsQuery = useEventsQuery();
   const animalsQuery = useAnimalsQuery();
   const notificationsQuery = useNotificationsQuery();
-  const [selectedDate, setSelectedDate] = useState(() => dateKey(new Date()));
+  const storedDate = useCalendarUIStore((state) => state.selectedDate);
+  const setStoredDate = useCalendarUIStore((state) => state.setDate);
+  const selectedDate = storedDate ?? dateKey(new Date());
   const [visibleMonth, setVisibleMonth] = useState(selectedDate);
   const highlightsQuery = useAgendaHighlightsQuery(
     Number(visibleMonth.slice(0, 4)),
@@ -78,12 +86,15 @@ export function AgendaScreen({
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [draftTypes, setDraftTypes] = useState<string[]>([]);
+  const [selectedAnimalIds, setSelectedAnimalIds] = useState<number[]>([]);
+  const [draftAnimalIds, setDraftAnimalIds] = useState<number[]>([]);
+  const [animalHistoryExpanded, setAnimalHistoryExpanded] = useState(false);
   const events = eventsQuery.data ?? [];
   const animals = animalsQuery.data ?? [];
   const searchActive = query.trim().length > 0;
   const displayedEvents = useMemo(
-    () => filterAgendaEvents(events, selectedDate, query, selectedTypes),
-    [events, query, selectedDate, selectedTypes],
+    () => filterAgendaEvents(events, selectedDate, query, selectedTypes, selectedAnimalIds),
+    [events, query, selectedAnimalIds, selectedDate, selectedTypes],
   );
   const marks = useMemo(
     () => buildAgendaMarks(events, colors),
@@ -110,7 +121,7 @@ export function AgendaScreen({
     ]);
   const selectCreate = (target: GlobalCreateTarget) => {
     setCreateOpen(false);
-    onCreate(target);
+    onCreate(target, target === "event" ? selectedDate : undefined);
   };
 
   return (
@@ -167,13 +178,14 @@ export function AgendaScreen({
           <IconButton
             icon="filter"
             accessibilityLabel={
-              selectedTypes.length
-                ? `Filtrer les événements, ${selectedTypes.length} filtre actif`
+              selectedTypes.length || selectedAnimalIds.length
+                ? `Filtrer les événements, ${selectedTypes.length + selectedAnimalIds.length} filtre actif`
                 : "Filtrer les événements"
             }
-            variant={selectedTypes.length ? "primary" : "secondary"}
+            variant={selectedTypes.length || selectedAnimalIds.length ? "primary" : "secondary"}
             onPress={() => {
-              setDraftTypes(selectedTypes.length ? selectedTypes : ["__all"]);
+              setDraftTypes(selectedTypes);
+              setDraftAnimalIds(selectedAnimalIds);
               setFiltersOpen(true);
             }}
           />
@@ -188,7 +200,11 @@ export function AgendaScreen({
               items.map(({ title }) => title),
             ]),
           )}
-          onSelectDate={setSelectedDate}
+          onSelectDate={(date) => {
+            setSelectedTypes([]);
+            setSelectedAnimalIds([]);
+            setStoredDate(date);
+          }}
           onMonthChange={setVisibleMonth}
         />
         <Text
@@ -201,7 +217,7 @@ export function AgendaScreen({
         >
           {searchActive
             ? "Résultats de la recherche"
-            : selectedTypes.length
+            : selectedTypes.length || selectedAnimalIds.length
               ? "Résultats des filtres"
             : formatAgendaDay(selectedDate)}
         </Text>
@@ -271,12 +287,12 @@ export function AgendaScreen({
           <EmptyState
             icon="event"
             title={
-              searchActive || selectedTypes.length
+              searchActive || selectedTypes.length || selectedAnimalIds.length
                 ? "Aucun événement trouvé"
                 : "Aucun événement ce jour"
             }
             message={
-              searchActive || selectedTypes.length
+              searchActive || selectedTypes.length || selectedAnimalIds.length
                 ? "Modifiez votre recherche ou réinitialisez les filtres."
                 : formatAgendaEmptyMessage(selectedDate)
             }
@@ -319,25 +335,17 @@ export function AgendaScreen({
       <SelectionModal
         open={filtersOpen}
         title="Filtrer les événements"
-        options={[...agendaEventTypeOptions]}
+        options={agendaEventTypeOptions.filter(({ id }) => id !== "__all")}
         selectedIds={draftTypes}
         mode="multi"
-        onChange={(ids) =>
-          setDraftTypes(
-            ids.includes("__all") && ids.length > 1
-              ? draftTypes.includes("__all")
-                ? ids.filter((id) => id !== "__all")
-                : ["__all"]
-              : ids,
-          )
-        }
-        confirmLabel={
-          draftTypes.includes("__all")
-            ? "Réinitialiser"
-            : "Appliquer les filtres"
-        }
+        onChange={setDraftTypes}
+        searchable={false}
+        allowEmptySelection
+        header={<View style={{ gap: spacing.sm }}><View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.control }}>Animaux</Text><Button label="Réinitialiser" variant="ghost" size="small" onPress={() => { setDraftAnimalIds([]); setDraftTypes([]); }} /></View><AgendaAnimalSelector animals={animals} selectedIds={draftAnimalIds} historyExpanded={animalHistoryExpanded} onToggleHistory={() => setAnimalHistoryExpanded((value) => !value)} onToggle={(animalId) => setDraftAnimalIds((current) => current.includes(animalId) ? current.filter((id) => id !== animalId) : [...current, animalId])} /><View style={{ height: 1, backgroundColor: colors.border }} /><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.control }}>Types d’événement</Text></View>}
+        confirmLabel={draftTypes.length || draftAnimalIds.length ? "Appliquer les filtres" : "Réinitialiser"}
         onConfirm={() => {
-          setSelectedTypes(draftTypes.includes("__all") ? [] : draftTypes);
+          setSelectedTypes(draftTypes);
+          setSelectedAnimalIds(draftAnimalIds);
           setFiltersOpen(false);
         }}
         onClose={() => setFiltersOpen(false)}
@@ -345,4 +353,15 @@ export function AgendaScreen({
       />
     </>
   );
+}
+
+function AgendaAnimalSelector({ animals, selectedIds, historyExpanded, onToggleHistory, onToggle }: { animals: readonly Animal[]; selectedIds: readonly number[]; historyExpanded: boolean; onToggleHistory: () => void; onToggle: (animalId: number) => void }) {
+  const sorted = sortAnimalsForWorkspace(animals);
+  const present = sorted.filter((animal) => getAnimalPresence(animal) === 'present');
+  const historical = sorted.filter((animal) => getAnimalPresence(animal) === 'history');
+  const renderAnimal = (animal: Animal) => {
+    const selected = selectedIds.includes(animal.id);
+    return <AnimalSelectorItem key={animal.id} name={animal.nom} imageUrl={animal.imageUrl} selected={selected} selectionOrder={selected ? selectedIds.indexOf(animal.id) + 1 : undefined} sharedFromGroup={isSharedAnimal(animal)} onPress={() => onToggle(animal.id)} />;
+  };
+  return <ScrollView horizontal directionalLockEnabled alwaysBounceVertical={false} nestedScrollEnabled showsHorizontalScrollIndicator={false} style={{ minHeight: 116, flexGrow: 0 }} contentContainerStyle={{ minWidth: '100%', paddingTop: spacing.sm, alignItems: 'flex-start' }}><View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>{present.map(renderAnimal)}{historical.length ? <AnimalSelectorMore expanded={historyExpanded} onPress={onToggleHistory} testID="agenda-animal-more" /> : null}{historyExpanded ? historical.map(renderAnimal) : null}</View></ScrollView>;
 }

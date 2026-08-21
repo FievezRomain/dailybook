@@ -11,13 +11,21 @@ export interface EventWizardFormData {
   notif?: string;
   optionnotif?: string;
   shared_groups?: number[];
-  documents?: unknown[];
+  documents?: EventWizardDocument[];
   state?: string;
+  todisplay?: boolean;
   idparent?: number;
   frequencetype?: string;
   frequencevalue?: string;
   rappelnotification?: string;
   [key: string]: unknown;
+}
+
+export interface EventWizardDocument {
+  name: string;
+  localUri?: string;
+  mimeType?: string;
+  size?: number;
 }
 
 interface EventWizardState {

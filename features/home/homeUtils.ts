@@ -21,8 +21,9 @@ export function getEventDate(event: Event) { const raw = `${event.dateevent}${ev
 export function splitHomeEvents(events: readonly Event[], now = new Date()) {
   const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const end = new Date(start); end.setDate(end.getDate() + 1);
-  const visible = events.filter((event) => event.todisplay !== false).sort((a, b) => getEventDate(a).getTime() - getEventDate(b).getTime());
-  return { today: visible.filter((event) => { const date = getEventDate(event); return date < end && (date >= start || !isEventCompleted(event)); }), upcoming: visible.filter((event) => getEventDate(event) >= end) };
+  const upcomingEnd = new Date(start); upcomingEnd.setDate(upcomingEnd.getDate() + 8);
+  const visible = [...events].sort((a, b) => getEventDate(a).getTime() - getEventDate(b).getTime());
+  return { today: visible.filter((event) => { const date = getEventDate(event); return date < end && (date >= start || !isEventCompleted(event)); }), upcoming: visible.filter((event) => { const date = getEventDate(event); return date >= end && date < upcomingEnd; }) };
 }
 
 export function getEventOverdueDays(event: Event, now = new Date()) {

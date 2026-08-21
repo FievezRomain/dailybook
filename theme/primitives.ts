@@ -5,7 +5,7 @@ export const palette = {
   aubere: '#BAA89B',
   rouan: '#D3CCC9',
   baieBrun: '#694233',
-  baieCerise: '#B07161',
+  baieCerise: '#B07165',
   palomino: '#F6E6CE',
   gris: '#F4EDEB',
   defaultLight: '#F4F4F4',

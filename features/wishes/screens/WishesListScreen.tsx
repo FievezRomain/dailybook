@@ -13,6 +13,7 @@ import {
   FloatingActionButton,
   GlobalCreateMenu,
   RootScreen,
+  SearchField,
   Skeleton,
   TabBar,
   TopBar,
@@ -47,6 +48,7 @@ interface WishesListScreenProps {
   onCreate: (target: GlobalCreateTarget) => void;
   onNotifications?: () => void;
   onAccount?: () => void;
+  onBack: () => void;
 }
 
 export function WishesListScreen({
@@ -58,17 +60,22 @@ export function WishesListScreen({
   onCreate,
   onNotifications,
   onAccount,
+  onBack,
 }: WishesListScreenProps) {
   const { colors } = useAppTheme();
   const user = useAuthStore((state) => state.user);
   const wishesQuery = useWishesQuery();
   const notificationsQuery = useNotificationsQuery();
   const [activeTab, setActiveTab] = useState<WishListTab>("planned");
+  const [search, setSearch] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const wishes = wishesQuery.data ?? [];
   const visibleWishes = useMemo(
-    () => filterWishesByTab(wishes, activeTab),
-    [activeTab, wishes],
+    () => {
+      const normalizedSearch = search.trim().toLocaleLowerCase('fr-FR');
+      return filterWishesByTab(wishes, activeTab).filter((wish) => [wish.nom, wish.destinataire].some((value) => value?.toLocaleLowerCase('fr-FR').includes(normalizedSearch)));
+    },
+    [activeTab, search, wishes],
   );
   const state = resolveAsyncState({
     loading: wishesQuery.isLoading,
@@ -90,6 +97,8 @@ export function WishesListScreen({
         header={
           <TopBar
             title="Souhaits"
+            context="detail"
+            onBack={onBack}
             material={material}
             onNotifications={onNotifications}
             unreadNotifications={unread}
@@ -120,33 +129,11 @@ export function WishesListScreen({
             onRefresh={() => void wishesQuery.refetch()}
           />
         }
-        contentContainerStyle={{ gap: spacing.lg, paddingBottom: spacing.xxl }}
+        contentContainerStyle={{ gap: spacing.lg, paddingBottom: spacing.xxl * 3 }}
         material={material}
         testID="wishes-list"
       >
-        <View style={{ gap: spacing.xs }}>
-          <Text
-            accessibilityRole="header"
-            style={{
-              color: colors.textPrimary,
-              fontFamily: typography.fonts.bold,
-              fontSize: typography.sizes.xxl,
-              lineHeight: 35,
-            }}
-          >
-            Souhaits
-          </Text>
-          <Text
-            style={{
-              color: colors.textSecondary,
-              fontFamily: typography.fonts.regular,
-              fontSize: typography.sizes.sm,
-              lineHeight: 20,
-            }}
-          >
-            Vos envies à prévoir et à suivre
-          </Text>
-        </View>
+        <SearchField value={search} onChangeText={setSearch} onClear={() => setSearch('')} placeholder="Rechercher un souhait" accessibilityLabel="Rechercher un souhait" />
         <TabBar
           items={wishTabs}
           activeId={activeTab}
@@ -164,7 +151,7 @@ export function WishesListScreen({
               onRetry={() => void wishesQuery.refetch()}
             />
           ) : visibleWishes.length === 0 ? (
-            <EmptyState title={emptyCopy[0]} message={emptyCopy[1]} />
+            search.trim() ? <EmptyState type="search" title="Aucun résultat" message="Essayez un autre intitulé ou destinataire." actionLabel="Effacer la recherche" onAction={() => setSearch('')} /> : <EmptyState title={emptyCopy[0]} message={emptyCopy[1]} />
           ) : (
             <View
               style={{

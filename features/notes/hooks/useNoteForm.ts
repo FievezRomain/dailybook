@@ -26,7 +26,7 @@ export function useNoteForm(actionType: 'create' | 'modify', note: Partial<Note>
 
   const resetValues = () => reset({ titre: '', note: '' });
 
-  const submit = async (data: NoteFormValues, onClose: () => void) => {
+  const submit = async (data: NoteFormValues, _legacyOnClose?: () => void) => {
     if (loading) return;
     setLoading(true);
     try {
@@ -48,7 +48,6 @@ export function useNoteForm(actionType: 'create' | 'modify', note: Partial<Note>
         onSuccess?.();
       }
       resetValues();
-      onClose();
     } catch (err: unknown) {
       const parsed = parseApiError(err);
       Toast.show({ type: 'error', position: 'top', text1: parsed.message });

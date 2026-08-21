@@ -46,6 +46,7 @@ import {
   PremiumGate,
   RootScreen,
   Skeleton,
+  TabBar,
   TopBar,
   resolveAsyncState,
   type GlobalCreateTarget,
@@ -93,6 +94,8 @@ export interface AnimalsWorkspaceScreenProps {
   onOpenEvent?: (eventId: number) => void;
   canAccessVisualTracking?: boolean;
   onVisualTrackingLocked?: () => void;
+  canAccessMedicalDocuments?: boolean;
+  onMedicalDocumentsLocked?: () => void;
   preferredAnimalId?: number;
   feedback?: string;
   onDismissFeedback?: () => void;
@@ -117,6 +120,8 @@ export function AnimalsWorkspaceScreen({
   onOpenEvent,
   canAccessVisualTracking = false,
   onVisualTrackingLocked = () => undefined,
+  canAccessMedicalDocuments = false,
+  onMedicalDocumentsLocked = () => undefined,
   preferredAnimalId,
   feedback,
   onDismissFeedback,
@@ -377,49 +382,13 @@ export function AnimalsWorkspaceScreen({
                 </View>
               </ScrollView>
             </View>
-            <View
-              accessibilityRole="tablist"
-              style={{
-                height: 48,
-                flexDirection: "row",
-                paddingHorizontal: spacing.md,
-              }}
-            >
-              {workspaceTabs.map((item) => {
-                const active = workspaceTab === item.id;
-                return (
-                  <Pressable
-                    key={item.id}
-                    accessibilityRole="tab"
-                    accessibilityState={{ selected: active }}
-                    onPress={() => setWorkspaceTab(item.id)}
-                    style={{
-                      flex: 1,
-                      alignItems: "center",
-                      justifyContent: "center",
-                      borderBottomWidth: active ? 2 : 0,
-                      borderBottomColor: colors.textPrimary,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        color: active
-                          ? colors.textPrimary
-                          : colors.textSecondary,
-                        fontFamily: active
-                          ? typography.fonts.semiBold
-                          : typography.fonts.medium,
-                        fontSize: active
-                          ? typography.sizes.md
-                          : typography.sizes.control,
-                      }}
-                    >
-                      {item.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
+            <TabBar
+              items={workspaceTabs}
+              activeId={workspaceTab}
+              onSelect={setWorkspaceTab}
+              fullWidthIndicator
+              style={{ paddingHorizontal: spacing.md }}
+            />
             <View style={{ padding: spacing.md }}>
               {workspaceTab === "infos" ? (
                 <AnimalInfos
@@ -440,6 +409,8 @@ export function AnimalsWorkspaceScreen({
                   }
                   onOpenEvent={onOpenEvent}
                   documentError={medicalDocumentError}
+                  canAccessDocuments={canAccessMedicalDocuments}
+                  onDocumentsLocked={onMedicalDocumentsLocked}
                   onOpenDocument={async (eventId, name) => {
                     setMedicalDocumentError(undefined);
                     try {
@@ -829,6 +800,8 @@ function AnimalHealth({
   onOpenDocument,
   onDocumentMore,
   documentError,
+  canAccessDocuments,
+  onDocumentsLocked,
 }: {
   animal: Animal;
   events: readonly import("../../../models/Event").Event[];
@@ -840,6 +813,8 @@ function AnimalHealth({
   onOpenDocument: (eventId: number, name: string) => void;
   onDocumentMore?: (eventId: number, name: string) => void;
   documentError?: string;
+  canAccessDocuments: boolean;
+  onDocumentsLocked: () => void;
 }) {
   const medicalEvents = getAnimalMedicalEvents(events, animal.id);
   const history = [...medicalEvents].sort(
@@ -859,7 +834,7 @@ function AnimalHealth({
     );
   return (
     <View style={{ gap: spacing.md }}>
-      <SectionHeading onActions={onActions}>Historique médical</SectionHeading>
+      <SectionHeading onActions={onActions}>Dossier médical</SectionHeading>
       {error ? (
         <Banner
           tone="error"
@@ -897,6 +872,15 @@ function AnimalHealth({
         />
       )}
       <SectionHeading>Documents médicaux</SectionHeading>
+      {!canAccessDocuments ? (
+        <PremiumGate
+          title="Documents médicaux Premium"
+          message="Centralisez et consultez les documents médicaux de votre animal avec l’abonnement Premium."
+          onComparePlans={onDocumentsLocked}
+          testID="medical-documents-premium-gate"
+        />
+      ) : (
+        <>
       {documentError ? (
         <Banner
           tone="error"
@@ -932,6 +916,8 @@ function AnimalHealth({
           title="Aucun document médical"
           message="Les documents ajoutés aux soins et rendez-vous médicaux apparaîtront ici."
         />
+      )}
+        </>
       )}
     </View>
   );

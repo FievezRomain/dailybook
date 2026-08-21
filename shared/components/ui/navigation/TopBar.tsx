@@ -26,14 +26,15 @@ export function TopBar({ title, context = 'root', material = 'solid', scrolled =
   const resolvedInitials = avatarInitials ?? user?.prenom?.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() ?? 'VA';
   const resolvedImageUrl = avatarImageUrl ?? storedImageUrl ?? firebasePhotoUrl;
   const fallbackImageUrl = resolvedImageUrl === firebasePhotoUrl ? undefined : firebasePhotoUrl;
+  const brandedRoot = context === 'root' && title.trim().toLocaleUpperCase('fr-FR') === 'VASCO';
   return (
     <NavigationSurface material={material} style={[{ height: componentTokens.navigation.topBarHeight, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, borderBottomWidth: scrolled ? 1 : 0, borderBottomColor: colors.border, backgroundColor: material === 'glass' ? colors.glassBackground : colors.surface, shadowColor: colors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 2, elevation: 1 }, style]}>
       {context === 'detail' ? (
         <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={onBack} style={{ width: 24, height: 44, alignItems: 'center', justifyContent: 'center' }}><Icon name="back" size="lg" /></Pressable>
-      ) : (
+      ) : brandedRoot ? (
         <Image accessibilityIgnoresInvertColors source={require('../../../../assets/logo.png')} resizeMode="contain" style={{ width: 36, height: 36 }} />
-      )}
-      <Text numberOfLines={1} accessibilityLabel={context === 'root' ? 'Vasco' : title} style={{ flex: 1, color: context === 'root' ? colors.primary : colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xl, lineHeight: typography.lineHeights.relaxed }} testID={testID}>{context === 'root' ? 'VASCO' : title}</Text>
+      ) : null}
+      <Text numberOfLines={1} accessibilityLabel={brandedRoot ? 'Vasco' : title} style={{ flex: 1, color: brandedRoot ? colors.primary : colors.textPrimary, fontFamily: brandedRoot ? typography.fonts.medium : typography.fonts.bold, fontSize: typography.sizes.xl, lineHeight: typography.lineHeights.relaxed, textTransform: brandedRoot ? 'uppercase' : 'capitalize' }} testID={testID}>{brandedRoot ? 'VASCO' : title}</Text>
       {trailing ?? (
         <>
           {onNotifications ? (

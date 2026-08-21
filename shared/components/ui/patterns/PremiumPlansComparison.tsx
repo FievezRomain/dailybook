@@ -1,29 +1,34 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { radii, spacing, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
-import { Button } from '../actions';
 import { DetailScreen } from '../layout';
 import { TopBar } from '../navigation';
 
 const comparisonRows = [
-  { label: 'Animaux, événements, objectifs…', free: true },
-  { label: 'Statistiques', free: false },
-  { label: 'Groupes', free: false },
-  { label: 'Création assistée par IA', free: false },
-  { label: 'Notes vocales', free: false },
+  { label: "Gestion d'animaux", free: true },
+  { label: 'Gestion de tâches', free: true },
+  { label: 'Gestion des objectifs', free: true },
+  { label: 'Planification et suivi des événements', free: true },
+  { label: 'Rappels des événements', free: true },
+  { label: 'Gestion de plus de trois animaux', free: false },
+  { label: "Partage des tâches avec d'autres membres", free: false },
+  { label: 'Suivi du budget', free: false },
+  { label: "Suivi de l'alimentation", free: false },
+  { label: "Statistiques d'activités", free: false },
+  { label: 'Gestion du dossier médical', free: false },
+  { label: 'Enregistrement GPS lors des activités', free: false },
+  { label: "Suivi de l'évolution physique de l'animal", free: false },
 ] as const;
 
 export interface PremiumPlansComparisonProps {
   onBack: () => void;
-  onDiscoverPremium: () => void;
-  onContinueFree: () => void;
   testID?: string;
 }
 
-export function PremiumPlansComparison({ onBack, onDiscoverPremium, onContinueFree, testID }: PremiumPlansComparisonProps) {
+export function PremiumPlansComparison({ onBack, testID }: PremiumPlansComparisonProps) {
   const { colors } = useAppTheme();
   return (
-    <DetailScreen header={<TopBar title="Abonnement" context="detail" onBack={onBack} />} testID={testID} contentContainerStyle={{ gap: spacing.md, paddingTop: spacing.lg }} footer={<View style={{ gap: spacing.sm, paddingBottom: spacing.sm }}><Button label="Découvrir Premium" onPress={onDiscoverPremium} size="large" fullWidth /><Pressable accessibilityRole="button" accessibilityLabel="Continuer avec la version gratuite" onPress={onContinueFree} style={{ minHeight: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.control }}>Je continue avec la version gratuite</Text></Pressable></View>}>
+    <DetailScreen header={<TopBar title="Abonnement" context="detail" onBack={onBack} />} testID={testID} contentContainerStyle={{ gap: spacing.md, paddingTop: spacing.lg, paddingBottom: spacing.lg }}>
       <View style={{ gap: spacing.xs }}><Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: 26, lineHeight: 32 }}>Choisissez votre expérience</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>Les fonctions essentielles restent disponibles gratuitement.</Text></View>
       <View accessibilityRole="summary" accessibilityLabel="Comparatif des offres Gratuit et Premium" style={{ borderWidth: 1, borderColor: colors.border, borderRadius: radii.lg, backgroundColor: colors.surfaceVariant, overflow: 'hidden', paddingHorizontal: spacing.md }}>
         <ComparisonRow label="Fonctionnalité" free="Gratuit" premium="Premium" header />

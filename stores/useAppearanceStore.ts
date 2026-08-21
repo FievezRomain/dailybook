@@ -10,7 +10,7 @@ interface AppearanceState {
 }
 
 export const useAppearanceStore = create<AppearanceState>()(persist((set) => ({
-  glassEnabled: true,
+  glassEnabled: false,
   reduceMotion: false,
   setGlassEnabled: (glassEnabled) => set({ glassEnabled }),
   setReduceMotion: (reduceMotion) => set({ reduceMotion }),

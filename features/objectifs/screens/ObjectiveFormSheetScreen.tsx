@@ -84,10 +84,19 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
       return;
     }
     if (step === 1) {
-      setField('sousetapes', form.sousetapes
-        .filter((item) => item.label.trim())
-        .map((item, index) => ({ ...item, label: item.label.trim(), order: index + 1 })));
       setStep(2);
+      return;
+    }
+    if (step === 2) {
+      const normalizedSteps = form.sousetapes
+        .filter((item) => item.label.trim())
+        .map((item, index) => ({ ...item, label: item.label.trim(), order: index + 1 }));
+      if (!normalizedSteps.length) {
+        setSaveError('Ajoutez au moins une étape pour créer l’objectif.');
+        return;
+      }
+      setField('sousetapes', normalizedSteps);
+      setStep(3);
       return;
     }
     try {
@@ -116,16 +125,16 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
     if (!calendarField) return;
     detailsForm.setValue(calendarField, value, { shouldDirty: true, shouldValidate: true });
   };
-  const footerLabel = step === 2 ? (mode === 'edit' ? 'Enregistrer les modifications' : 'Créer l’objectif') : 'Continuer';
+  const footerLabel = step === 3 ? (mode === 'edit' ? 'Enregistrer les modifications' : 'Créer l’objectif') : 'Continuer';
 
   return <><FormSheet title={mode === 'edit' ? 'Modifier l’objectif' : duplicate ? 'Dupliquer l’objectif' : 'Nouvel objectif'} onBack={() => step > 0 ? setStep(step - 1) : onClose()} onClose={onClose} dirty={dirty} confirmBackWhenDirty={step === 0} footerLabel={footerLabel} onFooterPress={() => void continueWizard()} footerDisabled={pending} footerLoading={pending} testID="objective-form-sheet">
-    <LinearProgress current={step + 1} total={3} label={`Étape ${step + 1} sur 3`} />
+    <LinearProgress current={step + 1} total={4} label={`Étape ${step + 1} sur 4`} />
     <View style={{ gap: spacing.xs, marginTop: spacing.md }}>
-      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: typography.lineHeights.loose }}>{step === 0 ? 'Définir le cap' : step === 1 ? 'Animaux & étapes' : 'Vérification'}</Text>
-      {step < 2 ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{step === 0 ? 'Un objectif simple et mesurable fonctionne mieux.' : 'Associez le cap puis découpez-le en petites étapes.'}</Text> : null}
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: typography.lineHeights.loose }}>{step === 0 ? 'Définir le cap' : step === 1 ? 'Choisir les animaux' : step === 2 ? 'Définir les étapes' : 'Vérification'}</Text>
+      {step < 3 ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{step === 0 ? 'Un objectif simple et mesurable fonctionne mieux.' : step === 1 ? 'Associez un ou plusieurs animaux à cet objectif.' : 'Découpez le cap en petites étapes.'}</Text> : null}
     </View>
     {step === 0 ? <>
-      <ControlledTextField control={detailsForm.control} name="title" label="Titre" placeholder="Ex. Marcher 20 km" required helperText="Obligatoire" />
+      <ControlledTextField control={detailsForm.control} name="title" label="Titre" placeholder="Exemple : Rendez-vous vétérinaire" required helperText="Obligatoire" />
       <ControlledField control={detailsForm.control} name="datedebut">{({ value, errorMessage }) => <DateField label="Date de début" value={value} errorMessage={errorMessage} onPress={() => setCalendarField('datedebut')} />}</ControlledField>
       <ControlledField control={detailsForm.control} name="datefin">{({ value, errorMessage }) => <DateField label="Date de fin" value={value} errorMessage={errorMessage} onPress={() => setCalendarField('datefin')} />}</ControlledField>
     </> : null}
@@ -133,8 +142,10 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
       <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>Sélectionnez un ou plusieurs animaux</Text>
       {sortedAnimals.length ? <View accessibilityRole="list" style={{ gap: 10 }}>{visibleAnimals.map((animal) => { const selected = form.animaux.includes(animal.id); const subtitle = getAnimalSelectionSubtitle(animal); return <View key={animal.id} style={{ flexDirection: 'row', alignItems: 'center' }}><Checkbox value={selected} accessibilityLabel={`${selected ? 'Désélectionner' : 'Sélectionner'} ${animal.nom}`} onValueChange={() => toggleAnimal(animal.id)} /><View style={{ flex: 1 }}><ListItem testID={`objective-animal-${animal.id}`} title={animal.nom} subtitle={subtitle} leading={<Avatar initials={animal.nom} imageUrl={animal.image} accessibilityLabel={`Photo de ${animal.nom}`} size={40} decorative />} accessibilityLabel={`${animal.nom}, ${subtitle}, ${selected ? 'sélectionné' : 'non sélectionné'}`} accessibilityHint="Active ou désactive cet animal" onPress={() => toggleAnimal(animal.id)} /></View></View>; })}</View> : <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium }}>Aucun animal disponible. Vous pourrez en associer un plus tard.</Text>}
       {historicalAnimals.length ? <AnimalHistoryToggle expanded={historyExpanded} onPress={() => setHistoryExpanded((value) => !value)} testID="objective-animal-history" /> : null}
+    </> : null}
+    {step === 2 ? <>
       <View style={{ gap: spacing.md }}>
-        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Étapes (optionnel)</Text>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Étapes</Text>
         {form.sousetapes.map((item, index) => <TextField
           key={item.id ?? `new-step-${index}`}
           label={`Étape ${index + 1}`}
@@ -148,8 +159,8 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
       </View>
       <Button label="Ajouter une étape" icon="add" variant="secondary" fullWidth onPress={addStep} style={{ borderRadius: radii.lg }} testID="objective-add-step" />
     </> : null}
-    {step === 2 ? <ObjectiveSummary form={form} animals={sortedAnimals} onEdit={() => setStep(0)} /> : null}
-    {step === 2 ? <View style={{ padding: spacing.md, borderRadius: radii.lg, backgroundColor: colors.backgroundPaper }}><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Vasco suivra automatiquement la progression à partir des événements et mesures liés.</Text></View> : null}
+    {step === 3 ? <ObjectiveSummary form={form} animals={sortedAnimals} onEdit={() => setStep(0)} /> : null}
+    {step === 3 ? <View style={{ padding: spacing.md, borderRadius: radii.lg, backgroundColor: colors.backgroundPaper }}><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Vasco suivra automatiquement la progression à partir des événements et mesures liés.</Text></View> : null}
     {saveError ? <Banner tone="error" title="Enregistrement impossible" message={saveError} blocking testID="objective-save-error" /> : null}
   </FormSheet><CalendarPicker open={Boolean(calendarField)} current={calendarField ? form[calendarField] : undefined} selectedStart={calendarField ? form[calendarField] : undefined} onSelectDay={selectDate} onConfirm={() => setCalendarField(undefined)} onClose={() => setCalendarField(undefined)} /></>;
 }

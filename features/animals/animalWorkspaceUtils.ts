@@ -28,7 +28,7 @@ export function resolveAnimalSelection(animals: readonly Animal[], selectedId?: 
 export const MEDICAL_EVENT_TYPES = ['soins', 'rdv'] as const;
 
 export function getAnimalMedicalEvents(events: readonly Event[], animalId: number) {
-  return events.filter((event) => !event.idparent && event.animaux.includes(animalId) && MEDICAL_EVENT_TYPES.includes(event.eventtype as (typeof MEDICAL_EVENT_TYPES)[number]));
+  return events.filter((event) => !event.idparent && event.todisplay !== false && event.animaux.includes(animalId) && MEDICAL_EVENT_TYPES.includes(event.eventtype as (typeof MEDICAL_EVENT_TYPES)[number]));
 }
 
 export function getAnimalMedicalDocuments(events: readonly Event[], animalId: number) {

@@ -19,10 +19,11 @@ interface NotificationsScreenProps {
   activeTab: MainTabId;
   onSelectTab: (tab: MainTabId) => void;
   onAccount?: () => void;
+  onBack: () => void;
   onOpenNotification?: (notification: Notification) => void;
 }
 
-export function NotificationsScreen({ material = 'solid', activeTab, onSelectTab, onAccount, onOpenNotification }: NotificationsScreenProps) {
+export function NotificationsScreen({ material = 'solid', activeTab, onSelectTab, onAccount, onBack, onOpenNotification }: NotificationsScreenProps) {
   const { colors } = useAppTheme();
   const user = useAuthStore((state) => state.user);
   const query = useNotificationsQuery();
@@ -52,17 +53,14 @@ export function NotificationsScreen({ material = 'solid', activeTab, onSelectTab
 
   return <>
     <RootScreen
-      header={<TopBar title="Vasco" material={material} unreadNotifications={unread} onAccount={onAccount} avatarInitials={getInitials(user?.prenom)} />}
+      header={<TopBar title="Notifications" context="detail" material={material} onBack={onBack} />}
       bottomBar={<BottomBar items={tabs} activeId={activeTab} onSelect={onSelectTab} material={material} testID="main-tabs" />}
       refreshControl={<RefreshControl refreshing={query.isRefetching} onRefresh={() => void query.refetch()} />}
       contentContainerStyle={{ gap: spacing.md, paddingBottom: spacing.xxl }}
       material={material}
       testID="notifications-list"
     >
-      <View style={{ gap: spacing.xs }}>
-        <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 35 }}>Notifications</Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Rappels, invitations et informations importantes</Text>
-      </View>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Rappels, invitations et informations importantes</Text>
       {unread > 0 ? <Pressable accessibilityRole="button" accessibilityLabel="Tout marquer comme lu" disabled={mutations.markAllAsRead.isPending} onPress={() => mutations.markAllAsRead.mutate()} style={{ minHeight: 44, alignSelf: 'flex-end', justifyContent: 'center' }}><Text style={{ color: colors.primaryDark, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>Tout marquer comme lu</Text></Pressable> : null}
       {actionError ? <Banner tone="error" title="Réponse impossible" message={actionError} onDismiss={() => setActionError(undefined)} /> : null}
       {query.isError && notifications.length > 0 ? <Banner tone="error" title="Actualisation impossible" message="Les notifications déjà chargées restent disponibles." onDismiss={undefined} /> : null}

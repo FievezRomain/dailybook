@@ -118,6 +118,7 @@ Ne pas lancer une animation infinie hors écran. Arrêter timers, audio et anima
 - Désactiver le double submit.
 - Le bouton affiche son loading sans bloquer les champs non concernés.
 - Dates et heures respectent locale, fuseau et accessibilité clavier/picker.
+- L’application déclare explicitement le français comme langue native supportée afin que les contrôles système, menus d’édition et sélecteurs utilisent la locale française lorsque la plateforme l’autorise. Les menus Copier/Couper/Coller restent rendus par iOS/Android et suivent en dernier ressort la langue configurée pour l’application ou le système.
 
 ## 9. Premium et sécurité côté client
 

@@ -159,6 +159,8 @@ Le loader de marque utilise le coussinet Vasco avec animation séquentielle. Les
 
 Fonctionnalités réservées : Statistiques, Groupes, création par IA et notes vocales.
 
+Le droit Premium Groupes porte sur la création et la gestion du groupe. Un membre Gratuit déjà accepté peut utiliser un groupe actif, notamment pour partager un événement, à condition que tous les animaux liés à cet événement soient acceptés dans ce groupe. Le groupe reste actif uniquement tant que son gestionnaire conserve un abonnement Premium actif ; sinon il est masqué pour tous les membres et exclu de tous les sélecteurs de partage, sans suppression des données.
+
 Comportement d’un compte gratuit :
 
 1. l’entrée reste visible avec l’indication Premium ;

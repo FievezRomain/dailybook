@@ -16,18 +16,15 @@ import {
   EventCreateDetailsScreen,
   EventCreateEntryScreen,
   EventCreateOptionsScreen,
-  EventCreateSuccessScreen,
   EventCreateTypeScreen,
   EventDetailScreen,
   isPremiumSubscription,
 } from "../../features/events";
 import { HomeScreen, type MainTabId } from "../../features/home";
 import {
-  ActionSheet,
   FormSheetHost,
   PremiumPlansComparison,
   PremiumRequiredPattern,
-  type OverlayActionItem,
 } from "../../shared/components/ui";
 import { useAuthStore } from "../../stores/useAuthStore";
 import { useEventWizardStore } from "../../stores/useEventWizardStore";
@@ -41,8 +38,8 @@ import {
 import { useObjectifsQuery } from "../../hooks/queries/useObjectifsQuery";
 import { useObjectiveWizardStore } from "../../stores/useObjectiveWizardStore";
 import {
-  NoteCreateSuccessScreen,
   NoteDetailScreen,
+  NoteCreateEntryScreen,
   NoteFormSheetScreen,
   NotesListScreen,
   VoiceProcessingScreen,
@@ -89,7 +86,6 @@ import {
 export function MainNavigator() {
   const [tab, setTab] = useState<MainTabId>("home");
   const [preferredAnimalId, setPreferredAnimalId] = useState<number>();
-  const [statisticsGate, setStatisticsGate] = useState(false);
   const [statisticsPlans, setStatisticsPlans] = useState(false);
   const [voicePlans, setVoicePlans] = useState(false);
   const [groupsPlans, setGroupsPlans] = useState(false);
@@ -107,9 +103,9 @@ export function MainNavigator() {
   >();
   const [voiceRecording, setVoiceRecording] = useState<VoiceRecording>();
   const [voiceDraft, setVoiceDraft] = useState<VoiceNoteDraft>();
-  const [createdVoiceNoteId, setCreatedVoiceNoteId] = useState<number>();
   const [animalFeedback, setAnimalFeedback] = useState<string>();
   const resetWizard = useEventWizardStore((state) => state.reset);
+  const setEventWizardFormData = useEventWizardStore((state) => state.setFormData);
   const eventFormData = useEventWizardStore((state) => state.formData);
   const resetAnimalWizard = useAnimalWizardStore((state) => state.reset);
   const resetObjectiveWizard = useObjectiveWizardStore((state) => state.reset);
@@ -134,7 +130,6 @@ export function MainNavigator() {
     | { name: "noteVoiceRecording" }
     | { name: "noteVoiceProcessing" }
     | { name: "noteVoiceReview" }
-    | { name: "noteVoiceSuccess" }
     | { name: "noteForm"; mode: "create" | "edit"; noteId?: number }
     | { name: "wishes" }
     | { name: "wish"; wishId: number }
@@ -159,19 +154,15 @@ export function MainNavigator() {
     | { name: "eventCreateDetails" }
     | { name: "eventCreateAnimals" }
     | { name: "eventCreateOptions" }
-    | { name: "eventCreateSuccess"; eventId?: number }
     | { name: "eventCreateAiPremium" }
     | { name: "eventCreateAiDescription" }
     | { name: "eventCreateAiReview" }
-    | { name: "eventCreateGroupsPremium" }
     | { name: "eventEditDetails"; eventId: number }
     | { name: "eventEditAnimals"; eventId: number }
     | { name: "eventEditOptions"; eventId: number }
-    | { name: "eventEditGroupsPremium"; eventId: number }
     | { name: "eventDuplicateDetails"; sourceEventId: number }
     | { name: "eventDuplicateAnimals"; sourceEventId: number }
     | { name: "eventDuplicateOptions"; sourceEventId: number }
-    | { name: "eventDuplicateGroupsPremium"; sourceEventId: number }
   >({ name: "root" });
   const selectTab = (next: MainTabId) => {
     setNotificationsOpen(false);
@@ -198,7 +189,7 @@ export function MainNavigator() {
     else if (notification.type === "contact")
       setRoute({ name: "contact", contactId: notification.object_id });
   };
-  const create = (target: string) => {
+  const create = (target: string, initialEventDate?: string) => {
     if (target === "animal") {
       resetAnimalWizard();
       setRoute({ name: "animalForm", mode: "create" });
@@ -231,6 +222,7 @@ export function MainNavigator() {
     }
     if (target !== "event") return;
     resetWizard();
+    if (initialEventDate) setEventWizardFormData({ dateevent: initialEventDate });
     setRoute({ name: "eventCreateEntry" });
   };
   const agenda = () => {
@@ -241,7 +233,7 @@ export function MainNavigator() {
   const tracking = () => (
     <TrackingScreen
       canAccessStatistics={isPremiumSubscription(user?.subscription)}
-      onStatisticsLocked={() => setStatisticsGate(true)}
+      onCompareStatisticsPlans={() => setStatisticsPlans(true)}
       onSelectTab={selectTab}
       onCreate={create}
       onCreateObjective={() => create("objective")}
@@ -255,6 +247,7 @@ export function MainNavigator() {
   );
   const notes = () => (
     <NotesListScreen
+      onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
       onSelectTab={selectTab}
       onOpenNote={(noteId) => setRoute({ name: "note", noteId })}
       onCreateNote={() => setRoute({ name: "noteCreateChoice" })}
@@ -265,6 +258,7 @@ export function MainNavigator() {
   );
   const wishes = () => (
     <WishesListScreen
+      onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
       activeMainTab={tab}
       onSelectTab={selectTab}
       onOpenWish={(wishId) => setRoute({ name: "wish", wishId })}
@@ -276,6 +270,7 @@ export function MainNavigator() {
   );
   const contacts = () => (
     <ContactsListScreen
+      onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
       onSelectTab={selectTab}
       onOpenContact={(contactId) => setRoute({ name: "contact", contactId })}
       onCreateContact={() => setRoute({ name: "contactForm", mode: "create" })}
@@ -286,6 +281,7 @@ export function MainNavigator() {
   );
   const groups = () => (
     <GroupsListScreen
+      onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
       onSelectTab={selectTab}
       onOpenGroup={(groupId) => setRoute({ name: "group", groupId })}
       onOpenInvitation={(invitationId) =>
@@ -315,20 +311,6 @@ export function MainNavigator() {
       onAccount={openSettings}
     />
   );
-  const noteCreationActions: readonly OverlayActionItem<"write" | "voice">[] = [
-    {
-      id: "write",
-      label: "Écrire une note",
-      description: "Saisir un titre et un contenu",
-      icon: "edit",
-    },
-    {
-      id: "voice",
-      label: "Enregistrer une note vocale",
-      description: "Utiliser le micro puis corriger la transcription",
-      icon: "microphone",
-    },
-  ];
   const clearVoiceDraft = () => {
     if (voiceRecording) VoiceUploadService.deleteLocal(voiceRecording.uri);
     setVoiceRecording(undefined);
@@ -381,6 +363,8 @@ export function MainNavigator() {
         onOpenEvent={(eventId) => setRoute({ name: "event", eventId })}
         canAccessVisualTracking={premium}
         onVisualTrackingLocked={() => setVisualTrackingPlans(true)}
+        canAccessMedicalDocuments={premium}
+        onMedicalDocumentsLocked={() => setVisualTrackingPlans(true)}
         onAnimalAction={openAnimalAction}
         onNotifications={openNotifications}
         onAccount={openSettings}
@@ -473,6 +457,7 @@ export function MainNavigator() {
       <NotificationsScreen
         activeTab={tab}
         onSelectTab={selectTab}
+        onBack={() => setNotificationsOpen(false)}
         onAccount={openSettings}
         onOpenNotification={openNotificationTarget}
       />
@@ -481,32 +466,13 @@ export function MainNavigator() {
     return (
       <PremiumPlansComparison
         onBack={() => setStatisticsPlans(false)}
-        onDiscoverPremium={() => undefined}
-        onContinueFree={() => {
-          setStatisticsPlans(false);
-          setStatisticsGate(false);
-        }}
         testID="statistics-plans-comparison"
-      />
-    );
-  if (statisticsGate)
-    return (
-      <PremiumRequiredPattern
-        feature="statistics"
-        onBack={() => setStatisticsGate(false)}
-        onComparePlans={() => setStatisticsPlans(true)}
-        testID="statistics-premium-required"
       />
     );
   if (voicePlans)
     return (
       <PremiumPlansComparison
         onBack={() => setVoicePlans(false)}
-        onDiscoverPremium={() => undefined}
-        onContinueFree={() => {
-          setVoicePlans(false);
-          setRoute({ name: "root" });
-        }}
         testID="voice-plans-comparison"
       />
     );
@@ -514,11 +480,6 @@ export function MainNavigator() {
     return (
       <PremiumPlansComparison
         onBack={() => setGroupsPlans(false)}
-        onDiscoverPremium={() => undefined}
-        onContinueFree={() => {
-          setGroupsPlans(false);
-          setRoute({ name: "root" });
-        }}
         testID="groups-plans-comparison"
       />
     );
@@ -526,8 +487,6 @@ export function MainNavigator() {
     return (
       <PremiumPlansComparison
         onBack={() => setVisualTrackingPlans(false)}
-        onDiscoverPremium={() => undefined}
-        onContinueFree={() => setVisualTrackingPlans(false)}
         testID="visual-tracking-plans-comparison"
       />
     );
@@ -571,11 +530,12 @@ export function MainNavigator() {
                   : { name: "groups" },
               )
             }
-            onSaved={(groupId) =>
+            onSaved={(groupId) => {
+              setTab("more");
               setRoute(
                 groupId ? { name: "group", groupId } : { name: "groups" },
-              )
-            }
+              );
+            }}
           />
         </FormSheetHost>
       </>
@@ -634,21 +594,19 @@ export function MainNavigator() {
     return (
       <>
         {notes()}
-        <ActionSheet
-          open
-          title="Créer une note"
-          subtitle="Choisissez votre mode de saisie"
-          items={noteCreationActions}
-          onClose={() => setRoute({ name: "root" })}
-          onSelect={(choice) => {
-            if (choice === "write")
-              setRoute({ name: "noteForm", mode: "create" });
-            else if (isPremiumSubscription(user?.subscription))
-              setRoute({ name: "noteVoiceRecording" });
-            else setRoute({ name: "noteVoicePremium" });
-          }}
-          testID="note-create-choice"
-        />
+        <FormSheetHost>
+          <NoteCreateEntryScreen
+            onBack={() => setRoute({ name: "root" })}
+            onWritten={() => setRoute({ name: "noteForm", mode: "create" })}
+            onVoice={() =>
+              setRoute(
+                isPremiumSubscription(user?.subscription)
+                  ? { name: "noteVoiceRecording" }
+                  : { name: "noteVoicePremium" },
+              )
+            }
+          />
+        </FormSheetHost>
       </>
     );
   if (route.name === "noteVoicePremium")
@@ -695,28 +653,15 @@ export function MainNavigator() {
           clearVoiceDraft();
           setRoute({ name: "root" });
         }}
-        onCreated={(noteId) => {
-          setCreatedVoiceNoteId(noteId);
+        onCreated={() => {
           setVoiceRecording(undefined);
           setVoiceDraft(undefined);
-          setRoute({ name: "noteVoiceSuccess" });
+          setTab("more");
+          setRoute({ name: "notes" });
         }}
       />
     ) : (
       notes()
-    );
-  if (route.name === "noteVoiceSuccess")
-    return (
-      <NoteCreateSuccessScreen
-        onBackToNotes={() => setRoute({ name: "root" })}
-        onViewNote={() =>
-          setRoute(
-            createdVoiceNoteId
-              ? { name: "note", noteId: createdVoiceNoteId }
-              : { name: "root" },
-          )
-        }
-      />
     );
   if (route.name === "noteForm") {
     const selectedNote = route.noteId
@@ -742,10 +687,13 @@ export function MainNavigator() {
               setRoute(
                 route.noteId
                   ? { name: "note", noteId: route.noteId }
-                  : { name: "root" },
+                  : { name: "notes" },
               )
             }
-            onSaved={() => setRoute({ name: "root" })}
+            onSaved={() => {
+              setTab("more");
+              setRoute({ name: "notes" });
+            }}
           />
         </FormSheetHost>
       </>
@@ -781,9 +729,10 @@ export function MainNavigator() {
                   : { name: "wishes" },
               )
             }
-            onSaved={(wishId) =>
+            onSaved={(wishId) => {
+              setTab("more");
               setRoute(wishId ? { name: "wish", wishId } : { name: "wishes" })
-            }
+            }}
           />
         </FormSheetHost>
       </>
@@ -833,13 +782,14 @@ export function MainNavigator() {
                   : { name: "contacts" },
               )
             }
-            onSaved={(contactId) =>
+            onSaved={(contactId) => {
+              setTab("more");
               setRoute(
                 contactId
                   ? { name: "contact", contactId }
                   : { name: "contacts" },
               )
-            }
+            }}
           />
         </FormSheetHost>
       </>
@@ -958,24 +908,6 @@ export function MainNavigator() {
       </>
     );
   }
-  if (route.name === "eventCreateGroupsPremium")
-    return (
-      <PremiumRequiredPattern
-        feature="groups"
-        onBack={() => setRoute({ name: "eventCreateOptions" })}
-        onComparePlans={() => undefined}
-      />
-    );
-  if (route.name === "eventEditGroupsPremium")
-    return (
-      <PremiumRequiredPattern
-        feature="groups"
-        onBack={() =>
-          setRoute({ name: "eventEditOptions", eventId: route.eventId })
-        }
-        onComparePlans={() => undefined}
-      />
-    );
   if (route.name === "eventEditOptions")
     return (
       <>
@@ -1000,12 +932,6 @@ export function MainNavigator() {
                 feedback: "Les modifications ont bien été enregistrées.",
               });
             }}
-            onPremiumGroups={() =>
-              setRoute({
-                name: "eventEditGroupsPremium",
-                eventId: route.eventId,
-              })
-            }
           />
         </FormSheetHost>
       </>
@@ -1033,6 +959,7 @@ export function MainNavigator() {
         {eventContext(route.eventId)}
         <FormSheetHost>
           <EventCreateDetailsScreen
+            onComparePlans={() => setVisualTrackingPlans(true)}
             onBack={() => setRoute({ name: "event", eventId: route.eventId })}
             onClose={() => setRoute({ name: "event", eventId: route.eventId })}
             onContinue={() =>
@@ -1045,19 +972,6 @@ export function MainNavigator() {
           />
         </FormSheetHost>
       </>
-    );
-  if (route.name === "eventDuplicateGroupsPremium")
-    return (
-      <PremiumRequiredPattern
-        feature="groups"
-        onBack={() =>
-          setRoute({
-            name: "eventDuplicateOptions",
-            sourceEventId: route.sourceEventId,
-          })
-        }
-        onComparePlans={() => undefined}
-      />
     );
   if (route.name === "eventDuplicateOptions")
     return (
@@ -1076,14 +990,8 @@ export function MainNavigator() {
             }
             onCreated={(eventId) => {
               resetWizard();
-              setRoute({ name: "eventCreateSuccess", eventId });
+              agenda();
             }}
-            onPremiumGroups={() =>
-              setRoute({
-                name: "eventDuplicateGroupsPremium",
-                sourceEventId: route.sourceEventId,
-              })
-            }
           />
         </FormSheetHost>
       </>
@@ -1119,6 +1027,7 @@ export function MainNavigator() {
         {eventContext(route.sourceEventId)}
         <FormSheetHost>
           <EventCreateDetailsScreen
+            onComparePlans={() => setVisualTrackingPlans(true)}
             onBack={() =>
               setRoute({ name: "event", eventId: route.sourceEventId })
             }
@@ -1176,21 +1085,6 @@ export function MainNavigator() {
         </FormSheetHost>
       </>
     );
-  if (route.name === "eventCreateSuccess")
-    return (
-      <>
-        {rootContext()}
-        <FormSheetHost>
-          <EventCreateSuccessScreen
-            onAgenda={agenda}
-            onCreateAnother={() => {
-              resetWizard();
-              setRoute({ name: "eventCreateEntry" });
-            }}
-          />
-        </FormSheetHost>
-      </>
-    );
   if (route.name === "eventCreateOptions")
     return (
       <>
@@ -1202,12 +1096,7 @@ export function MainNavigator() {
               resetWizard();
               setRoute({ name: "root" });
             }}
-            onCreated={(eventId) =>
-              setRoute({ name: "eventCreateSuccess", eventId })
-            }
-            onPremiumGroups={() =>
-              setRoute({ name: "eventCreateGroupsPremium" })
-            }
+            onCreated={() => agenda()}
           />
         </FormSheetHost>
       </>
@@ -1234,6 +1123,7 @@ export function MainNavigator() {
         {rootContext()}
         <FormSheetHost>
           <EventCreateDetailsScreen
+            onComparePlans={() => setVisualTrackingPlans(true)}
             onBack={() => setRoute({ name: "eventCreateType" })}
             onClose={() => {
               resetWizard();

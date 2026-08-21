@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { RefreshControl, Text, View } from 'react-native';
 
 import { useGroupsQuery, useInvitationsQuery } from '../../../hooks/queries/useGroupsQuery';
 import { useNotificationsQuery } from '../../../hooks/queries/useNotificationsQuery';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import { BottomBar, EmptyState, ErrorState, FloatingActionButton, GlobalCreateMenu, GroupCard, RootScreen, Skeleton, TopBar, resolveAsyncState, type GlobalCreateTarget } from '../../../shared/components/ui';
+import { BottomBar, EmptyState, ErrorState, FloatingActionButton, GlobalCreateMenu, GroupCard, RootScreen, SearchField, Skeleton, TopBar, resolveAsyncState, type GlobalCreateTarget } from '../../../shared/components/ui';
 import type { Material } from '../../../theme/materials';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -21,23 +21,27 @@ interface GroupsListScreenProps {
   onCreate: (target: GlobalCreateTarget) => void;
   onNotifications?: () => void;
   onAccount?: () => void;
+  onBack: () => void;
 }
 
-export function GroupsListScreen({ material = 'solid', onSelectTab, onOpenGroup, onOpenInvitation, onCreateGroup, onCreate, onNotifications, onAccount }: GroupsListScreenProps) {
+export function GroupsListScreen({ material = 'solid', onSelectTab, onOpenGroup, onOpenInvitation, onCreateGroup, onCreate, onNotifications, onAccount, onBack }: GroupsListScreenProps) {
   const { colors } = useAppTheme();
   const user = useAuthStore((state) => state.user);
   const groupsQuery = useGroupsQuery();
   const invitationsQuery = useInvitationsQuery();
   const notificationsQuery = useNotificationsQuery();
   const [createOpen, setCreateOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const groups = groupsQuery.data ?? [];
+  const normalizedSearch = search.trim().toLocaleLowerCase('fr-FR');
+  const visibleGroups = useMemo(() => groups.filter((group) => [group.name, group.informations].some((value) => value?.toLocaleLowerCase('fr-FR').includes(normalizedSearch))), [groups, normalizedSearch]);
   const invitations = invitationsQuery.data ?? [];
   const state = resolveAsyncState({ loading: groupsQuery.isLoading, error: groupsQuery.isError, hasData: groups.length > 0 });
   const unread = (notificationsQuery.data ?? []).filter((notification) => !notification.is_read).length;
   const refresh = async () => { await Promise.all([groupsQuery.refetch(), invitationsQuery.refetch()]); };
 
   return <><RootScreen
-    header={<TopBar title="Groupes" material={material} onNotifications={onNotifications} unreadNotifications={unread} onAccount={onAccount} avatarInitials={getInitials(user?.prenom)} />}
+    header={<TopBar title="Groupes" context="detail" onBack={onBack} material={material} onNotifications={onNotifications} unreadNotifications={unread} onAccount={onAccount} avatarInitials={getInitials(user?.prenom)} />}
     bottomBar={<BottomBar items={tabs} activeId="more" onSelect={onSelectTab} material={material} testID="main-tabs" />}
     floatingAction={<FloatingActionButton accessibilityLabel="Créer" testID="groups-create" onPress={() => setCreateOpen(true)} material={material} />}
     refreshControl={<RefreshControl refreshing={groupsQuery.isRefetching || invitationsQuery.isRefetching} onRefresh={() => void refresh()} />}
@@ -45,11 +49,13 @@ export function GroupsListScreen({ material = 'solid', onSelectTab, onOpenGroup,
     material={material}
     testID="groups-list"
   >
+    <SearchField value={search} onChangeText={setSearch} onClear={() => setSearch('')} placeholder="Rechercher un groupe" accessibilityLabel="Rechercher un groupe" />
     {invitations.length ? <View style={{ gap: spacing.sm }}><Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.lg }}>Invitations</Text>{invitations.map((invitation) => <GroupCard key={invitation.id} name={invitation.group_name || `Groupe ${invitation.group_id}`} summary={invitation.proposed_by_name ? `Invitation de ${invitation.proposed_by_name}` : 'Invitation reçue'} description="Répondez pour rejoindre ce groupe." initials={getGroupInitials(invitation.group_name || 'Groupe')} role="invited" onPress={() => onOpenInvitation(invitation.id)} testID={`group-invitation-${invitation.id}`} />)}</View> : null}
-    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}><Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 35 }}>Vos groupes</Text>{groups.length ? <Text style={{ color: colors.primaryDark, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{groups.length} groupe{groups.length > 1 ? 's' : ''}</Text> : null}</View>
+    {groups.length ? <Text style={{ alignSelf: 'flex-end', color: colors.primaryDark, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{visibleGroups.length} groupe{visibleGroups.length > 1 ? 's' : ''}</Text> : null}
     {state === 'loading' ? <View style={{ gap: spacing.md }}><Skeleton type="card" density="comfortable" /><Skeleton type="card" density="comfortable" /><Skeleton type="card" density="comfortable" /></View>
       : state === 'error' ? <ErrorState title="Liste indisponible" message="Impossible de charger vos groupes. Vérifiez la connexion puis réessayez." onRetry={() => void groupsQuery.refetch()} />
         : groups.length === 0 ? <EmptyState title="Aucun groupe" message="Créez un espace pour partager le suivi de vos animaux avec vos proches." />
-          : <View style={{ gap: spacing.md }}>{groups.map((group) => <GroupCard key={group.id} name={group.name} summary={getGroupSummary(group)} description={group.informations} initials={getGroupInitials(group.name)} role={isGroupManager(group, user?.email) ? 'owner' : 'member'} onPress={() => onOpenGroup(group.id)} testID={`group-card-${group.id}`} />)}</View>}
+          : visibleGroups.length === 0 ? <EmptyState type="search" title="Aucun résultat" message="Essayez un autre nom de groupe." actionLabel="Effacer la recherche" onAction={() => setSearch('')} />
+          : <View style={{ gap: spacing.md }}>{visibleGroups.map((group) => <GroupCard key={group.id} name={group.name} summary={getGroupSummary(group)} description={group.informations} initials={getGroupInitials(group.name)} role={isGroupManager(group, user?.email) ? 'owner' : 'member'} onPress={() => onOpenGroup(group.id)} testID={`group-card-${group.id}`} />)}</View>}
   </RootScreen><GlobalCreateMenu open={createOpen} onClose={() => setCreateOpen(false)} onSelect={onCreate} material={material} testID="groups-create-menu" /></>;
 }

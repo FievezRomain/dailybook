@@ -35,7 +35,7 @@ interface ObjectiveWizardState {
 export const useObjectiveWizardStore = create<ObjectiveWizardState>()((set) => ({
   step: 0,
   formData: emptyForm(),
-  setStep: (step) => set({ step: Math.max(0, Math.min(2, step)) }),
+  setStep: (step) => set({ step: Math.max(0, Math.min(3, step)) }),
   setField: (key, value) => set((state) => ({ formData: { ...state.formData, [key]: value } })),
   replaceFormData: (formData) => set({ step: 0, formData }),
   reset: () => set({ step: 0, formData: emptyForm() }),

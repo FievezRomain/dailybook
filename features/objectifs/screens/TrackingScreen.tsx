@@ -14,9 +14,11 @@ import {
   FloatingActionButton,
   GlobalCreateMenu,
   ObjectiveCard,
+  PremiumGate,
   RootScreen,
   SectionHeader,
   Skeleton,
+  TabBar,
   TopBar,
   resolveAsyncState,
   type GlobalCreateTarget,
@@ -52,7 +54,7 @@ type TrackingTab = "objectives" | "statistics";
 export interface TrackingScreenProps {
   material?: Material;
   canAccessStatistics: boolean;
-  onStatisticsLocked: () => void;
+  onCompareStatisticsPlans: () => void;
   onSelectTab: (tab: MainTabId) => void;
   onCreate: (target: GlobalCreateTarget) => void;
   onCreateObjective: () => void;
@@ -65,7 +67,7 @@ export interface TrackingScreenProps {
 export function TrackingScreen({
   material = "solid",
   canAccessStatistics,
-  onStatisticsLocked,
+  onCompareStatisticsPlans,
   onSelectTab,
   onCreate,
   onCreateObjective,
@@ -127,10 +129,6 @@ export function TrackingScreen({
     ? notificationsQuery.data
     : [];
   const selectTrackingTab = (tab: TrackingTab) => {
-    if (tab === "statistics" && !canAccessStatistics) {
-      onStatisticsLocked();
-      return;
-    }
     setSelectedStatistic(undefined);
     setActiveTab(tab);
   };
@@ -251,7 +249,7 @@ export function TrackingScreen({
         padded={false}
         testID="tracking-screen"
       >
-        {activeTab === "statistics" ? (
+        {activeTab === "statistics" && canAccessStatistics ? (
           <AnimalFilter
             mode="multiple"
             animals={presentAnimals}
@@ -279,11 +277,18 @@ export function TrackingScreen({
         )}
         <TrackingTabs
           activeTab={activeTab}
-          canAccessStatistics={canAccessStatistics}
-          colors={colors}
           onSelect={selectTrackingTab}
         />
-        {activeTab === "statistics" ? (
+        {activeTab === "statistics" && !canAccessStatistics ? (
+          <View style={{ padding: spacing.md }}>
+            <PremiumGate
+              title="Statistiques Premium"
+              message="Analysez les mesures, activités et dépenses de vos animaux avec l’abonnement Premium."
+              onComparePlans={onCompareStatisticsPlans}
+              testID="statistics-premium-gate"
+            />
+          </View>
+        ) : activeTab === "statistics" ? (
           <StatisticsOverview
             animalIds={selectedAnimalIds}
             period={statisticsPeriod}
@@ -377,7 +382,7 @@ function AnimalFilter(props: AnimalFilterProps) {
       contentContainerStyle={{
         minWidth: "100%",
         paddingHorizontal: spacing.sm,
-        paddingTop: spacing.sm,
+        paddingTop: spacing.xl,
         alignItems: "flex-start",
       }}
     >
@@ -407,61 +412,12 @@ function AnimalFilter(props: AnimalFilterProps) {
 
 function TrackingTabs({
   activeTab,
-  canAccessStatistics,
-  colors,
   onSelect,
 }: {
   activeTab: TrackingTab;
-  canAccessStatistics: boolean;
-  colors: ReturnType<typeof useAppTheme>["colors"];
   onSelect: (tab: TrackingTab) => void;
 }) {
-  return (
-    <View
-      accessibilityRole="tablist"
-      style={{
-        height: 48,
-        flexDirection: "row",
-        paddingHorizontal: spacing.md,
-      }}
-    >
-      {(
-        [
-          { id: "objectives", label: "Objectifs" },
-          { id: "statistics", label: "Statistiques" },
-        ] as const
-      ).map((item) => {
-        const active = activeTab === item.id;
-        return (
-          <Pressable
-            key={item.id}
-            accessibilityRole="tab"
-            accessibilityState={{ selected: active }}
-            onPress={() => onSelect(item.id)}
-            style={{
-              flex: 1,
-              alignItems: "center",
-              justifyContent: "center",
-              borderBottomWidth: active ? 2 : 1,
-              borderBottomColor: active ? colors.primaryDark : colors.border,
-            }}
-          >
-            <Text
-              style={{
-                color: active ? colors.primaryDark : colors.textSecondary,
-                fontFamily: active
-                  ? typography.fonts.semiBold
-                  : typography.fonts.medium,
-                fontSize: typography.sizes.md,
-              }}
-            >
-              {item.label}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
-  );
+  return <TabBar items={[{ id: "objectives", label: "Objectifs" }, { id: "statistics", label: "Statistiques" }]} activeId={activeTab} onSelect={onSelect} fullWidthIndicator style={{ paddingHorizontal: spacing.md }} />;
 }
 
 function ObjectivesContent({

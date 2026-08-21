@@ -23,7 +23,7 @@ export const agendaEventTypeOptions = [
   { id: 'balade', label: 'Balade' },
   { id: 'entrainement', label: 'Entraînement' },
   { id: 'concours', label: 'Concours' },
-  { id: 'rdv', label: 'Rendez-vous' },
+  { id: 'rdv', label: 'Rendez-vous médical' },
   { id: 'soins', label: 'Soins' },
   { id: 'depense', label: 'Dépense' },
   { id: 'autre', label: 'Autre' },
@@ -34,12 +34,13 @@ export function canonicalEventType(value: string) {
   return EVENT_TYPE_ALIASES[normalized] ?? normalized;
 }
 
-export function filterAgendaEvents(events: readonly Event[], date: string, query: string, selectedTypes: readonly string[]) {
+export function filterAgendaEvents(events: readonly Event[], date: string, query: string, selectedTypes: readonly string[], selectedAnimalIds: readonly number[] = []) {
   const normalizedQuery = query.trim().toLocaleLowerCase('fr-FR');
-  const globalFilterActive = Boolean(normalizedQuery || selectedTypes.length);
-  const source = globalFilterActive ? events.filter((event) => event.todisplay !== false) : eventsForDate(events, date);
+  const globalFilterActive = Boolean(normalizedQuery || selectedTypes.length || selectedAnimalIds.length);
+  const source = globalFilterActive ? events : eventsForDate(events, date);
   return source
     .filter((event) => !selectedTypes.length || selectedTypes.includes(canonicalEventType(event.eventtype)))
+    .filter((event) => !selectedAnimalIds.length || selectedAnimalIds.some((animalId) => event.animaux.includes(animalId)))
     .filter((event) => !normalizedQuery || [event.nom, canonicalEventType(event.eventtype), event.commentaire]
       .some((value) => value?.toLocaleLowerCase('fr-FR').includes(normalizedQuery)))
     .sort((a, b) => a.dateevent.localeCompare(b.dateevent) || (a.heuredebutevent ?? '').localeCompare(b.heuredebutevent ?? ''));
@@ -53,7 +54,7 @@ export function groupAgendaHighlights(highlights: readonly AgendaHighlight[]) {
 }
 
 export function dateKey(date: Date) { const year = date.getFullYear(); const month = String(date.getMonth() + 1).padStart(2, '0'); const day = String(date.getDate()).padStart(2, '0'); return `${year}-${month}-${day}`; }
-export function eventsForDate(events: readonly Event[], date: string) { return events.filter((event) => event.dateevent.slice(0, 10) === date && event.todisplay !== false).sort((a, b) => (a.heuredebutevent ?? '').localeCompare(b.heuredebutevent ?? '')); }
+export function eventsForDate(events: readonly Event[], date: string) { return events.filter((event) => event.dateevent.slice(0, 10) === date).sort((a, b) => (a.heuredebutevent ?? '').localeCompare(b.heuredebutevent ?? '')); }
 export function formatAgendaMonth(date: string) { const label = new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(new Date(`${date}T12:00:00`)); return label.charAt(0).toUpperCase() + label.slice(1); }
 export function formatAgendaDay(date: string, full = true) { return new Intl.DateTimeFormat('fr-FR', full ? { weekday: 'long', day: 'numeric', month: 'long' } : { day: 'numeric', month: 'long' }).format(new Date(`${date}T12:00:00`)); }
 export function formatAgendaEmptyMessage(date: string) { return `Rien de prévu pour le ${formatAgendaDay(date).toLocaleLowerCase('fr-FR')}.`; }

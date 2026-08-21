@@ -30,6 +30,13 @@ export function getSelectedAnimalNames(ids: readonly number[], animals: readonly
   return ids.map((id) => animals.find((animal) => animal.id === id)?.nom).filter((name): name is string => Boolean(name));
 }
 
+export function isPastEventDate(value: string | undefined, now = new Date()) {
+  const eventDate = value?.slice(0, 10);
+  if (!eventDate || !/^\d{4}-\d{2}-\d{2}$/.test(eventDate)) return false;
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  return eventDate < today;
+}
+
 export function buildEventCreationPayload(form: EventWizardFormData): CreateEventPayload {
   const eventtype = form.eventType ?? 'autre';
   const fallbackName = getEventDetailsConfig(eventtype).title;
@@ -38,7 +45,8 @@ export function buildEventCreationPayload(form: EventWizardFormData): CreateEven
     dateevent: form.dateevent ?? '',
     animaux: form.animaux ?? [],
     eventtype,
-    state: form.state ?? 'pending',
+    state: form.state ?? (isPastEventDate(form.dateevent) ? 'completed' : 'pending'),
+    ...(eventtype === 'soins' || eventtype === 'rdv' ? { todisplay: form.todisplay ?? true } : {}),
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   };
   const stringFields = ['lieu', 'heuredebutevent', 'commentaire', 'traitement', 'datefinsoins', 'specialiste', 'discipline', 'epreuve', 'dossart', 'placement', 'categoriedepense', 'heuredebutbalade', 'datefinbalade', 'heurefinbalade', 'rappelnotification'] as const;
@@ -52,19 +60,23 @@ export function buildEventCreationPayload(form: EventWizardFormData): CreateEven
     payload.frequencevalue = form.frequencevalue;
   }
   if (form.shared_groups?.length) payload.shared_groups = form.shared_groups;
+  const documents = (form.documents ?? []).filter((document) => !document.localUri).map((document) => document.name);
+  if (documents.length) payload.documents = documents;
   if (typeof form.idparent === 'number') payload.idparent = form.idparent;
   return payload;
 }
 
 export function buildEventUpdatePayload(form: EventWizardFormData, eventId: number): UpdateEventPayload {
-  return { ...buildEventCreationPayload(form), id: eventId, update_scope: form.updateScope as UpdateEventPayload['update_scope'] };
+  return { ...buildEventCreationPayload(form), state: form.state ?? 'pending', id: eventId, update_scope: form.updateScope as UpdateEventPayload['update_scope'] };
 }
 
 export function eventToWizardForm(event: Event): EventWizardFormData {
   const source = event as Event & Record<string, unknown>;
-  const fields = ['nom', 'dateevent', 'animaux', 'lieu', 'heuredebutevent', 'commentaire', 'notif', 'optionnotif', 'shared_groups', 'traitement', 'datefinsoins', 'specialiste', 'discipline', 'note', 'epreuve', 'dossart', 'placement', 'depense', 'categoriedepense', 'heuredebutbalade', 'datefinbalade', 'heurefinbalade', 'state', 'idparent', 'frequencetype', 'frequencevalue', 'rappelnotification'] as const;
+  const fields = ['nom', 'dateevent', 'animaux', 'lieu', 'heuredebutevent', 'commentaire', 'notif', 'optionnotif', 'shared_groups', 'documents', 'traitement', 'datefinsoins', 'specialiste', 'discipline', 'note', 'epreuve', 'dossart', 'placement', 'depense', 'categoriedepense', 'heuredebutbalade', 'datefinbalade', 'heurefinbalade', 'state', 'todisplay', 'idparent', 'frequencetype', 'frequencevalue', 'rappelnotification'] as const;
   const form: EventWizardFormData = { eventType: event.eventtype };
   fields.forEach((key) => { if (source[key] !== undefined && source[key] !== null) Object.assign(form, { [key]: source[key] }); });
+  form.shared_groups = event.shared_groups ?? [];
+  form.documents = (event.documents ?? []).map((document) => ({ name: document.name }));
   return form;
 }
 

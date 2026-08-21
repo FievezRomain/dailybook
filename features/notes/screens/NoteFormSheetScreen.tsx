@@ -5,7 +5,7 @@ import {
 } from "../../../shared/components/ui";
 import type { Note } from "../../../models/Note";
 import { useNoteForm } from "../hooks/useNoteForm";
-import { RichNoteEditor } from "../components/RichNoteEditor";
+import { RichNoteEditor, type RichNoteEditorHandle } from "../components/RichNoteEditor";
 
 interface NoteFormSheetScreenProps {
   mode: "create" | "edit";
@@ -13,7 +13,6 @@ interface NoteFormSheetScreenProps {
   onClose: () => void;
   onSaved: () => void;
 }
-
 export function NoteFormSheetScreen({
   mode,
   note,
@@ -25,7 +24,11 @@ export function NoteFormSheetScreen({
     note,
     onSaved,
   );
-  const save = form.handleSubmit((values) => submit(values, onClose));
+  const editorRef = useRef<RichNoteEditorHandle>(null);
+  const save = () => {
+    editorRef.current?.flush();
+    setTimeout(() => void form.handleSubmit((values) => submit(values))(), 80);
+  };
 
   return (
     <FormSheet
@@ -33,7 +36,7 @@ export function NoteFormSheetScreen({
       onBack={onClose}
       onClose={onClose}
       footerLabel={mode === "edit" ? "Enregistrer" : "Créer la note"}
-      onFooterPress={() => void save()}
+      onFooterPress={save}
       footerLoading={loading}
       dirty={form.formState.isDirty}
       confirmBackWhenDirty
@@ -43,7 +46,7 @@ export function NoteFormSheetScreen({
         control={form.control}
         name="titre"
         label="Titre"
-        placeholder="Ex. Liste pour le week-end"
+        placeholder="Exemple : Titre"
         helperText="Obligatoire"
         maxLength={120}
         disabled={loading}
@@ -52,6 +55,7 @@ export function NoteFormSheetScreen({
       <ControlledField control={form.control} name="note" disabled={loading}>
         {({ value, onChange, errorMessage, disabled }) => (
           <RichNoteEditor
+            ref={editorRef}
             value={value}
             onChange={(next) => {
               if (next.length <= 500) onChange(next);
@@ -64,3 +68,4 @@ export function NoteFormSheetScreen({
     </FormSheet>
   );
 }
+import { useRef } from "react";

@@ -20,9 +20,10 @@ interface NotesListScreenProps {
   onCreate: (target: GlobalCreateTarget) => void;
   onNotifications?: () => void;
   onAccount?: () => void;
+  onBack: () => void;
 }
 
-export function NotesListScreen({ material = 'solid', onSelectTab, onOpenNote, onCreateNote, onCreate, onNotifications, onAccount }: NotesListScreenProps) {
+export function NotesListScreen({ material = 'solid', onSelectTab, onOpenNote, onCreateNote, onCreate, onNotifications, onAccount, onBack }: NotesListScreenProps) {
   const { colors } = useAppTheme();
   const user = useAuthStore((state) => state.user);
   const notesQuery = useNotesQuery();
@@ -36,7 +37,7 @@ export function NotesListScreen({ material = 'solid', onSelectTab, onOpenNote, o
 
   return <>
     <RootScreen
-      header={<TopBar title="Notes" material={material} onNotifications={onNotifications} unreadNotifications={unread} onAccount={onAccount} avatarInitials={getInitials(user?.prenom)} />}
+      header={<TopBar title="Notes" context="detail" onBack={onBack} material={material} onNotifications={onNotifications} unreadNotifications={unread} onAccount={onAccount} avatarInitials={getInitials(user?.prenom)} />}
       bottomBar={<BottomBar items={tabs} activeId="more" onSelect={onSelectTab} material={material} testID="main-tabs" />}
       floatingAction={<FloatingActionButton accessibilityLabel="Créer" testID="notes-create" onPress={() => setCreateOpen(true)} material={material} />}
       refreshControl={<RefreshControl refreshing={notesQuery.isRefetching} onRefresh={() => void notesQuery.refetch()} />}
@@ -46,10 +47,7 @@ export function NotesListScreen({ material = 'solid', onSelectTab, onOpenNote, o
     >
       <SearchField label="Rechercher dans les notes" placeholder="Rechercher dans les notes" value={query} onChangeText={setQuery} onClear={() => setQuery('')} />
       <View style={{ gap: spacing.md }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text accessibilityRole="header" style={{ flex: 1, color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl }}>Vos notes</Text>
-          <Text style={{ color: colors.primaryDark, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{notes.length} {notes.length > 1 ? 'notes' : 'note'}</Text>
-        </View>
+        <Text style={{ alignSelf: 'flex-end', color: colors.primaryDark, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{notes.length} {notes.length > 1 ? 'notes' : 'note'}</Text>
         {state === 'loading' ? <LoadingNotes /> : state === 'error' ? <ErrorState message="Impossible de charger vos notes." onRetry={() => void notesQuery.refetch()} /> : notes.length === 0 ? <EmptyState title="Aucune note pour le moment" message="Écrivez une note pour garder une idée ou une information importante." /> : visibleNotes.length === 0 ? <EmptyState title="Aucun résultat" message="Essayez avec d’autres mots." actionLabel="Effacer la recherche" onAction={() => setQuery('')} /> : visibleNotes.map((note) => <NoteCard key={note.id} note={note} material={material} onPress={() => onOpenNote(note.id)} />)}
       </View>
     </RootScreen>

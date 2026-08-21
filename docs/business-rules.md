@@ -29,7 +29,8 @@ Ce document centralise les décisions produit qui doivent rester identiques entr
 
 ## Carnet médical
 
-- L’historique médical contient les événements `soins` et `rdv` associés à l’animal.
+- Le dossier médical contient les événements `soins` et `rdv` associés à l’animal lorsque leur champ `todisplay` vaut `true` ou est absent. Ce choix vaut `true` par défaut et peut être modifié pendant la création ou la modification.
+- `todisplay` ne masque jamais un événement dans l’Agenda ou sur l’accueil : il pilote uniquement sa présence dans le dossier médical.
 - Pour une série récurrente, seule l’occurrence racine (`idparent` absent) est présentée dans ce résumé.
 - Les documents médicaux sont les documents attachés à ces événements.
 
@@ -64,6 +65,10 @@ Ce document centralise les décisions produit qui doivent rester identiques entr
 - Le backend garantit cette limite, y compris lors de requêtes concurrentes. Les clients indiquent que la photo du mois est déjà enregistrée et ne proposent un nouvel ajout qu’au mois suivant.
 
 ## Événements marquants de l’Agenda
+
+Lors de la création d’un événement dont la date est antérieure à la date du jour, son état initial est automatiquement `completed` (`Terminé`). La date du jour et les dates futures utilisent initialement `pending` (`À faire`). Le champ État reste visible avant l’intitulé et modifiable pendant la création comme pendant la modification ; un choix explicite de l’utilisateur prévaut sur la valeur proposée automatiquement.
+
+L’ajout d’un document médical à un événement de type Soins ou Rendez-vous médical est réservé aux comptes Premium. Les comptes gratuits conservent la visibilité de la fonctionnalité et sont orientés vers le comparatif d’abonnement, mais ne peuvent ni demander un téléversement ni rattacher un nouveau fichier côté API.
 
 Le backend expose `GET /api/v1/events/highlights?year=AAAA`. Il calcule actuellement :
 

@@ -49,6 +49,7 @@ export function VascoBottomSheet({
   formHandle = false,
 }: VascoBottomSheetProps) {
   const modalRef = useRef<React.ElementRef<typeof BottomSheetModal>>(null);
+  const unmountingRef = useRef(false);
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
   const resolvedHeight = height ?? getBottomSheetHeight(size);
@@ -58,8 +59,14 @@ export function VascoBottomSheet({
   useEffect(() => {
     if (open) modalRef.current?.present();
     else modalRef.current?.dismiss();
-    return () => modalRef.current?.dismiss();
   }, [open]);
+  useEffect(() => () => {
+    unmountingRef.current = true;
+    modalRef.current?.dismiss();
+  }, []);
+  const handleDismiss = useCallback(() => {
+    if (!unmountingRef.current) onClose();
+  }, [onClose]);
 
   const renderBackdrop = useCallback(
     (props: BottomSheetBackdropProps) => (
@@ -89,7 +96,7 @@ export function VascoBottomSheet({
       enableDynamicSizing={false}
       enablePanDownToClose={dismissible}
       enableDismissOnClose
-      onDismiss={onClose}
+      onDismiss={handleDismiss}
       backdropComponent={renderBackdrop}
       backgroundComponent={renderBackground}
       handleComponent={() => <SheetHandle prominent={formHandle} />}

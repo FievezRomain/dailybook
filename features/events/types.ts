@@ -22,6 +22,8 @@ export type CreateEventPayload = {
   lieu?: string;
   commentaire?: string;
   state?: string;
+  /** Affichage dans le dossier médical pour les soins et rendez-vous médicaux. */
+  todisplay?: boolean;
   idparent?: number;
   frequencetype?: string;
   frequencevalue?: string;
@@ -31,6 +33,7 @@ export type CreateEventPayload = {
   expotoken?: string;
   timezone?: string;
   shared_groups?: number[];
+  documents?: string[];
   // Balade
   heuredebutbalade?: string;
   datefinbalade?: string;

@@ -21,9 +21,10 @@ interface ContactsListScreenProps {
   onCreate: (target: GlobalCreateTarget) => void;
   onNotifications?: () => void;
   onAccount?: () => void;
+  onBack: () => void;
 }
 
-export function ContactsListScreen({ material = 'solid', onSelectTab, onOpenContact, onCreateContact, onCreate, onNotifications, onAccount }: ContactsListScreenProps) {
+export function ContactsListScreen({ material = 'solid', onSelectTab, onOpenContact, onCreateContact, onCreate, onNotifications, onAccount, onBack }: ContactsListScreenProps) {
   const { colors } = useAppTheme();
   const user = useAuthStore((state) => state.user);
   const contactsQuery = useContactsQuery();
@@ -42,7 +43,7 @@ export function ContactsListScreen({ material = 'solid', onSelectTab, onOpenCont
 
   return <>
     <RootScreen
-      header={<TopBar title="Contacts" material={material} onNotifications={onNotifications} unreadNotifications={unread} onAccount={onAccount} avatarInitials={getInitials(user?.prenom)} />}
+      header={<TopBar title="Contacts" context="detail" onBack={onBack} material={material} onNotifications={onNotifications} unreadNotifications={unread} onAccount={onAccount} avatarInitials={getInitials(user?.prenom)} />}
       bottomBar={<BottomBar items={tabs} activeId="more" onSelect={onSelectTab} material={material} testID="main-tabs" />}
       floatingAction={<FloatingActionButton accessibilityLabel="Créer" testID="contacts-create" onPress={() => setCreateOpen(true)} material={material} />}
       refreshControl={<RefreshControl refreshing={contactsQuery.isRefetching} onRefresh={() => void contactsQuery.refetch()} />}
@@ -50,10 +51,6 @@ export function ContactsListScreen({ material = 'solid', onSelectTab, onOpenCont
       material={material}
       testID="contacts-list"
     >
-      <View style={{ gap: spacing.xs }}>
-        <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 35 }}>Contacts</Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Les personnes utiles au quotidien</Text>
-      </View>
       <SearchField value={search} onChangeText={setSearch} placeholder="Rechercher un contact" accessibilityLabel="Rechercher un contact" testID="contacts-search" />
       {state === 'loading' ? <View style={{ gap: spacing.md }}><Skeleton type="card" density="comfortable" /><Skeleton type="card" density="comfortable" /><Skeleton type="card" density="comfortable" /></View>
         : state === 'error' ? <ErrorState title="Liste indisponible" message="Impossible de charger vos contacts. Vérifiez la connexion puis réessayez." onRetry={() => void contactsQuery.refetch()} />

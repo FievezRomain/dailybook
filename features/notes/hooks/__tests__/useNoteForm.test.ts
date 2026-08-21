@@ -39,7 +39,7 @@ describe('useNoteForm', () => {
       note: 'Naya a bien travaillé',
     });
     expect(onSuccess).toHaveBeenCalledTimes(1);
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onClose).not.toHaveBeenCalled();
   });
 
   it('submit (modify) calls updateNote', async () => {

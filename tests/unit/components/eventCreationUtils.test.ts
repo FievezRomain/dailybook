@@ -1,4 +1,4 @@
-import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getReminderLabel } from '../../../features/events/eventCreationUtils';
+import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getReminderLabel, isPastEventDate } from '../../../features/events/eventCreationUtils';
 import type { Event } from '../../../models/Event';
 
 describe('event creation payload', () => {
@@ -16,8 +16,21 @@ describe('event creation payload', () => {
     expect(buildEventCreationPayload({ eventType: 'balade', dateevent: '2026-08-18', datefinbalade: '2026-09-18', frequencevalue: 'monthly' })).toMatchObject({ frequencetype: 'recurring', frequencevalue: 'monthly', datefinbalade: '2026-09-18' });
   });
 
+  it('defaults health-history visibility to true and preserves an explicit opt-out', () => {
+    expect(buildEventCreationPayload({ eventType: 'soins', dateevent: '2026-08-18' }).todisplay).toBe(true);
+    expect(buildEventCreationPayload({ eventType: 'rdv', dateevent: '2026-08-18', todisplay: false }).todisplay).toBe(false);
+    expect(buildEventCreationPayload({ eventType: 'balade', dateevent: '2026-08-18' })).not.toHaveProperty('todisplay');
+  });
+
   it('uses a safe fallback name for optional titles', () => {
     expect(buildEventCreationPayload({ eventType: 'rdv', dateevent: '2026-08-09', animaux: [2] }).nom).toBe('Rendez-vous');
+  });
+
+  it('creates past events as completed by default', () => {
+    expect(isPastEventDate('2026-08-20', new Date(2026, 7, 21))).toBe(true);
+    expect(isPastEventDate('2026-08-21', new Date(2026, 7, 21))).toBe(false);
+    expect(buildEventCreationPayload({ eventType: 'autre', dateevent: '2000-01-01' }).state).toBe('completed');
+    expect(buildEventCreationPayload({ eventType: 'autre', dateevent: '2000-01-01', state: 'pending' }).state).toBe('pending');
   });
 
   it('formats reminder and summary labels', () => {

@@ -33,10 +33,11 @@ Home sépare `Aujourd’hui`, `Prochains jours` et `Objectifs en cours`. Il n’
 
 Dans Agenda :
 
-- la recherche instantanée et les filtres de type sont combinables et réinitialisables ;
+- la recherche instantanée, les filtres de type et la sélection multiple d’animaux sont combinables et réinitialisables ; sélectionner une nouvelle date retire les filtres de type et d’animaux, sans effacer la recherche saisie sur la page ;
 - tous les événements de la journée défilent naturellement, sans action `Voir plus` ;
 
 - sélectionner une date met à jour la liste située sous le calendrier sans changer d’écran ;
+- dans les sélecteurs de date des formulaires, toucher l’intitulé du mois et de l’année ouvre un accès direct au choix du mois et de l’année ;
 - les événements sont indiqués dans le calendrier par leurs couleurs ;
 - si la date sélectionnée ne contient aucun événement, afficher `Aucun événement ce jour` et rappeler la date dans le texte secondaire ; le FAB reste le point d’entrée de création ;
 - si la journée contient trop d’événements, `X autres · Voir plus` ouvre la liste complète du jour ;
@@ -60,11 +61,13 @@ Chaque destination de création ou de modification s’ouvre au-dessus du contex
 
 ## 5. Événements
 
-Création guidée : entrée → type → champs spécifiques au type → animaux → options → vérification/succès.
+Création guidée : entrée → type → champs spécifiques au type → animaux → options → mutation → retour Agenda. Aucun écran de succès intermédiaire ne demande de choisir une destination ou de créer une seconde entité.
 
 Création IA : description → analyse → formulaire prérempli à vérifier → animaux/options → création.
 
 Les champs diffèrent selon Soins, Rendez-vous, Balade, Entraînement, Concours, Dépense et Autre. Ne pas réduire tous les types à un formulaire générique.
+
+Soins et Rendez-vous acceptent des documents PDF ou image à la fin de l’étape Détails pendant la création et la modification. Les nouveaux fichiers sont envoyés après l’enregistrement de l’événement puis apparaissent dans Santé > Documents médicaux pour les animaux associés. Les documents existants peuvent être conservés ou retirés depuis le même formulaire. Juste avant les documents, un interrupteur permet de choisir si l’événement apparaît dans le dossier médical ; il est activé par défaut.
 
 Détail → `…` → Modifier, Dupliquer/Partager selon maquette, Supprimer. Modifier expose les mêmes informations que créer, préremplies.
 
@@ -76,7 +79,7 @@ Dans les formulaires de création ou modification qui proposent une sélection d
 
 Tabs internes : Informations, Physique, Santé. Changer de tab ne doit pas recréer l’écran ni perdre l’animal sélectionné. `Physique` regroupe les mesures et l’alimentation. `Santé` présente directement l’historique des soins et rendez-vous médicaux, sans intertitre `À surveiller`, puis les documents médicaux. La Galerie n’est plus une destination du workspace.
 
-Création/modification : Profil → Dates → Identité → Origines → Corps et alimentation → Notes/vérification.
+Création/modification : Profil → Dates → Identité → Origines → Corps et alimentation → Notes/vérification. La date de naissance accepte une saisie `JJ/MM/AAAA`, refuse les dates futures et reste accessible via le calendrier ; toute date optionnelle peut être effacée.
 
 Actions : Modifier, signaler un départ, signaler un décès, supprimer. Le départ et le décès conservent l’historique selon la règle métier et demandent une date.
 
@@ -86,7 +89,7 @@ Dans l’onglet Physique, `Ajouter une mesure` ouvre la Form Sheet partagée au-
 
 ## 7. Objectifs et Statistiques
 
-Objectifs : liste → détail → menu `…` → modifier, mettre à jour, dupliquer, supprimer. Les cartes affichent une seule fois les animaux liés et conservent la date de fin.
+Objectifs : liste → détail → menu `…` → modifier, mettre à jour, dupliquer, supprimer. Le formulaire sépare Définition du cap → Animaux → Étapes → Vérification. Au moins une étape renseignée est obligatoire pour créer l’objectif. Les cartes affichent une seule fois les animaux liés et conservent la date de fin.
 
 Statistiques : accès depuis Suivi. Périodes Jour, Mois, 1 an et 5 ans. Les graphiques utilisent les composants Chart et des tooltips accessibles.
 
@@ -96,7 +99,7 @@ Pour un compte gratuit, l’accès Statistiques ouvre `Premium Required — Stat
 
 Notes : liste → détail → menu d’actions → modifier/partager/supprimer.
 
-Le `+` de Notes ouvre un choix :
+Le `+` de Notes ouvre une première étape de formulaire cohérente avec celle des événements, puis propose :
 
 - écrire une note ;
 - enregistrer une note vocale, si Premium.
@@ -114,6 +117,10 @@ Le menu global du FAB suit toujours cet ordre : Événement, Animal, Objectif, N
 Contact : liste → détail → `…` → modifier/supprimer. Création/modification en trois étapes : Identité → Coordonnées → Vérification. Aucune bottom bar dans ce wizard.
 
 Groupes est Premium. Pour un compte gratuit, ouvrir l’explication Premium avant toute liste ou création.
+
+Un membre déjà accepté dans un groupe actif peut continuer à partager un événement avec ce groupe même si son propre compte est Gratuit. Un groupe est proposé dans le formulaire Événement uniquement si tous les animaux associés à l’événement y sont partagés avec le statut `accepted`.
+
+L’activité d’un groupe dépend de l’abonnement de son gestionnaire. Si le gestionnaire ne possède plus d’abonnement Premium actif, le groupe devient indisponible pour tous ses membres : il disparaît des listes et sélecteurs, ne donne plus accès aux événements partagés et ne peut plus recevoir de nouveaux partages. Les données ne sont pas supprimées ; elles redeviennent accessibles si le droit Premium du gestionnaire est rétabli.
 
 Compte Premium : liste → détail Animaux/Membres. Actions : modifier le groupe, gérer un membre, ajouter/retirer un animal partagé, invitation et suppression. Création/modification en quatre étapes : Informations → Membres → Animaux → Vérification.
 
