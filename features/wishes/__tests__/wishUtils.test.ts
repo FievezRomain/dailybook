@@ -1,40 +1,65 @@
-import type { Wish } from '@models/Wish';
+import type { Wish } from "@models/Wish";
 
-import { wishFormSchema } from '../../../business/validators/wish';
-import { buildWishPayload, buildWishUpdatePayload, filterWishesByTab, getWishMetadata, getWishPriceLabel } from '../wishUtils';
+import { wishFormSchema } from "../../../business/validators/wish";
+import {
+  buildWishPayload,
+  buildWishUpdatePayload,
+  filterWishesByTab,
+  getWishMetadata,
+  getWishPriceLabel,
+  getWishPriceValue,
+} from "../wishUtils";
 
 const wishes: Wish[] = [
-  { id: 1, nom: 'Nouveau licol', destinataire: 'Milo', acquis: false, prix: '89 €' },
-  { id: 2, nom: 'Tapis', destinataire: '', acquis: true, prix: '95 €' },
+  {
+    id: 1,
+    nom: "Nouveau licol",
+    destinataire: "Milo",
+    acquis: false,
+    prix: "89 €",
+  },
+  { id: 2, nom: "Tapis", destinataire: "", acquis: true, prix: "95 €" },
 ];
 
-describe('wishUtils', () => {
-  it('filters planned and acquired wishes without inventing archived data', () => {
-    expect(filterWishesByTab(wishes, 'planned')).toEqual([wishes[0]]);
-    expect(filterWishesByTab(wishes, 'acquired')).toEqual([wishes[1]]);
-    expect(filterWishesByTab(wishes, 'archived')).toEqual([]);
+describe("wishUtils", () => {
+  it("filters the two states actually provided by the backend", () => {
+    expect(filterWishesByTab(wishes, "planned")).toEqual([wishes[0]]);
+    expect(filterWishesByTab(wishes, "acquired")).toEqual([wishes[1]]);
   });
 
-  it('formats only metadata exposed by the backend', () => {
-    expect(getWishPriceLabel(wishes[0])).toBe('Budget estimé · 89 €');
-    expect(getWishPriceLabel(wishes[1])).toBe('Prix réalisé · 95 €');
-    expect(getWishMetadata(wishes[0])).toBe('Milo');
-    expect(getWishMetadata(wishes[1])).toBe('Pour moi');
+  it("formats only metadata exposed by the backend", () => {
+    expect(getWishPriceLabel(wishes[0])).toBe("Prix · 89 €");
+    expect(getWishPriceLabel(wishes[1])).toBe("Prix · 95 €");
+    expect(getWishPriceValue({ ...wishes[0], prix: '89.50' })).toBe('89,50 €');
+    expect(getWishMetadata(wishes[0])).toBe("Milo");
+    expect(getWishMetadata(wishes[1])).toBe("Pour moi");
   });
 
-  it('omits blank optional fields and normalizes the decimal separator', () => {
-    expect(buildWishPayload({ nom: '  Nouveau licol ', url: ' ', prix: ' 89,50 ', destinataire: '' })).toEqual({
-      nom: 'Nouveau licol',
+  it("omits blank optional fields and normalizes the decimal separator", () => {
+    expect(
+      buildWishPayload({
+        nom: "  Nouveau licol ",
+        url: " ",
+        prix: " 89,50 ",
+        destinataire: "",
+      }),
+    ).toEqual({
+      nom: "Nouveau licol",
       url: undefined,
-      prix: '89.50',
+      prix: "89.50",
       destinataire: undefined,
     });
   });
 
-  it('preserves production fields when updating a wish', () => {
-    expect(buildWishUpdatePayload({ nom: 'Tapis bleu', url: '', prix: '', destinataire: '' }, wishes[1])).toEqual({
+  it("preserves production fields when updating a wish", () => {
+    expect(
+      buildWishUpdatePayload(
+        { nom: "Tapis bleu", url: "", prix: "", destinataire: "" },
+        wishes[1],
+      ),
+    ).toEqual({
       id: 2,
-      nom: 'Tapis bleu',
+      nom: "Tapis bleu",
       url: undefined,
       prix: undefined,
       destinataire: undefined,
@@ -43,8 +68,22 @@ describe('wishUtils', () => {
     });
   });
 
-  it('accepts blank optional values and rejects malformed values', () => {
-    expect(wishFormSchema.safeParse({ nom: 'Licol', url: '', prix: '', destinataire: '' }).success).toBe(true);
-    expect(wishFormSchema.safeParse({ nom: 'Licol', url: 'seller', prix: '89 euros', destinataire: '' }).success).toBe(false);
+  it("accepts blank optional values and rejects malformed values", () => {
+    expect(
+      wishFormSchema.safeParse({
+        nom: "Licol",
+        url: "",
+        prix: "",
+        destinataire: "",
+      }).success,
+    ).toBe(true);
+    expect(
+      wishFormSchema.safeParse({
+        nom: "Licol",
+        url: "seller",
+        prix: "89 euros",
+        destinataire: "",
+      }).success,
+    ).toBe(false);
   });
 });

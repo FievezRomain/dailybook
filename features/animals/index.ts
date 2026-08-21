@@ -6,3 +6,4 @@ export { AnimalActionDialogs } from './components/AnimalActionDialogs';
 export type { SensitiveAnimalAction } from './components/AnimalActionDialogs';
 export { AnimalMeasurementSheet } from './components/AnimalMeasurementSheet';
 export { AnimalMeasurementHistorySheet } from './components/AnimalMeasurementHistorySheet';
+export { isSharedAnimal } from './animalWorkspaceUtils';

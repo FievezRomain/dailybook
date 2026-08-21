@@ -73,15 +73,21 @@ export function useEventMutations() {
       if (ctx?.snapshot) queryClient.setQueryData(EVENTS_KEY, ctx.snapshot);
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
     },
-    onSuccess: async () => {
+    onSuccess: async (_result, { id, body }) => {
+      queryClient.setQueryData<Event[]>(EVENTS_KEY, (prev = []) =>
+        prev.map((item) => (item.id === Number(id) ? { ...item, ...body, syncing: false } as unknown as Event : item)),
+      );
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
-      await invalidate();
     },
   });
 
   const remove = useMutation({
-    mutationFn: (id: string) => EventService.deleteEvent(id),
-    onMutate: async (id) => {
+    mutationFn: (input: string | { id: string; scope: 'occurrence' | 'following' | 'series' }) =>
+      typeof input === 'string'
+        ? EventService.deleteEvent(input)
+        : EventService.deleteEvent(input.id, input.scope),
+    onMutate: async (input) => {
+      const id = typeof input === 'string' ? input : input.id;
       await queryClient.cancelQueries({ queryKey: EVENTS_KEY });
       const snapshot = queryClient.getQueryData<Event[]>(EVENTS_KEY);
       queryClient.setQueryData<Event[]>(EVENTS_KEY, (prev = []) =>
@@ -110,4 +116,11 @@ export function useEventMutations() {
   });
 
   return { create, update, patch, remove, attachDocument, deleteDocument };
+}
+
+export function useAgendaHighlightsQuery(year: number) {
+  return useQuery({
+    queryKey: [...EVENTS_KEY, 'highlights', year],
+    queryFn: () => EventService.getAgendaHighlights(year),
+  });
 }

@@ -28,7 +28,7 @@ export function RegisterIdentityScreen({ navigation }: RegisterIdentityScreenPro
       navigation.navigate('RegisterSecurity');
     }
   };
-  return <AuthScreen scroll={false} testID="auth-register-identity" contentStyle={{ gap: spacing.md, paddingTop: 28 }}>
+  return <AuthScreen testID="auth-register-identity" contentStyle={{ gap: spacing.md, paddingTop: 28 }}>
     <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 32, letterSpacing: -0.2 }}>Étape 1 sur 3 · Vos informations</Text>
     <ProgressSteps current={1} total={3} />
     <TextField label="Prénom" helperText="Utilisé pour personnaliser l’application" errorMessage={errors.firstName} placeholder="Votre prénom" value={firstName} onChangeText={setFirstName} autoCapitalize="words" textContentType="givenName" returnKeyType="next" />

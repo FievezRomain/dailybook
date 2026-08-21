@@ -20,7 +20,7 @@ export interface EventCreateOptionsScreenProps {
 
 function OptionRow({ title, description, value, onChange }: { title: string; description: string; value: boolean; onChange: (value: boolean) => void }) {
   const { colors } = useAppTheme();
-  return <View style={{ minHeight: 92, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.backgroundPaper }}><View style={{ flex: 1, gap: spacing.xs }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg, lineHeight: 24 }}>{title}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>{description}</Text></View><Switch value={value} onValueChange={onChange} accessibilityLabel={title} /></View>;
+  return <View style={{ minHeight: 92, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, padding: spacing.md, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surfaceVariant }}><View style={{ flex: 1, gap: spacing.xs }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg, lineHeight: 24 }}>{title}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>{description}</Text></View><Switch value={value} onValueChange={onChange} accessibilityLabel={title} /></View>;
 }
 
 export function EventCreateOptionsScreen({ onBack, onCreated, onPremiumGroups, eventId, onClose = onBack }: EventCreateOptionsScreenProps) {
@@ -35,6 +35,7 @@ export function EventCreateOptionsScreen({ onBack, onCreated, onPremiumGroups, e
   const selectedReminder = form.optionnotif ?? '30m';
   const names = getSelectedAnimalNames(form.animaux ?? [], animals);
   const editing = eventId !== undefined;
+  const editScope = form.updateScope as 'occurrence' | 'following' | 'series' | undefined;
 
   const save = async () => {
     setErrorMessage(undefined);
@@ -63,11 +64,11 @@ export function EventCreateOptionsScreen({ onBack, onCreated, onPremiumGroups, e
       footer={<View style={{ paddingHorizontal: spacing.md }}><Button label={editing ? 'Enregistrer les modifications' : 'Enregistrer l’événement'} onPress={() => void save()} loading={editing ? mutations.update.isPending : mutations.create.isPending} size="large" fullWidth /></View>}
       testID={editing ? 'event-edit-options' : 'event-create-options'}
     >
-      <LinearProgress current={4} total={4} label="Étape 4 sur 4" />
+      <LinearProgress current={editScope === 'series' ? 3 : editScope ? 2 : 4} total={editScope === 'series' ? 3 : editScope ? 2 : 4} label={editScope === 'series' ? 'Étape 3 sur 3' : editScope ? 'Étape 2 sur 2' : 'Étape 4 sur 4'} />
       {errorMessage ? <Banner tone="error" title="Enregistrement impossible" message={errorMessage} blocking /> : null}
-      <View style={{ marginTop: spacing.lg }}><OptionRow title="Rappel" description="Recevoir une notification avant l’événement" value={reminderEnabled} onChange={(value) => { setField('notif', value ? 'JourJ' : undefined); if (value && !form.optionnotif) setField('optionnotif', '30m'); }} /></View>
-      {reminderEnabled ? <Select label="Quand ?" placeholder="Choisir un délai" value={getReminderLabel(selectedReminder)} helperText="Modifiable à tout moment" onPress={() => setReminderOpen(true)} /> : null}
-      <OptionRow title="Partager avec un groupe" description="Les membres pourront consulter l’événement · Premium" value={false} onChange={(value) => { if (value) onPremiumGroups(); }} />
+      {editScope ? null : <View style={{ marginTop: spacing.lg }}><OptionRow title="Rappel" description="Recevoir une notification avant l’événement" value={reminderEnabled} onChange={(value) => { setField('notif', value ? 'JourJ' : undefined); if (value && !form.optionnotif) setField('optionnotif', '30m'); }} /></View>}
+      {!editScope && reminderEnabled ? <Select label="Quand ?" placeholder="Choisir un délai" value={getReminderLabel(selectedReminder)} helperText="Modifiable à tout moment" onPress={() => setReminderOpen(true)} /> : null}
+      {editScope === 'occurrence' || editScope === 'following' ? null : <OptionRow title="Partager avec un groupe" description="Les membres pourront consulter l’événement · Premium" value={false} onChange={(value) => { if (value) onPremiumGroups(); }} />}
       <View accessibilityRole="summary" accessibilityLabel="Résumé de l’événement" style={{ minHeight: 154, gap: spacing.sm, padding: spacing.md, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.backgroundPaper }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg, lineHeight: 24 }}>Résumé</Text><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>{formatEventCreationSummary(form)}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>{names.join(' et ')}{reminderEnabled ? ` · Rappel ${getReminderLabel(selectedReminder).toLocaleLowerCase('fr-FR')}` : ' · Sans rappel'}</Text></View>
     </FormSheet>
     <SelectionModal open={reminderOpen} title="Quand recevoir le rappel ?" options={reminderOptions} selectedIds={[selectedReminder]} onChange={(ids) => setField('optionnotif', ids[0])} onConfirm={() => setReminderOpen(false)} onClose={() => setReminderOpen(false)} />

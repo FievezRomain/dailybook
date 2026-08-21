@@ -13,6 +13,7 @@ interface AuthState {
   isLoading: boolean;
   initAuth: () => () => void;
   setUser: (user: UserProfile | null) => void;
+  refreshFirebaseUser: () => Promise<AuthUser | null>;
   signOutUser: () => Promise<void>;
 }
 
@@ -50,6 +51,12 @@ export const useAuthStore = create<AuthState>()(
       },
 
       setUser: (user) => set({ user }),
+
+      refreshFirebaseUser: async () => {
+        const firebaseUser = await authService.refreshCurrentUser();
+        set({ firebaseUser, isAuthenticated: Boolean(firebaseUser) });
+        return firebaseUser;
+      },
 
       signOutUser: async () => {
         await authService.signOut();

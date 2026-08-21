@@ -4,12 +4,11 @@ import * as ImagePicker from 'expo-image-picker';
 import type { Animal } from '../../../models/Animal';
 import { useAnimalMutations } from '../../../hooks/queries/useAnimalsQuery';
 import { uploadFile } from '../../../services/aws/FileStorageService';
-import { useAuthStore } from '../../../stores/useAuthStore';
 import { useAnimalWizardStore, type AnimalWizardFormData } from '../../../stores/useAnimalWizardStore';
 import { Banner, CalendarPicker, DateTimeField, FormSheet, LinearProgress, MediaUpload, Select, SelectionModal, TextArea, TextField } from '../../../shared/components/ui';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { animalFormFingerprint, animalToWizardForm, buildAnimalPayload, buildAnimalUpdatePayload, buildChangedAnimalHistory, getAnimalSaveError, isAnimalBodyValid, isAnimalProfileValid, pickerDate } from '../animalFormUtils';
+import { animalFormFingerprint, animalToWizardForm, buildAnimalPayload, buildAnimalUpdatePayload, buildChangedAnimalHistory, formDateLabel, getAnimalSaveError, isAnimalBodyValid, isAnimalProfileValid, pickerDate } from '../animalFormUtils';
 
 const steps = [['Son profil', 'Commençons par les informations essentielles.'], ['Dates importantes', 'Elles permettent d’adapter l’âge et le suivi.'], ['Identité', 'Ajoutez les éléments utiles pour le reconnaître.'], ['Origines', 'Ces informations restent modifiables à tout moment.'], ['Corps & alimentation', 'Des repères précis pour un suivi quotidien utile.'], ['Notes & vérification', 'Un dernier regard avant d’enregistrer le profil.']] as const;
 const choices = { species: ['Chien', 'Chat', 'Cheval', 'Âne', 'Autre'], sex: ['Femelle', 'Mâle', 'Inconnu'], unit: ['g', 'kg', 'ml', 'portion'] } as const;
@@ -17,7 +16,7 @@ const choices = { species: ['Chien', 'Chat', 'Cheval', 'Âne', 'Autre'], sex: ['
 export interface AnimalFormSheetScreenProps { mode: 'create' | 'edit'; animal?: Animal; onClose: () => void; onSaved: (animal: Animal) => void }
 
 export function AnimalFormSheetScreen({ mode, animal, onClose, onSaved }: AnimalFormSheetScreenProps) {
-  const { colors } = useAppTheme(); const user = useAuthStore((state) => state.user); const mutations = useAnimalMutations();
+  const { colors } = useAppTheme(); const mutations = useAnimalMutations();
   const step = useAnimalWizardStore((state) => state.step); const form = useAnimalWizardStore((state) => state.formData); const setStep = useAnimalWizardStore((state) => state.setStep); const setField = useAnimalWizardStore((state) => state.setField); const replaceFormData = useAnimalWizardStore((state) => state.replaceFormData);
   const [baseline, setBaseline] = useState('{}'); const [showErrors, setShowErrors] = useState(false); const [selection, setSelection] = useState<keyof typeof choices>(); const [calendarField, setCalendarField] = useState<'datenaissance' | 'datearrivee' | 'datedepart'>(); const [photoUploading, setPhotoUploading] = useState(false); const [localError, setLocalError] = useState<{ title: string; message: string }>();
   useEffect(() => { const initial = mode === 'edit' && animal ? animalToWizardForm(animal) : {}; replaceFormData(initial); setBaseline(animalFormFingerprint(initial)); }, [animal, mode, replaceFormData]);
@@ -29,16 +28,24 @@ export function AnimalFormSheetScreen({ mode, animal, onClose, onSaved }: Animal
     setLocalError(undefined);
     try {
       let prepared = form;
+      let createdWithoutPhoto: Animal | undefined;
+      if (mode === 'create' && form.image?.startsWith('file:')) {
+        createdWithoutPhoto = await mutations.create.mutateAsync(buildAnimalPayload({ ...form, image: undefined }));
+      }
       if (form.image?.startsWith('file:')) {
         setPhotoUploading(true);
         const filename = form.image.split('/').pop() || 'animal.jpg';
-        const uploaded = await uploadFile(form.image, filename, 'image/jpeg', 'animal', String(animal?.id ?? user?.email ?? 'new'));
+        const targetId = animal?.id ?? createdWithoutPhoto?.id;
+        if (!targetId) throw new Error('Animal identifier missing before image upload');
+        const uploaded = await uploadFile(form.image, filename, 'image/jpeg', 'animal', String(targetId));
         if (!uploaded) { setLocalError({ title: 'Import de la photo impossible', message: 'La photo n’a pas été envoyée. Vos informations sont conservées.' }); return; }
-        prepared = { ...form, image: filename };
+        prepared = { ...form, image: uploaded };
       }
       const saved = mode === 'edit' && animal
         ? await mutations.update.mutateAsync({ id: String(animal.id), body: buildAnimalUpdatePayload(prepared, animal.id) })
-        : await mutations.create.mutateAsync(buildAnimalPayload(prepared));
+        : createdWithoutPhoto
+          ? await mutations.update.mutateAsync({ id: String(createdWithoutPhoto.id), body: buildAnimalUpdatePayload(prepared, createdWithoutPhoto.id) })
+          : await mutations.create.mutateAsync(buildAnimalPayload(prepared));
       if (mode === 'edit' && animal) {
         const history = buildChangedAnimalHistory(prepared, animal, new Date().toISOString().slice(0, 10));
         await Promise.all(history.map((body) => mutations.createHistory.mutateAsync({ animalId: String(animal.id), body })));
@@ -48,7 +55,7 @@ export function AnimalFormSheetScreen({ mode, animal, onClose, onSaved }: Animal
     finally { setPhotoUploading(false); }
   };
   const field = (key: keyof AnimalWizardFormData, label: string, placeholder: string, helperText = 'Optionnel', keyboardType?: 'decimal-pad') => <TextField label={label} placeholder={placeholder} value={form[key] ?? ''} helperText={helperText} keyboardType={keyboardType} onChangeText={(value) => setField(key, value)} />;
-  const dateField = (key: 'datenaissance' | 'datearrivee' | 'datedepart', label: string, helperText: string) => <DateTimeField kind="date" label={label} placeholder="JJ / MM / AAAA" value={form[key]} helperText={helperText} onPress={() => setCalendarField(key)} />;
+  const dateField = (key: 'datenaissance' | 'datearrivee' | 'datedepart', label: string, helperText: string) => <DateTimeField kind="date" label={label} placeholder="JJ / MM / AAAA" value={formDateLabel(form[key])} helperText={helperText} onPress={() => setCalendarField(key)} />;
   const selectedValue = selection === 'species' ? form.espece : selection === 'sex' ? form.sexe : form.unity;
   return <><FormSheet title={mode === 'edit' ? `Modifier ${animal?.nom ?? 'l’animal'}` : 'Ajouter un animal'} onBack={() => step ? setStep(step - 1) : onClose()} onClose={onClose} dirty={dirty} confirmBackWhenDirty={step === 0} footerLabel={step === 5 ? (mode === 'edit' ? 'Enregistrer les modifications' : 'Créer le profil') : 'Continuer'} onFooterPress={() => void save()} footerDisabled={pending} footerLoading={pending} testID="animal-form-sheet">
     <LinearProgress current={step + 1} total={6} label={`Étape ${step + 1} sur 6`} /><View style={{ gap: spacing.xs, marginTop: spacing.md }}><Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: typography.lineHeights.loose }}>{steps[step][0]}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{steps[step][1]}</Text></View>

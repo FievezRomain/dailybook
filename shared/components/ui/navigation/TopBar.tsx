@@ -15,9 +15,17 @@ export interface TopBarProps { title: string; context?: 'root' | 'detail'; mater
 
 export function TopBar({ title, context = 'root', material = 'solid', scrolled = false, onBack, onNotifications, unreadNotifications = 0, onAccount, avatarInitials, avatarImageUrl, trailing, style, testID }: TopBarProps) {
   const { colors } = useAppTheme();
-  const user = useAuthStore((state) => state.user); const [storedImageUrl, setStoredImageUrl] = useState<string>();
-  useEffect(() => { setStoredImageUrl(undefined); if (user?.filename && user.id) void FileService.getDownloadUrl(user.filename, 'user', user.id).then(setStoredImageUrl).catch(() => undefined); }, [user?.filename, user?.id]);
+  const user = useAuthStore((state) => state.user);
+  const firebasePhotoUrl = useAuthStore((state) => state.firebaseUser?.photoURL);
+  const [storedImageUrl, setStoredImageUrl] = useState<string | undefined>(() => user?.filename && user.id ? FileService.getCachedDownloadUrl(user.filename, 'user', user.id) : undefined);
+  useEffect(() => {
+    if (!user?.filename || !user.id) { setStoredImageUrl(undefined); return; }
+    setStoredImageUrl(FileService.getCachedDownloadUrl(user.filename, 'user', user.id));
+    void FileService.getDownloadUrl(user.filename, 'user', user.id).then(setStoredImageUrl).catch(() => undefined);
+  }, [user?.filename, user?.id]);
   const resolvedInitials = avatarInitials ?? user?.prenom?.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join('').toUpperCase() ?? 'VA';
+  const resolvedImageUrl = avatarImageUrl ?? storedImageUrl ?? firebasePhotoUrl;
+  const fallbackImageUrl = resolvedImageUrl === firebasePhotoUrl ? undefined : firebasePhotoUrl;
   return (
     <NavigationSurface material={material} style={[{ height: componentTokens.navigation.topBarHeight, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, borderBottomWidth: scrolled ? 1 : 0, borderBottomColor: colors.border, backgroundColor: material === 'glass' ? colors.glassBackground : colors.surface, shadowColor: colors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 2, elevation: 1 }, style]}>
       {context === 'detail' ? (
@@ -34,7 +42,7 @@ export function TopBar({ title, context = 'root', material = 'solid', scrolled =
               {unreadNotifications > 0 ? <View pointerEvents="none" style={{ position: 'absolute', right: 1, top: 4 }}><NotificationBadge type="dot" accessibilityLabel={`${unreadNotifications} notifications non lues`} /></View> : null}
             </Pressable>
           ) : null}
-          {onAccount ? <Pressable accessibilityRole="button" accessibilityLabel="Profil et réglages" onPress={onAccount} style={{ width: 36, height: 44, alignItems: 'center', justifyContent: 'center' }}><Avatar initials={resolvedInitials} imageUrl={avatarImageUrl ?? storedImageUrl} accessibilityLabel="" decorative /></Pressable> : null}
+          {onAccount ? <Pressable accessibilityRole="button" accessibilityLabel="Profil et réglages" onPress={onAccount} style={{ width: 36, height: 44, alignItems: 'center', justifyContent: 'center' }}><Avatar initials={resolvedInitials} imageUrl={resolvedImageUrl} fallbackImageUrl={fallbackImageUrl} accessibilityLabel="" decorative /></Pressable> : null}
         </>
       )}
     </NavigationSurface>

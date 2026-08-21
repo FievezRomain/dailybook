@@ -18,8 +18,9 @@ export class S3FileStorageService implements IFileStorageService {
     contentType: string,
     ressourceType: string,
     ressourceId: string,
+    sizeBytes?: number,
   ): Promise<string | undefined> {
-    return awsUploadFile(fileUri, fileName, contentType, ressourceType, ressourceId);
+    return awsUploadFile(fileUri, fileName, contentType, ressourceType, ressourceId, sizeBytes);
   }
 
   async getFileUrl(

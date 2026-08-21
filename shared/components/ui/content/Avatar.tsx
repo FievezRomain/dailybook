@@ -1,4 +1,5 @@
 import { Image } from 'expo-image';
+import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
@@ -6,6 +7,7 @@ import { useAppTheme } from '../../../../theme/useAppTheme';
 export interface AvatarProps {
   initials: string;
   imageUrl?: string | null;
+  fallbackImageUrl?: string | null;
   accessibilityLabel: string;
   size?: number;
   decorative?: boolean;
@@ -15,8 +17,11 @@ export interface AvatarProps {
 
 const normalizeInitials = (value: string) => value.trim().slice(0, 2).toLocaleUpperCase();
 
-export function Avatar({ initials, imageUrl, accessibilityLabel, size = 32, decorative = false, backgroundColor, borderColor }: AvatarProps) {
+export function Avatar({ initials, imageUrl, fallbackImageUrl, accessibilityLabel, size = 32, decorative = false, backgroundColor, borderColor }: AvatarProps) {
   const { colors } = useAppTheme();
+  const [failedUrls, setFailedUrls] = useState<string[]>([]);
+  useEffect(() => setFailedUrls([]), [imageUrl, fallbackImageUrl]);
+  const resolvedImageUrl = [imageUrl, fallbackImageUrl].find((url): url is string => Boolean(url && !failedUrls.includes(url)));
   return (
     <View
       accessible={!decorative}
@@ -34,8 +39,8 @@ export function Avatar({ initials, imageUrl, accessibilityLabel, size = 32, deco
         justifyContent: 'center',
       }}
     >
-      {imageUrl ? (
-        <Image source={{ uri: imageUrl }} style={{ width: size, height: size }} contentFit="cover" accessibilityElementsHidden />
+      {resolvedImageUrl ? (
+        <Image source={{ uri: resolvedImageUrl }} style={{ width: size, height: size }} contentFit="cover" cachePolicy="memory-disk" accessibilityElementsHidden onError={() => setFailedUrls((urls) => urls.includes(resolvedImageUrl) ? urls : [...urls, resolvedImageUrl])} />
       ) : (
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: size === 32 ? 12 : Math.max(12, size * 0.375) }}>
           {normalizeInitials(initials)}

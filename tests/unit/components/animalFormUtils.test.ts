@@ -1,18 +1,19 @@
 import type { Animal } from '../../../models/Animal';
 import { AxiosError } from 'axios';
-import { animalFormFingerprint, animalToWizardForm, apiDate, buildAnimalPayload, buildAnimalUpdatePayload, buildChangedAnimalHistory, getAnimalSaveError, isAnimalBodyValid, isAnimalProfileValid } from '../../../features/animals/animalFormUtils';
+import { animalFormFingerprint, animalToWizardForm, apiDate, buildAnimalPayload, buildAnimalUpdatePayload, buildChangedAnimalHistory, formDateLabel, getAnimalSaveError, isAnimalBodyValid, isAnimalProfileValid } from '../../../features/animals/animalFormUtils';
 
 describe('animalFormUtils', () => {
   it('normalizes API dates and numeric values for creation', () => {
     expect(buildAnimalPayload({ nom: ' Milo ', espece: ' Chien ', datenaissance: '12/04/2021', poids: '12,5', quantity: '250' })).toMatchObject({ nom: 'Milo', espece: 'Chien', datenaissance: '2021-04-12', poids: 12.5, quantity: 250 });
     expect(apiDate('2026-08-02')).toBe('2026-08-02');
+    expect(formDateLabel('2026-08-02')).toBe('02/08/2026');
   });
 
   it('prefills all editable values and keeps the update id', () => {
-    const animal = { id: 7, nom: 'Milo', espece: 'Chien', datearrivee: '02/08/2022', food: 'Croquettes', quantity: 250, unity: 'g', informations: 'Calme' } as Animal;
+    const animal = { id: 7, nom: 'Milo', espece: 'Chien', datenaissance: '12/04/2021', datearrivee: '02/08/2022', food: 'Croquettes', quantity: 250, unity: 'g', informations: 'Calme' } as Animal;
     const form = animalToWizardForm(animal);
-    expect(form).toMatchObject({ nom: 'Milo', datearrivee: '02/08/2022', food: 'Croquettes', quantity: '250', unity: 'g', informations: 'Calme' });
-    expect(buildAnimalUpdatePayload(form, 7)).toMatchObject({ id: 7, datearrivee: '2022-08-02' });
+    expect(form).toMatchObject({ nom: 'Milo', datenaissance: '2021-04-12', datearrivee: '2022-08-02', food: 'Croquettes', quantity: '250', unity: 'g', informations: 'Calme' });
+    expect(buildAnimalUpdatePayload({ ...form, datenaissance: '2022-05-13' }, 7)).toMatchObject({ id: 7, datenaissance: '2022-05-13', datearrivee: '2022-08-02' });
   });
 
   it('validates only required profile and entered numeric values', () => {

@@ -1,6 +1,16 @@
 import { Event } from '../../models/Event';
 
 export type ActionType = 'create' | 'modify';
+export type EventUpdateScope = 'occurrence' | 'following' | 'series';
+
+export type AgendaHighlight = {
+  id: string;
+  date: string;
+  kind: 'animal_birthday' | 'annual_reminder';
+  title: string;
+  animal_ids: number[];
+  source_event_id?: number;
+};
 
 /** Payload envoyé au backend pour créer un événement. */
 export type CreateEventPayload = {
@@ -41,7 +51,7 @@ export type CreateEventPayload = {
   categoriedepense?: string;
 };
 
-export type UpdateEventPayload = CreateEventPayload & { id: number };
+export type UpdateEventPayload = CreateEventPayload & { id: number; update_scope?: EventUpdateScope };
 
 /** Payload pour la mise à jour partielle d'un événement (état, commentaire, note, dépense). */
 export type PatchEventPayload = {

@@ -13,6 +13,9 @@ describe('event details configuration', () => {
 
   it('exposes type-specific fields and safely falls back to other', () => {
     expect(getEventDetailsConfig('depense').fields.map((field) => field.key)).toEqual(['depense', 'categoriedepense']);
+    expect(getEventDetailsConfig('concours').fields.map((field) => field.key)).toEqual(['discipline', 'epreuve', 'dossart', 'placement', 'note']);
+    expect(getEventDetailsConfig('soins').fields).toContainEqual(expect.objectContaining({ key: 'datefinsoins', kind: 'date' }));
+    expect(getEventDetailsConfig('balade').fields).toContainEqual(expect.objectContaining({ key: 'heurefinbalade', kind: 'time' }));
     expect(getEventDetailsConfig('unknown').title).toBe('Autre');
   });
 });

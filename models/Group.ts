@@ -5,6 +5,10 @@ export type GroupAnimal = {
     nom: string;
     espece?: string | null;
     image?: string | null;
+    imageUrl?: string | null;
+    race?: string | null;
+    sexe?: string | null;
+    couleur?: string | null;
 };
 
 export type GroupBucket<T> = {

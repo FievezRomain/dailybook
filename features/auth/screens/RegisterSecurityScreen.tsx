@@ -32,7 +32,6 @@ export function RegisterSecurityScreen({ navigation }: RegisterSecurityScreenPro
     try {
       await authService.signUp(email, result.data, firstName);
       await register({ email, prenom: firstName });
-      await authService.sendEmailVerification();
       navigation.navigate('VerifyEmail');
     } catch {
       setErrors({ form: 'Création du compte impossible. Cette adresse est peut-être déjà utilisée.' });

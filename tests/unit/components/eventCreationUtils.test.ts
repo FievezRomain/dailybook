@@ -3,8 +3,17 @@ import type { Event } from '../../../models/Event';
 
 describe('event creation payload', () => {
   it('maps wizard data to the backend contract', () => {
-    const payload = buildEventCreationPayload({ eventType: 'depense', nom: ' Croquettes ', dateevent: '2026-08-09', animaux: [1], depense: '24,50', categoriedepense: 'alimentation', notif: 'JourJ', optionnotif: '30m' });
-    expect(payload).toMatchObject({ eventtype: 'depense', nom: 'Croquettes', dateevent: '2026-08-09', animaux: [1], depense: 24.5, categoriedepense: 'alimentation', notif: 'JourJ', optionnotif: '30 minutes avant' });
+    const payload = buildEventCreationPayload({ eventType: 'depense', nom: ' Croquettes ', dateevent: '2026-08-09', heuredebutevent: '14:30', animaux: [1], depense: '24,50', categoriedepense: 'alimentation', notif: 'JourJ', optionnotif: '30m' });
+    expect(payload).toMatchObject({ eventtype: 'depense', nom: 'Croquettes', dateevent: '2026-08-09', heuredebutevent: '14:30', animaux: [1], depense: 24.5, categoriedepense: 'alimentation', notif: 'JourJ', optionnotif: '30 minutes avant' });
+  });
+
+  it('maps optional type-specific fields without dropping numeric values', () => {
+    expect(buildEventCreationPayload({ eventType: 'concours', dateevent: '2026-08-09', discipline: 'Agility', placement: '2e', note: '4,5' })).toMatchObject({ discipline: 'Agility', placement: '2e', note: 4.5 });
+  });
+
+  it('normalizes recurrence for care and walk events', () => {
+    expect(buildEventCreationPayload({ eventType: 'soins', dateevent: '2026-08-18', datefinsoins: '2026-08-20', frequencevalue: 'daily' })).toMatchObject({ frequencetype: 'recurring', frequencevalue: 'daily', datefinsoins: '2026-08-20' });
+    expect(buildEventCreationPayload({ eventType: 'balade', dateevent: '2026-08-18', datefinbalade: '2026-09-18', frequencevalue: 'monthly' })).toMatchObject({ frequencetype: 'recurring', frequencevalue: 'monthly', datefinbalade: '2026-09-18' });
   });
 
   it('uses a safe fallback name for optional titles', () => {

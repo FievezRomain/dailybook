@@ -5,11 +5,10 @@ import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import type { AuthStackParamList } from '../navigation';
 import { AuthScreen } from '../components/AuthScreen';
-import { TextLink } from '../components/TextLink';
 
-export type WelcomeScreenProps = NativeStackScreenProps<AuthStackParamList, 'Welcome'> & { onChangeLanguage?: () => void };
+export type WelcomeScreenProps = NativeStackScreenProps<AuthStackParamList, 'Welcome'>;
 
-export function WelcomeScreen({ navigation, onChangeLanguage = () => undefined }: WelcomeScreenProps) {
+export function WelcomeScreen({ navigation }: WelcomeScreenProps) {
   const { colors } = useAppTheme();
   return <AuthScreen scroll={false} centered testID="auth-welcome" contentStyle={{ gap: spacing.md }}>
     <View style={{ height: 42 }} />
@@ -19,6 +18,5 @@ export function WelcomeScreen({ navigation, onChangeLanguage = () => undefined }
     <View style={{ flex: 1, minHeight: 120 }} />
     <Button label="Créer mon compte" onPress={() => navigation.navigate('RegisterMethod')} size="large" fullWidth />
     <Button label="J’ai déjà un compte" onPress={() => navigation.navigate('SignIn')} variant="secondary" size="large" fullWidth />
-    <TextLink label="Français · Modifier la langue" onPress={onChangeLanguage} />
   </AuthScreen>;
 }

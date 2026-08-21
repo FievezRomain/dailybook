@@ -3,6 +3,10 @@ import type { Event } from '../../models/Event';
 
 export type AnimalPresence = 'present' | 'history';
 
+export function isSharedAnimal(animal: Animal) {
+  return animal.provenance?.trim().toLocaleLowerCase('fr-FR') === 'group';
+}
+
 export function getAnimalPresence(animal: Animal): AnimalPresence {
   return animal.datedepart || animal.datedeces ? 'history' : 'present';
 }
@@ -24,7 +28,7 @@ export function resolveAnimalSelection(animals: readonly Animal[], selectedId?: 
 export const MEDICAL_EVENT_TYPES = ['soins', 'rdv'] as const;
 
 export function getAnimalMedicalEvents(events: readonly Event[], animalId: number) {
-  return events.filter((event) => event.animaux.includes(animalId) && MEDICAL_EVENT_TYPES.includes(event.eventtype as (typeof MEDICAL_EVENT_TYPES)[number]));
+  return events.filter((event) => !event.idparent && event.animaux.includes(animalId) && MEDICAL_EVENT_TYPES.includes(event.eventtype as (typeof MEDICAL_EVENT_TYPES)[number]));
 }
 
 export function getAnimalMedicalDocuments(events: readonly Event[], animalId: number) {
@@ -35,8 +39,13 @@ export function getAnimalMedicalDocuments(events: readonly Event[], animalId: nu
 
 function parseDate(value?: string): Date | undefined {
   if (!value) return undefined;
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? undefined : date;
+  const iso = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+  const french = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value);
+  const parts = iso ? [Number(iso[1]), Number(iso[2]), Number(iso[3])] : french ? [Number(french[3]), Number(french[2]), Number(french[1])] : undefined;
+  if (!parts) return undefined;
+  const [year, month, day] = parts;
+  const date = new Date(year, month - 1, day, 12);
+  return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day ? date : undefined;
 }
 
 export function formatAnimalDate(value?: string): string | undefined {
@@ -56,7 +65,7 @@ export function compactAnimalDetails(animal: Animal): string {
   return [animal.espece, animal.race, formatAnimalAge(animal.datenaissance)].filter(Boolean).join(' · ');
 }
 
-export type AnimalPicture = { id: string; uri: string };
+export type AnimalPicture = { id: string; uri: string; recordedAt?: string };
 
 export function normalizeAnimalPictures(value: unknown): AnimalPicture[] {
   if (!Array.isArray(value)) return [];
@@ -64,6 +73,12 @@ export function normalizeAnimalPictures(value: unknown): AnimalPicture[] {
     if (!item || typeof item !== 'object') return undefined;
     const source = item as Record<string, unknown>;
     const uri = source.url ?? source.image ?? source.filename;
-    return typeof uri === 'string' ? { id: String(source.id ?? index), uri } : undefined;
+    const recordedAt = source.date_enregistrement ?? source.date;
+    return typeof uri === 'string' ? { id: String(source.id ?? index), uri, ...(typeof recordedAt === 'string' ? { recordedAt } : {}) } : undefined;
   }).filter((item): item is AnimalPicture => Boolean(item));
+}
+
+export function hasAnimalBodyPictureForMonth(pictures: readonly AnimalPicture[], month = new Date()) {
+  const key = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}`;
+  return pictures.some((picture) => picture.recordedAt?.slice(0, 7) === key);
 }

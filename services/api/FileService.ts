@@ -13,12 +13,28 @@
  */
 
 import httpClient from './httpClient';
+import { prepareImageUpload, type ImageUploadKind } from '../../shared/utils/prepareImageUpload';
 
-export type RessourceType = 'event' | 'animal' | 'user' | 'note' | 'wish' | 'contact';
+const DOWNLOAD_URL_TTL_MS = 4 * 60 * 1000;
+type CachedDownloadUrl = { url?: string; promise?: Promise<string>; expiresAt: number };
+const downloadUrlCache = new Map<string, CachedDownloadUrl>();
+
+function downloadCacheKey(filename: string, ressourceType: RessourceType, ressourceId: number | string) {
+  return `${ressourceType}:${ressourceId}:${filename}`;
+}
+
+function invalidateDownloadUrl(filename: string, ressourceType: RessourceType, ressourceId?: number | string) {
+  if (ressourceId !== undefined) downloadUrlCache.delete(downloadCacheKey(filename, ressourceType, ressourceId));
+}
+
+export type RessourceType = 'event' | 'animal' | 'body' | 'user' | 'note' | 'wish' | 'contact';
 
 export interface PresignedUpload {
   url: string;
+  fields: Record<string, string>;
+  filename: string;
   s3Path: string;
+  expiresIn: number;
 }
 
 export interface PresignedDownload {
@@ -30,9 +46,19 @@ interface UploadUrlBody {
   ressourceType: RessourceType;
   ressourceId?: number | string;
   contentType: string;
+  sizeBytes: number;
 }
 
 export const FileService = {
+  getCachedDownloadUrl(
+    filename: string,
+    ressourceType: RessourceType,
+    ressourceId: number | string,
+  ): string | undefined {
+    const cached = downloadUrlCache.get(downloadCacheKey(filename, ressourceType, ressourceId));
+    return cached && cached.expiresAt > Date.now() ? cached.url : undefined;
+  },
+
   /**
    * Demande au backend une URL présignée pour uploader directement vers S3.
    */
@@ -44,13 +70,15 @@ export const FileService = {
   /**
    * Upload binaire direct vers S3 via l'URL présignée.
    */
-  async uploadToS3(uploadUrl: string, fileUri: string, contentType: string): Promise<void> {
+  async uploadToS3(upload: PresignedUpload, fileUri: string, contentType: string): Promise<void> {
     const fileResponse = await fetch(fileUri);
     const blob = await fileResponse.blob();
-    const putResponse = await fetch(uploadUrl, {
-      method: 'PUT',
-      headers: { 'Content-Type': contentType },
-      body: blob,
+    const body = new FormData();
+    Object.entries(upload.fields).forEach(([key, value]) => body.append(key, value));
+    body.append('file', blob as Blob, upload.filename);
+    const putResponse = await fetch(upload.url, {
+      method: 'POST',
+      body,
     });
     if (!putResponse.ok) {
       throw new Error(`S3 upload failed: ${putResponse.status} ${putResponse.statusText}`);
@@ -66,15 +94,31 @@ export const FileService = {
     contentType: string,
     ressourceType: RessourceType,
     ressourceId?: number | string,
+    sizeBytes?: number,
   ): Promise<string> {
-    const { url, s3Path } = await FileService.getUploadUrl({
+    const imageKinds: Partial<Record<RessourceType, ImageUploadKind>> = {
+      user: 'profile', animal: 'animal', body: 'body', wish: 'wish',
+    };
+    const imageKind = imageKinds[ressourceType];
+    const prepared = imageKind
+      ? await prepareImageUpload({ uri: fileUri }, imageKind)
+      : { uri: fileUri, contentType, sizeBytes: sizeBytes ?? (await (await fetch(fileUri)).blob()).size };
+    const upload = await FileService.getUploadUrl({
       filename,
       ressourceType,
       ressourceId,
-      contentType,
+      contentType: prepared.contentType,
+      sizeBytes: prepared.sizeBytes,
     });
-    await FileService.uploadToS3(url, fileUri, contentType);
-    return s3Path;
+    await FileService.uploadToS3(upload, prepared.uri, prepared.contentType);
+    await httpClient.post('/files/upload-complete', {
+      filename: upload.filename,
+      ressourceType,
+      ressourceId,
+      contentType: prepared.contentType,
+    });
+    invalidateDownloadUrl(upload.filename, ressourceType, ressourceId);
+    return upload.filename;
   },
 
   /**
@@ -85,11 +129,24 @@ export const FileService = {
     ressourceType: RessourceType,
     ressourceId: number | string,
   ): Promise<string> {
-    const response = await httpClient.get<PresignedDownload>(
+    const key = downloadCacheKey(filename, ressourceType, ressourceId);
+    const cached = downloadUrlCache.get(key);
+    if (cached && cached.expiresAt > Date.now()) {
+      if (cached.url) return cached.url;
+      if (cached.promise) return cached.promise;
+    }
+    const promise = httpClient.get<PresignedDownload>(
       `/files/${encodeURIComponent(filename)}`,
       { params: { ressourceType, ressourceId } },
-    );
-    return response.data.url;
+    ).then((response) => {
+      downloadUrlCache.set(key, { url: response.data.url, expiresAt: Date.now() + DOWNLOAD_URL_TTL_MS });
+      return response.data.url;
+    }).catch((error: unknown) => {
+      downloadUrlCache.delete(key);
+      throw error;
+    });
+    downloadUrlCache.set(key, { promise, expiresAt: Date.now() + DOWNLOAD_URL_TTL_MS });
+    return promise;
   },
 
   /**
@@ -103,5 +160,6 @@ export const FileService = {
     await httpClient.delete(`/files/${encodeURIComponent(filename)}`, {
       params: { ressourceType, ressourceId },
     });
+    invalidateDownloadUrl(filename, ressourceType, ressourceId);
   },
 };

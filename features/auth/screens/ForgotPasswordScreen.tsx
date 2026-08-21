@@ -25,7 +25,7 @@ export function ForgotPasswordScreen({ navigation, route }: ForgotPasswordScreen
     catch { setError('Envoi impossible. Vérifiez votre connexion et réessayez.'); }
     finally { setLoading(false); }
   };
-  return <AuthScreen scroll={false} testID="auth-forgot-password" contentStyle={{ gap: spacing.md, paddingTop: 28 }}>
+  return <AuthScreen testID="auth-forgot-password" contentStyle={{ gap: spacing.md, paddingTop: 28 }}>
     <IconButton icon="back" accessibilityLabel="Retour à la connexion" variant="ghost" onPress={() => navigation.goBack()} />
     <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 32, letterSpacing: -0.2 }}>Mot de passe oublié ?</Text>
     <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.md, lineHeight: typography.lineHeights.normal }}>Indiquez votre adresse e-mail. Nous vous enverrons un lien sécurisé pour choisir un nouveau mot de passe.</Text>

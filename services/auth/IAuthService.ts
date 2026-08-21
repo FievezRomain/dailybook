@@ -70,6 +70,9 @@ export interface IAuthService {
    */
   getCurrentUser(): AuthUser | null;
 
+  /** Recharge l'utilisateur après une action effectuée hors de l'application. */
+  refreshCurrentUser(): Promise<AuthUser | null>;
+
   /**
    * Abonne un callback aux changements d'état d'authentification.
    * @returns Fonction d'unsubscribe à appeler au démontage.

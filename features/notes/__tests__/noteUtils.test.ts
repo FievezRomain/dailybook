@@ -1,6 +1,6 @@
 import { noteFormSchema } from '../../../business/validators/note';
 import type { Note } from '../../../models/Note';
-import { filterNotes, getNoteExcerpt, getNoteMetadata } from '../noteUtils';
+import { filterNotes, getNoteExcerpt, getNoteMetadata, markdownToPlainText } from '../noteUtils';
 
 const notes: Note[] = [
   { id: 1, titre: 'Questions vétérinaire', note: 'Vérifier le traitement de Milo' },
@@ -17,6 +17,10 @@ describe('noteUtils', () => {
 
   it('truncates long content with an ellipsis', () => {
     expect(getNoteExcerpt({ id: 3, titre: 'Titre', note: 'Une observation importante' }, 15)).toBe('Une observation…');
+  });
+
+  it('keeps Markdown syntax out of list excerpts', () => {
+    expect(markdownToPlainText('## Courses\n\n- **Lait**\n- _Pain_')).toBe('Courses Lait Pain');
   });
 
   it('hides unavailable legacy metadata and formats reliable timestamps', () => {

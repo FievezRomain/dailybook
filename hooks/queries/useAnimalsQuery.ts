@@ -16,6 +16,7 @@ export function useAnimalsQuery() {
   return useQuery({
     queryKey: ANIMALS_KEY,
     queryFn: AnimalsService.getAnimals,
+    staleTime: 4 * 60 * 1000,
   });
 }
 

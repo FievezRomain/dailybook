@@ -15,6 +15,7 @@ export async function uploadFile(
   contentType: string,
   ressourceType: string,
   ressourceId: string,
+  sizeBytes?: number,
 ): Promise<string | undefined> {
   try {
     return await FileService.upload(
@@ -23,6 +24,7 @@ export async function uploadFile(
       contentType,
       ressourceType as RessourceType,
       ressourceId,
+      sizeBytes,
     );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

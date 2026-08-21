@@ -17,9 +17,19 @@ export function pickerDate(value?: string) {
   return normalized && /^\d{4}-\d{2}-\d{2}$/.test(normalized) ? normalized : undefined;
 }
 
+export function formDateLabel(value?: string) {
+  const normalized = pickerDate(value);
+  if (!normalized) return undefined;
+  const [year, month, day] = normalized.split('-');
+  return `${day}/${month}/${year}`;
+}
+
 export function animalToWizardForm(animal: Animal): AnimalWizardFormData {
   const form: AnimalWizardFormData = { nom: animal.nom, espece: animal.espece };
-  optionalStrings.forEach((key) => { const value = animal[key]; if (value != null) form[key] = String(value); });
+  optionalStrings.forEach((key) => {
+    const value = animal[key];
+    if (value != null) form[key] = key.startsWith('date') ? apiDate(String(value)) : String(value);
+  });
   if (animal.poids != null) form.poids = String(animal.poids);
   if (animal.taille != null) form.taille = String(animal.taille);
   if (animal.quantity != null) form.quantity = String(animal.quantity);

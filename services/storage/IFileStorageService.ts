@@ -14,6 +14,7 @@ export interface IFileStorageService {
     contentType: string,
     ressourceType: string,
     ressourceId: string,
+    sizeBytes?: number,
   ): Promise<string | undefined>;
 
   /**

@@ -10,6 +10,18 @@ export const reminderOptions = [
   { id: '1d', label: '1 jour avant' },
 ] as const;
 
+export const recurrenceOptions = [
+  { id: 'none', label: 'Ne pas répéter' },
+  { id: 'daily', label: 'Tous les jours' },
+  { id: 'weekly', label: 'Toutes les semaines' },
+  { id: 'biweekly', label: 'Toutes les 2 semaines' },
+  { id: 'monthly', label: 'Tous les mois' },
+] as const;
+
+export function getRecurrenceLabel(id?: string) {
+  return recurrenceOptions.find((option) => option.id === id)?.label ?? recurrenceOptions[0].label;
+}
+
 export function getReminderLabel(id?: string) {
   return reminderOptions.find((option) => option.id === id)?.label ?? reminderOptions[0].label;
 }
@@ -29,17 +41,23 @@ export function buildEventCreationPayload(form: EventWizardFormData): CreateEven
     state: form.state ?? 'pending',
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   };
-  const stringFields = ['lieu', 'heuredebutevent', 'commentaire', 'traitement', 'datefinsoins', 'specialiste', 'discipline', 'epreuve', 'dossart', 'placement', 'categoriedepense', 'heuredebutbalade', 'datefinbalade', 'heurefinbalade', 'frequencetype', 'frequencevalue', 'rappelnotification'] as const;
+  const stringFields = ['lieu', 'heuredebutevent', 'commentaire', 'traitement', 'datefinsoins', 'specialiste', 'discipline', 'epreuve', 'dossart', 'placement', 'categoriedepense', 'heuredebutbalade', 'datefinbalade', 'heurefinbalade', 'rappelnotification'] as const;
   stringFields.forEach((key) => { const value = form[key]; if (typeof value === 'string' && value.trim()) Object.assign(payload, { [key]: value.trim() }); });
   if (form.depense !== undefined && form.depense !== '') { const amount = Number(String(form.depense).replace(',', '.')); if (Number.isFinite(amount)) payload.depense = amount; }
+  if (form.note !== undefined && form.note !== '') { const note = Number(String(form.note).replace(',', '.')); if (Number.isFinite(note)) payload.note = note; }
   if (form.notif) { payload.notif = 'JourJ'; payload.optionnotif = getReminderLabel(form.optionnotif); }
+  if ((eventtype === 'soins' || eventtype === 'balade') && form.frequencevalue && form.frequencevalue !== 'none') {
+    const supportedFrequencies = ['daily', 'weekly', 'biweekly', 'monthly', 'tlj', 'tls', 'tl2s', 'tlm'];
+    payload.frequencetype = supportedFrequencies.includes(form.frequencevalue) ? 'recurring' : form.frequencetype;
+    payload.frequencevalue = form.frequencevalue;
+  }
   if (form.shared_groups?.length) payload.shared_groups = form.shared_groups;
   if (typeof form.idparent === 'number') payload.idparent = form.idparent;
   return payload;
 }
 
 export function buildEventUpdatePayload(form: EventWizardFormData, eventId: number): UpdateEventPayload {
-  return { ...buildEventCreationPayload(form), id: eventId };
+  return { ...buildEventCreationPayload(form), id: eventId, update_scope: form.updateScope as UpdateEventPayload['update_scope'] };
 }
 
 export function eventToWizardForm(event: Event): EventWizardFormData {

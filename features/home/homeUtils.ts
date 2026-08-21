@@ -8,7 +8,7 @@ const eventTypes: Record<string, EventCardType> = { soins: 'care', rdv: 'appoint
 export const HOME_HEADER_SCROLL_THRESHOLD = 8;
 export const isHomeHeaderScrolled = (offsetY: number) => offsetY > HOME_HEADER_SCROLL_THRESHOLD;
 
-export function toEventCardType(value: string): EventCardType { return eventTypes[value] ?? 'other'; }
+export function toEventCardType(value: string): EventCardType { return eventTypes[value.trim().toLowerCase()] ?? 'other'; }
 
 export function getFirstName(value?: string | null) { return value?.trim().split(/\s+/)[0] || 'à vous'; }
 
@@ -22,8 +22,18 @@ export function splitHomeEvents(events: readonly Event[], now = new Date()) {
   const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const end = new Date(start); end.setDate(end.getDate() + 1);
   const visible = events.filter((event) => event.todisplay !== false).sort((a, b) => getEventDate(a).getTime() - getEventDate(b).getTime());
-  return { today: visible.filter((event) => { const date = getEventDate(event); return date >= start && date < end; }), upcoming: visible.filter((event) => getEventDate(event) >= end) };
+  return { today: visible.filter((event) => { const date = getEventDate(event); return date < end && (date >= start || !isEventCompleted(event)); }), upcoming: visible.filter((event) => getEventDate(event) >= end) };
 }
+
+export function getEventOverdueDays(event: Event, now = new Date()) {
+  if (isEventCompleted(event)) return 0;
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const eventDate = getEventDate(event);
+  const eventDay = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
+  return Math.max(0, Math.floor((today.getTime() - eventDay.getTime()) / 86_400_000));
+}
+
+export function formatEventOverdueLabel(days: number) { return `En retard de ${days} jour${days > 1 ? 's' : ''}`; }
 
 export function getLinkedAnimals(ids: readonly number[], animals: readonly Animal[]) { return ids.map((id) => animals.find((animal) => animal.id === id)).filter((animal): animal is Animal => Boolean(animal)).map((animal) => ({ id: String(animal.id), name: animal.nom, imageUrl: animal.imageUrl })); }
 
@@ -34,3 +44,5 @@ export function formatObjectiveEnd(dateValue: Date) { const date = new Date(date
 export function formatObjectivePeriod(startValue: Date, endValue: Date) { const formatter = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }); return `Du ${formatter.format(new Date(startValue))} au ${formatter.format(new Date(endValue))}`; }
 
 export function getDailyTaskProgress(events: readonly Event[]) { const total = events.length; const done = events.filter((event) => ['done', 'completed', 'termine', 'terminé', 'true'].includes(String(event.state).toLowerCase())).length; return { total, done, progress: total ? done / total : 0 }; }
+
+export function isEventCompleted(event: Pick<Event, 'state'>) { return ['done', 'completed', 'termine', 'terminé', 'true'].includes(String(event.state).toLowerCase()); }

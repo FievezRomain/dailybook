@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Image, Linking, Text, View } from 'react-native';
+import { Linking, Share, Text, View } from 'react-native';
+import { Image } from 'expo-image';
 
 import { useNotificationsQuery } from '@hooks/queries/useNotificationsQuery';
 import { useWishImageQuery } from '@hooks/queries/useWishImageQuery';
@@ -23,11 +24,12 @@ import { radii, spacing, typography } from '@theme/scales';
 import { useAppTheme } from '@theme/useAppTheme';
 
 import { tabs, type MainTabId } from '../../home/mainTabs';
-import { getWishMetadata, getWishPriceLabel } from '../wishUtils';
+import { getWishMetadata, getWishPriceValue } from '../wishUtils';
 
-type WishAction = 'edit' | 'delete';
+type WishAction = 'edit' | 'share' | 'delete';
 const actions: readonly OverlayActionItem<WishAction>[] = [
   { id: 'edit', label: 'Modifier', description: 'Mettre à jour les informations', icon: 'edit' },
+  { id: 'share', label: 'Partager', description: 'Envoyer cette idée cadeau', icon: 'share' },
   { id: 'delete', label: 'Supprimer', description: 'Une confirmation sera demandée', icon: 'delete', tone: 'destructive' },
 ];
 
@@ -74,6 +76,17 @@ export function WishDetailScreen({ wishId, activeTab = 'home', onBack, onEdit, o
       setActionError("Ce lien ne peut pas être ouvert.");
     }
   };
+  const shareWish = async () => {
+    const price = getWishPriceValue(wish);
+    const lines = [`Idée cadeau : ${wish.nom}`];
+    if (price) lines.push(`Prix : ${price}`);
+    if (wish.url) lines.push(wish.url);
+    try {
+      await Share.share({ title: wish.nom, message: lines.join('\n'), url: wish.url || undefined });
+    } catch {
+      setActionError('Le souhait n’a pas pu être partagé.');
+    }
+  };
 
   return <>
     <RootScreen
@@ -90,18 +103,18 @@ export function WishDetailScreen({ wishId, activeTab = 'home', onBack, onEdit, o
         <IconButton icon="moreHorizontal" accessibilityLabel="Actions sur le souhait" variant="ghost" onPress={() => setActionsOpen(true)} />
       </View>
       <View style={{ width: '100%', height: 190, borderRadius: radii.xl, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceVariant }}>
-        {imageQuery.data ? <Image source={{ uri: imageQuery.data }} resizeMode="cover" accessibilityLabel={`Image de ${wish.nom}`} style={{ width: '100%', height: '100%' }} /> : <Icon name="wish" size="xxl" color={colors.primaryDark} />}
+        {imageQuery.data ? <Image source={{ uri: imageQuery.data, cacheKey: imageQuery.data.split('?')[0] }} contentFit="contain" cachePolicy="memory-disk" accessibilityLabel={`Image de ${wish.nom}`} style={{ width: '100%', height: '100%' }} /> : <Icon name="gift" size="xxl" color={colors.primaryDark} />}
       </View>
       {imageQuery.isError ? <Banner tone="error" title="Image indisponible" message="Le souhait reste accessible sans son image." onDismiss={() => undefined} /> : null}
       {actionError ? <Banner tone="error" title="Action impossible" message={actionError} onDismiss={() => setActionError(undefined)} /> : null}
-      {getWishPriceLabel(wish) ? <Text style={{ color: colors.primaryDark, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 35 }}>{String(wish.prix)}</Text> : null}
+      {getWishPriceValue(wish) ? <Text style={{ color: colors.primaryDark, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 35 }}>{getWishPriceValue(wish)}</Text> : null}
       <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Destinataire · {getWishMetadata(wish)}</Text>
       <View style={{ flexDirection: 'row', gap: spacing.sm }}>
         {wish.url ? <Button label="Ouvrir le lien" onPress={() => void openLink()} style={{ flex: 1 }} /> : null}
         <Button label={wish.acquis ? 'Marquer à prévoir' : 'Marquer acquis'} variant="secondary" loading={mutations.update.isPending} onPress={() => void updateAcquired()} style={{ flex: 1 }} />
       </View>
     </RootScreen>
-    <ActionSheet open={actionsOpen} title="Actions sur le souhait" subtitle={wish.nom} items={actions} onClose={() => setActionsOpen(false)} onSelect={(action) => { setActionsOpen(false); if (action === 'edit') onEdit(); else setDeleteOpen(true); }} testID="wish-actions" />
+    <ActionSheet open={actionsOpen} title="Actions sur le souhait" subtitle={wish.nom} items={actions} onClose={() => setActionsOpen(false)} onSelect={(action) => { setActionsOpen(false); if (action === 'edit') onEdit(); else if (action === 'share') void shareWish(); else setDeleteOpen(true); }} testID="wish-actions" />
     <Dialog open={deleteOpen} type="destructive" title="Supprimer ce souhait ?" description={`« ${wish.nom} » sera supprimé de votre liste. Cette action est définitive.`} confirmLabel="Supprimer" loading={mutations.remove.isPending} onClose={() => setDeleteOpen(false)} onConfirm={async () => { await mutations.remove.mutateAsync(String(wish.id)); onDeleted(); }} testID="wish-delete-confirmation" />
   </>;
 }

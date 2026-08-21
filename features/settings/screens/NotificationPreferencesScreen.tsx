@@ -22,6 +22,6 @@ export function NotificationPreferencesScreen({ activeTab, onSelectTab, onBack }
     <View style={{ gap: spacing.xs }}><Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 35 }}>Préférences de notification</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Choisissez les notifications que vous souhaitez recevoir.</Text></View>
     {mutation.isError ? <Banner tone="error" title="Modification impossible" message="Votre préférence n’a pas pu être enregistrée." onDismiss={() => mutation.reset()} /> : null}
     <ListItem title="Rappel journalier" subtitle="Pour ne pas oublier d’enregistrer un événement" trailing={<Switch value={value} onValueChange={change} disabled={mutation.isPending} accessibilityLabel="Rappel journalier" testID="daily-reminder-switch" />} />
-    {!value ? <Banner tone="info" title="Rappel journalier désactivé" message="Vous ne recevrez plus la notification de 20 h. Vous pourrez la réactiver à tout moment." onDismiss={undefined} /> : null}
+    {!value ? <Banner tone="info" title="Rappel journalier désactivé" message="La modification prend effet immédiatement : vous ne recevrez plus la notification de 20 h. Vous pourrez la réactiver à tout moment." onDismiss={undefined} /> : null}
   </RootScreen>;
 }

@@ -40,6 +40,7 @@ export const componentTokens = {
     handleWidth: 48,
   },
   dialog: { width: 336, iconSize: 44 },
+  mediaViewer: { maxWidth: 720, maxHeight: 720, heightRatio: 0.72, headerHeight: 72 },
   actionMenu: { width: 320, itemHeight: 48 },
   actionSheet: { height: 270, itemHeight: 56 },
   picker: {

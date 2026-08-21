@@ -1,23 +1,33 @@
-import type { Wish } from '@models/Wish';
+import type { Wish } from "@models/Wish";
 
-import type { CreateWishPayload, UpdateWishPayload } from './types';
+import type { CreateWishPayload, UpdateWishPayload } from "./types";
 
-export type WishListTab = 'planned' | 'acquired' | 'archived';
+export type WishListTab = "planned" | "acquired";
 
-export function filterWishesByTab(wishes: readonly Wish[], tab: WishListTab): Wish[] {
-  if (tab === 'archived') return [];
-  const acquired = tab === 'acquired';
+export function filterWishesByTab(
+  wishes: readonly Wish[],
+  tab: WishListTab,
+): Wish[] {
+  const acquired = tab === "acquired";
   return wishes.filter((wish) => Boolean(wish.acquis) === acquired);
 }
 
 export function getWishPriceLabel(wish: Wish): string | undefined {
-  const price = wish.prix == null ? '' : String(wish.prix).trim();
+  const price = getWishPriceValue(wish);
   if (!price) return undefined;
-  return `${wish.acquis ? 'Prix réalisé' : 'Budget estimé'} · ${price}`;
+  return `Prix · ${price}`;
+}
+
+export function getWishPriceValue(wish: Wish): string | undefined {
+  const price = wish.prix == null ? "" : String(wish.prix).trim();
+  if (!price) return undefined;
+  if (/€|\beur(?:o|os)?\b/i.test(price)) return price;
+  if (/^\d+(?:[.,]\d{1,2})?$/.test(price)) return `${price.replace('.', ',')} €`;
+  return price;
 }
 
 export function getWishMetadata(wish: Wish): string {
-  return wish.destinataire?.trim() || 'Pour moi';
+  return wish.destinataire?.trim() || "Pour moi";
 }
 
 export interface WishDraft {
@@ -29,10 +39,10 @@ export interface WishDraft {
 
 export function wishToDraft(wish?: Wish): WishDraft {
   return {
-    nom: wish?.nom ?? '',
-    url: wish?.url ?? '',
-    prix: wish?.prix == null ? '' : String(wish.prix),
-    destinataire: wish?.destinataire ?? '',
+    nom: wish?.nom ?? "",
+    url: wish?.url ?? "",
+    prix: wish?.prix == null ? "" : String(wish.prix),
+    destinataire: wish?.destinataire ?? "",
   };
 }
 
@@ -40,12 +50,16 @@ export function buildWishPayload(draft: WishDraft): CreateWishPayload {
   return {
     nom: draft.nom.trim(),
     url: draft.url.trim() || undefined,
-    prix: draft.prix.replaceAll(' ', '').replace(',', '.').trim() || undefined,
+    prix: draft.prix.replaceAll(" ", "").replace(",", ".").trim() || undefined,
     destinataire: draft.destinataire.trim() || undefined,
   };
 }
 
-export function buildWishUpdatePayload(draft: WishDraft, wish: Wish, image = wish.image): UpdateWishPayload {
+export function buildWishUpdatePayload(
+  draft: WishDraft,
+  wish: Wish,
+  image = wish.image,
+): UpdateWishPayload {
   return {
     id: wish.id,
     ...buildWishPayload(draft),

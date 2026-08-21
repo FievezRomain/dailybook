@@ -104,6 +104,13 @@ class FirebaseAuthService implements IAuthService {
     return user ? mapToAuthUser(user) : null;
   }
 
+  async refreshCurrentUser(): Promise<AuthUser | null> {
+    const user = getFirebaseAuth().currentUser;
+    if (!user) return null;
+    await user.reload();
+    return mapToAuthUser(user);
+  }
+
   onAuthStateChanged(callback: (user: AuthUser | null) => void): () => void {
     return firebaseOnAuthStateChanged(getFirebaseAuth(), (user) => {
       callback(user ? mapToAuthUser(user) : null);

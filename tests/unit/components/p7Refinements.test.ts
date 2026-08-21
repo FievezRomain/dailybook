@@ -14,14 +14,15 @@ describe('P7.f visual refinements', () => {
     const source = read('shared/components/ui/content/WishCard.tsx');
     expect(source).toContain('<DomainTitle numberOfLines={0}>');
     expect(source).toContain('<DomainBody numberOfLines={0}>{description}</DomainBody>');
-    expect(source).toContain('<DomainBody numberOfLines={0}>{priceLabel}</DomainBody>');
+    expect(source).toContain('{priceLabel}');
+    expect(source).toContain('<DomainCaption numberOfLines={0} color={colors.primaryDark}>');
     expect(source).toContain('<DomainCaption numberOfLines={0}');
     expect(source).not.toContain('numberOfLines={1}');
   });
 
   it('aggregates every animal when the Tous filter is active', () => {
     const source = read('features/objectifs/screens/TrackingScreen.tsx');
-    expect(source).toContain("statisticsAnimalSelection === 'all' ? animals.map((animal) => animal.id) : statisticsAnimalSelection");
+    expect(source).toMatch(/statisticsAnimalSelection\s*===\s*["']all["']\s*\?\s*animals\.map\(\(animal\)\s*=>\s*animal\.id\)\s*:\s*statisticsAnimalSelection/);
     expect(source).toContain('animalIds={selectedAnimalIds}');
   });
 
@@ -38,5 +39,14 @@ describe('P7.f visual refinements', () => {
     expect(source).toContain('<Checkbox');
     expect(source).toContain('<ListItem');
     expect(source).toContain('objective-add-step');
+  });
+
+  it('keeps one stable Agenda and Animals root with account navigation', () => {
+    const source = read('app/navigation/MainNavigator.tsx');
+    expect(source.match(/<AgendaScreen/g)).toHaveLength(1);
+    expect(source.match(/<AnimalsWorkspaceScreen/g)).toHaveLength(1);
+    expect(source.match(/onAccount=\{openSettings\}/g)?.length).toBeGreaterThanOrEqual(5);
+    expect(source).toContain('display: tab === "home" ? "flex" : "none"');
+    expect(source).toContain('display: tab === "animals" ? "flex" : "none"');
   });
 });

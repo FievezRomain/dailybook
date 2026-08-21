@@ -1,7 +1,8 @@
 import { Image } from 'expo-image';
-import { Modal, Pressable, Text, View } from 'react-native';
+import { Modal, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
+import { componentTokens } from '../../../../theme/componentTokens';
 import { radii, spacing, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 import { Icon, type VascoIconName } from '../icons';
@@ -25,12 +26,14 @@ export interface MediaViewerProps {
 
 export function MediaViewer({ open, uri, title, type = 'image', onClose, onShare, onDownload, onDeleteRequest, controlsVisible = true, onToggleControls, testID }: MediaViewerProps) {
   const { colors } = useAppTheme();
+  const { height } = useWindowDimensions();
+  const previewHeight = Math.min(componentTokens.mediaViewer.maxHeight, height * componentTokens.mediaViewer.heightRatio);
   return (
     <Modal visible={open} animationType="fade" statusBarTranslucent onRequestClose={onClose}>
       <SafeAreaView testID={testID} style={{ flex: 1, backgroundColor: colors.overlay }}>
-        {controlsVisible ? <View style={{ minHeight: 64, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md }}><ViewerButton icon="close" label="Fermer" onPress={onClose} /><Text numberOfLines={1} style={{ flex: 1, color: colors.textOnPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, textAlign: 'center' }}>{title}</Text><View style={{ width: 44 }} /></View> : null}
-        <Pressable accessibilityRole="button" accessibilityLabel={controlsVisible ? 'Masquer les contrôles' : 'Afficher les contrôles'} onPress={onToggleControls} disabled={!onToggleControls} style={{ flex: 1, justifyContent: 'center', padding: spacing.md }}>
-          <View style={{ flex: 1, maxHeight: '100%', overflow: 'hidden', borderRadius: radii.lg, backgroundColor: colors.backgroundPaper }}>
+        {controlsVisible ? <View style={{ minHeight: componentTokens.mediaViewer.headerHeight, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.xs }}><ViewerCloseButton onPress={onClose} /><Text numberOfLines={2} style={{ flex: 1, color: colors.textOnPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, lineHeight: 22, textAlign: 'center' }}>{title}</Text><View style={{ width: 48 }} /></View> : null}
+        <Pressable accessibilityRole="button" accessibilityLabel={controlsVisible ? 'Masquer les contrôles' : 'Afficher les contrôles'} onPress={onToggleControls} disabled={!onToggleControls} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.md, paddingVertical: spacing.lg }}>
+          <View style={{ width: '100%', maxWidth: componentTokens.mediaViewer.maxWidth, height: previewHeight, overflow: 'hidden', borderRadius: radii.lg, backgroundColor: colors.backgroundPaper }}>
             {type === 'image' ? <Image source={{ uri }} contentFit="contain" accessibilityLabel={title} style={{ flex: 1 }} /> : <WebView source={{ uri }} style={{ flex: 1, backgroundColor: colors.backgroundPaper }} accessibilityLabel={title} />}
           </View>
         </Pressable>
@@ -38,6 +41,11 @@ export function MediaViewer({ open, uri, title, type = 'image', onClose, onShare
       </SafeAreaView>
     </Modal>
   );
+}
+
+function ViewerCloseButton({ onPress }: { onPress: () => void }) {
+  const { colors } = useAppTheme();
+  return <Pressable accessibilityRole="button" accessibilityLabel="Fermer" hitSlop={spacing.sm} onPress={onPress} style={({ pressed }) => ({ width: 48, height: 48, alignItems: 'center', justifyContent: 'center', borderRadius: radii.full, backgroundColor: colors.overlay, opacity: pressed ? 0.7 : 1 })}><Icon name="close" size="lg" color={colors.textOnPrimary} /></Pressable>;
 }
 
 function ViewerButton({ icon, label, onPress, destructive = false }: { icon: VascoIconName; label: string; onPress: () => void; destructive?: boolean }) {

@@ -10,7 +10,7 @@ export { LinkedAnimals } from './LinkedAnimals';
 export type { LinkedAnimalsProps } from './LinkedAnimals';
 export type { LinkedAnimalData } from './linkedAnimalsUtils';
 export { EventCard } from './EventCard';
-export type { EventCardProps } from './EventCard';
+export type { EventCardProps, EventCardStatus } from './EventCard';
 export type { EventCardType } from './domainCardUtils';
 export { AnimalCard } from './AnimalCard';
 export type { AnimalCardLayout, AnimalCardProps } from './AnimalCard';
