@@ -1,5 +1,5 @@
 import { Pressable, ScrollView, Text, View } from "react-native";
-import Svg, { Path, Polyline } from "react-native-svg";
+import Svg, { Circle, Line, Path, Polyline } from "react-native-svg";
 import { componentTokens } from "../../../../theme/componentTokens";
 import { radii, spacing, typography } from "../../../../theme/scales";
 import { useAppTheme } from "../../../../theme/useAppTheme";
@@ -90,7 +90,7 @@ export function DataVisualization({
           <>
             <View style={{ flex: 1, justifyContent: "center" }}>
               {type === "line" ? (
-                <LinePlot data={data} />
+                <LinePlot data={data} valueFormatter={valueFormatter} />
               ) : type === "bar" ? (
                 <BarPlot data={data} />
               ) : type === "pie" ? (
@@ -147,11 +147,15 @@ function ChartMessage({ error }: { error: boolean }) {
   );
 }
 
-function LinePlot({ data }: { data: readonly ChartDatum[] }) {
+function LinePlot({ data, valueFormatter }: { data: readonly ChartDatum[]; valueFormatter: (value: number) => string }) {
   const { colors } = useAppTheme();
   const normalized = normalizeChartValues(data);
-  const width = 296;
+  const width = 240;
   const height = 128;
+  const values = data.map((item) => item.value);
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const middle = min + (max - min) / 2;
   const points = normalized
     .map(
       (item, index) =>
@@ -159,16 +163,42 @@ function LinePlot({ data }: { data: readonly ChartDatum[] }) {
     )
     .join(" ");
   return (
-    <View style={{ alignItems: "center", gap: 4 }}>
-      <Svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`}>
-        <Polyline
-          points={points}
-          fill="none"
-          stroke={colors.primary}
-          strokeWidth={2}
-        />
-      </Svg>
-      <AxisLabels data={data} />
+    <View style={{ flexDirection: "row", alignItems: "stretch", gap: spacing.xs }}>
+      <View style={{ height, justifyContent: "space-between", alignItems: "flex-end", paddingVertical: 10 }}>
+        {[max, middle, min].map((value, index) => (
+          <Text
+            key={index}
+            style={{
+              color: colors.textSecondary,
+              fontFamily: typography.fonts.medium,
+              fontSize: typography.sizes.xs,
+            }}
+          >
+            {valueFormatter(value)}
+          </Text>
+        ))}
+      </View>
+      <View style={{ flex: 1, gap: 4 }}>
+        <Svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`}>
+          <Line x1="0" y1={height - 14} x2={width} y2={height - 14} stroke={colors.border} strokeWidth="1" />
+          <Line x1="0" y1="10" x2="0" y2={height - 14} stroke={colors.border} strokeWidth="1" />
+          <Polyline
+            points={points}
+            fill="none"
+            stroke={colors.primary}
+            strokeWidth={2}
+          />
+          {normalized.length === 1 ? (
+            <Circle
+              cx={width / 2}
+              cy={height - normalized[0].normalized * 100 - 14}
+              r={5}
+              fill={colors.primary}
+            />
+          ) : null}
+        </Svg>
+        <AxisLabels data={data} />
+      </View>
     </View>
   );
 }
@@ -307,7 +337,10 @@ function pieSlicePath(centerX: number, centerY: number, radius: number, startAng
 function HeatmapPlot({ data, onPress }: { data: readonly HeatmapDatum[]; onPress?: (item: HeatmapDatum) => void }) {
   const { colors } = useAppTheme();
   const rows = [...new Set(data.map((item) => item.row))];
-  const columns = [...new Set(data.map((item) => item.column))];
+  const dataColumns = [...new Set(data.map((item) => item.column))];
+  const weekdays = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
+  const weekly = dataColumns.every((column) => weekdays.includes(column));
+  const columns = weekly ? weekdays : dataColumns;
   const max = Math.max(1, ...data.map((item) => item.value));
   return (
     <ScrollView
@@ -324,7 +357,7 @@ function HeatmapPlot({ data, onPress }: { data: readonly HeatmapDatum[]; onPress
               key={column}
               numberOfLines={1}
               style={{
-                width: 30,
+                width: weekly ? 48 : 30,
                 textAlign: "center",
                 color: colors.textSecondary,
                 fontFamily: typography.fonts.medium,
@@ -352,7 +385,8 @@ function HeatmapPlot({ data, onPress }: { data: readonly HeatmapDatum[]; onPress
               {row}
             </Text>
             {columns.map((column) => {
-              const item = data.find((candidate) => candidate.row === row && candidate.column === column) ?? { row, column, value: 0 };
+              const item = data.find((candidate) => candidate.row === row && candidate.column === column);
+              if (!item) return <View key={column} style={{ width: weekly ? 48 : 30, height: 22 }} />;
               const intensity =
                 item.value > 0 ? 0.3 + clampIntensity(item.value / max) * 0.7 : 0.1;
               return (
@@ -364,7 +398,7 @@ function HeatmapPlot({ data, onPress }: { data: readonly HeatmapDatum[]; onPress
                   accessibilityHint={item.value && onPress ? "Déplie les événements correspondants dans l’historique" : undefined}
                   onPress={() => onPress?.(item)}
                   style={({ pressed }) => ({
-                    width: 30,
+                    width: weekly ? 48 : 30,
                     height: 22,
                     borderRadius: 5,
                     backgroundColor: colors.primary,

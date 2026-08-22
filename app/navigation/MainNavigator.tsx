@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { View } from "react-native";
 import {
   AnimalActionDialogs,
@@ -27,6 +27,7 @@ import {
   PremiumRequiredPattern,
 } from "../../shared/components/ui";
 import { useAuthStore } from "../../stores/useAuthStore";
+import { useNotificationNavigationStore } from "../../stores/useNotificationNavigationStore";
 import { useEventWizardStore } from "../../stores/useEventWizardStore";
 import { useAnimalsQuery } from "../../hooks/queries/useAnimalsQuery";
 import { useAnimalWizardStore } from "../../stores/useAnimalWizardStore";
@@ -91,6 +92,10 @@ export function MainNavigator() {
   const [groupsPlans, setGroupsPlans] = useState(false);
   const [visualTrackingPlans, setVisualTrackingPlans] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const notificationOpenRequest = useNotificationNavigationStore((state) => state.requestId);
+  useEffect(() => {
+    if (notificationOpenRequest > 0) setNotificationsOpen(true);
+  }, [notificationOpenRequest]);
   const [settingsOpen, setSettingsOpen] = useState<
     | "overview"
     | "profile"
@@ -146,6 +151,7 @@ export function MainNavigator() {
         mode: "create" | "edit";
         groupId?: number;
         initialStep?: 0 | 1 | 2;
+        animalOnly?: boolean;
       }
     | { name: "animalForm"; mode: "create" | "edit"; animalId?: number }
     | { name: "animalAction"; action: SensitiveAnimalAction; animalId: number }
@@ -523,6 +529,7 @@ export function MainNavigator() {
             mode={route.mode}
             group={selectedGroup}
             initialStep={route.initialStep}
+            animalOnly={route.animalOnly}
             onClose={() =>
               setRoute(
                 selectedGroup
@@ -576,16 +583,13 @@ export function MainNavigator() {
           )
         }
         onAddAnimal={() =>
-          setRoute(
-            premium
-              ? {
-                  name: "groupForm",
-                  mode: "edit",
-                  groupId: route.groupId,
-                  initialStep: 2,
-                }
-              : { name: "groupPremium" },
-          )
+          setRoute({
+            name: "groupForm",
+            mode: "edit",
+            groupId: route.groupId,
+            initialStep: 2,
+            animalOnly: true,
+          })
         }
       />
     );

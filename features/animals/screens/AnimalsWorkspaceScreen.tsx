@@ -15,7 +15,7 @@ import {
   useAnimalMutations,
   useAnimalsQuery,
 } from "../../../hooks/queries/useAnimalsQuery";
-import { uploadFile } from "../../../services/aws/FileStorageService";
+import { openDocumentWithCache, shareMedicalRecord, uploadFile } from "../../../services/aws/FileStorageService";
 import {
   useEventMutations,
   useEventsQuery,
@@ -40,7 +40,6 @@ import {
   FloatingActionButton,
   GlobalCreateMenu,
   Icon,
-  MediaUpload,
   MediaViewer,
   MetricCard,
   PremiumGate,
@@ -50,6 +49,7 @@ import {
   TopBar,
   resolveAsyncState,
   type GlobalCreateTarget,
+  FormSheet,
 } from "../../../shared/components/ui";
 import type { Material } from "../../../theme/materials";
 import { componentTokens } from "../../../theme/componentTokens";
@@ -67,7 +67,7 @@ import {
   getAnimalMedicalDocuments,
   getAnimalMedicalEvents,
   getAnimalPresence,
-  hasAnimalBodyPictureForMonth,
+  getVisualTrackingMonths,
   isSharedAnimal,
   normalizeAnimalPictures,
   resolveAnimalSelection,
@@ -75,8 +75,8 @@ import {
   type AnimalPicture,
 } from "../animalWorkspaceUtils";
 import { AnimalMeasurementSheet } from "../components/AnimalMeasurementSheet";
-import { AnimalMeasurementHistorySheet } from "../components/AnimalMeasurementHistorySheet";
 import { getMeasurementSummary } from "../animalMeasurementUtils";
+import { getCachedImageSource } from "../../../shared/utils/mediaCache";
 
 type WorkspaceTab = "infos" | "health" | "body";
 type AnimalAction = "edit" | "departure" | "death" | "delete";
@@ -89,8 +89,6 @@ export interface AnimalsWorkspaceScreenProps {
   onCreate: (target: GlobalCreateTarget) => void;
   onAnimalAction?: (action: AnimalAction, animalId: number) => void;
   onAddHealth?: (animalId: number) => void;
-  onAddBodyPicture?: (animalId: number) => void;
-  onAddGalleryPicture?: (animalId: number) => void;
   onOpenEvent?: (eventId: number) => void;
   canAccessVisualTracking?: boolean;
   onVisualTrackingLocked?: () => void;
@@ -115,8 +113,6 @@ export function AnimalsWorkspaceScreen({
   onCreate,
   onAnimalAction,
   onAddHealth,
-  onAddBodyPicture,
-  onAddGalleryPicture,
   onOpenEvent,
   canAccessVisualTracking = false,
   onVisualTrackingLocked = () => undefined,
@@ -145,17 +141,14 @@ export function AnimalsWorkspaceScreen({
   const [historyExpanded, setHistoryExpanded] = useState(false);
   const [actionsOpen, setActionsOpen] = useState(false);
   const [selectedPicture, setSelectedPicture] = useState<AnimalPicture>();
-  const [deletePictureOpen, setDeletePictureOpen] = useState(false);
   const [measurementType, setMeasurementType] = useState<"poids" | "taille">();
-  const [measurementHistoryType, setMeasurementHistoryType] = useState<
-    "poids" | "taille"
-  >();
   const [medicalDocument, setMedicalDocument] = useState<{
     name: string;
     uri: string;
     type: "image" | "document";
   }>();
   const [medicalDocumentError, setMedicalDocumentError] = useState<string>();
+  const [sharingMedicalRecord, setSharingMedicalRecord] = useState(false);
   const [documentAction, setDocumentAction] = useState<{
     eventId: number;
     name: string;
@@ -168,9 +161,12 @@ export function AnimalsWorkspaceScreen({
   const canManageSelected = selected ? !isSharedAnimal(selected) : false;
   const picturesQuery = useAnimalBodyPicturesQuery(
     selected ? String(selected.id) : "",
+    canAccessVisualTracking,
   );
   const bodyPictures = normalizeAnimalPictures(picturesQuery.data);
-  const hasCurrentMonthPicture = hasAnimalBodyPictureForMonth(bodyPictures);
+  const trackingMonths = useMemo(() => getVisualTrackingMonths(), []);
+  const [pictureMonth, setPictureMonth] = useState<string>();
+  const [pictureAction, setPictureAction] = useState<"delete" | "replace">();
   const present = animals.filter(
     (animal) => getAnimalPresence(animal) === "present",
   );
@@ -216,7 +212,7 @@ export function AnimalsWorkspaceScreen({
       eventsQuery.refetch(),
       selected ? picturesQuery.refetch() : Promise.resolve(),
     ]);
-  const addPicture = async () => {
+  const addPicture = async (date = new Date().toISOString().slice(0, 10)) => {
     if (!selected || mutations.addBodyPicture.isPending) return;
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) return;
@@ -238,7 +234,7 @@ export function AnimalsWorkspaceScreen({
     if (!uploaded) return;
     await mutations.addBodyPicture.mutateAsync({
       animalId: String(selected.id),
-      body: { idanimal: selected.id, filename: uploaded },
+      body: { idanimal: selected.id, filename: uploaded, date_enregistrement: date },
     });
   };
   const selector = (items: typeof animals) =>
@@ -352,20 +348,20 @@ export function AnimalsWorkspaceScreen({
                 />
               </View>
             ) : null}
-            <View
-              accessibilityRole="radiogroup"
-              accessibilityLabel="Choisir un animal"
-              style={{ paddingTop: spacing.xl }}
-            >
+            <View accessibilityRole="radiogroup" accessibilityLabel="Choisir un animal">
               <ScrollView
                 horizontal
                 directionalLockEnabled
                 alwaysBounceVertical={false}
                 nestedScrollEnabled
                 showsHorizontalScrollIndicator={false}
+                style={{ flexGrow: 0 }}
                 contentContainerStyle={{
                   minWidth: "100%",
                   paddingHorizontal: spacing.sm,
+                  paddingTop: spacing.xl,
+                  paddingBottom: spacing.md,
+                  alignItems: "flex-start",
                   gap: 4,
                 }}
               >
@@ -411,6 +407,18 @@ export function AnimalsWorkspaceScreen({
                   documentError={medicalDocumentError}
                   canAccessDocuments={canAccessMedicalDocuments}
                   onDocumentsLocked={onMedicalDocumentsLocked}
+                  sharingRecord={sharingMedicalRecord}
+                  onShareRecord={canManageSelected ? async () => {
+                    setSharingMedicalRecord(true);
+                    setMedicalDocumentError(undefined);
+                    try {
+                      await shareMedicalRecord(String(selected.id), `dossier-medical-${selected.nom}.pdf`);
+                    } catch {
+                      setMedicalDocumentError("Impossible de préparer le dossier médical. Vérifiez votre connexion puis réessayez.");
+                    } finally {
+                      setSharingMedicalRecord(false);
+                    }
+                  } : undefined}
                   onOpenDocument={async (eventId, name) => {
                     setMedicalDocumentError(undefined);
                     try {
@@ -442,15 +450,14 @@ export function AnimalsWorkspaceScreen({
                   animal={selected}
                   canManage={canManageSelected}
                   canAccessVisualTracking={canAccessVisualTracking}
-                  hasCurrentMonthPicture={hasCurrentMonthPicture}
+                  pictures={bodyPictures}
+                  picturesLoading={picturesQuery.isLoading}
+                  picturesError={picturesQuery.isError}
+                  onRetryPictures={() => void picturesQuery.refetch()}
                   onVisualTrackingLocked={onVisualTrackingLocked}
-                  onAddPicture={() =>
-                    onAddBodyPicture
-                      ? onAddBodyPicture(selected.id)
-                      : void addPicture()
-                  }
+                  onAddPicture={() => setPictureMonth(trackingMonths[0].key)}
+                  onOpenPicture={setSelectedPicture}
                   onAddMeasure={() => setMeasurementType("poids")}
-                  onOpenMeasure={setMeasurementHistoryType}
                   onActions={
                     canManageSelected ? () => setActionsOpen(true) : undefined
                   }
@@ -491,10 +498,23 @@ export function AnimalsWorkspaceScreen({
                   ),
                 );
             }
+            if (action === "event" && documentAction) {
+              onOpenEvent?.(documentAction.eventId);
+              setDocumentAction(undefined);
+            }
+            if (action === "share" && documentAction) {
+              setMedicalDocumentError(undefined);
+              void getEventDocumentUrl(String(documentAction.eventId), documentAction.name)
+                .then((uri) => openDocumentWithCache(uri, documentAction.name))
+                .then(() => setDocumentAction(undefined))
+                .catch(() => setMedicalDocumentError("Impossible de partager ce document. Vérifiez votre connexion puis réessayez."));
+            }
             if (action === "delete") setDeleteDocumentOpen(true);
           }}
           items={[
             { id: "open", label: "Ouvrir", icon: "file" },
+            { id: "event", label: "Voir l’événement", icon: "calendar" },
+            { id: "share", label: "Partager", icon: "share" },
             {
               id: "delete",
               label: "Supprimer",
@@ -569,41 +589,37 @@ export function AnimalsWorkspaceScreen({
         uri={selectedPicture?.uri ?? ""}
         title={selected ? `Photo de ${selected.nom}` : "Photo"}
         onClose={() => setSelectedPicture(undefined)}
-        onDeleteRequest={
-          canManageSelected ? () => setDeletePictureOpen(true) : undefined
-        }
       />
-      <Dialog
-        open={deletePictureOpen}
-        type="destructive"
-        title="Supprimer cette photo ?"
-        description="Cette photo de suivi sera supprimée définitivement."
-        confirmLabel="Supprimer"
-        loading={mutations.deleteBodyPicture.isPending}
-        onClose={() => setDeletePictureOpen(false)}
-        onConfirm={async () => {
-          if (!selected || !selectedPicture) return;
-          await mutations.deleteBodyPicture.mutateAsync({
-            animalId: String(selected.id),
-            pictureId: selectedPicture.id,
-          });
-          setSelectedPicture(undefined);
-        }}
-      />
+      {selected && pictureMonth ? (
+        <FormSheet
+          title="Photo de suivi"
+          onBack={() => setPictureMonth(undefined)}
+          onClose={() => setPictureMonth(undefined)}
+          footer={(() => {
+            const existing = bodyPictures.find((picture) => picture.recordedAt?.slice(0, 7) === pictureMonth);
+            const month = trackingMonths.find((item) => item.key === pictureMonth);
+            if (existing) return <View style={{ gap: spacing.sm, paddingHorizontal: spacing.md }}><Button label="Remplacer la photo" fullWidth size="large" onPress={() => setPictureAction("replace")} /><Button label="Supprimer la photo" variant="destructive" fullWidth size="large" onPress={() => setPictureAction("delete")} /></View>;
+            return <View style={{ paddingHorizontal: spacing.md }}><Button label="Choisir une photo" fullWidth size="large" onPress={() => { setPictureMonth(undefined); void addPicture(month?.date); }} /></View>;
+          })()}
+          testID="animal-visual-tracking-sheet"
+        >
+          <BodyText>Choisissez un mois parmi les 12 derniers mois.</BodyText>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}>
+            {trackingMonths.map((month) => {
+              const occupied = bodyPictures.some((picture) => picture.recordedAt?.slice(0, 7) === month.key);
+              const selectedMonth = pictureMonth === month.key;
+              return <Pressable key={month.key} accessibilityRole="radio" accessibilityState={{ selected: selectedMonth }} accessibilityLabel={`${month.label}${occupied ? ", photo ajoutée" : ""}`} onPress={() => setPictureMonth(month.key)} style={{ width: "31%", minHeight: 72, padding: spacing.sm, justifyContent: "center", borderWidth: selectedMonth ? 2 : 1, borderColor: selectedMonth ? colors.primary : colors.border, borderRadius: radii.lg, backgroundColor: occupied ? colors.surfaceVariant : colors.surface }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, textAlign: "center", textTransform: "capitalize" }}>{month.label}</Text>{occupied ? <Text style={{ color: colors.primary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xs, textAlign: "center" }}>Photo ajoutée</Text> : null}</Pressable>;
+            })}
+          </View>
+        </FormSheet>
+      ) : null}
+      <Dialog open={Boolean(pictureAction)} type="destructive" title={pictureAction === "replace" ? "Remplacer la photo ?" : "Supprimer cette photo ?"} description={pictureAction === "replace" ? "La photo actuelle sera supprimée avant d’en choisir une nouvelle." : "Cette photo de suivi sera supprimée définitivement."} confirmLabel={pictureAction === "replace" ? "Supprimer et remplacer" : "Supprimer"} loading={mutations.deleteBodyPicture.isPending} onClose={() => setPictureAction(undefined)} onConfirm={async () => { if (!selected || !pictureMonth) return; const existing = bodyPictures.find((picture) => picture.recordedAt?.slice(0, 7) === pictureMonth); const month = trackingMonths.find((item) => item.key === pictureMonth); if (!existing) return; await mutations.deleteBodyPicture.mutateAsync({ animalId: String(selected.id), pictureId: existing.id }); const replace = pictureAction === "replace"; setPictureAction(undefined); setPictureMonth(undefined); if (replace) await addPicture(month?.date); }} testID="animal-visual-picture-action-dialog" />
       {selected && canManageSelected && measurementType ? (
         <AnimalMeasurementSheet
           animal={selected}
           initialType={measurementType}
           onClose={() => setMeasurementType(undefined)}
           onSaved={() => setMeasurementType(undefined)}
-        />
-      ) : null}
-      {selected && measurementHistoryType ? (
-        <AnimalMeasurementHistorySheet
-          animal={selected}
-          type={measurementHistoryType}
-          readOnly={!canManageSelected}
-          onClose={() => setMeasurementHistoryType(undefined)}
         />
       ) : null}
     </>
@@ -671,7 +687,7 @@ function AnimalInfos({
           initials={animal.nom}
           imageUrl={animal.imageUrl}
           accessibilityLabel={`Photo de ${animal.nom}`}
-          size={componentTokens.content.animalSelector.ringSize}
+          size={componentTokens.content.animalProfileAvatarSize}
           backgroundColor={colors.surfaceVariant}
           borderColor={colors.primaryLight}
         />
@@ -802,6 +818,8 @@ function AnimalHealth({
   documentError,
   canAccessDocuments,
   onDocumentsLocked,
+  sharingRecord,
+  onShareRecord,
 }: {
   animal: Animal;
   events: readonly import("../../../models/Event").Event[];
@@ -815,6 +833,8 @@ function AnimalHealth({
   documentError?: string;
   canAccessDocuments: boolean;
   onDocumentsLocked: () => void;
+  sharingRecord: boolean;
+  onShareRecord?: () => void;
 }) {
   const medicalEvents = getAnimalMedicalEvents(events, animal.id);
   const history = [...medicalEvents].sort(
@@ -835,6 +855,7 @@ function AnimalHealth({
   return (
     <View style={{ gap: spacing.md }}>
       <SectionHeading onActions={onActions}>Dossier médical</SectionHeading>
+      {canAccessDocuments && onShareRecord ? <Button label="Partager le dossier médical" icon="share" variant="secondary" fullWidth loading={sharingRecord} disabled={sharingRecord} onPress={onShareRecord} /> : null}
       {error ? (
         <Banner
           tone="error"
@@ -900,7 +921,7 @@ function AnimalHealth({
               type={
                 document.name.toLowerCase().endsWith(".pdf") ? "pdf" : "image"
               }
-              metadata="Document médical"
+              metadata={`${document.eventName} · ${formatAnimalDate(document.eventDate) ?? document.eventType}`}
               previewUrl={document.url}
               onOpen={() => onOpenDocument(document.eventId, document.name)}
               onMore={
@@ -927,21 +948,27 @@ function AnimalBody({
   animal,
   canManage,
   canAccessVisualTracking,
-  hasCurrentMonthPicture,
+  pictures,
+  picturesLoading,
+  picturesError,
+  onRetryPictures,
   onVisualTrackingLocked,
   onAddPicture,
+  onOpenPicture,
   onAddMeasure,
-  onOpenMeasure,
   onActions,
 }: {
   animal: Animal;
   canManage: boolean;
   canAccessVisualTracking: boolean;
-  hasCurrentMonthPicture: boolean;
+  pictures: AnimalPicture[];
+  picturesLoading: boolean;
+  picturesError: boolean;
+  onRetryPictures: () => void;
   onVisualTrackingLocked: () => void;
   onAddPicture: () => void;
+  onOpenPicture: (picture: AnimalPicture) => void;
   onAddMeasure: () => void;
-  onOpenMeasure: (type: "poids" | "taille") => void;
   onActions?: () => void;
 }) {
   const food = [
@@ -966,7 +993,6 @@ function AnimalBody({
             value={weight.value}
             trend={weight.trend}
             trendLabel={weight.trendLabel}
-            onPress={() => onOpenMeasure("poids")}
           />
         </View>
         <View style={{ flex: 1 }}>
@@ -975,7 +1001,6 @@ function AnimalBody({
             value={height.value}
             trend={height.trend}
             trendLabel={height.trendLabel}
-            onPress={() => onOpenMeasure("taille")}
           />
         </View>
       </View>
@@ -992,120 +1017,42 @@ function AnimalBody({
       <SectionHeading>Alimentation</SectionHeading>
       <BodyText>{food || "Non renseignée"}</BodyText>
       <SectionHeading>Suivi visuel</SectionHeading>
-      {!canManage ? (
-        <EmptyState
-          icon="group"
-          title="Suivi partagé en lecture seule"
-          message="Seul le propriétaire peut ajouter des photos."
-        />
-      ) : canAccessVisualTracking ? (
-        <MediaUpload
-          state={hasCurrentMonthPicture ? "success" : "empty"}
-          onPress={hasCurrentMonthPicture ? undefined : onAddPicture}
-          success={{
-            title: "Photo du mois enregistrée",
-            description: "Vous pourrez en ajouter une nouvelle le mois prochain.",
-          }}
-          empty={{
-            title: "Ajouter la photo du mois",
-            description: "Une photo maximum par animal et par mois.",
-          }}
-        />
-      ) : (
+      {!canAccessVisualTracking ? (
         <PremiumGate
           title="Suivi visuel Premium"
           message="Ajoutez et comparez les photos d’évolution de votre animal avec l’abonnement Premium."
           onComparePlans={onVisualTrackingLocked}
           testID="visual-tracking-premium-gate"
         />
+      ) : !canManage ? (
+        <VisualTrackingCarousel animal={animal} pictures={pictures} loading={picturesLoading} error={picturesError} onRetry={onRetryPictures} onOpen={onOpenPicture} />
+      ) : (
+        <VisualTrackingCarousel animal={animal} pictures={pictures} loading={picturesLoading} error={picturesError} onRetry={onRetryPictures} onAdd={onAddPicture} onOpen={onOpenPicture} />
       )}
     </View>
   );
 }
 
-function AnimalGallery({
-  animal,
-  pictures,
-  loading,
-  error,
-  onRetry,
-  onAdd,
-  onOpen,
-  onActions,
-}: {
-  animal: Animal;
-  pictures: AnimalPicture[];
-  loading: boolean;
-  error: boolean;
-  onRetry: () => void;
-  onAdd: () => void;
-  onOpen: (picture: AnimalPicture) => void;
-  onActions: () => void;
-}) {
+function VisualTrackingCarousel({ animal, pictures, loading, error, onRetry, onAdd, onOpen }: { animal: Animal; pictures: AnimalPicture[]; loading: boolean; error: boolean; onRetry: () => void; onAdd?: () => void; onOpen: (picture: AnimalPicture) => void }) {
   const { colors } = useAppTheme();
-  const state = resolveAsyncState({
-    loading,
-    error,
-    hasData: pictures.length > 0,
-  });
-  return (
-    <View style={{ gap: spacing.md }}>
-      <SectionHeading onActions={onActions}>Galerie</SectionHeading>
-      {error && state === "success" ? (
-        <Banner
-          tone="error"
-          title="Mise à jour impossible"
-          message="Les photos déjà chargées restent disponibles."
-          blocking
-          onDismiss={undefined}
-        />
-      ) : null}
-      {state === "loading" ? (
-        <>
-          <Skeleton type="card" density="comfortable" />
-          <Skeleton type="card" density="comfortable" />
-        </>
-      ) : state === "error" ? (
-        <ErrorState
-          message="Impossible de charger la galerie."
-          onRetry={onRetry}
-        />
-      ) : state === "success" ? (
-        <View
-          style={{ flexDirection: "row", flexWrap: "wrap", gap: spacing.sm }}
-        >
-          {pictures.map((picture) => (
-            <Pressable
-              key={picture.id}
-              accessibilityRole="button"
-              accessibilityLabel={`Ouvrir une photo de ${animal.nom}`}
-              onPress={() => onOpen(picture)}
-              style={{ width: "48%", aspectRatio: 1 }}
-            >
-              <Image
-                source={{ uri: picture.uri }}
-                contentFit="cover"
-                accessibilityLabel={`Souvenir de ${animal.nom}`}
-                style={{
-                  flex: 1,
-                  borderRadius: radii.lg,
-                  backgroundColor: colors.surfaceVariant,
-                }}
-              />
-            </Pressable>
-          ))}
-        </View>
-      ) : (
-        <EmptyState
-          title={`Aucun souvenir pour ${animal.nom}`}
-          message="Ajoutez des photos pour suivre son évolution et conserver vos meilleurs moments."
-          actionLabel="Ajouter"
-          onAction={onAdd}
-        />
-      )}
-    </View>
-  );
+  const [carouselWidth, setCarouselWidth] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const ordered = [...pictures].sort((a, b) => (b.recordedAt ?? "").localeCompare(a.recordedAt ?? ""));
+
+  useEffect(() => setActiveIndex((index) => Math.min(index, Math.max(ordered.length - 1, 0))), [ordered.length]);
+
+  return <View style={{ gap: spacing.md }}>
+    {error && pictures.length ? <Banner tone="error" title="Mise à jour impossible" message="Les photos déjà chargées restent disponibles." blocking onDismiss={undefined} /> : null}
+    {loading ? <Skeleton type="card" density="comfortable" /> : error && !pictures.length ? <ErrorState message="Impossible de charger le suivi visuel." onRetry={onRetry} /> : ordered.length ? <View onLayout={(event) => setCarouselWidth(event.nativeEvent.layout.width)} style={{ width: "100%", gap: spacing.sm }}>{carouselWidth ? <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} decelerationRate="fast" onMomentumScrollEnd={(event) => setActiveIndex(Math.round(event.nativeEvent.contentOffset.x / carouselWidth))} accessibilityLabel="Photos d’évolution physique, de la plus récente à la plus ancienne">{ordered.map((picture) => <Pressable key={picture.id} accessibilityRole="button" accessibilityLabel={`Ouvrir la photo de ${formatPictureMonth(picture.recordedAt)}`} onPress={() => onOpen(picture)} style={{ width: carouselWidth, gap: spacing.sm }}><Image source={getCachedImageSource(picture.uri)} cachePolicy="memory-disk" contentFit="cover" style={{ width: "100%", aspectRatio: 4 / 3, borderRadius: radii.lg, backgroundColor: colors.surfaceVariant }} accessibilityLabel={`Évolution de ${animal.nom}, ${formatPictureMonth(picture.recordedAt)}`} /><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, textAlign: "center", textTransform: "capitalize" }}>{formatPictureMonth(picture.recordedAt)}</Text></Pressable>)}</ScrollView> : null}<View accessibilityRole="text" accessibilityLabel={`Photo ${activeIndex + 1} sur ${ordered.length}`} style={{ flexDirection: "row", justifyContent: "center", gap: spacing.xs }}>{ordered.map((picture, index) => <View key={picture.id} style={{ width: 8, height: 8, borderRadius: radii.full, backgroundColor: index === activeIndex ? colors.primary : colors.border }} />)}</View></View> : <EmptyState title={`Aucune photo pour ${animal.nom}`} message="Ajoutez une photo pour suivre son évolution physique." />}
+    {onAdd ? <Button label="Gérer les photos" icon="add" variant="secondary" size="large" fullWidth onPress={onAdd} /> : null}
+  </View>;
 }
+
+function formatPictureMonth(value?: string) {
+  if (!value) return "Date inconnue";
+  return new Intl.DateTimeFormat("fr-FR", { month: "long", year: "numeric" }).format(new Date(`${value.slice(0, 10)}T12:00:00`));
+}
+
 function BodyText({ children }: { children: string }) {
   const { colors } = useAppTheme();
   return (

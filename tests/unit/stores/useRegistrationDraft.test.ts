@@ -10,7 +10,13 @@ describe('useRegistrationDraft', () => {
 
   it('efface le brouillon explicitement', () => {
     useRegistrationDraft.getState().setIdentity({ firstName: 'Camille', email: 'camille@example.fr' });
+    useRegistrationDraft.getState().setSecurity({ password: 'MotDePasse!123', confirmation: 'MotDePasse!123' });
     useRegistrationDraft.getState().reset();
-    expect(useRegistrationDraft.getState()).toEqual(expect.objectContaining({ firstName: '', email: '' }));
+    expect(useRegistrationDraft.getState()).toEqual(expect.objectContaining({ firstName: '', email: '', password: '', confirmation: '' }));
+  });
+
+  it('conserve la sécurité lors d’un retour entre les étapes', () => {
+    useRegistrationDraft.getState().setSecurity({ password: 'MotDePasse!123', confirmation: 'MotDePasse!123' });
+    expect(useRegistrationDraft.getState()).toEqual(expect.objectContaining({ password: 'MotDePasse!123', confirmation: 'MotDePasse!123' }));
   });
 });

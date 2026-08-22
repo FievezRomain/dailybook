@@ -11,6 +11,7 @@ import { StatisticTile } from './StatisticTile';
 
 interface StatisticsOverviewProps {
   animalIds: readonly number[];
+  hasSharedAnimal?: boolean;
   period: StatisticsPeriod;
   periodAnchor: Date;
   periodLabel: string;
@@ -22,13 +23,14 @@ interface StatisticsOverviewProps {
   onOpenDetail: (type: StatisticDetailType) => void;
 }
 
-export function StatisticsOverview({ animalIds, period, periodAnchor, periodLabel, periodNextDisabled, material = 'solid', onPeriodChange, onPreviousPeriod, onNextPeriod, onOpenDetail }: StatisticsOverviewProps) {
+export function StatisticsOverview({ animalIds, hasSharedAnimal = false, period, periodAnchor, periodLabel, periodNextDisabled, material = 'solid', onPeriodChange, onPreviousPeriod, onNextPeriod, onOpenDetail }: StatisticsOverviewProps) {
   const { colors } = useAppTheme();
   const dashboard = useStatisticsDashboard(period, animalIds, periodAnchor);
   if (!animalIds.length) return <EmptyState title="Aucun animal à analyser" message="Ajoutez un animal pour commencer à suivre ses statistiques." />;
   return <View style={{ padding: spacing.md, gap: spacing.md }}>
     <PeriodSelector options={statisticsPeriodOptions} value={period} onChange={onPeriodChange} testID="statistics-period" />
     <PeriodRangeNavigator label={periodLabel} onPrevious={onPreviousPeriod} onNext={onNextPeriod} nextDisabled={periodNextDisabled} testID="statistics-period-range" />
+    {hasSharedAnimal ? <Banner tone="info" title="Données accessibles uniquement" message="Pour un animal partagé dont vous n’êtes pas propriétaire, les statistiques utilisent uniquement les événements que vous avez créés ou qui vous sont partagés via un groupe actif." /> : null}
     {animalIds.length !== 1 ? <Banner tone="info" title="Statistiques individuelles" message="Sélectionnez un seul animal pour consulter son poids, sa taille et son alimentation." /> : null}
     {dashboard.isLoading ? <LoadingGrid /> : dashboard.isError ? <ErrorState message="Impossible de charger les statistiques." onRetry={() => void dashboard.refetch()} /> : <StatisticsGrid dashboard={dashboard} singleAnimal={animalIds.length === 1} material={material} onOpenDetail={onOpenDetail} colors={colors} />}
   </View>;

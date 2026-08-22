@@ -1,11 +1,18 @@
-import { formatNotificationTime, isMemberInvitation, toNotificationType } from '../notificationUtils';
+import { formatNotificationTime, isAnimalInvitation, isMemberInvitation, toNotificationType } from '../notificationUtils';
 
 describe('notificationUtils', () => {
+  const base = { id: 1, user_id: 2, title: 'Invitation', message: '', is_read: false, created_at: '', proposed_by: 'Camille' };
   it('maps backend notification types to the shared visual variants', () => {
     expect(toNotificationType('group_member')).toBe('group');
     expect(toNotificationType('group_animal')).toBe('group');
     expect(toNotificationType('system')).toBe('system');
     expect(toNotificationType('event')).toBe('reminder');
+  });
+
+  it('identifies actionable animal proposals', () => {
+    expect(isAnimalInvitation({ ...base, type: 'group_animal', object_id: 4, action_available: true })).toBe(true);
+    expect(isAnimalInvitation({ ...base, type: 'group_animal', object_id: 4, action_available: false })).toBe(false);
+    expect(isAnimalInvitation({ ...base, type: 'group_member', object_id: 4, action_available: true })).toBe(false);
   });
 
   it('formats recent timestamps in French', () => {
@@ -15,7 +22,6 @@ describe('notificationUtils', () => {
   });
 
   it('only exposes direct actions for pending member invitations', () => {
-    const base = { id: 1, user_id: 2, title: 'Invitation', message: '', is_read: false, created_at: '', proposed_by: 'Camille' };
     expect(isMemberInvitation({ ...base, type: 'group_member', object_id: 4, action_available: true })).toBe(true);
     expect(isMemberInvitation({ ...base, type: 'group_member', object_id: 4, action_available: false })).toBe(false);
     expect(isMemberInvitation({ ...base, type: 'group_animal', object_id: 4, action_available: true })).toBe(false);

@@ -19,7 +19,7 @@ describe('media upload states', () => {
     expect(isMediaUploadActionable('empty')).toBe(true);
     expect(isMediaUploadActionable('error')).toBe(true);
     expect(isMediaUploadActionable('uploading')).toBe(false);
-    expect(isMediaUploadActionable('success')).toBe(false);
+    expect(isMediaUploadActionable('success')).toBe(true);
     expect(isMediaUploadActionable('disabled')).toBe(false);
   });
 });

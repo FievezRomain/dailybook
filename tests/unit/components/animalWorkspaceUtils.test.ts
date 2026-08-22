@@ -1,6 +1,6 @@
 import type { Animal } from '../../../models/Animal';
 import type { Event } from '../../../models/Event';
-import { compactAnimalDetails, formatAnimalAge, formatAnimalDate, getAnimalMedicalDocuments, getAnimalMedicalEvents, getAnimalPresence, hasAnimalBodyPictureForMonth, isSharedAnimal, normalizeAnimalPictures, resolveAnimalSelection, sortAnimalsForWorkspace } from '../../../features/animals/animalWorkspaceUtils';
+import { compactAnimalDetails, formatAnimalAge, formatAnimalDate, getAnimalMedicalDocuments, getAnimalMedicalEvents, getAnimalPresence, getVisualTrackingMonths, hasAnimalBodyPictureForMonth, isSharedAnimal, normalizeAnimalPictures, resolveAnimalSelection, sortAnimalsForWorkspace } from '../../../features/animals/animalWorkspaceUtils';
 
 const animal = (id: number, nom: string, extra: Partial<Animal> = {}): Animal => ({ id, nom, espece: 'Chien', ...extra });
 
@@ -34,6 +34,14 @@ describe('animalWorkspaceUtils', () => {
     expect(normalizeAnimalPictures({ pictures: [] })).toEqual([]);
   });
 
+  it('propose exactement les douze derniers mois sans mois futur', () => {
+    const months = getVisualTrackingMonths(new Date(2026, 7, 21));
+    expect(months).toHaveLength(12);
+    expect(months[0]).toMatchObject({ key: '2026-08', date: '2026-08-01' });
+    expect(months[11]).toMatchObject({ key: '2025-09', date: '2025-09-01' });
+    expect(new Set(months.map((month) => month.key)).size).toBe(12);
+  });
+
   it('détecte si la photo de suivi du mois est déjà enregistrée', () => {
     expect(hasAnimalBodyPictureForMonth([
       { id: '1', uri: 'aout.jpg', recordedAt: '2026-08-03' },
@@ -61,8 +69,8 @@ describe('animalWorkspaceUtils', () => {
     ] as Event[];
     expect(getAnimalMedicalEvents(events, 1).map(({ id }) => id)).toEqual([10, 11]);
     expect(getAnimalMedicalDocuments(events, 1)).toEqual([
-      { name: 'vaccin.pdf', eventId: 10, eventDate: '2026-09-01' },
-      { name: 'radio.jpg', eventId: 11, eventDate: '2026-10-01' },
+      { name: 'vaccin.pdf', eventId: 10, eventDate: '2026-09-01', eventName: 'Vaccin', eventType: 'soins' },
+      { name: 'radio.jpg', eventId: 11, eventDate: '2026-10-01', eventName: 'Véto', eventType: 'rdv' },
     ]);
   });
 });

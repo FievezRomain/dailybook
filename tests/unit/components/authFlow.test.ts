@@ -22,4 +22,34 @@ describe('Vasco authentication flow', () => {
     expect(verification).toContain('refreshFirebaseUser()');
     expect(verification).toContain('authService.sendEmailVerification()');
   });
+
+  it('opens one backend session only for verified Firebase accounts', () => {
+    const store = read('stores/useAuthStore.ts');
+    const api = read('services/api/AuthService.ts');
+    const registration = read('features/auth/screens/RegisterSecurityScreen.tsx');
+    expect(store).toContain('if (authUser.emailVerified)');
+    expect(api).toContain("httpClient.post('/auth/session'");
+    expect(api).not.toContain('/auth/login');
+    expect(api).not.toContain('/auth/register');
+    expect(registration).not.toContain('await register(');
+  });
+
+  it('shows the animal icon without a creation action in the event empty state', () => {
+    const animalsStep = read('features/events/screens/EventCreateAnimalsScreen.tsx');
+    expect(animalsStep).toContain('icon="animals"');
+    expect(animalsStep).not.toContain('actionLabel="Ajouter un animal"');
+    expect(animalsStep).not.toContain('onCreateAnimal');
+  });
+
+  it('reauthenticates every supported provider before deleting the Firebase account', () => {
+    const service = read('services/auth/FirebaseAuthService.ts');
+    const settings = read('features/settings/screens/SettingsDetailScreens.tsx');
+    expect(service).toContain("providerIds.includes('password')");
+    expect(service).toContain("providerIds.includes('google.com')");
+    expect(service).toContain("providerIds.includes('apple.com')");
+    expect(service).toContain('reauthenticateWithCredential(user');
+    expect(settings).toContain('await authService.reauthenticateCurrentUser');
+    expect(settings).toContain('await authService.deleteCurrentUser()');
+    expect(settings).toContain('Vos données applicatives seront conservées pour le moment.');
+  });
 });

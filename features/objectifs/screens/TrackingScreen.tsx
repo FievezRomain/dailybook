@@ -111,6 +111,14 @@ export function TrackingScreen({
         : statisticsAnimalSelection,
     [animals, statisticsAnimalSelection],
   );
+  const hasSharedStatisticsAnimal = useMemo(
+    () =>
+      animals.some(
+        (animal) =>
+          selectedAnimalIds.includes(animal.id) && isSharedAnimal(animal),
+      ),
+    [animals, selectedAnimalIds],
+  );
   const visibleObjectives = useMemo(
     () =>
       selectedAnimalId == null
@@ -176,6 +184,7 @@ export function TrackingScreen({
       <StatisticDetailScreen
         type={selectedStatistic}
         animalIds={selectedAnimalIds}
+        hasSharedAnimal={hasSharedStatisticsAnimal}
         animalSelector={
           <AnimalFilter
             mode="multiple"
@@ -291,6 +300,7 @@ export function TrackingScreen({
         ) : activeTab === "statistics" ? (
           <StatisticsOverview
             animalIds={selectedAnimalIds}
+            hasSharedAnimal={hasSharedStatisticsAnimal}
             period={statisticsPeriod}
             periodAnchor={statisticsAnchor}
             periodLabel={statisticsRangeLabel}
@@ -383,6 +393,7 @@ function AnimalFilter(props: AnimalFilterProps) {
         minWidth: "100%",
         paddingHorizontal: spacing.sm,
         paddingTop: spacing.xl,
+        paddingBottom: spacing.md,
         alignItems: "flex-start",
       }}
     >

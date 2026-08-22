@@ -13,6 +13,8 @@ export type EventType = {
   title: string;
 };
 
+export type EventSharedGroup = number | string | { id: number | string; name?: string };
+
 /** Champs communs à toutes les variantes d'événement. */
 type BaseEvent = {
   id: number;
@@ -24,6 +26,7 @@ type BaseEvent = {
   lieu?: string;
   commentaire?: string;
   state?: string;
+  depense?: number;
   /** Pour un soin ou rendez-vous, indique sa présence dans le dossier médical. */
   todisplay?: boolean;
   idparent?: number;
@@ -31,8 +34,10 @@ type BaseEvent = {
   frequencevalue?: string;
   notif?: string;
   optionnotif?: string;
+  optionnotification?: string;
+  rappelnotification?: string;
   documents?: EventDocument[];
-  shared_groups?: number[];
+  shared_groups?: EventSharedGroup[];
   created_by?: UserRef;
   made_by?: UserRef;
 };
@@ -63,7 +68,6 @@ export type ConcoursEvent = BaseEvent & {
 export type RdvEvent = BaseEvent & {
   eventtype: 'rdv';
   specialiste?: string;
-  depense?: number;
 };
 
 export type SoinsEvent = BaseEvent & {
@@ -74,7 +78,6 @@ export type SoinsEvent = BaseEvent & {
 
 export type DepenseEvent = BaseEvent & {
   eventtype: 'depense';
-  depense?: number;
   categoriedepense?: string;
 };
 

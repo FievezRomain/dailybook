@@ -53,7 +53,7 @@ export async function getAnimalBodyPictures(animalId: string) {
   const pictures = Array.isArray(response.data) ? response.data : [];
   return Promise.all(pictures.map(async (picture: BodyPicturePayload & { id?: number }) => ({
     ...picture,
-    url: await FileService.getDownloadUrl(picture.filename, 'animal', animalId),
+    url: await FileService.getDownloadUrl(picture.filename, 'body', animalId),
   })));
 }
 

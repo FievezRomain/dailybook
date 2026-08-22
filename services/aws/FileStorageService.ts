@@ -2,6 +2,8 @@ import LoggerService from '../logs/LoggerService';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import { FileService, type RessourceType } from '../api/FileService';
+import { authService } from '../auth/FirebaseAuthService';
+import { env } from '../../config/env';
 
 /**
  * Upload un fichier directement vers S3 via une URL présignée obtenue du back-end.
@@ -67,7 +69,8 @@ export async function openDocumentWithCache(url: string, filename: string): Prom
       await FileSystem.makeDirectoryAsync(LOCAL_DIRECTORY, { intermediates: true });
     }
 
-    const fileUri = `${LOCAL_DIRECTORY}${filename}`;
+    const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const fileUri = `${LOCAL_DIRECTORY}${safeFilename}`;
     const fileInfo = await FileSystem.getInfoAsync(fileUri);
 
     if (!fileInfo.exists) {
@@ -92,6 +95,27 @@ export async function openDocumentWithCache(url: string, filename: string): Prom
 }
 
 // ─── Backward-compatible class adapter ──────────────────────────────────────
+export async function shareMedicalRecord(animalId: string, filename: string): Promise<void> {
+  const directory = FileSystem.cacheDirectory + 'vascoandco/exports/';
+  const safeFilename = filename.replace(/[^a-zA-Z0-9._-]/g, '_');
+  await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
+  const fileUri = `${directory}${safeFilename}`;
+  const token = await authService.getIdToken();
+  if (!token) throw new Error('missing-auth-token');
+  try {
+    const response = await FileSystem.downloadAsync(
+      `${env.API_URL}/animals/${encodeURIComponent(animalId)}/medical-record`,
+      fileUri,
+      { headers: { 'x-access-token': token } },
+    );
+    if (response.status !== 200) throw new Error(`medical-record-download-${response.status}`);
+    if (!(await Sharing.isAvailableAsync())) throw new Error('sharing-unavailable');
+    await Sharing.shareAsync(fileUri, { mimeType: 'application/pdf', dialogTitle: 'Partager le dossier médical' });
+  } finally {
+    await FileSystem.deleteAsync(fileUri, { idempotent: true });
+  }
+}
+
 const _fss_upload = uploadFile;
 const _fss_delete = deleteFile;
 const _fss_open = openDocumentWithCache;

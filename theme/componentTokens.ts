@@ -17,6 +17,7 @@ export const componentTokens = {
   mediaUpload: { height: 140, stroke: 2 },
   navigation: {
     topBarHeight: 64,
+    brandedTopBarLogoSize: 46,
     bottomBarHeight: 72,
     bottomBarWidth: 358,
     bottomBarMargin: 16,
@@ -53,6 +54,7 @@ export const componentTokens = {
     snackbarHeight: 56,
     bannerHeight: 96,
     stateHeight: 260,
+    compactStateHeight: 180,
     skeletonHeight: { compact: 96, comfortable: 128 },
   },
   content: {
@@ -63,7 +65,8 @@ export const componentTokens = {
     linkedAnimalOverlap: 6,
     fileItemHeight: 88,
     filePreviewSize: 52,
-    animalSelector: { width: 88, height: 106, ringSize: 72, imageSize: 56 },
+    animalSelector: { width: 88, height: 106, ringSize: 72, imageSize: 64 },
+    animalProfileAvatarSize: 88,
     metricCard: { width: 164, height: 132 },
     statisticCard: { summaryHeight: 128, overviewHeight: 106 },
     periodSelector: { width: 300, height: 40, itemHeight: 32 },

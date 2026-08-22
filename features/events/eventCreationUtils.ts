@@ -37,6 +37,17 @@ export function isPastEventDate(value: string | undefined, now = new Date()) {
   return eventDate < today;
 }
 
+export function normalizeSharedGroupIds(value: unknown): number[] {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((group) => {
+    const rawId = group && typeof group === 'object' && 'id' in group
+      ? (group as { id?: unknown }).id
+      : group;
+    const id = typeof rawId === 'number' ? rawId : typeof rawId === 'string' && rawId.trim() ? Number(rawId) : NaN;
+    return Number.isInteger(id) ? [id] : [];
+  });
+}
+
 export function buildEventCreationPayload(form: EventWizardFormData): CreateEventPayload {
   const eventtype = form.eventType ?? 'autre';
   const fallbackName = getEventDetailsConfig(eventtype).title;
@@ -59,7 +70,8 @@ export function buildEventCreationPayload(form: EventWizardFormData): CreateEven
     payload.frequencetype = supportedFrequencies.includes(form.frequencevalue) ? 'recurring' : form.frequencetype;
     payload.frequencevalue = form.frequencevalue;
   }
-  if (form.shared_groups?.length) payload.shared_groups = form.shared_groups;
+  const sharedGroupIds = normalizeSharedGroupIds(form.shared_groups);
+  if (sharedGroupIds.length) payload.shared_groups = sharedGroupIds;
   const documents = (form.documents ?? []).filter((document) => !document.localUri).map((document) => document.name);
   if (documents.length) payload.documents = documents;
   if (typeof form.idparent === 'number') payload.idparent = form.idparent;
@@ -75,7 +87,7 @@ export function eventToWizardForm(event: Event): EventWizardFormData {
   const fields = ['nom', 'dateevent', 'animaux', 'lieu', 'heuredebutevent', 'commentaire', 'notif', 'optionnotif', 'shared_groups', 'documents', 'traitement', 'datefinsoins', 'specialiste', 'discipline', 'note', 'epreuve', 'dossart', 'placement', 'depense', 'categoriedepense', 'heuredebutbalade', 'datefinbalade', 'heurefinbalade', 'state', 'todisplay', 'idparent', 'frequencetype', 'frequencevalue', 'rappelnotification'] as const;
   const form: EventWizardFormData = { eventType: event.eventtype };
   fields.forEach((key) => { if (source[key] !== undefined && source[key] !== null) Object.assign(form, { [key]: source[key] }); });
-  form.shared_groups = event.shared_groups ?? [];
+  form.shared_groups = normalizeSharedGroupIds(event.shared_groups);
   form.documents = (event.documents ?? []).map((document) => ({ name: document.name }));
   return form;
 }

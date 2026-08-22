@@ -24,3 +24,7 @@ export function formatNotificationTime(value?: string | null, now = new Date()):
 export function isMemberInvitation(notification: Notification): boolean {
   return notification.type === 'group_member' && Boolean(notification.object_id) && notification.action_available === true;
 }
+
+export function isAnimalInvitation(notification: Notification): boolean {
+  return notification.type === 'group_animal' && Boolean(notification.object_id) && notification.action_available === true;
+}

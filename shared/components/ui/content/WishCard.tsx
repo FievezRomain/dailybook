@@ -5,6 +5,7 @@ import { useAppTheme } from "../../../../theme/useAppTheme";
 import { Card } from "./Card";
 import { DomainBody, DomainCaption, DomainTitle } from "./DomainCardParts";
 import { Icon } from "../icons";
+import { getCachedImageSource } from "../../../utils/mediaCache";
 
 export type WishStatus = "planned" | "completed";
 export interface WishCardProps {
@@ -56,7 +57,7 @@ export function WishCard({
       >
         {imageUrl ? (
           <Image
-            source={{ uri: imageUrl, cacheKey: imageUrl.split('?')[0] }}
+            source={getCachedImageSource(imageUrl)}
             contentFit="cover"
             cachePolicy="memory-disk"
             accessibilityLabel={`Image de ${title}`}

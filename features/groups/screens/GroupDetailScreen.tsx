@@ -10,6 +10,7 @@ import {
 import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
 import { useAnimalImageUrl } from "../../../hooks/queries/useAnimalImageUrl";
 import { useAuthStore } from "../../../stores/useAuthStore";
+import { isPremiumSubscription } from "../../events/eventAiUtils";
 import {
   ActionSheet,
   Avatar,
@@ -37,7 +38,7 @@ import {
   getGroupInitials,
   getPendingAnimals,
   getPendingMembers,
-  isGroupManager,
+  getGroupManagementPermissions,
 } from "../groupUtils";
 
 type GroupTab = "animals" | "members";
@@ -92,7 +93,14 @@ export function GroupDetailScreen({
   const user = useAuthStore((state) => state.user);
   const groupsQuery = useGroupsQuery();
   const group = (groupsQuery.data ?? []).find((item) => item.id === groupId);
-  const manager = group ? isGroupManager(group, user?.email) : false;
+  const permissions = group
+    ? getGroupManagementPermissions(
+        group,
+        user?.email,
+        isPremiumSubscription(user?.subscription),
+      )
+    : { manager: false, canAddAnimal: false, canInviteMember: false };
+  const { manager, canAddAnimal, canInviteMember } = permissions;
   const animalsQuery = useGroupAnimalsQuery(String(groupId));
   const ownAnimalsQuery = useAnimalsQuery();
   const pendingSharesQuery = usePendingAnimalSharesQuery(
@@ -257,13 +265,15 @@ export function GroupDetailScreen({
         ) : null}
         {tab === "animals" ? (
           <View style={{ gap: spacing.lg }}>
-            <Button
-              label="Ajouter un animal"
-              icon="add"
-              variant="secondary"
-              fullWidth
-              onPress={onAddAnimal}
-            />
+            {canAddAnimal ? (
+              <Button
+                label="Ajouter un animal"
+                icon="add"
+                variant="secondary"
+                fullWidth
+                onPress={onAddAnimal}
+              />
+            ) : null}
             {animals.length ? (
               <Text
                 style={{
@@ -407,7 +417,7 @@ export function GroupDetailScreen({
           </View>
         ) : (
           <View style={{ gap: spacing.md }}>
-            {manager ? (
+            {canInviteMember ? (
               <Button
                 label="Inviter un membre"
                 icon="add"

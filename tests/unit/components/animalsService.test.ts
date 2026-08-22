@@ -15,7 +15,7 @@ describe('AnimalsService body pictures', () => {
     mockedHttp.get.mockResolvedValueOnce({ data: [{ id: 4, idanimal: 7, filename: 'body.jpg' }] } as never);
     mockedGetDownloadUrl.mockResolvedValueOnce('https://signed.example/body.jpg');
     await expect(getAnimalBodyPictures('7')).resolves.toEqual([{ id: 4, idanimal: 7, filename: 'body.jpg', url: 'https://signed.example/body.jpg' }]);
-    expect(mockedGetDownloadUrl).toHaveBeenCalledWith('body.jpg', 'animal', '7');
+    expect(mockedGetDownloadUrl).toHaveBeenCalledWith('body.jpg', 'body', '7');
   });
 
   it('sends the JSON contract expected by the backend after upload', async () => {

@@ -20,7 +20,7 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Sentry from '@sentry/react-native';
 import { getFirebaseAuth } from '../../firebase';
 import { getGoogleSigninModule } from './googleSigninModule';
-import type { IAuthService, AuthUser } from './IAuthService';
+import type { IAuthService, AuthUser, ReauthenticationMethod } from './IAuthService';
 
 function mapToAuthUser(fbUser: { uid: string; email: string | null; displayName: string | null; emailVerified: boolean; photoURL: string | null }): AuthUser {
   return {
@@ -97,6 +97,49 @@ class FirebaseAuthService implements IAuthService {
     if (!user) return;
     const credential = EmailAuthProvider.credential(email, password);
     await reauthenticateWithCredential(user, credential);
+  }
+
+  getReauthenticationMethod(): ReauthenticationMethod {
+    const providerIds = getFirebaseAuth().currentUser?.providerData.map((provider) => provider.providerId) ?? [];
+    if (providerIds.includes('google.com')) return 'google';
+    if (providerIds.includes('apple.com')) return 'apple';
+    if (providerIds.includes('password')) return 'password';
+    return 'unsupported';
+  }
+
+  async reauthenticateCurrentUser(password?: string): Promise<void> {
+    const user = getFirebaseAuth().currentUser;
+    if (!user) throw new Error('auth/no-current-user');
+    const method = this.getReauthenticationMethod();
+
+    if (method === 'password') {
+      if (!user.email || !password) throw new Error('auth/missing-password');
+      await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, password));
+      return;
+    }
+
+    if (method === 'google') {
+      const mod = getGoogleSigninModule();
+      if (!mod) throw new Error('auth/google-unavailable');
+      await mod.GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      const userInfo = await mod.GoogleSignin.signIn();
+      const idToken = (userInfo as { idToken?: string }).idToken
+        ?? (userInfo as { data?: { idToken?: string } }).data?.idToken;
+      if (!idToken) throw new Error('auth/missing-google-token');
+      await reauthenticateWithCredential(user, GoogleAuthProvider.credential(idToken));
+      return;
+    }
+
+    if (method === 'apple') {
+      if (Platform.OS !== 'ios') throw new Error('auth/apple-unavailable');
+      const appleCredential = await AppleAuthentication.signInAsync({ requestedScopes: [] });
+      if (!appleCredential.identityToken) throw new Error('auth/missing-apple-token');
+      const provider = new OAuthProvider('apple.com');
+      await reauthenticateWithCredential(user, provider.credential({ idToken: appleCredential.identityToken }));
+      return;
+    }
+
+    throw new Error('auth/unsupported-provider');
   }
 
   getCurrentUser(): AuthUser | null {

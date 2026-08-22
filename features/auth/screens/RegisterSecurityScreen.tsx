@@ -1,9 +1,8 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
-import { Banner, Button, PasswordField, ProgressSteps } from '../../../shared/components/ui';
+import { Banner, Button, IconButton, PasswordField, ProgressSteps } from '../../../shared/components/ui';
 import { passwordSchema } from '../../../business/validators/auth';
-import { register } from '../../../services/api/AuthService';
 import { authService } from '../../../services/auth/FirebaseAuthService';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -15,9 +14,10 @@ export type RegisterSecurityScreenProps = NativeStackScreenProps<AuthStackParamL
 
 export function RegisterSecurityScreen({ navigation }: RegisterSecurityScreenProps) {
   const { colors } = useAppTheme();
-  const { firstName, email } = useRegistrationDraft();
-  const [password, setPassword] = useState('');
-  const [confirmation, setConfirmation] = useState('');
+  const draft = useRegistrationDraft();
+  const { firstName, email } = draft;
+  const [password, setPassword] = useState(draft.password);
+  const [confirmation, setConfirmation] = useState(draft.confirmation);
   const [errors, setErrors] = useState<{ password?: string; confirmation?: string; form?: string }>({});
   const [loading, setLoading] = useState(false);
   const submit = async () => {
@@ -31,13 +31,17 @@ export function RegisterSecurityScreen({ navigation }: RegisterSecurityScreenPro
     setLoading(true);
     try {
       await authService.signUp(email, result.data, firstName);
-      await register({ email, prenom: firstName });
       navigation.navigate('VerifyEmail');
     } catch {
       setErrors({ form: 'Création du compte impossible. Cette adresse est peut-être déjà utilisée.' });
     } finally { setLoading(false); }
   };
+  const back = () => {
+    draft.setSecurity({ password, confirmation });
+    navigation.goBack();
+  };
   return <AuthScreen testID="auth-register-security" contentStyle={{ gap: spacing.md, paddingTop: 28 }}>
+    <IconButton icon="back" accessibilityLabel="Retour à vos informations" variant="ghost" onPress={back} />
     <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 32, letterSpacing: -0.2 }}>Sécuriser votre compte</Text>
     <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.md, lineHeight: typography.lineHeights.normal }}>Étape 2 sur 3 · Votre mot de passe</Text>
     <ProgressSteps current={2} total={3} />

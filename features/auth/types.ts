@@ -1,11 +1,7 @@
-export type LoginPayload = {
+export type SessionPayload = {
+  firstName?: string;
   timezone: string;
   expotoken?: string;
-};
-
-export type RegisterPayload = {
-  email: string;
-  prenom: string;
 };
 
 export type UpdateUserPayload = {

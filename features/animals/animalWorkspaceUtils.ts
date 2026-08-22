@@ -33,7 +33,7 @@ export function getAnimalMedicalEvents(events: readonly Event[], animalId: numbe
 
 export function getAnimalMedicalDocuments(events: readonly Event[], animalId: number) {
   return getAnimalMedicalEvents(events, animalId).flatMap((event) =>
-    (event.documents ?? []).map((document) => ({ ...document, eventId: event.id, eventDate: event.dateevent })),
+    (event.documents ?? []).map((document) => ({ ...document, eventId: event.id, eventDate: event.dateevent, eventName: event.nom || event.eventtype, eventType: event.eventtype })),
   );
 }
 
@@ -81,4 +81,16 @@ export function normalizeAnimalPictures(value: unknown): AnimalPicture[] {
 export function hasAnimalBodyPictureForMonth(pictures: readonly AnimalPicture[], month = new Date()) {
   const key = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}`;
   return pictures.some((picture) => picture.recordedAt?.slice(0, 7) === key);
+}
+
+export function getVisualTrackingMonths(now = new Date()) {
+  return Array.from({ length: 12 }, (_, index) => {
+    const date = new Date(now.getFullYear(), now.getMonth() - index, 1);
+    const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    return {
+      key,
+      date: `${key}-01`,
+      label: new Intl.DateTimeFormat('fr-FR', { month: 'long', year: 'numeric' }).format(date),
+    };
+  });
 }

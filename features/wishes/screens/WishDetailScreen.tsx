@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Linking, Platform, Share, Text, View } from 'react-native';
 import { Image } from 'expo-image';
+import { getCachedImageSource } from '../../../shared/utils/mediaCache';
 
 import { useNotificationsQuery } from '@hooks/queries/useNotificationsQuery';
 import { useWishImageQuery } from '@hooks/queries/useWishImageQuery';
@@ -104,7 +105,7 @@ export function WishDetailScreen({ wishId, activeTab = 'home', onBack, onEdit, o
         <IconButton icon="moreHorizontal" accessibilityLabel="Actions sur le souhait" variant="ghost" onPress={() => setActionsOpen(true)} />
       </View>
       <View style={{ width: '100%', height: 190, borderRadius: radii.xl, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceVariant }}>
-        {imageQuery.data ? <Image source={{ uri: imageQuery.data, cacheKey: imageQuery.data.split('?')[0] }} contentFit="contain" cachePolicy="memory-disk" accessibilityLabel={`Image de ${wish.nom}`} style={{ width: '100%', height: '100%' }} /> : <Icon name="gift" size="xxl" color={colors.primaryDark} />}
+        {imageQuery.data ? <Image source={getCachedImageSource(imageQuery.data)} contentFit="contain" cachePolicy="memory-disk" accessibilityLabel={`Image de ${wish.nom}`} style={{ width: '100%', height: '100%' }} /> : <Icon name="gift" size="xxl" color={colors.primaryDark} />}
       </View>
       {imageQuery.isError ? <Banner tone="error" title="Image indisponible" message="Le souhait reste accessible sans son image." onDismiss={() => undefined} /> : null}
       {actionError ? <Banner tone="error" title="Action impossible" message={actionError} onDismiss={() => setActionError(undefined)} /> : null}

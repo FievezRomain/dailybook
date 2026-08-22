@@ -5,6 +5,7 @@ import { componentTokens } from "../../../../theme/componentTokens";
 import { radii, typography } from "../../../../theme/scales";
 import { useAppTheme } from "../../../../theme/useAppTheme";
 import { Icon } from "../icons";
+import { getCachedImageSource } from "../../../utils/mediaCache";
 
 export interface AnimalSelectorItemProps {
   name: string;
@@ -46,7 +47,7 @@ export function AnimalSelectorItem({
     >
       {imageUrl ? (
         <Image
-          source={{ uri: imageUrl }}
+          source={getCachedImageSource(imageUrl)}
           contentFit="cover"
           cachePolicy="memory-disk"
           accessibilityElementsHidden
@@ -68,7 +69,7 @@ export function AnimalSelectorItem({
   );
   const ring = selected ? (
     <LinearGradient
-      colors={[colors.primaryLight, colors.primary]}
+      colors={[colors.primaryLight, colors.primary, colors.primaryDark]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={{

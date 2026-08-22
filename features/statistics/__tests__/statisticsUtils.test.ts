@@ -81,7 +81,21 @@ describe('statisticsUtils', () => {
 
   it('builds activity heatmap values from dated occurrences, never distances', () => {
     const data: EventStatisticsData = { statistic: [{ date: '2026-08-03', exact_value: 12 }, { date: '2026-08-03', exact_value: 8 }] };
-    expect(getActivityHeatmapData(data, 'month', { dateDebut: '2026-08-01', dateFin: '2026-08-31' }).find((cell) => cell.row.includes('août 2026') && cell.column === '3')?.value).toBe(2);
+    const heatmap = getActivityHeatmapData(data, 'month', { dateDebut: '2026-08-01', dateFin: '2026-08-31' });
+    expect(heatmap).toHaveLength(31);
+    expect(new Set(heatmap.map((cell) => cell.row))).toEqual(new Set(['Sem. 1', 'Sem. 2', 'Sem. 3', 'Sem. 4', 'Sem. 5', 'Sem. 6']));
+    expect(heatmap.find((cell) => cell.column === 'lundi' && cell.periodKey === '2026-08-03')?.value).toBe(2);
+    expect(heatmap.at(-1)?.periodKey).toBe('2026-08-31');
+  });
+
+  it.each([
+    ['2025-01-01', '2025-12-31', 365],
+    ['2024-01-01', '2024-12-31', 366],
+  ] as const)('builds one annual heatmap cell per calendar day from %s', (dateDebut, dateFin, expectedDays) => {
+    const heatmap = getActivityHeatmapData(undefined, 'year', { dateDebut, dateFin });
+    expect(heatmap).toHaveLength(expectedDays);
+    expect(heatmap[0]?.periodKey).toBe(dateDebut);
+    expect(heatmap.at(-1)?.periodKey).toBe(dateFin);
   });
 
   it('uses months and years for annual heatmaps', () => {

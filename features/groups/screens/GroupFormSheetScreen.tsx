@@ -37,6 +37,7 @@ import {
 import { getAnimalSelectionSubtitle } from "../../events/eventAnimalsUtils";
 import {
   getAcceptedAnimals,
+  getAnimalsAvailableForGroupProposal,
   getAcceptedMembers,
   getPendingAnimals,
   getPendingMembers,
@@ -46,6 +47,7 @@ interface GroupFormSheetScreenProps {
   mode: "create" | "edit";
   group?: Group;
   initialStep?: 0 | 1 | 2;
+  animalOnly?: boolean;
   onClose: () => void;
   onSaved: (groupId?: number) => void;
 }
@@ -56,6 +58,7 @@ export function GroupFormSheetScreen({
   mode,
   group,
   initialStep = 0,
+  animalOnly = false,
   onClose,
   onSaved,
 }: GroupFormSheetScreenProps) {
@@ -149,11 +152,13 @@ export function GroupFormSheetScreen({
 
   const submit = async () => {
     const parsed = groupDetailsSchema.safeParse(form.getValues());
-    if (!parsed.success || !validateMembers()) return;
+    if (!animalOnly && (!parsed.success || !validateMembers())) return;
     setSaveError(undefined);
     try {
       let savedGroupId = group?.id;
-      if (mode === "edit" && group) {
+      if (animalOnly) {
+        if (!savedGroupId) throw new Error("Missing group id");
+      } else if (mode === "edit" && group && parsed.success) {
         await mutations.update.mutateAsync({
           id: String(group.id),
           body: {
@@ -162,7 +167,7 @@ export function GroupFormSheetScreen({
             informations: parsed.data.informations.trim() || undefined,
           },
         });
-      } else {
+      } else if (parsed.success) {
         const created = await mutations.create.mutateAsync({
           name: parsed.data.name.trim(),
           informations: parsed.data.informations.trim() || undefined,
@@ -195,6 +200,10 @@ export function GroupFormSheetScreen({
 
   const continueWizard = async () => {
     setSaveError(undefined);
+    if (animalOnly) {
+      await submit();
+      return;
+    }
     if (step === 0) {
       if (await form.trigger()) setStep(1);
       return;
@@ -218,12 +227,16 @@ export function GroupFormSheetScreen({
     );
   };
   const footerLabel =
-    step === 3
+    animalOnly
+      ? "Ajouter au groupe"
+      : step === 3
       ? mode === "edit"
         ? "Enregistrer les modifications"
         : "Créer le groupe"
       : "Continuer";
-  const orderedAnimals = sortAnimalsForWorkspace(animalsQuery.data ?? []);
+  const orderedAnimals = sortAnimalsForWorkspace(
+    getAnimalsAvailableForGroupProposal(animalsQuery.data ?? [], existingAnimalIds),
+  );
   const presentAnimals = orderedAnimals.filter(
     (animal) => getAnimalPresence(animal) === "present",
   );
@@ -234,9 +247,9 @@ export function GroupFormSheetScreen({
 
   return (
     <FormSheet
-      title={mode === "edit" ? "Modifier le groupe" : "Créer un groupe"}
+      title={animalOnly ? "Ajouter un animal" : mode === "edit" ? "Modifier le groupe" : "Créer un groupe"}
       onBack={() =>
-        step > 0 ? setStep((step - 1) as GroupWizardStep) : onClose()
+        animalOnly ? onClose() : step > 0 ? setStep((step - 1) as GroupWizardStep) : onClose()
       }
       onClose={onClose}
       dirty={dirty}
@@ -248,9 +261,9 @@ export function GroupFormSheetScreen({
       testID="group-form-sheet"
     >
       <LinearProgress
-        current={step + 1}
-        total={4}
-        label={`Étape ${step + 1} sur 4`}
+        current={animalOnly ? 1 : step + 1}
+        total={animalOnly ? 1 : 4}
+        label={animalOnly ? "Sélection des animaux" : `Étape ${step + 1} sur 4`}
       />
       <View style={{ gap: spacing.xs, marginTop: spacing.md }}>
         <Text

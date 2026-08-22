@@ -13,6 +13,7 @@ export interface RootScreenProps {
   children: ReactNode;
   floatingAction?: ReactNode;
   scroll?: boolean;
+  keyboardAware?: boolean;
   padded?: boolean;
   refreshControl?: React.ReactElement<RefreshControlProps>;
   onScrollOffsetChange?: (offsetY: number) => void;
@@ -21,7 +22,7 @@ export interface RootScreenProps {
   material?: Material;
 }
 
-export function RootScreen({ header, bottomBar, children, floatingAction, scroll = true, padded = true, refreshControl, onScrollOffsetChange, contentContainerStyle, testID, material }: RootScreenProps) {
+export function RootScreen({ header, bottomBar, children, floatingAction, scroll = true, keyboardAware = false, padded = true, refreshControl, onScrollOffsetChange, contentContainerStyle, testID, material }: RootScreenProps) {
   const { colors } = useAppTheme();
   const [scrolled, setScrolled] = useState(false);
   const insets = useSafeAreaInsets();
@@ -33,5 +34,5 @@ export function RootScreen({ header, bottomBar, children, floatingAction, scroll
   const renderedHeader = isValidElement<{ scrolled?: boolean }>(header) ? cloneElement(header, { scrolled }) : header;
   const floatingBarSpace = componentTokens.navigation.bottomBarHeight + componentTokens.navigation.bottomBarMargin * 2 + insets.bottom;
   const floatingActionSpace = floatingAction ? componentTokens.button.height.large + componentTokens.navigation.bottomBarMargin : 0;
-  return <Screen edges={[]} testID={testID}><SafeAreaView edges={['top']} style={{ backgroundColor: barBackgroundColor }}><View accessibilityRole="header">{renderedHeader}</View></SafeAreaView>{scroll ? <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" nestedScrollEnabled directionalLockEnabled={false} refreshControl={refreshControl} onScroll={handleScroll} scrollEventThrottle={16} contentInsetAdjustmentBehavior="never" contentContainerStyle={[baseStyle, { flexGrow: 1, paddingBottom: floatingBarSpace + floatingActionSpace }, contentContainerStyle]}>{children}</ScrollView> : <View style={[baseStyle, { flex: 1, paddingBottom: floatingBarSpace + floatingActionSpace }, contentContainerStyle]}>{children}</View>}{floatingAction ? <View pointerEvents="box-none" style={{ position: 'absolute', right: 24, bottom: floatingBarSpace + componentTokens.navigation.bottomBarMargin }}>{floatingAction}</View> : null}<View pointerEvents="box-none" style={{ position: 'absolute', left: componentTokens.navigation.bottomBarMargin, right: componentTokens.navigation.bottomBarMargin, bottom: insets.bottom + componentTokens.navigation.bottomBarMargin }}><View accessibilityRole="tablist">{bottomBar}</View></View></Screen>;
+  return <Screen edges={[]} testID={testID}><SafeAreaView edges={['top']} style={{ backgroundColor: barBackgroundColor }}><View accessibilityRole="header">{renderedHeader}</View></SafeAreaView>{scroll ? <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode={keyboardAware ? "interactive" : "on-drag"} automaticallyAdjustKeyboardInsets={keyboardAware} nestedScrollEnabled directionalLockEnabled={false} refreshControl={refreshControl} onScroll={handleScroll} scrollEventThrottle={16} contentInsetAdjustmentBehavior="never" contentContainerStyle={[baseStyle, { flexGrow: 1, paddingBottom: floatingBarSpace + floatingActionSpace }, contentContainerStyle]}>{children}</ScrollView> : <View style={[baseStyle, { flex: 1, paddingBottom: floatingBarSpace + floatingActionSpace }, contentContainerStyle]}>{children}</View>}{floatingAction ? <View pointerEvents="box-none" style={{ position: 'absolute', right: 24, bottom: floatingBarSpace + componentTokens.navigation.bottomBarMargin }}>{floatingAction}</View> : null}<View pointerEvents="box-none" style={{ position: 'absolute', left: componentTokens.navigation.bottomBarMargin, right: componentTokens.navigation.bottomBarMargin, bottom: insets.bottom + componentTokens.navigation.bottomBarMargin }}><View accessibilityRole="tablist">{bottomBar}</View></View></Screen>;
 }

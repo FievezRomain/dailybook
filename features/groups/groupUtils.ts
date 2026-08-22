@@ -1,5 +1,6 @@
 import type { Group, GroupAnimal, GroupBucket } from '../../models/Group';
 import type { GroupMember } from '../../models/GroupMember';
+import type { Animal } from '../../models/Animal';
 
 export function getGroupBucketItems<T>(buckets: GroupBucket<T>[] | null | undefined, type: GroupBucket<T>['type']): T[] {
   return buckets?.find((bucket) => bucket.type === type)?.items ?? [];
@@ -30,7 +31,25 @@ export function isGroupManager(group: Group, email?: string | null): boolean {
 export function getGroupSummary(group: Group): string {
   const memberCount = group.nb_members ?? getAcceptedMembers(group).length;
   const animalCount = group.nb_animaux ?? getAcceptedAnimals(group).length;
-  return `${memberCount} membre${memberCount > 1 ? 's' : ''} · ${animalCount} animal${animalCount > 1 ? 'aux' : ''}`;
+  return `${memberCount} membre${memberCount > 1 ? 's' : ''} · ${animalCount} ${animalCount > 1 ? 'animaux' : 'animal'}`;
+}
+
+export function getAnimalsAvailableForGroupProposal(animals: readonly Animal[], existingAnimalIds: readonly number[]): Animal[] {
+  const existingIds = new Set(existingAnimalIds);
+  return animals.filter((animal) => existingIds.has(animal.id) || animal.provenance?.trim().toLocaleLowerCase('fr-FR') !== 'group');
+}
+
+export function getGroupManagementPermissions(
+  group: Group,
+  email: string | null | undefined,
+  premium: boolean,
+) {
+  const manager = isGroupManager(group, email);
+  return {
+    manager,
+    canAddAnimal: true,
+    canInviteMember: premium && manager,
+  };
 }
 
 export function getGroupInitials(name: string): string {

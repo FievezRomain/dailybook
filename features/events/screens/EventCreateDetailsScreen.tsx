@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
-import { CalendarPicker, DateTimeField, FormSheet, LinearProgress, PeriodSelector, Select, SelectionModal, Switch, TextArea, TextField, TimePicker } from '../../../shared/components/ui';
+import { CalendarPicker, DateTimeField, FormSheet, LinearProgress, PeriodSelector, Select, SelectionModal, StarRatingField, Switch, TextArea, TextField, TimePicker } from '../../../shared/components/ui';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -57,6 +57,7 @@ export function EventCreateDetailsScreen({ onBack, onContinue, onClose = onBack,
       const currentValue = String(formData[field.key] ?? '') || undefined;
       return <Select key={field.key} label={field.label} placeholder={field.placeholder} value={selectedCategory?.title ?? currentValue} helperText="Facultatif" onPress={() => setExpenseCategoryOpen(true)} />;
     }
+    if (field.kind === 'rating') return <StarRatingField key={field.key} label={field.label} value={typeof formData[field.key] === 'number' ? formData[field.key] as number : undefined} onChange={(value) => setField(field.key, value)} testID={`event-${field.key}-rating`} />;
     return <TextField key={field.key} label={field.label} placeholder={field.placeholder} value={String(formData[field.key] ?? '')} keyboardType={field.keyboardType} helperText="Facultatif" onChangeText={(value) => setField(field.key, field.keyboardType === 'decimal-pad' ? value.replace(',', '.') : value)} />;
   };
   const visibleFields = config.fields.filter((field) => {

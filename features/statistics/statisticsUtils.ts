@@ -165,7 +165,7 @@ export function getActivityHeatmapData(data: EventStatisticsData | undefined, pe
   if (!startValue || !endValue) return [];
   const start = new Date(`${startValue}T12:00:00`);
   const end = new Date(`${endValue}T12:00:00`);
-  const monthly = period === 'year' || period === 'fiveYears';
+  const monthly = period === 'fiveYears';
   const counts = new Map<string, number>();
   for (const value of eventDates) {
     const key = monthly ? value.slice(0, 7) : value;
@@ -184,9 +184,17 @@ export function getActivityHeatmapData(data: EventStatisticsData | undefined, pe
     return rows;
   }
   const rows: HeatmapDatum[] = [];
+  const weekdays = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
+  const firstDayOffset = (start.getDay() + 6) % 7;
   for (let cursor = new Date(start); cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
     const key = format(cursor, 'yyyy-MM-dd');
-    rows.push({ row: new Intl.DateTimeFormat('fr-FR', { month: 'short', year: 'numeric' }).format(cursor).replace('.', ''), column: String(cursor.getDate()), value: counts.get(key) ?? 0, periodKey: key });
+    const monthRow = period === 'month'
+      ? `Sem. ${Math.floor((cursor.getDate() + firstDayOffset - 1) / 7) + 1}`
+      : new Intl.DateTimeFormat('fr-FR', { month: 'short', year: 'numeric' }).format(cursor).replace('.', '');
+    const column = period === 'month'
+      ? weekdays[(cursor.getDay() + 6) % 7]
+      : String(cursor.getDate());
+    rows.push({ row: monthRow, column, value: counts.get(key) ?? 0, periodKey: key });
   }
   return rows;
 }

@@ -18,6 +18,7 @@ import { useThemeStore } from './stores/useThemeStore';
 import tamaguiConfig from './theme/tamagui.config';
 import { darkTokens, lightTokens } from './theme/tokens';
 import { parseApiError } from './utils/errorParser';
+import { NotificationRuntime } from './services/notifications/NotificationRuntime';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -85,6 +86,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <NotificationRuntime />
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
           <BottomSheetModalProvider>

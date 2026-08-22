@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { Text, View } from 'react-native';
-import { DataVisualization, DetailScreen, EmptyState, ErrorState, EventCard, MetricCard, PeriodRangeNavigator, PeriodSelector, Skeleton, StatisticHistoryGroup, TopBar } from '../../../shared/components/ui';
+import { Banner, DataVisualization, DetailScreen, EmptyState, ErrorState, EventCard, MetricCard, PeriodRangeNavigator, PeriodSelector, Skeleton, StatisticHistoryGroup, TopBar } from '../../../shared/components/ui';
 import { generateDistinctChartColors } from '../../../shared/components/ui/charts/colorUtils';
 import { useStatisticsQuery } from '../../../hooks/queries/useStatisticsQuery';
 import type { Material } from '../../../theme/materials';
@@ -14,6 +14,7 @@ import type { StatisticDetailType, StatisticsPeriod } from '../types';
 interface StatisticDetailScreenProps {
   type: StatisticDetailType;
   animalIds: readonly number[];
+  hasSharedAnimal?: boolean;
   animalSelector?: ReactNode;
   period: StatisticsPeriod;
   periodAnchor: Date;
@@ -29,7 +30,7 @@ interface StatisticDetailScreenProps {
 
 const config = { poids: { title: 'Poids', unit: 'kg', chart: 'Évolution du poids' }, taille: { title: 'Taille', unit: 'cm', chart: 'Évolution de la taille' }, alimentation: { title: 'Alimentation', unit: '', chart: 'Évolution des quantités' }, balades: { title: 'Balades', unit: '', chart: 'Fréquence des balades' }, depenses: { title: 'Dépenses', unit: '€', chart: 'Répartition des dépenses' }, entrainements: { title: 'Entraînements', unit: '', chart: 'Fréquence des entraînements' }, concours: { title: 'Concours', unit: '', chart: 'Fréquence des concours' } } as const;
 
-export function StatisticDetailScreen({ type, animalIds, animalSelector, period, periodAnchor, periodLabel, periodNextDisabled, material = 'solid', onPeriodChange, onPreviousPeriod, onNextPeriod, onOpenEvent, onBack }: StatisticDetailScreenProps) {
+export function StatisticDetailScreen({ type, animalIds, hasSharedAnimal = false, animalSelector, period, periodAnchor, periodLabel, periodNextDisabled, material = 'solid', onPeriodChange, onPreviousPeriod, onNextPeriod, onOpenEvent, onBack }: StatisticDetailScreenProps) {
   const { colors } = useAppTheme();
   const [selectedHistoryPeriod, setSelectedHistoryPeriod] = useState<string>();
   const [historySelectionVersion, setHistorySelectionVersion] = useState(0);
@@ -71,6 +72,7 @@ export function StatisticDetailScreen({ type, animalIds, animalSelector, period,
 
   return <DetailScreen header={<TopBar title={labels.title} context="detail" onBack={onBack} material={material} />} contentContainerStyle={{ paddingBottom: spacing.xxl, gap: spacing.lg }} testID={`statistic-detail-${type}`}>
     {animalSelector}
+    {hasSharedAnimal ? <Banner tone="info" title="Données accessibles uniquement" message="Pour un animal partagé dont vous n’êtes pas propriétaire, les statistiques utilisent uniquement les événements que vous avez créés ou qui vous sont partagés via un groupe actif." /> : null}
     <PeriodSelector options={statisticsPeriodOptions} value={period} onChange={onPeriodChange} />
     <PeriodRangeNavigator label={periodLabel} onPrevious={onPreviousPeriod} onNext={onNextPeriod} nextDisabled={periodNextDisabled} />
     {type === 'depenses' ? <MetricCard label="Total des dépenses" value={formatStatisticNumber(expenseTotal, '€')} supportingText={`Sur la période · ${periodLabel}`} density="compact" material={material} style={{ width: '100%' }} /> : null}

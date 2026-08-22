@@ -60,9 +60,10 @@ export type UpdateEventPayload = CreateEventPayload & { id: number; update_scope
 export type PatchEventPayload = {
   id?: number;
   state?: string;
-  commentaire?: string;
-  note?: number;
-  depense?: number;
+  commentaire?: string | null;
+  note?: number | null;
+  depense?: number | null;
+  placement?: string | null;
   animaux?: number[];
 };
 

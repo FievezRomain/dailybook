@@ -31,16 +31,21 @@ export function TopBar({ title, context = 'root', material = 'solid', scrolled =
     <NavigationSurface material={material} style={[{ height: componentTokens.navigation.topBarHeight, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, borderBottomWidth: scrolled ? 1 : 0, borderBottomColor: colors.border, backgroundColor: material === 'glass' ? colors.glassBackground : colors.surface, shadowColor: colors.textPrimary, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 2, elevation: 1 }, style]}>
       {context === 'detail' ? (
         <Pressable accessibilityRole="button" accessibilityLabel="Retour" onPress={onBack} style={{ width: 24, height: 44, alignItems: 'center', justifyContent: 'center' }}><Icon name="back" size="lg" /></Pressable>
-      ) : brandedRoot ? (
-        <Image accessibilityIgnoresInvertColors source={require('../../../../assets/logo.png')} resizeMode="contain" style={{ width: 36, height: 36 }} />
       ) : null}
-      <Text numberOfLines={1} accessibilityLabel={brandedRoot ? 'Vasco' : title} style={{ flex: 1, color: brandedRoot ? colors.primary : colors.textPrimary, fontFamily: brandedRoot ? typography.fonts.medium : typography.fonts.bold, fontSize: typography.sizes.xl, lineHeight: typography.lineHeights.relaxed, textTransform: brandedRoot ? 'uppercase' : 'capitalize' }} testID={testID}>{brandedRoot ? 'VASCO' : title}</Text>
+      {brandedRoot ? (
+        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+          <Image accessibilityIgnoresInvertColors source={require('../../../../assets/logo.png')} resizeMode="contain" style={{ width: componentTokens.navigation.brandedTopBarLogoSize, height: componentTokens.navigation.brandedTopBarLogoSize }} />
+          <Text numberOfLines={1} accessibilityLabel="Vasco" style={{ color: colors.primary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xl, lineHeight: typography.lineHeights.relaxed, textTransform: 'uppercase' }} testID={testID}>VASCO</Text>
+        </View>
+      ) : (
+        <Text numberOfLines={1} accessibilityLabel={title} style={{ flex: 1, color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xl, lineHeight: typography.lineHeights.relaxed }} testID={testID}>{title}</Text>
+      )}
       {trailing ?? (
         <>
           {onNotifications ? (
             <Pressable accessibilityRole="button" accessibilityLabel={unreadNotifications > 0 ? `Notifications, ${unreadNotifications} non lues` : 'Notifications'} onPress={onNotifications} testID={testID ? `${testID}-notifications` : 'top-bar-notifications'} style={{ width: 36, height: 44, alignItems: 'center', justifyContent: 'center' }}>
-              <Icon name="notifications" size="md" />
-              {unreadNotifications > 0 ? <View pointerEvents="none" style={{ position: 'absolute', right: 1, top: 4 }}><NotificationBadge type="dot" accessibilityLabel={`${unreadNotifications} notifications non lues`} /></View> : null}
+              <Icon name={unreadNotifications > 0 ? "notificationsUnread" : "notifications"} size="md" />
+              {unreadNotifications > 0 ? <View pointerEvents="none" style={{ position: 'absolute', right: -3, top: 1 }}><NotificationBadge type="count" count={unreadNotifications} accessibilityLabel={`${unreadNotifications} notifications non lues`} /></View> : null}
             </Pressable>
           ) : null}
           {onAccount ? <Pressable accessibilityRole="button" accessibilityLabel="Profil et réglages" onPress={onAccount} style={{ width: 36, height: 44, alignItems: 'center', justifyContent: 'center' }}><Avatar initials={resolvedInitials} imageUrl={resolvedImageUrl} fallbackImageUrl={fallbackImageUrl} accessibilityLabel="" decorative /></Pressable> : null}

@@ -7,11 +7,11 @@ import type { Animal } from '../../../models/Animal';
 import type { Objectif } from '../../../models/Objectif';
 import { useObjectifMutations } from '../../../hooks/queries/useObjectifsQuery';
 import { useObjectiveWizardStore } from '../../../stores/useObjectiveWizardStore';
-import { AnimalHistoryToggle, Avatar, Banner, Button, CalendarPicker, Checkbox, ControlledField, ControlledTextField, DateTimeField, FormSheet, IconButton, LinearProgress, ListItem, TextField } from '../../../shared/components/ui';
+import { AnimalHistoryToggle, AnimalProvenanceAvatar, Banner, Button, CalendarPicker, Checkbox, ControlledField, ControlledTextField, DateTimeField, FormSheet, IconButton, LinearProgress, ListItem, TextField } from '../../../shared/components/ui';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { parseApiError } from '../../../utils/errorParser';
-import { getAnimalPresence, sortAnimalsForWorkspace } from '../../animals/animalWorkspaceUtils';
+import { getAnimalPresence, isSharedAnimal, sortAnimalsForWorkspace } from '../../animals/animalWorkspaceUtils';
 import { getAnimalSelectionSubtitle } from '../../events/eventAnimalsUtils';
 import { buildObjectivePayload, buildObjectiveUpdatePayload, objectiveDetailsSchema, objectiveToDuplicateWizardForm, objectiveToWizardForm, objectiveWizardFingerprint } from '../objectiveFormUtils';
 
@@ -140,7 +140,7 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
     </> : null}
     {step === 1 ? <>
       <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>Sélectionnez un ou plusieurs animaux</Text>
-      {sortedAnimals.length ? <View accessibilityRole="list" style={{ gap: 10 }}>{visibleAnimals.map((animal) => { const selected = form.animaux.includes(animal.id); const subtitle = getAnimalSelectionSubtitle(animal); return <View key={animal.id} style={{ flexDirection: 'row', alignItems: 'center' }}><Checkbox value={selected} accessibilityLabel={`${selected ? 'Désélectionner' : 'Sélectionner'} ${animal.nom}`} onValueChange={() => toggleAnimal(animal.id)} /><View style={{ flex: 1 }}><ListItem testID={`objective-animal-${animal.id}`} title={animal.nom} subtitle={subtitle} leading={<Avatar initials={animal.nom} imageUrl={animal.image} accessibilityLabel={`Photo de ${animal.nom}`} size={40} decorative />} accessibilityLabel={`${animal.nom}, ${subtitle}, ${selected ? 'sélectionné' : 'non sélectionné'}`} accessibilityHint="Active ou désactive cet animal" onPress={() => toggleAnimal(animal.id)} /></View></View>; })}</View> : <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium }}>Aucun animal disponible. Vous pourrez en associer un plus tard.</Text>}
+      {sortedAnimals.length ? <View accessibilityRole="list" style={{ gap: 10 }}>{visibleAnimals.map((animal) => { const selected = form.animaux.includes(animal.id); const subtitle = getAnimalSelectionSubtitle(animal); return <View key={animal.id} style={{ flexDirection: 'row', alignItems: 'center' }}><Checkbox value={selected} accessibilityLabel={`${selected ? 'Désélectionner' : 'Sélectionner'} ${animal.nom}`} onValueChange={() => toggleAnimal(animal.id)} /><View style={{ flex: 1 }}><ListItem testID={`objective-animal-${animal.id}`} title={animal.nom} subtitle={subtitle} leading={<AnimalProvenanceAvatar name={animal.nom} imageUrl={animal.imageUrl} sharedFromGroup={isSharedAnimal(animal)} size={40} />} accessibilityLabel={`${animal.nom}, ${subtitle}, ${selected ? 'sélectionné' : 'non sélectionné'}`} accessibilityHint="Active ou désactive cet animal" onPress={() => toggleAnimal(animal.id)} /></View></View>; })}</View> : <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium }}>Aucun animal disponible. Vous pourrez en associer un plus tard.</Text>}
       {historicalAnimals.length ? <AnimalHistoryToggle expanded={historyExpanded} onPress={() => setHistoryExpanded((value) => !value)} testID="objective-animal-history" /> : null}
     </> : null}
     {step === 2 ? <>

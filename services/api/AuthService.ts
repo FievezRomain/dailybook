@@ -1,5 +1,5 @@
 import httpClient from './httpClient';
-import { LoginPayload, RegisterPayload, UpdateUserPayload } from '../../features/auth/types';
+import { SessionPayload, UpdateUserPayload } from '../../features/auth/types';
 import { UserProfile } from '../../models/User';
 import * as Notifications from 'expo-notifications';
 import * as TrackingTransparency from 'expo-tracking-transparency';
@@ -8,13 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 
-export async function login(data: LoginPayload): Promise<UserProfile> {
-  const response = await httpClient.post('/auth/login', data);
-  return response.data;
-}
-
-export async function register(body: RegisterPayload): Promise<UserProfile> {
-  const response = await httpClient.post('/auth/register', body);
+export async function openSession(body: SessionPayload): Promise<UserProfile> {
+  const response = await httpClient.post('/auth/session', body);
   return response.data;
 }
 
@@ -78,7 +73,7 @@ export async function getUserInformations() {
     await AsyncStorage.setItem('userExpoToken', JSON.stringify(expoToken));
   }
 
-  return login({ timezone: userTimezone, expotoken: expoToken });
+  return openSession({ timezone: userTimezone, expotoken: expoToken });
 }
 
 export async function initTrackingActivity() {

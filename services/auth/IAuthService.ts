@@ -14,6 +14,8 @@ export interface AuthUser {
   photoURL: string | null;
 }
 
+export type ReauthenticationMethod = 'password' | 'google' | 'apple' | 'unsupported';
+
 export interface IAuthService {
   /**
    * Connexion email/password.
@@ -64,6 +66,12 @@ export interface IAuthService {
    * Ré-authentifie l'utilisateur avec ses credentials (requis avant updatePassword/deleteUser).
    */
   reauthenticate(email: string, password: string): Promise<void>;
+
+  /** Fournisseur à utiliser pour confirmer une action sensible. */
+  getReauthenticationMethod(): ReauthenticationMethod;
+
+  /** Ré-authentifie l'utilisateur courant avec son fournisseur Firebase. */
+  reauthenticateCurrentUser(password?: string): Promise<void>;
 
   /**
    * Retourne l'utilisateur courant ou null si non connecté.

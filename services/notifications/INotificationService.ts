@@ -14,6 +14,14 @@ export interface INotificationService {
    */
   getToken(): Promise<string | undefined>;
 
+  setBadgeCount(count: number): Promise<void>;
+
+  addReceivedListener(listener: () => void): () => void;
+
+  addResponseListener(listener: () => void): () => void;
+
+  hasLastResponse(): Promise<boolean>;
+
   /**
    * Planifie une notification locale avec délai.
    */

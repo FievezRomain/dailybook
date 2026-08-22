@@ -10,7 +10,7 @@ import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { getInitials } from '../../home/homeUtils';
 import { tabs, type MainTabId } from '../../home/mainTabs';
-import { formatNotificationTime, isMemberInvitation, toNotificationType } from '../notificationUtils';
+import { formatNotificationTime, isAnimalInvitation, isMemberInvitation, toNotificationType } from '../notificationUtils';
 import { NotificationSwipeRow } from '../components/NotificationSwipeRow';
 import type { Notification } from '../../../models/Notification';
 
@@ -34,7 +34,7 @@ export function NotificationsScreen({ material = 'solid', activeTab, onSelectTab
   const unread = notifications.filter((item) => !item.is_read).length;
   const [feedback, setFeedback] = useState<string>();
   const [actionError, setActionError] = useState<string>();
-  const responding = groupMutations.respondInvitation.isPending;
+  const responding = groupMutations.respondInvitation.isPending || groupMutations.respondAnimalShare.isPending;
 
   const respond = async (notificationId: number, invitationId: number, status: 'accepted' | 'declined') => {
     setActionError(undefined);
@@ -42,6 +42,16 @@ export function NotificationsScreen({ material = 'solid', activeTab, onSelectTab
       await groupMutations.respondInvitation.mutateAsync({ invitationId: String(invitationId), body: { status } });
       await mutations.setRead.mutateAsync({ id: notificationId, isRead: true });
       setFeedback(status === 'accepted' ? 'Invitation acceptée.' : 'Invitation refusée.');
+    } catch {
+      setActionError('Votre réponse n’a pas pu être enregistrée. Réessayez.');
+    }
+  };
+  const respondToAnimal = async (notificationId: number, shareId: number, status: 'accepted' | 'declined') => {
+    setActionError(undefined);
+    try {
+      await groupMutations.respondAnimalShare.mutateAsync({ shareId: String(shareId), body: { status } });
+      await mutations.setRead.mutateAsync({ id: notificationId, isRead: true });
+      setFeedback(status === 'accepted' ? 'Animal accepté.' : 'Animal refusé.');
     } catch {
       setActionError('Votre réponse n’a pas pu être enregistrée. Réessayez.');
     }
@@ -67,11 +77,11 @@ export function NotificationsScreen({ material = 'solid', activeTab, onSelectTab
       {state === 'loading' ? <View style={{ gap: spacing.md }}><Skeleton /><Skeleton /><Skeleton /></View>
         : state === 'error' ? <ErrorState title="Notifications indisponibles" message="Impossible de charger vos notifications." onRetry={() => void query.refetch()} />
           : notifications.length === 0 ? <EmptyState title="Aucune notification" message="Vos rappels, invitations et informations importantes apparaîtront ici." />
-            : <View style={{ gap: spacing.sm }}>{notifications.map((notification) => isMemberInvitation(notification) ? <View key={notification.id} style={{ width: '100%', maxWidth: 360, minHeight: 190, padding: spacing.md, gap: spacing.sm, borderWidth: 1, borderColor: colors.border, borderRadius: radii.lg, backgroundColor: colors.surfaceVariant }}>
+            : <View style={{ gap: spacing.sm }}>{notifications.map((notification) => (isMemberInvitation(notification) || isAnimalInvitation(notification)) ? <View key={notification.id} style={{ width: '100%', maxWidth: 360, minHeight: 190, padding: spacing.md, gap: spacing.sm, borderWidth: 1, borderColor: colors.border, borderRadius: radii.lg, backgroundColor: colors.surfaceVariant }}>
               <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{notification.title || 'Invitation dans un groupe'}</Text>
               <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xs }}>{[notification.proposed_by, formatNotificationTime(notification.created_at)].filter(Boolean).join(' · ')}</Text>
               <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>{notification.message}</Text>
-              <View style={{ flexDirection: 'row', gap: spacing.sm }}><Button label="Refuser" variant="secondary" size="small" disabled={responding} onPress={() => void respond(notification.id, notification.object_id!, 'declined')} style={{ flex: 1 }} /><Button label="Accepter" size="small" loading={responding} onPress={() => void respond(notification.id, notification.object_id!, 'accepted')} style={{ flex: 1 }} /></View>
+              <View style={{ flexDirection: 'row', gap: spacing.sm }}><Button label="Refuser" variant="secondary" size="small" disabled={responding} onPress={() => void (isAnimalInvitation(notification) ? respondToAnimal(notification.id, notification.object_id!, 'declined') : respond(notification.id, notification.object_id!, 'declined'))} style={{ flex: 1 }} /><Button label="Accepter" size="small" loading={responding} onPress={() => void (isAnimalInvitation(notification) ? respondToAnimal(notification.id, notification.object_id!, 'accepted') : respond(notification.id, notification.object_id!, 'accepted'))} style={{ flex: 1 }} /></View>
             </View> : <NotificationSwipeRow key={notification.id} read={notification.is_read} onToggleRead={() => mutations.setRead.mutate({ id: notification.id, isRead: !notification.is_read })} onDelete={() => mutations.remove.mutate(notification.id)}><NotificationCard title={notification.title || 'Notification'} message={notification.message || ''} timestamp={formatNotificationTime(notification.created_at)} type={toNotificationType(notification.type)} read={notification.is_read} onPress={() => openNotification(notification)} testID={`notification-${notification.id}`} /></NotificationSwipeRow>)}</View>}
     </RootScreen>
     <Snackbar visible={Boolean(feedback)} message={feedback || ''} onHidden={() => setFeedback(undefined)} />

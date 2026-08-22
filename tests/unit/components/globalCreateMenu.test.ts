@@ -2,8 +2,8 @@ import { globalCreateChoices, globalCreateTargets } from '../../../shared/compon
 
 describe('GlobalCreateMenu', () => {
   it('respecte le contenu et l’ordre définis dans Figma', () => {
-    expect(globalCreateTargets).toEqual(['event', 'animal', 'objective', 'note', 'contact', 'group', 'wish']);
-    expect(globalCreateChoices.map(({ label }) => label)).toEqual(['Événement', 'Animal', 'Objectif', 'Note', 'Contact', 'Groupe', 'Souhait']);
+    expect(globalCreateTargets).toEqual(['event', 'animal', 'objective', 'note', 'contact', 'wish', 'group']);
+    expect(globalCreateChoices.map(({ label }) => label)).toEqual(['Événement', 'Animal', 'Objectif', 'Note', 'Contact', 'Souhait', 'Groupe']);
     expect(globalCreateChoices.find(({ id }) => id === 'wish')?.icon).toBe('heart');
   });
 });

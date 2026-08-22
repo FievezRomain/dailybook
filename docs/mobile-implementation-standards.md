@@ -122,7 +122,7 @@ Ne pas lancer une animation infinie hors écran. Arrêter timers, audio et anima
 
 ## 9. Premium et sécurité côté client
 
-Le client améliore l’UX mais ne sécurise pas un droit commercial. Le backend doit vérifier l’entitlement pour les statistiques, groupes, IA et voix.
+Le client améliore l’UX mais ne sécurise pas un droit commercial. Le backend doit vérifier l’entitlement pour les statistiques, la création et la gestion Premium des groupes, l’IA et la voix. La proposition de ses propres animaux dans un groupe actif reste autorisée à tout membre, y compris Gratuit, avec contrôle backend de l’appartenance et de la propriété.
 
 Centraliser les droits :
 

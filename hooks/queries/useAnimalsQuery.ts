@@ -20,11 +20,11 @@ export function useAnimalsQuery() {
   });
 }
 
-export function useAnimalBodyPicturesQuery(animalId: string) {
+export function useAnimalBodyPicturesQuery(animalId: string, enabled = true) {
   return useQuery({
     queryKey: ['animals', animalId, 'body-pictures'],
     queryFn: () => AnimalsService.getAnimalBodyPictures(animalId),
-    enabled: !!animalId,
+    enabled: Boolean(animalId) && enabled,
   });
 }
 

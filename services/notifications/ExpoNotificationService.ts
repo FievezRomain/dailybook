@@ -49,6 +49,26 @@ export class ExpoNotificationService implements INotificationService {
     ).data;
   }
 
+  async setBadgeCount(count: number): Promise<void> {
+    await Notifications.setBadgeCountAsync(count);
+  }
+
+  addReceivedListener(listener: () => void): () => void {
+    const subscription = Notifications.addNotificationReceivedListener(listener);
+    return () => subscription.remove();
+  }
+
+  addResponseListener(listener: () => void): () => void {
+    const subscription = Notifications.addNotificationResponseReceivedListener(listener);
+    return () => subscription.remove();
+  }
+
+  async hasLastResponse(): Promise<boolean> {
+    const response = await Notifications.getLastNotificationResponseAsync();
+    if (response) await Notifications.clearLastNotificationResponseAsync();
+    return Boolean(response);
+  }
+
   async scheduleLocal(options: {
     title: string;
     body: string;

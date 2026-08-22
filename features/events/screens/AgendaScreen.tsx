@@ -31,6 +31,7 @@ import {
   type GlobalCreateTarget,
 } from "../../../shared/components/ui";
 import { spacing, typography } from "../../../theme/scales";
+import { componentTokens } from "../../../theme/componentTokens";
 import type { Material } from "../../../theme/materials";
 import { useAppTheme } from "../../../theme/useAppTheme";
 import {
@@ -213,6 +214,8 @@ export function AgendaScreen({
             fontFamily: typography.fonts.semiBold,
             fontSize: typography.sizes.lg,
             lineHeight: 24,
+            textAlign: "center",
+            width: "100%",
           }}
         >
           {searchActive
@@ -296,7 +299,7 @@ export function AgendaScreen({
                 ? "Modifiez votre recherche ou réinitialisez les filtres."
                 : formatAgendaEmptyMessage(selectedDate)
             }
-            style={{ minHeight: 260 }}
+            style={{ minHeight: searchActive || selectedTypes.length || selectedAnimalIds.length ? componentTokens.feedback.stateHeight : componentTokens.feedback.compactStateHeight }}
           />
         ) : (
           displayedEvents.map((event) => {

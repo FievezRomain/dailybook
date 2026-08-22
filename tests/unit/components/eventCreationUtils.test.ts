@@ -1,4 +1,4 @@
-import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getReminderLabel, isPastEventDate } from '../../../features/events/eventCreationUtils';
+import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getReminderLabel, isPastEventDate, normalizeSharedGroupIds } from '../../../features/events/eventCreationUtils';
 import type { Event } from '../../../models/Event';
 
 describe('event creation payload', () => {
@@ -56,6 +56,23 @@ describe('event creation payload', () => {
 
     expect(form).toMatchObject({ eventType: 'soins', traitement: 'Vaccin', animaux: [1, 2], state: 'completed', idparent: 3 });
     expect(buildEventUpdatePayload(form, event.id)).toMatchObject({ id: 7, eventtype: 'soins', traitement: 'Vaccin', state: 'completed', idparent: 3, frequencetype: 'year', frequencevalue: '1' });
+  });
+
+  it('normalizes shared groups returned by the backend before an update', () => {
+    const event = {
+      id: 12,
+      eventtype: 'autre',
+      nom: 'Sortie',
+      dateevent: '2026-08-22',
+      animaux: [1],
+      shared_groups: [{ id: 7, name: 'Équipe' }, '8'],
+    } as Event;
+
+    const form = eventToWizardForm(event);
+
+    expect(normalizeSharedGroupIds(event.shared_groups)).toEqual([7, 8]);
+    expect(form.shared_groups).toEqual([7, 8]);
+    expect(buildEventUpdatePayload(form, event.id).shared_groups).toEqual([7, 8]);
   });
 
   it('creates an independent editable copy without inherited sharing or completion', () => {

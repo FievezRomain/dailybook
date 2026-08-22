@@ -5,10 +5,11 @@ import { Notification } from '../../models/Notification';
 
 export const NOTIFICATIONS_KEY = ['notifications'] as const;
 
-export function useNotificationsQuery() {
+export function useNotificationsQuery(enabled = true) {
   return useQuery({
     queryKey: NOTIFICATIONS_KEY,
     queryFn: NotificationService.getNotifications,
+    enabled,
   });
 }
 

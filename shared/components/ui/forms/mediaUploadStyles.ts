@@ -19,5 +19,5 @@ export function resolveMediaUploadVisual(colors: VascoColors, state: MediaUpload
 }
 
 export function isMediaUploadActionable(state: MediaUploadState) {
-  return state === 'empty' || state === 'error';
+  return state === 'empty' || state === 'success' || state === 'error';
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
+import { getCachedImageSource } from '../../../utils/mediaCache';
 
 export interface AvatarProps {
   initials: string;
@@ -40,7 +41,7 @@ export function Avatar({ initials, imageUrl, fallbackImageUrl, accessibilityLabe
       }}
     >
       {resolvedImageUrl ? (
-        <Image source={{ uri: resolvedImageUrl }} style={{ width: size, height: size }} contentFit="cover" cachePolicy="memory-disk" accessibilityElementsHidden onError={() => setFailedUrls((urls) => urls.includes(resolvedImageUrl) ? urls : [...urls, resolvedImageUrl])} />
+        <Image source={getCachedImageSource(resolvedImageUrl)} style={{ width: size, height: size }} contentFit="cover" cachePolicy="memory-disk" accessibilityElementsHidden onError={() => setFailedUrls((urls) => urls.includes(resolvedImageUrl) ? urls : [...urls, resolvedImageUrl])} />
       ) : (
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: size === 32 ? 12 : Math.max(12, size * 0.375) }}>
           {normalizeInitials(initials)}

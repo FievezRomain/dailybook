@@ -71,6 +71,8 @@ Soins et Rendez-vous acceptent des documents PDF ou image à la fin de l’étap
 
 Détail → `…` → Modifier, Dupliquer/Partager selon maquette, Supprimer. Modifier expose les mêmes informations que créer, préremplies.
 
+Le détail Événement intègre le menu `…` dans la Top Bar. Son résumé affiche le type, l’état, la date et les animaux avec des avatars lisibles. Le suivi rapide affiche uniquement les champs proposés par le formulaire du type concerné, complétés par l’état et le compte rendu. Il utilise exactement deux cartes par ligne, puis la pleine largeur lorsqu’un élément reste seul. Une action Modifier unique ouvre une seule Form Sheet regroupant tous les champs rapides applicables. Les autres valeurs renseignées sont présentées en grille à deux colonnes lorsque leur longueur le permet afin d’exploiter la largeur de l’écran et de limiter le défilement.
+
 ## 6. Animaux
 
 Le workspace conserve le sélecteur horizontal. À l’état initial, il montre uniquement les animaux présents, sans titres de groupe. `+ Voir plus`, placé à la fin, révèle ensuite les animaux sortis puis décédés ; `− Voir moins` masque de nouveau l’historique. Le cercle dégradé de sélection est espacé de la photo. Ce comportement est partagé par tous les écrans qui utilisent ce sélecteur.
@@ -91,7 +93,9 @@ Dans l’onglet Physique, `Ajouter une mesure` ouvre la Form Sheet partagée au-
 
 Objectifs : liste → détail → menu `…` → modifier, mettre à jour, dupliquer, supprimer. Le formulaire sépare Définition du cap → Animaux → Étapes → Vérification. Au moins une étape renseignée est obligatoire pour créer l’objectif. Les cartes affichent une seule fois les animaux liés et conservent la date de fin.
 
-Statistiques : accès depuis Suivi. Périodes Jour, Mois, 1 an et 5 ans. Les graphiques utilisent les composants Chart et des tooltips accessibles.
+Statistiques : accès depuis Suivi. Périodes Mois, Année et 5 ans. Les graphiques utilisent les composants Chart et des tooltips accessibles. Toute courbe de détail affiche une abscisse temporelle et une ordonnée chiffrée ; une série réduite à une valeur affiche tout de même son point. Une heatmap mensuelle contient exactement une case par jour du mois sélectionné, les jours de la semaine en colonnes et une ligne par semaine. Une heatmap annuelle contient une case par jour de l’année sélectionnée, soit 365 ou 366 cases. La vue 5 ans conserve une agrégation mensuelle.
+
+Lorsqu’un animal sélectionné est accessible via un groupe et que l’utilisateur n’en est pas propriétaire, les statistiques issues des événements agrègent uniquement les événements créés par cet utilisateur ou explicitement partagés avec lui via un groupe actif. Un bandeau informatif visible sur l’aperçu et le détail précise que les données peuvent être partielles.
 
 Pour un compte gratuit, l’accès Statistiques ouvre `Premium Required — Statistiques` puis le comparatif.
 
@@ -110,7 +114,7 @@ Souhait : liste → détail → menu d’actions. Création/modification en troi
 
 La liste Souhaits utilise une grille décalée à deux colonnes dont les cartes s’adaptent au contenu sans troncature. Les états vides de Contacts, Groupes, Notes et Souhaits ne dupliquent pas l’action du FAB.
 
-Le menu global du FAB suit toujours cet ordre : Événement, Animal, Objectif, Note, Contact, Groupe, Souhait. Groupe conserve son contrôle Premium et Souhait utilise l’icône cœur.
+Le menu global du FAB suit toujours cet ordre : Événement, Animal, Objectif, Note, Contact, Souhait, Groupe. Groupe conserve son contrôle Premium et apparaît en dernier ; Souhait utilise l’icône cœur.
 
 ## 9. Contacts et Groupes
 
@@ -120,15 +124,21 @@ Groupes est Premium. Pour un compte gratuit, ouvrir l’explication Premium avan
 
 Un membre déjà accepté dans un groupe actif peut continuer à partager un événement avec ce groupe même si son propre compte est Gratuit. Un groupe est proposé dans le formulaire Événement uniquement si tous les animaux associés à l’événement y sont partagés avec le statut `accepted`.
 
+Lorsqu’un événement est déjà partagé avec plusieurs groupes, son étape Animaux propose uniquement les animaux acceptés dans tous ces groupes. Cela inclut un animal accessible via l’un de ces groupes lorsque tous les groupes destinataires y ont accès. Son pictogramme de provenance reste affiché. Cette association à un événement ne donne pas le droit de proposer l’animal à un nouveau groupe.
+
+Si cette règle réduit la liste pendant une modification, un message informatif précise que seuls les animaux liés à tous les groupes avec lesquels l’événement est partagé sont affichés.
+
 L’activité d’un groupe dépend de l’abonnement de son gestionnaire. Si le gestionnaire ne possède plus d’abonnement Premium actif, le groupe devient indisponible pour tous ses membres : il disparaît des listes et sélecteurs, ne donne plus accès aux événements partagés et ne peut plus recevoir de nouveaux partages. Les données ne sont pas supprimées ; elles redeviennent accessibles si le droit Premium du gestionnaire est rétabli.
 
 Compte Premium : liste → détail Animaux/Membres. Actions : modifier le groupe, gérer un membre, ajouter/retirer un animal partagé, invitation et suppression. Création/modification en quatre étapes : Informations → Membres → Animaux → Vérification.
 
 ## 10. Notifications et Réglages
 
-Cloche → liste. Une invitation ouvre ses actions Accepter/Refuser. Les autres notifications ouvrent l’entité associée lorsqu’elle existe.
+Cloche → liste. La cloche devient pleine et porte le nombre de notifications non lues ; ce même nombre est synchronisé avec le badge de l’icône native. Les invitations de membres et les propositions d’animaux en attente présentent les actions Accepter/Refuser. Les autres notifications ouvrent l’entité associée lorsqu’elle existe. Un appui sur une notification push ouvre l’application directement sur cette liste.
 
-Un compte Gratuit peut accepter ou refuser une invitation, rejoindre un groupe et consulter les groupes dont il fait partie. La création d’un groupe et les actions d’ajout de membres ou d’animaux restent Premium et ouvrent le parcours contextualisé.
+Une invitation de membre crée toujours une notification dans Vasco pour un compte existant et déclenche un push seulement si la permission système et un token Expo valide sont disponibles. Sans compte Vasco correspondant, l’invitation est envoyée par email. La proposition d’un animal par un non-gestionnaire notifie selon les mêmes conditions le gestionnaire, qui doit la valider avant que le partage soit accepté.
+
+Un compte Gratuit peut accepter ou refuser une invitation, rejoindre et consulter un groupe actif, puis proposer au partage ses propres animaux. La création d’un groupe et l’ajout de membres restent Premium et ouvrent le parcours contextualisé. Proposer un animal ne dépend pas de l’abonnement du membre ; le backend vérifie son appartenance au groupe actif et la propriété directe de chaque animal proposé.
 
 Avatar/Plus → Réglages : Profil, Apparence, Notifications, Sécurité, Données et confidentialité, Abonnement et support.
 

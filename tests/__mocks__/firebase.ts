@@ -10,6 +10,8 @@ export const updatePassword = jest.fn();
 export const deleteUser = jest.fn();
 export const reauthenticateWithCredential = jest.fn();
 export const EmailAuthProvider = { credential: jest.fn() };
+export const GoogleAuthProvider = { credential: jest.fn() };
+export const OAuthProvider = jest.fn(() => ({ credential: jest.fn() }));
 export const sendPasswordResetEmail = jest.fn();
 export const getReactNativePersistence = jest.fn(() => ({}));
 export const initializeAuth = jest.fn(() => ({}));

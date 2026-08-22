@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
+import { useGroupsQuery } from "../../../hooks/queries/useGroupsQuery";
 import { useAnimalImageUrl } from "../../../hooks/queries/useAnimalImageUrl";
 import type { Animal } from "../../../models/Animal";
 import {
   AnimalHistoryToggle,
-  Avatar,
+  AnimalProvenanceAvatar,
+  Banner,
   Button,
   Checkbox,
   EmptyState,
@@ -17,6 +19,7 @@ import {
 } from "../../../shared/components/ui";
 import {
   getAnimalPresence,
+  isSharedAnimal,
   sortAnimalsForWorkspace,
 } from "../../animals/animalWorkspaceUtils";
 import { useEventWizardStore } from "../../../stores/useEventWizardStore";
@@ -27,22 +30,23 @@ import {
   getAnimalSelectionSubtitle,
   toggleEventAnimal,
 } from "../eventAnimalsUtils";
+import { getAllowedEventAnimals } from "../eventGroupSharing";
 
 export interface EventCreateAnimalsScreenProps {
   onBack: () => void;
   onContinue: () => void;
   onClose?: () => void;
-  onCreateAnimal?: () => void;
 }
 
 export function EventCreateAnimalsScreen({
   onBack,
   onContinue,
   onClose = onBack,
-  onCreateAnimal = () => undefined,
 }: EventCreateAnimalsScreenProps) {
   const { colors } = useAppTheme();
   const animalsQuery = useAnimalsQuery();
+  const groupsQuery = useGroupsQuery();
+  const sharedGroupIds = useEventWizardStore((state) => state.formData.shared_groups) ?? [];
   const storedSelectedIds = useEventWizardStore(
     (state) => state.formData.animaux,
   );
@@ -50,7 +54,9 @@ export function EventCreateAnimalsScreen({
   const setField = useEventWizardStore((state) => state.setField);
   const [showError, setShowError] = useState(false);
   const [historyExpanded, setHistoryExpanded] = useState(false);
-  const animals = sortAnimalsForWorkspace(animalsQuery.data ?? []);
+  const allAnimals = animalsQuery.data ?? [];
+  const animals = sortAnimalsForWorkspace(getAllowedEventAnimals(allAnimals, groupsQuery.data ?? [], sharedGroupIds));
+  const listRestrictedByGroups = sharedGroupIds.length > 0 && animals.length < allAnimals.length;
   const presentAnimals = animals.filter(
     (animal) => getAnimalPresence(animal) === "present",
   );
@@ -69,10 +75,13 @@ export function EventCreateAnimalsScreen({
     setShowError(false);
   };
   const next = () => {
-    if (!selectedIds.length) {
+    const allowedIds = new Set(animals.map((animal) => animal.id));
+    const validSelectedIds = selectedIds.filter((id) => allowedIds.has(id));
+    if (!validSelectedIds.length) {
       setShowError(true);
       return;
     }
+    if (validSelectedIds.length !== selectedIds.length) setField("animaux", validSelectedIds);
     onContinue();
   };
   const footer = (
@@ -123,24 +132,30 @@ export function EventCreateAnimalsScreen({
       >
         Sélectionnez un ou plusieurs animaux
       </Text>
-      {animalsQuery.isLoading ? (
+      {listRestrictedByGroups ? (
+        <Banner
+          tone="info"
+          title="Liste adaptée aux groupes partagés"
+          message="Cet événement est partagé avec un ou plusieurs groupes. Seuls vos animaux acceptés dans tous ces groupes peuvent être associés."
+        />
+      ) : null}
+      {animalsQuery.isLoading || (sharedGroupIds.length > 0 && groupsQuery.isLoading) ? (
         <>
           <Skeleton type="profile" density="compact" />
           <Skeleton type="profile" density="compact" />
           <Skeleton type="profile" density="compact" />
         </>
-      ) : animalsQuery.isError ? (
+      ) : animalsQuery.isError || (sharedGroupIds.length > 0 && groupsQuery.isError) ? (
         <ErrorState
           title="Animaux indisponibles"
           message="Impossible de charger vos animaux pour le moment."
-          onRetry={() => void animalsQuery.refetch()}
+          onRetry={() => void Promise.all([animalsQuery.refetch(), groupsQuery.refetch()])}
         />
       ) : animals.length === 0 ? (
         <EmptyState
-          title="Aucun animal"
-          message="Ajoutez d’abord un animal pour pouvoir créer cet événement."
-          actionLabel="Ajouter un animal"
-          onAction={onCreateAnimal}
+          icon="animals"
+          title={sharedGroupIds.length ? "Aucun animal compatible" : "Aucun animal"}
+          message={sharedGroupIds.length ? "Pour cet événement partagé, seuls vos animaux acceptés dans tous les groupes concernés peuvent être associés." : "Ajoutez d’abord un animal pour pouvoir créer cet événement."}
         />
       ) : (
         <View accessibilityRole="list" style={{ gap: 10 }}>
@@ -188,5 +203,5 @@ const EMPTY_SELECTED_IDS: readonly number[] = [];
 
 function ResolvedAnimalAvatar({ animal }: { animal: Animal }) {
   const fallbackImageUrl = useAnimalImageUrl(animal.image, animal.id);
-  return <Avatar initials={animal.nom} imageUrl={animal.imageUrl ?? fallbackImageUrl} accessibilityLabel={`Photo de ${animal.nom}`} size={40} decorative />;
+  return <AnimalProvenanceAvatar name={animal.nom} imageUrl={animal.imageUrl ?? fallbackImageUrl} sharedFromGroup={isSharedAnimal(animal)} size={40} />;
 }

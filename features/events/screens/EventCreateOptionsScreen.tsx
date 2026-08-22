@@ -40,7 +40,8 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
   const names = getSelectedAnimalNames(form.animaux ?? [], animals);
   const editing = eventId !== undefined;
   const editScope = form.updateScope as 'occurrence' | 'following' | 'series' | undefined;
-  const eligibleGroups = getEligibleEventGroups(groupsQuery.data ?? [], form.animaux ?? []);
+  const selectedAnimalIds = form.animaux ?? [];
+  const eligibleGroups = getEligibleEventGroups(groupsQuery.data ?? [], selectedAnimalIds);
   const selectedGroupIds = (form.shared_groups ?? []).map(String);
   const documents = form.documents ?? [];
 

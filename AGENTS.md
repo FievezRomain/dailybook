@@ -52,7 +52,7 @@ Une capture isolée ne suffit pas : un écran doit être compris dans son parcou
 Les fonctionnalités suivantes nécessitent un abonnement Premium :
 
 - statistiques ;
-- groupes ;
+- création et gestion des groupes, à l’exception de la proposition de ses propres animaux par un membre d’un groupe actif ;
 - création assistée par IA ;
 - notes vocales.
 
