@@ -17,10 +17,15 @@ import {
 export const GROUPS_KEY = ['groups'] as const;
 export const INVITATIONS_KEY = ['invitations'] as const;
 
+export function getActiveGroups(groups: readonly Group[]): Group[] {
+  return groups.filter((group) => group.active !== false);
+}
+
 export function useGroupsQuery(enabled = true) {
   return useQuery({
     queryKey: GROUPS_KEY,
     queryFn: GroupService.getGroups,
+    select: getActiveGroups,
     enabled,
   });
 }
@@ -67,6 +72,7 @@ export function useGroupMutations() {
       const optimistic: Group = {
         ...body,
         id: -1,
+        active: true,
         data: { members: [], animals: [] },
         syncing: true,
       };

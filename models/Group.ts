@@ -19,6 +19,8 @@ export type GroupBucket<T> = {
 export type Group = {
     id: number;
     name: string;
+    /** Un groupe sans gestionnaire Premium actif reste conservé côté serveur mais indisponible dans l'app. */
+    active?: boolean;
     informations?: string | null;
     nb_members?: number | null;
     nb_animaux?: number | null;

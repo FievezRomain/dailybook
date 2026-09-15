@@ -31,7 +31,7 @@ export function GroupInvitationScreen({ invitationId, onBack, onAccepted, onDecl
       await mutations.respondInvitation.mutateAsync({ invitationId: String(invitation.id), body: { status } });
       if (status === 'accepted') onAccepted(); else onDeclined();
     } catch {
-      setError("Votre réponse n’a pas pu être enregistrée. Réessayez.");
+      setError("Cette invitation n’est peut-être plus valide ou le groupe n’est plus actif. Actualisez puis réessayez.");
     }
   };
 

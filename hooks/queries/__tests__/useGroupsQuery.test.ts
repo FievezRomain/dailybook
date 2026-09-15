@@ -36,6 +36,19 @@ describe('useGroupsQuery', () => {
     expect(result.current.data).toHaveLength(2);
   });
 
+  it('excludes inactive groups while keeping legacy responses visible', async () => {
+    mockedGetGroups.mockResolvedValue([
+      createMockGroup({ id: 1, active: true }),
+      createMockGroup({ id: 2, active: false }),
+      createMockGroup({ id: 3 }),
+    ] as any);
+
+    const { result } = renderHook(() => useGroupsQuery(), { wrapper: createQueryWrapper() });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data?.map((group) => group.id)).toEqual([1, 3]);
+  });
+
   it('sets isError when the service throws', async () => {
     mockedGetGroups.mockRejectedValue(new Error('Network error'));
 
