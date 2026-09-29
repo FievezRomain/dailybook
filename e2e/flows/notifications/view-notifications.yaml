@@ -1,0 +1,11 @@
+appId: com.vascoandco.vasco.ios
+name: Notifications - ouverture et consultation
+---
+- runFlow: ../auth/login.yaml
+
+- tapOn:
+    id: "top-bar-notifications"
+- assertVisible:
+    id: "notifications-list"
+- assertVisible: "Notifications"
+- assertVisible: "Rappels, invitations et informations importantes"

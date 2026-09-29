@@ -2,10 +2,10 @@ export type Animal = {
     id: number;
     nom: string;
     espece: string;
-    datenaissance?: Date;
-    datearrivee?: Date;
-    datedepart?: Date;
-    datedeces?: Date;
+    datenaissance?: string;
+    datearrivee?: string;
+    datedepart?: string;
+    datedeces?: string;
     race?: string;
     taille?: number;
     poids?: number;
@@ -18,6 +18,11 @@ export type Animal = {
     nommere?: string;
     numeroidentification?: string;
     image?: string;
+    /** URL de lecture signée, distincte du nom de fichier persistant `image`. */
+    imageUrl?: string;
     previousimage?: string;
     informations?: string;
+    provenance?: string;
+    /** UI-only — true pendant la sync optimiste */
+    syncing?: boolean;
 };

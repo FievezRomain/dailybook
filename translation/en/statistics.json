@@ -1,0 +1,21 @@
+{
+  "title": "Performance",
+  "noData": "No data yet",
+  "weight": "Weight",
+  "height": "Height",
+  "training": "Trainings",
+  "competition": "Competitions",
+  "walk": "Walks",
+  "feeding": "Feeding",
+  "expenses": "Expenses",
+  "addEntry": "Add a measurement",
+  "date": "Date",
+  "value": "Value",
+  "unit": "Unit",
+  "kg": "kg",
+  "cm": "cm",
+  "km": "km",
+  "eur": "€",
+  "saved": "Entry saved ✓",
+  "deleted": "Entry deleted"
+}

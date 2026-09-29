@@ -1,0 +1,45 @@
+appId: com.vascoandco.vasco.ios
+name: Objectifs — création guidée en trois étapes
+---
+- runFlow: ../auth/login.yaml
+
+- tapOn:
+    id: "main-tabs-tracking"
+- assertVisible:
+    id: "tracking-screen"
+- tapOn:
+    id: "tracking-create"
+- tapOn: "Objectif"
+- assertVisible:
+    id: "objective-form-sheet"
+
+- assertVisible: "Étape 1 sur 3"
+- tapOn: "Titre"
+- inputText: "Marcher 20 km Maestro"
+- hideKeyboard
+- tapOn: "Date de début, JJ / MM / AAAA"
+- tapOn: "15"
+- tapOn: "Choisir la date"
+- tapOn: "Date de fin, JJ / MM / AAAA"
+- tapOn: "28"
+- tapOn: "Choisir la date"
+- tapOn: "Continuer"
+
+- assertVisible: "Étape 2 sur 3"
+- tapOn:
+    id: "objective-animal-.*"
+    index: 0
+- tapOn: "Étapes"
+- inputText: "Marcher 5 km\nMarcher 10 km\nMarcher 20 km"
+- hideKeyboard
+- tapOn: "Continuer"
+
+- assertVisible: "Étape 3 sur 3"
+- assertVisible: "Marcher 20 km Maestro"
+- assertNotVisible: "Rappel"
+- tapOn: "Créer l’objectif"
+- extendedWaitUntil:
+    visible: "Marcher 20 km Maestro"
+    timeout: 20000
+- assertVisible:
+    id: "objective-detail"

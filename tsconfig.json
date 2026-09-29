@@ -1,25 +1,30 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "commonjs",
-    "lib": [
-      "esnext"
-    ],
-    "jsx": "react-native",
     "strict": true,
-    "moduleResolution": "node",
-    "allowJs": true,
-    "checkJs": false,
-    "noEmit": true,
     "isolatedModules": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
+    "checkJs": false,
+    "baseUrl": ".",
+    "paths": {
+      "@features/*": ["features/*"],
+      "@shared/*": ["shared/*"],
+      "@hooks/*": ["hooks/*"],
+      "@services/*": ["services/*"],
+      "@stores/*": ["stores/*"],
+      "@theme/*": ["theme/*"],
+      "@models/*": ["models/*"],
+      "@utils/*": ["utils/*"],
+      "@config/*": ["config/*"],
+      "@business/*": ["business/*"],
+      "@navigation/*": ["navigation/*"],
+      "@constants/*": ["constants/*"],
+      "@types/*": ["types/*"]
+    },
     "types": [
       "react",
-      "react-native"
+      "react-native",
+      "jest"
     ]
   },
   "include": [
@@ -29,11 +34,6 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.js"
-  ],
-  "exclude": [
-    "node_modules",
-    "babel.config.js",
-    "metro.config.js"
   ],
   "extends": "expo/tsconfig.base"
 }

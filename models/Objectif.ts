@@ -1,7 +1,7 @@
 export type ObjectifEtape = {
     id: number;
     etape: string;
-    state: string;
+    state: string | boolean;
     order: number;
 }
 
@@ -14,4 +14,6 @@ export type Objectif = {
     temporalityobjectif?: string;
     sousetapes: ObjectifEtape[];
     sharedgroups?: number[];
+    /** UI-only — true pendant la sync optimiste */
+    syncing?: boolean;
 };

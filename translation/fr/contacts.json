@@ -1,0 +1,23 @@
+{
+  "title": "Contacts",
+  "addContact": "Ajouter un contact",
+  "noContact": "Aucun contact pour le moment",
+  "name": "Nom",
+  "phone": "Téléphone",
+  "email": "E-mail",
+  "role": "Rôle",
+  "saved": "Contact enregistré ✓",
+  "deleted": "Contact supprimé",
+  "deleteContact": "Supprimer ce contact ?",
+  "invite": "Inviter à suivre {{name}}",
+  "nameRequired": "Nom obligatoire",
+  "modalTitle": "Contact",
+  "manageContact": "Gérer le contact",
+  "roles": {
+    "vet": "Vétérinaire",
+    "farrier": "Maréchal",
+    "trainer": "Entraîneur",
+    "owner": "Propriétaire",
+    "other": "Autre"
+  }
+}

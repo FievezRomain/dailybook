@@ -1,0 +1,16 @@
+appId: com.vascoandco.vasco.ios
+name: Notes - état vide sans CTA redondant
+---
+- runFlow: ../auth/login.yaml
+- tapOn:
+    id: "main-tabs-more"
+- tapOn: "Notes"
+- assertVisible:
+    id: "notes-list"
+- runFlow:
+    when:
+      visible: "Aucune note pour le moment"
+    commands:
+      - assertNotVisible: "Écrire une note"
+      - assertVisible:
+          id: "notes-create"

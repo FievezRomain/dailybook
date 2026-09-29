@@ -1,0 +1,16 @@
+{
+  "title": "Notes",
+  "addNote": "Ajouter une observation",
+  "noNote": "Aucune observation pour le moment",
+  "noteSaved": "Observation ajoutée ✓",
+  "noteDeleted": "Note supprimée",
+  "noteUpdated": "Note mise à jour ✓",
+  "deleteNote": "Supprimer cette note ?",
+  "content": "Contenu",
+  "animal": "Animal",
+  "date": "Date",
+  "aiEntry": "Saisie vocale",
+  "syncing": "Synchronisation en cours…",
+  "searchPlaceholder": "Recherche",
+  "searchResults": "Résultats de la recherche \"{{query}}\""
+}

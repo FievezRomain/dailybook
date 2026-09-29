@@ -1,0 +1,13 @@
+{
+  "title": "Notifications",
+  "titlePart1": "Your",
+  "titlePart2": "Notifications",
+  "noNotification": "You have no notifications",
+  "markAllRead": "Mark all as read",
+  "delete": "Delete",
+  "types": {
+    "reminder": "Reminder",
+    "update": "Update",
+    "info": "Info"
+  }
+}

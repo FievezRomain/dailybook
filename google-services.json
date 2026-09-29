@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "592615799562",
     "project_id": "dailybook-be27d",
-    "storage_bucket": "dailybook-be27d.appspot.com"
+    "storage_bucket": "dailybook-be27d.firebasestorage.app"
   },
   "client": [
     {
@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "592615799562-qddjtkcus1ar29h4rveiaqi2r2i9grhr.apps.googleusercontent.com",
+          "client_id": "592615799562-u63lchjchstnr6iog282aiq4p1n61m7f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.vascoandco.vasco.android",
+            "certificate_hash": "b7554e7c57c8832b394b7aa7c8d026be0efe8c23"
+          }
+        },
+        {
+          "client_id": "592615799562-16p7i0iq8plhs0plm0ou78kj2hve97bo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,14 +35,14 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "592615799562-qddjtkcus1ar29h4rveiaqi2r2i9grhr.apps.googleusercontent.com",
+              "client_id": "592615799562-16p7i0iq8plhs0plm0ou78kj2hve97bo.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "592615799562-ob3qrotnhl11u7je79b4of2b83ghejoe.apps.googleusercontent.com",
+              "client_id": "592615799562-hjtrr6anli4uhkqudlp46d4v0pdo7v4i.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.rfievez.dailybook"
+                "bundle_id": "com.vascoandco.vasco.ios"
               }
             }
           ]

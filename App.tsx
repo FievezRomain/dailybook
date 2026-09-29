@@ -1,165 +1,101 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { AuthenticatedUserProvider } from "./contexts/AuthenticatedUserProvider";
-import AuthStack from "./navigation/AuthStack";
+import './config/i18n';
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Font from 'expo-font';
-import { useEffect, useState, useContext } from "react";
-import { ActivityIndicator, Alert, StyleSheet, Text, View } from "react-native";
-import * as Sentry from '@sentry/react-native';
+import * as NavigationBar from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
-import AuthService from "./services/api/AuthService";
-import { Provider as PaperProvider } from 'react-native-paper';
-import { ThemeProvider, ThemeContext } from './contexts/ThemeProvider';
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { AnimauxProvider } from "./contexts/AnimauxProvider";
-import { EventsProvider } from "./contexts/EventsProvider";
-import { ObjectifsProvider } from "./contexts/ObjectifsProvider";
-import { NotesProvider } from "./contexts/NotesProvider";
-import { ContactsProvider } from "./contexts/ContactsProvider";
-import { WishProvider } from "./contexts/WishProvider";
-import { GroupProvider } from "./contexts/GroupProvider";
-import { darkTheme, lightTheme } from "./theme/theme";
-import * as Updates from 'expo-updates';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useEffect, useState } from 'react';
+import { Appearance, Platform, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { TamaguiProvider, Theme } from 'tamagui';
+import { RootNavigator } from './app/navigation/RootNavigator';
+import { initSocialAuth } from './services/auth/initSocialAuth';
+import { initTrackingActivity } from './services/api/AuthService';
+import { useAuthStore } from './stores/useAuthStore';
+import { useThemeStore } from './stores/useThemeStore';
+import tamaguiConfig from './theme/tamagui.config';
+import { darkTokens, lightTokens } from './theme/tokens';
+import { parseApiError } from './utils/errorParser';
+import { NotificationRuntime } from './services/notifications/NotificationRuntime';
 
-const IconComponent = (props: any) => <MaterialCommunityIcons {...props} />;
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: (failureCount, error) => {
+        const parsed = parseApiError(error);
+        return (parsed.isNetworkError || parsed.isAuthError) && failureCount < 2;
+      },
+    },
+    mutations: { retry: 0 },
+  },
+});
 
-function ThemedApp() {
-  const { isDarkTheme } = useContext(ThemeContext);
+function VascoApplication() {
+  const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
+  const syncSystemTheme = useThemeStore((state) => state.syncSystemTheme);
+  const tokens = resolvedTheme === 'dark' ? darkTokens : lightTokens;
+
+  useEffect(() => {
+    const subscription = Appearance.addChangeListener(({ colorScheme }) => syncSystemTheme(colorScheme));
+    return () => subscription.remove();
+  }, [syncSystemTheme]);
+
+  useEffect(() => {
+    if (Platform.OS !== 'android') return;
+
+    void Promise.all([
+      NavigationBar.setBackgroundColorAsync(tokens.surface),
+      NavigationBar.setButtonStyleAsync(resolvedTheme === 'dark' ? 'light' : 'dark'),
+    ]).catch(() => undefined);
+  }, [resolvedTheme]);
+
   return (
-    <PaperProvider 
-      theme={isDarkTheme ? darkTheme : lightTheme} 
-      settings={{
-        icon: IconComponent,
-      }}
-    > 
-      <NavigationContainer>
-          <StatusBar style={isDarkTheme ? "light" : "dark"} translucent backgroundColor="rgba(0, 0, 0, 0)" />
-          <AuthStack />
-      </NavigationContainer>
-    </PaperProvider>
+    <TamaguiProvider config={tamaguiConfig} defaultTheme={resolvedTheme}>
+      <Theme name={resolvedTheme}>
+        <View style={{ flex: 1, backgroundColor: tokens.surface }}>
+          <StatusBar style={resolvedTheme === 'dark' ? 'light' : 'dark'} />
+          <RootNavigator />
+        </View>
+      </Theme>
+    </TamaguiProvider>
   );
 }
 
 function App() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const authService = new AuthService;
-
-  Sentry.init({
-    dsn: 'https://f6cde365af7bd130a50a9fac22144580@o4507714688516096.ingest.de.sentry.io/4507714690809936', // Remplacez par votre DSN Sentry
-    debug: false, // Passez à false en production
-  });
+  const initAuth = useAuthStore((state) => state.initAuth);
 
   useEffect(() => {
-
-    const initializeApp = async () => {
-      await loadFonts();
-      setFontsLoaded(true);
-      authService.initTrackingActivity();
-
-      // Vérification et téléchargement des OTA
-      try {
-        const update = await Updates.checkForUpdateAsync();
-        if (update.isAvailable) {
-          setIsUpdating(true);
-          await Updates.fetchUpdateAsync();
-          Alert.alert(
-            "Mise à jour disponible",
-            "Une nouvelle version a été téléchargée. L'application va redémarrer.",
-            [
-              {
-                text: "OK",
-                onPress: async () => {
-                  await Updates.reloadAsync();
-                }
-              }
-            ]
-          );
-        }
-      } catch (error) {
-        console.log("Erreur lors de la vérification OTA:", error);
-      } finally {
-        setIsUpdating(false);
-      }
-    }
-
-    initializeApp();
-    
-  }, []);
-
-  /*const navigation = useNavigation();
-  const authService = new AuthService;
-  const { setUser } = useContext(AuthenticatedUserProvider);
-
-  useEffect( async () => {
-    const unsubscribe = navigation.addListener("state", () => {
-      authService.getUser().then((myUser) => {
-        setUser(myUser);
-      })
-    });
-    return unsubscribe;
-  }, [navigation]) */
-
-  const loadFonts = () => {
-    return Font.loadAsync({
+    const unsubscribe = initAuth();
+    void Font.loadAsync({
       'Quicksand-Bold': require('./assets/fonts/Quicksand-Bold.ttf'),
       'Quicksand-Light': require('./assets/fonts/Quicksand-Light.ttf'),
       'Quicksand-Medium': require('./assets/fonts/Quicksand-Medium.ttf'),
       'Quicksand-Regular': require('./assets/fonts/Quicksand-Regular.ttf'),
-      'Quicksand-SemiBold': require('./assets/fonts/Quicksand-SemiBold.ttf')
-    });
-  };
+      'Quicksand-SemiBold': require('./assets/fonts/Quicksand-SemiBold.ttf'),
+    }).then(() => setFontsLoaded(true));
+    initTrackingActivity();
+    initSocialAuth();
+    return unsubscribe;
+  }, [initAuth]);
 
-  const styles = StyleSheet.create({
-    loaderContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#fff',
-    },
-    loaderText: {
-      marginTop: 10,
-      fontSize: 16,
-      color: '#333',
-    },
-  });
-
-  if (!fontsLoaded || isUpdating) {
-    return (
-      <View style={styles.loaderContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={styles.loaderText}>
-          {isUpdating ? "Téléchargement de la mise à jour…" : "Chargement…"}
-        </Text>
-      </View>
-    );
-  }
+  if (!fontsLoaded) return null;
 
   return (
-    <>
-      <GroupProvider>
-        <AnimauxProvider>
-          <EventsProvider>
-            <ObjectifsProvider>
-              <NotesProvider>
-                <ContactsProvider>
-                  <WishProvider>
-                    <AuthenticatedUserProvider>
-                      <GestureHandlerRootView>
-                        <ThemeProvider>
-                          <ThemedApp />
-                        </ThemeProvider>
-                      </GestureHandlerRootView>
-                    </AuthenticatedUserProvider>
-                  </WishProvider>
-                </ContactsProvider>
-              </NotesProvider>
-            </ObjectifsProvider>
-          </EventsProvider>
-        </AnimauxProvider>
-      </GroupProvider>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <NotificationRuntime />
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <SafeAreaProvider>
+          <BottomSheetModalProvider>
+            <VascoApplication />
+          </BottomSheetModalProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    </QueryClientProvider>
   );
-};
+}
 
-export default Sentry.wrap(App);
+export default App;
