@@ -53,7 +53,7 @@ Les fonctionnalités suivantes nécessitent un abonnement Premium :
 
 - statistiques ;
 - création et gestion des groupes, à l’exception de la proposition de ses propres animaux par un membre d’un groupe actif ;
-- création assistée par IA ;
+- création intelligente ;
 - notes vocales.
 
 Pour un compte gratuit, utiliser le composant et le parcours Premium documentés. Une action verrouillée ouvre une explication contextualisée puis le comparatif Gratuit/Premium. Elle ne doit être ni inactive sans explication, ni supprimée de l’interface.

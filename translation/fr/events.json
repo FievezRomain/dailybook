@@ -46,7 +46,7 @@
   "continueWithHorse": "Continuer avec {{count}} cheval",
   "continueWithHorses": "Continuer avec {{count}} chevaux",
   "aiDescribeFirst": "Décrivez votre événement d'abord",
-  "aiParseError": "L'IA n'a pas pu analyser votre texte",
+  "aiParseError": "Vasco n'a pas pu analyser votre texte",
   "deleteAllWalks": "Supprimer les balades {{suffix}}",
   "deleteAllCares": "Supprimer les soins {{suffix}}",
   "types": {

@@ -12,6 +12,6 @@ describe('premiumUtils', () => {
   });
 
   it('fournit un contenu contextualisé pour chaque verrou', () => {
-    expect(getPremiumFeatureContent('aiCreation')).toEqual(expect.objectContaining({ title: 'Création assistée par IA' }));
+    expect(getPremiumFeatureContent('aiCreation')).toEqual(expect.objectContaining({ title: 'Création intelligente' }));
   });
 });

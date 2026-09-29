@@ -157,7 +157,7 @@ Le loader de marque utilise le coussinet Vasco avec animation séquentielle. Les
 
 ## 10. Premium
 
-Fonctionnalités réservées : Statistiques, Groupes, création par IA et notes vocales.
+Fonctionnalités réservées : Statistiques, Groupes, création intelligente et notes vocales.
 
 Le droit Premium Groupes porte sur la création et la gestion du groupe, notamment l’invitation de membres. Un membre Gratuit déjà accepté peut utiliser un groupe actif, proposer au partage ses propres animaux et partager un événement, à condition que tous les animaux liés à cet événement soient acceptés dans ce groupe. Le groupe reste actif uniquement tant que son gestionnaire conserve un abonnement Premium actif ; sinon il est masqué pour tous les membres et exclu de tous les sélecteurs de partage, sans suppression des données.
 
@@ -179,7 +179,7 @@ La plaquette de référence indique :
 | Animaux, événements, objectifs, notes, souhaits et contacts | Oui | Oui |
 | Statistiques | Non | Oui |
 | Groupes | Non | Oui |
-| Création assistée par IA | Non | Oui |
+| Création intelligente | Non | Oui |
 | Notes vocales | Non | Oui |
 
 Toute modification commerciale nécessite une validation produit et une mise à jour simultanée de cette table, du backend d’entitlements et des maquettes.

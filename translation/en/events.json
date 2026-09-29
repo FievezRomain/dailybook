@@ -46,7 +46,7 @@
   "continueWithHorse": "Continue with {{count}} horse",
   "continueWithHorses": "Continue with {{count}} horses",
   "aiDescribeFirst": "Describe your event first",
-  "aiParseError": "AI could not parse your text",
+  "aiParseError": "Vasco could not analyze your text",
   "deleteAllWalks": "Delete all walks {{suffix}}",
   "deleteAllCares": "Delete all care sessions {{suffix}}",
   "types": {

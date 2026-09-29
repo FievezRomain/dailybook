@@ -6,6 +6,7 @@ Plan d'exécution : [refonte graphique et composants réutilisables](visual-refa
 
 | Document | Usage |
 | --- | --- |
+| [Mise en service](mise-en-service.md) | Lancement local, development builds, EAS Update, builds stores, publication et rollback |
 | [Design handoff](design-handoff.md) | Source de vérité visuelle, thèmes, composants, formulaires et Premium |
 | [Navigation et interactions](navigation-and-interactions.md) | Origine de chaque écran, destinations, retours et overlays |
 | [Standards mobile](mobile-implementation-standards.md) | Architecture UI, layout, animations, accessibilité, performance et tests |

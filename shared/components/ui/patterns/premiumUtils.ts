@@ -21,7 +21,7 @@ const premiumFeatureContent: Record<PremiumFeature, PremiumFeatureContent> = {
     description: 'Partagez le suivi de vos animaux avec les personnes de votre choix.',
   },
   aiCreation: {
-    title: 'Création assistée par IA',
+    title: 'Création intelligente',
     description: 'Créez plus rapidement un événement avec l’assistance de Vasco.',
   },
   voiceNotes: {

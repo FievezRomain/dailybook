@@ -93,7 +93,7 @@ La migration doit commencer par des adaptateurs, jamais par une suppression glob
 
 ### Premium
 
-La documentation produit réserve Statistiques, Groupes, création IA et notes vocales au Premium. L'API expose bien `Free`/`Premium` et l'erreur structurée `FEATURE_UNAVAILABLE`, mais le contrôle Premium n'est actuellement appliqué qu'à l'upload de fichiers. Les routes Statistics, Groups et AI vérifient l'authentification, pas l'abonnement.
+La documentation produit réserve Statistiques, Groupes, création intelligente et notes vocales au Premium. L'API expose bien `Free`/`Premium` et l'erreur structurée `FEATURE_UNAVAILABLE`, mais le contrôle Premium n'est actuellement appliqué qu'à l'upload de fichiers. Les routes techniques Statistics, Groups et AI vérifient l'authentification, pas l'abonnement.
 
 Conséquence : le `Premium Gate` côté mobile est nécessaire mais insuffisant. Une tâche backend doit protéger les cas d'usage concernés pour éviter le contournement client. La voix ne possède pas encore de contrat backend dédié identifié.
 

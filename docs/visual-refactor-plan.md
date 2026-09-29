@@ -93,14 +93,14 @@ Sortie : inventaire versionné, écarts, API v1 gelée et backlog estimé.
 - [x] **P7.b** Calendar/Events pour valider cartes, formulaires et overlays.
   - [x] Reprendre les parcours de création et modification Event selon les nouvelles maquettes en bottom sheet.
     - [x] Extraire `Overlay/Form Sheet Surface` comme surface commune Solid/Glass pour tous les formulaires d'ajout et de modification.
-    - [x] Afficher la création guidée et IA dans une unique Form Sheet au-dessus du contexte courant.
+    - [x] Afficher la création guidée et la création intelligente dans une unique Form Sheet au-dessus du contexte courant.
     - [x] Afficher la modification et la duplication dans la même Form Sheet, avec données préremplies.
     - [x] Conserver les valeurs entre étapes et confirmer la fermeture si des données non enregistrées seraient perdues.
     - [x] Préparer la vérification Light, Dark, Glass avec fallback Solid, clavier, scroll, accessibilité et parcours critique ; exécution exhaustive centralisée en P8.c–P8.d.
   - [x] Agenda Solid, calendrier inline, journée complète et ouverture du détail.
   - [x] Détail événement, menu `…`, marquage terminé et suppression avec confirmation explicite.
   - [x] Création guidée : entrée → type → détails spécifiques aux 7 types → animaux → rappels/partage → mutation → succès.
-  - [x] Création IA Premium : description → analyse backend → normalisation → vérification/modification → animaux/options → création.
+  - [x] Création intelligente Premium : description → analyse backend → normalisation → vérification/modification → animaux/options → création.
   - [x] Conservation des valeurs du wizard, absence de bottom bar et retour entre étapes.
   - [x] Connexion aux données réelles via React Query, services API et token Firebase.
   - [x] États chargement, vide et erreur sur Agenda, Home et sélection des animaux ; timeout HTTP global.
@@ -108,7 +108,7 @@ Sortie : inventaire versionné, écarts, API v1 gelée et backlog estimé.
   - [x] Gate client basée sur l'abonnement `Free`/`Premium` retourné par le backend.
   - [x] Modification préremplie avec le même périmètre de champs que la création.
   - [x] Dupliquer et partager depuis le menu d'actions.
-  - [x] Protection Premium des routes IA et Groupes côté backend.
+  - [x] Protection Premium des routes de création intelligente et de Groupes côté backend.
   - [x] Vérification visuelle exhaustive Light/Dark, Glass avec fallback Solid et tailles d'écran.
   - [x] Préparer le scénario Maestro du parcours critique ; exécution mobile reportée à P8.b.
 - [x] **P7.c** Animals, puis Performance/Objectives/Statistics.
@@ -315,7 +315,7 @@ Les tickets, PR et comptes rendus conservent les identifiants P0.a à P8.f.
 ### 9 août 2026 — P7.a/P7.b
 
 - Nouvelle arborescence UI Vasco utilisée par Auth, Home, Agenda et Events ; les anciens écrans de présentation correspondants ont été supprimés.
-- Parcours événement guidé et IA raccordés aux stores, queries et mutations conservés de la couche métier.
+- Parcours événement guidé et intelligent raccordés aux stores, queries et mutations conservés de la couche métier.
 - Correction de la stabilité du sélecteur Zustand de choix des animaux afin d'éviter `Maximum update depth exceeded`.
 - Correction de l'URL API locale, ajout d'un timeout Axios de 10 secondes et exposition des états d'erreur après échec réseau.
 - Contrat Notifications aligné sur l'API Python et sécurisé contre les réponses/caches mal formés.
@@ -347,9 +347,9 @@ Les tickets, PR et comptes rendus conservent les identifiants P0.a à P8.f.
 ### 9 août 2026 — P7.b protection Premium backend
 
 - Une dépendance FastAPI centralisée vérifie l'abonnement actif après authentification et lève l'erreur métier `PremiumRequiredError` pour tout compte non Premium.
-- La garde est appliquée aux routeurs IA et Groupes complets ; les appels directs hors application mobile ne peuvent donc plus contourner les restrictions client.
+- La garde est appliquée aux routeurs de création intelligente et Groupes complets ; les appels directs hors application mobile ne peuvent donc plus contourner les restrictions client.
 - Le repository en mémoire respecte désormais l'abonnement injecté afin de tester fidèlement les deux niveaux d'accès.
-- Validation backend effectuée : 18 tests E2E passants, dont refus Free sur IA/Groupes et accès Premium sur les deux, Ruff ciblé et `git diff --check`.
+- Validation backend effectuée : 18 tests E2E passants, dont refus Free sur création intelligente/Groupes et accès Premium sur les deux, Ruff ciblé et `git diff --check`.
 - À cette étape, P7.b restait ouvert pour la vérification visuelle exhaustive ; le scénario Maestro était à préparer pour l’exécution mobile centralisée en P8.b.
 
 ### 9 août 2026 — P7.b vérification visuelle
@@ -387,7 +387,7 @@ Les tickets, PR et comptes rendus conservent les identifiants P0.a à P8.f.
 
 - Le composant Figma `Overlay/Form Sheet Surface` est implémenté comme surface commune Solid/Glass et alimente désormais le Bottom Sheet partagé.
 - Une enveloppe `FormSheet` centralise la hauteur adaptative, la Top Bar, le contenu scrollable, le footer long et la confirmation d'abandon des données non enregistrées.
-- Entrée, type, détails spécifiques, animaux, options, description IA et vérification IA utilisent cette enveloppe ; création, modification et duplication conservent respectivement l'Agenda/Home ou le détail événement en arrière-plan.
+- Entrée, type, détails spécifiques, animaux, options, description intelligente et vérification intelligente utilisent cette enveloppe ; création, modification et duplication conservent respectivement l'Agenda/Home ou le détail événement en arrière-plan.
 - Le succès reste volontairement un écran complet, conformément au nœud Figma `Events/Create — Success`.
 - Validation effectuée : `npm run typecheck`, 16 tests unitaires ciblés Events/overlays et `git diff --check`.
 - La sous-tâche reste ouverte pour la vérification réelle Light/Dark, Glass/Solid, clavier, scroll, accessibilité et appareil/émulateur.
@@ -420,7 +420,7 @@ Les tickets, PR et comptes rendus conservent les identifiants P0.a à P8.f.
 ### 9 août 2026 — Form Sheet persistante du parcours Event
 
 - L'architecture à une modal par étape est supprimée au profit de `FormSheetHost`, une unique `BottomSheetModal` qui reste montée pendant tout le parcours.
-- Entrée, Type, Détails, Animaux, Options et les étapes IA remplacent uniquement le contenu, le titre, la progression et le footer de cette même sheet.
+- Entrée, Type, Détails, Animaux, Options et les étapes de création intelligente remplacent uniquement le contenu, le titre, la progression et le footer de cette même sheet.
 - Création, modification et duplication utilisent le même mécanisme ; fermer ou abandonner la sheet ne peut donc plus révéler une étape précédente.
 - Les écrans d'étape conservent leur API autonome et s'enregistrent comme contenu lorsqu'ils sont rendus dans le host, ce qui permet de réutiliser le pattern pour les futurs formulaires.
 - Validation effectuée : `npm run typecheck`, 16 tests ciblés Events/overlays et `git diff --check`.

@@ -47,7 +47,7 @@ Dans Agenda :
 
 | Option | Destination | Premium |
 | --- | --- | --- |
-| Événement | Choix création guidée ou IA | IA uniquement |
+| Événement | Choix création guidée ou intelligente | Création intelligente uniquement |
 | Animal | Wizard Animal | Non |
 | Objectif | Wizard Objectif | Non |
 | Note | Choix note texte ou vocale | Voix uniquement |
@@ -63,7 +63,7 @@ Chaque destination de création ou de modification s’ouvre au-dessus du contex
 
 Création guidée : entrée → type → champs spécifiques au type → animaux → options → mutation → retour Agenda. Aucun écran de succès intermédiaire ne demande de choisir une destination ou de créer une seconde entité.
 
-Création IA : description → analyse → formulaire prérempli à vérifier → animaux/options → création.
+Création intelligente : description → analyse → formulaire prérempli à vérifier → animaux/options → création.
 
 Les champs diffèrent selon Soins, Rendez-vous, Balade, Entraînement, Concours, Dépense et Autre. Ne pas réduire tous les types à un formulaire générique.
 
