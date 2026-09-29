@@ -66,7 +66,7 @@ function VascoApplication() {
       NavigationBar.setBackgroundColorAsync(tokens.surface),
       NavigationBar.setButtonStyleAsync(resolvedTheme === 'dark' ? 'light' : 'dark'),
     ]).catch(() => undefined);
-  }, [resolvedTheme]);
+  }, [resolvedTheme, tokens.surface]);
 
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme={resolvedTheme}>
