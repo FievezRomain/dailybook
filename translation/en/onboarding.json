@@ -1,0 +1,21 @@
+{
+  "skip": "Skip",
+  "next": "Next",
+  "done": "Let's go!",
+  "step1": {
+    "title": "Welcome to MyDailyBook 🐴",
+    "description": "Your equestrian life journal. Track, understand and share your horse's life."
+  },
+  "step2": {
+    "title": "Add your first horse",
+    "description": "Start by creating your companion's profile. Photo, breed, date of birth…"
+  },
+  "step3": {
+    "title": "Log your observations",
+    "description": "Create a note in under 30 seconds. Use voice entry for even more speed."
+  },
+  "step4": {
+    "title": "Plan and track",
+    "description": "Events, objectives, performance — all centralized in your dashboard."
+  }
+}

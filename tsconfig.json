@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "checkJs": false,
+    "baseUrl": ".",
+    "paths": {
+      "@features/*": ["features/*"],
+      "@shared/*": ["shared/*"],
+      "@hooks/*": ["hooks/*"],
+      "@services/*": ["services/*"],
+      "@stores/*": ["stores/*"],
+      "@theme/*": ["theme/*"],
+      "@models/*": ["models/*"],
+      "@utils/*": ["utils/*"],
+      "@config/*": ["config/*"],
+      "@business/*": ["business/*"],
+      "@navigation/*": ["navigation/*"],
+      "@constants/*": ["constants/*"],
+      "@types/*": ["types/*"]
+    },
+    "types": [
+      "react",
+      "react-native",
+      "jest"
+    ]
+  },
+  "include": [
+    "*.ts",
+    "*.tsx",
+    "*.js",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js"
+  ],
+  "extends": "expo/tsconfig.base"
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Notifications",
+  "titlePart1": "Vos",
+  "titlePart2": "Notifications",
+  "noNotification": "Vous n'avez aucune notification",
+  "markAllRead": "Tout marquer comme lu",
+  "delete": "Supprimer",
+  "types": {
+    "reminder": "Rappel",
+    "update": "Mise à jour",
+    "info": "Information"
+  }
+}

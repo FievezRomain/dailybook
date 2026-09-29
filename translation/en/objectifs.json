@@ -1,0 +1,23 @@
+{
+  "title": "Objectives",
+  "addObjectif": "Add an objective",
+  "noObjectif": "No objectives yet. Set yourself a challenge!",
+  "name": "Objective",
+  "description": "Description",
+  "dueDate": "Due date",
+  "status": "Status",
+  "animal": "Animal",
+  "saved": "Objective saved ✓",
+  "deleted": "Objective deleted",
+  "completed": "Objective reached! Well done 🏆",
+  "deleteObjectif": "Delete this objective?",
+  "statuses": {
+    "todo": "To do",
+    "inProgress": "In progress",
+    "done": "Done"
+  },
+  "addButton": "+ Add",
+  "noObjectifYet": "No objectives yet",
+  "noObjectifSubtext": "Set yourself a first goal!",
+  "steps": "{{done}}/{{total}} steps"
+}

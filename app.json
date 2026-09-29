@@ -2,8 +2,11 @@
   "expo": {
     "name": "Vasco",
     "slug": "dailybook",
-    "version": "1.1.6",
-    "sdkVersion": "52.0.0",
+    "version": "2.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "sdkVersion": "54.0.0",
     "orientation": "portrait",
     "newArchEnabled": true,
     "icon": "./assets/icon.png",
@@ -15,11 +18,17 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/9733b21a-2b6a-413e-98ff-c4fdc8c1765d"
+    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.vascoandco.vasco.ios",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "buildNumber": "1.1.6",
+      "buildNumber": "2.0.0",
+      "usesAppleSignIn": true,
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
         "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
@@ -27,8 +36,12 @@
         "NSPushNotificationsUsageDescription": "Cette application utilise des notifications pour vous envoyer des mises à jour importantes.",
         "UIBackgroundModes": [
           "fetch",
+          "remote-notification",
+          "fetch",
           "remote-notification"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSFaceIDUsageDescription": "Cette application utilise Face ID pour sécuriser vos données."
       }
     },
     "android": {
@@ -38,22 +51,28 @@
       },
       "package": "com.vascoandco.vasco.android",
       "googleServicesFile": "./google-services.json",
-      "versionCode": 19,
+      "versionCode": 25,
       "permissions": [
-        "WAKE_LOCK",
-        "RECEIVE_BOOT_COMPLETED",
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
+        "android.permission.WAKE_LOCK",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.CAMERA",
+        "android.permission.READ_EXTERNAL_STORAGE",
         "com.google.android.c2dm.permission.RECEIVE",
-        "INTERNET",
-        "ACCESS_NETWORK_STATE",
-        "ACCESS_WIFI_STATE"
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.ACCESS_WIFI_STATE",
+        "android.permission.RECORD_AUDIO",
+        "com.google.android.gms.permission.AD_ID"
       ],
       "statusBar": {
         "backgroundColor": "#ffffff",
         "translucent": true,
         "style": "dark-content"
       }
+    },
+    "androidNavigationBar": {
+      "backgroundColor": "#FFFFFF",
+      "barStyle": "dark-content"
     },
     "web": {
       "favicon": "./assets/icon.png"
@@ -85,7 +104,27 @@
         }
       ],
       "expo-tracking-transparency",
-      "expo-localization"
+      [
+        "expo-localization",
+        {
+          "supportedLocales": ["fr"]
+        }
+      ],
+      "expo-updates",
+      "expo-apple-authentication",
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "Vasco utilise le micro uniquement pour enregistrer la note vocale que vous choisissez de créer.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.592615799562-hjtrr6anli4uhkqudlp46d4v0pdo7v4i"
+        }
+      ]
     ]
   }
 }

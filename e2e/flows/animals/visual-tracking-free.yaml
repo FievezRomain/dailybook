@@ -1,0 +1,13 @@
+appId: com.vascoandco.vasco.ios
+name: Animaux - suivi visuel verrouillé pour un compte gratuit
+---
+- runFlow: ../auth/login.yaml
+- tapOn:
+    id: "main-tabs-animals"
+- tapOn: "Physique"
+- assertVisible:
+    id: "visual-tracking-premium-gate"
+- assertVisible: "Suivi visuel Premium"
+- tapOn: "Comparer les offres"
+- assertVisible:
+    id: "visual-tracking-plans-comparison"

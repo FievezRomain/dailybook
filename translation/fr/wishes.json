@@ -1,0 +1,13 @@
+{
+  "title": "Liste de souhaits",
+  "addWish": "Ajouter un souhait",
+  "noWish": "Aucun souhait pour le moment",
+  "name": "Nom",
+  "price": "Prix",
+  "link": "Lien",
+  "acquired": "Acquis",
+  "notAcquired": "Non acquis",
+  "saved": "Souhait enregistré ✓",
+  "deleted": "Souhait supprimé",
+  "deleteWish": "Supprimer ce souhait ?"
+}

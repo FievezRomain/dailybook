@@ -1,0 +1,11 @@
+appId: com.vascoandco.vasco.ios
+name: Logout - user signs out
+---
+- runFlow: login.yaml
+
+- tapOn:
+    id: "menu-profile"
+
+- tapOn: "Déconnexion"
+
+- assertVisible: "Se connecter"

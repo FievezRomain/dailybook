@@ -1,0 +1,161 @@
+name: "🔍 Quality Gate"
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  quality:
+    name: Lint · Types · Security · Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Setup ───────────────────────────────────────────────
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      # ── ESLint (lint) ────────────────────────────────────────
+      - name: "🧹 ESLint – Lint"
+        id: lint
+        continue-on-error: true
+        run: |
+          set +e
+          OUTPUT=$(npx eslint . --ext .ts,.tsx --max-warnings 0 2>&1)
+          EXIT=$?
+          echo "exit=$EXIT" >> "$GITHUB_OUTPUT"
+          {
+            echo "log<<LINT_EOF"
+            echo "$OUTPUT"
+            echo "LINT_EOF"
+          } >> "$GITHUB_OUTPUT"
+          exit $EXIT
+
+      # ── TypeScript (types) ──────────────────────────────────
+      - name: "🏷️ TypeScript – Type checking"
+        id: types
+        continue-on-error: true
+        run: |
+          set +e
+          OUTPUT=$(npx tsc --noEmit 2>&1)
+          EXIT=$?
+          echo "exit=$EXIT" >> "$GITHUB_OUTPUT"
+          {
+            echo "log<<TYPES_EOF"
+            echo "$OUTPUT"
+            echo "TYPES_EOF"
+          } >> "$GITHUB_OUTPUT"
+          exit $EXIT
+
+      # ── npm audit (security) ────────────────────────────────
+      - name: "🔒 npm audit – Security"
+        id: security
+        continue-on-error: true
+        run: |
+          set +e
+          OUTPUT=$(npm audit --audit-level=high 2>&1)
+          EXIT=$?
+          echo "exit=$EXIT" >> "$GITHUB_OUTPUT"
+          {
+            echo "log<<SEC_EOF"
+            echo "$OUTPUT"
+            echo "SEC_EOF"
+          } >> "$GITHUB_OUTPUT"
+          exit $EXIT
+
+      # ── Jest + Coverage ─────────────────────────────────────
+      - name: "🧪 Jest – Tests & Coverage"
+        id: tests
+        continue-on-error: true
+        run: |
+          set +e
+          OUTPUT=$(npx jest --coverage --passWithNoTests 2>&1)
+          EXIT=$?
+          echo "exit=$EXIT" >> "$GITHUB_OUTPUT"
+          {
+            echo "log<<TEST_EOF"
+            echo "$OUTPUT"
+            echo "TEST_EOF"
+          } >> "$GITHUB_OUTPUT"
+          exit $EXIT
+
+      # ── PR Comment ──────────────────────────────────────────
+      - name: "💬 Post quality report on PR"
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const steps = {
+              lint:     { label: '🧹 Lint (ESLint)' },
+              types:    { label: '🏷️ Types (TypeScript)' },
+              security: { label: '🔒 Security (npm audit)' },
+              tests:    { label: '🧪 Tests & Coverage' },
+            };
+
+            const outcomes = {
+              lint:     '${{ steps.lint.outcome }}',
+              types:    '${{ steps.types.outcome }}',
+              security: '${{ steps.security.outcome }}',
+              tests:    '${{ steps.tests.outcome }}',
+            };
+
+            const logs = {
+              lint:     `${{ steps.lint.outputs.log     || '' }}`,
+              types:    `${{ steps.types.outputs.log    || '' }}`,
+              security: `${{ steps.security.outputs.log || '' }}`,
+              tests:    `${{ steps.tests.outputs.log    || '' }}`,
+            };
+
+            const icon = (o) => o === 'success' ? '✅' : '❌';
+            const allPassed = Object.values(outcomes).every(o => o === 'success');
+
+            let body = `## ${allPassed ? '✅' : '❌'} Quality Gate Report\n\n`;
+            body += `| Check | Status |\n|-------|--------|\n`;
+
+            for (const [key, meta] of Object.entries(steps)) {
+              body += `| ${meta.label} | ${icon(outcomes[key])} |\n`;
+            }
+
+            body += '\n';
+
+            for (const [key, meta] of Object.entries(steps)) {
+              if (outcomes[key] !== 'success' && logs[key]) {
+                body += `<details><summary>${meta.label} — details</summary>\n\n\`\`\`\n${logs[key].slice(0, 8000)}\n\`\`\`\n</details>\n\n`;
+              }
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const existing = comments.find(c => c.body.includes('Quality Gate Report'));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+            if (!allPassed) core.setFailed('Quality gate failed');

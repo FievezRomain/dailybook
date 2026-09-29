@@ -1,0 +1,21 @@
+{
+  "title": "Performances",
+  "noData": "Aucune donnée pour le moment",
+  "weight": "Poids",
+  "height": "Taille",
+  "training": "Entraînements",
+  "competition": "Concours",
+  "walk": "Balades",
+  "feeding": "Alimentation",
+  "expenses": "Dépenses",
+  "addEntry": "Ajouter une mesure",
+  "date": "Date",
+  "value": "Valeur",
+  "unit": "Unité",
+  "kg": "kg",
+  "cm": "cm",
+  "km": "km",
+  "eur": "€",
+  "saved": "Entrée enregistrée ✓",
+  "deleted": "Entrée supprimée"
+}

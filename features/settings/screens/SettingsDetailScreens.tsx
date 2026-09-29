@@ -1,0 +1,74 @@
+import { useEffect, useState } from 'react';
+import { Linking, Text, View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import Constants from 'expo-constants';
+import { Avatar, Banner, BottomBar, Button, Dialog, PasswordField, RootScreen, Switch, TextField, TopBar } from '../../../shared/components/ui';
+import { tabs, type MainTabId } from '../../home/mainTabs';
+import { getInitials } from '../../home/homeUtils';
+import { useAuthStore } from '../../../stores/useAuthStore';
+import { useThemeStore } from '../../../stores/useThemeStore';
+import { useAppTheme } from '../../../theme/useAppTheme';
+import { radii, spacing, typography } from '../../../theme/scales';
+import { FileService } from '../../../services/api/FileService';
+import { updateMe } from '../../../services/api/AuthService';
+import { authService } from '../../../services/auth/FirebaseAuthService';
+import { SettingsRow } from '../components/SettingsRow';
+
+interface BaseProps { activeTab: MainTabId; onSelectTab: (tab: MainTabId) => void; onBack: () => void }
+function SettingsScreen({ title, subtitle, children, ...props }: BaseProps & { title: string; subtitle: string; children: React.ReactNode }) { const { colors } = useAppTheme(); return <RootScreen keyboardAware header={<TopBar title={title} context="detail" onBack={props.onBack} />} bottomBar={<BottomBar items={tabs} activeId={props.activeTab} onSelect={props.onSelectTab} testID="main-tabs" />} contentContainerStyle={{ gap: spacing.lg }}><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{subtitle}</Text>{children}</RootScreen>; }
+function InfoPanel({ title, message }: { title: string; message: string }) { const { colors } = useAppTheme(); return <View style={{ gap: 6, padding: spacing.lg, borderRadius: radii.lg, backgroundColor: colors.surfaceVariant }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.md }}>{title}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs, lineHeight: 18 }}>{message}</Text></View>; }
+
+export function SettingsProfileScreen(props: BaseProps) {
+  const user = useAuthStore((s) => s.user); const firebasePhotoUrl = useAuthStore((s) => s.firebaseUser?.photoURL); const setUser = useAuthStore((s) => s.setUser); const [name, setName] = useState(user?.prenom ?? ''); const [email, setEmail] = useState(user?.email ?? ''); const [imageUrl, setImageUrl] = useState<string>(); const [imageDraft, setImageDraft] = useState<{ uri: string; filename: string; mime: string }>(); const [saving, setSaving] = useState(false); const [feedback, setFeedback] = useState<{ tone: 'success' | 'error'; message: string }>();
+  useEffect(() => { if (user?.filename && user.id) void FileService.getDownloadUrl(user.filename, 'user', user.id).then(setImageUrl).catch(() => undefined); }, [user?.filename, user?.id]);
+  const pickImage = async () => { const permission = await ImagePicker.requestMediaLibraryPermissionsAsync(); if (!permission.granted) return; const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: true, aspect: [1, 1], quality: 0.8 }); if (result.canceled) return; const asset = result.assets[0]; setImageDraft({ uri: asset.uri, filename: asset.fileName || `profil-${Date.now()}.jpg`, mime: asset.mimeType || 'image/jpeg' }); setImageUrl(asset.uri); };
+  const save = async () => { if (!user || !name.trim() || !email.trim()) return; setSaving(true); setFeedback(undefined); try { let filename = user.filename; if (imageDraft) filename = await FileService.upload(imageDraft.uri, imageDraft.filename, imageDraft.mime, 'user', user.id); if (email.trim() !== user.email) await authService.updateEmail(email.trim()); await authService.updateProfile({ displayName: name.trim(), photoURL: imageUrl }); const profile = await updateMe({ prenom: name.trim(), newEmail: email.trim() !== user.email ? email.trim() : undefined, image: filename }); setUser({ ...profile, subscription: user.subscription }); setImageDraft(undefined); setFeedback({ tone: 'success', message: 'Vos informations ont été enregistrées.' }); } catch { setFeedback({ tone: 'error', message: 'Le profil n’a pas pu être mis à jour. Réessayez.' }); } finally { setSaving(false); } };
+  return <SettingsScreen {...props} title="Profil" subtitle="Informations utilisées dans Vasco">{feedback ? <Banner title={feedback.tone === 'success' ? 'Profil enregistré' : 'Action impossible'} message={feedback.message} tone={feedback.tone} /> : null}<View style={{ alignItems: 'center', gap: spacing.sm }}><Avatar initials={getInitials(name)} imageUrl={imageUrl} fallbackImageUrl={firebasePhotoUrl} accessibilityLabel="Photo de profil" size={92} /><Button label="Modifier la photo" variant="ghost" fullWidth onPress={() => void pickImage()} /></View><TextField label="Nom" value={name} onChangeText={setName} autoCapitalize="words" /><TextField label="Adresse e-mail" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" /><Button label="Enregistrer" loading={saving} fullWidth onPress={() => void save()} /></SettingsScreen>;
+}
+
+export function SettingsAppearanceScreen(props: BaseProps) { const preference = useThemeStore((s) => s.preference); const setPreference = useThemeStore((s) => s.setPreference); return <SettingsScreen {...props} title="Apparence" subtitle="Adaptez Vasco à votre système"><SettingToggle title="Suivre le système" subtitle="Recommandé : utilise le réglage du téléphone" value={preference === 'system'} onChange={(v) => setPreference(v ? 'system' : 'light')} /><SettingToggle title="Mode sombre" subtitle="Disponible lorsque le système ne pilote pas le thème" value={preference === 'dark'} disabled={preference === 'system'} onChange={(v) => setPreference(v ? 'dark' : 'light')} /></SettingsScreen>; }
+function SettingToggle({ title, subtitle, value, onChange, disabled }: { title: string; subtitle: string; value: boolean; onChange: (v: boolean) => void; disabled?: boolean }) { const { colors } = useAppTheme(); return <View style={{ minHeight: 66, flexDirection: 'row', alignItems: 'center', gap: spacing.md, padding: spacing.md, borderRadius: radii.lg, backgroundColor: colors.surface }}><View style={{ flex: 1, gap: 3 }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{title}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{subtitle}</Text></View><Switch value={value} onValueChange={onChange} accessibilityLabel={title} disabled={disabled} /></View>; }
+
+export function SettingsSecurityScreen(props: BaseProps & { onChangePassword: () => void }) { return <SettingsScreen {...props} title="Sécurité" subtitle="Protégez l’accès à votre compte"><SettingsRow title="Modifier le mot de passe" subtitle="Mot de passe actuel requis" onPress={props.onChangePassword} /><InfoPanel title="Conseil" message="Utilisez un mot de passe unique." /></SettingsScreen>; }
+export function SettingsChangePasswordScreen(props: BaseProps) { const user = useAuthStore((s) => s.user); const [current, setCurrent] = useState(''); const [next, setNext] = useState(''); const [confirm, setConfirm] = useState(''); const [error, setError] = useState<string>(); const [saving, setSaving] = useState(false); const valid = next.length >= 12 && /[a-z]/.test(next) && /[A-Z]/.test(next) && /\d/.test(next) && /[^\w]/.test(next) && next === confirm; const submit = async () => { if (!user || !valid) return; setSaving(true); setError(undefined); try { await authService.reauthenticate(user.email, current); await authService.updatePassword(next); props.onBack(); } catch { setError('Le mot de passe actuel est incorrect ou la mise à jour a échoué.'); } finally { setSaving(false); } }; return <SettingsScreen {...props} title="Changer le mot de passe" subtitle="Votre mot de passe actuel est nécessaire">{error ? <Banner title="Mise à jour impossible" message={error} tone="error" /> : null}<TextField label="Mot de passe actuel" value={current} onChangeText={setCurrent} secureTextEntry /><TextField label="Nouveau mot de passe" value={next} onChangeText={setNext} secureTextEntry /><TextField label="Confirmer le mot de passe" value={confirm} onChangeText={setConfirm} secureTextEntry errorMessage={confirm && next !== confirm ? 'Les mots de passe ne correspondent pas.' : undefined} /><InfoPanel title="Mot de passe robuste" message="12 caractères minimum · une majuscule et une minuscule · un chiffre et un caractère spécial" /><Button label="Mettre à jour" disabled={!current || !valid} loading={saving} onPress={() => void submit()} style={{ alignSelf: 'center' }} /></SettingsScreen>; }
+function getAccountDeletionErrorMessage(error: unknown): string {
+  const value = error as { code?: string; message?: string };
+  const code = `${value.code ?? ''} ${value.message ?? ''}`.toLowerCase();
+  if (code.includes('wrong-password') || code.includes('invalid-credential') || code.includes('missing-password')) return 'Le mot de passe saisi est incorrect.';
+  if (code.includes('cancel') || code.includes('1001')) return 'La réauthentification a été annulée. Votre compte n’a pas été supprimé.';
+  if (code.includes('network')) return 'La connexion au service d’authentification a échoué. Vérifiez votre réseau puis réessayez.';
+  if (code.includes('unsupported-provider') || code.includes('unavailable')) return 'Ce mode de connexion ne permet pas la réauthentification sur cet appareil.';
+  return 'Votre identité n’a pas pu être confirmée. Votre compte n’a pas été supprimé.';
+}
+
+export function SettingsPrivacyScreen(props: BaseProps) {
+  const method = authService.getReauthenticationMethod();
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string>();
+  const removeAccount = async () => {
+    await authService.reauthenticateCurrentUser(method === 'password' ? password : undefined);
+    await authService.deleteCurrentUser();
+  };
+  const handleError = (cause: unknown) => {
+    setConfirmationOpen(false);
+    setPassword('');
+    setError(getAccountDeletionErrorMessage(cause));
+  };
+  return <>
+    <SettingsScreen {...props} title="Données et confidentialité" subtitle="Gardez le contrôle sur vos informations">
+      {error ? <Banner tone="error" title="Suppression impossible" message={error} onDismiss={() => setError(undefined)} /> : null}
+      {method === 'password' ? <PasswordField label="Mot de passe actuel" helperText="Nécessaire pour confirmer votre identité" value={password} onChangeText={setPassword} textContentType="password" returnKeyType="done" /> : null}
+      {method === 'unsupported' ? <Banner tone="error" title="Réauthentification indisponible" message="Déconnectez-vous puis reconnectez-vous avec le fournisseur associé à votre compte." /> : null}
+      <Button label="Supprimer mon compte" variant="destructive" disabled={method === 'unsupported' || (method === 'password' && !password)} onPress={() => { setError(undefined); setConfirmationOpen(true); }} style={{ alignSelf: 'center' }} />
+    </SettingsScreen>
+    <Dialog open={confirmationOpen} type="destructive" title="Supprimer votre compte ?" description="Cette action supprimera définitivement votre accès à Vasco. Vos données applicatives seront conservées pour le moment." confirmLabel="Supprimer définitivement" onClose={() => setConfirmationOpen(false)} onConfirm={removeAccount} onError={handleError} />
+  </>;
+}
+export function SettingsHelpScreen(props: BaseProps) {
+  return <SettingsScreen {...props} title="Aide" subtitle="Nous sommes là pour vous accompagner">
+    <SettingsRow title="Contacter le support" subtitle="contact@vascoandco.com" onPress={() => void Linking.openURL('mailto:contact@vascoandco.com')} />
+    <SettingsRow title="Retrouver toutes les informations" subtitle="Vous pouvez retrouver toutes nos informations sur le site Vasco and Co." subtitleNumberOfLines={2} onPress={() => void Linking.openURL('https://www.vascoandco.fr/')} />
+    <SettingsRow title="À propos de Vasco" subtitle={`Version ${Constants.expoConfig?.version ?? ''}`} />
+  </SettingsScreen>;
+}
