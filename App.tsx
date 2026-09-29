@@ -2,8 +2,10 @@ import './config/i18n';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import * as Sentry from '@sentry/react-native';
 import * as Font from 'expo-font';
 import * as NavigationBar from 'expo-navigation-bar';
+import * as Updates from 'expo-updates';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { Appearance, Platform, View } from 'react-native';
@@ -19,6 +21,20 @@ import tamaguiConfig from './theme/tamagui.config';
 import { darkTokens, lightTokens } from './theme/tokens';
 import { parseApiError } from './utils/errorParser';
 import { NotificationRuntime } from './services/notifications/NotificationRuntime';
+import { env } from './config/env';
+
+const sentryEnabled = !env.IS_DEV && Boolean(env.SENTRY_DSN);
+
+if (sentryEnabled) {
+  Sentry.init({
+    dsn: env.SENTRY_DSN,
+    enabled: true,
+    environment: Updates.channel ?? 'production',
+    release: Updates.runtimeVersion ? `vasco@${Updates.runtimeVersion}` : undefined,
+    sendDefaultPii: false,
+    tracesSampleRate: 0.1,
+  });
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -98,4 +114,4 @@ function App() {
   );
 }
 
-export default App;
+export default sentryEnabled ? Sentry.wrap(App) : App;
