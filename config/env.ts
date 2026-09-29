@@ -23,6 +23,10 @@ function requiredInProduction(name: string, value: string | undefined): string {
 export const env = {
   IS_DEV,
 
+  // Fonctionnalités intelligentes masquées par défaut jusqu'à leur réactivation produit.
+  INTELLIGENT_FEATURES_ENABLED:
+    process.env.EXPO_PUBLIC_INTELLIGENT_FEATURES_ENABLED === 'true',
+
   // URL de l'API - commute automatiquement dev/prod.
   API_URL: IS_DEV
     ? (process.env.EXPO_PUBLIC_API_URL_DEV ?? 'http://localhost:8080/api/v1')

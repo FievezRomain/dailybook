@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from 'react-native';
+import { env } from '../../../config/env';
 import { FormSheet, Icon, type VascoIconName } from '../../../shared/components/ui';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -24,6 +25,6 @@ export function NoteCreateEntryScreen({ onBack, onWritten, onVoice }: Props) {
       <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control }}>Vous pourrez vérifier votre note avant son enregistrement.</Text>
     </View>
     <EntryCard icon="add" title="Créer une note écrite" description="Saisissez et mettez en forme votre note manuellement." onPress={onWritten} />
-    <EntryCard icon="microphone" title="Dicter avec l’IA" description="Enregistrez une note vocale puis vérifiez sa transcription." onPress={onVoice} />
+    {env.INTELLIGENT_FEATURES_ENABLED ? <EntryCard icon="microphone" title="Dictée intelligente" description="Enregistrez une note vocale puis vérifiez sa transcription." onPress={onVoice} /> : null}
   </FormSheet>;
 }

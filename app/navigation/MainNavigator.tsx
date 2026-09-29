@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { View } from "react-native";
+import { env } from "../../config/env";
 import {
   AnimalActionDialogs,
   AnimalFormSheetScreen,
@@ -223,13 +224,21 @@ export function MainNavigator() {
       return;
     }
     if (target === "note") {
-      setRoute({ name: "noteCreateChoice" });
+      setRoute(
+        env.INTELLIGENT_FEATURES_ENABLED
+          ? { name: "noteCreateChoice" }
+          : { name: "noteForm", mode: "create" },
+      );
       return;
     }
     if (target !== "event") return;
     resetWizard();
     if (initialEventDate) setEventWizardFormData({ dateevent: initialEventDate });
-    setRoute({ name: "eventCreateEntry" });
+    setRoute(
+      env.INTELLIGENT_FEATURES_ENABLED
+        ? { name: "eventCreateEntry" }
+        : { name: "eventCreateType" },
+    );
   };
   const agenda = () => {
     resetWizard();
@@ -256,7 +265,13 @@ export function MainNavigator() {
       onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
       onSelectTab={selectTab}
       onOpenNote={(noteId) => setRoute({ name: "note", noteId })}
-      onCreateNote={() => setRoute({ name: "noteCreateChoice" })}
+      onCreateNote={() =>
+        setRoute(
+          env.INTELLIGENT_FEATURES_ENABLED
+            ? { name: "noteCreateChoice" }
+            : { name: "noteForm", mode: "create" },
+        )
+      }
       onCreate={create}
       onNotifications={openNotifications}
       onAccount={openSettings}
@@ -1144,7 +1159,13 @@ export function MainNavigator() {
         {rootContext()}
         <FormSheetHost>
           <EventCreateTypeScreen
-            onBack={() => setRoute({ name: "eventCreateEntry" })}
+            onBack={() =>
+              setRoute(
+                env.INTELLIGENT_FEATURES_ENABLED
+                  ? { name: "eventCreateEntry" }
+                  : { name: "root" },
+              )
+            }
             onClose={() => {
               resetWizard();
               setRoute({ name: "root" });

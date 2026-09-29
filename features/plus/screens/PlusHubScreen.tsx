@@ -40,7 +40,7 @@ export function PlusHubScreen({ material = 'solid', onSelectTab, onGroups, onCon
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
         <PlusHubItem title="Groupes" description="Espaces partagés" icon="group" onPress={onGroups} material={material} testID="plus-groups" />
         <PlusHubItem title="Contacts" description="Personnes utiles" icon="contact" onPress={onContacts} material={material} testID="plus-contacts" />
-        <PlusHubItem title="Notes" description="Textes et notes vocales" icon="note" onPress={onNotes} material={material} testID="plus-notes" />
+        <PlusHubItem title="Notes" description="Textes et informations utiles" icon="note" onPress={onNotes} material={material} testID="plus-notes" />
         <PlusHubItem title="Souhaits" description="Idées et envies" icon="heart" onPress={onWishes} material={material} testID="plus-wishes" />
       </View>
     </RootScreen>
