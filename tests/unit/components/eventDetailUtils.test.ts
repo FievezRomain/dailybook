@@ -29,7 +29,6 @@ describe('event detail information', () => {
       Type: 'Concours',
       État: 'Terminé',
       Animaux: 'Vasco',
-      Lieu: 'Namur',
       Discipline: 'Agility',
       Épreuve: 'Club 1',
       Dossard: '24',
@@ -65,5 +64,23 @@ describe('event detail information', () => {
     expect(labels).not.toContain('Classement');
     expect(labels).not.toContain('Spécialiste');
     expect(labels).not.toContain('Catégorie de dépense');
+  });
+
+  it('calcule la durée d’une balade à partir de ses heures de début et de fin', () => {
+    const event = {
+      id: 9,
+      nom: 'Balade en forêt',
+      dateevent: '2026-08-22',
+      heuredebutevent: '09:15',
+      datefinbalade: '2026-08-22',
+      heurefinbalade: '11:00',
+      animaux: [1],
+      eventtype: 'balade',
+    } as Event;
+
+    expect(Object.fromEntries(getEventDetailRows(event, ['Vasco']).map((row) => [row.label, row.value]))).toMatchObject({
+      'Fin de la balade': '22 août 2026 · 11 h 00',
+      'Durée de la balade': '1 h 45 min',
+    });
   });
 });

@@ -26,8 +26,10 @@ export function EventCreateTypeScreen({ onBack, onContinue, onClose = onBack }: 
     <View accessibilityRole="radiogroup" style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md }}>
       {eventCreateTypes.map((type) => {
         const active = selected === type.id;
-        return <Pressable key={type.id} accessibilityRole="radio" accessibilityLabel={type.label} accessibilityState={{ checked: active }} onPress={() => select(type.id)} style={({ pressed }) => ({ width: type.id === 'autre' ? '100%' : '47.5%', minHeight: type.id === 'rdv' ? 108 : 96, flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, padding: spacing.md, borderRadius: radii.lg, borderWidth: active ? 2 : 1, borderColor: active ? colors.primary : colors.border, backgroundColor: colors.surface, opacity: pressed ? 0.82 : 1 })}>
-          <Icon name={type.icon} size="lg" color={active ? colors.primary : colors.textPrimary} />
+        const accent = colors[type.color];
+        return <Pressable key={type.id} accessibilityRole="radio" accessibilityLabel={type.label} accessibilityState={{ checked: active }} onPress={() => select(type.id)} style={({ pressed }) => ({ width: type.id === 'autre' ? '100%' : '47.5%', minHeight: type.id === 'rdv' ? 108 : 96, overflow: 'hidden', flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, padding: spacing.md, paddingLeft: spacing.lg, borderRadius: radii.lg, borderWidth: active ? 2 : 1, borderColor: active ? accent : colors.border, backgroundColor: colors.surface, opacity: pressed ? 0.82 : 1 })}>
+          <View accessibilityElementsHidden style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 5, backgroundColor: accent }} />
+          <Icon name={type.icon} size="lg" color={accent} />
           {type.id === 'rdv' ? <View style={{ flex: 1, paddingTop: spacing.xs }}><Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65} maxFontSizeMultiplier={1.2} style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, lineHeight: 22 }}>Rendez-vous</Text><Text numberOfLines={1} maxFontSizeMultiplier={1.2} style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, lineHeight: 22 }}>médical</Text></View> : <Text numberOfLines={1} style={{ flex: 1, color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, lineHeight: 22, paddingTop: spacing.xs }}>{type.label}</Text>}
         </Pressable>;
       })}

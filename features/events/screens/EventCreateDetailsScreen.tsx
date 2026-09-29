@@ -68,7 +68,7 @@ export function EventCreateDetailsScreen({ onBack, onContinue, onClose = onBack,
   });
 
   return <>
-    <FormSheet title={config.title} onBack={onBack} onClose={onClose} dirty={Object.keys(formData).length > 0} footerLabel={editScope === 'occurrence' || editScope === 'following' ? 'Continuer' : 'Choisir les animaux'} onFooterPress={next} testID="event-create-details">
+    <FormSheet title={config.title.toLocaleUpperCase('fr-FR')} onBack={onBack} onClose={onClose} dirty={Object.keys(formData).length > 0} footerLabel={editScope === 'occurrence' || editScope === 'following' ? 'Continuer' : 'Choisir les animaux'} onFooterPress={next} testID="event-create-details">
       <LinearProgress current={editScope ? 1 : 2} total={editScope === 'series' ? 3 : editScope ? 2 : 4} label={editScope === 'series' ? 'Étape 1 sur 3' : editScope ? 'Étape 1 sur 2' : 'Étape 2 sur 4'} />
       <View style={{ gap: spacing.xs }}>
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>État</Text>
@@ -76,7 +76,7 @@ export function EventCreateDetailsScreen({ onBack, onContinue, onClose = onBack,
       </View>
       {editScope === 'occurrence' || editScope === 'following' ? null : <TextField autoFocus label={config.nameLabel} placeholder={config.namePlaceholder} value={formData.nom ?? ''} required={config.nameRequired} helperText={config.nameRequired ? 'Obligatoire' : 'Facultatif'} errorMessage={showErrors && config.nameRequired && !formData.nom?.trim() ? 'Renseignez un intitulé.' : undefined} onChangeText={(value) => setField('nom', value)} containerStyle={{ marginTop: spacing.lg }} />}
       {editScope === 'series' ? null : <DateTimeField kind="date" label="Date" placeholder="Choisir une date" value={formatDate(formData.dateevent)} required helperText="Obligatoire" errorMessage={showErrors && !formData.dateevent ? 'Choisissez une date.' : undefined} onPress={() => setCalendarField('dateevent')} />}
-      {editScope === 'series' ? null : <DateTimeField kind="time" label="Heure" placeholder="Choisir une heure" value={formatTime(formData.heuredebutevent)} helperText="Facultatif" onPress={() => openTime('heuredebutevent')} />}
+      {editScope === 'series' ? null : <DateTimeField kind="time" label={formData.eventType === 'balade' ? 'Heure de début' : 'Heure'} placeholder="Choisir une heure" value={formatTime(formData.heuredebutevent)} helperText="Facultatif" onPress={() => openTime('heuredebutevent')} />}
       {visibleFields.map(renderField)}
       {recurrentType && editScope !== 'occurrence' ? <Select label="Répétition" placeholder="Choisir une fréquence" value={getRecurrenceLabel(recurrence)} helperText={recurrence === 'none' ? 'Facultatif' : 'Jusqu’à la date de fin'} errorMessage={showErrors && recurrence !== 'none' && !recurrenceEnd ? 'Choisissez une date de fin.' : showErrors && recurrence !== 'none' && recurrenceEnd && formData.dateevent && recurrenceEnd < formData.dateevent ? 'La date de fin doit suivre la date de début.' : undefined} onPress={() => setRecurrenceOpen(true)} /> : null}
       {editScope && editScope !== 'occurrence' ? null : <TextArea label="Description" placeholder="Ajoutez les informations utiles…" value={formData.commentaire ?? ''} helperText={`${formData.commentaire?.length ?? 0}/500`} maxLength={500} onChangeText={(value) => setField('commentaire', value)} />}

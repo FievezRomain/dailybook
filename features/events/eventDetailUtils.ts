@@ -9,6 +9,13 @@ export interface EventDetailRow {
 }
 
 type EventValues = Event & Record<string, unknown>;
+type WalkTiming = {
+  dateevent: string;
+  heuredebutevent?: string;
+  heuredebutbalade?: string;
+  datefinbalade?: string;
+  heurefinbalade?: string;
+};
 
 export function getEventDetailRows(event: Event, animalNames: readonly string[]): EventDetailRow[] {
   const source = event as EventValues;
@@ -30,6 +37,8 @@ export function getEventDetailRows(event: Event, animalNames: readonly string[])
   if (supports('datefinsoins')) add('Fin du traitement', source.datefinsoins, formatDate);
   if (supports('datefinbalade') || supports('heurefinbalade')) {
     if (source.datefinbalade || source.heurefinbalade) rows.push({ label: 'Fin de la balade', value: formatOptionalDateAndTime(source.datefinbalade, source.heurefinbalade) });
+    const duration = formatWalkDuration(event);
+    if (duration) rows.push({ label: 'Durée de la balade', value: duration });
   }
   if (supports('discipline')) add('Discipline', source.discipline);
   if (supports('epreuve')) add('Épreuve', source.epreuve);
@@ -38,7 +47,7 @@ export function getEventDetailRows(event: Event, animalNames: readonly string[])
   if (supports('note')) add('Note', source.note, formatRating);
   if (supports('depense')) add('Dépense', event.depense, formatExpense);
   if (supports('categoriedepense')) add('Catégorie de dépense', source.categoriedepense, formatExpenseCategory);
-  if (event.frequencevalue && event.frequencevalue !== 'none') add('Répétition', event.frequencevalue, getRecurrenceLabel);
+  if (event.frequencevalue && event.frequencevalue !== 'none') add('Répétition', event.frequencevalue, (value) => getRecurrenceLabel(String(value)));
   add('Rappel', event.optionnotif ?? event.optionnotification ?? event.notif);
   add('Rappel annuel', event.rappelnotification, formatAnnualReminder);
   if ((event.eventtype === 'soins' || event.eventtype === 'rdv') && event.todisplay !== undefined) add('Dossier médical', event.todisplay, formatMedicalVisibility);
@@ -48,6 +57,33 @@ export function getEventDetailRows(event: Event, animalNames: readonly string[])
   add('Réalisé par', event.made_by, formatUserReference);
   add('Description', event.commentaire);
   return rows;
+}
+
+function parseDateParts(value: string) {
+  const [year, month, day] = value.slice(0, 10).split('-').map(Number);
+  return year && month && day ? Date.UTC(year, month - 1, day) : undefined;
+}
+
+function parseTimeParts(value?: string) {
+  if (!value) return undefined;
+  const [hours, minutes] = value.split(':').map(Number);
+  if (!Number.isInteger(hours) || !Number.isInteger(minutes) || hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return undefined;
+  return hours * 60 + minutes;
+}
+
+export function formatWalkDuration(event: WalkTiming) {
+  const startTime = parseTimeParts(event.heuredebutbalade || event.heuredebutevent);
+  const endTime = parseTimeParts(event.heurefinbalade);
+  const startDate = parseDateParts(event.dateevent);
+  const endDate = parseDateParts(event.datefinbalade || event.dateevent);
+  if (startTime === undefined || endTime === undefined || startDate === undefined || endDate === undefined) return undefined;
+
+  const durationMinutes = Math.round((endDate - startDate) / 86_400_000) * 1_440 + endTime - startTime;
+  if (durationMinutes <= 0) return undefined;
+
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+  return [hours ? `${hours} h` : '', minutes ? `${minutes} min` : ''].filter(Boolean).join(' ');
 }
 
 function formatDate(value: unknown) {
