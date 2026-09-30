@@ -37,7 +37,7 @@ const lng = supportedLocales.includes(deviceLocale) ? deviceLocale : 'fr';
 i18n
   .use(initReactI18next)
   .init({
-    compatibilityJSON: 'v3',
+    compatibilityJSON: 'v4',
     lng,
     fallbackLng: 'fr',
     defaultNS: 'common',

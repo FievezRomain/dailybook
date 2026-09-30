@@ -6,15 +6,8 @@
     "runtimeVersion": {
       "policy": "appVersion"
     },
-    "sdkVersion": "54.0.0",
     "orientation": "portrait",
-    "newArchEnabled": true,
     "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -63,16 +56,7 @@
         "android.permission.ACCESS_WIFI_STATE",
         "android.permission.RECORD_AUDIO",
         "com.google.android.gms.permission.AD_ID"
-      ],
-      "statusBar": {
-        "backgroundColor": "#ffffff",
-        "translucent": true,
-        "style": "dark-content"
-      }
-    },
-    "androidNavigationBar": {
-      "backgroundColor": "#FFFFFF",
-      "barStyle": "dark-content"
+      ]
     },
     "web": {
       "favicon": "./assets/icon.png"
@@ -98,7 +82,7 @@
         {
           "ios": {
             "useFrameworks": "static",
-            "deploymentTarget": "15.1",
+            "deploymentTarget": "16.4",
             "modularHeaders": true
           }
         }
@@ -107,7 +91,9 @@
       [
         "expo-localization",
         {
-          "supportedLocales": ["fr"]
+          "supportedLocales": [
+            "fr"
+          ]
         }
       ],
       "expo-updates",
@@ -123,6 +109,21 @@
         "@react-native-google-signin/google-signin",
         {
           "iosUrlScheme": "com.googleusercontent.apps.592615799562-hjtrr6anli4uhkqudlp46d4v0pdo7v4i"
+        }
+      ],
+      "@react-native-community/datetimepicker",
+      "@sentry/react-native",
+      "expo-image",
+      "expo-secure-store",
+      "expo-sharing",
+      "expo-status-bar",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "backgroundColor": "#ffffff",
+          "imageWidth": 200,
+          "resizeMode": "contain"
         }
       ]
     ]

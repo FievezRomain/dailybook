@@ -4,11 +4,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Sentry from '@sentry/react-native';
 import * as Font from 'expo-font';
-import * as NavigationBar from 'expo-navigation-bar';
 import * as Updates from 'expo-updates';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { Appearance, Platform, View } from 'react-native';
+import { Appearance, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider, Theme } from 'tamagui';
@@ -58,15 +57,6 @@ function VascoApplication() {
     const subscription = Appearance.addChangeListener(({ colorScheme }) => syncSystemTheme(colorScheme));
     return () => subscription.remove();
   }, [syncSystemTheme]);
-
-  useEffect(() => {
-    if (Platform.OS !== 'android') return;
-
-    void Promise.all([
-      NavigationBar.setBackgroundColorAsync(tokens.surface),
-      NavigationBar.setButtonStyleAsync(resolvedTheme === 'dark' ? 'light' : 'dark'),
-    ]).catch(() => undefined);
-  }, [resolvedTheme, tokens.surface]);
 
   return (
     <TamaguiProvider config={tamaguiConfig} defaultTheme={resolvedTheme}>

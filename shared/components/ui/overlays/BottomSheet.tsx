@@ -12,7 +12,7 @@ import { componentTokens } from '../../../../theme/componentTokens';
 import type { Material } from '../../../../theme/materials';
 import { radii, spacing, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
-import { getBottomSheetHeight, type BottomSheetSize } from './bottomSheetUtils';
+import { getBottomSheetCommand, getBottomSheetHeight, type BottomSheetSize } from './bottomSheetUtils';
 import { FormSheetSurface } from './FormSheetSurface';
 
 export interface VascoBottomSheetProps {
@@ -49,6 +49,7 @@ export function VascoBottomSheet({
   formHandle = false,
 }: VascoBottomSheetProps) {
   const modalRef = useRef<React.ElementRef<typeof BottomSheetModal>>(null);
+  const presentedRef = useRef(false);
   const unmountingRef = useRef(false);
   const insets = useSafeAreaInsets();
   const { colors } = useAppTheme();
@@ -57,14 +58,20 @@ export function VascoBottomSheet({
   const handleAreaHeight = formHandle ? componentTokens.formSheet.handleAreaHeight : componentTokens.bottomSheet.paddingTop + componentTokens.bottomSheet.handle.height;
 
   useEffect(() => {
-    if (open) modalRef.current?.present();
-    else modalRef.current?.dismiss();
+    const command = getBottomSheetCommand(open, presentedRef.current);
+    if (command === 'present' && modalRef.current) {
+      presentedRef.current = true;
+      modalRef.current.present();
+    } else if (command === 'dismiss' && modalRef.current) {
+      modalRef.current.dismiss();
+    }
   }, [open]);
   useEffect(() => () => {
     unmountingRef.current = true;
-    modalRef.current?.dismiss();
+    if (presentedRef.current) modalRef.current?.dismiss();
   }, []);
   const handleDismiss = useCallback(() => {
+    presentedRef.current = false;
     if (!unmountingRef.current) onClose();
   }, [onClose]);
 

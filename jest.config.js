@@ -4,7 +4,7 @@ const config = {
   setupFiles: ['<rootDir>/tests/unit/setup.ts'],
   roots: ['<rootDir>/tests/unit', '<rootDir>/features', '<rootDir>/hooks', '<rootDir>/utils'],
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { tsconfig: { jsx: 'react' } }],
+    '^.+\\.tsx?$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.test.json' }],
   },
   collectCoverageFrom: [
     'features/**/{components,hooks}/*.{ts,tsx}',
@@ -36,6 +36,8 @@ const config = {
     '^react-dom/test-utils$': '<rootDir>/node_modules/react-dom/test-utils.js',
     'httpClient': '<rootDir>/tests/__mocks__/httpClient.ts',
     '^expo-haptics$': '<rootDir>/tests/__mocks__/expoHaptics.ts',
+    '^expo-file-system/legacy$': '<rootDir>/tests/__mocks__/expoFileSystemLegacy.ts',
+    '^expo-image-manipulator$': '<rootDir>/tests/__mocks__/expoImageManipulator.ts',
     '^expo-secure-store$': '<rootDir>/tests/__mocks__/expoSecureStore.ts',
     '^react-native-toast-message$': '<rootDir>/tests/__mocks__/toastMessage.ts',
     '^@react-navigation/(.*)$': '<rootDir>/tests/__mocks__/@react-navigation/native.ts',
