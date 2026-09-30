@@ -112,7 +112,13 @@
         }
       ],
       "@react-native-community/datetimepicker",
-      "@sentry/react-native",
+      [
+        "@sentry/react-native",
+        {
+          "organization": "mydailybook",
+          "project": "mydailybook-mobile"
+        }
+      ],
       "expo-image",
       "expo-secure-store",
       "expo-sharing",
