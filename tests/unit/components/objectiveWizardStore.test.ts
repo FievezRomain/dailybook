@@ -3,9 +3,9 @@ import { useObjectiveWizardStore } from '../../../stores/useObjectiveWizardStore
 describe('objective wizard store', () => {
   beforeEach(() => useObjectiveWizardStore.getState().reset());
 
-  it('keeps the wizard within its three approved steps', () => {
+  it('keeps the wizard within its four approved steps', () => {
     useObjectiveWizardStore.getState().setStep(8);
-    expect(useObjectiveWizardStore.getState().step).toBe(2);
+    expect(useObjectiveWizardStore.getState().step).toBe(3);
     useObjectiveWizardStore.getState().setStep(-1);
     expect(useObjectiveWizardStore.getState().step).toBe(0);
   });
