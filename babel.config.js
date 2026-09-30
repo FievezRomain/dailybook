@@ -26,15 +26,6 @@ module.exports = function(api) {
         },
       ],
       'react-native-worklets/plugin',
-      [
-        '@tamagui/babel-plugin',
-        {
-          components: ['tamagui'],
-          config: './theme/tamagui.config.ts',
-          logTimings: false,
-          disableExtraction: process.env.NODE_ENV === 'development',
-        },
-      ],
     ],
   };
 };

@@ -5,7 +5,19 @@ import * as AnimalsService from '../../../services/api/AnimalsService';
 import { createQueryWrapper } from '../../../tests/utils/queryWrapper';
 import { createMockAnimal } from '../../../tests/factories/animal.factory';
 
-jest.mock('../../../services/api/AnimalsService');
+jest.mock('../../../services/api/AnimalsService', () => ({
+  getAnimals: jest.fn(),
+  getAnimalBodyPictures: jest.fn(),
+  getAnimalHistory: jest.fn(),
+  createAnimal: jest.fn(),
+  updateAnimal: jest.fn(),
+  deleteAnimal: jest.fn(),
+  createAnimalHistory: jest.fn(),
+  updateAnimalHistory: jest.fn(),
+  deleteAnimalHistory: jest.fn(),
+  addAnimalBodyPicture: jest.fn(),
+  deleteAnimalBodyPicture: jest.fn(),
+}));
 
 const mockedGetAnimals = AnimalsService.getAnimals as jest.MockedFunction<typeof AnimalsService.getAnimals>;
 const mockedCreateAnimal = AnimalsService.createAnimal as jest.MockedFunction<typeof AnimalsService.createAnimal>;
