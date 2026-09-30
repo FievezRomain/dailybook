@@ -18,6 +18,12 @@ export const recurrenceOptions = [
   { id: 'monthly', label: 'Tous les mois' },
 ] as const;
 
+export function getEventTypeRecurrenceDefaults(eventType: string) {
+  return eventType === 'soins' || eventType === 'balade'
+    ? { frequencetype: 'recurring', frequencevalue: 'daily' }
+    : { frequencetype: undefined, frequencevalue: undefined };
+}
+
 export function getRecurrenceLabel(id?: string) {
   return recurrenceOptions.find((option) => option.id === id)?.label ?? recurrenceOptions[0].label;
 }

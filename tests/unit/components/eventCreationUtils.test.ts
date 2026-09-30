@@ -1,7 +1,13 @@
-import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getReminderLabel, isPastEventDate, normalizeSharedGroupIds } from '../../../features/events/eventCreationUtils';
+import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getEventTypeRecurrenceDefaults, getReminderLabel, isPastEventDate, normalizeSharedGroupIds } from '../../../features/events/eventCreationUtils';
 import type { Event } from '../../../models/Event';
 
 describe('event creation payload', () => {
+  it('defaults recurring care and walk events to a daily recurrence', () => {
+    expect(getEventTypeRecurrenceDefaults('soins')).toEqual({ frequencetype: 'recurring', frequencevalue: 'daily' });
+    expect(getEventTypeRecurrenceDefaults('balade')).toEqual({ frequencetype: 'recurring', frequencevalue: 'daily' });
+    expect(getEventTypeRecurrenceDefaults('rdv')).toEqual({ frequencetype: undefined, frequencevalue: undefined });
+  });
+
   it('maps wizard data to the backend contract', () => {
     const payload = buildEventCreationPayload({ eventType: 'depense', nom: ' Croquettes ', dateevent: '2026-08-09', heuredebutevent: '14:30', animaux: [1], depense: '24,50', categoriedepense: 'alimentation', notif: 'JourJ', optionnotif: '30m' });
     expect(payload).toMatchObject({ eventtype: 'depense', nom: 'Croquettes', dateevent: '2026-08-09', heuredebutevent: '14:30', animaux: [1], depense: 24.5, categoriedepense: 'alimentation', notif: 'JourJ', optionnotif: '30 minutes avant' });

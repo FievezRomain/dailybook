@@ -4,6 +4,7 @@ import { eventTypePresentation } from '../../../shared/components/ui/content/dom
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { getEventTypeRecurrenceDefaults } from '../eventCreationUtils';
 
 export const eventCreateTypes = [
   { id: 'soins', description: 'Traitement, vaccin ou suivi', ...eventTypePresentation.care },
@@ -20,8 +21,11 @@ export interface EventCreateTypeScreenProps { onBack: () => void; onContinue: ()
 export function EventCreateTypeScreen({ onBack, onContinue, onClose = onBack }: EventCreateTypeScreenProps) {
   const { colors, isDark } = useAppTheme();
   const selected = useEventWizardStore((state) => state.formData.eventType);
-  const setField = useEventWizardStore((state) => state.setField);
-  const select = (id: string) => { setField('eventType', id); onContinue(); };
+  const setFormData = useEventWizardStore((state) => state.setFormData);
+  const select = (id: string) => {
+    setFormData({ eventType: id, ...getEventTypeRecurrenceDefaults(id) });
+    onContinue();
+  };
 
   return <FormSheet title="Type d’événement" onBack={onBack} onClose={onClose} dirty={Boolean(selected)} testID="event-create-type">
     <LinearProgress current={1} total={4} label="Étape 1 sur 4" />
