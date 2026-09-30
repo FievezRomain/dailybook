@@ -6,14 +6,17 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 export type ThemePreference = 'system' | 'light' | 'dark';
 export type ResolvedTheme = 'light' | 'dark';
 
-const resolveTheme = (preference: ThemePreference, systemScheme: ColorSchemeName): ResolvedTheme =>
+const resolveTheme = (
+  preference: ThemePreference,
+  systemScheme: ColorSchemeName | null | undefined,
+): ResolvedTheme =>
   preference === 'system' ? (systemScheme === 'dark' ? 'dark' : 'light') : preference;
 
 interface ThemeState {
   preference: ThemePreference;
   resolvedTheme: ResolvedTheme;
   setPreference: (preference: ThemePreference) => void;
-  syncSystemTheme: (scheme: ColorSchemeName) => void;
+  syncSystemTheme: (scheme: ColorSchemeName | null | undefined) => void;
 }
 
 export const useThemeStore = create<ThemeState>()(
