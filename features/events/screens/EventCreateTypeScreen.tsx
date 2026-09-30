@@ -1,21 +1,24 @@
 import { Pressable, Text, View } from 'react-native';
 import { FormSheet, Icon, LinearProgress, type VascoIconName } from '../../../shared/components/ui';
+import { eventTypePresentation } from '../../../shared/components/ui/content/domainCardUtils';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { eventTypePresentation } from '../../../shared/components/ui/content/domainCardUtils';
 
 export const eventCreateTypes = [
-  { id: 'soins', ...eventTypePresentation.care }, { id: 'rdv', ...eventTypePresentation.appointment },
-  { id: 'balade', ...eventTypePresentation.walk }, { id: 'entrainement', ...eventTypePresentation.training },
-  { id: 'concours', ...eventTypePresentation.competition }, { id: 'depense', ...eventTypePresentation.expense },
-  { id: 'autre', ...eventTypePresentation.other },
-] as const satisfies readonly { id: string; label: string; icon: VascoIconName }[];
+  { id: 'soins', description: 'Traitement, vaccin ou suivi', ...eventTypePresentation.care },
+  { id: 'rdv', description: 'Vétérinaire ou praticien', ...eventTypePresentation.appointment },
+  { id: 'balade', description: 'Sortie, distance et durée', ...eventTypePresentation.walk },
+  { id: 'entrainement', description: 'Séance et progression', ...eventTypePresentation.training },
+  { id: 'concours', description: 'Épreuve et classement', ...eventTypePresentation.competition },
+  { id: 'depense', description: 'Achat, catégorie et montant', ...eventTypePresentation.expense },
+  { id: 'autre', description: 'Un événement personnalisé', ...eventTypePresentation.other },
+] as const satisfies readonly { id: string; label: string; description: string; icon: VascoIconName }[];
 
 export interface EventCreateTypeScreenProps { onBack: () => void; onContinue: () => void; onClose?: () => void }
 
 export function EventCreateTypeScreen({ onBack, onContinue, onClose = onBack }: EventCreateTypeScreenProps) {
-  const { colors } = useAppTheme();
+  const { colors, isDark } = useAppTheme();
   const selected = useEventWizardStore((state) => state.formData.eventType);
   const setField = useEventWizardStore((state) => state.setField);
   const select = (id: string) => { setField('eventType', id); onContinue(); };
@@ -27,10 +30,45 @@ export function EventCreateTypeScreen({ onBack, onContinue, onClose = onBack }: 
       {eventCreateTypes.map((type) => {
         const active = selected === type.id;
         const accent = colors[type.color];
-        return <Pressable key={type.id} accessibilityRole="radio" accessibilityLabel={type.label} accessibilityState={{ checked: active }} onPress={() => select(type.id)} style={({ pressed }) => ({ width: type.id === 'autre' ? '100%' : '47.5%', minHeight: type.id === 'rdv' ? 108 : 96, overflow: 'hidden', flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, padding: spacing.md, paddingLeft: spacing.lg, borderRadius: radii.lg, borderWidth: active ? 2 : 1, borderColor: active ? accent : colors.border, backgroundColor: colors.surface, opacity: pressed ? 0.82 : 1 })}>
-          <View accessibilityElementsHidden style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 5, backgroundColor: accent }} />
-          <Icon name={type.icon} size="lg" color={accent} />
-          {type.id === 'rdv' ? <View style={{ flex: 1, paddingTop: spacing.xs }}><Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.65} maxFontSizeMultiplier={1.2} style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, lineHeight: 22 }}>Rendez-vous</Text><Text numberOfLines={1} maxFontSizeMultiplier={1.2} style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, lineHeight: 22 }}>médical</Text></View> : <Text numberOfLines={1} style={{ flex: 1, color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, lineHeight: 22, paddingTop: spacing.xs }}>{type.label}</Text>}
+        const wide = type.id === 'autre';
+        const tint = `${accent}${isDark ? '24' : '14'}`;
+        return <Pressable
+          key={type.id}
+          accessibilityRole="radio"
+          accessibilityLabel={type.label}
+          accessibilityHint={type.description}
+          accessibilityState={{ checked: active }}
+          onPress={() => select(type.id)}
+          style={({ pressed }) => ({
+            width: wide ? '100%' : '47.5%',
+            minHeight: wide ? 96 : 132,
+            overflow: 'hidden',
+            flexDirection: wide ? 'row' : 'column',
+            alignItems: wide ? 'center' : 'stretch',
+            gap: wide ? spacing.md : spacing.sm,
+            padding: spacing.md,
+            paddingTop: wide ? spacing.md : spacing.lg,
+            borderRadius: radii.xl,
+            borderWidth: active ? 2 : 1,
+            borderColor: active ? accent : colors.border,
+            backgroundColor: active || pressed ? tint : colors.surface,
+            shadowColor: colors.textPrimary,
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: isDark ? 0 : 0.06,
+            shadowRadius: 8,
+            elevation: active ? 2 : 1,
+            transform: [{ scale: pressed ? 0.985 : 1 }],
+          })}
+        >
+          <View accessibilityElementsHidden style={{ position: 'absolute', left: 0, top: 0, right: 0, height: 4, backgroundColor: accent }} />
+          <View accessibilityElementsHidden style={{ width: 44, height: 44, flexShrink: 0, alignItems: 'center', justifyContent: 'center', borderRadius: radii.lg, backgroundColor: tint }}>
+            <Icon name={type.icon} size="lg" color={accent} />
+          </View>
+          <View style={{ flex: wide ? 1 : undefined, minWidth: 0, gap: 3 }}>
+            <Text numberOfLines={2} style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md, lineHeight: 21 }}>{type.label}</Text>
+            <Text numberOfLines={2} style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs, lineHeight: 17 }}>{type.description}</Text>
+          </View>
+          {wide ? <Icon name="next" size="sm" color={accent} /> : null}
         </Pressable>;
       })}
     </View>

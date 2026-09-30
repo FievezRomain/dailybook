@@ -85,6 +85,22 @@ import {
   SettingsHelpScreen,
 } from "../../features/settings";
 
+type CreateOrigin = "root" | "notes" | "wishes" | "contacts" | "groups";
+type CreateOriginRoute = { name: "root" } | { name: "notes" } | { name: "wishes" } | { name: "contacts" } | { name: "groups" };
+
+function resolveCreateOrigin(routeName: string): CreateOrigin {
+  if (routeName === "notes" || routeName === "wishes" || routeName === "contacts" || routeName === "groups") return routeName;
+  return "root";
+}
+
+function routeForCreateOrigin(origin: CreateOrigin): CreateOriginRoute {
+  if (origin === "notes") return { name: "notes" };
+  if (origin === "wishes") return { name: "wishes" };
+  if (origin === "contacts") return { name: "contacts" };
+  if (origin === "groups") return { name: "groups" };
+  return { name: "root" };
+}
+
 export function MainNavigator() {
   const [tab, setTab] = useState<MainTabId>("home");
   const [preferredAnimalId, setPreferredAnimalId] = useState<number>();
@@ -171,6 +187,7 @@ export function MainNavigator() {
     | { name: "eventDuplicateAnimals"; sourceEventId: number }
     | { name: "eventDuplicateOptions"; sourceEventId: number }
   >({ name: "root" });
+  const [createOrigin, setCreateOrigin] = useState<CreateOrigin>("root");
   const selectTab = (next: MainTabId) => {
     setNotificationsOpen(false);
     setSettingsOpen(undefined);
@@ -197,6 +214,7 @@ export function MainNavigator() {
       setRoute({ name: "contact", contactId: notification.object_id });
   };
   const create = (target: string, initialEventDate?: string) => {
+    setCreateOrigin(resolveCreateOrigin(route.name));
     if (target === "animal") {
       resetAnimalWizard();
       setRoute({ name: "animalForm", mode: "create" });
@@ -265,13 +283,7 @@ export function MainNavigator() {
       onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
       onSelectTab={selectTab}
       onOpenNote={(noteId) => setRoute({ name: "note", noteId })}
-      onCreateNote={() =>
-        setRoute(
-          env.INTELLIGENT_FEATURES_ENABLED
-            ? { name: "noteCreateChoice" }
-            : { name: "noteForm", mode: "create" },
-        )
-      }
+      onCreateNote={() => create("note")}
       onCreate={create}
       onNotifications={openNotifications}
       onAccount={openSettings}
@@ -283,7 +295,7 @@ export function MainNavigator() {
       activeMainTab={tab}
       onSelectTab={selectTab}
       onOpenWish={(wishId) => setRoute({ name: "wish", wishId })}
-      onCreateWish={() => setRoute({ name: "wishForm", mode: "create" })}
+      onCreateWish={() => create("wish")}
       onCreate={create}
       onNotifications={openNotifications}
       onAccount={openSettings}
@@ -294,7 +306,7 @@ export function MainNavigator() {
       onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
       onSelectTab={selectTab}
       onOpenContact={(contactId) => setRoute({ name: "contact", contactId })}
-      onCreateContact={() => setRoute({ name: "contactForm", mode: "create" })}
+      onCreateContact={() => create("contact")}
       onCreate={create}
       onNotifications={openNotifications}
       onAccount={openSettings}
@@ -308,13 +320,7 @@ export function MainNavigator() {
       onOpenInvitation={(invitationId) =>
         setRoute({ name: "groupInvitation", invitationId })
       }
-      onCreateGroup={() =>
-        setRoute(
-          premium
-            ? { name: "groupForm", mode: "create" }
-            : { name: "groupPremium" },
-        )
-      }
+      onCreateGroup={() => create("group")}
       onCreate={create}
       onNotifications={openNotifications}
       onAccount={openSettings}
@@ -396,6 +402,16 @@ export function MainNavigator() {
       </View>
     </View>
   );
+  const createBackground = () => {
+    if (createOrigin === "notes") return notes();
+    if (createOrigin === "wishes") return wishes();
+    if (createOrigin === "contacts") return contacts();
+    if (createOrigin === "groups") return groups();
+    return rootContext();
+  };
+  const returnToCreateOrigin = () => {
+    setRoute(routeForCreateOrigin(createOrigin));
+  };
   const eventContext = (eventId: number) => (
     <EventDetailScreen
       eventId={eventId}
@@ -515,7 +531,7 @@ export function MainNavigator() {
     return (
       <PremiumRequiredPattern
         feature="groups"
-        onBack={() => setRoute({ name: "root" })}
+        onBack={returnToCreateOrigin}
         onComparePlans={() => setGroupsPlans(true)}
         testID="groups-premium-required"
       />
@@ -533,9 +549,7 @@ export function MainNavigator() {
         onAddMember={() => undefined}
         onAddAnimal={() => undefined}
       />
-    ) : (
-      groups()
-    );
+    ) : route.mode === "create" ? createBackground() : groups();
     return (
       <>
         {background}
@@ -545,12 +559,9 @@ export function MainNavigator() {
             group={selectedGroup}
             initialStep={route.initialStep}
             animalOnly={route.animalOnly}
-            onClose={() =>
-              setRoute(
-                selectedGroup
-                  ? { name: "group", groupId: selectedGroup.id }
-                  : { name: "groups" },
-              )
+            onClose={() => selectedGroup
+              ? setRoute({ name: "group", groupId: selectedGroup.id })
+              : returnToCreateOrigin()
             }
             onSaved={(groupId) => {
               setTab("more");
@@ -612,10 +623,10 @@ export function MainNavigator() {
   if (route.name === "noteCreateChoice")
     return (
       <>
-        {notes()}
+        {createBackground()}
         <FormSheetHost>
           <NoteCreateEntryScreen
-            onBack={() => setRoute({ name: "root" })}
+            onBack={returnToCreateOrigin}
             onWritten={() => setRoute({ name: "noteForm", mode: "create" })}
             onVoice={() =>
               setRoute(
@@ -695,19 +706,14 @@ export function MainNavigator() {
             onEdit={() => undefined}
             onDeleted={() => setRoute({ name: "root" })}
           />
-        ) : (
-          notes()
-        )}
+        ) : createBackground()}
         <FormSheetHost>
           <NoteFormSheetScreen
             mode={route.mode}
             note={selectedNote}
-            onClose={() =>
-              setRoute(
-                route.noteId
-                  ? { name: "note", noteId: route.noteId }
-                  : { name: "notes" },
-              )
+            onClose={() => route.noteId
+              ? setRoute({ name: "note", noteId: route.noteId })
+              : returnToCreateOrigin()
             }
             onSaved={() => {
               setTab("more");
@@ -731,9 +737,7 @@ export function MainNavigator() {
         onDeleted={() => setRoute({ name: "wishes" })}
         onSelectTab={selectTab}
       />
-    ) : (
-      wishes()
-    );
+    ) : createBackground();
     return (
       <>
         {background}
@@ -741,12 +745,9 @@ export function MainNavigator() {
           <WishFormSheetScreen
             mode={route.mode}
             wish={selectedWish}
-            onClose={() =>
-              setRoute(
-                selectedWish
-                  ? { name: "wish", wishId: selectedWish.id }
-                  : { name: "wishes" },
-              )
+            onClose={() => selectedWish
+              ? setRoute({ name: "wish", wishId: selectedWish.id })
+              : returnToCreateOrigin()
             }
             onSaved={(wishId) => {
               setTab("more");
@@ -784,9 +785,7 @@ export function MainNavigator() {
         onDeleted={() => setRoute({ name: "contacts" })}
         onSelectTab={selectTab}
       />
-    ) : (
-      contacts()
-    );
+    ) : createBackground();
     return (
       <>
         {background}
@@ -794,12 +793,9 @@ export function MainNavigator() {
           <ContactFormSheetScreen
             mode={route.mode}
             contact={selectedContact}
-            onClose={() =>
-              setRoute(
-                selectedContact
-                  ? { name: "contact", contactId: selectedContact.id }
-                  : { name: "contacts" },
-              )
+            onClose={() => selectedContact
+              ? setRoute({ name: "contact", contactId: selectedContact.id })
+              : returnToCreateOrigin()
             }
             onSaved={(contactId) => {
               setTab("more");
@@ -846,9 +842,7 @@ export function MainNavigator() {
         onDeleted={() => setRoute({ name: "root" })}
         onDuplicate={() => undefined}
       />
-    ) : (
-      rootContext()
-    );
+    ) : createBackground();
     return (
       <>
         {background}
@@ -862,7 +856,7 @@ export function MainNavigator() {
               setRoute(
                 objective
                   ? { name: "objective", objectiveId: objective.id }
-                  : { name: "root" },
+                  : routeForCreateOrigin(createOrigin),
               );
             }}
             onSaved={(objectiveId) => {
@@ -887,14 +881,15 @@ export function MainNavigator() {
       return rootContext();
     return (
       <>
-        {rootContext()}
+        {route.mode === "create" ? createBackground() : rootContext()}
         <FormSheetHost>
           <AnimalFormSheetScreen
             mode={route.mode}
             animal={animal}
             onClose={() => {
               resetAnimalWizard();
-              setRoute({ name: "root" });
+              if (route.mode === "create") returnToCreateOrigin();
+              else setRoute({ name: "root" });
             }}
             onSaved={(savedAnimal) => {
               setPreferredAnimalId(savedAnimal.id);
@@ -1074,13 +1069,13 @@ export function MainNavigator() {
   if (route.name === "eventCreateAiReview")
     return (
       <>
-        {rootContext()}
+        {createBackground()}
         <FormSheetHost>
           <EventCreateAiReviewScreen
             onBack={() => setRoute({ name: "eventCreateAiDescription" })}
             onClose={() => {
               resetWizard();
-              setRoute({ name: "root" });
+              returnToCreateOrigin();
             }}
             onEdit={() => setRoute({ name: "eventCreateDetails" })}
             onContinue={() => setRoute({ name: "eventCreateAnimals" })}
@@ -1091,13 +1086,13 @@ export function MainNavigator() {
   if (route.name === "eventCreateAiDescription")
     return (
       <>
-        {rootContext()}
+        {createBackground()}
         <FormSheetHost>
           <EventCreateAiDescriptionScreen
             onBack={() => setRoute({ name: "eventCreateEntry" })}
             onClose={() => {
               resetWizard();
-              setRoute({ name: "root" });
+              returnToCreateOrigin();
             }}
             onAnalyzed={() => setRoute({ name: "eventCreateAiReview" })}
           />
@@ -1107,13 +1102,13 @@ export function MainNavigator() {
   if (route.name === "eventCreateOptions")
     return (
       <>
-        {rootContext()}
+        {createBackground()}
         <FormSheetHost>
           <EventCreateOptionsScreen
             onBack={() => setRoute({ name: "eventCreateAnimals" })}
             onClose={() => {
               resetWizard();
-              setRoute({ name: "root" });
+              returnToCreateOrigin();
             }}
             onCreated={() => agenda()}
           />
@@ -1123,13 +1118,13 @@ export function MainNavigator() {
   if (route.name === "eventCreateAnimals")
     return (
       <>
-        {rootContext()}
+        {createBackground()}
         <FormSheetHost>
           <EventCreateAnimalsScreen
             onBack={() => setRoute({ name: "eventCreateDetails" })}
             onClose={() => {
               resetWizard();
-              setRoute({ name: "root" });
+              returnToCreateOrigin();
             }}
             onContinue={() => setRoute({ name: "eventCreateOptions" })}
           />
@@ -1139,14 +1134,14 @@ export function MainNavigator() {
   if (route.name === "eventCreateDetails")
     return (
       <>
-        {rootContext()}
+        {createBackground()}
         <FormSheetHost>
           <EventCreateDetailsScreen
             onComparePlans={() => setVisualTrackingPlans(true)}
             onBack={() => setRoute({ name: "eventCreateType" })}
             onClose={() => {
               resetWizard();
-              setRoute({ name: "root" });
+              returnToCreateOrigin();
             }}
             onContinue={() => setRoute({ name: "eventCreateAnimals" })}
           />
@@ -1156,19 +1151,16 @@ export function MainNavigator() {
   if (route.name === "eventCreateType")
     return (
       <>
-        {rootContext()}
+        {createBackground()}
         <FormSheetHost>
           <EventCreateTypeScreen
-            onBack={() =>
-              setRoute(
-                env.INTELLIGENT_FEATURES_ENABLED
-                  ? { name: "eventCreateEntry" }
-                  : { name: "root" },
-              )
+            onBack={() => env.INTELLIGENT_FEATURES_ENABLED
+              ? setRoute({ name: "eventCreateEntry" })
+              : returnToCreateOrigin()
             }
             onClose={() => {
               resetWizard();
-              setRoute({ name: "root" });
+              returnToCreateOrigin();
             }}
             onContinue={() => setRoute({ name: "eventCreateDetails" })}
           />
@@ -1178,11 +1170,11 @@ export function MainNavigator() {
   if (route.name === "eventCreateEntry")
     return (
       <>
-        {rootContext()}
+        {createBackground()}
         <FormSheetHost>
           <EventCreateEntryScreen
-            onBack={() => setRoute({ name: "root" })}
-            onClose={() => setRoute({ name: "root" })}
+            onBack={returnToCreateOrigin}
+            onClose={returnToCreateOrigin}
             onGuided={() => setRoute({ name: "eventCreateType" })}
             onAi={() => {
               if (isPremiumSubscription(user?.subscription))
