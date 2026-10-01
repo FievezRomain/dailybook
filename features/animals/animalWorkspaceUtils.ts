@@ -3,8 +3,16 @@ import type { Event } from '../../models/Event';
 
 export type AnimalPresence = 'present' | 'history';
 
+function normalizedAnimalProvenance(animal: Animal) {
+  return animal.provenance?.trim().toLocaleLowerCase('fr-FR');
+}
+
 export function isSharedAnimal(animal: Animal) {
-  return animal.provenance?.trim().toLocaleLowerCase('fr-FR') === 'group';
+  return ['group', 'shared'].includes(normalizedAnimalProvenance(animal) ?? '');
+}
+
+export function isOwnedAnimal(animal: Animal) {
+  return normalizedAnimalProvenance(animal) === 'owner';
 }
 
 export function getAnimalPresence(animal: Animal): AnimalPresence {

@@ -1,10 +1,18 @@
 import type { Animal } from '../../../models/Animal';
 import type { Event } from '../../../models/Event';
-import { compactAnimalDetails, formatAnimalAge, formatAnimalDate, getAnimalMedicalDocuments, getAnimalMedicalEvents, getAnimalPresence, getVisualTrackingMonths, hasAnimalBodyPictureForMonth, isSharedAnimal, normalizeAnimalPictures, resolveAnimalSelection, sortAnimalsForWorkspace } from '../../../features/animals/animalWorkspaceUtils';
+import { compactAnimalDetails, formatAnimalAge, formatAnimalDate, getAnimalMedicalDocuments, getAnimalMedicalEvents, getAnimalPresence, getVisualTrackingMonths, hasAnimalBodyPictureForMonth, isOwnedAnimal, isSharedAnimal, normalizeAnimalPictures, resolveAnimalSelection, sortAnimalsForWorkspace } from '../../../features/animals/animalWorkspaceUtils';
 
 const animal = (id: number, nom: string, extra: Partial<Animal> = {}): Animal => ({ id, nom, espece: 'Chien', ...extra });
 
 describe('animalWorkspaceUtils', () => {
+  it('supports current shared provenance and restricts unknown ownership', () => {
+    expect(isSharedAnimal(animal(1, 'Shared', { provenance: 'shared' }))).toBe(true);
+    expect(isSharedAnimal(animal(2, 'Normalized', { provenance: ' SHARED ' }))).toBe(true);
+    expect(isOwnedAnimal(animal(3, 'Owner', { provenance: 'owner' }))).toBe(true);
+    expect(isOwnedAnimal(animal(4, 'Shared', { provenance: 'shared' }))).toBe(false);
+    expect(isOwnedAnimal(animal(5, 'Unknown'))).toBe(false);
+  });
+
   it('identifie uniquement les animaux partagés par un groupe', () => {
     expect(isSharedAnimal(animal(1, 'Partagé', { provenance: 'group' }))).toBe(true);
     expect(isSharedAnimal(animal(2, 'Groupe normalisé', { provenance: ' GROUP ' }))).toBe(true);

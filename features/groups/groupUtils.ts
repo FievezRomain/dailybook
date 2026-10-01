@@ -1,6 +1,7 @@
 import type { Group, GroupAnimal, GroupBucket } from '../../models/Group';
 import type { GroupMember } from '../../models/GroupMember';
 import type { Animal } from '../../models/Animal';
+import { isOwnedAnimal } from '../animals/animalWorkspaceUtils';
 
 export function getGroupBucketItems<T>(buckets: GroupBucket<T>[] | null | undefined, type: GroupBucket<T>['type']): T[] {
   return buckets?.find((bucket) => bucket.type === type)?.items ?? [];
@@ -36,7 +37,7 @@ export function getGroupSummary(group: Group): string {
 
 export function getAnimalsAvailableForGroupProposal(animals: readonly Animal[], existingAnimalIds: readonly number[]): Animal[] {
   const existingIds = new Set(existingAnimalIds);
-  return animals.filter((animal) => existingIds.has(animal.id) || animal.provenance?.trim().toLocaleLowerCase('fr-FR') !== 'group');
+  return animals.filter((animal) => existingIds.has(animal.id) || isOwnedAnimal(animal));
 }
 
 export function getGroupManagementPermissions(
