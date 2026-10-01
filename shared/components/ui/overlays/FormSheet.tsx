@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
-import { ScrollView, useWindowDimensions, View } from 'react-native';
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { Platform, useWindowDimensions, View } from 'react-native';
 import { componentTokens } from '../../../../theme/componentTokens';
 import type { Material } from '../../../../theme/materials';
 import { spacing } from '../../../../theme/scales';
@@ -86,7 +87,7 @@ function FormSheetModal({
 
   return <>
     <VascoBottomSheet open={sheetOpen} onClose={handleDismiss} title={title} material={material} formHandle dismissible={!footerLoading} height={Math.max(componentTokens.formSheet.minHeight, Math.min(componentTokens.formSheet.maxHeight, windowHeight * componentTokens.formSheet.heightRatio))} header={<TopBar title={title} context="detail" material={material} onBack={footerLoading ? () => undefined : confirmBackWhenDirty && dirty ? handleDismiss : onBack} />} footer={renderedFooter} contentContainerStyle={{ gap: 0, paddingHorizontal: 0, paddingTop: 0 }} testID={testID}>
-      <ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" automaticallyAdjustKeyboardInsets contentContainerStyle={{ flexGrow: 1, gap: spacing.md, paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>{children}</ScrollView>
+      <BottomSheetScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'} contentContainerStyle={{ flexGrow: 1, gap: spacing.md, paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>{children}</BottomSheetScrollView>
     </VascoBottomSheet>
     <Dialog open={confirmClose} type="destructive" title="Abandonner les modifications ?" description="Les informations non enregistrées seront perdues." cancelLabel="Continuer" confirmLabel="Abandonner" onClose={() => { setConfirmClose(false); setSheetOpen(true); }} onConfirm={() => { setConfirmClose(false); onClose(); }} testID={testID ? `${testID}-close-confirmation` : undefined} />
   </>;
