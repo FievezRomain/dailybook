@@ -917,7 +917,15 @@ export function MainNavigator() {
           action={route.action}
           animal={animal}
           onClose={() => setRoute({ name: "root" })}
-          onDone={() => setRoute({ name: "root" })}
+          onDone={() => {
+            if (route.action === "death") {
+              setPreferredAnimalId(animal.id);
+              setAnimalFeedback(
+                "Toutes nos condoléances. La date de décès a bien été enregistrée.",
+              );
+            }
+            setRoute({ name: "root" });
+          }}
         />
       </>
     );
