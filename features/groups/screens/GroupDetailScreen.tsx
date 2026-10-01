@@ -11,6 +11,7 @@ import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
 import { useAnimalImageUrl } from "../../../hooks/queries/useAnimalImageUrl";
 import { useAuthStore } from "../../../stores/useAuthStore";
 import { isPremiumSubscription } from "../../events/eventAiUtils";
+import { isOwnedAnimal } from "../../animals/animalWorkspaceUtils";
 import {
   ActionSheet,
   Avatar,
@@ -165,7 +166,7 @@ export function GroupDetailScreen({
   const pendingShares = pendingSharesQuery.data ?? [];
   const ownAnimalIds = new Set(
     (ownAnimalsQuery.data ?? [])
-      .filter((animal) => animal.provenance !== "group")
+      .filter(isOwnedAnimal)
       .map((animal) => animal.id),
   );
   const mutate = async (

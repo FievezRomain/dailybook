@@ -68,7 +68,8 @@ describe('groupUtils', () => {
     const animals = [
       { id: 1, nom: 'Propriétaire', espece: 'chien', provenance: 'owner' },
       { id: 2, nom: 'Déjà présent', espece: 'chat', provenance: 'group' },
-      { id: 3, nom: 'Autre groupe', espece: 'cheval', provenance: 'group' },
+      { id: 3, nom: 'Autre groupe', espece: 'cheval', provenance: 'shared' },
+      { id: 4, nom: 'Provenance inconnue', espece: 'cheval' },
     ];
     expect(getAnimalsAvailableForGroupProposal(animals, [2]).map(({ id }) => id)).toEqual([1, 2]);
   });

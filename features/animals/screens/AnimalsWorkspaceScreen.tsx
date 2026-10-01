@@ -68,6 +68,7 @@ import {
   getAnimalMedicalEvents,
   getAnimalPresence,
   getVisualTrackingMonths,
+  isOwnedAnimal,
   isSharedAnimal,
   normalizeAnimalPictures,
   resolveAnimalSelection,
@@ -158,7 +159,7 @@ export function AnimalsWorkspaceScreen({
   const appliedPreferredAnimalId = useRef<number | undefined>(undefined);
   const selected =
     animals.find((animal) => animal.id === selectedId) ?? animals[0];
-  const canManageSelected = selected ? !isSharedAnimal(selected) : false;
+  const canManageSelected = selected ? isOwnedAnimal(selected) : false;
   const picturesQuery = useAnimalBodyPicturesQuery(
     selected ? String(selected.id) : "",
     canAccessVisualTracking,
