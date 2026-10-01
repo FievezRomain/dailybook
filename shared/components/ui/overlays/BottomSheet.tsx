@@ -6,13 +6,13 @@ import {
   type BottomSheetBackdropProps,
   type BottomSheetBackgroundProps,
 } from '@gorhom/bottom-sheet';
-import { Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Text, useWindowDimensions, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { componentTokens } from '../../../../theme/componentTokens';
 import type { Material } from '../../../../theme/materials';
 import { radii, spacing, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
-import { getBottomSheetCommand, getBottomSheetHeight, type BottomSheetSize } from './bottomSheetUtils';
+import { getBottomSheetCommand, getBottomSheetHeight, getBottomSheetHeightWithinViewport, type BottomSheetSize } from './bottomSheetUtils';
 import { FormSheetSurface } from './FormSheetSurface';
 
 export interface VascoBottomSheetProps {
@@ -52,8 +52,10 @@ export function VascoBottomSheet({
   const presentedRef = useRef(false);
   const unmountingRef = useRef(false);
   const insets = useSafeAreaInsets();
+  const { height: windowHeight } = useWindowDimensions();
   const { colors } = useAppTheme();
-  const resolvedHeight = height ?? getBottomSheetHeight(size);
+  const requestedHeight = height ?? getBottomSheetHeight(size);
+  const resolvedHeight = getBottomSheetHeightWithinViewport(requestedHeight, windowHeight, insets.top, spacing.md);
   const snapPoints = useMemo(() => [resolvedHeight], [resolvedHeight]);
   const handleAreaHeight = formHandle ? componentTokens.formSheet.handleAreaHeight : componentTokens.bottomSheet.paddingTop + componentTokens.bottomSheet.handle.height;
 
