@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react-native';
+import { filterLogContext } from './logContext';
 
 type LogContext = Record<string, unknown>;
 
@@ -39,18 +40,15 @@ class LoggerService {
   breadcrumb(category: string, message: string, data?: LogContext): void {
     if (__DEV__) return;
 
-    Sentry.addBreadcrumb({ category, message, data, level: 'info' });
+    Sentry.addBreadcrumb({ category, message, data: filterLogContext(data).data, level: 'info' });
   }
 
   private applyContext(scope: Sentry.Scope, context?: LogContext): void {
     if (!context) return;
 
-    const { feature, operation, screen, app_mode: appMode, ...extra } = context;
-    if (typeof feature === 'string') scope.setTag('feature', feature);
-    if (typeof operation === 'string') scope.setTag('operation', operation);
-    if (typeof screen === 'string') scope.setTag('screen', screen);
-    if (typeof appMode === 'string') scope.setTag('app_mode', appMode);
-    if (Object.keys(extra).length > 0) scope.setContext('additional_context', extra);
+    const { tags, data } = filterLogContext(context);
+    for (const [key, value] of Object.entries(tags)) scope.setTag(key, value);
+    if (Object.keys(data).length > 0) scope.setContext('additional_context', data);
   }
 }
 
