@@ -1,5 +1,5 @@
 import { BlurView } from 'expo-blur';
-import { Pressable, View, type AccessibilityRole, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, View, type AccessibilityRole, type StyleProp, type ViewStyle } from 'react-native';
 import type { Material } from '../../../../theme/materials';
 import { materialTokens } from '../../../../theme/materials';
 import { palette } from '../../../../theme/primitives';
@@ -28,6 +28,7 @@ export function Card({
 }: CardProps) {
   const { colors, isDark } = useAppTheme();
   const resolvedMaterial = useResolvedMaterial(material);
+  const hasConstrainedWidth = StyleSheet.flatten(style)?.maxWidth != null;
 
   const content = (pressed: boolean) => {
     const containerStyle: ViewStyle = {
@@ -44,6 +45,7 @@ export function Card({
       shadowOpacity: resolvedMaterial === 'solid' ? 0.08 : 0,
       shadowRadius: 2,
       elevation: resolvedMaterial === 'solid' ? 1 : 0,
+      alignSelf: hasConstrainedWidth ? 'center' : undefined,
     };
 
     if (resolvedMaterial === 'glass') {

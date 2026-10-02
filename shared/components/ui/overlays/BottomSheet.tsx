@@ -30,6 +30,7 @@ export interface VascoBottomSheetProps {
   header?: ReactNode;
   contentContainerStyle?: StyleProp<ViewStyle>;
   formHandle?: boolean;
+  scrollableContent?: boolean;
 }
 
 export function VascoBottomSheet({
@@ -47,6 +48,7 @@ export function VascoBottomSheet({
   header,
   contentContainerStyle,
   formHandle = false,
+  scrollableContent = false,
 }: VascoBottomSheetProps) {
   const modalRef = useRef<React.ElementRef<typeof BottomSheetModal>>(null);
   const presentedRef = useRef(false);
@@ -96,6 +98,39 @@ export function VascoBottomSheet({
     [material],
   );
 
+  const content = (
+    <>
+      {header ?? <View style={{ gap: spacing.xs }}>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.xl, lineHeight: typography.lineHeights.relaxed }}>
+          {title}
+        </Text>
+        {description ? (
+          <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>
+            {description}
+          </Text>
+        ) : null}
+      </View>}
+      <View style={{ flex: 1 }}>{children}</View>
+      {footer}
+    </>
+  );
+  const containerProps = {
+    accessible: true,
+    accessibilityRole: 'summary' as const,
+    accessibilityLabel: title,
+    testID,
+    style: [
+      {
+        height: Math.max(0, resolvedHeight - handleAreaHeight),
+        gap: spacing.md,
+        paddingHorizontal: componentTokens.bottomSheet.paddingX,
+        paddingTop: spacing.md,
+        paddingBottom: Math.max(spacing.lg, insets.bottom),
+      },
+      contentContainerStyle,
+    ],
+  };
+
   return (
     <BottomSheetModal
       ref={modalRef}
@@ -113,35 +148,7 @@ export function VascoBottomSheet({
       keyboardBlurBehavior="restore"
       android_keyboardInputMode="adjustResize"
     >
-      <BottomSheetView
-        accessible
-        accessibilityRole="summary"
-        accessibilityLabel={title}
-        testID={testID}
-        style={[
-          {
-            height: Math.max(0, resolvedHeight - handleAreaHeight),
-            gap: spacing.md,
-            paddingHorizontal: componentTokens.bottomSheet.paddingX,
-            paddingTop: spacing.md,
-            paddingBottom: Math.max(spacing.lg, insets.bottom),
-          },
-          contentContainerStyle,
-        ]}
-      >
-        {header ?? <View style={{ gap: spacing.xs }}>
-          <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.xl, lineHeight: typography.lineHeights.relaxed }}>
-            {title}
-          </Text>
-          {description ? (
-            <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>
-              {description}
-            </Text>
-          ) : null}
-        </View>}
-        <View style={{ flex: 1 }}>{children}</View>
-        {footer}
-      </BottomSheetView>
+      {scrollableContent ? <View {...containerProps}>{content}</View> : <BottomSheetView {...containerProps}>{content}</BottomSheetView>}
     </BottomSheetModal>
   );
 }

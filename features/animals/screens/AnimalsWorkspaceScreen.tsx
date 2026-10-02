@@ -359,6 +359,7 @@ export function AnimalsWorkspaceScreen({
                 style={{ flexGrow: 0 }}
                 contentContainerStyle={{
                   minWidth: "100%",
+                  justifyContent: "center",
                   paddingHorizontal: spacing.sm,
                   paddingTop: spacing.xl,
                   paddingBottom: spacing.md,
@@ -386,7 +387,7 @@ export function AnimalsWorkspaceScreen({
               fullWidthIndicator
               style={{ paddingHorizontal: spacing.md }}
             />
-            <View style={{ padding: spacing.md }}>
+            <View style={{ width: "100%", maxWidth: 376, alignSelf: "center", padding: spacing.md }}>
               {workspaceTab === "infos" ? (
                 <AnimalInfos
                   animal={selected}
