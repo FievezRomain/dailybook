@@ -391,6 +391,7 @@ function AnimalFilter(props: AnimalFilterProps) {
       style={{ flexGrow: 0 }}
       contentContainerStyle={{
         minWidth: "100%",
+        justifyContent: "center",
         paddingHorizontal: spacing.sm,
         paddingTop: spacing.xl,
         paddingBottom: spacing.md,
@@ -457,7 +458,7 @@ function ObjectivesContent({
           (objective) => getObjectiveProgress(objective) < 1,
         );
   return (
-    <View style={{ padding: spacing.md, gap: spacing.md }}>
+    <View style={{ width: "100%", maxWidth: 376, alignSelf: "center", padding: spacing.md, gap: spacing.md }}>
       <SectionHeader
         label={list === "active" ? "En cours" : "Tous"}
         count={items.length}
