@@ -43,6 +43,19 @@ describe('screen layout utilities', () => {
     expect(animals).toContain('paddingBottom: spacing.md');
     expect(animals).toContain('size={componentTokens.content.animalProfileAvatarSize}');
   });
+  it('centers constrained content on wider phones', () => {
+    const card = fs.readFileSync(path.resolve(__dirname, '../../../shared/components/ui/content/Card.tsx'), 'utf8');
+    const tracking = fs.readFileSync(path.resolve(__dirname, '../../../features/objectifs/screens/TrackingScreen.tsx'), 'utf8');
+    const animals = fs.readFileSync(path.resolve(__dirname, '../../../features/animals/screens/AnimalsWorkspaceScreen.tsx'), 'utf8');
+    const wishes = fs.readFileSync(path.resolve(__dirname, '../../../features/wishes/screens/WishesListScreen.tsx'), 'utf8');
+    const plus = fs.readFileSync(path.resolve(__dirname, '../../../features/plus/screens/PlusHubScreen.tsx'), 'utf8');
+    expect(card).toContain("alignSelf: hasConstrainedWidth ? 'center' : undefined");
+    expect(tracking).toContain('maxWidth: 376, alignSelf: "center"');
+    expect(animals).toContain('maxWidth: 376, alignSelf: "center"');
+    expect(wishes).toContain('maxWidth: 360');
+    expect(wishes).toContain('alignSelf: "center"');
+    expect(plus).toContain("justifyContent: 'center'");
+  });
   it('keeps the larger home logo close to the Vasco wordmark', () => {
     const topBar = fs.readFileSync(path.resolve(__dirname, '../../../shared/components/ui/navigation/TopBar.tsx'), 'utf8');
     expect(topBar).toContain('componentTokens.navigation.brandedTopBarLogoSize');

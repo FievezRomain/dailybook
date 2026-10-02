@@ -30,7 +30,7 @@ export function GlobalCreateMenu({ open, onClose, onSelect, material = 'solid', 
   };
 
   return (
-    <VascoBottomSheet open={open} onClose={handleDismiss} title="Créer" description="Que souhaitez-vous ajouter ?" material={material} height={680} testID={testID}>
+    <VascoBottomSheet open={open} onClose={handleDismiss} title="Créer" description="Que souhaitez-vous ajouter ?" material={material} height={680} scrollableContent testID={testID}>
       <BottomSheetScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ gap: spacing.sm, paddingBottom: spacing.sm }}>
         {globalCreateChoices.map((choice) => <CreateMenuItem key={choice.id} choice={choice} onPress={() => requestSelection(choice.id)} />)}
       </BottomSheetScrollView>

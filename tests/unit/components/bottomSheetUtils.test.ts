@@ -36,9 +36,13 @@ describe('bottom-sheet scroll integration', () => {
   it('uses Gorhom scrollables for the global creation menu and forms', () => {
     const menu = read('shared/components/ui/patterns/GlobalCreateMenu.tsx');
     const form = read('shared/components/ui/overlays/FormSheet.tsx');
+    const sheet = read('shared/components/ui/overlays/BottomSheet.tsx');
 
     expect(menu).toContain('<BottomSheetScrollView');
     expect(form).toContain('<BottomSheetScrollView');
+    expect(menu).toContain('scrollableContent');
+    expect(form).toContain('scrollableContent');
+    expect(sheet).toContain('scrollableContent ? <View');
     expect(menu).not.toContain('<ScrollView');
     expect(form).not.toContain('<ScrollView');
   });

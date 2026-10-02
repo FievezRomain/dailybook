@@ -13,7 +13,7 @@ interface NotificationSwipeRowProps {
 
 export function NotificationSwipeRow({ read, onToggleRead, onDelete, children }: NotificationSwipeRowProps) {
   const { colors } = useAppTheme();
-  return <Swipeable overshootRight={false} rightThreshold={44} renderRightActions={() => <View style={{ minHeight: 104, flexDirection: 'row', overflow: 'hidden', borderRadius: radii.lg }}>
+  return <Swipeable containerStyle={{ width: '100%', maxWidth: 360, alignSelf: 'center' }} overshootRight={false} rightThreshold={44} renderRightActions={() => <View style={{ minHeight: 104, flexDirection: 'row', overflow: 'hidden', borderRadius: radii.lg }}>
     <Pressable accessibilityRole="button" accessibilityLabel={read ? 'Marquer comme non lue' : 'Marquer comme lue'} onPress={onToggleRead} style={{ width: 88, alignItems: 'center', justifyContent: 'center', padding: spacing.sm, backgroundColor: colors.surfaceDim }}><Text style={{ textAlign: 'center', color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.xs }}>{read ? 'Non lue' : 'Lue'}</Text></Pressable>
     <Pressable accessibilityRole="button" accessibilityLabel="Supprimer la notification" onPress={onDelete} style={{ width: 88, alignItems: 'center', justifyContent: 'center', padding: spacing.sm, backgroundColor: colors.error }}><Text style={{ color: colors.textOnPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.xs }}>Supprimer</Text></Pressable>
   </View>}>{children}</Swipeable>;
