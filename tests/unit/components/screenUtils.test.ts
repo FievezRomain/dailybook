@@ -50,9 +50,9 @@ describe('screen layout utilities', () => {
     const wishes = fs.readFileSync(path.resolve(__dirname, '../../../features/wishes/screens/WishesListScreen.tsx'), 'utf8');
     const plus = fs.readFileSync(path.resolve(__dirname, '../../../features/plus/screens/PlusHubScreen.tsx'), 'utf8');
     expect(card).toContain("alignSelf: hasConstrainedWidth ? 'center' : undefined");
-    expect(tracking).toContain('maxWidth: 376, alignSelf: "center"');
-    expect(animals).toContain('maxWidth: 376, alignSelf: "center"');
-    expect(wishes).toContain('maxWidth: 360');
+    expect(tracking).toContain('maxWidth: 452, alignSelf: "center"');
+    expect(animals).toContain('maxWidth: 452, alignSelf: "center"');
+    expect(wishes).toContain('maxWidth: 420');
     expect(wishes).toContain('alignSelf: "center"');
     expect(plus).toContain("justifyContent: 'center'");
   });
