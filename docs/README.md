@@ -6,6 +6,7 @@ Plan d'exécution : [refonte graphique et composants réutilisables](visual-refa
 
 | Document | Usage |
 | --- | --- |
+| [Droits au premier plan](subscription-foreground-refresh.md) | Cadeau, révocation, cache et recette iOS/Android restant à effectuer |
 | [Mise en service](mise-en-service.md) | Lancement local, development builds, EAS Update, builds stores, publication et rollback |
 | [Design handoff](design-handoff.md) | Source de vérité visuelle, thèmes, composants, formulaires et Premium |
 | [Navigation et interactions](navigation-and-interactions.md) | Origine de chaque écran, destinations, retours et overlays |
