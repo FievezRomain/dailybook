@@ -14,10 +14,23 @@ ses valeurs et ses tests, pas de réintroduire un contexte libre.
 
 ## Limites restantes
 
-Ce filtre porte uniquement sur les contextes ajoutés par LoggerService. Les
-messages d'erreur, avertissements et libellés de breadcrumbs restent à traiter,
-ainsi que les événements/transactions automatiques et le contexte utilisateur du
-SDK. `sendDefaultPii: false` n'est pas une garantie de nettoyage de ces champs.
+Incrément suivant : les événements explicitement capturés par LoggerService ont
+un processeur de portée. Les messages libres et noms d'exception non reconnus
+sont remplacés par des libellés fixes ; requêtes, extras, breadcrumbs attachés,
+variables locales, extraits de source et métadonnées libres des frames sont
+retirés. Les types connus, fonctions, fichiers (sans query/fragment/credentials),
+lignes, colonnes et identifiants de debug sont conservés pour le diagnostic.
+Les libellés des breadcrumbs explicites sont filtrés avant ajout au SDK.
+
+Neuf tests ciblés couvrent désormais contextes et événements du journaliseur.
+Ce contrôle n'est pas une preuve de symbolication dans Sentry ni de filtrage natif.
+Les noms de fonctions/modules et chemins de code sont considérés techniques ;
+ils ne doivent pas être construits à partir de données utilisateur.
+
+Ces filtres portent uniquement sur les captures explicites de LoggerService.
+Les événements/transactions automatiques, les crashs natifs, les pièces jointes,
+ainsi que le contexte utilisateur/global du SDK restent à qualifier.
+`sendDefaultPii: false` n'est pas une garantie de nettoyage de ces champs.
 Ne pas présenter ce premier lot comme un filtrage complet ou une absence de fuite.
 
 L'upload des source maps est désactivé dans les profils EAS actuellement inspectés.
@@ -27,7 +40,7 @@ restent à qualifier sur un candidat autorisé, sans publier en production.
 ## Vérification locale
 
 ```sh
-npx jest --runInBand --coverage=false tests/unit/logContext.test.ts tests/unit/loggerContextIntegration.test.ts
+npx jest --runInBand --coverage=false tests/unit/logContext.test.ts tests/unit/logEvent.test.ts tests/unit/loggerContextIntegration.test.ts
 npx tsc --noEmit
 ```
 

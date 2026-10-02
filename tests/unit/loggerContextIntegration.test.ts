@@ -1,4 +1,4 @@
-const mockScope = { setTag: jest.fn(), setContext: jest.fn() };
+const mockScope = { setTag: jest.fn(), setContext: jest.fn(), addEventProcessor: jest.fn() };
 jest.mock('@sentry/react-native', () => ({
   withScope: (callback: (scope: typeof mockScope) => void) => callback(mockScope),
   captureMessage: jest.fn(), captureException: jest.fn(), addBreadcrumb: jest.fn(),
@@ -19,6 +19,7 @@ describe('LoggerService context boundary', () => {
     expect(mockScope.setContext).toHaveBeenNthCalledWith(1, 'additional_context', { hasTitle: true });
     expect(mockScope.setContext).toHaveBeenNthCalledWith(2, 'additional_context', { hasTitle: true });
     expect(mockScope.setTag).toHaveBeenCalledWith('feature', 'notes');
+    expect(mockScope.addEventProcessor).toHaveBeenCalledTimes(2);
     expect(JSON.stringify(mockScope.setContext.mock.calls)).not.toContain('private');
   });
   it('filters breadcrumb data through the same policy', () => {
