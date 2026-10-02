@@ -20,7 +20,7 @@ export function PlusHubItem({ title, description, icon, onPress, material = 'sol
   const { colors } = useAppTheme();
 
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityHint={description} onPress={onPress} testID={testID} style={[{ flexBasis: '47%', flexGrow: 1, minWidth: 150, maxWidth: 171 }, style]}>
+    <Pressable accessibilityRole="button" accessibilityLabel={title} accessibilityHint={description} onPress={onPress} testID={testID} style={[{ flexBasis: '47%', flexGrow: 1, minWidth: 150, maxWidth: 202 }, style]}>
       <Card material={material} style={{ height: 148, padding: spacing.md, justifyContent: 'flex-start', gap: spacing.sm }}>
         <View style={{ width: 44, height: 44, borderRadius: radii.full, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.surfaceVariant }}>
           <Icon name={icon} size="lg" color={colors.primaryDark} />

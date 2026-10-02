@@ -156,7 +156,7 @@ export function WishesListScreen({
             <View
               style={{
                 width: "100%",
-                maxWidth: 360,
+                maxWidth: 420,
                 alignSelf: "center",
                 flexDirection: "row",
                 alignItems: "flex-start",
