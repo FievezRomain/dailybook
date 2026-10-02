@@ -1,4 +1,6 @@
 import * as Sentry from '@sentry/react-native';
+import { filterLogContext } from './logContext';
+import { filterLoggerEvent, technicalBreadcrumb, technicalLogLabel } from './logEvent';
 
 type LogContext = Record<string, unknown>;
 
@@ -12,6 +14,7 @@ class LoggerService {
     Sentry.withScope((scope) => {
       this.applyContext(scope, context);
       scope.setTag('logger', 'LoggerService');
+      scope.addEventProcessor(event => filterLoggerEvent(event, message));
       Sentry.captureException(error instanceof Error ? error : new Error(String(error)));
     });
   }
@@ -32,25 +35,23 @@ class LoggerService {
     Sentry.withScope((scope) => {
       this.applyContext(scope, data);
       scope.setTag('logger', 'LoggerService');
-      Sentry.captureMessage(message, 'warning');
+      scope.addEventProcessor(event => filterLoggerEvent(event, message));
+      Sentry.captureMessage(technicalLogLabel(message), 'warning');
     });
   }
 
   breadcrumb(category: string, message: string, data?: LogContext): void {
     if (__DEV__) return;
 
-    Sentry.addBreadcrumb({ category, message, data, level: 'info' });
+    Sentry.addBreadcrumb({ ...technicalBreadcrumb(category, message), data: filterLogContext(data).data, level: 'info' });
   }
 
   private applyContext(scope: Sentry.Scope, context?: LogContext): void {
     if (!context) return;
 
-    const { feature, operation, screen, app_mode: appMode, ...extra } = context;
-    if (typeof feature === 'string') scope.setTag('feature', feature);
-    if (typeof operation === 'string') scope.setTag('operation', operation);
-    if (typeof screen === 'string') scope.setTag('screen', screen);
-    if (typeof appMode === 'string') scope.setTag('app_mode', appMode);
-    if (Object.keys(extra).length > 0) scope.setContext('additional_context', extra);
+    const { tags, data } = filterLogContext(context);
+    for (const [key, value] of Object.entries(tags)) scope.setTag(key, value);
+    if (Object.keys(data).length > 0) scope.setContext('additional_context', data);
   }
 }
 

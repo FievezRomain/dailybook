@@ -11,6 +11,7 @@ Plan d'exécution : [refonte graphique et composants réutilisables](visual-refa
 | [Navigation et interactions](navigation-and-interactions.md) | Origine de chaque écran, destinations, retours et overlays |
 | [Standards mobile](mobile-implementation-standards.md) | Architecture UI, layout, animations, accessibilité, performance et tests |
 | [Sécurité](security.md) | Exigences de sécurité existantes |
+| [Confidentialité Sentry](sentry-privacy.md) | Filtrage des contextes techniques, preuves et limites de la recette mobile US-021 |
 | [Règles métier](business-rules.md) | Décisions produit partagées entre backend, mobile et web |
 | [Architecture](../.github/instructions/architecture.instructions.md) | Responsabilités par couche et conventions du dépôt |
 | [Tokens UI](../.github/instructions/ui-design-tokens.instructions.md) | Utilisation du thème et des composants partagés |

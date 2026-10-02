@@ -21,6 +21,7 @@ import { darkTokens, lightTokens } from './theme/tokens';
 import { parseApiError } from './utils/errorParser';
 import { NotificationRuntime } from './services/notifications/NotificationRuntime';
 import { env } from './config/env';
+import { filterJavaScriptError } from './services/logs/sentryPrivacy';
 
 const sentryEnabled = !env.IS_DEV && Boolean(env.SENTRY_DSN);
 
@@ -31,6 +32,7 @@ if (sentryEnabled) {
     environment: Updates.channel ?? 'production',
     release: Updates.runtimeVersion ? `vasco@${Updates.runtimeVersion}` : undefined,
     sendDefaultPii: false,
+    beforeSend: filterJavaScriptError,
     tracesSampleRate: 0.1,
   });
 }

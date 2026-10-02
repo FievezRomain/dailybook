@@ -17,7 +17,7 @@ import {
 } from 'firebase/auth';
 import { Platform } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
-import * as Sentry from '@sentry/react-native';
+import { setMonitoringIdentity } from './monitoringIdentity';
 import { getFirebaseAuth } from '../../firebase';
 import { getGoogleSigninModule } from './googleSigninModule';
 import type { IAuthService, AuthUser, ReauthenticationMethod } from './IAuthService';
@@ -35,12 +35,12 @@ function mapToAuthUser(fbUser: { uid: string; email: string | null; displayName:
 /**
  * Implémentation Firebase de IAuthService.
  * Seul fichier autorisé à importer depuis 'firebase/auth'.
- * Appelle Sentry.setUser() sur signIn/signOut pour le suivi des erreurs.
+ * Transmet uniquement l'identifiant interne au suivi des erreurs, sans email.
  */
 class FirebaseAuthService implements IAuthService {
   async signIn(email: string, password: string): Promise<AuthUser> {
     const { user } = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
-    Sentry.setUser({ id: user.uid, email: user.email ?? undefined });
+    setMonitoringIdentity(user);
     return mapToAuthUser(user);
   }
 
@@ -48,13 +48,13 @@ class FirebaseAuthService implements IAuthService {
     const { user } = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
     await firebaseUpdateProfile(user, { displayName });
     await firebaseSendEmailVerification(user);
-    Sentry.setUser({ id: user.uid, email: user.email ?? undefined });
+    setMonitoringIdentity(user);
     return mapToAuthUser(user);
   }
 
   async signOut(): Promise<void> {
     await firebaseSignOut(getFirebaseAuth());
-    Sentry.setUser(null);
+    setMonitoringIdentity(null);
   }
 
   async sendEmailVerification(): Promise<void> {
@@ -89,7 +89,7 @@ class FirebaseAuthService implements IAuthService {
     const user = getFirebaseAuth().currentUser;
     if (!user) return;
     await firebaseDeleteUser(user);
-    Sentry.setUser(null);
+    setMonitoringIdentity(null);
   }
 
   async reauthenticate(email: string, password: string): Promise<void> {
@@ -184,7 +184,7 @@ class FirebaseAuthService implements IAuthService {
       }
       const credential = GoogleAuthProvider.credential(idToken);
       const { user } = await signInWithCredential(getFirebaseAuth(), credential);
-      Sentry.setUser({ id: user.uid, email: user.email ?? undefined });
+      setMonitoringIdentity(user);
       return mapToAuthUser(user);
     } catch (err: unknown) {
       const e = err as { code?: string; message?: string };
@@ -223,7 +223,7 @@ class FirebaseAuthService implements IAuthService {
       const name = [credential.fullName.givenName, credential.fullName.familyName].filter(Boolean).join(' ');
       if (name) await firebaseUpdateProfile(user, { displayName: name });
     }
-    Sentry.setUser({ id: user.uid, email: user.email ?? undefined });
+    setMonitoringIdentity(user);
     return mapToAuthUser(user);
   }
 }
