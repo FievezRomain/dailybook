@@ -14,6 +14,14 @@ ses valeurs et ses tests, pas de réintroduire un contexte libre.
 
 ## Limites restantes
 
+Le hook final `beforeSend` applique maintenant la politique aux erreurs JavaScript
+automatiques également (`services/logs/sentryPrivacy.ts`). Il garde release/dist,
+les coordonnées de code, le UID pseudonyme, OS iOS/Android et sa version numérique,
+les tags explicitement autorisés et les identifiants de trace/span valides. Les
+contextes globaux libres, email/nom d'utilisateur, nom serveur, transaction,
+fingerprint libre et threads sont supprimés. Le filtre ne modifie pas l'objet
+source. Treize tests ciblés réussissent ; aucun transport Sentry réel testé.
+
 L'identité explicite Sentry est centralisée dans `services/auth/monitoringIdentity.ts`.
 Les quatre parcours Firebase (email/inscription/Google/Apple) transmettent seulement
 le UID ; déconnexion et suppression de compte remettent l'identité à null. Aucun
@@ -34,9 +42,10 @@ Ce contrôle n'est pas une preuve de symbolication dans Sentry ni de filtrage na
 Les noms de fonctions/modules et chemins de code sont considérés techniques ;
 ils ne doivent pas être construits à partir de données utilisateur.
 
-Ces filtres portent uniquement sur les captures explicites de LoggerService.
-Les événements/transactions automatiques, les crashs natifs, les pièces jointes,
-ainsi que le contexte utilisateur/global du SDK restent à qualifier.
+Les captures explicites et erreurs passant par le hook JavaScript sont filtrées.
+Les transactions de performance, les crashs natifs, les pièces jointes et la
+transmission effective par le SDK restent à qualifier. Les métadonnées de SDK,
+release et debug sont considérées techniques, pas destinées à du contenu utilisateur.
 `sendDefaultPii: false` n'est pas une garantie de nettoyage de ces champs.
 Ne pas présenter ce premier lot comme un filtrage complet ou une absence de fuite.
 
@@ -47,7 +56,7 @@ restent à qualifier sur un candidat autorisé, sans publier en production.
 ## Vérification locale
 
 ```sh
-npx jest --runInBand --coverage=false tests/unit/logContext.test.ts tests/unit/logEvent.test.ts tests/unit/loggerContextIntegration.test.ts
+npx jest --runInBand --coverage=false tests/unit/logContext.test.ts tests/unit/logEvent.test.ts tests/unit/loggerContextIntegration.test.ts tests/unit/monitoringIdentity.test.ts tests/unit/sentryPrivacy.test.ts
 npx tsc --noEmit
 ```
 
