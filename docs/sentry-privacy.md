@@ -14,6 +14,13 @@ ses valeurs et ses tests, pas de réintroduire un contexte libre.
 
 ## Limites restantes
 
+L'identité explicite Sentry est centralisée dans `services/auth/monitoringIdentity.ts`.
+Les quatre parcours Firebase (email/inscription/Google/Apple) transmettent seulement
+le UID ; déconnexion et suppression de compte remettent l'identité à null. Aucun
+email, nom, photo ni credential n'est copié. Le UID reste une donnée pseudonyme,
+pas anonyme : accès, rétention et base de traitement Sentry restent à encadrer.
+Cela n'efface pas les événements historiques déjà présents chez le fournisseur.
+
 Incrément suivant : les événements explicitement capturés par LoggerService ont
 un processeur de portée. Les messages libres et noms d'exception non reconnus
 sont remplacés par des libellés fixes ; requêtes, extras, breadcrumbs attachés,
