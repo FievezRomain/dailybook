@@ -63,3 +63,18 @@ npx tsc --noEmit
 Les tests n'appellent pas Sentry : le fournisseur est simulé à la frontière.
 Les cas couvrent conservation du contexte technique, suppression des données
 privées, valeurs invalides, champs hérités/accesseurs et branchement du filtre.
+
+### Preuve du pipeline JavaScript
+
+`tests/unit/sentryPipeline.test.ts` utilise le vrai `BrowserClient`, `Scope` et
+parseur de stack des dépendances Sentry installées, avec intégrations automatiques
+désactivées et transport exclusivement en mémoire. Une vraie `TypeError` traverse
+la préparation d'événement et le hook final. L'enveloppe sérialisée ne contient
+pas les marqueurs privés injectés (message, email, contexte, extra, breadcrumb),
+mais conserve version, UID factice et frames analysées. Test réussi, aucun appel
+réseau ni DSN réel. Cela valide le pipeline JavaScript partagé, **pas** le client
+React Native, son pont natif, les crashs natifs ou la symbolication distante.
+
+```sh
+npx jest --runInBand --coverage=false tests/unit/sentryPipeline.test.ts
+```
