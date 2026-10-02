@@ -29,7 +29,7 @@ export function InlineCalendar({ current, selectedDate, markedDates, highlights 
   const selected = { ...(markedDates?.[selectedDate] ?? {}), selected: true, selectedColor: colors.primary, selectedTextColor: colors.textOnPrimary };
   const allMarks = { ...markedDates, [selectedDate]: selected };
   return (
-    <Card accessibilityLabel="Calendrier" testID={testID} style={{ width: "100%", maxWidth: 360, minHeight: 337, padding: 0, borderRadius: radii.modal, shadowColor: alpha.black16, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 1, shadowRadius: 8, elevation: 8, overflow: "hidden" }}>
+    <Card accessibilityLabel="Calendrier" testID={testID} style={{ width: "100%", maxWidth: 420, minHeight: 337, padding: 0, borderRadius: radii.modal, shadowColor: alpha.black16, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 1, shadowRadius: 8, elevation: 8, overflow: "hidden" }}>
       <Calendar
         current={current.slice(0, 10)}
         firstDay={1}

@@ -50,7 +50,7 @@ export const componentTokens = {
     time: { width: 320 },
   },
   feedback: {
-    width: 360,
+    width: 420,
     snackbarHeight: 56,
     bannerHeight: 96,
     stateHeight: 260,

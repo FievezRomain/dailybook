@@ -17,7 +17,7 @@ export interface NoteCardProps {
 export function NoteCard({ title, excerpt, metadata, pinned = false, material = 'solid', onPress, onMore, testID }: NoteCardProps) {
 	const { colors } = useAppTheme();
 	return (
-		<Card material={material} onPress={onPress} accessibilityLabel={`${title}${pinned ? ', épinglée' : ''}`} testID={testID} style={{ width: '100%', maxWidth: 344 }}>
+		<Card material={material} onPress={onPress} accessibilityLabel={`${title}${pinned ? ', épinglée' : ''}`} testID={testID} style={{ width: '100%', maxWidth: 420 }}>
 			<CardHeader title={title} aside={pinned ? <DomainCaption color={colors.primaryDark}>Épinglée</DomainCaption> : undefined} onMore={onMore} />
 			<DomainBody>{excerpt}</DomainBody>
 			{metadata ? <DomainCaption>{metadata}</DomainCaption> : null}
