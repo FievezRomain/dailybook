@@ -1,4 +1,4 @@
-import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getEventTypeRecurrenceDefaults, getReminderLabel, isPastEventDate, normalizeSharedGroupIds } from '../../../features/events/eventCreationUtils';
+import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getEventTypeRecurrenceDefaults, getReminderLabel, isPastEventDate, isRecurringEvent, normalizeSharedGroupIds } from '../../../features/events/eventCreationUtils';
 import type { Event } from '../../../models/Event';
 
 describe('event creation payload', () => {
@@ -8,6 +8,13 @@ describe('event creation payload', () => {
     expect(getEventTypeRecurrenceDefaults('rdv')).toEqual({ frequencetype: undefined, frequencevalue: undefined });
   });
 
+  it('only asks for a scope when the event belongs to a recurring series', () => {
+    expect(isRecurringEvent({ eventtype: 'depense', frequencevalue: 'daily' })).toBe(false);
+    expect(isRecurringEvent({ eventtype: 'soins', frequencevalue: 'none' })).toBe(false);
+    expect(isRecurringEvent({ eventtype: 'soins', frequencevalue: 'daily' })).toBe(true);
+    expect(isRecurringEvent({ eventtype: 'balade', idparent: 3 })).toBe(true);
+  });
+
   it('maps wizard data to the backend contract', () => {
     const payload = buildEventCreationPayload({ eventType: 'depense', nom: ' Croquettes ', dateevent: '2026-08-09', heuredebutevent: '14:30', animaux: [1], depense: '24,50', categoriedepense: 'alimentation', notif: 'JourJ', optionnotif: '30m' });
     expect(payload).toMatchObject({ eventtype: 'depense', nom: 'Croquettes', dateevent: '2026-08-09', heuredebutevent: '14:30', animaux: [1], depense: 24.5, categoriedepense: 'alimentation', notif: 'JourJ', optionnotif: '30 minutes avant' });
@@ -15,6 +22,10 @@ describe('event creation payload', () => {
 
   it('maps optional type-specific fields without dropping numeric values', () => {
     expect(buildEventCreationPayload({ eventType: 'concours', dateevent: '2026-08-09', discipline: 'Agility', placement: '2e', note: '4,5' })).toMatchObject({ discipline: 'Agility', placement: '2e', note: 4.5 });
+  });
+
+  it('updates a non-recurring event as a single occurrence by default', () => {
+    expect(buildEventUpdatePayload({ eventType: 'depense', dateevent: '2026-08-09' }, 14).update_scope).toBe('occurrence');
   });
 
   it('normalizes recurrence for care and walk events', () => {

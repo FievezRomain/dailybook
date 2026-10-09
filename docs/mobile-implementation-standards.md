@@ -47,9 +47,12 @@ Exemple de squelette :
 
 `EntityFormSheet` gère la safe area, le clavier, le scrim, la poignée et le geste de glissement vers le bas. Le footer ne doit pas dépendre d’une bottom bar cachée sous le formulaire. La structure interne reste en flex/auto-layout ; ne pas construire la sheet ou le formulaire avec `position: 'absolute'`.
 
+Sur Android comme sur iOS, tout menu ouvert depuis le FAB et tout formulaire dont le contenu peut dépasser la hauteur disponible doit conserver une zone verticale réellement scrollable, clavier ouvert compris. La dernière option et les actions de validation doivent rester atteignables sur les petits écrans ; aucun conteneur parent ne doit intercepter le geste sans relayer le scroll.
+
 ## 3. Responsive mobile
 
 - Utiliser la largeur disponible, pas une largeur d’iPhone codée en dur.
+- Centrer le même conteneur de contenu pour les données, les états vides et les skeletons. Sur téléphone large, employer une largeur maximale commune et des marges latérales compactes plutôt que d’aligner les cartes à gauche ou de réduire inutilement la zone lisible.
 - Appliquer les safe areas.
 - Tester petits écrans, grands écrans, orientation si autorisée et font scale 200 %.
 - Les textes passent à la ligne sans chevauchement.

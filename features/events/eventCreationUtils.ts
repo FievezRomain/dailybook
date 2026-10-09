@@ -18,10 +18,27 @@ export const recurrenceOptions = [
   { id: 'monthly', label: 'Tous les mois' },
 ] as const;
 
+export function supportsEventRecurrence(eventType?: string) {
+  return eventType === 'soins' || eventType === 'balade';
+}
+
 export function getEventTypeRecurrenceDefaults(eventType: string) {
-  return eventType === 'soins' || eventType === 'balade'
+  return supportsEventRecurrence(eventType)
     ? { frequencetype: 'recurring', frequencevalue: 'daily' }
     : { frequencetype: undefined, frequencevalue: undefined };
+}
+
+export function isRecurringEvent(event: Partial<Event>) {
+  if (!supportsEventRecurrence(event.eventtype)) return false;
+
+  const recurrence = event.frequencevalue?.trim().toLocaleLowerCase('fr-FR');
+  if (recurrence === 'none') return false;
+
+  return Boolean(
+    event.idparent ||
+    recurrence ||
+    event.frequencetype?.trim().toLocaleLowerCase('fr-FR') === 'recurring',
+  );
 }
 
 export function getRecurrenceLabel(id?: string) {
@@ -85,7 +102,7 @@ export function buildEventCreationPayload(form: EventWizardFormData): CreateEven
 }
 
 export function buildEventUpdatePayload(form: EventWizardFormData, eventId: number): UpdateEventPayload {
-  return { ...buildEventCreationPayload(form), state: form.state ?? 'pending', id: eventId, update_scope: form.updateScope as UpdateEventPayload['update_scope'] };
+  return { ...buildEventCreationPayload(form), state: form.state ?? 'pending', id: eventId, update_scope: (form.updateScope ?? 'occurrence') as UpdateEventPayload['update_scope'] };
 }
 
 export function eventToWizardForm(event: Event): EventWizardFormData {
