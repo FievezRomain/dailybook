@@ -1,6 +1,7 @@
 import type { Animal } from '../../models/Animal';
 import type { AiParseResult } from '../../services/api/AiService';
 import type { EventWizardFormData } from '../../stores/useEventWizardStore';
+import { getEventTypeRecurrenceDefaults } from './eventCreationUtils';
 
 const eventTypes = new Set(['soins', 'rdv', 'balade', 'entrainement', 'concours', 'depense', 'autre']);
 
@@ -9,6 +10,7 @@ export function normalizeAiEvent(result: AiParseResult, rawText: string, animals
   const detectedIds = animals.filter((animal) => rawText.toLocaleLowerCase('fr-FR').includes(animal.nom.toLocaleLowerCase('fr-FR'))).map((animal) => animal.id);
   return {
     eventType: validType,
+    ...getEventTypeRecurrenceDefaults(validType),
     nom: result.nom,
     dateevent: result.dateevent,
     heuredebutevent: typeof result.heuredebutevent === 'string' ? result.heuredebutevent : typeof result.heuredebut === 'string' ? result.heuredebut : undefined,

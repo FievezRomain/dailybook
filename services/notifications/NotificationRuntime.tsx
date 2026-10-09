@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
-import { AppState } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import { NOTIFICATIONS_KEY, useNotificationsQuery } from '../../hooks/queries/useNotificationsQuery';
 import { useAuthStore } from '../../stores/useAuthStore';
 import { useNotificationNavigationStore } from '../../stores/useNotificationNavigationStore';
 import { notificationService } from './ExpoNotificationService';
-import { openSession } from '../api/AuthService';
+import { useForegroundSubscriptionSync } from '../../hooks/useForegroundSubscriptionSync';
 
 export function NotificationRuntime() {
+  useForegroundSubscriptionSync();
   const authenticated = useAuthStore((state) => state.isAuthenticated);
   const firebaseUser = useAuthStore((state) => state.firebaseUser);
   const sessionReady = authenticated && Boolean(firebaseUser);
@@ -38,19 +38,6 @@ export function NotificationRuntime() {
       removeResponse();
     };
   }, [queryClient, requestOpen, sessionReady]);
-
-  useEffect(() => {
-    if (!sessionReady) return;
-    const syncToken = () => {
-      void notificationService.getToken().catch(() => undefined).then((expotoken) =>
-        openSession({ timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, expotoken }),
-      ).catch(() => undefined);
-    };
-    const subscription = AppState.addEventListener('change', (state) => {
-      if (state === 'active') syncToken();
-    });
-    return () => subscription.remove();
-  }, [sessionReady]);
 
   return null;
 }

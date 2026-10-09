@@ -19,11 +19,15 @@ describe('animalWorkspaceUtils', () => {
     expect(isSharedAnimal(animal(3, 'Propriétaire', { provenance: 'owner' }))).toBe(false);
   });
 
-  it('classe les présents avant les départs puis les décès', () => {
-    const result = sortAnimalsForWorkspace([animal(3, 'Mort', { datedeces: '2025-01-01' }), animal(1, 'Présent'), animal(2, 'Parti', { datedepart: '2025-01-01' })]);
-    expect(result.map(({ id }) => id)).toEqual([1, 2, 3]);
-    expect(getAnimalPresence(result[0])).toBe('present');
-    expect(getAnimalPresence(result[1])).toBe('history');
+  it('classe globalement les animaux par espèce puis par nom', () => {
+    const result = sortAnimalsForWorkspace([
+      animal(3, 'Zulu', { espece: 'Cheval', datedeces: '2025-01-01' }),
+      animal(1, 'Milo', { espece: 'Chien' }),
+      animal(2, 'Aria', { espece: 'Cheval', datedepart: '2025-01-01' }),
+    ]);
+    expect(result.map(({ id }) => id)).toEqual([2, 3, 1]);
+    expect(getAnimalPresence(result[0])).toBe('history');
+    expect(getAnimalPresence(result[2])).toBe('present');
   });
 
   it('formate les dates, âge et résumé sans valeur vide', () => {
@@ -60,7 +64,7 @@ describe('animalWorkspaceUtils', () => {
   });
 
   it('conserve la sélection existante et choisit un fallback selon l’ordre métier si elle disparaît', () => {
-    const values = [animal(3, 'Décédé', { datedeces: '2025-01-01' }), animal(2, 'Parti', { datedepart: '2025-01-01' }), animal(1, 'Présent')];
+    const values = [animal(3, 'Décédé', { espece: 'Chien', datedeces: '2025-01-01' }), animal(2, 'Parti', { espece: 'Cheval', datedepart: '2025-01-01' }), animal(1, 'Présent', { espece: 'Âne' })];
     expect(resolveAnimalSelection(values, 2)).toBe(2);
     expect(resolveAnimalSelection(values, 99)).toBe(1);
     expect(resolveAnimalSelection([], 2)).toBeUndefined();

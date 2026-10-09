@@ -13,6 +13,7 @@ import type { Notification } from '../../models/Notification';
 import { formatEventOverdueLabel, formatHomeDate, formatObjectivePeriod, getDailyTaskProgress, getEventDate, getEventOverdueDays, getFirstName, getInitials, getLinkedAnimals, getObjectiveProgress, isEventCompleted, isHomeHeaderScrolled, splitHomeEvents, toEventCardType } from './homeUtils';
 import type { Animal } from '../../models/Animal';
 import type { Objectif } from '../../models/Objectif';
+import { isObjectiveInProgress } from '../objectifs/objectiveUtils';
 
 import { tabs, type MainTabId } from './mainTabs';
 
@@ -47,7 +48,7 @@ function HomeContent({ events, objectives, animals, hasError, onRetry, onEvent, 
   const mutations = useEventMutations();
   const [completionError, setCompletionError] = useState(false);
   const daily = getDailyTaskProgress(events.today);
-  const activeObjectives = objectives.filter((objective) => getObjectiveProgress(objective) < 1);
+  const activeObjectives = objectives.filter((objective) => isObjectiveInProgress(objective));
   const setEventCompleted = async (event: (typeof events.today)[number], completed: boolean) => {
     setCompletionError(false);
     try { await mutations.patch.mutateAsync({ id: String(event.id), body: { state: completed ? 'completed' : 'pending' } }); }
