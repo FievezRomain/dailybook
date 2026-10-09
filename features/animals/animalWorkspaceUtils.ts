@@ -21,9 +21,8 @@ export function getAnimalPresence(animal: Animal): AnimalPresence {
 
 export function sortAnimalsForWorkspace(animals: readonly Animal[]): Animal[] {
   return [...animals].sort((left, right) => {
-    const leftRank = left.datedeces ? 2 : left.datedepart ? 1 : 0;
-    const rightRank = right.datedeces ? 2 : right.datedepart ? 1 : 0;
-    return leftRank - rightRank || left.nom.localeCompare(right.nom, 'fr');
+    const speciesOrder = (left.espece ?? '').localeCompare(right.espece ?? '', 'fr', { sensitivity: 'base' });
+    return speciesOrder || left.nom.localeCompare(right.nom, 'fr', { sensitivity: 'base' }) || left.id - right.id;
   });
 }
 

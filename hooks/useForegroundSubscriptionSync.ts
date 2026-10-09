@@ -31,8 +31,8 @@ export function useForegroundSubscriptionSync(): void {
         if (!currentSession()) return;
         if (typeof result.subscription !== 'string') throw new Error('INVALID_SUBSCRIPTION_RESPONSE');
         const state = useAuthStore.getState();
-        if (state.user && state.user.subscription !== result.subscription) {
-          state.setUser({ ...state.user, subscription: result.subscription });
+        if (state.user && (state.user.subscription !== result.subscription || state.user.subscription_date_fin !== result.subscription_date_fin)) {
+          state.setUser({ ...state.user, subscription: result.subscription, subscription_date_fin: result.subscription_date_fin });
           // Group and other Premium views must not retain their previous access result.
           await queryClient.invalidateQueries();
         }

@@ -4,7 +4,7 @@ const animals = [{ id: 1, nom: 'Milo', espece: 'Chien' }, { id: 2, nom: 'Nala', 
 
 describe('AI event normalization', () => {
   it('maps backend fields and detects an animal name locally', () => {
-    expect(normalizeAiEvent({ nom: 'Vaccin', eventtype: 'soins', heuredebut: '09:00' }, 'Vaccin de Milo mardi', animals)).toMatchObject({ eventType: 'soins', nom: 'Vaccin', heuredebutevent: '09:00', animaux: [1] });
+    expect(normalizeAiEvent({ nom: 'Vaccin', eventtype: 'soins', heuredebut: '09:00' }, 'Vaccin de Milo mardi', animals)).toMatchObject({ eventType: 'soins', nom: 'Vaccin', heuredebutevent: '09:00', animaux: [1], frequencetype: 'recurring', frequencevalue: 'daily' });
   });
 
   it('falls back to the other event type', () => {

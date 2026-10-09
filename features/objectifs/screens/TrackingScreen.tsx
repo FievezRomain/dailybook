@@ -49,6 +49,7 @@ import {
   isCurrentStatisticsPeriod,
   shiftStatisticsPeriodAnchor,
 } from "../../statistics/statisticsUtils";
+import { isObjectiveExpired, isObjectiveInProgress } from "../objectiveUtils";
 
 type TrackingTab = "objectives" | "statistics";
 export interface TrackingScreenProps {
@@ -388,7 +389,7 @@ function AnimalFilter(props: AnimalFilterProps) {
       alwaysBounceVertical={false}
       nestedScrollEnabled
       showsHorizontalScrollIndicator={false}
-      style={{ flexGrow: 0 }}
+      style={{ flexGrow: 0, width: "100%" }}
       contentContainerStyle={{
         minWidth: "100%",
         justifyContent: "center",
@@ -454,9 +455,7 @@ function ObjectivesContent({
   const items =
     list === "all"
       ? (objectives ?? [])
-      : (objectives ?? []).filter(
-          (objective) => getObjectiveProgress(objective) < 1,
-        );
+      : (objectives ?? []).filter((objective) => isObjectiveInProgress(objective));
   return (
     <View style={{ width: "100%", maxWidth: 452, alignSelf: "center", padding: spacing.md, gap: spacing.md }}>
       <SectionHeader
@@ -489,8 +488,7 @@ function ObjectivesContent({
         items.map((objective) => {
           const progress = getObjectiveProgress(objective);
           const completed = progress >= 1;
-          const overdue =
-            !completed && new Date(objective.datefin).getTime() < Date.now();
+          const overdue = isObjectiveExpired(objective);
           return (
             <ObjectiveCard
               key={objective.id}

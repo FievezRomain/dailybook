@@ -7,7 +7,7 @@ import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { getEventDate, getLinkedAnimals, isEventCompleted, toEventCardType } from '../../home/homeUtils';
-import { eventToDuplicateWizardForm, eventToWizardForm, formatEventShareMessage } from '../eventCreationUtils';
+import { eventToDuplicateWizardForm, eventToWizardForm, formatEventShareMessage, isRecurringEvent } from '../eventCreationUtils';
 import { getEventDetailRows } from '../eventDetailUtils';
 import type { EventUpdateScope } from '../types';
 import { EventQuickEditSheet } from '../components/EventQuickEditSheet';
@@ -45,10 +45,10 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
   const animals = getLinkedAnimals(event.animaux, animalsQuery.data ?? []); const date = getEventDate(event); const animalNames = animals.map((animal) => animal.name).join(' et ') || 'Aucun animal';
   const selectAction = (action: EventAction) => {
     if (action === 'delete') {
-      if (event.idparent || event.frequencevalue) setDeleteScopeOpen(true);
+      if (isRecurringEvent(event)) setDeleteScopeOpen(true);
       else { setDeleteScope('occurrence'); setDeleteOpen(true); }
     }
-    else if (action === 'edit') { resetWizard(); setFormData(eventToWizardForm(event)); if (event.idparent || event.frequencevalue) setScopeOpen(true); else onEdit(event.id); }
+    else if (action === 'edit') { resetWizard(); setFormData(eventToWizardForm(event)); if (isRecurringEvent(event)) setScopeOpen(true); else onEdit(event.id); }
     else if (action === 'duplicate') { resetWizard(); setFormData(eventToDuplicateWizardForm(event)); onDuplicate(event.id); }
     else { setShareError(false); void Share.share({ title: event.nom || 'Événement Vasco', message: formatEventShareMessage(event, animals.map((animal) => animal.name)) }).then(() => onShare(event.id)).catch(() => setShareError(true)); }
   };

@@ -20,6 +20,7 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant que propriétaire**, je souhaite gérer la photo de profil, les mesures, documents et données corporelles de mon animal afin de conserver un suivi complet.
 - **En tant que propriétaire**, je souhaite créer, consulter, modifier et supprimer les entrées d’historique de mon animal afin de corriger ou compléter son suivi.
 - **En tant qu’utilisateur**, je souhaite que les dates animales soient converties en vraies dates de contrat avant la couche SQL afin que leur enregistrement soit fiable.
+- **En tant qu’utilisateur**, je souhaite que les animaux soient ordonnés globalement par espèce, puis par nom et enfin par identifiant afin de retrouver le même classement stable sur toutes les plateformes.
 
 ### Accès à un animal partagé
 
@@ -71,6 +72,8 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant qu’auteur**, je souhaite pouvoir remplacer explicitement cet état proposé pendant la création ou la modification afin de conserver le dernier mot.
 - **En tant qu’utilisateur**, je souhaite marquer un événement comme terminé ou à faire depuis son détail afin de mettre son suivi à jour rapidement.
 - **En tant qu’auteur**, je souhaite définir une répétition pour les types compatibles afin de créer une série sans ressaisie manuelle.
+- **En tant qu’auteur**, je souhaite que les soins et balades proposent « tous les jours » par défaut à la création tout en me laissant choisir aucune récurrence afin d’accélérer le cas courant.
+- **En tant qu’auteur d’un événement unique**, je souhaite modifier ou supprimer directement l’événement lorsque sa récurrence est absente, vaut `none` ou que son type n’est pas compatible afin de ne jamais choisir une portée qui n’existe pas.
 - **En tant qu’auteur**, je souhaite configurer les rappels disponibles afin d’être averti au moment prévu.
 - **En tant qu’utilisateur**, je souhaite que le backend calcule les rappels et notifications à partir des données de l’événement afin que les clients ne divergent pas.
 
@@ -83,6 +86,8 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant qu’auteur modifiant un événement partagé**, je souhaite ne voir que les animaux acceptés dans tous les groupes destinataires et être informé de cette restriction afin de préserver un partage valide.
 - **En tant qu’utilisateur**, je souhaite que le backend refuse atomiquement un payload dont un groupe ne contient pas tous les animaux afin qu’aucune mutation partielle ne subsiste.
 - **En tant que propriétaire**, je souhaite que l’association d’un animal partagé à un événement n’autorise jamais son repartage vers un autre groupe afin de conserver le contrôle de sa diffusion.
+- **En tant qu’utilisateur**, je souhaite que « réalisé par » ne révèle une identité que si mes droits actifs permettent de la connaître ; sinon je vois un libellé neutre pour un membre autorisé ou ancien, ou aucune attribution si elle est invalide.
+- **En tant qu’utilisateur**, je souhaite que l’email du réalisateur ne soit jamais présenté dans l’interface afin qu’une information technique du contrat ne devienne pas une fuite de donnée personnelle.
 
 ### Documents et événements marquants
 
@@ -148,6 +153,8 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant qu’utilisateur**, je souhaite que les sous-étapes vides ne soient pas persistées et que les étapes ajoutées, modifiées ou retirées soient synchronisées lors d’une modification afin de conserver exactement mon plan courant.
 - **En tant qu’utilisateur**, je souhaite mettre à jour séparément l’état d’une sous-étape de mon propre objectif afin de suivre ma progression rapidement.
 - **En tant qu’utilisateur**, je souhaite que la duplication crée un nouvel objectif sans transférer de propriété sur les animaux associés afin de copier la structure uniquement.
+- **En tant qu’utilisateur**, je souhaite qu’un objectif soit « en cours » uniquement s’il possède encore une sous-étape non validée et si sa date de fin est aujourd’hui ou dans le futur afin que cette vue représente réellement le travail restant.
+- **En tant qu’utilisateur**, je souhaite qu’un objectif soit « terminé » uniquement lorsque toutes ses sous-étapes sont validées et « expiré » lorsqu’il reste incomplet après sa date de fin afin de ne pas confondre échéance et réussite.
 
 ## Notes
 
@@ -183,6 +190,7 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant qu’utilisateur**, je souhaite naviguer par mois, année ou période de cinq ans afin d’adapter la profondeur de l’analyse.
 - **En tant qu’utilisateur**, je souhaite voir les valeurs d’abscisse et d’ordonnée sur chaque courbe afin d’interpréter les données.
 - **En tant qu’utilisateur**, je souhaite voir un point lorsqu’une courbe ne contient qu’une valeur afin que la mesure ne paraisse pas absente sans inventer de tendance.
+- **En tant qu’utilisateur mobile**, je souhaite que le sélecteur d’animaux occupe toute la largeur utile du détail d’une statistique afin de pouvoir parcourir toutes les options sans zone morte.
 - **En tant qu’utilisateur**, je souhaite une heatmap mensuelle avec les jours lundi à dimanche en colonnes, une ligne par semaine et exactement une case par date réelle afin de lire le mois comme un calendrier.
 - **En tant qu’utilisateur**, je souhaite une heatmap annuelle de 365 ou 366 cases et une vue cinq ans agrégée par mois afin que chaque granularité reste pertinente.
 
@@ -193,6 +201,14 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant qu’utilisateur**, je souhaite qu’un appui sur un push ouvre Vasco sur la liste des notifications afin d’accéder directement au contexte.
 - **En tant qu’utilisateur**, je souhaite que le nombre non lu alimente la cloche, son état plein et le badge de l’icône native afin de voir immédiatement les notifications en attente.
 - **En tant qu’utilisateur**, je souhaite que lire, accepter, refuser ou tout marquer comme lu resynchronise tous les badges afin qu’ils reflètent toujours l’état réel.
+
+## Abonnements marchands
+
+- **En tant qu’acheteur**, je souhaite m’authentifier avec Firebase sur le site marchand WordPress afin que mon achat soit rattaché au bon compte Vasco.
+- **En tant qu’exploitant**, je souhaite que seul le serveur WordPress appelle `POST /api/v1/admin/users/subscription` avec `X-Vasco-Firebase-Uid`, une clé d’administration conservée côté serveur et un SKU connu afin qu’aucun navigateur ne puisse attribuer un abonnement.
+- **En tant qu’équipe produit**, je souhaite que le backend déduise le niveau et la durée du SKU sans accepter de dates ni de niveau arbitraire du marchand afin de garder le catalogue comme source de vérité.
+- **En tant qu’abonné**, je souhaite qu’un achat du même niveau prolonge mon échéance existante d’un mois ou d’un an et qu’un changement de niveau reparte du jour de l’achat afin que la durée restante ne soit conservée que lors d’un renouvellement équivalent.
+- **En tant qu’utilisateur**, je souhaite voir la date de fin dans mon profil uniquement lorsqu’un abonnement commercial actif en possède une afin de ne pas afficher une échéance artificielle pour Free ou Pioneer.
 
 ## Fichiers et stockage
 

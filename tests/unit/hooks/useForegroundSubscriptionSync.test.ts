@@ -44,6 +44,13 @@ it('applies revocation as well as attribution', async () => {
   resume();
   await waitFor(() => expect(mockSetUser).toHaveBeenCalledWith(expect.objectContaining({ subscription: 'Free' })));
 });
+it('refreshes the end date even when the subscription tier is unchanged', async () => {
+  mockState.user = { ...mockState.user!, subscription: 'Premium', subscription_date_fin: '2026-11-01' };
+  mockSession.mockResolvedValue({ subscription: 'Premium', subscription_date_fin: '2026-12-01' });
+  renderHook(useForegroundSubscriptionSync);
+  resume();
+  await waitFor(() => expect(mockSetUser).toHaveBeenCalledWith(expect.objectContaining({ subscription_date_fin: '2026-12-01' })));
+});
 it('keeps the cached profile on network failure', async () => {
   mockSession.mockRejectedValue(new Error('offline'));
   renderHook(useForegroundSubscriptionSync);
