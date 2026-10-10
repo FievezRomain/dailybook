@@ -20,8 +20,9 @@ EAS Update
 
 Le projet utilise :
 
-- Expo SDK 54 ;
+- Expo SDK 57 ;
 - `expo-updates` ;
+- uniquement les plateformes natives `ios` et `android` ;
 - les canaux `development`, `preview` et `production` ;
 - `runtimeVersion.policy = appVersion` ;
 - `appVersionSource = remote` pour les numéros techniques de build.
