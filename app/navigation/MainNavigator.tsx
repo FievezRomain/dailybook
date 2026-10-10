@@ -5,6 +5,7 @@ import {
   AnimalActionDialogs,
   AnimalFormSheetScreen,
   AnimalsWorkspaceScreen,
+  isOwnedAnimal,
   isSharedAnimal,
   type SensitiveAnimalAction,
 } from "../../features/animals";
@@ -84,6 +85,7 @@ import {
   SettingsSecurityScreen,
   SettingsHelpScreen,
 } from "../../features/settings";
+import { canCreateAnimal } from "../../shared/utils/subscriptionUtils";
 
 type CreateOrigin = "root" | "notes" | "wishes" | "contacts" | "groups";
 type CreateOriginRoute = { name: "root" } | { name: "notes" } | { name: "wishes" } | { name: "contacts" } | { name: "groups" };
@@ -108,6 +110,7 @@ export function MainNavigator() {
   const [voicePlans, setVoicePlans] = useState(false);
   const [groupsPlans, setGroupsPlans] = useState(false);
   const [visualTrackingPlans, setVisualTrackingPlans] = useState(false);
+  const [animalPlans, setAnimalPlans] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const notificationOpenRequest = useNotificationNavigationStore((state) => state.requestId);
   useEffect(() => {
@@ -163,6 +166,7 @@ export function MainNavigator() {
     | { name: "group"; groupId: number }
     | { name: "groupInvitation"; invitationId: number }
     | { name: "groupPremium" }
+    | { name: "animalPremium" }
     | {
         name: "groupForm";
         mode: "create" | "edit";
@@ -216,6 +220,11 @@ export function MainNavigator() {
   const create = (target: string, initialEventDate?: string) => {
     setCreateOrigin(resolveCreateOrigin(route.name));
     if (target === "animal") {
+      const ownedAnimalCount = animals.filter(isOwnedAnimal).length;
+      if (!canCreateAnimal(user?.subscription, ownedAnimalCount)) {
+        setRoute({ name: "animalPremium" });
+        return;
+      }
       resetAnimalWizard();
       setRoute({ name: "animalForm", mode: "create" });
       return;
@@ -525,6 +534,22 @@ export function MainNavigator() {
       <PremiumPlansComparison
         onBack={() => setVisualTrackingPlans(false)}
         testID="visual-tracking-plans-comparison"
+      />
+    );
+  if (animalPlans)
+    return (
+      <PremiumPlansComparison
+        onBack={() => setAnimalPlans(false)}
+        testID="animals-plans-comparison"
+      />
+    );
+  if (route.name === "animalPremium")
+    return (
+      <PremiumRequiredPattern
+        feature="animalLimit"
+        onBack={returnToCreateOrigin}
+        onComparePlans={() => setAnimalPlans(true)}
+        testID="animals-premium-required"
       />
     );
   if (route.name === "groupPremium")

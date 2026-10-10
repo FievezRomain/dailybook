@@ -98,6 +98,7 @@ export function getAnimalSaveError(error: unknown, mode: 'create' | 'edit') {
   const parsed = parseApiError(error);
   if (parsed.code === AppErrorCode.NOT_FOUND) return { title: 'Animal introuvable', message: 'Ce profil n’existe plus. Revenez à la liste puis réessayez.' };
   if (parsed.code === AppErrorCode.NETWORK_ERROR) return { title: 'Connexion interrompue', message: 'Le serveur ne répond pas. Vérifiez votre connexion puis réessayez.' };
+  if (parsed.code === AppErrorCode.QUOTA_EXCEEDED) return { title: 'Limite de 3 animaux atteinte', message: 'Votre compte Gratuit peut contenir jusqu’à 3 animaux. Passez à Premium pour en ajouter davantage.' };
   if (parsed.code === AppErrorCode.VALIDATION_ERROR) return { title: 'Informations à vérifier', message: parsed.message };
   if (parsed.code === AppErrorCode.INTERNAL_ERROR) return { title: 'Enregistrement impossible', message: 'Le serveur a rencontré un problème. Vos informations sont conservées.' };
   return { title: mode === 'edit' ? 'Modification impossible' : 'Création impossible', message: parsed.message };

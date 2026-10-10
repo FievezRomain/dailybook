@@ -50,4 +50,12 @@ describe('animalFormUtils', () => {
     expect(getAnimalSaveError(notFound, 'edit').title).toBe('Animal introuvable');
     expect(getAnimalSaveError(server, 'create')).toEqual({ title: 'Enregistrement impossible', message: 'Le serveur a rencontré un problème. Vos informations sont conservées.' });
   });
+
+  it('explains the free animal quota returned by the backend', () => {
+    const quota = new AxiosError('quota', undefined, undefined, undefined, { status: 429, statusText: 'Too Many Requests', headers: {}, config: {} as never, data: undefined });
+    expect(getAnimalSaveError(quota, 'create')).toEqual(expect.objectContaining({
+      title: 'Limite de 3 animaux atteinte',
+      message: expect.stringContaining('Premium'),
+    }));
+  });
 });

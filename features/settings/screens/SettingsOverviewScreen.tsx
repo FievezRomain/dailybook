@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 import { Avatar, BottomBar, Dialog, Icon, ListItem, RootScreen, StatusBadge, TopBar } from '../../../shared/components/ui';
 import { radii, spacing, typography } from '../../../theme/scales';
@@ -8,17 +9,20 @@ import { useAuthStore } from '../../../stores/useAuthStore';
 import { tabs, type MainTabId } from '../../home/mainTabs';
 import { getInitials } from '../../home/homeUtils';
 import { useUserImageUrl } from '../hooks/useUserImageUrl';
+import { getSubscriptionTranslationKey, isPremiumSubscription, isPioneerSubscription } from '../../../shared/utils/subscriptionUtils';
 
 interface Props { activeTab: MainTabId; onSelectTab: (tab: MainTabId) => void; onBack: () => void; onOpen: (target: 'profile' | 'appearance' | 'notifications' | 'security' | 'privacy' | 'help') => void }
 
 export function SettingsOverviewScreen({ activeTab, onSelectTab, onBack, onOpen }: Props) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation('common');
   const user = useAuthStore((state) => state.user);
   const firebasePhotoUrl = useAuthStore((state) => state.firebaseUser?.photoURL);
   const signOut = useAuthStore((state) => state.signOutUser);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const imageUrl = useUserImageUrl(user?.filename, user?.id);
-  const premium = String(user?.subscription).toLowerCase() === 'premium';
+  const premium = isPremiumSubscription(user?.subscription);
+  const pioneer = isPioneerSubscription(user?.subscription);
   const leading = (name: 'profile' | 'visibilityOn' | 'notifications' | 'lock' | 'info' | 'file') => <View style={{ width: 40, height: 40, alignItems: 'center', justifyContent: 'center', borderRadius: radii.full, backgroundColor: colors.surfaceVariant }}><Icon name={name} color={colors.primary} /></View>;
 
   return <>
@@ -27,7 +31,7 @@ export function SettingsOverviewScreen({ activeTab, onSelectTab, onBack, onOpen 
         <Avatar initials={getInitials(user?.prenom)} imageUrl={imageUrl} fallbackImageUrl={firebasePhotoUrl} accessibilityLabel="Photo de profil" size={76} />
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.xl }}>{user?.prenom || 'Compte Vasco'}</Text>
         <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{user?.email}</Text>
-        <StatusBadge label={premium ? 'Premium' : 'Gratuit'} tone={premium ? 'success' : 'neutral'} />
+        <StatusBadge label={t(getSubscriptionTranslationKey(user?.subscription))} tone={premium || pioneer ? 'success' : 'neutral'} />
       </View>
       <View>
         <ListItem title="Profil" subtitle="Nom, photo et adresse e-mail" leading={leading('profile')} onPress={() => onOpen('profile')} />

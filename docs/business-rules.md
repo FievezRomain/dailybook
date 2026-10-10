@@ -32,6 +32,13 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant que propriétaire**, je souhaite rester le seul à pouvoir modifier, supprimer ou enrichir mon animal partagé afin que le partage ne transfère aucun droit de propriété.
 - **En tant que propriétaire**, je souhaite que le backend vérifie l’accès actif et le rattachement du nom de fichier avant de signer une photo privée afin que les médias de mon animal restent protégés.
 
+### Quota d’animaux
+
+- Un compte `Free` peut posséder au maximum trois animaux. Les animaux seulement accessibles via un groupe ne consomment pas ce quota.
+- Les comptes `Premium` et `Pioneer` peuvent posséder un nombre illimité d’animaux.
+- `Pioneer` est attribué aux comptes présents avant l’entrée en vigueur du quota. Il ne débloque pas les autres fonctionnalités Premium.
+- Le backend contrôle le quota de façon atomique ; les clients affichent le verrou en amont et traitent également l’erreur `QUOTA_EXCEEDED`.
+
 ### Carnet et synthèse médicale
 
 - **En tant que propriétaire ou membre autorisé**, je souhaite consulter dans le dossier médical les événements `soins` et `rdv` dont `todisplay` vaut `true` ou est absent afin d’obtenir un résumé pertinent.
