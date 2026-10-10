@@ -1,6 +1,6 @@
 import './config/i18n';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import * as Sentry from '@sentry/react-native';
 import * as Font from 'expo-font';
@@ -18,9 +18,9 @@ import { useAuthStore } from './stores/useAuthStore';
 import { useThemeStore } from './stores/useThemeStore';
 import tamaguiConfig from './theme/tamagui.config';
 import { darkTokens, lightTokens } from './theme/tokens';
-import { parseApiError } from './utils/errorParser';
 import { NotificationRuntime } from './services/notifications/NotificationRuntime';
 import { env } from './config/env';
+import { queryClient } from './services/query/queryClient';
 
 const sentryEnabled = !env.IS_DEV && Boolean(env.SENTRY_DSN);
 
@@ -34,19 +34,6 @@ if (sentryEnabled) {
     tracesSampleRate: 0.1,
   });
 }
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000,
-      retry: (failureCount, error) => {
-        const parsed = parseApiError(error);
-        return (parsed.isNetworkError || parsed.isAuthError) && failureCount < 2;
-      },
-    },
-    mutations: { retry: 0 },
-  },
-});
 
 function VascoApplication() {
   const resolvedTheme = useThemeStore((state) => state.resolvedTheme);
