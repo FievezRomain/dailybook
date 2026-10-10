@@ -103,22 +103,6 @@ function routeForCreateOrigin(origin: CreateOrigin): CreateOriginRoute {
   return { name: "root" };
 }
 
-type CreateOrigin = "root" | "notes" | "wishes" | "contacts" | "groups";
-type CreateOriginRoute = { name: "root" } | { name: "notes" } | { name: "wishes" } | { name: "contacts" } | { name: "groups" };
-
-function resolveCreateOrigin(routeName: string): CreateOrigin {
-  if (routeName === "notes" || routeName === "wishes" || routeName === "contacts" || routeName === "groups") return routeName;
-  return "root";
-}
-
-function routeForCreateOrigin(origin: CreateOrigin): CreateOriginRoute {
-  if (origin === "notes") return { name: "notes" };
-  if (origin === "wishes") return { name: "wishes" };
-  if (origin === "contacts") return { name: "contacts" };
-  if (origin === "groups") return { name: "groups" };
-  return { name: "root" };
-}
-
 export function MainNavigator() {
   const [tab, setTab] = useState<MainTabId>("home");
   const [preferredAnimalId, setPreferredAnimalId] = useState<number>();
