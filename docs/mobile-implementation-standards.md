@@ -59,6 +59,8 @@ Sur Android comme sur iOS, tout menu ouvert depuis le FAB et tout formulaire don
 - Une action ne doit pas devenir un bouton sur trois lignes.
 - Les listes utilisent virtualization et clés stables.
 - Le clavier ne masque ni le champ courant ni le CTA.
+- Un état vide de section ou de liste utilise une carte délimitée, alignée sur la largeur des cartes métier, avec icône, titre et explication lisibles. Un simple texte flottant n’est pas suffisant pour les événements, objectifs, animaux, notes, contacts, groupes, souhaits et notifications.
+- Le splash natif utilise le logo Vasco centré à une taille immédiatement identifiable sur petits et grands téléphones ; toute modification de sa largeur nécessite une nouvelle build native et une vérification Android/iOS.
 
 ## 4. Tokens et composants
 
