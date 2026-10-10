@@ -2,6 +2,7 @@ import type { Animal } from '../../models/Animal';
 import type { AiParseResult } from '../../services/api/AiService';
 import type { EventWizardFormData } from '../../stores/useEventWizardStore';
 import { getEventTypeRecurrenceDefaults } from './eventCreationUtils';
+export { isPremiumSubscription } from '../../shared/utils/subscriptionUtils';
 
 const eventTypes = new Set(['soins', 'rdv', 'balade', 'entrainement', 'concours', 'depense', 'autre']);
 
@@ -24,6 +25,3 @@ export function normalizeAiEvent(result: AiParseResult, rawText: string, animals
   };
 }
 
-export function isPremiumSubscription(subscription?: string) {
-  return subscription?.trim().toLocaleLowerCase('fr-FR') === 'premium';
-}

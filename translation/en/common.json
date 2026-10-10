@@ -29,6 +29,11 @@
   },
   "empty": "No results",
   "connectionRestored": "Back online ✓",
+  "subscription": {
+    "free": "Free",
+    "premium": "Premium",
+    "pioneer": "Pioneer"
+  },
   "darkModeOn": "Dark mode on",
   "darkModeOff": "Light mode on",
   "createMenu": {

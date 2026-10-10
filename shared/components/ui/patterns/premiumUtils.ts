@@ -1,4 +1,4 @@
-export const premiumFeatures = ['statistics', 'groups', 'aiCreation', 'voiceNotes'] as const;
+export const premiumFeatures = ['statistics', 'groups', 'aiCreation', 'voiceNotes', 'animalLimit'] as const;
 
 export type PremiumFeature = (typeof premiumFeatures)[number];
 
@@ -27,6 +27,10 @@ const premiumFeatureContent: Record<PremiumFeature, PremiumFeatureContent> = {
   voiceNotes: {
     title: 'Notes vocales',
     description: 'Enregistrez une note à la voix pour ne rien oublier.',
+  },
+  animalLimit: {
+    title: 'Vous avez atteint la limite de 3 animaux',
+    description: 'Passez à Premium pour ajouter autant d’animaux que vous le souhaitez.',
   },
 };
 

@@ -5,4 +5,4 @@ export { AnimalFormSheetScreen } from './screens/AnimalFormSheetScreen';
 export { AnimalActionDialogs } from './components/AnimalActionDialogs';
 export type { SensitiveAnimalAction } from './components/AnimalActionDialogs';
 export { AnimalMeasurementSheet } from './components/AnimalMeasurementSheet';
-export { isSharedAnimal } from './animalWorkspaceUtils';
+export { isOwnedAnimal, isSharedAnimal } from './animalWorkspaceUtils';
