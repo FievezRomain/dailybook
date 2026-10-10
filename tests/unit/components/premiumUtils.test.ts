@@ -1,8 +1,8 @@
 import { canUsePremiumFeature, getPremiumFeatureContent, premiumFeatures } from '../../../shared/components/ui/patterns/premiumUtils';
 
 describe('premiumUtils', () => {
-  it('centralise les quatre fonctionnalités Premium', () => {
-    expect(premiumFeatures).toEqual(['statistics', 'groups', 'aiCreation', 'voiceNotes']);
+  it('centralise les fonctionnalités Premium', () => {
+    expect(premiumFeatures).toEqual(['statistics', 'groups', 'aiCreation', 'voiceNotes', 'animalLimit']);
   });
 
   it('vérifie un droit sans déduire le statut du compte', () => {
@@ -13,5 +13,6 @@ describe('premiumUtils', () => {
 
   it('fournit un contenu contextualisé pour chaque verrou', () => {
     expect(getPremiumFeatureContent('aiCreation')).toEqual(expect.objectContaining({ title: 'Création intelligente' }));
+    expect(getPremiumFeatureContent('animalLimit')).toEqual(expect.objectContaining({ title: expect.stringContaining('3 animaux') }));
   });
 });
