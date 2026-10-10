@@ -4,6 +4,7 @@ import { spacing, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 import { Button } from '../actions';
 import { Icon, type VascoIconName } from '../icons';
+import { Card } from '../content/Card';
 
 export type EmptyStateType = 'generic' | 'search' | 'offline' | 'permission';
 const defaults: Record<EmptyStateType, { icon: VascoIconName; title: string; message: string; actionLabel: string }> = {
@@ -21,5 +22,5 @@ export function ErrorState({ title = 'Une erreur est survenue', message = 'Impos
 
 function StateMessage({ icon, title, message, actionLabel, onAction, iconTone, style, testID }: { icon: VascoIconName; title: string; message: string; actionLabel: string; onAction?: () => void; iconTone?: 'error'; style?: StyleProp<ViewStyle>; testID?: string }) {
   const { colors } = useAppTheme();
-  return <View accessibilityRole="summary" testID={testID} style={[{ width: '100%', maxWidth: componentTokens.feedback.width, alignSelf: 'center', minHeight: componentTokens.feedback.stateHeight, alignItems: 'center', justifyContent: 'center', gap: spacing.md, paddingHorizontal: spacing.xl }, style]}><Icon name={icon} size="xl" color={iconTone === 'error' ? colors.error : colors.primary} /><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xl, textAlign: 'center' }}>{title}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: typography.lineHeights.normal, textAlign: 'center' }}>{message}</Text>{onAction ? <Button label={actionLabel} onPress={onAction} style={{ alignSelf: 'center' }} /> : null}</View>;
+  return <Card style={[{ width: '100%', maxWidth: componentTokens.feedback.width, minHeight: componentTokens.feedback.compactStateHeight, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.xl, paddingVertical: spacing.lg }, style]}><View accessibilityRole="summary" accessibilityLabel={`${title}. ${message}`} testID={testID} style={{ width: '100%', alignItems: 'center', gap: spacing.md }}><View style={{ width: 52, height: 52, alignItems: 'center', justifyContent: 'center', borderRadius: 26, backgroundColor: iconTone === 'error' ? colors.errorSurface : colors.surfaceVariant }}><Icon name={icon} size="xl" color={iconTone === 'error' ? colors.error : colors.primary} /></View><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xl, textAlign: 'center' }}>{title}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: typography.lineHeights.normal, textAlign: 'center' }}>{message}</Text>{onAction ? <Button label={actionLabel} onPress={onAction} style={{ alignSelf: 'center' }} /> : null}</View></Card>;
 }

@@ -9,6 +9,8 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant qu’utilisateur**, je souhaite que toute mutation soit contrôlée côté backend même si l’action est masquée dans l’interface afin qu’un appel direct ne contourne jamais une règle.
 - **En tant qu’utilisateur Gratuit**, je souhaite voir les fonctionnalités Premium avec une explication contextualisée afin de comprendre leur valeur et le moyen d’y accéder.
 - **En tant qu’utilisateur**, je souhaite confirmer explicitement toute suppression ou mutation sensible afin d’éviter une perte involontaire.
+- **En tant qu’utilisateur changeant de compte**, je souhaite que le profil, les listes, les notifications, les images signées et toutes les réponses mises en cache de l’ancien compte soient supprimés avant l’affichage du nouveau compte afin qu’aucune donnée personnelle ne traverse une session.
+- **En tant qu’équipe technique**, je souhaite qu’une réponse asynchrone démarrée par une ancienne identité soit ignorée après un changement de Firebase UID afin qu’une requête tardive ne puisse pas restaurer un ancien profil.
 
 ## Animaux
 
