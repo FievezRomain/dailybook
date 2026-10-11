@@ -3,6 +3,10 @@ import { isPremiumSubscription, normalizeAiEvent } from '../../../features/event
 const animals = [{ id: 1, nom: 'Milo', espece: 'Chien' }, { id: 2, nom: 'Nala', espece: 'Chat' }];
 
 describe('AI event normalization', () => {
+  it('does not erase the default current date when the AI finds no date', () => {
+    expect(normalizeAiEvent({ eventtype: 'autre' }, 'Une note sans date', [])).not.toHaveProperty('dateevent');
+  });
+
   it('maps backend fields and detects an animal name locally', () => {
     expect(normalizeAiEvent({ nom: 'Vaccin', eventtype: 'soins', heuredebut: '09:00' }, 'Vaccin de Milo mardi', animals)).toMatchObject({ eventType: 'soins', nom: 'Vaccin', heuredebutevent: '09:00', animaux: [1], frequencetype: 'recurring', frequencevalue: 'daily' });
   });

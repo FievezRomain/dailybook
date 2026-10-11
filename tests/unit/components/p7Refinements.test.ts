@@ -55,7 +55,7 @@ describe('P7.f visual refinements', () => {
     const navigator = read('app/navigation/MainNavigator.tsx');
     expect(agenda).toContain('useCalendarUIStore');
     expect(agenda).toContain('target === "event" ? selectedDate : undefined');
-    expect(navigator).toContain('if (initialEventDate) setEventWizardFormData({ dateevent: initialEventDate })');
+    expect(navigator).toContain('setEventWizardFormData({ dateevent: getInitialEventDate(initialEventDate) })');
   });
 
   it('renders Premium gates inside Statistics and medical documents', () => {

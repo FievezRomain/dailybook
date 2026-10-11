@@ -68,7 +68,7 @@ export function EventCreateDetailsScreen({ onBack, onContinue, onClose = onBack,
   });
 
   return <>
-    <FormSheet title={config.title.toLocaleUpperCase('fr-FR')} onBack={onBack} onClose={onClose} dirty={Object.keys(formData).length > 0} footerLabel={editScope === 'occurrence' || editScope === 'following' ? 'Continuer' : 'Choisir les animaux'} onFooterPress={next} testID="event-create-details">
+    <FormSheet title={config.title.toLocaleUpperCase('fr-FR')} onBack={onBack} onClose={onClose} dirty={Object.keys(formData).length > 0} footerLabel="Choisir les animaux" onFooterPress={next} testID="event-create-details">
       <LinearProgress current={editScope ? 1 : 2} total={editScope === 'series' ? 3 : editScope ? 2 : 4} label={editScope === 'series' ? 'Étape 1 sur 3' : editScope ? 'Étape 1 sur 2' : 'Étape 2 sur 4'} />
       <View style={{ gap: spacing.xs }}>
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>État</Text>

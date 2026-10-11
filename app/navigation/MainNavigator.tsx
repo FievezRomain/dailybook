@@ -20,6 +20,7 @@ import {
   EventCreateOptionsScreen,
   EventCreateTypeScreen,
   EventDetailScreen,
+  getInitialEventDate,
   isPremiumSubscription,
 } from "../../features/events";
 import { HomeScreen, type MainTabId } from "../../features/home";
@@ -131,7 +132,6 @@ export function MainNavigator() {
   const [animalFeedback, setAnimalFeedback] = useState<string>();
   const resetWizard = useEventWizardStore((state) => state.reset);
   const setEventWizardFormData = useEventWizardStore((state) => state.setFormData);
-  const eventFormData = useEventWizardStore((state) => state.formData);
   const resetAnimalWizard = useAnimalWizardStore((state) => state.reset);
   const resetObjectiveWizard = useObjectiveWizardStore((state) => state.reset);
   const animals = useAnimalsQuery().data ?? [];
@@ -260,7 +260,7 @@ export function MainNavigator() {
     }
     if (target !== "event") return;
     resetWizard();
-    if (initialEventDate) setEventWizardFormData({ dateevent: initialEventDate });
+    setEventWizardFormData({ dateevent: getInitialEventDate(initialEventDate) });
     setRoute(
       env.INTELLIGENT_FEATURES_ENABLED
         ? { name: "eventCreateEntry" }
@@ -963,12 +963,7 @@ export function MainNavigator() {
           <EventCreateOptionsScreen
             eventId={route.eventId}
             onBack={() =>
-              setRoute(
-                eventFormData.updateScope === "series" ||
-                  eventFormData.updateScope === "following"
-                  ? { name: "eventEditAnimals", eventId: route.eventId }
-                  : { name: "eventEditDetails", eventId: route.eventId },
-              )
+              setRoute({ name: "eventEditAnimals", eventId: route.eventId })
             }
             onClose={() => setRoute({ name: "event", eventId: route.eventId })}
             onCreated={(eventId) => {
@@ -1010,11 +1005,7 @@ export function MainNavigator() {
             onBack={() => setRoute({ name: "event", eventId: route.eventId })}
             onClose={() => setRoute({ name: "event", eventId: route.eventId })}
             onContinue={() =>
-              setRoute(
-                eventFormData.updateScope === "occurrence"
-                  ? { name: "eventEditOptions", eventId: route.eventId }
-                  : { name: "eventEditAnimals", eventId: route.eventId },
-              )
+              setRoute({ name: "eventEditAnimals", eventId: route.eventId })
             }
           />
         </FormSheetHost>
@@ -1035,7 +1026,7 @@ export function MainNavigator() {
             onClose={() =>
               setRoute({ name: "event", eventId: route.sourceEventId })
             }
-            onCreated={(eventId) => {
+            onCreated={(_eventId) => {
               resetWizard();
               agenda();
             }}
