@@ -13,7 +13,7 @@ export function normalizeAiEvent(result: AiParseResult, rawText: string, animals
     eventType: validType,
     ...getEventTypeRecurrenceDefaults(validType),
     nom: result.nom,
-    dateevent: result.dateevent,
+    ...(result.dateevent ? { dateevent: result.dateevent } : {}),
     heuredebutevent: typeof result.heuredebutevent === 'string' ? result.heuredebutevent : typeof result.heuredebut === 'string' ? result.heuredebut : undefined,
     lieu: result.lieu,
     commentaire: result.commentaire,

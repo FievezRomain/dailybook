@@ -5,6 +5,7 @@ import { generateDistinctChartColors } from '../../../shared/components/ui/chart
 import { useStatisticsQuery } from '../../../hooks/queries/useStatisticsQuery';
 import type { Material } from '../../../theme/materials';
 import type { HistoryEntry } from '../../../models/Statistics';
+import { componentTokens } from '../../../theme/componentTokens';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { toEventCardType } from '../../home/homeUtils';
@@ -46,7 +47,7 @@ export function StatisticDetailScreen({ type, animalIds, hasSharedAnimal = false
   const competitionQuery = useStatisticsQuery('concours', parameters, type === 'concours');
   const query = type === 'poids' ? weightQuery : type === 'taille' ? sizeQuery : type === 'alimentation' ? foodQuery : type === 'balades' ? walksQuery : type === 'depenses' ? expensesQuery : type === 'entrainements' ? trainingQuery : competitionQuery;
   const isPhysical = type === 'poids' || type === 'taille' || type === 'alimentation';
-  if (isPhysical && animalIds.length !== 1) return <DetailScreen header={<TopBar title={labels.title} context="detail" onBack={onBack} material={material} />} contentContainerStyle={{ gap: spacing.lg }}>{animalSelector}<EmptyState title="Sélectionnez un seul animal" message="Le poids, la taille et l’alimentation sont des suivis individuels qui ne peuvent pas être mélangés entre plusieurs animaux." /></DetailScreen>;
+  if (isPhysical && animalIds.length !== 1) return <DetailScreen header={<TopBar title={labels.title} context="detail" onBack={onBack} material={material} />} contentContainerStyle={{ gap: spacing.lg }}><FullWidthAnimalSelector>{animalSelector}</FullWidthAnimalSelector><EmptyState title="Sélectionnez un seul animal" message="Le poids, la taille et l’alimentation sont des suivis individuels qui ne peuvent pas être mélangés entre plusieurs animaux." /></DetailScreen>;
   if (query.isLoading) return <DetailScreen header={<TopBar title={labels.title} context="detail" onBack={onBack} material={material} />}><Skeleton type="card" density="comfortable" /></DetailScreen>;
   if (query.isError) return <DetailScreen header={<TopBar title={labels.title} context="detail" onBack={onBack} material={material} />}><ErrorState message={`Impossible de charger ${labels.title.toLowerCase()}.`} onRetry={() => void query.refetch()} /></DetailScreen>;
 
@@ -71,7 +72,7 @@ export function StatisticDetailScreen({ type, animalIds, hasSharedAnimal = false
   const selectHistoryGroup = (key?: string) => { if (!key) return; setSelectedHistoryPeriod(key); setHistorySelectionVersion((version) => version + 1); };
 
   return <DetailScreen header={<TopBar title={labels.title} context="detail" onBack={onBack} material={material} />} contentContainerStyle={{ paddingBottom: spacing.xxl, gap: spacing.lg }} testID={`statistic-detail-${type}`}>
-    {animalSelector}
+    <FullWidthAnimalSelector>{animalSelector}</FullWidthAnimalSelector>
     {hasSharedAnimal ? <Banner tone="info" title="Données accessibles uniquement" message="Pour un animal partagé dont vous n’êtes pas propriétaire, les statistiques utilisent uniquement les événements que vous avez créés ou qui vous sont partagés via un groupe actif." /> : null}
     <PeriodSelector options={statisticsPeriodOptions} value={period} onChange={onPeriodChange} />
     <PeriodRangeNavigator label={periodLabel} onPrevious={onPreviousPeriod} onNext={onNextPeriod} nextDisabled={periodNextDisabled} />
@@ -80,6 +81,11 @@ export function StatisticDetailScreen({ type, animalIds, hasSharedAnimal = false
     <DataVisualization title={labels.chart} type={type === 'depenses' ? 'pie' : isPhysical ? 'line' : 'heatmap'} state={(isPhysical ? chartData.length : history.length) ? 'ready' : 'empty'} data={type === 'depenses' ? coloredExpenseData : chartData} heatmapData={heatmapData} onDataPress={type === 'depenses' ? (item) => selectHistoryGroup(item.label) : undefined} onHeatmapPress={isPhysical || type === 'depenses' ? undefined : (item) => selectHistoryGroup(item.periodKey)} valueFormatter={(value) => formatStatisticNumber(value, labels.unit)} selected={selectedPoint ? { label: selectedPoint.label, value: formatStatisticNumber(selectedPoint.value, labels.unit) } : undefined} accessibilitySummary={`${history.length} entrées pour ${labels.title.toLowerCase()}`} testID={`statistic-chart-${type}`} />
     {type === 'alimentation' ? <FoodHistorySections entries={physicalHistory} /> : <View style={{ gap: spacing.sm }}><Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xl }}>Historique</Text>{eventGroups.length ? eventGroups.map(([group, events]) => { const selected = Boolean(selectedHistoryPeriod && (type === 'depenses' ? group === selectedHistoryPeriod : group.startsWith(selectedHistoryPeriod))); return <StatisticHistoryGroup key={`${group}-${selectedHistoryPeriod ?? 'initial'}-${historySelectionVersion}`} label={type === 'depenses' ? group : formatStatisticHistoryDate(group)} indicatorColor={type === 'depenses' ? coloredExpenseData.find((item) => item.label === group)?.color : undefined} summary={`${events.length} événement${events.length > 1 ? 's' : ''}`} defaultExpanded={selected}>{events.map((event) => <EventCard key={event.id} type={toEventCardType(event.eventtype)} date={formatStatisticHistoryDate(event.dateevent)} time={event.heuredebutevent} title={event.nom} description={event.commentaire} onPress={() => onOpenEvent(event.id)} />)}</StatisticHistoryGroup>; }) : history.length ? history.map((entry, index) => <HistoryRow key={`${entry.date}-${index}`} date={entry.date} value={formatStatisticNumber(entry.value, labels.unit)} />) : <EmptyState icon="chartColumn" title="Aucune donnée sur cette période" message="Les prochaines entrées apparaîtront ici." />}</View>}
   </DetailScreen>;
+}
+
+function FullWidthAnimalSelector({ children }: { children?: ReactNode }) {
+  if (!children) return null;
+  return <View testID="statistic-animal-selector-full-width" style={{ alignSelf: 'stretch', marginHorizontal: -componentTokens.screen.contentPaddingX }}>{children}</View>;
 }
 
 function FoodHistorySections({ entries }: { entries: readonly HistoryEntry[] }) {
