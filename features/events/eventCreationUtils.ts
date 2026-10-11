@@ -28,6 +28,11 @@ export function getEventTypeRecurrenceDefaults(eventType: string) {
     : { frequencetype: undefined, frequencevalue: undefined };
 }
 
+export function getInitialEventDate(initialEventDate?: string, now = new Date()) {
+  if (initialEventDate) return initialEventDate;
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+}
+
 export function isRecurringEvent(event: Partial<Event>) {
   if (!supportsEventRecurrence(event.eventtype)) return false;
 

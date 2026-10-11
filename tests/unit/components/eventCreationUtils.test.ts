@@ -1,7 +1,12 @@
-import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getEventTypeRecurrenceDefaults, getReminderLabel, isPastEventDate, isRecurringEvent, normalizeSharedGroupIds } from '../../../features/events/eventCreationUtils';
+import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getEventTypeRecurrenceDefaults, getInitialEventDate, getReminderLabel, isPastEventDate, isRecurringEvent, normalizeSharedGroupIds } from '../../../features/events/eventCreationUtils';
 import type { Event } from '../../../models/Event';
 
 describe('event creation payload', () => {
+  it('uses the selected calendar date or defaults to the local current date', () => {
+    expect(getInitialEventDate('2026-10-20', new Date(2026, 9, 11, 23, 30))).toBe('2026-10-20');
+    expect(getInitialEventDate(undefined, new Date(2026, 9, 11, 23, 30))).toBe('2026-10-11');
+  });
+
   it('defaults recurring care and walk events to a daily recurrence', () => {
     expect(getEventTypeRecurrenceDefaults('soins')).toEqual({ frequencetype: 'recurring', frequencevalue: 'daily' });
     expect(getEventTypeRecurrenceDefaults('balade')).toEqual({ frequencetype: 'recurring', frequencevalue: 'daily' });

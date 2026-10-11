@@ -78,11 +78,13 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 ### État, rappels et récurrence
 
 - **En tant qu’auteur**, je souhaite qu’un événement passé soit proposé `completed` et qu’un événement présent ou futur soit proposé `pending` afin d’obtenir un état initial pertinent.
+- **En tant qu’auteur créant un événement**, je souhaite que la date choisie dans l’Agenda soit préremplie et, en l’absence de date de contexte, que la date locale du jour soit proposée afin de ne jamais commencer avec une date vide.
 - **En tant qu’auteur**, je souhaite pouvoir remplacer explicitement cet état proposé pendant la création ou la modification afin de conserver le dernier mot.
 - **En tant qu’utilisateur**, je souhaite marquer un événement comme terminé ou à faire depuis son détail afin de mettre son suivi à jour rapidement.
 - **En tant qu’auteur**, je souhaite définir une répétition pour les types compatibles afin de créer une série sans ressaisie manuelle.
 - **En tant qu’auteur**, je souhaite que les soins et balades proposent « tous les jours » par défaut à la création tout en me laissant choisir aucune récurrence afin d’accélérer le cas courant.
 - **En tant qu’auteur d’un événement unique**, je souhaite modifier ou supprimer directement l’événement lorsque sa récurrence est absente, vaut `none` ou que son type n’est pas compatible afin de ne jamais choisir une portée qui n’existe pas.
+- **En tant qu’auteur modifiant un événement**, je souhaite toujours accéder à l’étape de sélection des animaux, y compris pour une dépense, un événement unique ou la modification d’une seule occurrence, afin de pouvoir corriger ses associations.
 - **En tant qu’auteur**, je souhaite configurer les rappels disponibles afin d’être averti au moment prévu.
 - **En tant qu’utilisateur**, je souhaite que le backend calcule les rappels et notifications à partir des données de l’événement afin que les clients ne divergent pas.
 

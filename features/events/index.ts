@@ -20,7 +20,7 @@ export { EventCreateOptionsScreen } from './screens/EventCreateOptionsScreen';
 export type { EventCreateOptionsScreenProps } from './screens/EventCreateOptionsScreen';
 export { EventCreateSuccessScreen } from './screens/EventCreateSuccessScreen';
 export type { EventCreateSuccessScreenProps } from './screens/EventCreateSuccessScreen';
-export { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getReminderLabel, getSelectedAnimalNames, reminderOptions } from './eventCreationUtils';
+export { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getInitialEventDate, getReminderLabel, getSelectedAnimalNames, reminderOptions } from './eventCreationUtils';
 export { EventCreateAiDescriptionScreen } from './screens/EventCreateAiDescriptionScreen';
 export { EventCreateAiReviewScreen } from './screens/EventCreateAiReviewScreen';
 export { isPremiumSubscription, normalizeAiEvent } from './eventAiUtils';
