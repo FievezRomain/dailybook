@@ -1,4 +1,4 @@
-import { attachEventDocument } from '../../services/api/EventService';
+import { attachEventDocument, deleteEventDocument } from '../../services/api/EventService';
 import { FileService } from '../../services/api/FileService';
 import type { EventWizardDocument } from '../../stores/useEventWizardStore';
 
@@ -28,4 +28,18 @@ export async function uploadPendingEventDocuments(
     onUploaded?.(document, filename);
   }
   return uploaded;
+}
+
+export async function deleteRemovedEventDocuments(
+  eventId: number,
+  filenames: readonly string[],
+  onDeleted?: (filename: string) => void,
+) {
+  const deleted: string[] = [];
+  for (const filename of filenames) {
+    await deleteEventDocument(String(eventId), filename);
+    deleted.push(filename);
+    onDeleted?.(filename);
+  }
+  return deleted;
 }

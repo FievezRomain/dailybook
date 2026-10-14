@@ -11,9 +11,9 @@ import { useAppTheme } from '../../../theme/useAppTheme';
 import { Banner, Button, FormSheet, LinearProgress, Select, SelectionModal, Switch } from '../../../shared/components/ui';
 import { AppErrorCode } from '../../../types/AppErrorCode';
 import { parseApiError } from '../../../utils/errorParser';
-import { buildEventCreationPayload, buildEventUpdatePayload, formatEventCreationSummary, getReminderLabel, getSelectedAnimalNames, reminderOptions } from '../eventCreationUtils';
+import { buildEventCreationPayload, buildEventUpdatePayload, formatEventCreationSummary, getReminderLabel, getRemovedEventDocumentNames, getSelectedAnimalNames, reminderOptions } from '../eventCreationUtils';
 import { getEligibleEventGroups } from '../eventGroupSharing';
-import { uploadPendingEventDocuments } from '../eventDocumentUpload';
+import { deleteRemovedEventDocuments, uploadPendingEventDocuments } from '../eventDocumentUpload';
 
 export interface EventCreateOptionsScreenProps {
   onBack: () => void;
@@ -49,6 +49,7 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
   const eligibleGroups = getEligibleEventGroups(groupsQuery.data ?? [], selectedAnimalIds);
   const selectedGroupIds = (form.shared_groups ?? []).map(String);
   const documents = form.documents ?? [];
+  const removedDocuments = getRemovedEventDocumentNames(form);
   const markDocumentUploaded = (document: (typeof documents)[number], filename: string) => {
     const current = useEventWizardStore.getState().formData.documents ?? [];
     setField('documents', current.map((item) => item === document ? { name: filename } : item));
@@ -64,6 +65,10 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
         const updated = await mutations.update.mutateAsync({ id: String(eventId), body: buildEventUpdatePayload(form, eventId) });
         eventPersisted = true;
         const savedId = updated?.id ?? eventId;
+        await deleteRemovedEventDocuments(savedId, removedDocuments, (filename) => {
+          const original = useEventWizardStore.getState().formData.originalDocuments ?? [];
+          setField('originalDocuments', original.filter((name) => name !== filename));
+        });
         await uploadPendingEventDocuments(savedId, documents, markDocumentUploaded);
         await queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
@@ -84,8 +89,8 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
     } catch (error) {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
       const parsed = parseApiError(error);
-      setErrorMessage(eventPersisted && documents.some((document) => document.localUri)
-        ? 'L’événement est enregistré, mais au moins un document n’a pas pu être ajouté. Réessayez : aucun nouvel événement ne sera créé.'
+      setErrorMessage(eventPersisted && (removedDocuments.length > 0 || documents.some((document) => document.localUri))
+        ? 'L’événement est enregistré, mais au moins une modification de document n’a pas pu aboutir. Réessayez : l’opération déjà terminée ne sera pas répétée.'
         : parsed.isNetworkError || parsed.code === AppErrorCode.NOT_FOUND
           ? 'Vérifiez votre connexion puis réessayez. Vos informations sont conservées.'
           : 'Un problème est survenu de notre côté. Réessayez dans quelques instants. Vos informations sont conservées.');

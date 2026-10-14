@@ -110,7 +110,7 @@ describe('P7.f visual refinements', () => {
     expect(detail).not.toContain('title="Aucun document"');
     expect(options).toContain('useEventMutations({ haptics: false })');
     expect(options).toContain('await queryClient.invalidateQueries({ queryKey: EVENTS_KEY })');
-    expect(options).toContain('L’événement est enregistré, mais au moins un document n’a pas pu être ajouté.');
+    expect(options).toContain('L’événement est enregistré, mais au moins une modification de document n’a pas pu aboutir.');
     expect(agenda).toContain('<Snackbar visible={Boolean(feedback)}');
     expect(navigator).toContain('setAgendaFeedback("Événement enregistré.")');
   });

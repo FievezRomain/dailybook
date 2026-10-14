@@ -1,9 +1,10 @@
-import { attachEventDocument } from '../../../services/api/EventService';
+import { attachEventDocument, deleteEventDocument } from '../../../services/api/EventService';
 import { FileService } from '../../../services/api/FileService';
-import { uploadEventDocument, uploadPendingEventDocuments } from '../../../features/events/eventDocumentUpload';
+import { deleteRemovedEventDocuments, uploadEventDocument, uploadPendingEventDocuments } from '../../../features/events/eventDocumentUpload';
 
 jest.mock('../../../services/api/EventService', () => ({
   attachEventDocument: jest.fn(),
+  deleteEventDocument: jest.fn(),
 }));
 jest.mock('../../../services/api/FileService', () => ({
   FileService: { upload: jest.fn() },
@@ -11,12 +12,14 @@ jest.mock('../../../services/api/FileService', () => ({
 
 const mockedUpload = FileService.upload as jest.MockedFunction<typeof FileService.upload>;
 const mockedAttach = attachEventDocument as jest.MockedFunction<typeof attachEventDocument>;
+const mockedDelete = deleteEventDocument as jest.MockedFunction<typeof deleteEventDocument>;
 
 describe('event document upload', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockedUpload.mockResolvedValue('stored-document.jpg');
     mockedAttach.mockResolvedValue();
+    mockedDelete.mockResolvedValue();
   });
 
   it('uploads a local file after the event exists, then attaches the stored filename', async () => {
@@ -53,5 +56,17 @@ describe('event document upload', () => {
     expect(mockedUpload).toHaveBeenCalledTimes(2);
     expect(mockedAttach).toHaveBeenNthCalledWith(1, '8', 'first.pdf');
     expect(mockedAttach).toHaveBeenNthCalledWith(2, '8', 'second.jpg');
+  });
+
+  it('deletes removed files through the event endpoint after save and reports each completed deletion', async () => {
+    const onDeleted = jest.fn();
+
+    await expect(deleteRemovedEventDocuments(8, ['radio.jpg', 'ordonnance.pdf'], onDeleted))
+      .resolves.toEqual(['radio.jpg', 'ordonnance.pdf']);
+
+    expect(mockedDelete).toHaveBeenNthCalledWith(1, '8', 'radio.jpg');
+    expect(mockedDelete).toHaveBeenNthCalledWith(2, '8', 'ordonnance.pdf');
+    expect(onDeleted).toHaveBeenNthCalledWith(1, 'radio.jpg');
+    expect(onDeleted).toHaveBeenNthCalledWith(2, 'ordonnance.pdf');
   });
 });
