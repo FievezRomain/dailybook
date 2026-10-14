@@ -2,10 +2,26 @@ import httpClient from './httpClient';
 import { createCrudService } from './factory';
 import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type AgendaHighlight } from '../../features/events/types';
 import { Event } from '../../models/Event';
+import { FileService, fileDownloadKey } from './FileService';
 
 const _crud = createCrudService<Event, CreateEventPayload, UpdateEventPayload>('/events');
 
-export const getEvents = _crud.getAll;
+export async function getEvents(): Promise<Event[]> {
+  const events = await _crud.getAll();
+  const urls = await FileService.getDownloadUrls(events.flatMap((event) =>
+    (event.documents ?? []).map((document) => ({
+      filename: document.name,
+      ressourceType: 'event' as const,
+      ressourceId: event.id,
+    }))));
+  return events.map((event) => ({
+    ...event,
+    documents: event.documents?.map((document) => ({
+      ...document,
+      url: urls.get(fileDownloadKey({ filename: document.name, ressourceType: 'event', ressourceId: event.id })) ?? document.url,
+    })),
+  }));
+}
 export async function getAgendaHighlights(year: number): Promise<AgendaHighlight[]> {
   const response = await httpClient.get('/events/highlights', { params: { year } });
   return response.data;
@@ -40,11 +56,7 @@ export async function patchEvent(eventId: string, body: PatchEventPayload): Prom
 }
 
 export async function getEventDocumentUrl(eventId: string, filename: string): Promise<string> {
-  const response = await httpClient.get(`/events/${eventId}/documents/${encodeURIComponent(filename)}`);
-  const data: unknown = response.data;
-  if (typeof data === 'string') return data;
-  if (data && typeof data === 'object' && 'url' in data && typeof data.url === 'string') return data.url;
-  throw new Error('URL de document invalide.');
+  return FileService.getDownloadUrl(filename, 'event', eventId);
 }
 
 export async function deleteEventDocument(eventId: string, filename: string): Promise<void> {

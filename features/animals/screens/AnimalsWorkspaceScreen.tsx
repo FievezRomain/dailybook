@@ -153,6 +153,7 @@ export function AnimalsWorkspaceScreen({
   const [documentAction, setDocumentAction] = useState<{
     eventId: number;
     name: string;
+    url?: string;
   }>();
   const [documentActionsOpen, setDocumentActionsOpen] = useState(false);
   const [deleteDocumentOpen, setDeleteDocumentOpen] = useState(false);
@@ -421,13 +422,10 @@ export function AnimalsWorkspaceScreen({
                       setSharingMedicalRecord(false);
                     }
                   } : undefined}
-                  onOpenDocument={async (eventId, name) => {
+                  onOpenDocument={async (eventId, name, url) => {
                     setMedicalDocumentError(undefined);
                     try {
-                      const uri = await getEventDocumentUrl(
-                        String(eventId),
-                        name,
-                      );
+                      const uri = url ?? await getEventDocumentUrl(String(eventId), name);
                       setMedicalDocument({
                         name,
                         uri,
@@ -443,7 +441,7 @@ export function AnimalsWorkspaceScreen({
                   }}
                   onDocumentMore={
                     canManageSelected
-                      ? (eventId, name) => setDocumentAction({ eventId, name })
+                      ? (eventId, name, url) => setDocumentAction({ eventId, name, url })
                       : undefined
                   }
                 />
@@ -480,10 +478,9 @@ export function AnimalsWorkspaceScreen({
           onClose={() => setDocumentActionsOpen(false)}
           onSelect={(action) => {
             if (action === "open" && documentAction) {
-              void getEventDocumentUrl(
-                String(documentAction.eventId),
-                documentAction.name,
-              )
+              void (documentAction.url
+                ? Promise.resolve(documentAction.url)
+                : getEventDocumentUrl(String(documentAction.eventId), documentAction.name))
                 .then((uri) => {
                   setMedicalDocument({
                     name: documentAction.name,
@@ -506,7 +503,9 @@ export function AnimalsWorkspaceScreen({
             }
             if (action === "share" && documentAction) {
               setMedicalDocumentError(undefined);
-              void getEventDocumentUrl(String(documentAction.eventId), documentAction.name)
+              void (documentAction.url
+                ? Promise.resolve(documentAction.url)
+                : getEventDocumentUrl(String(documentAction.eventId), documentAction.name))
                 .then((uri) => openDocumentWithCache(uri, documentAction.name))
                 .then(() => setDocumentAction(undefined))
                 .catch(() => setMedicalDocumentError("Impossible de partager ce document. Vérifiez votre connexion puis réessayez."));
@@ -830,8 +829,8 @@ function AnimalHealth({
   onRetry: () => void;
   onActions?: () => void;
   onOpenEvent?: (eventId: number) => void;
-  onOpenDocument: (eventId: number, name: string) => void;
-  onDocumentMore?: (eventId: number, name: string) => void;
+  onOpenDocument: (eventId: number, name: string, url?: string) => void;
+  onDocumentMore?: (eventId: number, name: string, url?: string) => void;
   documentError?: string;
   canAccessDocuments: boolean;
   onDocumentsLocked: () => void;
@@ -925,10 +924,10 @@ function AnimalHealth({
               }
               metadata={`${document.eventName} · ${formatAnimalDate(document.eventDate) ?? document.eventType}`}
               previewUrl={document.url}
-              onOpen={() => onOpenDocument(document.eventId, document.name)}
+              onOpen={() => onOpenDocument(document.eventId, document.name, document.url)}
               onMore={
                 onDocumentMore
-                  ? () => onDocumentMore(document.eventId, document.name)
+                  ? () => onDocumentMore(document.eventId, document.name, document.url)
                   : undefined
               }
             />

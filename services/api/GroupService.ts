@@ -13,6 +13,7 @@ import {
 } from '../../features/groups/types';
 import { Group } from '../../models/Group';
 import { Animal } from '../../models/Animal';
+import { FileService, fileDownloadKey } from './FileService';
 
 // ─── Groupes ──────────────────────────────────────────────────────────────────────────────────
 
@@ -49,7 +50,13 @@ export async function respondInvitation(
 
 export async function getGroupAnimals(groupId: string): Promise<Animal[]> {
   const response = await httpClient.get(`/groups/${groupId}/animals`);
-  return response.data;
+  const animals: Animal[] = Array.isArray(response.data) ? response.data : [];
+  const urls = await FileService.getDownloadUrls(animals.flatMap((animal) => animal.image
+    ? [{ filename: animal.image, ressourceType: 'animal' as const, ressourceId: animal.id }]
+    : []));
+  return animals.map((animal) => animal.image
+    ? { ...animal, imageUrl: urls.get(fileDownloadKey({ filename: animal.image, ressourceType: 'animal', ressourceId: animal.id })) ?? animal.imageUrl }
+    : animal);
 }
 
 export async function proposeAnimal(groupId: string, body: ProposeAnimalPayload): Promise<void> {

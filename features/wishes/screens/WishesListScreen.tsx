@@ -3,7 +3,6 @@ import { Image, RefreshControl, Text, View } from "react-native";
 
 import { useNotificationsQuery } from "@hooks/queries/useNotificationsQuery";
 import { useWishesQuery } from "@hooks/queries/useWishesQuery";
-import { useWishImageQuery } from "@hooks/queries/useWishImageQuery";
 import type { Wish } from "@models/Wish";
 import { useAuthStore } from "@stores/useAuthStore";
 import {
@@ -218,25 +217,24 @@ function WishMasonryCard({
   material: Material;
   onPress: () => void;
 }) {
-  const imageQuery = useWishImageQuery(wish.id, wish.image);
   const [aspectRatio, setAspectRatio] = useState(1);
   useEffect(() => {
-    if (!imageQuery.data) return;
+    if (!wish.imageUrl) return;
     Image.getSize(
-      imageQuery.data,
+      wish.imageUrl,
       (width, height) => {
         if (width > 0 && height > 0) setAspectRatio(width / height);
       },
       () => setAspectRatio(1),
     );
-  }, [imageQuery.data]);
+  }, [wish.imageUrl]);
   return (
     <WishCard
       title={wish.nom}
       status={wish.acquis ? "completed" : "planned"}
       metadata={getWishMetadata(wish)}
       priceLabel={getWishPriceLabel(wish)}
-      imageUrl={imageQuery.data}
+      imageUrl={wish.imageUrl}
       imageAspectRatio={aspectRatio}
       material={material}
       onPress={onPress}

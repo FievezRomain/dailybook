@@ -26,7 +26,12 @@ describe('FileService download URL cache', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('shares one backend request for concurrent and repeated reads', async () => {
-    mockedGet.mockResolvedValue({ data: { url: 'https://signed.example/animal' } } as never);
+    mockedPost.mockResolvedValueOnce({ data: [{
+      fileName: 'photo.jpg',
+      ressourceType: 'animal',
+      ressourceId: 42,
+      url: 'https://signed.example/animal',
+    }] } as never);
 
     const first = FileService.getDownloadUrl('photo.jpg', 'animal', 42);
     const second = FileService.getDownloadUrl('photo.jpg', 'animal', 42);
@@ -36,8 +41,28 @@ describe('FileService download URL cache', () => {
       'https://signed.example/animal',
     ]);
     await expect(FileService.getDownloadUrl('photo.jpg', 'animal', 42)).resolves.toBe('https://signed.example/animal');
-    expect(mockedGet).toHaveBeenCalledTimes(1);
+    expect(mockedPost).toHaveBeenCalledTimes(1);
+    expect(mockedPost).toHaveBeenCalledWith('/files/download-urls', {
+      items: [{ fileName: 'photo.jpg', ressourceType: 'animal', ressourceId: 42 }],
+    });
+    expect(mockedGet).not.toHaveBeenCalled();
     expect(FileService.getCachedDownloadUrl('photo.jpg', 'animal', 42)).toBe('https://signed.example/animal');
+  });
+
+  it('resolves multiple resource URLs in one request and ignores unavailable rows', async () => {
+    mockedPost.mockResolvedValueOnce({ data: [
+      { fileName: 'first.jpg', ressourceType: 'animal', ressourceId: 7, url: 'https://signed.example/first' },
+      { fileName: 'missing.jpg', ressourceType: 'animal', ressourceId: 8, url: null },
+    ] } as never);
+
+    const result = await FileService.getDownloadUrls([
+      { filename: 'first.jpg', ressourceType: 'animal', ressourceId: 7 },
+      { filename: 'missing.jpg', ressourceType: 'animal', ressourceId: 8 },
+    ]);
+
+    expect(mockedPost).toHaveBeenCalledTimes(1);
+    expect(result.get('animal:7:first.jpg')).toBe('https://signed.example/first');
+    expect(result.has('animal:8:missing.jpg')).toBe(false);
   });
 
   it('uploads local images with the native multipart implementation', async () => {

@@ -105,7 +105,7 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
       {medicalEvent ? <>
         <SectionTitle>Documents médicaux</SectionTitle>
         {event.documents?.length
-          ? <View style={{ gap: spacing.sm }}>{event.documents.map((document) => <FileItem key={document.name} name={document.name} type={document.name.toLowerCase().endsWith('.pdf') ? 'pdf' : 'image'} metadata="Document enregistré" />)}</View>
+          ? <View style={{ gap: spacing.sm }}>{event.documents.map((document) => <FileItem key={document.name} name={document.name} type={document.name.toLowerCase().endsWith('.pdf') ? 'pdf' : 'image'} metadata="Document enregistré" previewUrl={document.url} />)}</View>
           : <Banner tone="info" title="Aucun document" message="Ajoutez une image ou un PDF à cet événement médical." />}
         {premium
           ? <Button label="Ajouter une image ou un PDF" icon="add" variant="secondary" fullWidth onPress={() => setDocumentAddOpen(true)} testID="event-add-document" />

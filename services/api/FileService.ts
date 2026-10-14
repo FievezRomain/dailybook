@@ -35,6 +35,24 @@ async function getLocalFileSize(fileUri: string): Promise<number> {
 }
 
 export type RessourceType = 'event' | 'animal' | 'body' | 'user' | 'note' | 'wish' | 'contact';
+export type BatchDownloadRessourceType = Extract<RessourceType, 'animal' | 'body' | 'event' | 'wish' | 'user'>;
+
+export interface FileDownloadRequest {
+  filename: string;
+  ressourceType: BatchDownloadRessourceType;
+  ressourceId: number | string;
+}
+
+interface BatchDownloadResponse {
+  fileName: string;
+  ressourceType: BatchDownloadRessourceType;
+  ressourceId: number;
+  url: unknown | null;
+}
+
+export function fileDownloadKey(item: FileDownloadRequest): string {
+  return downloadCacheKey(item.filename, item.ressourceType, item.ressourceId);
+}
 
 export interface PresignedUpload {
   url: string;
@@ -64,6 +82,74 @@ export const FileService = {
   ): string | undefined {
     const cached = downloadUrlCache.get(downloadCacheKey(filename, ressourceType, ressourceId));
     return cached && cached.expiresAt > Date.now() ? cached.url : undefined;
+  },
+
+  /**
+   * Résout jusqu’à 100 URLs signées par requête backend et alimente le cache partagé.
+   * Une entrée absente ou `url: null` reste simplement indisponible pour laisser l’UI
+   * afficher son fallback sans déclencher une rafale d’appels individuels.
+   */
+  async getDownloadUrls(items: readonly FileDownloadRequest[]): Promise<Map<string, string>> {
+    const unique = new Map(items.map((item) => [fileDownloadKey(item), item]));
+    const resolved = new Map<string, string>();
+    const waiting: Array<{ key: string; promise: Promise<string> }> = [];
+    const missing: FileDownloadRequest[] = [];
+
+    unique.forEach((item, key) => {
+      const cached = downloadUrlCache.get(key);
+      if (cached && cached.expiresAt > Date.now()) {
+        if (cached.url) resolved.set(key, cached.url);
+        else if (cached.promise) waiting.push({ key, promise: cached.promise });
+      } else {
+        missing.push(item);
+      }
+    });
+
+    for (let index = 0; index < missing.length; index += 100) {
+      const chunk = missing.slice(index, index + 100);
+      const batchPromise = httpClient.post<BatchDownloadResponse[]>('/files/download-urls', {
+        items: chunk.map((item) => ({
+          fileName: item.filename,
+          ressourceType: item.ressourceType,
+          ressourceId: Number(item.ressourceId),
+        })),
+      }).then((response) => {
+        const urls = new Map<string, string>();
+        const rows = Array.isArray(response.data) ? response.data : [];
+        rows.forEach((row) => {
+          if (typeof row.url !== 'string' || !row.url) return;
+          const key = fileDownloadKey({
+            filename: row.fileName,
+            ressourceType: row.ressourceType,
+            ressourceId: row.ressourceId,
+          });
+          urls.set(key, row.url);
+          downloadUrlCache.set(key, { url: row.url, expiresAt: Date.now() + DOWNLOAD_URL_TTL_MS });
+        });
+        return urls;
+      });
+
+      chunk.forEach((item) => {
+        const key = fileDownloadKey(item);
+        const promise = batchPromise.then((urls) => {
+          const url = urls.get(key);
+          if (!url) throw new Error(`URL de téléchargement indisponible pour ${item.filename}.`);
+          return url;
+        });
+        downloadUrlCache.set(key, { promise, expiresAt: Date.now() + DOWNLOAD_URL_TTL_MS });
+        waiting.push({ key, promise });
+        void promise.catch(() => {
+          const cached = downloadUrlCache.get(key);
+          if (cached?.promise === promise) downloadUrlCache.delete(key);
+        });
+      });
+    }
+
+    const settled = await Promise.allSettled(waiting.map(({ promise }) => promise));
+    settled.forEach((result, index) => {
+      if (result.status === 'fulfilled') resolved.set(waiting[index].key, result.value);
+    });
+    return resolved;
   },
 
   /**
@@ -134,6 +220,13 @@ export const FileService = {
     ressourceType: RessourceType,
     ressourceId: number | string,
   ): Promise<string> {
+    if (ressourceType === 'animal' || ressourceType === 'body' || ressourceType === 'event' || ressourceType === 'wish' || ressourceType === 'user') {
+      const item = { filename, ressourceType, ressourceId } satisfies FileDownloadRequest;
+      const urls = await FileService.getDownloadUrls([item]);
+      const url = urls.get(fileDownloadKey(item));
+      if (!url) throw new Error(`URL de téléchargement indisponible pour ${filename}.`);
+      return url;
+    }
     const key = downloadCacheKey(filename, ressourceType, ressourceId);
     const cached = downloadUrlCache.get(key);
     if (cached && cached.expiresAt > Date.now()) {

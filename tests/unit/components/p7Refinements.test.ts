@@ -109,6 +109,20 @@ describe('P7.f visual refinements', () => {
     expect(navigator).toContain('setAgendaFeedback("Événement enregistré.")');
   });
 
+  it('uses the grouped signed URL endpoint for media collections', () => {
+    const files = read('services/api/FileService.ts');
+    const animals = read('services/api/AnimalsService.ts');
+    const events = read('services/api/EventService.ts');
+    const wishes = read('services/api/WishService.ts');
+    const groups = read('services/api/GroupService.ts');
+    expect(files).toContain("post<BatchDownloadResponse[]>('/files/download-urls'");
+    expect(files).toContain('index += 100');
+    expect(animals).toContain('FileService.getDownloadUrls');
+    expect(events).toContain('FileService.getDownloadUrls');
+    expect(wishes).toContain('FileService.getDownloadUrls');
+    expect(groups).toContain('FileService.getDownloadUrls');
+  });
+
   it('separates objective animals and steps into four wizard stages', () => {
     const screen = read('features/objectifs/screens/ObjectiveFormSheetScreen.tsx');
     const store = read('stores/useObjectiveWizardStore.ts');
