@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useGroupsQuery } from '../../../hooks/queries/useGroupsQuery';
-import { useEventMutations } from '../../../hooks/queries/useEventsQuery';
+import { EVENTS_KEY, useEventMutations } from '../../../hooks/queries/useEventsQuery';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -31,7 +33,8 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
   const setField = useEventWizardStore((state) => state.setField);
   const animals = useAnimalsQuery().data ?? [];
   const groupsQuery = useGroupsQuery();
-  const mutations = useEventMutations();
+  const queryClient = useQueryClient();
+  const mutations = useEventMutations({ haptics: false });
   const [reminderOpen, setReminderOpen] = useState(false);
   const [groupsOpen, setGroupsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
@@ -55,11 +58,15 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
     if (saving) return;
     setErrorMessage(undefined);
     setSaving(true);
+    let eventPersisted = savedEventId !== undefined;
     try {
       if (eventId !== undefined) {
         const updated = await mutations.update.mutateAsync({ id: String(eventId), body: buildEventUpdatePayload(form, eventId) });
+        eventPersisted = true;
         const savedId = updated?.id ?? eventId;
         await uploadPendingEventDocuments(savedId, documents, markDocumentUploaded);
+        await queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
         onCreated(savedId);
       } else {
         let savedId = savedEventId;
@@ -67,15 +74,21 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
           const created = await mutations.create.mutateAsync(buildEventCreationPayload(form));
           savedId = created.id;
           setSavedEventId(savedId);
+          eventPersisted = true;
         }
         await uploadPendingEventDocuments(savedId, documents, markDocumentUploaded);
+        await queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
         onCreated(savedId);
       }
     } catch (error) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
       const parsed = parseApiError(error);
-      setErrorMessage(parsed.isNetworkError || parsed.code === AppErrorCode.NOT_FOUND
-        ? 'Vérifiez votre connexion puis réessayez. Vos informations sont conservées.'
-        : 'Un problème est survenu de notre côté. Réessayez dans quelques instants. Vos informations sont conservées.');
+      setErrorMessage(eventPersisted && documents.some((document) => document.localUri)
+        ? 'L’événement est enregistré, mais au moins un document n’a pas pu être ajouté. Réessayez : aucun nouvel événement ne sera créé.'
+        : parsed.isNetworkError || parsed.code === AppErrorCode.NOT_FOUND
+          ? 'Vérifiez votre connexion puis réessayez. Vos informations sont conservées.'
+          : 'Un problème est survenu de notre côté. Réessayez dans quelques instants. Vos informations sont conservées.');
     } finally {
       setSaving(false);
     }

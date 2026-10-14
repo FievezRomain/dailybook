@@ -93,12 +93,20 @@ describe('P7.f visual refinements', () => {
     const source = read('features/events/components/EventDocumentsField.tsx');
     const picker = read('features/events/components/EventDocumentPicker.tsx');
     const detail = read('features/events/screens/EventDetailScreen.tsx');
+    const options = read('features/events/screens/EventCreateOptionsScreen.tsx');
+    const agenda = read('features/events/screens/AgendaScreen.tsx');
+    const navigator = read('app/navigation/MainNavigator.tsx');
     expect(source).toContain('EMPTY_DOCUMENTS');
     expect(source).not.toContain('state.formData.documents ?? []');
     expect(picker).toContain('Prêt à être envoyé');
     expect(picker).toContain('state="uploaded"');
     expect(detail).toContain('testID="event-add-document"');
     expect(detail).toContain('<EventDocumentAddSheet');
+    expect(options).toContain('useEventMutations({ haptics: false })');
+    expect(options).toContain('await queryClient.invalidateQueries({ queryKey: EVENTS_KEY })');
+    expect(options).toContain('L’événement est enregistré, mais au moins un document n’a pas pu être ajouté.');
+    expect(agenda).toContain('<Snackbar visible={Boolean(feedback)}');
+    expect(navigator).toContain('setAgendaFeedback("Événement enregistré.")');
   });
 
   it('separates objective animals and steps into four wizard stages', () => {
