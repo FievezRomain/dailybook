@@ -5,6 +5,7 @@ import { Text, View } from 'react-native';
 import { useForm } from 'react-hook-form';
 
 import { wishFormSchema, type WishFormValues } from '@business/validators/wish';
+import { STORAGE_TEXT_LIMITS } from '@business/validators/storageLimits';
 import { useWishMutations } from '@hooks/queries/useWishesQuery';
 import type { Wish } from '@models/Wish';
 import { FileService } from '@services/api/FileService';
@@ -132,12 +133,12 @@ export function WishFormSheetScreen({ mode, wish, onClose, onSaved }: WishFormSh
       </View>
       {step === 0 ? <>
         <MediaUpload state={imageAsset || wish?.image ? 'success' : 'empty'} onPress={() => void chooseImage()} empty={{ title: 'Ajouter une image · optionnel', description: 'Choisir une photo dans votre bibliothèque' }} success={{ title: imageAsset ? 'Nouvelle image sélectionnée' : 'Image actuelle', description: 'Touchez pour remplacer' }} testID="wish-image" />
-        <ControlledTextField control={form.control} name="nom" label="Nom" placeholder="Ex. Selle western" required maxLength={120} testID="wish-name" />
+        <ControlledTextField control={form.control} name="nom" label="Nom" placeholder="Ex. Selle western" required maxLength={STORAGE_TEXT_LIMITS.wish} testID="wish-name" />
         <ControlledTextField control={form.control} name="url" label="Lien · optionnel" placeholder="https://vascoandco.fr" autoCapitalize="none" keyboardType="url" maxLength={500} testID="wish-url" />
       </> : null}
       {step === 1 ? <>
         <ControlledTextField control={form.control} name="prix" label="Prix · optionnel" placeholder="Ex. 20 €" keyboardType="decimal-pad" maxLength={30} testID="wish-price" />
-        <ControlledTextField control={form.control} name="destinataire" label="Destinataire · optionnel" placeholder="Par défaut, pour vous" maxLength={120} testID="wish-recipient" />
+        <ControlledTextField control={form.control} name="destinataire" label="Destinataire · optionnel" placeholder="Par défaut, pour vous" maxLength={STORAGE_TEXT_LIMITS.wish} testID="wish-recipient" />
       </> : null}
       {step === 2 ? <View style={{ gap: spacing.lg, padding: spacing.md, borderRadius: radii.lg, backgroundColor: colors.surfaceVariant }}>
         <SummaryRow label="Nom" value={values.nom} strong />

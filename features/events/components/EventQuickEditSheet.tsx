@@ -4,6 +4,7 @@ import type { Event } from '../../../models/Event';
 import { Banner, FormSheet, PeriodSelector, StarRatingField, TextArea, TextField } from '../../../shared/components/ui';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
+import { EVENT_TEXT_LIMITS } from '../eventCreationUtils';
 import { getEventQuickFieldKeys } from '../eventDetailsConfig';
 import type { PatchEventPayload } from '../types';
 
@@ -51,7 +52,7 @@ export function EventQuickEditSheet({ event, onClose, onSave }: { event: Event; 
       <PeriodSelector options={stateOptions} value={state} onChange={setState} accessibilityLabel="État de l’événement" testID="event-quick-state" />
     </View>
     {supportsNote ? <StarRatingField label="Note" value={note} onChange={setNote} /> : null}
-    {supportsPlacement ? <TextField label="Classement" placeholder="Ex. 2e" value={placement} helperText="Facultatif" onChangeText={setPlacement} /> : null}
+    {supportsPlacement ? <TextField label="Classement" placeholder="Ex. 2e" value={placement} helperText="Facultatif" maxLength={EVENT_TEXT_LIMITS.placement} onChangeText={setPlacement} /> : null}
     {supportsExpense ? <TextField label="Dépense" placeholder="0,00 €" value={expense} keyboardType="decimal-pad" helperText="Facultatif" errorMessage={expenseValid ? undefined : 'Saisissez un montant positif.'} onChangeText={setExpense} /> : null}
     <TextArea label="Compte rendu" placeholder="Ajoutez les informations utiles…" value={comment} maxLength={500} helperText={`${comment.length}/500`} onChangeText={setComment} />
   </FormSheet>;

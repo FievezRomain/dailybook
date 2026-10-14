@@ -4,6 +4,7 @@ import { Text, View } from 'react-native';
 import { useForm } from 'react-hook-form';
 
 import { contactFormSchema, type ContactFormValues } from '@business/validators/contact';
+import { STORAGE_TEXT_LIMITS } from '@business/validators/storageLimits';
 import { useContactMutations } from '@hooks/queries/useContactsQuery';
 import type { Contact } from '@models/Contact';
 import LoggerService from '@services/logs/LoggerService';
@@ -74,12 +75,12 @@ export function ContactFormSheetScreen({ mode, contact, onClose, onSaved }: Cont
         <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>{step === 0 ? 'Ajoutez uniquement les informations utiles' : step === 1 ? 'Ajoutez seulement les moyens de contact utiles' : 'Relisez les informations avant de valider'}</Text>
       </View>
       {step === 0 ? <>
-        <ControlledTextField control={form.control} name="nom" label="Nom" placeholder="Ex. Claire Martin" required maxLength={120} autoCapitalize="words" testID="contact-name" />
-        <ControlledTextField control={form.control} name="profession" label="Rôle" placeholder="Ex. Vétérinaire" maxLength={120} testID="contact-role" />
+        <ControlledTextField control={form.control} name="nom" label="Nom" placeholder="Ex. Claire Martin" required maxLength={STORAGE_TEXT_LIMITS.contact} autoCapitalize="words" testID="contact-name" />
+        <ControlledTextField control={form.control} name="profession" label="Rôle" placeholder="Ex. Vétérinaire" maxLength={STORAGE_TEXT_LIMITS.contact} testID="contact-role" />
       </> : null}
       {step === 1 ? <>
-        <ControlledTextField control={form.control} name="telephone" label="Téléphone · optionnel" placeholder="Ex. 06 00 00 00 00" keyboardType="phone-pad" maxLength={30} testID="contact-phone" />
-        <ControlledTextField control={form.control} name="email" label="E-mail · optionnel" placeholder="Ex. nom@exemple.fr" keyboardType="email-address" autoCapitalize="none" maxLength={254} testID="contact-email" />
+        <ControlledTextField control={form.control} name="telephone" label="Téléphone · optionnel" placeholder="Ex. 06 00 00 00 00" keyboardType="phone-pad" maxLength={STORAGE_TEXT_LIMITS.contact} testID="contact-phone" />
+        <ControlledTextField control={form.control} name="email" label="E-mail · optionnel" placeholder="Ex. nom@exemple.fr" keyboardType="email-address" autoCapitalize="none" maxLength={STORAGE_TEXT_LIMITS.contact} testID="contact-email" />
       </> : null}
       {step === 2 ? <View style={{ gap: spacing.lg, padding: spacing.md, borderRadius: radii.lg, backgroundColor: colors.surfaceVariant }}>
         <SummaryRow value={`${values.nom}${values.profession ? ` · ${values.profession}` : ''}`} strong />
