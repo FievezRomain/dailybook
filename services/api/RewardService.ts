@@ -15,8 +15,3 @@ export async function dailyCheckIn(): Promise<RewardSummary> {
   const response = await httpClient.post('/rewards/check-ins/daily');
   return response.data;
 }
-
-export async function completeWeeklyReview(): Promise<RewardSummary> {
-  const response = await httpClient.post('/rewards/reviews/weekly');
-  return response.data;
-}

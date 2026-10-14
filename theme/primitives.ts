@@ -27,6 +27,8 @@ export const palette = {
   eventRdv: '#7C5F52',
   eventBalade: '#8C7A4F',
   eventDepense: '#A66A3F',
+  vascorOldGoldLight: '#D8BC78',
+  vascorOldGold: '#B2914E',
 } as const;
 
 export const alpha = {

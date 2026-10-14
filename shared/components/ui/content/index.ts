@@ -33,3 +33,5 @@ export { SectionEmptyMessage } from './SectionEmptyMessage';
 export type { SectionEmptyMessageProps } from './SectionEmptyMessage';
 export { SectionHeader } from './SectionHeader';
 export { StatisticHistoryGroup } from './StatisticHistoryGroup';
+export { VascorMark } from './VascorMark';
+export type { VascorMarkProps } from './VascorMark';

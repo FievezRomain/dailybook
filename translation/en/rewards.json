@@ -1,33 +1,60 @@
 {
   "currency": {
-    "name": "Pawpoints",
-    "short": "Pawpoints",
-    "balanceAccessibility": "{{count}} Pawpoints"
+    "name": "Vascor",
+    "short": "Vascor",
+    "balanceAccessibility": "{{count}} Vascor"
   },
   "hub": {
-    "title": "My Pawpoints",
+    "title": "My Vascor",
     "subtitle": "Good care for your animals earns rewards.",
+    "navigation": {
+      "missions": "Missions",
+      "grades": "Ranks",
+      "activity": "Activity",
+      "store": "Store"
+    },
+    "summaryError": "Unable to load your Vascor space.",
+    "historyError": "Unable to load your Vascor activity.",
+    "currentGradeLabel": "Your current rank",
+    "gradeProgressAccessibility": "Progress towards the next rank: {{percent}} percent",
     "balance": "Available balance",
-    "lifetime": "{{count}} earned in total",
+    "lifetime": "{{count}} Vascor earned in total",
+    "nextGrade": "{{count}} Vascor until {{grade}} rank",
+    "highestGrade": "Highest rank reached",
     "history": "History",
     "store": "Store",
     "storeEmptyTitle": "Rewards are coming soon",
     "storeEmptyMessage": "Offers will appear here once they can be made available fairly to everyone.",
-    "historyEmpty": "Your first Pawpoints will appear here.",
-    "reviewTitle": "Weekly review",
-    "reviewMessage": "Available after completing at least two different kinds of care activity this week.",
-    "reviewAction": "Complete my review · +20",
-    "reviewCompleted": "Review completed",
-    "gradesAction": "View all ranks",
-    "gradesHideAction": "Hide ranks",
-    "gradesTitle": "Ranks",
-    "gradeThreshold": "From {{count}} earned Pawpoints",
+    "storeSubtitle": "Find the benefits available with your Vascor here.",
+    "storeBalance": "{{count}} Vascor available",
+    "historyEmpty": "Your first Vascor will appear here.",
+    "activityTitle": "Your activity",
+    "activitySubtitle": "Every gain remains visible so you can understand how your balance changes.",
+    "gradesTitle": "Your progress",
+    "gradesSubtitle": "All thresholds stay visible so you can see the next rank at a glance.",
+    "gradeThreshold": "From {{count}} earned Vascor",
     "currentGrade": "Current",
-    "opportunitiesTitle": "Pawpoints still available",
+    "reachedGrade": "Reached",
+    "missionsTitle": "Current missions",
+    "missionsSubtitle": "Complete current missions to earn both the usual reward and its bonus.",
+    "missionExpires": "Until {{date}}",
+    "moreWaysTitle": "Keep your streak going",
+    "boostsTitle": "Vascor boosts",
+    "boostsSubtitle": "One action changes every day, week and month. The bonus is added to the usual reward.",
+    "boostGain": "{{base}} usual Vascor + {{bonus}} bonus",
+    "boostAccessibility": "{{period}}, {{action}}, {{base}} usual Vascor plus {{bonus}} bonus",
+    "premiumOnlyBoost": "Premium-only mission, kept visible so you can plan for the next boost.",
+    "premiumBonusActive": "Premium bonus active: +{{percent}}% on every rewarded action.",
+    "premiumBonusUpsell": "With Premium, every action earns {{percent}}% more Vascor.",
+    "premiumActiveTitle": "Your Premium bonus is active",
+    "premiumBonusTitle": "Earn more with every action",
+    "comparePremium": "Explore Premium",
+    "boostHistory": "{{period}} bonus · {{action}}",
+    "opportunitiesTitle": "Vascor still available",
     "opportunitiesSubtitle": "These actions are calculated from your account and current tracking.",
     "opportunityRemaining_one": "{{count}} rewarded action remaining",
     "opportunityRemaining_other": "{{count}} rewarded actions remaining",
-    "opportunitiesEmpty": "You have collected all currently available Pawpoints."
+    "opportunitiesEmpty": "You have collected all currently available Vascor."
   },
   "levels": {
     "companion": "Companion",
@@ -38,11 +65,24 @@
   "actions": {
     "daily_check_in": "Daily app open",
     "animal_profile_completed": "Animal profile completed",
+    "event_created": "Event created",
     "event_completed": "Event completed",
     "care_follow_up": "Care follow-up recorded",
     "measurement_recorded": "Measurement recorded",
+    "body_picture_added": "Progress photo added",
     "objective_step_completed": "Goal step completed",
-    "objective_completed": "Goal completed",
-    "weekly_review_completed": "Weekly review completed"
+    "objective_completed": "Goal completed"
+  },
+  "boosts": {
+    "periods": {
+      "daily": "daily",
+      "weekly": "weekly",
+      "monthly": "monthly"
+    },
+    "status": {
+      "available": "To do",
+      "completed": "Completed",
+      "locked": "Premium"
+    }
   }
 }

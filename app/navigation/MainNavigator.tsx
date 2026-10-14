@@ -115,6 +115,7 @@ export function MainNavigator() {
   const [groupsPlans, setGroupsPlans] = useState(false);
   const [visualTrackingPlans, setVisualTrackingPlans] = useState(false);
   const [animalPlans, setAnimalPlans] = useState(false);
+  const [rewardsPlans, setRewardsPlans] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [rewardsOpen, setRewardsOpen] = useState(false);
   const rewardOpenRequest = useRewardStore((state) => state.openRequestId);
@@ -525,12 +526,20 @@ export function MainNavigator() {
         onOpenNotification={openNotificationTarget}
       />
     );
+  if (rewardsPlans)
+    return (
+      <PremiumPlansComparison
+        onBack={() => setRewardsPlans(false)}
+        testID="rewards-plans-comparison"
+      />
+    );
   if (rewardsOpen)
     return (
       <RewardsHubScreen
         activeTab={tab}
         onSelectTab={selectTab}
         onBack={() => setRewardsOpen(false)}
+        onComparePlans={() => setRewardsPlans(true)}
       />
     );
   if (statisticsPlans)

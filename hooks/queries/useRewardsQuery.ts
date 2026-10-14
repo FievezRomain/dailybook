@@ -22,14 +22,3 @@ export function useDailyRewardCheckIn() {
     },
   });
 }
-
-export function useCompleteWeeklyReview() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: RewardService.completeWeeklyReview,
-    onSuccess: (summary) => {
-      queryClient.setQueryData(REWARD_SUMMARY_KEY, summary);
-      void queryClient.invalidateQueries({ queryKey: REWARD_HISTORY_KEY });
-    },
-  });
-}

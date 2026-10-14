@@ -18,7 +18,6 @@ export const iconRegistry = {
   home: "home-outline",
   agenda: "calendar-month-outline",
   animals: "paw-outline",
-  rewards: "paw",
   animalScope: "view-grid-outline",
   tracking: "chart-line",
   more: "view-grid-outline",

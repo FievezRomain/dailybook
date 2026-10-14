@@ -7,6 +7,7 @@ interface RewardState {
   openRequestId: number;
   requestOpen: () => void;
   recordGrants: (grants: RewardGrant[]) => void;
+  consumeGrant: (transactionId: number) => void;
   clearGrants: () => void;
 }
 
@@ -18,6 +19,12 @@ export const useRewardStore = create<RewardState>((set) => ({
     set((state) => ({
       grants: [...state.grants, ...grants],
       balanceOverride: grants.at(-1)?.balance ?? state.balanceOverride,
+    })),
+  consumeGrant: (transactionId) =>
+    set((state) => ({
+      grants: state.grants.filter(
+        (grant) => grant.transaction_id !== transactionId,
+      ),
     })),
   clearGrants: () => set({ grants: [] }),
 }));

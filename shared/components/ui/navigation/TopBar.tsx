@@ -10,19 +10,12 @@ import { Icon } from '../icons';
 import { NavigationSurface } from './NavigationSurface';
 import { useAuthStore } from '../../../../stores/useAuthStore';
 import { FileService } from '../../../../services/api/FileService';
-import { useTranslation } from 'react-i18next';
-import { useRewardSummaryQuery } from '../../../../hooks/queries/useRewardsQuery';
-import { useRewardStore } from '../../../../stores/useRewardStore';
+import { VascorTopBarAction } from './VascorTopBarAction';
 
 export interface TopBarProps { title: string; context?: 'root' | 'detail'; material?: Material; scrolled?: boolean; onBack?: () => void; onNotifications?: () => void; unreadNotifications?: number; onAccount?: () => void; avatarInitials?: string; avatarImageUrl?: string | null; trailing?: ReactNode; style?: StyleProp<ViewStyle>; testID?: string }
 
 export function TopBar({ title, context = 'root', material = 'solid', scrolled = false, onBack, onNotifications, unreadNotifications = 0, onAccount, avatarInitials, avatarImageUrl, trailing, style, testID }: TopBarProps) {
   const { colors } = useAppTheme();
-  const { t } = useTranslation('rewards');
-  const rewardSummary = useRewardSummaryQuery(Boolean(onNotifications));
-  const balanceOverride = useRewardStore((state) => state.balanceOverride);
-  const requestRewardsOpen = useRewardStore((state) => state.requestOpen);
-  const rewardBalance = balanceOverride ?? rewardSummary.data?.balance ?? 0;
   const user = useAuthStore((state) => state.user);
   const firebasePhotoUrl = useAuthStore((state) => state.firebaseUser?.photoURL);
   const [storedImageUrl, setStoredImageUrl] = useState<string | undefined>(() => user?.filename && user.id ? FileService.getCachedDownloadUrl(user.filename, 'user', user.id) : undefined);
@@ -51,18 +44,9 @@ export function TopBar({ title, context = 'root', material = 'solid', scrolled =
       {trailing ?? (
         <>
           {onNotifications ? (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={t('currency.balanceAccessibility', { count: rewardBalance })}
-              onPress={requestRewardsOpen}
+            <VascorTopBarAction
               testID={testID ? `${testID}-rewards` : 'top-bar-rewards'}
-              style={{ minWidth: 52, height: 44, paddingHorizontal: spacing.xs, flexDirection: 'row', gap: spacing.xs, alignItems: 'center', justifyContent: 'center' }}
-            >
-              <Icon name="rewards" size="sm" color={colors.primary} />
-              <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.xs }}>
-                {rewardBalance}
-              </Text>
-            </Pressable>
+            />
           ) : null}
           {onNotifications ? (
             <Pressable accessibilityRole="button" accessibilityLabel={unreadNotifications > 0 ? `Notifications, ${unreadNotifications} non lues` : 'Notifications'} onPress={onNotifications} testID={testID ? `${testID}-notifications` : 'top-bar-notifications'} style={{ width: 36, height: 44, alignItems: 'center', justifyContent: 'center' }}>

@@ -26,6 +26,13 @@ const shared = {
   eventConcours: eventTypeColors.concours,
   eventDepense: eventTypeColors.depense,
   eventAutre: eventTypeColors.autre,
+  vascorCoinHighlight: palette.palomino,
+  vascorCoinLight: palette.vascorOldGoldLight,
+  vascorCoin: palette.vascorOldGold,
+  vascorCoinDark: palette.eventBalade,
+  vascorCoinShadow: palette.darkWarm,
+  vascorCoinRust: palette.eventDepense,
+  vascorCoinPatina: palette.aubere,
 } as const;
 
 export const lightColors = {

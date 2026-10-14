@@ -1,33 +1,60 @@
 {
   "currency": {
-    "name": "Pattounes",
-    "short": "Pattounes",
-    "balanceAccessibility": "{{count}} Pattounes"
+    "name": "Vascor",
+    "short": "Vascor",
+    "balanceAccessibility": "{{count}} Vascor"
   },
   "hub": {
-    "title": "Mes Pattounes",
+    "title": "Mes Vascor",
     "subtitle": "Vos bons gestes pour vos animaux sont récompensés.",
+    "navigation": {
+      "missions": "Défis",
+      "grades": "Grades",
+      "activity": "Activité",
+      "store": "Boutique"
+    },
+    "summaryError": "Impossible de charger votre espace Vascor.",
+    "historyError": "Impossible de charger votre activité Vascor.",
+    "currentGradeLabel": "Votre grade actuel",
+    "gradeProgressAccessibility": "Progression vers le prochain grade : {{percent}} pour cent",
     "balance": "Solde disponible",
-    "lifetime": "{{count}} gagnées depuis le début",
+    "lifetime": "{{count}} Vascor gagnés depuis le début",
+    "nextGrade": "{{count}} Vascor avant le grade {{grade}}",
+    "highestGrade": "Grade maximal atteint",
     "history": "Historique",
     "store": "Boutique",
     "storeEmptyTitle": "Les récompenses arrivent bientôt",
     "storeEmptyMessage": "Les offres apparaîtront ici dès qu’elles pourront être proposées à tous dans de bonnes conditions.",
-    "historyEmpty": "Vos premières Pattounes apparaîtront ici.",
-    "reviewTitle": "Bilan de la semaine",
-    "reviewMessage": "Disponible après au moins deux types de suivi réalisés cette semaine.",
-    "reviewAction": "Terminer mon bilan · +20",
-    "reviewCompleted": "Bilan terminé",
-    "gradesAction": "Voir tous les grades",
-    "gradesHideAction": "Masquer les grades",
-    "gradesTitle": "Les grades",
-    "gradeThreshold": "À partir de {{count}} Pattounes gagnées",
+    "storeSubtitle": "Retrouvez ici les avantages accessibles avec vos Vascor.",
+    "storeBalance": "{{count}} Vascor disponibles",
+    "historyEmpty": "Vos premiers Vascor apparaîtront ici.",
+    "activityTitle": "Votre activité",
+    "activitySubtitle": "Chaque gain reste visible pour comprendre comment votre solde évolue.",
+    "gradesTitle": "Votre progression",
+    "gradesSubtitle": "Les paliers sont toujours visibles pour situer le prochain grade.",
+    "gradeThreshold": "À partir de {{count}} Vascor gagnés",
     "currentGrade": "Actuel",
-    "opportunitiesTitle": "Pattounes encore disponibles",
+    "reachedGrade": "Atteint",
+    "missionsTitle": "Défis en cours",
+    "missionsSubtitle": "Relevez les missions du moment pour cumuler le gain habituel et son bonus.",
+    "missionExpires": "Jusqu’au {{date}}",
+    "moreWaysTitle": "Continuez sur votre lancée",
+    "boostsTitle": "Boosts Vascor",
+    "boostsSubtitle": "Une action change chaque jour, chaque semaine et chaque mois. Le bonus s’ajoute au gain habituel.",
+    "boostGain": "{{base}} Vascor habituels + {{bonus}} bonus",
+    "boostAccessibility": "{{period}}, {{action}}, {{base}} Vascor habituels plus {{bonus}} bonus",
+    "premiumOnlyBoost": "Mission réservée à Premium, visible pour vous permettre d’anticiper le prochain boost.",
+    "premiumBonusActive": "Bonus Premium actif : +{{percent}} % sur chaque action récompensée.",
+    "premiumBonusUpsell": "Avec Premium, chaque action rapporte {{percent}} % de Vascor en plus.",
+    "premiumActiveTitle": "Votre bonus Premium est actif",
+    "premiumBonusTitle": "Gagnez plus à chaque action",
+    "comparePremium": "Découvrir Premium",
+    "boostHistory": "Bonus {{period}} · {{action}}",
+    "opportunitiesTitle": "Vascor encore disponibles",
     "opportunitiesSubtitle": "Les actions ci-dessous sont calculées selon votre compte et vos suivis en cours.",
     "opportunityRemaining_one": "{{count}} action encore récompensée",
     "opportunityRemaining_other": "{{count}} actions encore récompensées",
-    "opportunitiesEmpty": "Vous avez récupéré toutes les Pattounes disponibles pour le moment."
+    "opportunitiesEmpty": "Vous avez récupéré tous les Vascor disponibles pour le moment."
   },
   "levels": {
     "companion": "Compagnon",
@@ -38,11 +65,24 @@
   "actions": {
     "daily_check_in": "Ouverture quotidienne",
     "animal_profile_completed": "Profil animal complété",
+    "event_created": "Événement créé",
     "event_completed": "Événement terminé",
     "care_follow_up": "Suivi de soin renseigné",
     "measurement_recorded": "Mesure enregistrée",
+    "body_picture_added": "Photo d’évolution ajoutée",
     "objective_step_completed": "Étape d’objectif terminée",
-    "objective_completed": "Objectif terminé",
-    "weekly_review_completed": "Bilan hebdomadaire terminé"
+    "objective_completed": "Objectif terminé"
+  },
+  "boosts": {
+    "periods": {
+      "daily": "du jour",
+      "weekly": "de la semaine",
+      "monthly": "du mois"
+    },
+    "status": {
+      "available": "À faire",
+      "completed": "Terminé",
+      "locked": "Premium"
+    }
   }
 }
