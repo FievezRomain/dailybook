@@ -6,6 +6,7 @@ import { createQueryWrapper } from '../../../tests/utils/queryWrapper';
 import { createMockGroup } from '../../../tests/factories/group.factory';
 
 jest.mock('../../../services/api/GroupService');
+jest.mock('../../../services/api/FileService', () => ({ FileService: {}, fileDownloadKey: jest.fn() }));
 jest.mock('../useAnimalsQuery', () => ({ ANIMALS_KEY: ['animals'] }));
 jest.mock('../useEventsQuery', () => ({ EVENTS_KEY: ['events'] }));
 

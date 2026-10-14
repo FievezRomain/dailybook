@@ -6,6 +6,7 @@ import { useEventsQuery, useEventMutations, EVENTS_KEY } from '../../../hooks/qu
 import * as EventService from '../../../services/api/EventService';
 
 jest.mock('../../../services/api/EventService');
+jest.mock('../../../services/api/FileService', () => ({ FileService: {}, fileDownloadKey: jest.fn() }));
 
 const mockedGetEvents = EventService.getEvents as jest.MockedFunction<typeof EventService.getEvents>;
 const mockedCreateEvent = EventService.createEvent as jest.MockedFunction<typeof EventService.createEvent>;

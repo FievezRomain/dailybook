@@ -33,6 +33,15 @@ describe('event creation payload', () => {
     expect(buildEventUpdatePayload({ eventType: 'depense', dateevent: '2026-08-09' }, 14).update_scope).toBe('occurrence');
   });
 
+  it('sends the final persisted document list and excludes pending local files on update', () => {
+    expect(buildEventUpdatePayload({
+      eventType: 'soins',
+      dateevent: '2026-08-09',
+      documents: [{ name: 'ordonnance.pdf' }, { name: 'nouvelle.jpg', localUri: 'file:///nouvelle.jpg' }],
+    }, 14).documents).toEqual(['ordonnance.pdf']);
+    expect(buildEventUpdatePayload({ eventType: 'soins', dateevent: '2026-08-09', documents: [] }, 14).documents).toEqual([]);
+  });
+
   it('normalizes recurrence for care and walk events', () => {
     expect(buildEventCreationPayload({ eventType: 'soins', dateevent: '2026-08-18', datefinsoins: '2026-08-20', frequencevalue: 'daily' })).toMatchObject({ frequencetype: 'recurring', frequencevalue: 'daily', datefinsoins: '2026-08-20' });
     expect(buildEventCreationPayload({ eventType: 'balade', dateevent: '2026-08-18', datefinbalade: '2026-09-18', frequencevalue: 'monthly' })).toMatchObject({ frequencetype: 'recurring', frequencevalue: 'monthly', datefinbalade: '2026-09-18' });

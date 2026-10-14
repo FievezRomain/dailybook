@@ -8,7 +8,6 @@ import {
   usePendingAnimalSharesQuery,
 } from "../../../hooks/queries/useGroupsQuery";
 import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
-import { useAnimalImageUrl } from "../../../hooks/queries/useAnimalImageUrl";
 import { useAuthStore } from "../../../stores/useAuthStore";
 import { isPremiumSubscription } from "../../events/eventAiUtils";
 import { isOwnedAnimal } from "../../animals/animalWorkspaceUtils";
@@ -568,7 +567,6 @@ function GroupAnimalRow({
   onPress?: () => void;
 }) {
   const { colors } = useAppTheme();
-  const resolvedImage = useAnimalImageUrl(animal.image ?? undefined, animal.id);
   const details =
     [animal.espece, animal.race, animal.sexe, animal.couleur]
       .filter(Boolean)
@@ -586,7 +584,7 @@ function GroupAnimalRow({
     >
       <Avatar
         initials={animal.nom}
-        imageUrl={animal.imageUrl ?? resolvedImage}
+        imageUrl={animal.imageUrl}
         size={44}
         accessibilityLabel={`Photo de ${animal.nom}`}
         decorative

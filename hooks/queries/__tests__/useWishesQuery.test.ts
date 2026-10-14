@@ -6,6 +6,7 @@ import { createQueryWrapper } from '../../../tests/utils/queryWrapper';
 import { createMockWish } from '../../../tests/factories/wish.factory';
 
 jest.mock('../../../services/api/WishService');
+jest.mock('../../../services/api/FileService', () => ({ FileService: {}, fileDownloadKey: jest.fn() }));
 
 const mockedGetWishes = WishService.getWishes as jest.MockedFunction<typeof WishService.getWishes>;
 const mockedCreateWish = WishService.createWish as jest.MockedFunction<typeof WishService.createWish>;

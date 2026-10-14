@@ -13,18 +13,25 @@ jest.mock('../../../shared/utils/prepareImageUpload', () => ({
 jest.mock('expo-file-system/legacy', () => ({
   FileSystemUploadType: { MULTIPART: 1 },
   uploadAsync: jest.fn(),
+  getInfoAsync: jest.fn(),
 }));
 
 const mockedGet = httpClient.get as jest.MockedFunction<typeof httpClient.get>;
 const mockedPost = httpClient.post as jest.MockedFunction<typeof httpClient.post>;
 const mockedPrepareImage = prepareImageUpload as jest.MockedFunction<typeof prepareImageUpload>;
 const mockedUploadAsync = FileSystem.uploadAsync as jest.MockedFunction<typeof FileSystem.uploadAsync>;
+const mockedGetInfoAsync = FileSystem.getInfoAsync as jest.MockedFunction<typeof FileSystem.getInfoAsync>;
 
 describe('FileService download URL cache', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('shares one backend request for concurrent and repeated reads', async () => {
-    mockedGet.mockResolvedValue({ data: { url: 'https://signed.example/animal' } } as never);
+    mockedPost.mockResolvedValueOnce({ data: [{
+      fileName: 'photo.jpg',
+      ressourceType: 'animal',
+      ressourceId: 42,
+      url: 'https://signed.example/animal',
+    }] } as never);
 
     const first = FileService.getDownloadUrl('photo.jpg', 'animal', 42);
     const second = FileService.getDownloadUrl('photo.jpg', 'animal', 42);
@@ -34,8 +41,28 @@ describe('FileService download URL cache', () => {
       'https://signed.example/animal',
     ]);
     await expect(FileService.getDownloadUrl('photo.jpg', 'animal', 42)).resolves.toBe('https://signed.example/animal');
-    expect(mockedGet).toHaveBeenCalledTimes(1);
+    expect(mockedPost).toHaveBeenCalledTimes(1);
+    expect(mockedPost).toHaveBeenCalledWith('/files/download-urls', {
+      items: [{ fileName: 'photo.jpg', ressourceType: 'animal', ressourceId: 42 }],
+    });
+    expect(mockedGet).not.toHaveBeenCalled();
     expect(FileService.getCachedDownloadUrl('photo.jpg', 'animal', 42)).toBe('https://signed.example/animal');
+  });
+
+  it('resolves multiple resource URLs in one request and ignores unavailable rows', async () => {
+    mockedPost.mockResolvedValueOnce({ data: [
+      { fileName: 'first.jpg', ressourceType: 'animal', ressourceId: 7, url: 'https://signed.example/first' },
+      { fileName: 'missing.jpg', ressourceType: 'animal', ressourceId: 8, url: null },
+    ] } as never);
+
+    const result = await FileService.getDownloadUrls([
+      { filename: 'first.jpg', ressourceType: 'animal', ressourceId: 7 },
+      { filename: 'missing.jpg', ressourceType: 'animal', ressourceId: 8 },
+    ]);
+
+    expect(mockedPost).toHaveBeenCalledTimes(1);
+    expect(result.get('animal:7:first.jpg')).toBe('https://signed.example/first');
+    expect(result.has('animal:8:missing.jpg')).toBe(false);
   });
 
   it('uploads local images with the native multipart implementation', async () => {
@@ -59,6 +86,25 @@ describe('FileService download URL cache', () => {
       ressourceType: 'animal',
       ressourceId: 42,
       contentType: 'image/jpeg',
+    });
+  });
+
+  it('reads a missing event document size locally before requesting the signed URL', async () => {
+    mockedGetInfoAsync.mockResolvedValue({ exists: true, uri: 'file:///cache/report.pdf', size: 2048, isDirectory: false, modificationTime: 1 });
+    mockedPost
+      .mockResolvedValueOnce({ data: { url: 'https://bucket.example', fields: { key: 'uid/report.pdf' }, filename: 'report.pdf', s3Path: 'uid/report.pdf', expiresIn: 300 } } as never)
+      .mockResolvedValueOnce({ data: { filename: 'report.pdf' } } as never);
+    mockedUploadAsync.mockResolvedValue({ status: 204, headers: {}, body: '', mimeType: 'application/xml' });
+
+    await expect(FileService.upload('file:///cache/report.pdf', 'report.pdf', 'application/pdf', 'event', 42)).resolves.toBe('report.pdf');
+
+    expect(mockedGetInfoAsync).toHaveBeenCalledWith('file:///cache/report.pdf');
+    expect(mockedPost).toHaveBeenNthCalledWith(1, '/files/upload-url', {
+      filename: 'report.pdf',
+      ressourceType: 'event',
+      ressourceId: 42,
+      contentType: 'application/pdf',
+      sizeBytes: 2048,
     });
   });
 });

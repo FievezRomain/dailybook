@@ -9,20 +9,18 @@ import {
   AnimalHistoryRecord,
 } from '../../features/animals/types';
 import { Animal } from '../../models/Animal';
-import { FileService } from './FileService';
+import { FileService, fileDownloadKey } from './FileService';
 
 const _crud = createCrudService<Animal, CreateAnimalPayload, UpdateAnimalPayload>('/animals');
 
 export async function getAnimals(): Promise<Animal[]> {
   const animals = await _crud.getAll();
-  return Promise.all(animals.map(async (animal) => {
-    if (!animal.image) return animal;
-    try {
-      return { ...animal, imageUrl: await FileService.getDownloadUrl(animal.image, 'animal', animal.id) };
-    } catch {
-      return animal;
-    }
-  }));
+  const urls = await FileService.getDownloadUrls(animals.flatMap((animal) => animal.image
+    ? [{ filename: animal.image, ressourceType: 'animal' as const, ressourceId: animal.id }]
+    : []));
+  return animals.map((animal) => animal.image
+    ? { ...animal, imageUrl: urls.get(fileDownloadKey({ filename: animal.image, ressourceType: 'animal', ressourceId: animal.id })) ?? animal.imageUrl }
+    : animal);
 }
 export const createAnimal = _crud.create;
 export const updateAnimal = _crud.update;
@@ -50,11 +48,16 @@ export async function deleteAnimalHistory(
 
 export async function getAnimalBodyPictures(animalId: string) {
   const response = await httpClient.get(`/animals/${animalId}/body-pictures`);
-  const pictures = Array.isArray(response.data) ? response.data : [];
-  return Promise.all(pictures.map(async (picture: BodyPicturePayload & { id?: number }) => ({
-    ...picture,
-    url: await FileService.getDownloadUrl(picture.filename, 'body', animalId),
+  const pictures: Array<BodyPicturePayload & { id?: number; url?: string }> = Array.isArray(response.data) ? response.data : [];
+  const urls = await FileService.getDownloadUrls(pictures.map((picture) => ({
+    filename: picture.filename,
+    ressourceType: 'body',
+    ressourceId: animalId,
   })));
+  return pictures.map((picture) => ({
+    ...picture,
+    url: urls.get(fileDownloadKey({ filename: picture.filename, ressourceType: 'body', ressourceId: animalId })) ?? picture.url,
+  }));
 }
 
 export async function getAnimalHistory(animalId: string, item: AnimalHistoryItem): Promise<AnimalHistoryRecord[]> {

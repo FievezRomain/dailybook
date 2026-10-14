@@ -11,6 +11,8 @@ export type Wish = {
      */
     prix?: string | null;
     image?: string;
+  /** URL de lecture signée, résolue en batch pour les listes. */
+  imageUrl?: string;
     previousimage?: string;
     /** UI-only — true pendant la sync optimiste */
     syncing?: boolean;

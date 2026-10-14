@@ -6,6 +6,7 @@ import { createQueryWrapper } from '../../../tests/utils/queryWrapper';
 import { createMockEvent, createMockBaladeEvent } from '../../../tests/factories/event.factory';
 
 jest.mock('../../../services/api/EventService');
+jest.mock('../../../services/api/FileService', () => ({ FileService: {}, fileDownloadKey: jest.fn() }));
 
 const mockedGetEvents = EventService.getEvents as jest.MockedFunction<typeof EventService.getEvents>;
 const mockedCreateEvent = EventService.createEvent as jest.MockedFunction<typeof EventService.createEvent>;
