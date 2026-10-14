@@ -3,7 +3,10 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { useEventForm } from '../useEventForm';
 import * as EventService from '../../../../services/api/EventService';
 
-jest.mock('../../../../services/api/EventService');
+jest.mock('../../../../services/api/EventService', () => ({
+  createEvent: jest.fn(),
+  updateEvent: jest.fn(),
+}));
 
 const mockedCreateEvent = EventService.createEvent as jest.MockedFunction<typeof EventService.createEvent>;
 const mockedUpdateEvent = EventService.updateEvent as jest.MockedFunction<typeof EventService.updateEvent>;

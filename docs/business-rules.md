@@ -230,6 +230,8 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant qu’utilisateur**, je souhaite que l’upload exige mon authentification et mon accès à la ressource sans constituer à lui seul une fonctionnalité Premium afin de séparer stockage et droit fonctionnel.
 - **En tant qu’utilisateur**, je souhaite que les images et URL signées soient mises en cache localement et mutualisées pendant leur validité afin d’éviter les téléchargements répétés.
 - **En tant qu’utilisateur**, je souhaite que la nouvelle référence d’une image de profil, d’animal ou de souhait soit enregistrée avant la suppression de l’ancien objet afin qu’un échec ne supprime jamais mon image actuelle.
+- **En tant qu’exploitant**, je souhaite que toute suppression ou tout remplacement confirmé d’un média appelle un endpoint backend propriétaire de la ressource qui supprime l’objet S3 et sa métadonnée, de façon idempotente, afin qu’aucun fichier orphelin ne subsiste.
+- **En tant qu’exploitant**, je souhaite que la suppression d’une entité supprime également tous ses médias privés côté backend avant de finaliser la suppression métier, avec des tests couvrant événements, animaux, photos de suivi, souhaits, groupes et profils.
 
 ## Évolution d’une règle
 

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Text, View } from 'react-native';
+import * as Haptics from 'expo-haptics';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useGroupsQuery } from '../../../hooks/queries/useGroupsQuery';
-import { useEventMutations } from '../../../hooks/queries/useEventsQuery';
+import { EVENTS_KEY, useEventMutations } from '../../../hooks/queries/useEventsQuery';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
-import { FileService } from '../../../services/api/FileService';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { Banner, Button, FormSheet, LinearProgress, Select, SelectionModal, Switch } from '../../../shared/components/ui';
@@ -12,6 +13,7 @@ import { AppErrorCode } from '../../../types/AppErrorCode';
 import { parseApiError } from '../../../utils/errorParser';
 import { buildEventCreationPayload, buildEventUpdatePayload, formatEventCreationSummary, getReminderLabel, getSelectedAnimalNames, reminderOptions } from '../eventCreationUtils';
 import { getEligibleEventGroups } from '../eventGroupSharing';
+import { uploadPendingEventDocuments } from '../eventDocumentUpload';
 
 export interface EventCreateOptionsScreenProps {
   onBack: () => void;
@@ -31,10 +33,13 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
   const setField = useEventWizardStore((state) => state.setField);
   const animals = useAnimalsQuery().data ?? [];
   const groupsQuery = useGroupsQuery();
-  const mutations = useEventMutations();
+  const queryClient = useQueryClient();
+  const mutations = useEventMutations({ haptics: false });
   const [reminderOpen, setReminderOpen] = useState(false);
   const [groupsOpen, setGroupsOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [saving, setSaving] = useState(false);
+  const [savedEventId, setSavedEventId] = useState<number>();
   const reminderEnabled = Boolean(form.notif);
   const selectedReminder = form.optionnotif ?? '30m';
   const names = getSelectedAnimalNames(form.animaux ?? [], animals);
@@ -44,31 +49,48 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
   const eligibleGroups = getEligibleEventGroups(groupsQuery.data ?? [], selectedAnimalIds);
   const selectedGroupIds = (form.shared_groups ?? []).map(String);
   const documents = form.documents ?? [];
-
-  const uploadNewDocuments = async (savedEventId: number) => {
-    for (const document of documents.filter((item) => item.localUri)) {
-      await FileService.upload(document.localUri!, document.name, document.mimeType ?? 'application/octet-stream', 'event', savedEventId, document.size);
-    }
+  const markDocumentUploaded = (document: (typeof documents)[number], filename: string) => {
+    const current = useEventWizardStore.getState().formData.documents ?? [];
+    setField('documents', current.map((item) => item === document ? { name: filename } : item));
   };
 
   const save = async () => {
+    if (saving) return;
     setErrorMessage(undefined);
+    setSaving(true);
+    let eventPersisted = savedEventId !== undefined;
     try {
       if (eventId !== undefined) {
         const updated = await mutations.update.mutateAsync({ id: String(eventId), body: buildEventUpdatePayload(form, eventId) });
+        eventPersisted = true;
         const savedId = updated?.id ?? eventId;
-        await uploadNewDocuments(savedId);
+        await uploadPendingEventDocuments(savedId, documents, markDocumentUploaded);
+        await queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
         onCreated(savedId);
       } else {
-        const created = await mutations.create.mutateAsync(buildEventCreationPayload(form));
-        if (created?.id) await uploadNewDocuments(created.id);
-        onCreated(created?.id);
+        let savedId = savedEventId;
+        if (savedId === undefined) {
+          const created = await mutations.create.mutateAsync(buildEventCreationPayload(form));
+          savedId = created.id;
+          setSavedEventId(savedId);
+          eventPersisted = true;
+        }
+        await uploadPendingEventDocuments(savedId, documents, markDocumentUploaded);
+        await queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+        onCreated(savedId);
       }
     } catch (error) {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
       const parsed = parseApiError(error);
-      setErrorMessage(parsed.isNetworkError || parsed.code === AppErrorCode.NOT_FOUND
-        ? 'Vérifiez votre connexion puis réessayez. Vos informations sont conservées.'
-        : 'Un problème est survenu de notre côté. Réessayez dans quelques instants. Vos informations sont conservées.');
+      setErrorMessage(eventPersisted && documents.some((document) => document.localUri)
+        ? 'L’événement est enregistré, mais au moins une modification de document n’a pas pu aboutir. Réessayez : l’opération déjà terminée ne sera pas répétée.'
+        : parsed.isNetworkError || parsed.code === AppErrorCode.NOT_FOUND
+          ? 'Vérifiez votre connexion puis réessayez. Vos informations sont conservées.'
+          : 'Un problème est survenu de notre côté. Réessayez dans quelques instants. Vos informations sont conservées.');
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -78,7 +100,7 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
       onBack={onBack}
       onClose={onClose}
       dirty
-      footer={<View style={{ paddingHorizontal: spacing.md }}><Button label={editing ? 'Enregistrer les modifications' : 'Enregistrer l’événement'} onPress={() => void save()} loading={editing ? mutations.update.isPending : mutations.create.isPending} size="large" fullWidth /></View>}
+      footer={<View style={{ paddingHorizontal: spacing.md }}><Button label={editing ? 'Enregistrer les modifications' : 'Enregistrer l’événement'} onPress={() => void save()} loading={saving} size="large" fullWidth /></View>}
       testID={editing ? 'event-edit-options' : 'event-create-options'}
     >
       <LinearProgress current={editScope === 'series' ? 3 : editScope ? 2 : 4} total={editScope === 'series' ? 3 : editScope ? 2 : 4} label={editScope === 'series' ? 'Étape 3 sur 3' : editScope ? 'Étape 2 sur 2' : 'Étape 4 sur 4'} />

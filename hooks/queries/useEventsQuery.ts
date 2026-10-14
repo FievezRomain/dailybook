@@ -13,7 +13,7 @@ export function useEventsQuery() {
   });
 }
 
-export function useEventMutations() {
+export function useEventMutations({ haptics = true }: { haptics?: boolean } = {}) {
   const queryClient = useQueryClient();
   const invalidate = () => queryClient.invalidateQueries({ queryKey: EVENTS_KEY });
 
@@ -28,10 +28,10 @@ export function useEventMutations() {
     },
     onError: async (_err, _vars, ctx) => {
       if (ctx?.snapshot) queryClient.setQueryData(EVENTS_KEY, ctx.snapshot);
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
+      if (haptics) await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
     },
     onSuccess: async () => {
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+      if (haptics) await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
       await invalidate();
     },
   });
@@ -49,10 +49,10 @@ export function useEventMutations() {
     },
     onError: async (_err, _vars, ctx) => {
       if (ctx?.snapshot) queryClient.setQueryData(EVENTS_KEY, ctx.snapshot);
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
+      if (haptics) await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => undefined);
     },
     onSuccess: async () => {
-      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
+      if (haptics) await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
       await invalidate();
     },
   });

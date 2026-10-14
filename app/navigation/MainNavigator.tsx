@@ -130,6 +130,7 @@ export function MainNavigator() {
   const [voiceRecording, setVoiceRecording] = useState<VoiceRecording>();
   const [voiceDraft, setVoiceDraft] = useState<VoiceNoteDraft>();
   const [animalFeedback, setAnimalFeedback] = useState<string>();
+  const [agendaFeedback, setAgendaFeedback] = useState<string>();
   const resetWizard = useEventWizardStore((state) => state.reset);
   const setEventWizardFormData = useEventWizardStore((state) => state.setFormData);
   const resetAnimalWizard = useAnimalWizardStore((state) => state.reset);
@@ -387,6 +388,8 @@ export function MainNavigator() {
         onCreate={create}
         onNotifications={openNotifications}
         onAccount={openSettings}
+        feedback={agendaFeedback}
+        onFeedbackHidden={() => setAgendaFeedback(undefined)}
         />
       </View>
       <View style={{ flex: 1, display: tab === "animals" ? "flex" : "none" }} accessibilityElementsHidden={tab !== "animals"} importantForAccessibility={tab === "animals" ? "auto" : "no-hide-descendants"}>
@@ -430,6 +433,7 @@ export function MainNavigator() {
       onDuplicate={(sourceEventId) =>
         setRoute({ name: "eventDuplicateDetails", sourceEventId })
       }
+      onComparePlans={() => setVisualTrackingPlans(true)}
     />
   );
   if (settingsOpen === "notifications")
@@ -1134,7 +1138,10 @@ export function MainNavigator() {
               resetWizard();
               returnToCreateOrigin();
             }}
-            onCreated={() => agenda()}
+            onCreated={() => {
+              setAgendaFeedback("Événement enregistré.");
+              agenda();
+            }}
           />
         </FormSheetHost>
       </>
@@ -1220,6 +1227,7 @@ export function MainNavigator() {
         onDuplicate={(sourceEventId) =>
           setRoute({ name: "eventDuplicateDetails", sourceEventId })
         }
+        onComparePlans={() => setVisualTrackingPlans(true)}
       />
     );
   if (route.name === "objective") {

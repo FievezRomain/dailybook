@@ -3,19 +3,22 @@ import { FileService } from '../../../services/api/FileService';
 import { addAnimalBodyPicture, getAnimalBodyPictures, getAnimalHistory, updateAnimalHistory } from '../../../services/api/AnimalsService';
 
 jest.mock('../../../services/api/httpClient');
-jest.mock('../../../services/api/FileService', () => ({ FileService: { getDownloadUrl: jest.fn() } }));
+jest.mock('../../../services/api/FileService', () => ({
+  FileService: { getDownloadUrls: jest.fn() },
+  fileDownloadKey: ({ filename, ressourceType, ressourceId }: { filename: string; ressourceType: string; ressourceId: string | number }) => `${ressourceType}:${ressourceId}:${filename}`,
+}));
 
 const mockedHttp = httpClient as jest.Mocked<typeof httpClient>;
-const mockedGetDownloadUrl = FileService.getDownloadUrl as jest.MockedFunction<typeof FileService.getDownloadUrl>;
+const mockedGetDownloadUrls = FileService.getDownloadUrls as jest.MockedFunction<typeof FileService.getDownloadUrls>;
 
 describe('AnimalsService body pictures', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('resolves backend filenames into signed image URLs', async () => {
     mockedHttp.get.mockResolvedValueOnce({ data: [{ id: 4, idanimal: 7, filename: 'body.jpg' }] } as never);
-    mockedGetDownloadUrl.mockResolvedValueOnce('https://signed.example/body.jpg');
+    mockedGetDownloadUrls.mockResolvedValueOnce(new Map([['body:7:body.jpg', 'https://signed.example/body.jpg']]));
     await expect(getAnimalBodyPictures('7')).resolves.toEqual([{ id: 4, idanimal: 7, filename: 'body.jpg', url: 'https://signed.example/body.jpg' }]);
-    expect(mockedGetDownloadUrl).toHaveBeenCalledWith('body.jpg', 'body', '7');
+    expect(mockedGetDownloadUrls).toHaveBeenCalledWith([{ filename: 'body.jpg', ressourceType: 'body', ressourceId: '7' }]);
   });
 
   it('sends the JSON contract expected by the backend after upload', async () => {

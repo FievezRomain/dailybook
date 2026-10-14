@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
 import { useGroupsQuery } from "../../../hooks/queries/useGroupsQuery";
-import { useAnimalImageUrl } from "../../../hooks/queries/useAnimalImageUrl";
 import type { Animal } from "../../../models/Animal";
 import {
   AnimalHistoryToggle,
@@ -202,6 +201,5 @@ export function EventCreateAnimalsScreen({
 const EMPTY_SELECTED_IDS: readonly number[] = [];
 
 function ResolvedAnimalAvatar({ animal }: { animal: Animal }) {
-  const fallbackImageUrl = useAnimalImageUrl(animal.image, animal.id);
-  return <AnimalProvenanceAvatar name={animal.nom} imageUrl={animal.imageUrl ?? fallbackImageUrl} sharedFromGroup={isSharedAnimal(animal)} size={40} />;
+  return <AnimalProvenanceAvatar name={animal.nom} imageUrl={animal.imageUrl} sharedFromGroup={isSharedAnimal(animal)} size={40} />;
 }

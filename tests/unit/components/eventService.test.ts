@@ -1,25 +1,25 @@
-import httpClient from '../../../services/api/httpClient';
 import { getEventDocumentUrl } from '../../../services/api/EventService';
+import { FileService } from '../../../services/api/FileService';
 
-jest.mock('../../../services/api/httpClient', () => ({
-  __esModule: true,
-  default: { get: jest.fn(), post: jest.fn(), put: jest.fn(), patch: jest.fn(), delete: jest.fn() },
+jest.mock('../../../services/api/FileService', () => ({
+  FileService: { getDownloadUrl: jest.fn() },
+  fileDownloadKey: jest.fn(),
 }));
 
-const mockedGet = httpClient.get as jest.MockedFunction<typeof httpClient.get>;
+const mockedGetDownloadUrl = FileService.getDownloadUrl as jest.MockedFunction<typeof FileService.getDownloadUrl>;
 
 describe('EventService documents', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('extrait et retourne l’URL signée fournie par le backend', async () => {
-    mockedGet.mockResolvedValue({ data: { url: 'https://signed.example/document.png' } } as never);
+  it('délègue la récupération de l’URL signée au service de fichiers', async () => {
+    mockedGetDownloadUrl.mockResolvedValue('https://signed.example/document.png');
 
     await expect(getEventDocumentUrl('12', 'radio image.png')).resolves.toBe('https://signed.example/document.png');
-    expect(mockedGet).toHaveBeenCalledWith('/events/12/documents/radio%20image.png');
+    expect(mockedGetDownloadUrl).toHaveBeenCalledWith('radio image.png', 'event', '12');
   });
 
-  it('rejette une réponse sans URL exploitable', async () => {
-    mockedGet.mockResolvedValue({ data: {} } as never);
+  it('propage une erreur de récupération d’URL', async () => {
+    mockedGetDownloadUrl.mockRejectedValue(new Error('URL de document invalide.'));
     await expect(getEventDocumentUrl('12', 'radio.png')).rejects.toThrow('URL de document invalide.');
   });
 });

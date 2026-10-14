@@ -27,6 +27,7 @@ import {
   SearchField,
   SelectionModal,
   Skeleton,
+  Snackbar,
   TopBar,
   type GlobalCreateTarget,
 } from "../../../shared/components/ui";
@@ -60,6 +61,8 @@ export interface AgendaScreenProps {
   onCreate: (target: GlobalCreateTarget, selectedDate?: string) => void;
   onNotifications?: () => void;
   onAccount?: () => void;
+  feedback?: string;
+  onFeedbackHidden?: () => void;
 }
 
 export function AgendaScreen({
@@ -69,6 +72,8 @@ export function AgendaScreen({
   onCreate,
   onNotifications = () => undefined,
   onAccount = () => undefined,
+  feedback,
+  onFeedbackHidden = () => undefined,
 }: AgendaScreenProps) {
   const { colors } = useAppTheme();
   const user = useAuthStore((state) => state.user);
@@ -354,6 +359,7 @@ export function AgendaScreen({
         onClose={() => setFiltersOpen(false)}
         testID="agenda-filters"
       />
+      <Snackbar visible={Boolean(feedback)} message={feedback ?? ''} onHidden={onFeedbackHidden} />
     </>
   );
 }

@@ -89,10 +89,47 @@ describe('P7.f visual refinements', () => {
     expect(options).not.toContain('Documents médicaux');
   });
 
-  it('keeps event document selectors referentially stable when empty', () => {
+  it('keeps event document selection, direct upload and viewing explicit', () => {
     const source = read('features/events/components/EventDocumentsField.tsx');
+    const picker = read('features/events/components/EventDocumentPicker.tsx');
+    const fileItem = read('shared/components/ui/content/FileItem.tsx');
+    const detail = read('features/events/screens/EventDetailScreen.tsx');
+    const options = read('features/events/screens/EventCreateOptionsScreen.tsx');
+    const agenda = read('features/events/screens/AgendaScreen.tsx');
+    const navigator = read('app/navigation/MainNavigator.tsx');
     expect(source).toContain('EMPTY_DOCUMENTS');
     expect(source).not.toContain('state.formData.documents ?? []');
+    expect(picker).toContain('Prêt à être envoyé');
+    expect(picker).toContain('state="uploaded"');
+    expect(picker).toContain('onRemove=');
+    expect(fileItem).toContain("icon={'delete'}");
+    expect(detail).toContain('testID="event-add-image"');
+    expect(detail).toContain('testID="event-add-pdf"');
+    expect(detail).toContain('<MediaViewer');
+    expect(detail).toContain('onDeleteRequest=');
+    expect(detail).toContain('await deleteEventDocument(String(event.id), documentToDelete)');
+    expect(detail).toContain('testID="event-document-delete-dialog"');
+    expect(detail).not.toContain('<EventDocumentAddSheet');
+    expect(detail).not.toContain('title="Aucun document"');
+    expect(options).toContain('useEventMutations({ haptics: false })');
+    expect(options).toContain('await queryClient.invalidateQueries({ queryKey: EVENTS_KEY })');
+    expect(options).toContain('L’événement est enregistré, mais au moins une modification de document n’a pas pu aboutir.');
+    expect(agenda).toContain('<Snackbar visible={Boolean(feedback)}');
+    expect(navigator).toContain('setAgendaFeedback("Événement enregistré.")');
+  });
+
+  it('uses the grouped signed URL endpoint for media collections', () => {
+    const files = read('services/api/FileService.ts');
+    const animals = read('services/api/AnimalsService.ts');
+    const events = read('services/api/EventService.ts');
+    const wishes = read('services/api/WishService.ts');
+    const groups = read('services/api/GroupService.ts');
+    expect(files).toContain("post<BatchDownloadResponse[]>('/files/download-urls'");
+    expect(files).toContain('index += 100');
+    expect(animals).toContain('FileService.getDownloadUrls');
+    expect(events).toContain('FileService.getDownloadUrls');
+    expect(wishes).toContain('FileService.getDownloadUrls');
+    expect(groups).toContain('FileService.getDownloadUrls');
   });
 
   it('separates objective animals and steps into four wizard stages', () => {
