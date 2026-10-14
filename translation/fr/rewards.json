@@ -1,0 +1,48 @@
+{
+  "currency": {
+    "name": "Pattounes",
+    "short": "Pattounes",
+    "balanceAccessibility": "{{count}} Pattounes"
+  },
+  "hub": {
+    "title": "Mes Pattounes",
+    "subtitle": "Vos bons gestes pour vos animaux sont récompensés.",
+    "balance": "Solde disponible",
+    "lifetime": "{{count}} gagnées depuis le début",
+    "history": "Historique",
+    "store": "Boutique",
+    "storeEmptyTitle": "Les récompenses arrivent bientôt",
+    "storeEmptyMessage": "Les offres apparaîtront ici dès qu’elles pourront être proposées à tous dans de bonnes conditions.",
+    "historyEmpty": "Vos premières Pattounes apparaîtront ici.",
+    "reviewTitle": "Bilan de la semaine",
+    "reviewMessage": "Disponible après au moins deux types de suivi réalisés cette semaine.",
+    "reviewAction": "Terminer mon bilan · +20",
+    "reviewCompleted": "Bilan terminé",
+    "gradesAction": "Voir tous les grades",
+    "gradesHideAction": "Masquer les grades",
+    "gradesTitle": "Les grades",
+    "gradeThreshold": "À partir de {{count}} Pattounes gagnées",
+    "currentGrade": "Actuel",
+    "opportunitiesTitle": "Pattounes encore disponibles",
+    "opportunitiesSubtitle": "Les actions ci-dessous sont calculées selon votre compte et vos suivis en cours.",
+    "opportunityRemaining_one": "{{count}} action encore récompensée",
+    "opportunityRemaining_other": "{{count}} actions encore récompensées",
+    "opportunitiesEmpty": "Vous avez récupéré toutes les Pattounes disponibles pour le moment."
+  },
+  "levels": {
+    "companion": "Compagnon",
+    "attentive": "Attentionné",
+    "protector": "Protecteur",
+    "guardian": "Gardien"
+  },
+  "actions": {
+    "daily_check_in": "Ouverture quotidienne",
+    "animal_profile_completed": "Profil animal complété",
+    "event_completed": "Événement terminé",
+    "care_follow_up": "Suivi de soin renseigné",
+    "measurement_recorded": "Mesure enregistrée",
+    "objective_step_completed": "Étape d’objectif terminée",
+    "objective_completed": "Objectif terminé",
+    "weekly_review_completed": "Bilan hebdomadaire terminé"
+  }
+}

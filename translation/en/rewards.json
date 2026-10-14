@@ -1,0 +1,48 @@
+{
+  "currency": {
+    "name": "Pawpoints",
+    "short": "Pawpoints",
+    "balanceAccessibility": "{{count}} Pawpoints"
+  },
+  "hub": {
+    "title": "My Pawpoints",
+    "subtitle": "Good care for your animals earns rewards.",
+    "balance": "Available balance",
+    "lifetime": "{{count}} earned in total",
+    "history": "History",
+    "store": "Store",
+    "storeEmptyTitle": "Rewards are coming soon",
+    "storeEmptyMessage": "Offers will appear here once they can be made available fairly to everyone.",
+    "historyEmpty": "Your first Pawpoints will appear here.",
+    "reviewTitle": "Weekly review",
+    "reviewMessage": "Available after completing at least two different kinds of care activity this week.",
+    "reviewAction": "Complete my review · +20",
+    "reviewCompleted": "Review completed",
+    "gradesAction": "View all ranks",
+    "gradesHideAction": "Hide ranks",
+    "gradesTitle": "Ranks",
+    "gradeThreshold": "From {{count}} earned Pawpoints",
+    "currentGrade": "Current",
+    "opportunitiesTitle": "Pawpoints still available",
+    "opportunitiesSubtitle": "These actions are calculated from your account and current tracking.",
+    "opportunityRemaining_one": "{{count}} rewarded action remaining",
+    "opportunityRemaining_other": "{{count}} rewarded actions remaining",
+    "opportunitiesEmpty": "You have collected all currently available Pawpoints."
+  },
+  "levels": {
+    "companion": "Companion",
+    "attentive": "Attentive",
+    "protector": "Protector",
+    "guardian": "Guardian"
+  },
+  "actions": {
+    "daily_check_in": "Daily app open",
+    "animal_profile_completed": "Animal profile completed",
+    "event_completed": "Event completed",
+    "care_follow_up": "Care follow-up recorded",
+    "measurement_recorded": "Measurement recorded",
+    "objective_step_completed": "Goal step completed",
+    "objective_completed": "Goal completed",
+    "weekly_review_completed": "Weekly review completed"
+  }
+}

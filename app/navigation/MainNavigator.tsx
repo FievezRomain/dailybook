@@ -87,6 +87,9 @@ import {
   SettingsHelpScreen,
 } from "../../features/settings";
 import { canCreateAnimal } from "../../shared/utils/subscriptionUtils";
+import { RewardsHubScreen } from "../../features/rewards";
+import { useDailyRewardCheckIn } from "../../hooks/queries/useRewardsQuery";
+import { useRewardStore } from "../../stores/useRewardStore";
 
 type CreateOrigin = "root" | "notes" | "wishes" | "contacts" | "groups";
 type CreateOriginRoute = { name: "root" } | { name: "notes" } | { name: "wishes" } | { name: "contacts" } | { name: "groups" };
@@ -113,6 +116,12 @@ export function MainNavigator() {
   const [visualTrackingPlans, setVisualTrackingPlans] = useState(false);
   const [animalPlans, setAnimalPlans] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [rewardsOpen, setRewardsOpen] = useState(false);
+  const rewardOpenRequest = useRewardStore((state) => state.openRequestId);
+  const dailyRewardCheckIn = useDailyRewardCheckIn();
+  useEffect(() => {
+    dailyRewardCheckIn.mutate();
+  }, []);
   const notificationOpenRequest = useNotificationNavigationStore((state) => state.requestId);
   useEffect(() => {
     if (notificationOpenRequest > 0) setNotificationsOpen(true);
@@ -127,6 +136,13 @@ export function MainNavigator() {
     | "privacy"
     | "help"
   >();
+  useEffect(() => {
+    if (rewardOpenRequest > 0) {
+      setNotificationsOpen(false);
+      setSettingsOpen(undefined);
+      setRewardsOpen(true);
+    }
+  }, [rewardOpenRequest]);
   const [voiceRecording, setVoiceRecording] = useState<VoiceRecording>();
   const [voiceDraft, setVoiceDraft] = useState<VoiceNoteDraft>();
   const [animalFeedback, setAnimalFeedback] = useState<string>();
@@ -194,6 +210,7 @@ export function MainNavigator() {
   const [createOrigin, setCreateOrigin] = useState<CreateOrigin>("root");
   const selectTab = (next: MainTabId) => {
     setNotificationsOpen(false);
+    setRewardsOpen(false);
     setSettingsOpen(undefined);
     setTab(next);
     setRoute({ name: "root" });
@@ -506,6 +523,14 @@ export function MainNavigator() {
         onBack={() => setNotificationsOpen(false)}
         onAccount={openSettings}
         onOpenNotification={openNotificationTarget}
+      />
+    );
+  if (rewardsOpen)
+    return (
+      <RewardsHubScreen
+        activeTab={tab}
+        onSelectTab={selectTab}
+        onBack={() => setRewardsOpen(false)}
       />
     );
   if (statisticsPlans)
