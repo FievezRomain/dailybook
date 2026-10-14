@@ -11,7 +11,7 @@ import { useAppTheme } from '../../../theme/useAppTheme';
 import { Banner, Button, FormSheet, LinearProgress, Select, SelectionModal, Switch } from '../../../shared/components/ui';
 import { AppErrorCode } from '../../../types/AppErrorCode';
 import { parseApiError } from '../../../utils/errorParser';
-import { buildEventCreationPayload, buildEventUpdatePayload, formatEventCreationSummary, getReminderLabel, getSelectedAnimalNames, reminderOptions } from '../eventCreationUtils';
+import { buildEventCreationPayload, buildEventUpdatePayload, formatEventCreationSummary, getEventTextLimitError, getReminderLabel, getSelectedAnimalNames, reminderOptions } from '../eventCreationUtils';
 import { getEligibleEventGroups } from '../eventGroupSharing';
 import { uploadPendingEventDocuments } from '../eventDocumentUpload';
 
@@ -56,6 +56,11 @@ export function EventCreateOptionsScreen({ onBack, onCreated, eventId, onClose =
 
   const save = async () => {
     if (saving) return;
+    const textLimitError = getEventTextLimitError(form);
+    if (textLimitError) {
+      setErrorMessage(textLimitError);
+      return;
+    }
     setErrorMessage(undefined);
     setSaving(true);
     let eventPersisted = savedEventId !== undefined;

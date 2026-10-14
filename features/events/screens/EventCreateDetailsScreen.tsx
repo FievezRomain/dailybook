@@ -5,7 +5,7 @@ import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { canContinueEventDetails, getEventDetailsConfig, type EventDetailFieldConfig } from '../eventDetailsConfig';
-import { getRecurrenceLabel, isPastEventDate, recurrenceOptions } from '../eventCreationUtils';
+import { EVENT_TEXT_LIMITS, getRecurrenceLabel, isPastEventDate, recurrenceOptions } from '../eventCreationUtils';
 import { EXPENSE_CATEGORY_LIST } from '../constants';
 import { EventDocumentsField } from '../components/EventDocumentsField';
 
@@ -58,7 +58,7 @@ export function EventCreateDetailsScreen({ onBack, onContinue, onClose = onBack,
       return <Select key={field.key} label={field.label} placeholder={field.placeholder} value={selectedCategory?.title ?? currentValue} helperText="Facultatif" onPress={() => setExpenseCategoryOpen(true)} />;
     }
     if (field.kind === 'rating') return <StarRatingField key={field.key} label={field.label} value={typeof formData[field.key] === 'number' ? formData[field.key] as number : undefined} onChange={(value) => setField(field.key, value)} testID={`event-${field.key}-rating`} />;
-    return <TextField key={field.key} label={field.label} placeholder={field.placeholder} value={String(formData[field.key] ?? '')} keyboardType={field.keyboardType} helperText="Facultatif" onChangeText={(value) => setField(field.key, field.keyboardType === 'decimal-pad' ? value.replace(',', '.') : value)} />;
+    return <TextField key={field.key} label={field.label} placeholder={field.placeholder} value={String(formData[field.key] ?? '')} keyboardType={field.keyboardType} helperText="Facultatif" maxLength={EVENT_TEXT_LIMITS[field.key]} onChangeText={(value) => setField(field.key, field.keyboardType === 'decimal-pad' ? value.replace(',', '.') : value)} />;
   };
   const visibleFields = config.fields.filter((field) => {
     if (!editScope) return true;
@@ -74,7 +74,7 @@ export function EventCreateDetailsScreen({ onBack, onContinue, onClose = onBack,
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>État</Text>
         <PeriodSelector options={eventStateOptions} value={formData.state === 'completed' ? 'completed' : 'pending'} onChange={(state) => setField('state', state)} accessibilityLabel="État de l’événement" testID="event-state-selector" />
       </View>
-      {editScope === 'occurrence' || editScope === 'following' ? null : <TextField autoFocus label={config.nameLabel} placeholder={config.namePlaceholder} value={formData.nom ?? ''} required={config.nameRequired} helperText={config.nameRequired ? 'Obligatoire' : 'Facultatif'} errorMessage={showErrors && config.nameRequired && !formData.nom?.trim() ? 'Renseignez un intitulé.' : undefined} onChangeText={(value) => setField('nom', value)} containerStyle={{ marginTop: spacing.lg }} />}
+      {editScope === 'occurrence' || editScope === 'following' ? null : <TextField autoFocus label={config.nameLabel} placeholder={config.namePlaceholder} value={formData.nom ?? ''} required={config.nameRequired} helperText={config.nameRequired ? 'Obligatoire' : 'Facultatif'} maxLength={EVENT_TEXT_LIMITS.nom} errorMessage={showErrors && config.nameRequired && !formData.nom?.trim() ? 'Renseignez un intitulé.' : undefined} onChangeText={(value) => setField('nom', value)} containerStyle={{ marginTop: spacing.lg }} />}
       {editScope === 'series' ? null : <DateTimeField kind="date" label="Date" placeholder="Choisir une date" value={formatDate(formData.dateevent)} required helperText="Obligatoire" errorMessage={showErrors && !formData.dateevent ? 'Choisissez une date.' : undefined} onPress={() => setCalendarField('dateevent')} />}
       {editScope === 'series' ? null : <DateTimeField kind="time" label={formData.eventType === 'balade' ? 'Heure de début' : 'Heure'} placeholder="Choisir une heure" value={formatTime(formData.heuredebutevent)} helperText="Facultatif" onPress={() => openTime('heuredebutevent')} />}
       {visibleFields.map(renderField)}

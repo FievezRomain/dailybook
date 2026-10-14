@@ -1,5 +1,7 @@
+import type { EventWizardFormData } from '../../stores/useEventWizardStore';
+
 export interface EventDetailFieldConfig {
-  key: string;
+  key: Extract<keyof EventWizardFormData, string>;
   label: string;
   placeholder: string;
   keyboardType?: 'default' | 'decimal-pad';

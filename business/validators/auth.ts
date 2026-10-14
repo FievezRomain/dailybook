@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { STORAGE_TEXT_LIMITS } from './storageLimits';
 
 /**
  * Email — RFC 5322 simplifié, lowercase, trim.
@@ -7,6 +8,7 @@ export const emailSchema = z
   .string()
   .trim()
   .toLowerCase()
+  .max(STORAGE_TEXT_LIMITS.accountEmail, 'errors.emailTooLong')
   .email('errors.emailInvalid');
 
 /**
@@ -36,7 +38,7 @@ export const signUpSchema = z
       .string()
       .trim()
       .min(2, 'errors.firstNameTooShort')
-      .max(50, 'errors.firstNameTooLong'),
+      .max(STORAGE_TEXT_LIMITS.accountFirstName, 'errors.firstNameTooLong'),
     password: passwordSchema,
     password_confirm: z.string(),
   })

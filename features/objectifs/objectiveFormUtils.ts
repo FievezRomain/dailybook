@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { STORAGE_TEXT_LIMITS } from '../../business/validators/storageLimits';
 import type { Objectif } from '../../models/Objectif';
 import type { ObjectiveWizardFormData, ObjectiveWizardStep } from '../../stores/useObjectiveWizardStore';
 import type { CreateObjectifPayload, UpdateObjectifPayload } from './types';
@@ -6,7 +7,7 @@ import type { CreateObjectifPayload, UpdateObjectifPayload } from './types';
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
 
 export const objectiveDetailsSchema = z.object({
-  title: z.string().trim().min(1, 'Indiquez un titre.'),
+  title: z.string().trim().min(1, 'Indiquez un titre.').max(STORAGE_TEXT_LIMITS.objectiveTitle, `Le titre ne peut pas dépasser ${STORAGE_TEXT_LIMITS.objectiveTitle} caractères.`),
   datedebut: z.string().regex(isoDate, 'Choisissez une date de début.'),
   datefin: z.string().regex(isoDate, 'Choisissez une date de fin.'),
 }).refine((value) => value.datefin >= value.datedebut, {
