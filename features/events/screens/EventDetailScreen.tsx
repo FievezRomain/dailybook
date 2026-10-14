@@ -2,7 +2,9 @@ import { useState, type ReactNode } from 'react';
 import { Share, Text, View } from 'react-native';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useEventMutations, useEventsQuery } from '../../../hooks/queries/useEventsQuery';
-import { ActionSheet, Avatar, Banner, Button, Card, DetailScreen, Dialog, EmptyState, FileItem, Icon, IconButton, PremiumGate, Skeleton, TopBar, type OverlayActionItem } from '../../../shared/components/ui';
+import { ActionSheet, Avatar, Banner, Button, Card, DetailScreen, Dialog, EmptyState, FileItem, Icon, IconButton, MediaViewer, PremiumGate, Skeleton, TopBar, type OverlayActionItem } from '../../../shared/components/ui';
+import type { EventDocument } from '../../../models/EventDocument';
+import { getEventDocumentUrl } from '../../../services/api/EventService';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -13,13 +15,16 @@ import type { EventUpdateScope } from '../types';
 import { EventQuickEditSheet } from '../components/EventQuickEditSheet';
 import { eventTypePresentation, resolveEventVisual } from '../../../shared/components/ui/content/domainCardUtils';
 import { getEventQuickFieldKeys } from '../eventDetailsConfig';
-import { EventDocumentAddSheet } from '../components/EventDocumentAddSheet';
+import { pickEventImageDocuments, pickEventPdfDocuments } from '../components/EventDocumentPicker';
+import { uploadPendingEventDocuments } from '../eventDocumentUpload';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { isPremiumSubscription } from '../../../shared/utils/subscriptionUtils';
 
 type EventAction = 'edit' | 'duplicate' | 'share' | 'delete';
 type EventDeleteScope = 'occurrence' | 'following' | 'series';
 type EventFeedback = { tone: 'success' | 'error'; title: string; message: string };
+type EventDocumentUploadKind = 'image' | 'pdf';
+type EventDocumentViewer = { uri: string; title: string; type: 'image' | 'document' };
 const editScopes: readonly OverlayActionItem<EventUpdateScope>[] = [
   { id: 'occurrence', label: 'Cette occurrence', description: 'Modifier uniquement cet événement', icon: 'edit' },
   { id: 'following', label: 'Cette occurrence et les suivantes', description: 'Appliquer les changements à partir de cette date', icon: 'calendar' },
@@ -42,7 +47,8 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
   const event = (eventsQuery.data ?? []).find((item) => item.id === eventId);
   const [actionsOpen, setActionsOpen] = useState(false); const [deleteOpen, setDeleteOpen] = useState(false); const [scopeOpen, setScopeOpen] = useState(false); const [deleteScopeOpen, setDeleteScopeOpen] = useState(false); const [deleteScope, setDeleteScope] = useState<EventDeleteScope>('occurrence');
   const [quickEditOpen, setQuickEditOpen] = useState(false);
-  const [documentAddOpen, setDocumentAddOpen] = useState(false);
+  const [documentUploading, setDocumentUploading] = useState<EventDocumentUploadKind>();
+  const [documentViewer, setDocumentViewer] = useState<EventDocumentViewer>();
   const [feedback, setFeedback] = useState<EventFeedback | undefined>(initialFeedback ? { tone: 'success', title: 'Événement mis à jour', message: initialFeedback } : undefined); const [shareError, setShareError] = useState(false);
   if (eventsQuery.isLoading || animalsQuery.isLoading) return <DetailScreen header={<TopBar title="Événement" context="detail" onBack={onBack} />}><Skeleton type="card" density="comfortable" /></DetailScreen>;
   if (!event) return <DetailScreen header={<TopBar title="Événement" context="detail" onBack={onBack} />}><EmptyState title="Événement introuvable" message="Il a peut-être été supprimé ou déplacé." actionLabel="Retour" onAction={onBack} /></DetailScreen>;
@@ -84,6 +90,47 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
       throw new Error('event-quick-edit-failed');
     }
   };
+  const addEventDocuments = async (kind: EventDocumentUploadKind) => {
+    if (documentUploading) return;
+    setFeedback(undefined);
+    setDocumentUploading(kind);
+    try {
+      const selection = kind === 'image' ? await pickEventImageDocuments() : await pickEventPdfDocuments();
+      if (!selection.documents.length) {
+        if (selection.warning) setFeedback({ tone: 'error', title: 'Fichier non ajouté', message: selection.warning });
+        return;
+      }
+      await uploadPendingEventDocuments(event.id, selection.documents);
+      await eventsQuery.refetch();
+      setFeedback({
+        tone: 'success',
+        title: selection.documents.length > 1 ? 'Documents ajoutés' : 'Document ajouté',
+        message: selection.warning ?? (selection.documents.length > 1
+          ? 'Les documents sont maintenant associés à cet événement.'
+          : 'Le document est maintenant associé à cet événement.'),
+      });
+    } catch (error) {
+      setFeedback({
+        tone: 'error',
+        title: 'Ajout impossible',
+        message: error instanceof Error ? error.message : 'Le document n’a pas pu être ajouté. Réessayez.',
+      });
+    } finally {
+      setDocumentUploading(undefined);
+    }
+  };
+  const openEventDocument = async (document: EventDocument) => {
+    try {
+      const uri = document.url ?? await getEventDocumentUrl(String(event.id), document.name);
+      setDocumentViewer({
+        uri,
+        title: document.name,
+        type: document.name.toLowerCase().endsWith('.pdf') ? 'document' : 'image',
+      });
+    } catch {
+      setFeedback({ tone: 'error', title: 'Ouverture impossible', message: 'Le document n’a pas pu être ouvert. Réessayez.' });
+    }
+  };
 
   return <>
     <DetailScreen header={<TopBar title={event.nom || 'Événement'} context="detail" onBack={onBack} trailing={<IconButton icon="moreHorizontal" accessibilityLabel="Actions sur l’événement" onPress={() => setActionsOpen(true)} variant="ghost" />} />} contentContainerStyle={{ gap: spacing.md, paddingTop: spacing.md, paddingBottom: spacing.lg }} testID="event-detail">
@@ -105,10 +152,13 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
       {medicalEvent ? <>
         <SectionTitle>Documents médicaux</SectionTitle>
         {event.documents?.length
-          ? <View style={{ gap: spacing.sm }}>{event.documents.map((document) => <FileItem key={document.name} name={document.name} type={document.name.toLowerCase().endsWith('.pdf') ? 'pdf' : 'image'} metadata="Document enregistré" previewUrl={document.url} />)}</View>
-          : <Banner tone="info" title="Aucun document" message="Ajoutez une image ou un PDF à cet événement médical." />}
+          ? <View style={{ gap: spacing.sm }}>{event.documents.map((document) => <FileItem key={document.name} name={document.name} type={document.name.toLowerCase().endsWith('.pdf') ? 'pdf' : 'image'} metadata="Ouvrir le document" previewUrl={document.url} onOpen={() => void openEventDocument(document)} />)}</View>
+          : null}
         {premium
-          ? <Button label="Ajouter une image ou un PDF" icon="add" variant="secondary" fullWidth onPress={() => setDocumentAddOpen(true)} testID="event-add-document" />
+          ? <View style={{ gap: spacing.sm }}>
+            <Button label="Ajouter une image" icon="image" variant="secondary" fullWidth loading={documentUploading === 'image'} disabled={Boolean(documentUploading)} onPress={() => void addEventDocuments('image')} testID="event-add-image" />
+            <Button label="Ajouter un PDF" icon="filePdf" variant="secondary" fullWidth loading={documentUploading === 'pdf'} disabled={Boolean(documentUploading)} onPress={() => void addEventDocuments('pdf')} testID="event-add-pdf" />
+          </View>
           : <PremiumGate title="Documents médicaux Premium" message="L’ajout d’un document médical nécessite un abonnement Premium." onComparePlans={onComparePlans} testID="event-detail-documents-premium" />}
       </> : null}
     </DetailScreen>
@@ -117,14 +167,7 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
     <ActionSheet open={deleteScopeOpen} title="Que souhaitez-vous supprimer ?" subtitle="Choisissez la portée avant de confirmer la suppression." items={deleteScopes} onSelect={(scope) => { setDeleteScope(scope); setDeleteScopeOpen(false); setDeleteOpen(true); }} onClose={() => setDeleteScopeOpen(false)} />
     <Dialog open={deleteOpen} type="destructive" title="Confirmer la suppression ?" description={deleteScope === 'series' ? 'Toute la série sera supprimée. Cette action est irréversible.' : deleteScope === 'following' ? 'Cette occurrence et toutes les suivantes seront supprimées. Cette action est irréversible.' : 'Seule cette occurrence sera supprimée. Cette action est irréversible.'} confirmLabel="Supprimer" onConfirm={remove} onClose={() => setDeleteOpen(false)} loading={mutations.remove.isPending} onError={() => setFeedback({ tone: 'error', title: 'Suppression impossible', message: 'La suppression a échoué. Réessayez.' })} />
     {quickEditOpen ? <EventQuickEditSheet event={event} onClose={() => setQuickEditOpen(false)} onSave={quickSave} /> : null}
-    {documentAddOpen ? <EventDocumentAddSheet
-      eventId={event.id}
-      onClose={() => setDocumentAddOpen(false)}
-      onAdded={async () => {
-        await eventsQuery.refetch();
-        setFeedback({ tone: 'success', title: 'Document ajouté', message: 'Le document est maintenant associé à cet événement.' });
-      }}
-    /> : null}
+    {documentViewer ? <MediaViewer open uri={documentViewer.uri} title={documentViewer.title} type={documentViewer.type} onClose={() => setDocumentViewer(undefined)} testID="event-document-viewer" /> : null}
   </>;
 }
 

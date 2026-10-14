@@ -33,6 +33,10 @@ describe('event creation payload', () => {
     expect(buildEventUpdatePayload({ eventType: 'depense', dateevent: '2026-08-09' }, 14).update_scope).toBe('occurrence');
   });
 
+  it('sends an empty document list only when the event update is saved', () => {
+    expect(buildEventUpdatePayload({ eventType: 'soins', dateevent: '2026-08-09', documents: [] }, 14).documents).toEqual([]);
+  });
+
   it('normalizes recurrence for care and walk events', () => {
     expect(buildEventCreationPayload({ eventType: 'soins', dateevent: '2026-08-18', datefinsoins: '2026-08-20', frequencevalue: 'daily' })).toMatchObject({ frequencetype: 'recurring', frequencevalue: 'daily', datefinsoins: '2026-08-20' });
     expect(buildEventCreationPayload({ eventType: 'balade', dateevent: '2026-08-18', datefinbalade: '2026-09-18', frequencevalue: 'monthly' })).toMatchObject({ frequencetype: 'recurring', frequencevalue: 'monthly', datefinbalade: '2026-09-18' });

@@ -107,7 +107,8 @@ export function buildEventCreationPayload(form: EventWizardFormData): CreateEven
 }
 
 export function buildEventUpdatePayload(form: EventWizardFormData, eventId: number): UpdateEventPayload {
-  return { ...buildEventCreationPayload(form), state: form.state ?? 'pending', id: eventId, update_scope: (form.updateScope ?? 'occurrence') as UpdateEventPayload['update_scope'] };
+  const documents = (form.documents ?? []).filter((document) => !document.localUri).map((document) => document.name);
+  return { ...buildEventCreationPayload(form), documents, state: form.state ?? 'pending', id: eventId, update_scope: (form.updateScope ?? 'occurrence') as UpdateEventPayload['update_scope'] };
 }
 
 export function eventToWizardForm(event: Event): EventWizardFormData {

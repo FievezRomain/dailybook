@@ -89,9 +89,10 @@ describe('P7.f visual refinements', () => {
     expect(options).not.toContain('Documents médicaux');
   });
 
-  it('keeps event document selectors referentially stable when empty', () => {
+  it('keeps event document selection, direct upload and viewing explicit', () => {
     const source = read('features/events/components/EventDocumentsField.tsx');
     const picker = read('features/events/components/EventDocumentPicker.tsx');
+    const fileItem = read('shared/components/ui/content/FileItem.tsx');
     const detail = read('features/events/screens/EventDetailScreen.tsx');
     const options = read('features/events/screens/EventCreateOptionsScreen.tsx');
     const agenda = read('features/events/screens/AgendaScreen.tsx');
@@ -100,8 +101,13 @@ describe('P7.f visual refinements', () => {
     expect(source).not.toContain('state.formData.documents ?? []');
     expect(picker).toContain('Prêt à être envoyé');
     expect(picker).toContain('state="uploaded"');
-    expect(detail).toContain('testID="event-add-document"');
-    expect(detail).toContain('<EventDocumentAddSheet');
+    expect(picker).toContain('onRemove=');
+    expect(fileItem).toContain("icon={'delete'}");
+    expect(detail).toContain('testID="event-add-image"');
+    expect(detail).toContain('testID="event-add-pdf"');
+    expect(detail).toContain('<MediaViewer');
+    expect(detail).not.toContain('<EventDocumentAddSheet');
+    expect(detail).not.toContain('title="Aucun document"');
     expect(options).toContain('useEventMutations({ haptics: false })');
     expect(options).toContain('await queryClient.invalidateQueries({ queryKey: EVENTS_KEY })');
     expect(options).toContain('L’événement est enregistré, mais au moins un document n’a pas pu être ajouté.');
