@@ -106,6 +106,9 @@ describe('P7.f visual refinements', () => {
     expect(detail).toContain('testID="event-add-image"');
     expect(detail).toContain('testID="event-add-pdf"');
     expect(detail).toContain('<MediaViewer');
+    expect(detail).toContain('onDeleteRequest=');
+    expect(detail).toContain('await deleteEventDocument(String(event.id), documentToDelete)');
+    expect(detail).toContain('testID="event-document-delete-dialog"');
     expect(detail).not.toContain('<EventDocumentAddSheet');
     expect(detail).not.toContain('title="Aucun document"');
     expect(options).toContain('useEventMutations({ haptics: false })');

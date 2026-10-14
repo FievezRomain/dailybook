@@ -107,13 +107,9 @@ export function buildEventCreationPayload(form: EventWizardFormData): CreateEven
 }
 
 export function buildEventUpdatePayload(form: EventWizardFormData, eventId: number): UpdateEventPayload {
-  const { documents: _documents, ...payload } = buildEventCreationPayload(form);
-  return { ...payload, state: form.state ?? 'pending', id: eventId, update_scope: (form.updateScope ?? 'occurrence') as UpdateEventPayload['update_scope'] };
-}
-
-export function getRemovedEventDocumentNames(form: EventWizardFormData): string[] {
-  const retained = new Set((form.documents ?? []).filter((document) => !document.localUri).map((document) => document.name));
-  return (form.originalDocuments ?? []).filter((name) => !retained.has(name));
+  const payload = buildEventCreationPayload(form);
+  const documents = (form.documents ?? []).filter((document) => !document.localUri).map((document) => document.name);
+  return { ...payload, documents, state: form.state ?? 'pending', id: eventId, update_scope: (form.updateScope ?? 'occurrence') as UpdateEventPayload['update_scope'] };
 }
 
 export function eventToWizardForm(event: Event): EventWizardFormData {
@@ -123,12 +119,11 @@ export function eventToWizardForm(event: Event): EventWizardFormData {
   fields.forEach((key) => { if (source[key] !== undefined && source[key] !== null) Object.assign(form, { [key]: source[key] }); });
   form.shared_groups = normalizeSharedGroupIds(event.shared_groups);
   form.documents = (event.documents ?? []).map((document) => ({ name: document.name }));
-  form.originalDocuments = (event.documents ?? []).map((document) => document.name);
   return form;
 }
 
 export function eventToDuplicateWizardForm(event: Event): EventWizardFormData {
-  const { state: _state, idparent: _idparent, shared_groups: _sharedGroups, originalDocuments: _originalDocuments, ...copy } = eventToWizardForm(event);
+  const { state: _state, idparent: _idparent, shared_groups: _sharedGroups, ...copy } = eventToWizardForm(event);
   return { ...copy, nom: event.nom ? `Copie de ${event.nom}` : undefined, state: 'pending' };
 }
 

@@ -4,7 +4,7 @@ import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useEventMutations, useEventsQuery } from '../../../hooks/queries/useEventsQuery';
 import { ActionSheet, Avatar, Banner, Button, Card, DetailScreen, Dialog, EmptyState, FileItem, Icon, IconButton, MediaViewer, PremiumGate, Skeleton, TopBar, type OverlayActionItem } from '../../../shared/components/ui';
 import type { EventDocument } from '../../../models/EventDocument';
-import { getEventDocumentUrl } from '../../../services/api/EventService';
+import { deleteEventDocument, getEventDocumentUrl } from '../../../services/api/EventService';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -49,6 +49,7 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
   const [quickEditOpen, setQuickEditOpen] = useState(false);
   const [documentUploading, setDocumentUploading] = useState<EventDocumentUploadKind>();
   const [documentViewer, setDocumentViewer] = useState<EventDocumentViewer>();
+  const [documentToDelete, setDocumentToDelete] = useState<string>();
   const [feedback, setFeedback] = useState<EventFeedback | undefined>(initialFeedback ? { tone: 'success', title: 'Événement mis à jour', message: initialFeedback } : undefined); const [shareError, setShareError] = useState(false);
   if (eventsQuery.isLoading || animalsQuery.isLoading) return <DetailScreen header={<TopBar title="Événement" context="detail" onBack={onBack} />}><Skeleton type="card" density="comfortable" /></DetailScreen>;
   if (!event) return <DetailScreen header={<TopBar title="Événement" context="detail" onBack={onBack} />}><EmptyState title="Événement introuvable" message="Il a peut-être été supprimé ou déplacé." actionLabel="Retour" onAction={onBack} /></DetailScreen>;
@@ -131,6 +132,16 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
       setFeedback({ tone: 'error', title: 'Ouverture impossible', message: 'Le document n’a pas pu être ouvert. Réessayez.' });
     }
   };
+  const removeEventDocument = async () => {
+    if (!documentToDelete) return;
+    await deleteEventDocument(String(event.id), documentToDelete);
+    await eventsQuery.refetch();
+    setFeedback({
+      tone: 'success',
+      title: 'Document supprimé',
+      message: 'Le document a été retiré de l’événement et supprimé du stockage.',
+    });
+  };
 
   return <>
     <DetailScreen header={<TopBar title={event.nom || 'Événement'} context="detail" onBack={onBack} trailing={<IconButton icon="moreHorizontal" accessibilityLabel="Actions sur l’événement" onPress={() => setActionsOpen(true)} variant="ghost" />} />} contentContainerStyle={{ gap: spacing.md, paddingTop: spacing.md, paddingBottom: spacing.lg }} testID="event-detail">
@@ -167,7 +178,18 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
     <ActionSheet open={deleteScopeOpen} title="Que souhaitez-vous supprimer ?" subtitle="Choisissez la portée avant de confirmer la suppression." items={deleteScopes} onSelect={(scope) => { setDeleteScope(scope); setDeleteScopeOpen(false); setDeleteOpen(true); }} onClose={() => setDeleteScopeOpen(false)} />
     <Dialog open={deleteOpen} type="destructive" title="Confirmer la suppression ?" description={deleteScope === 'series' ? 'Toute la série sera supprimée. Cette action est irréversible.' : deleteScope === 'following' ? 'Cette occurrence et toutes les suivantes seront supprimées. Cette action est irréversible.' : 'Seule cette occurrence sera supprimée. Cette action est irréversible.'} confirmLabel="Supprimer" onConfirm={remove} onClose={() => setDeleteOpen(false)} loading={mutations.remove.isPending} onError={() => setFeedback({ tone: 'error', title: 'Suppression impossible', message: 'La suppression a échoué. Réessayez.' })} />
     {quickEditOpen ? <EventQuickEditSheet event={event} onClose={() => setQuickEditOpen(false)} onSave={quickSave} /> : null}
-    {documentViewer ? <MediaViewer open uri={documentViewer.uri} title={documentViewer.title} type={documentViewer.type} onClose={() => setDocumentViewer(undefined)} testID="event-document-viewer" /> : null}
+    {documentViewer ? <MediaViewer open uri={documentViewer.uri} title={documentViewer.title} type={documentViewer.type} onClose={() => setDocumentViewer(undefined)} onDeleteRequest={() => { setDocumentToDelete(documentViewer.title); setDocumentViewer(undefined); }} testID="event-document-viewer" /> : null}
+    <Dialog
+      open={Boolean(documentToDelete)}
+      type="destructive"
+      title="Supprimer ce document ?"
+      description="Le document sera retiré de l’événement et définitivement supprimé du stockage."
+      confirmLabel="Supprimer"
+      onConfirm={removeEventDocument}
+      onClose={() => setDocumentToDelete(undefined)}
+      onError={() => setFeedback({ tone: 'error', title: 'Suppression impossible', message: 'Le document n’a pas pu être supprimé. Réessayez.' })}
+      testID="event-document-delete-dialog"
+    />
   </>;
 }
 

@@ -1,4 +1,4 @@
-import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getEventTypeRecurrenceDefaults, getInitialEventDate, getReminderLabel, getRemovedEventDocumentNames, isPastEventDate, isRecurringEvent, normalizeSharedGroupIds } from '../../../features/events/eventCreationUtils';
+import { buildEventCreationPayload, buildEventUpdatePayload, eventToDuplicateWizardForm, eventToWizardForm, formatEventCreationSummary, formatEventShareMessage, getEventTypeRecurrenceDefaults, getInitialEventDate, getReminderLabel, isPastEventDate, isRecurringEvent, normalizeSharedGroupIds } from '../../../features/events/eventCreationUtils';
 import type { Event } from '../../../models/Event';
 
 describe('event creation payload', () => {
@@ -33,15 +33,13 @@ describe('event creation payload', () => {
     expect(buildEventUpdatePayload({ eventType: 'depense', dateevent: '2026-08-09' }, 14).update_scope).toBe('occurrence');
   });
 
-  it('keeps file deletion out of the generic event update payload', () => {
-    expect(buildEventUpdatePayload({ eventType: 'soins', dateevent: '2026-08-09', documents: [] }, 14)).not.toHaveProperty('documents');
-  });
-
-  it('computes only persisted documents removed from the edit draft', () => {
-    expect(getRemovedEventDocumentNames({
-      originalDocuments: ['radio.jpg', 'ordonnance.pdf'],
+  it('sends the final persisted document list and excludes pending local files on update', () => {
+    expect(buildEventUpdatePayload({
+      eventType: 'soins',
+      dateevent: '2026-08-09',
       documents: [{ name: 'ordonnance.pdf' }, { name: 'nouvelle.jpg', localUri: 'file:///nouvelle.jpg' }],
-    })).toEqual(['radio.jpg']);
+    }, 14).documents).toEqual(['ordonnance.pdf']);
+    expect(buildEventUpdatePayload({ eventType: 'soins', dateevent: '2026-08-09', documents: [] }, 14).documents).toEqual([]);
   });
 
   it('normalizes recurrence for care and walk events', () => {
@@ -87,7 +85,7 @@ describe('event creation payload', () => {
 
     const form = eventToWizardForm(event);
 
-    expect(form).toMatchObject({ eventType: 'soins', traitement: 'Vaccin', animaux: [1, 2], state: 'completed', idparent: 3, originalDocuments: [] });
+    expect(form).toMatchObject({ eventType: 'soins', traitement: 'Vaccin', animaux: [1, 2], state: 'completed', idparent: 3 });
     expect(buildEventUpdatePayload(form, event.id)).toMatchObject({ id: 7, eventtype: 'soins', traitement: 'Vaccin', state: 'completed', idparent: 3, frequencetype: 'year', frequencevalue: '1' });
   });
 

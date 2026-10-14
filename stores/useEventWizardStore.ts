@@ -12,8 +12,6 @@ export interface EventWizardFormData {
   optionnotif?: string;
   shared_groups?: number[];
   documents?: EventWizardDocument[];
-  /** Noms persistés à l’ouverture du formulaire, utilisés pour différer les suppressions jusqu’à l’enregistrement. */
-  originalDocuments?: string[];
   state?: string;
   todisplay?: boolean;
   idparent?: number;
