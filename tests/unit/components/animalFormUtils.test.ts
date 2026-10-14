@@ -1,6 +1,6 @@
 import type { Animal } from '../../../models/Animal';
 import { AxiosError } from 'axios';
-import { animalFormFingerprint, animalToWizardForm, apiDate, buildAnimalPayload, buildAnimalUpdatePayload, buildChangedAnimalHistory, formDateLabel, getAnimalSaveError, isAnimalBodyValid, isAnimalProfileValid } from '../../../features/animals/animalFormUtils';
+import { ANIMAL_TEXT_LIMITS, animalFormFingerprint, animalToWizardForm, apiDate, buildAnimalPayload, buildAnimalUpdatePayload, buildChangedAnimalHistory, formDateLabel, getAnimalSaveError, isAnimalBodyValid, isAnimalProfileValid, isAnimalTextValid } from '../../../features/animals/animalFormUtils';
 
 describe('animalFormUtils', () => {
   it('normalizes API dates and numeric values for creation', () => {
@@ -21,6 +21,13 @@ describe('animalFormUtils', () => {
     expect(isAnimalProfileValid({ nom: 'Milo' })).toBe(false);
     expect(isAnimalBodyValid({ poids: '12,5', taille: '', quantity: '250' })).toBe(true);
     expect(isAnimalBodyValid({ poids: 'douze' })).toBe(false);
+  });
+
+  it('enforces database-aligned animal text limits', () => {
+    expect(ANIMAL_TEXT_LIMITS.food).toBe(100);
+    expect(isAnimalTextValid({ nom: 'a'.repeat(50), espece: 'Chat', food: 'f'.repeat(100) })).toBe(true);
+    expect(isAnimalTextValid({ nom: 'a'.repeat(51), espece: 'Chat' })).toBe(false);
+    expect(isAnimalTextValid({ nom: 'Milo', espece: 'Chat', food: 'f'.repeat(101) })).toBe(false);
   });
 
   it('detects semantic dirtiness independently of key order and blank values', () => {

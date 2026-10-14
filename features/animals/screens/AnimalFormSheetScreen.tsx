@@ -8,7 +8,7 @@ import { useAnimalWizardStore, type AnimalWizardFormData } from '../../../stores
 import { Banner, CalendarPicker, FormSheet, IconButton, LinearProgress, MediaUpload, Select, SelectionModal, TextArea, TextField } from '../../../shared/components/ui';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { animalFormFingerprint, animalToWizardForm, buildAnimalPayload, buildAnimalUpdatePayload, buildChangedAnimalHistory, formDateLabel, getAnimalSaveError, isAnimalBodyValid, isAnimalProfileValid, pickerDate } from '../animalFormUtils';
+import { ANIMAL_TEXT_LIMITS, animalFormFingerprint, animalToWizardForm, buildAnimalPayload, buildAnimalUpdatePayload, buildChangedAnimalHistory, formDateLabel, getAnimalSaveError, isAnimalBodyValid, isAnimalProfileValid, isAnimalTextValid, pickerDate } from '../animalFormUtils';
 
 const steps = [['Son profil', 'Commençons par les informations essentielles.'], ['Dates importantes', 'Elles permettent d’adapter l’âge et le suivi.'], ['Identité', 'Ajoutez les éléments utiles pour le reconnaître.'], ['Origines', 'Ces informations restent modifiables à tout moment.'], ['Corps & alimentation', 'Des repères précis pour un suivi quotidien utile.'], ['Notes & vérification', 'Un dernier regard avant d’enregistrer le profil.']] as const;
 const choices = { species: ['Chat', 'Chien', 'Poisson', 'Oiseaux', 'Lapin', 'Rongeur', 'Reptile', 'Furet', 'Cheval', 'Poney', 'Âne', 'Mulet et bardot', 'Poule', 'Canard', 'Cochon', 'Chèvre', 'Mouton', 'Bovin', 'Dinde', 'Oie', 'Caille', 'Écureuil', 'Amphibien', 'Insecte', 'Crustacé', 'Arachnide', 'Lama et alpaga', 'Autruche et émeu', 'Autre'], unit: ['g', 'kg', 'ml', 'portion'] } as const;
@@ -25,6 +25,11 @@ export function AnimalFormSheetScreen({ mode, animal, onClose, onSaved }: Animal
   const save = async () => {
     if (!valid) { setShowErrors(true); return; }
     if (step < 5) { setShowErrors(false); setStep(step + 1); return; }
+    if (!isAnimalTextValid(form)) {
+      setShowErrors(true);
+      setLocalError({ title: 'Texte trop long', message: 'Vérifiez les limites indiquées dans les étapes du formulaire.' });
+      return;
+    }
     setLocalError(undefined);
     try {
       let prepared = form;
@@ -54,7 +59,12 @@ export function AnimalFormSheetScreen({ mode, animal, onClose, onSaved }: Animal
     } catch (error) { setLocalError(getAnimalSaveError(error, mode)); }
     finally { setPhotoUploading(false); }
   };
-  const field = (key: keyof AnimalWizardFormData, label: string, placeholder: string, helperText = 'Optionnel', keyboardType?: 'decimal-pad') => <TextField label={label} placeholder={placeholder} value={form[key] ?? ''} helperText={helperText} keyboardType={keyboardType} onChangeText={(value) => setField(key, value)} />;
+  const field = (key: keyof AnimalWizardFormData, label: string, placeholder: string, helperText = 'Optionnel', keyboardType?: 'decimal-pad') => {
+    const value = form[key] ?? '';
+    const maxLength = ANIMAL_TEXT_LIMITS[key];
+    const tooLong = maxLength !== undefined && value.trim().length > maxLength;
+    return <TextField label={label} placeholder={placeholder} value={value} helperText={maxLength ? `${helperText} · ${value.length}/${maxLength}` : helperText} keyboardType={keyboardType} maxLength={maxLength} errorMessage={tooLong ? `${label} ne peut pas dépasser ${maxLength} caractères.` : undefined} onChangeText={(nextValue) => setField(key, nextValue)} />;
+  };
   const dateField = (key: 'datenaissance' | 'datearrivee' | 'datedepart', label: string, helperText: string) => {
     const displayed = formDateLabel(form[key]) ?? form[key] ?? '';
     const birthDate = key === 'datenaissance';

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { STORAGE_TEXT_LIMITS } from '../../../business/validators/storageLimits';
 import { Pressable, Text, View } from 'react-native';
 
 import { Button, RootScreen, TextArea, TextField, TopBar } from '@shared/components/ui';
@@ -36,7 +37,7 @@ export function VoiceReviewScreen({ draft, recording, onCancel, onCreated }: Voi
       <View style={{ minHeight: 430, borderWidth: 1, borderColor: colors.border, borderRadius: radii.xl, backgroundColor: colors.surface, padding: spacing.md, gap: spacing.md }}>
         {editing ? (
           <>
-            <TextField label="Titre" value={title} onChangeText={setTitle} maxLength={120} testID="voice-review-title" />
+            <TextField label="Titre" value={title} onChangeText={setTitle} maxLength={STORAGE_TEXT_LIMITS.noteTitle} testID="voice-review-title" />
             <TextArea label="Contenu" value={transcript} onChangeText={setTranscript} maxLength={500} containerStyle={{ flex: 1 }} testID="voice-review-content" />
           </>
         ) : (

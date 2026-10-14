@@ -6,6 +6,17 @@ import { parseApiError } from '../../utils/errorParser';
 
 const optionalStrings = ['datenaissance', 'datearrivee', 'datedepart', 'datedeces', 'race', 'sexe', 'couleur', 'nompere', 'nommere', 'numeroidentification', 'food', 'unity', 'informations', 'image'] as const;
 
+export const ANIMAL_TEXT_LIMITS: Partial<Record<keyof AnimalWizardFormData, number>> = {
+  nom: 50,
+  espece: 50,
+  race: 50,
+  sexe: 50,
+  couleur: 50,
+  nompere: 50,
+  nommere: 50,
+  food: 100,
+};
+
 export function apiDate(value?: string) {
   if (!value) return undefined;
   const match = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(value);
@@ -66,6 +77,13 @@ export function isAnimalBodyValid(form: AnimalWizardFormData) {
   return ['poids', 'taille', 'quantity'].every((key) => {
     const value = form[key as keyof AnimalWizardFormData];
     return !value || Number.isFinite(Number(value.replace(',', '.')));
+  });
+}
+
+export function isAnimalTextValid(form: AnimalWizardFormData) {
+  return Object.entries(ANIMAL_TEXT_LIMITS).every(([key, maxLength]) => {
+    const value = form[key as keyof AnimalWizardFormData];
+    return value == null || value.trim().length <= maxLength;
   });
 }
 

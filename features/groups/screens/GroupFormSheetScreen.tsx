@@ -8,6 +8,7 @@ import {
   groupMemberEmailSchema,
   type GroupDetailsValues,
 } from "../../../business/validators/group";
+import { STORAGE_TEXT_LIMITS } from "../../../business/validators/storageLimits";
 import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
 import { useGroupMutations } from "../../../hooks/queries/useGroupsQuery";
 import type { Group } from "../../../models/Group";
@@ -309,7 +310,7 @@ export function GroupFormSheetScreen({
             placeholder="Ex. Famille"
             required
             helperText="Obligatoire"
-            maxLength={120}
+            maxLength={STORAGE_TEXT_LIMITS.groupName}
             autoCapitalize="sentences"
             testID="group-name"
           />
@@ -323,7 +324,7 @@ export function GroupFormSheetScreen({
                 onBlur={onBlur}
                 errorMessage={errorMessage}
                 helperText="Optionnel"
-                maxLength={500}
+                maxLength={STORAGE_TEXT_LIMITS.groupInformation}
                 testID="group-information"
               />
             )}
@@ -373,7 +374,7 @@ export function GroupFormSheetScreen({
                   value={email}
                   keyboardType="email-address"
                   autoCapitalize="none"
-                  maxLength={254}
+                  maxLength={STORAGE_TEXT_LIMITS.accountEmail}
                   onChangeText={(value) =>
                     setMembers((current) =>
                       current.map((item, itemIndex) =>

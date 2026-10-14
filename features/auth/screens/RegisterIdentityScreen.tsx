@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { Button, IconButton, ProgressSteps, TextField } from '../../../shared/components/ui';
 import { emailSchema } from '../../../business/validators/auth';
+import { STORAGE_TEXT_LIMITS } from '../../../business/validators/storageLimits';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { AuthScreen } from '../components/AuthScreen';
@@ -36,8 +37,8 @@ export function RegisterIdentityScreen({ navigation }: RegisterIdentityScreenPro
     <IconButton icon="back" accessibilityLabel="Retour au choix d’inscription" variant="ghost" onPress={back} />
     <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 32, letterSpacing: -0.2 }}>Étape 1 sur 3 · Vos informations</Text>
     <ProgressSteps current={1} total={3} />
-    <TextField label="Prénom" helperText="Utilisé pour personnaliser l’application" errorMessage={errors.firstName} placeholder="Votre prénom" value={firstName} onChangeText={setFirstName} autoCapitalize="words" textContentType="givenName" returnKeyType="next" />
-    <TextField label="Adresse e-mail" helperText="Elle restera privée" errorMessage={errors.email} placeholder="vous@exemple.fr" value={email} onChangeText={setEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" textContentType="emailAddress" returnKeyType="done" onSubmitEditing={next} />
+    <TextField label="Prénom" helperText="Utilisé pour personnaliser l’application" errorMessage={errors.firstName} placeholder="Votre prénom" value={firstName} onChangeText={setFirstName} maxLength={STORAGE_TEXT_LIMITS.accountFirstName} autoCapitalize="words" textContentType="givenName" returnKeyType="next" />
+    <TextField label="Adresse e-mail" helperText="Elle restera privée" errorMessage={errors.email} placeholder="vous@exemple.fr" value={email} onChangeText={setEmail} maxLength={STORAGE_TEXT_LIMITS.accountEmail} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" textContentType="emailAddress" returnKeyType="done" onSubmitEditing={next} />
     <View style={{ flex: 1, minHeight: 80 }} />
     <Button label="Continuer" onPress={next} size="large" fullWidth />
     <TextLink label="Déjà un compte ? Se connecter" onPress={() => navigation.navigate('SignIn')} />

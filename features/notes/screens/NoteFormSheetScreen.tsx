@@ -4,6 +4,7 @@ import {
   FormSheet,
 } from "../../../shared/components/ui";
 import type { Note } from "../../../models/Note";
+import { STORAGE_TEXT_LIMITS } from "../../../business/validators/storageLimits";
 import { useNoteForm } from "../hooks/useNoteForm";
 import { RichNoteEditor, type RichNoteEditorHandle } from "../components/RichNoteEditor";
 
@@ -48,7 +49,7 @@ export function NoteFormSheetScreen({
         label="Titre"
         placeholder="Exemple : Titre"
         helperText="Obligatoire"
-        maxLength={120}
+        maxLength={STORAGE_TEXT_LIMITS.noteTitle}
         disabled={loading}
         testID="input-note-titre"
       />

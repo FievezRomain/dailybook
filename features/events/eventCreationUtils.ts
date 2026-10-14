@@ -1,8 +1,35 @@
 import type { Animal } from '../../models/Animal';
 import type { Event } from '../../models/Event';
 import type { EventWizardFormData } from '../../stores/useEventWizardStore';
+import { STORAGE_TEXT_LIMITS } from '../../business/validators/storageLimits';
 import type { CreateEventPayload, UpdateEventPayload } from './types';
 import { getEventDetailsConfig } from './eventDetailsConfig';
+
+export const EVENT_TEXT_LIMITS: Partial<Record<Extract<keyof EventWizardFormData, string>, number>> = {
+  nom: STORAGE_TEXT_LIMITS.eventName,
+  lieu: STORAGE_TEXT_LIMITS.eventText,
+  specialiste: STORAGE_TEXT_LIMITS.eventText,
+  categoriedepense: STORAGE_TEXT_LIMITS.eventCategory,
+  heuredebutevent: STORAGE_TEXT_LIMITS.eventTime,
+  heuredebutbalade: STORAGE_TEXT_LIMITS.eventText,
+  heurefinbalade: STORAGE_TEXT_LIMITS.eventText,
+  discipline: STORAGE_TEXT_LIMITS.eventText,
+  epreuve: STORAGE_TEXT_LIMITS.eventText,
+  dossart: STORAGE_TEXT_LIMITS.eventText,
+  placement: STORAGE_TEXT_LIMITS.eventText,
+  traitement: STORAGE_TEXT_LIMITS.eventText,
+  state: STORAGE_TEXT_LIMITS.eventState,
+  frequencetype: STORAGE_TEXT_LIMITS.eventState,
+  frequencevalue: STORAGE_TEXT_LIMITS.eventState,
+};
+
+export function getEventTextLimitError(form: EventWizardFormData) {
+  const invalid = Object.entries(EVENT_TEXT_LIMITS).find(([key, maximum]) => {
+    const value = form[key as keyof EventWizardFormData];
+    return typeof maximum === 'number' && typeof value === 'string' && value.trim().length > maximum;
+  });
+  return invalid ? `Un champ dépasse la limite autorisée de ${invalid[1]} caractères.` : undefined;
+}
 
 export const reminderOptions = [
   { id: '30m', label: '30 minutes avant' },

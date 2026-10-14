@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { STORAGE_TEXT_LIMITS } from '../../../business/validators/storageLimits';
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useForm } from 'react-hook-form';
@@ -134,7 +135,7 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
       {step < 3 ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{step === 0 ? 'Un objectif simple et mesurable fonctionne mieux.' : step === 1 ? 'Associez un ou plusieurs animaux à cet objectif.' : 'Découpez le cap en petites étapes.'}</Text> : null}
     </View>
     {step === 0 ? <>
-      <ControlledTextField control={detailsForm.control} name="title" label="Titre" placeholder="Exemple : Rendez-vous vétérinaire" required helperText="Obligatoire" />
+      <ControlledTextField control={detailsForm.control} name="title" label="Titre" placeholder="Exemple : Rendez-vous vétérinaire" required helperText="Obligatoire" maxLength={STORAGE_TEXT_LIMITS.objectiveTitle} />
       <ControlledField control={detailsForm.control} name="datedebut">{({ value, errorMessage }) => <DateField label="Date de début" value={value} errorMessage={errorMessage} onPress={() => setCalendarField('datedebut')} />}</ControlledField>
       <ControlledField control={detailsForm.control} name="datefin">{({ value, errorMessage }) => <DateField label="Date de fin" value={value} errorMessage={errorMessage} onPress={() => setCalendarField('datefin')} />}</ControlledField>
     </> : null}
