@@ -430,6 +430,7 @@ export function MainNavigator() {
       onDuplicate={(sourceEventId) =>
         setRoute({ name: "eventDuplicateDetails", sourceEventId })
       }
+      onComparePlans={() => setVisualTrackingPlans(true)}
     />
   );
   if (settingsOpen === "notifications")
@@ -1220,6 +1221,7 @@ export function MainNavigator() {
         onDuplicate={(sourceEventId) =>
           setRoute({ name: "eventDuplicateDetails", sourceEventId })
         }
+        onComparePlans={() => setVisualTrackingPlans(true)}
       />
     );
   if (route.name === "objective") {

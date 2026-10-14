@@ -91,8 +91,14 @@ describe('P7.f visual refinements', () => {
 
   it('keeps event document selectors referentially stable when empty', () => {
     const source = read('features/events/components/EventDocumentsField.tsx');
+    const picker = read('features/events/components/EventDocumentPicker.tsx');
+    const detail = read('features/events/screens/EventDetailScreen.tsx');
     expect(source).toContain('EMPTY_DOCUMENTS');
     expect(source).not.toContain('state.formData.documents ?? []');
+    expect(picker).toContain('Prêt à être envoyé');
+    expect(picker).toContain('state="uploaded"');
+    expect(detail).toContain('testID="event-add-document"');
+    expect(detail).toContain('<EventDocumentAddSheet');
   });
 
   it('separates objective animals and steps into four wizard stages', () => {

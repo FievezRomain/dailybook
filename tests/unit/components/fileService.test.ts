@@ -13,12 +13,14 @@ jest.mock('../../../shared/utils/prepareImageUpload', () => ({
 jest.mock('expo-file-system/legacy', () => ({
   FileSystemUploadType: { MULTIPART: 1 },
   uploadAsync: jest.fn(),
+  getInfoAsync: jest.fn(),
 }));
 
 const mockedGet = httpClient.get as jest.MockedFunction<typeof httpClient.get>;
 const mockedPost = httpClient.post as jest.MockedFunction<typeof httpClient.post>;
 const mockedPrepareImage = prepareImageUpload as jest.MockedFunction<typeof prepareImageUpload>;
 const mockedUploadAsync = FileSystem.uploadAsync as jest.MockedFunction<typeof FileSystem.uploadAsync>;
+const mockedGetInfoAsync = FileSystem.getInfoAsync as jest.MockedFunction<typeof FileSystem.getInfoAsync>;
 
 describe('FileService download URL cache', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -59,6 +61,25 @@ describe('FileService download URL cache', () => {
       ressourceType: 'animal',
       ressourceId: 42,
       contentType: 'image/jpeg',
+    });
+  });
+
+  it('reads a missing event document size locally before requesting the signed URL', async () => {
+    mockedGetInfoAsync.mockResolvedValue({ exists: true, uri: 'file:///cache/report.pdf', size: 2048, isDirectory: false, modificationTime: 1 });
+    mockedPost
+      .mockResolvedValueOnce({ data: { url: 'https://bucket.example', fields: { key: 'uid/report.pdf' }, filename: 'report.pdf', s3Path: 'uid/report.pdf', expiresIn: 300 } } as never)
+      .mockResolvedValueOnce({ data: { filename: 'report.pdf' } } as never);
+    mockedUploadAsync.mockResolvedValue({ status: 204, headers: {}, body: '', mimeType: 'application/xml' });
+
+    await expect(FileService.upload('file:///cache/report.pdf', 'report.pdf', 'application/pdf', 'event', 42)).resolves.toBe('report.pdf');
+
+    expect(mockedGetInfoAsync).toHaveBeenCalledWith('file:///cache/report.pdf');
+    expect(mockedPost).toHaveBeenNthCalledWith(1, '/files/upload-url', {
+      filename: 'report.pdf',
+      ressourceType: 'event',
+      ressourceId: 42,
+      contentType: 'application/pdf',
+      sizeBytes: 2048,
     });
   });
 });

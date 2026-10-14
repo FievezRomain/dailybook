@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Share, Text, View } from 'react-native';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
 import { useEventMutations, useEventsQuery } from '../../../hooks/queries/useEventsQuery';
-import { ActionSheet, Avatar, Banner, Card, DetailScreen, Dialog, EmptyState, Icon, IconButton, Skeleton, TopBar, type OverlayActionItem } from '../../../shared/components/ui';
+import { ActionSheet, Avatar, Banner, Button, Card, DetailScreen, Dialog, EmptyState, FileItem, Icon, IconButton, PremiumGate, Skeleton, TopBar, type OverlayActionItem } from '../../../shared/components/ui';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -13,6 +13,9 @@ import type { EventUpdateScope } from '../types';
 import { EventQuickEditSheet } from '../components/EventQuickEditSheet';
 import { eventTypePresentation, resolveEventVisual } from '../../../shared/components/ui/content/domainCardUtils';
 import { getEventQuickFieldKeys } from '../eventDetailsConfig';
+import { EventDocumentAddSheet } from '../components/EventDocumentAddSheet';
+import { useAuthStore } from '../../../stores/useAuthStore';
+import { isPremiumSubscription } from '../../../shared/utils/subscriptionUtils';
 
 type EventAction = 'edit' | 'duplicate' | 'share' | 'delete';
 type EventDeleteScope = 'occurrence' | 'following' | 'series';
@@ -29,15 +32,17 @@ const deleteScopes: readonly OverlayActionItem<EventDeleteScope>[] = [
 ];
 const actions: readonly OverlayActionItem<EventAction>[] = [{ id: 'edit', label: 'Modifier', description: 'Mettre à jour toutes les informations', icon: 'edit' }, { id: 'duplicate', label: 'Dupliquer', description: 'Créer une copie modifiable', icon: 'duplicate' }, { id: 'share', label: 'Partager', description: 'Envoyer avec les applications du téléphone', icon: 'share' }, { id: 'delete', label: 'Supprimer', description: 'Une confirmation sera demandée', icon: 'delete', tone: 'destructive' }];
 
-export interface EventDetailScreenProps { eventId: number; onBack: () => void; onDeleted: () => void; initialFeedback?: string; onEdit?: (id: number) => void; onDuplicate?: (id: number) => void; onShare?: (id: number) => void }
+export interface EventDetailScreenProps { eventId: number; onBack: () => void; onDeleted: () => void; initialFeedback?: string; onEdit?: (id: number) => void; onDuplicate?: (id: number) => void; onShare?: (id: number) => void; onComparePlans?: () => void }
 
-export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback, onEdit = () => undefined, onDuplicate = () => undefined, onShare = () => undefined }: EventDetailScreenProps) {
+export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback, onEdit = () => undefined, onDuplicate = () => undefined, onShare = () => undefined, onComparePlans = () => undefined }: EventDetailScreenProps) {
   const { colors } = useAppTheme();
+  const premium = isPremiumSubscription(useAuthStore((state) => state.user?.subscription));
   const eventsQuery = useEventsQuery(); const animalsQuery = useAnimalsQuery(); const mutations = useEventMutations();
   const setFormData = useEventWizardStore((state) => state.setFormData); const resetWizard = useEventWizardStore((state) => state.reset);
   const event = (eventsQuery.data ?? []).find((item) => item.id === eventId);
   const [actionsOpen, setActionsOpen] = useState(false); const [deleteOpen, setDeleteOpen] = useState(false); const [scopeOpen, setScopeOpen] = useState(false); const [deleteScopeOpen, setDeleteScopeOpen] = useState(false); const [deleteScope, setDeleteScope] = useState<EventDeleteScope>('occurrence');
   const [quickEditOpen, setQuickEditOpen] = useState(false);
+  const [documentAddOpen, setDocumentAddOpen] = useState(false);
   const [feedback, setFeedback] = useState<EventFeedback | undefined>(initialFeedback ? { tone: 'success', title: 'Événement mis à jour', message: initialFeedback } : undefined); const [shareError, setShareError] = useState(false);
   if (eventsQuery.isLoading || animalsQuery.isLoading) return <DetailScreen header={<TopBar title="Événement" context="detail" onBack={onBack} />}><Skeleton type="card" density="comfortable" /></DetailScreen>;
   if (!event) return <DetailScreen header={<TopBar title="Événement" context="detail" onBack={onBack} />}><EmptyState title="Événement introuvable" message="Il a peut-être été supprimé ou déplacé." actionLabel="Retour" onAction={onBack} /></DetailScreen>;
@@ -57,7 +62,8 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
   const cardDate = new Intl.DateTimeFormat('fr-FR', { day: 'numeric', month: 'short' }).format(date);
   const cardTime = event.heuredebutevent ? date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : undefined;
   const informationRows = getEventDetailRows(event, animals.map((animal) => animal.name));
-  const secondaryRows = informationRows.filter((row) => !['Type', 'État', 'Date et heure', 'Animaux', 'Note', 'Classement', 'Dépense', 'Description'].includes(row.label));
+  const secondaryRows = informationRows.filter((row) => !['Type', 'État', 'Date et heure', 'Animaux', 'Note', 'Classement', 'Dépense', 'Description', 'Documents'].includes(row.label));
+  const medicalEvent = event.eventtype === 'soins' || event.eventtype === 'rdv';
   const eventVisual = resolveEventVisual(colors, toEventCardType(event.eventtype));
   const eventTypeLabel = eventTypePresentation[toEventCardType(event.eventtype)].label;
   const source = event as typeof event & Record<string, unknown>;
@@ -96,12 +102,29 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
         <QuickInfoCard label="Compte rendu" value={event.commentaire || 'Non renseigné'} fullWidth />
       </View>
       {secondaryRows.length ? <><SectionTitle>Informations</SectionTitle><Card style={{ flexDirection: 'row', flexWrap: 'wrap', columnGap: spacing.md, rowGap: spacing.md }}>{secondaryRows.map((row) => <Information key={row.label} label={row.label} value={row.value} />)}</Card></> : null}
+      {medicalEvent ? <>
+        <SectionTitle>Documents médicaux</SectionTitle>
+        {event.documents?.length
+          ? <View style={{ gap: spacing.sm }}>{event.documents.map((document) => <FileItem key={document.name} name={document.name} type={document.name.toLowerCase().endsWith('.pdf') ? 'pdf' : 'image'} metadata="Document enregistré" />)}</View>
+          : <Banner tone="info" title="Aucun document" message="Ajoutez une image ou un PDF à cet événement médical." />}
+        {premium
+          ? <Button label="Ajouter une image ou un PDF" icon="add" variant="secondary" fullWidth onPress={() => setDocumentAddOpen(true)} testID="event-add-document" />
+          : <PremiumGate title="Documents médicaux Premium" message="L’ajout d’un document médical nécessite un abonnement Premium." onComparePlans={onComparePlans} testID="event-detail-documents-premium" />}
+      </> : null}
     </DetailScreen>
     <ActionSheet open={actionsOpen} title="Actions sur l’événement" subtitle={`${event.nom || event.eventtype} · ${animalNames}`} items={actions} onSelect={selectAction} onClose={() => setActionsOpen(false)} />
     <ActionSheet open={scopeOpen} title="Que souhaitez-vous modifier ?" subtitle="Les informations de suivi déjà saisies seront préservées." items={editScopes} onSelect={(scope) => { setFormData({ updateScope: scope }); onEdit(event.id); }} onClose={() => setScopeOpen(false)} />
     <ActionSheet open={deleteScopeOpen} title="Que souhaitez-vous supprimer ?" subtitle="Choisissez la portée avant de confirmer la suppression." items={deleteScopes} onSelect={(scope) => { setDeleteScope(scope); setDeleteScopeOpen(false); setDeleteOpen(true); }} onClose={() => setDeleteScopeOpen(false)} />
     <Dialog open={deleteOpen} type="destructive" title="Confirmer la suppression ?" description={deleteScope === 'series' ? 'Toute la série sera supprimée. Cette action est irréversible.' : deleteScope === 'following' ? 'Cette occurrence et toutes les suivantes seront supprimées. Cette action est irréversible.' : 'Seule cette occurrence sera supprimée. Cette action est irréversible.'} confirmLabel="Supprimer" onConfirm={remove} onClose={() => setDeleteOpen(false)} loading={mutations.remove.isPending} onError={() => setFeedback({ tone: 'error', title: 'Suppression impossible', message: 'La suppression a échoué. Réessayez.' })} />
     {quickEditOpen ? <EventQuickEditSheet event={event} onClose={() => setQuickEditOpen(false)} onSave={quickSave} /> : null}
+    {documentAddOpen ? <EventDocumentAddSheet
+      eventId={event.id}
+      onClose={() => setDocumentAddOpen(false)}
+      onAdded={async () => {
+        await eventsQuery.refetch();
+        setFeedback({ tone: 'success', title: 'Document ajouté', message: 'Le document est maintenant associé à cet événement.' });
+      }}
+    /> : null}
   </>;
 }
 

@@ -28,6 +28,12 @@ function invalidateDownloadUrl(filename: string, ressourceType: RessourceType, r
   if (ressourceId !== undefined) downloadUrlCache.delete(downloadCacheKey(filename, ressourceType, ressourceId));
 }
 
+async function getLocalFileSize(fileUri: string): Promise<number> {
+  const info = await FileSystem.getInfoAsync(fileUri);
+  if (!info.exists || typeof info.size !== 'number') throw new Error('Impossible de déterminer la taille du fichier local.');
+  return info.size;
+}
+
 export type RessourceType = 'event' | 'animal' | 'body' | 'user' | 'note' | 'wish' | 'contact';
 
 export interface PresignedUpload {
@@ -101,7 +107,7 @@ export const FileService = {
     const imageKind = imageKinds[ressourceType];
     const prepared = imageKind
       ? await prepareImageUpload({ uri: fileUri }, imageKind)
-      : { uri: fileUri, contentType, sizeBytes: sizeBytes ?? (await (await fetch(fileUri)).blob()).size };
+      : { uri: fileUri, contentType, sizeBytes: sizeBytes ?? await getLocalFileSize(fileUri) };
     const upload = await FileService.getUploadUrl({
       filename,
       ressourceType,
