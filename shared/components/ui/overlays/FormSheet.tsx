@@ -5,6 +5,7 @@ import { componentTokens } from '../../../../theme/componentTokens';
 import type { Material } from '../../../../theme/materials';
 import { spacing } from '../../../../theme/scales';
 import { Button } from '../actions';
+import { FormSheetInputProvider } from '../forms/formSheetInputContext';
 import { TopBar } from '../navigation';
 import { VascoBottomSheet } from './BottomSheet';
 import { Dialog } from './Dialog';
@@ -87,7 +88,9 @@ function FormSheetModal({
 
   return <>
     <VascoBottomSheet open={sheetOpen} onClose={handleDismiss} title={title} material={material} formHandle scrollableContent dismissible={!footerLoading} height={Math.max(componentTokens.formSheet.minHeight, Math.min(componentTokens.formSheet.maxHeight, windowHeight * componentTokens.formSheet.heightRatio))} header={<TopBar title={title} context="detail" material={material} onBack={footerLoading ? () => undefined : confirmBackWhenDirty && dirty ? handleDismiss : onBack} />} footer={renderedFooter} contentContainerStyle={{ gap: 0, paddingHorizontal: 0, paddingTop: 0 }} testID={testID}>
-      <BottomSheetScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'} contentContainerStyle={{ flexGrow: 1, gap: spacing.md, paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>{children}</BottomSheetScrollView>
+      <FormSheetInputProvider>
+        <BottomSheetScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'} contentContainerStyle={{ flexGrow: 1, gap: spacing.md, paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>{children}</BottomSheetScrollView>
+      </FormSheetInputProvider>
     </VascoBottomSheet>
     <Dialog open={confirmClose} type="destructive" title="Abandonner les modifications ?" description="Les informations non enregistrées seront perdues." cancelLabel="Continuer" confirmLabel="Abandonner" onClose={() => { setConfirmClose(false); setSheetOpen(true); }} onConfirm={() => { setConfirmClose(false); onClose(); }} testID={testID ? `${testID}-close-confirmation` : undefined} />
   </>;

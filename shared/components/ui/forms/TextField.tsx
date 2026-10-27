@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react';
+import { BottomSheetTextInput } from '@gorhom/bottom-sheet';
 import {
   TextInput,
   View,
@@ -10,6 +11,7 @@ import { componentTokens } from '../../../../theme/componentTokens';
 import { radii, spacing, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
 import { Field } from './Field';
+import { useFormSheetInput } from './formSheetInputContext';
 
 export interface TextFieldProps extends Omit<TextInputProps, 'style'> {
   label: string;
@@ -40,8 +42,10 @@ export function TextField({
   ...inputProps
 }: TextFieldProps) {
   const { colors } = useAppTheme();
+  const usesBottomSheetKeyboardHandling = useFormSheetInput();
   const [focused, setFocused] = useState(false);
   const disabled = !editable;
+  const InputComponent = usesBottomSheetKeyboardHandling ? BottomSheetTextInput : TextInput;
   const stroke = focused || errorMessage
     ? componentTokens.field.stroke.focus
     : componentTokens.field.stroke.default;
@@ -79,7 +83,7 @@ export function TextField({
         ]}
       >
         {leading}
-        <TextInput
+        <InputComponent
           {...inputProps}
           value={value}
           editable={editable}

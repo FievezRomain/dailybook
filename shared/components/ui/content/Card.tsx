@@ -12,6 +12,7 @@ export interface CardProps {
   material?: Material;
   onPress?: () => void;
   accessibilityLabel?: string;
+  accessibilityHint?: string;
   accessibilityRole?: AccessibilityRole;
   style?: StyleProp<ViewStyle>;
   testID?: string;
@@ -22,6 +23,7 @@ export function Card({
   material = 'solid',
   onPress,
   accessibilityLabel,
+  accessibilityHint,
   accessibilityRole = 'summary',
   style,
   testID,
@@ -57,12 +59,13 @@ export function Card({
           accessible={Boolean(accessibilityLabel)}
           accessibilityRole={accessibilityLabel ? accessibilityRole : undefined}
           accessibilityLabel={accessibilityLabel}
+          accessibilityHint={accessibilityHint}
         >
           {children}
         </BlurView>
       );
     }
-    return <View accessible={Boolean(accessibilityLabel)} accessibilityRole={accessibilityLabel ? accessibilityRole : undefined} accessibilityLabel={accessibilityLabel} style={[containerStyle, style]}>{children}</View>;
+    return <View accessible={Boolean(accessibilityLabel)} accessibilityRole={accessibilityLabel ? accessibilityRole : undefined} accessibilityLabel={accessibilityLabel} accessibilityHint={accessibilityHint} style={[containerStyle, style]}>{children}</View>;
   };
 
   if (!onPress) return content(false);
@@ -71,6 +74,7 @@ export function Card({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
       onPress={onPress}
       testID={testID}
     >
