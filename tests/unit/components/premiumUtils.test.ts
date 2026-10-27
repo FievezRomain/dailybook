@@ -2,7 +2,7 @@ import { canUsePremiumFeature, getPremiumFeatureContent, premiumFeatures } from 
 
 describe('premiumUtils', () => {
   it('centralise les fonctionnalités Premium', () => {
-    expect(premiumFeatures).toEqual(['statistics', 'groups', 'aiCreation', 'voiceNotes', 'animalLimit']);
+    expect(premiumFeatures).toEqual(['statistics', 'groups', 'aiCreation', 'voiceNotes', 'animalLimit', 'gpsWalks']);
   });
 
   it('vérifie un droit sans déduire le statut du compte', () => {

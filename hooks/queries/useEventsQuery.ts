@@ -5,6 +5,7 @@ import { CreateEventPayload, UpdateEventPayload, PatchEventPayload } from '../..
 import { Event } from '../../models/Event';
 
 export const EVENTS_KEY = ['events'] as const;
+export const walkSessionKey = (eventId: number) => [...EVENTS_KEY, eventId, 'walk-session'] as const;
 
 export function useEventsQuery() {
   return useQuery({
@@ -122,5 +123,14 @@ export function useAgendaHighlightsQuery(year: number) {
   return useQuery({
     queryKey: [...EVENTS_KEY, 'highlights', year],
     queryFn: () => EventService.getAgendaHighlights(year),
+  });
+}
+
+export function useWalkSessionQuery(eventId: number, enabled = true) {
+  return useQuery({
+    queryKey: walkSessionKey(eventId),
+    queryFn: () => EventService.getWalkSession(eventId),
+    enabled,
+    retry: false,
   });
 }

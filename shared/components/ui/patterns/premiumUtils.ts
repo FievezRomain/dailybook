@@ -1,4 +1,4 @@
-export const premiumFeatures = ['statistics', 'groups', 'aiCreation', 'voiceNotes', 'animalLimit'] as const;
+export const premiumFeatures = ['statistics', 'groups', 'aiCreation', 'voiceNotes', 'animalLimit', 'gpsWalks'] as const;
 
 export type PremiumFeature = (typeof premiumFeatures)[number];
 
@@ -31,6 +31,10 @@ const premiumFeatureContent: Record<PremiumFeature, PremiumFeatureContent> = {
   animalLimit: {
     title: 'Vous avez atteint la limite de 3 animaux',
     description: 'Passez à Premium pour ajouter autant d’animaux que vous le souhaitez.',
+  },
+  gpsWalks: {
+    title: 'Balades GPS',
+    description: 'Enregistrez le tracé, la distance et la durée de vos balades, puis partagez-les.',
   },
 };
 

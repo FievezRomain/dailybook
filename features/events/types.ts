@@ -12,6 +12,30 @@ export type AgendaHighlight = {
   source_event_id?: number;
 };
 
+export type WalkPoint = {
+  latitude: number;
+  longitude: number;
+  recorded_at: string;
+  accuracy_m: number;
+  altitude_m?: number;
+  speed_mps?: number;
+};
+
+export type WalkSession = {
+  id: number;
+  event_id: number;
+  owner_id: number;
+  status: 'recording' | 'finalized';
+  started_at: string;
+  ended_at: string | null;
+  points: WalkPoint[];
+  last_sequence: number;
+  distance_meters: number;
+  duration_seconds: number;
+  moving_duration_seconds: number;
+  average_speed_mps: number;
+};
+
 /** Payload envoyé au backend pour créer un événement. */
 export type CreateEventPayload = {
   nom: string;
