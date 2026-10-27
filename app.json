@@ -29,13 +29,15 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "L'application a besoin d'accéder à votre galerie de photos",
         "NSCameraUsageDescription": "L'application a besoin d'accéder à votre appareil photo",
+        "NSLocationWhenInUseUsageDescription": "Vasco utilise votre position pendant une balade pour enregistrer le tracé.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Vasco utilise votre position pendant une balade pour poursuivre l’enregistrement lorsque l’écran est verrouillé.",
+        "NSLocationAlwaysUsageDescription": "Vasco utilise votre position pendant une balade pour poursuivre l’enregistrement lorsque l’écran est verrouillé.",
         "NSUserTrackingUsageDescription": "Cette application utilise vos données pour fournir une publicité personnalisée et améliorer votre expérience.",
         "NSPushNotificationsUsageDescription": "Cette application utilise des notifications pour vous envoyer des mises à jour importantes.",
         "UIBackgroundModes": [
           "fetch",
           "remote-notification",
-          "fetch",
-          "remote-notification"
+          "location"
         ],
         "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "Cette application utilise Face ID pour sécuriser vos données."
@@ -59,6 +61,11 @@
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.ACCESS_WIFI_STATE",
         "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_LOCATION",
         "com.google.android.gms.permission.AD_ID"
       ]
     },
@@ -81,6 +88,17 @@
         }
       ],
       "expo-task-manager",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Vasco utilise votre position pendant une balade pour enregistrer le tracé, y compris lorsque l’écran est verrouillé.",
+          "locationAlwaysPermission": "Vasco utilise votre position pendant une balade pour poursuivre l’enregistrement lorsque l’écran est verrouillé.",
+          "locationWhenInUsePermission": "Vasco utilise votre position pendant une balade pour enregistrer le tracé.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
+      ],
       [
         "expo-build-properties",
         {

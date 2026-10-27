@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Share, Text, View } from 'react-native';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
-import { useEventMutations, useEventsQuery } from '../../../hooks/queries/useEventsQuery';
+import { useEventMutations, useEventsQuery, useWalkSessionQuery } from '../../../hooks/queries/useEventsQuery';
 import { ActionSheet, Avatar, Banner, Button, Card, DetailScreen, Dialog, EmptyState, FileItem, Icon, IconButton, MediaViewer, PremiumGate, Skeleton, TopBar, type OverlayActionItem } from '../../../shared/components/ui';
 import type { EventDocument } from '../../../models/EventDocument';
 import { deleteEventDocument, getEventDocumentUrl } from '../../../services/api/EventService';
@@ -19,6 +19,7 @@ import { pickEventImageDocuments, pickEventPdfDocuments } from '../components/Ev
 import { uploadPendingEventDocuments } from '../eventDocumentUpload';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { isPremiumSubscription } from '../../../shared/utils/subscriptionUtils';
+import { WalkRouteCard } from '../components/WalkRouteCard';
 
 type EventAction = 'edit' | 'duplicate' | 'share' | 'delete';
 type EventDeleteScope = 'occurrence' | 'following' | 'series';
@@ -37,14 +38,15 @@ const deleteScopes: readonly OverlayActionItem<EventDeleteScope>[] = [
 ];
 const actions: readonly OverlayActionItem<EventAction>[] = [{ id: 'edit', label: 'Modifier', description: 'Mettre à jour toutes les informations', icon: 'edit' }, { id: 'duplicate', label: 'Dupliquer', description: 'Créer une copie modifiable', icon: 'duplicate' }, { id: 'share', label: 'Partager', description: 'Envoyer avec les applications du téléphone', icon: 'share' }, { id: 'delete', label: 'Supprimer', description: 'Une confirmation sera demandée', icon: 'delete', tone: 'destructive' }];
 
-export interface EventDetailScreenProps { eventId: number; onBack: () => void; onDeleted: () => void; initialFeedback?: string; onEdit?: (id: number) => void; onDuplicate?: (id: number) => void; onShare?: (id: number) => void; onComparePlans?: () => void }
+export interface EventDetailScreenProps { eventId: number; onBack: () => void; onDeleted: () => void; initialFeedback?: string; onEdit?: (id: number) => void; onDuplicate?: (id: number) => void; onShare?: (id: number) => void; onComparePlans?: () => void; onStartWalk?: (id: number) => void }
 
-export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback, onEdit = () => undefined, onDuplicate = () => undefined, onShare = () => undefined, onComparePlans = () => undefined }: EventDetailScreenProps) {
+export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback, onEdit = () => undefined, onDuplicate = () => undefined, onShare = () => undefined, onComparePlans = () => undefined, onStartWalk = () => undefined }: EventDetailScreenProps) {
   const { colors } = useAppTheme();
   const premium = isPremiumSubscription(useAuthStore((state) => state.user?.subscription));
   const eventsQuery = useEventsQuery(); const animalsQuery = useAnimalsQuery(); const mutations = useEventMutations();
   const setFormData = useEventWizardStore((state) => state.setFormData); const resetWizard = useEventWizardStore((state) => state.reset);
   const event = (eventsQuery.data ?? []).find((item) => item.id === eventId);
+  const walkSession = useWalkSessionQuery(eventId, event?.eventtype === 'balade' && premium);
   const [actionsOpen, setActionsOpen] = useState(false); const [deleteOpen, setDeleteOpen] = useState(false); const [scopeOpen, setScopeOpen] = useState(false); const [deleteScopeOpen, setDeleteScopeOpen] = useState(false); const [deleteScope, setDeleteScope] = useState<EventDeleteScope>('occurrence');
   const [quickEditOpen, setQuickEditOpen] = useState(false);
   const [documentUploading, setDocumentUploading] = useState<EventDocumentUploadKind>();
@@ -154,6 +156,14 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
       </Card>
       {feedback ? <Banner tone={feedback.tone} title={feedback.title} message={feedback.message} onDismiss={() => setFeedback(undefined)} /> : null}
       {shareError ? <Banner tone="error" title="Partage impossible" message="Le menu de partage n’a pas pu être ouvert. Réessayez." onDismiss={() => setShareError(false)} /> : null}
+      {event.eventtype === 'balade' ? <>
+        <SectionTitle>Balade GPS</SectionTitle>
+        {!premium ? <PremiumGate title="Balades GPS Premium" message="L’enregistrement du tracé GPS, des statistiques et de la carte à partager nécessite un abonnement Premium." onComparePlans={onComparePlans} testID="event-detail-gps-premium" />
+          : walkSession.isPending ? <Skeleton type="card" density="comfortable" />
+          : walkSession.data?.status === 'finalized' ? <WalkRouteCard name={event.nom || 'Ma balade'} session={walkSession.data} />
+            : walkSession.data?.status === 'recording' ? <Card style={{ gap: spacing.sm }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Une balade est en cours</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Reprenez le suivi pour afficher le tracé en direct ou terminer l’enregistrement.</Text><Button label="Reprendre la balade" icon="compass" fullWidth onPress={() => onStartWalk(event.id)} /></Card>
+              : <Card style={{ gap: spacing.sm }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Enregistrer cette balade</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Le GPS créera le tracé, la distance, la durée et la vitesse moyenne. Le démarrage se fait uniquement depuis ce détail.</Text><Button label="Démarrer le suivi GPS" icon="compass" fullWidth onPress={() => onStartWalk(event.id)} testID="event-start-gps-walk" /></Card>}
+      </> : null}
       <SectionTitle action={<IconButton icon="edit" accessibilityLabel="Modifier le suivi" onPress={() => setQuickEditOpen(true)} variant="ghost" />}>Suivi rapide</SectionTitle>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
         {quickItems.map((item, index) => <QuickInfoCard key={item.label} label={item.label} value={item.value} fullWidth={quickItems.length % 2 === 1 && index === quickItems.length - 1} />)}

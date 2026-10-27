@@ -20,6 +20,7 @@ import {
   EventCreateOptionsScreen,
   EventCreateTypeScreen,
   EventDetailScreen,
+  WalkTrackingScreen,
   getInitialEventDate,
   isPremiumSubscription,
 } from "../../features/events";
@@ -147,6 +148,7 @@ export function MainNavigator() {
     | { name: "root" }
     | { name: "day"; date: string }
     | { name: "event"; eventId: number; feedback?: string }
+    | { name: "walkTracking"; eventId: number }
     | { name: "objective"; objectiveId: number; actionsOpen?: boolean }
     | { name: "objectiveForm"; mode: "create" | "edit"; objectiveId?: number }
     | { name: "notes" }
@@ -434,6 +436,7 @@ export function MainNavigator() {
         setRoute({ name: "eventDuplicateDetails", sourceEventId })
       }
       onComparePlans={() => setVisualTrackingPlans(true)}
+      onStartWalk={(id) => setRoute({ name: "walkTracking", eventId: id })}
     />
   );
   if (settingsOpen === "notifications")
@@ -1216,6 +1219,14 @@ export function MainNavigator() {
         </FormSheetHost>
       </>
     );
+  if (route.name === "walkTracking")
+    return (
+      <WalkTrackingScreen
+        eventId={route.eventId}
+        onBack={() => setRoute({ name: "event", eventId: route.eventId })}
+        onFinished={() => setRoute({ name: "event", eventId: route.eventId, feedback: "Le tracé GPS de la balade a bien été enregistré." })}
+      />
+    );
   if (route.name === "event")
     return (
       <EventDetailScreen
@@ -1228,6 +1239,7 @@ export function MainNavigator() {
           setRoute({ name: "eventDuplicateDetails", sourceEventId })
         }
         onComparePlans={() => setVisualTrackingPlans(true)}
+        onStartWalk={(id) => setRoute({ name: "walkTracking", eventId: id })}
       />
     );
   if (route.name === "objective") {

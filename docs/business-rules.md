@@ -74,6 +74,11 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant qu’auteur**, je souhaite enregistrer une dépense facultative sur tout type d’événement afin d’associer le coût à son contexte réel.
 - **En tant qu’auteur d’un événement Dépense**, je souhaite catégoriser ce montant afin de l’analyser dans les statistiques.
 - **En tant qu’auteur d’une balade, d’un entraînement ou d’un concours**, je souhaite attribuer une note entière facultative de 1 à 5 étoiles et pouvoir l’effacer afin d’évaluer l’activité sans valeur obligatoire.
+- **En tant qu’auteur Premium d’une balade**, je souhaite démarrer le GPS uniquement depuis le détail de l’événement afin d’enregistrer mon parcours sans alourdir sa création.
+- **En tant qu’utilisateur**, je souhaite que l’enregistrement continue écran verrouillé et soit conservé localement jusqu’à sa synchronisation afin de ne pas perdre une balade en cas de coupure réseau.
+- **En tant que personne ayant accès à la balade**, je souhaite consulter le tracé final, la distance, la durée et la vitesse moyenne, puis partager une carte Vasco.
+- Le partage masque par défaut les 150 premiers et derniers mètres. Cette protection ne modifie jamais le tracé privé enregistré et peut être désactivée explicitement avant le partage ; un trajet trop court est entièrement masqué sur le visuel partagé.
+- Une seule session GPS peut être active par auteur et une balade ne possède qu’un tracé. Le serveur calcule les métriques finales et ignore les points manifestement imprécis ou physiquement incohérents.
 
 ### État, rappels et récurrence
 
