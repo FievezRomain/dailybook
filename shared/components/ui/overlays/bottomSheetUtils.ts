@@ -17,6 +17,14 @@ export function getBottomSheetHeightWithinViewport(
   return Math.min(requestedHeight, availableHeight);
 }
 
+export function getBottomSheetHeightWithSafeArea(
+  requestedHeight: number,
+  bottomInset: number,
+  defaultBottomPadding: number,
+) {
+  return requestedHeight + Math.max(0, bottomInset - defaultBottomPadding);
+}
+
 export function getBottomSheetCommand(open: boolean, presented: boolean): BottomSheetCommand {
   if (open && !presented) return 'present';
   if (!open && presented) return 'dismiss';

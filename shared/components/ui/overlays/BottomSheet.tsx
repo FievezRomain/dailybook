@@ -12,7 +12,7 @@ import { componentTokens } from '../../../../theme/componentTokens';
 import type { Material } from '../../../../theme/materials';
 import { radii, spacing, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
-import { getBottomSheetCommand, getBottomSheetHeight, getBottomSheetHeightWithinViewport, type BottomSheetSize } from './bottomSheetUtils';
+import { getBottomSheetCommand, getBottomSheetHeight, getBottomSheetHeightWithSafeArea, getBottomSheetHeightWithinViewport, type BottomSheetSize } from './bottomSheetUtils';
 import { FormSheetSurface } from './FormSheetSurface';
 
 export interface VascoBottomSheetProps {
@@ -57,7 +57,8 @@ export function VascoBottomSheet({
   const { height: windowHeight } = useWindowDimensions();
   const { colors } = useAppTheme();
   const requestedHeight = height ?? getBottomSheetHeight(size);
-  const resolvedHeight = getBottomSheetHeightWithinViewport(requestedHeight, windowHeight, insets.top, spacing.md);
+  const safeAreaHeight = getBottomSheetHeightWithSafeArea(requestedHeight, insets.bottom, spacing.lg);
+  const resolvedHeight = getBottomSheetHeightWithinViewport(safeAreaHeight, windowHeight, insets.top, spacing.md);
   const snapPoints = useMemo(() => [resolvedHeight], [resolvedHeight]);
   const handleAreaHeight = formHandle ? componentTokens.formSheet.handleAreaHeight : componentTokens.bottomSheet.paddingTop + componentTokens.bottomSheet.handle.height;
 
