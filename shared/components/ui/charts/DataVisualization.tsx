@@ -23,6 +23,8 @@ export interface HeatmapDatum {
   column: string;
   value: number;
   periodKey?: string;
+  maxValue?: number;
+  valueLabel?: string;
 }
 export interface DataVisualizationProps {
   title: string;
@@ -62,9 +64,9 @@ export function DataVisualization({
         maxWidth: componentTokens.content.dataVisualization.width,
         minHeight: componentTokens.content.dataVisualization.height,
         height:
-          type === "heatmap"
-            ? undefined
-            : componentTokens.content.dataVisualization.height,
+          type === "line" || type === "bar"
+            ? componentTokens.content.dataVisualization.height
+            : undefined,
         gap: 10,
       }}
     >
@@ -80,7 +82,7 @@ export function DataVisualization({
       </Text>
       <View
         accessibilityElementsHidden={!onHeatmapPress && !onDataPress}
-        style={{ width: "100%", flex: 1 }}
+        style={{ width: "100%", flex: type === "line" || type === "bar" ? 1 : undefined }}
       >
         {state === "loading" ? (
           <ChartLoading />
@@ -256,14 +258,15 @@ function PiePlot({
 }) {
   const { colors } = useAppTheme();
   const generatedColors = generateDistinctChartColors(data.length);
+  const stackLegend = data.length > 5;
   const total =
     data.reduce((sum, item) => sum + Math.max(0, item.value), 0) || 1;
   let startAngle = -90;
   return (
     <View
       style={{
-        flex: 1,
-        flexDirection: "row",
+        width: "100%",
+        flexDirection: stackLegend ? "column" : "row",
         alignItems: "center",
         gap: spacing.xl,
       }}
@@ -284,7 +287,7 @@ function PiePlot({
           return slice;
         })}
       </Svg>
-      <View style={{ flex: 1, gap: spacing.sm }}>
+      <View style={{ width: stackLegend ? "100%" : undefined, flex: stackLegend ? undefined : 1, gap: spacing.sm }}>
         {data.map((item, index) => (
           <Pressable
             key={`${item.label}-${index}`}
@@ -341,7 +344,7 @@ function HeatmapPlot({ data, onPress }: { data: readonly HeatmapDatum[]; onPress
   const weekdays = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
   const weekly = dataColumns.every((column) => weekdays.includes(column));
   const columns = weekly ? weekdays : dataColumns;
-  const max = Math.max(1, ...data.map((item) => item.value));
+  const max = Math.max(1, ...data.map((item) => item.maxValue ?? item.value));
   return (
     <ScrollView
       horizontal
@@ -394,7 +397,7 @@ function HeatmapPlot({ data, onPress }: { data: readonly HeatmapDatum[]; onPress
                   key={column}
                   disabled={!item.value || !onPress}
                   accessibilityRole={item.value && onPress ? "button" : undefined}
-                  accessibilityLabel={`${row} ${column}, ${item.value} occurrence${item.value > 1 ? "s" : ""}`}
+                  accessibilityLabel={`${row} ${column}, ${item.valueLabel ?? `${item.value} occurrence${item.value > 1 ? "s" : ""}`}`}
                   accessibilityHint={item.value && onPress ? "Déplie les événements correspondants dans l’historique" : undefined}
                   onPress={() => onPress?.(item)}
                   style={({ pressed }) => ({

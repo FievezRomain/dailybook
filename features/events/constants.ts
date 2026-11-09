@@ -33,6 +33,12 @@ export const EXPENSE_CATEGORY_LIST: DropdownItem[] = [
   { title: 'Service de garde / Pension', id: 'garde' },
   { title: 'Formation', id: 'formation' },
   { title: 'Assurance', id: 'assurance' },
+  { title: 'Balade', id: 'balade' },
+  { title: 'Entraînement', id: 'entrainement' },
+  { title: 'Concours', id: 'concours' },
+  { title: 'Rendez-vous', id: 'rdv' },
+  { title: 'Soins', id: 'soins' },
+  { title: 'Autre', id: 'autre' },
 ];
 
 export const FREQUENCY_LIST: DropdownItem[] = [

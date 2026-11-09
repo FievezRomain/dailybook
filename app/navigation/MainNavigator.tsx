@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { View } from "react-native";
+import { createNativeStackNavigator, type NativeStackScreenProps } from "@react-navigation/native-stack";
 import { env } from "../../config/env";
 import {
   AnimalActionDialogs,
@@ -49,8 +50,6 @@ import {
   VoiceProcessingScreen,
   VoiceRecordingScreen,
   VoiceReviewScreen,
-  type VoiceNoteDraft,
-  type VoiceRecording,
 } from "../../features/notes";
 import { useNotesQuery } from "../../hooks/queries/useNotesQuery";
 import { VoiceUploadService } from "../../services/storage/VoiceUploadService";
@@ -87,9 +86,57 @@ import {
   SettingsHelpScreen,
 } from "../../features/settings";
 import { canCreateAnimal } from "../../shared/utils/subscriptionUtils";
+import {
+  useMainNavigationStore,
+  type CreateOrigin,
+} from "../../stores/useMainNavigationStore";
 
-type CreateOrigin = "root" | "notes" | "wishes" | "contacts" | "groups";
 type CreateOriginRoute = { name: "root" } | { name: "notes" } | { name: "wishes" } | { name: "contacts" } | { name: "groups" };
+type MainRoute =
+  | { name: "root" }
+  | { name: "day"; date: string }
+  | { name: "event"; eventId: number; feedback?: string }
+  | { name: "objective"; objectiveId: number; actionsOpen?: boolean }
+  | { name: "objectiveForm"; mode: "create" | "edit"; objectiveId?: number }
+  | { name: "notes" }
+  | { name: "note"; noteId: number }
+  | { name: "noteCreateChoice" }
+  | { name: "noteVoicePremium" }
+  | { name: "noteVoiceRecording" }
+  | { name: "noteVoiceProcessing" }
+  | { name: "noteVoiceReview" }
+  | { name: "noteForm"; mode: "create" | "edit"; noteId?: number }
+  | { name: "wishes" }
+  | { name: "wish"; wishId: number }
+  | { name: "wishForm"; mode: "create" | "edit"; wishId?: number }
+  | { name: "contacts" }
+  | { name: "contact"; contactId: number }
+  | { name: "contactForm"; mode: "create" | "edit"; contactId?: number }
+  | { name: "groups" }
+  | { name: "group"; groupId: number }
+  | { name: "groupInvitation"; invitationId: number }
+  | { name: "groupPremium" }
+  | { name: "animalPremium" }
+  | { name: "groupForm"; mode: "create" | "edit"; groupId?: number; initialStep?: 0 | 1 | 2; animalOnly?: boolean }
+  | { name: "animalForm"; mode: "create" | "edit"; animalId?: number }
+  | { name: "animalAction"; action: SensitiveAnimalAction; animalId: number }
+  | { name: "eventCreateEntry" }
+  | { name: "eventCreateType" }
+  | { name: "eventCreateDetails" }
+  | { name: "eventCreateAnimals" }
+  | { name: "eventCreateOptions" }
+  | { name: "eventCreateAiPremium" }
+  | { name: "eventCreateAiDescription" }
+  | { name: "eventCreateAiReview" }
+  | { name: "eventEditDetails"; eventId: number }
+  | { name: "eventEditAnimals"; eventId: number }
+  | { name: "eventEditOptions"; eventId: number }
+  | { name: "eventDuplicateDetails"; sourceEventId: number }
+  | { name: "eventDuplicateAnimals"; sourceEventId: number }
+  | { name: "eventDuplicateOptions"; sourceEventId: number };
+
+type MainStackParamList = { Route: { route: MainRoute } };
+const MainStack = createNativeStackNavigator<MainStackParamList>();
 
 function resolveCreateOrigin(routeName: string): CreateOrigin {
   if (routeName === "notes" || routeName === "wishes" || routeName === "contacts" || routeName === "groups") return routeName;
@@ -105,8 +152,56 @@ function routeForCreateOrigin(origin: CreateOrigin): CreateOriginRoute {
 }
 
 export function MainNavigator() {
-  const [tab, setTab] = useState<MainTabId>("home");
-  const [preferredAnimalId, setPreferredAnimalId] = useState<number>();
+  return (
+    <MainStack.Navigator
+      initialRouteName="Route"
+      screenOptions={{ headerShown: false, animation: "slide_from_right", gestureEnabled: true }}
+    >
+      <MainStack.Screen
+        name="Route"
+        component={MainRouteHost}
+        initialParams={{ route: { name: "root" } }}
+      />
+    </MainStack.Navigator>
+  );
+}
+
+function MainRouteHost({ navigation, route }: NativeStackScreenProps<MainStackParamList, "Route">) {
+  return (
+    <MainRouteScreen
+      initialRoute={route.params.route}
+      navigate={(nextRoute) => navigation.push("Route", { route: nextRoute })}
+      goBack={() => navigation.goBack()}
+      resetToRoot={() => navigation.popToTop()}
+    />
+  );
+}
+
+function MainRouteScreen({
+  initialRoute,
+  navigate,
+  goBack,
+  resetToRoot,
+}: {
+  initialRoute: MainRoute;
+  navigate: (route: MainRoute) => void;
+  goBack: () => void;
+  resetToRoot: () => void;
+}) {
+  const tab = useMainNavigationStore((state) => state.tab);
+  const setTab = useMainNavigationStore((state) => state.setTab);
+  const preferredAnimalId = useMainNavigationStore((state) => state.preferredAnimalId);
+  const setPreferredAnimalId = useMainNavigationStore((state) => state.setPreferredAnimalId);
+  const createOrigin = useMainNavigationStore((state) => state.createOrigin);
+  const setCreateOrigin = useMainNavigationStore((state) => state.setCreateOrigin);
+  const voiceRecording = useMainNavigationStore((state) => state.voiceRecording);
+  const setVoiceRecording = useMainNavigationStore((state) => state.setVoiceRecording);
+  const voiceDraft = useMainNavigationStore((state) => state.voiceDraft);
+  const setVoiceDraft = useMainNavigationStore((state) => state.setVoiceDraft);
+  const animalFeedback = useMainNavigationStore((state) => state.animalFeedback);
+  const setAnimalFeedback = useMainNavigationStore((state) => state.setAnimalFeedback);
+  const agendaFeedback = useMainNavigationStore((state) => state.agendaFeedback);
+  const setAgendaFeedback = useMainNavigationStore((state) => state.setAgendaFeedback);
   const [statisticsPlans, setStatisticsPlans] = useState(false);
   const [voicePlans, setVoicePlans] = useState(false);
   const [groupsPlans, setGroupsPlans] = useState(false);
@@ -127,10 +222,6 @@ export function MainNavigator() {
     | "privacy"
     | "help"
   >();
-  const [voiceRecording, setVoiceRecording] = useState<VoiceRecording>();
-  const [voiceDraft, setVoiceDraft] = useState<VoiceNoteDraft>();
-  const [animalFeedback, setAnimalFeedback] = useState<string>();
-  const [agendaFeedback, setAgendaFeedback] = useState<string>();
   const resetWizard = useEventWizardStore((state) => state.reset);
   const setEventWizardFormData = useEventWizardStore((state) => state.setFormData);
   const resetAnimalWizard = useAnimalWizardStore((state) => state.reset);
@@ -143,61 +234,13 @@ export function MainNavigator() {
   const user = useAuthStore((state) => state.user);
   const premium = isPremiumSubscription(user?.subscription);
   const groupItems = useGroupsQuery().data ?? [];
-  const [route, setRoute] = useState<
-    | { name: "root" }
-    | { name: "day"; date: string }
-    | { name: "event"; eventId: number; feedback?: string }
-    | { name: "objective"; objectiveId: number; actionsOpen?: boolean }
-    | { name: "objectiveForm"; mode: "create" | "edit"; objectiveId?: number }
-    | { name: "notes" }
-    | { name: "note"; noteId: number }
-    | { name: "noteCreateChoice" }
-    | { name: "noteVoicePremium" }
-    | { name: "noteVoiceRecording" }
-    | { name: "noteVoiceProcessing" }
-    | { name: "noteVoiceReview" }
-    | { name: "noteForm"; mode: "create" | "edit"; noteId?: number }
-    | { name: "wishes" }
-    | { name: "wish"; wishId: number }
-    | { name: "wishForm"; mode: "create" | "edit"; wishId?: number }
-    | { name: "contacts" }
-    | { name: "contact"; contactId: number }
-    | { name: "contactForm"; mode: "create" | "edit"; contactId?: number }
-    | { name: "groups" }
-    | { name: "group"; groupId: number }
-    | { name: "groupInvitation"; invitationId: number }
-    | { name: "groupPremium" }
-    | { name: "animalPremium" }
-    | {
-        name: "groupForm";
-        mode: "create" | "edit";
-        groupId?: number;
-        initialStep?: 0 | 1 | 2;
-        animalOnly?: boolean;
-      }
-    | { name: "animalForm"; mode: "create" | "edit"; animalId?: number }
-    | { name: "animalAction"; action: SensitiveAnimalAction; animalId: number }
-    | { name: "eventCreateEntry" }
-    | { name: "eventCreateType" }
-    | { name: "eventCreateDetails" }
-    | { name: "eventCreateAnimals" }
-    | { name: "eventCreateOptions" }
-    | { name: "eventCreateAiPremium" }
-    | { name: "eventCreateAiDescription" }
-    | { name: "eventCreateAiReview" }
-    | { name: "eventEditDetails"; eventId: number }
-    | { name: "eventEditAnimals"; eventId: number }
-    | { name: "eventEditOptions"; eventId: number }
-    | { name: "eventDuplicateDetails"; sourceEventId: number }
-    | { name: "eventDuplicateAnimals"; sourceEventId: number }
-    | { name: "eventDuplicateOptions"; sourceEventId: number }
-  >({ name: "root" });
-  const [createOrigin, setCreateOrigin] = useState<CreateOrigin>("root");
+  const route = initialRoute;
+  const setRoute = navigate;
   const selectTab = (next: MainTabId) => {
     setNotificationsOpen(false);
     setSettingsOpen(undefined);
     setTab(next);
-    setRoute({ name: "root" });
+    resetToRoot();
   };
   const openNotifications = () => setNotificationsOpen(true);
   const openSettings = () => {
@@ -271,7 +314,7 @@ export function MainNavigator() {
   const agenda = () => {
     resetWizard();
     setTab("agenda");
-    setRoute({ name: "root" });
+    resetToRoot();
   };
   const tracking = () => (
     <TrackingScreen
@@ -290,7 +333,7 @@ export function MainNavigator() {
   );
   const notes = () => (
     <NotesListScreen
-      onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
+      onBack={goBack}
       onSelectTab={selectTab}
       onOpenNote={(noteId) => setRoute({ name: "note", noteId })}
       onCreateNote={() => create("note")}
@@ -301,7 +344,7 @@ export function MainNavigator() {
   );
   const wishes = () => (
     <WishesListScreen
-      onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
+      onBack={goBack}
       activeMainTab={tab}
       onSelectTab={selectTab}
       onOpenWish={(wishId) => setRoute({ name: "wish", wishId })}
@@ -313,7 +356,7 @@ export function MainNavigator() {
   );
   const contacts = () => (
     <ContactsListScreen
-      onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
+      onBack={goBack}
       onSelectTab={selectTab}
       onOpenContact={(contactId) => setRoute({ name: "contact", contactId })}
       onCreateContact={() => create("contact")}
@@ -324,7 +367,7 @@ export function MainNavigator() {
   );
   const groups = () => (
     <GroupsListScreen
-      onBack={() => { setTab("more"); setRoute({ name: "root" }); }}
+      onBack={goBack}
       onSelectTab={selectTab}
       onOpenGroup={(groupId) => setRoute({ name: "group", groupId })}
       onOpenInvitation={(invitationId) =>
@@ -422,12 +465,12 @@ export function MainNavigator() {
     return rootContext();
   };
   const returnToCreateOrigin = () => {
-    setRoute(routeForCreateOrigin(createOrigin));
+    goBack();
   };
   const eventContext = (eventId: number) => (
     <EventDetailScreen
       eventId={eventId}
-      onBack={() => setRoute({ name: "root" })}
+      onBack={goBack}
       onDeleted={() => setRoute({ name: "root" })}
       onEdit={(id) => setRoute({ name: "eventEditDetails", eventId: id })}
       onDuplicate={(sourceEventId) =>
@@ -572,7 +615,7 @@ export function MainNavigator() {
     const background = selectedGroup ? (
       <GroupDetailScreen
         groupId={selectedGroup.id}
-        onBack={() => setRoute({ name: "groups" })}
+        onBack={goBack}
         onEdit={() => undefined}
         onDeleted={() => setRoute({ name: "groups" })}
         onAddMember={() => undefined}
@@ -607,7 +650,7 @@ export function MainNavigator() {
     return (
       <GroupInvitationScreen
         invitationId={route.invitationId}
-        onBack={() => setRoute({ name: "groups" })}
+        onBack={goBack}
         onAccepted={() => setRoute({ name: "groups" })}
         onDeclined={() => setRoute({ name: "groups" })}
       />
@@ -616,7 +659,7 @@ export function MainNavigator() {
     return (
       <GroupDetailScreen
         groupId={route.groupId}
-        onBack={() => setRoute({ name: "groups" })}
+        onBack={goBack}
         onEdit={() =>
           setRoute(
             premium
@@ -672,7 +715,7 @@ export function MainNavigator() {
     return (
       <PremiumRequiredPattern
         feature="voiceNotes"
-        onBack={() => setRoute({ name: "noteCreateChoice" })}
+        onBack={goBack}
         onComparePlans={() => setVoicePlans(true)}
         testID="voice-premium-required"
       />
@@ -731,7 +774,7 @@ export function MainNavigator() {
         {route.noteId ? (
           <NoteDetailScreen
             noteId={route.noteId}
-            onBack={() => setRoute({ name: "root" })}
+            onBack={goBack}
             onEdit={() => undefined}
             onDeleted={() => setRoute({ name: "root" })}
           />
@@ -761,7 +804,7 @@ export function MainNavigator() {
       <WishDetailScreen
         wishId={selectedWish.id}
         activeTab={tab}
-        onBack={() => setRoute({ name: "wishes" })}
+        onBack={goBack}
         onEdit={() => undefined}
         onDeleted={() => setRoute({ name: "wishes" })}
         onSelectTab={selectTab}
@@ -792,7 +835,7 @@ export function MainNavigator() {
       <WishDetailScreen
         wishId={route.wishId}
         activeTab={tab}
-        onBack={() => setRoute({ name: "wishes" })}
+        onBack={goBack}
         onEdit={() =>
           setRoute({ name: "wishForm", mode: "edit", wishId: route.wishId })
         }
@@ -809,7 +852,7 @@ export function MainNavigator() {
       <ContactDetailScreen
         contactId={selectedContact.id}
         activeTab={tab}
-        onBack={() => setRoute({ name: "contacts" })}
+        onBack={goBack}
         onEdit={() => undefined}
         onDeleted={() => setRoute({ name: "contacts" })}
         onSelectTab={selectTab}
@@ -844,7 +887,7 @@ export function MainNavigator() {
       <ContactDetailScreen
         contactId={route.contactId}
         activeTab={tab}
-        onBack={() => setRoute({ name: "contacts" })}
+        onBack={goBack}
         onEdit={() =>
           setRoute({
             name: "contactForm",
@@ -866,7 +909,7 @@ export function MainNavigator() {
       <ObjectiveDetailScreen
         objective={objective}
         animals={animals}
-        onBack={() => setRoute({ name: "root" })}
+        onBack={goBack}
         onEdit={() => undefined}
         onDeleted={() => setRoute({ name: "root" })}
         onDuplicate={() => undefined}
@@ -966,9 +1009,7 @@ export function MainNavigator() {
         <FormSheetHost>
           <EventCreateOptionsScreen
             eventId={route.eventId}
-            onBack={() =>
-              setRoute({ name: "eventEditAnimals", eventId: route.eventId })
-            }
+            onBack={goBack}
             onClose={() => setRoute({ name: "event", eventId: route.eventId })}
             onCreated={(eventId) => {
               resetWizard();
@@ -988,9 +1029,7 @@ export function MainNavigator() {
         {eventContext(route.eventId)}
         <FormSheetHost>
           <EventCreateAnimalsScreen
-            onBack={() =>
-              setRoute({ name: "eventEditDetails", eventId: route.eventId })
-            }
+            onBack={goBack}
             onClose={() => setRoute({ name: "event", eventId: route.eventId })}
             onContinue={() =>
               setRoute({ name: "eventEditOptions", eventId: route.eventId })
@@ -1006,7 +1045,7 @@ export function MainNavigator() {
         <FormSheetHost>
           <EventCreateDetailsScreen
             onComparePlans={() => setVisualTrackingPlans(true)}
-            onBack={() => setRoute({ name: "event", eventId: route.eventId })}
+            onBack={goBack}
             onClose={() => setRoute({ name: "event", eventId: route.eventId })}
             onContinue={() =>
               setRoute({ name: "eventEditAnimals", eventId: route.eventId })
@@ -1021,12 +1060,7 @@ export function MainNavigator() {
         {eventContext(route.sourceEventId)}
         <FormSheetHost>
           <EventCreateOptionsScreen
-            onBack={() =>
-              setRoute({
-                name: "eventDuplicateAnimals",
-                sourceEventId: route.sourceEventId,
-              })
-            }
+            onBack={goBack}
             onClose={() =>
               setRoute({ name: "event", eventId: route.sourceEventId })
             }
@@ -1044,12 +1078,7 @@ export function MainNavigator() {
         {eventContext(route.sourceEventId)}
         <FormSheetHost>
           <EventCreateAnimalsScreen
-            onBack={() =>
-              setRoute({
-                name: "eventDuplicateDetails",
-                sourceEventId: route.sourceEventId,
-              })
-            }
+            onBack={goBack}
             onClose={() =>
               setRoute({ name: "event", eventId: route.sourceEventId })
             }
@@ -1070,9 +1099,7 @@ export function MainNavigator() {
         <FormSheetHost>
           <EventCreateDetailsScreen
             onComparePlans={() => setVisualTrackingPlans(true)}
-            onBack={() =>
-              setRoute({ name: "event", eventId: route.sourceEventId })
-            }
+            onBack={goBack}
             onClose={() =>
               setRoute({ name: "event", eventId: route.sourceEventId })
             }
@@ -1090,7 +1117,7 @@ export function MainNavigator() {
     return (
       <PremiumRequiredPattern
         feature="aiCreation"
-        onBack={() => setRoute({ name: "eventCreateEntry" })}
+        onBack={goBack}
         onComparePlans={() => undefined}
       />
     );
@@ -1100,7 +1127,7 @@ export function MainNavigator() {
         {createBackground()}
         <FormSheetHost>
           <EventCreateAiReviewScreen
-            onBack={() => setRoute({ name: "eventCreateAiDescription" })}
+            onBack={goBack}
             onClose={() => {
               resetWizard();
               returnToCreateOrigin();
@@ -1117,7 +1144,7 @@ export function MainNavigator() {
         {createBackground()}
         <FormSheetHost>
           <EventCreateAiDescriptionScreen
-            onBack={() => setRoute({ name: "eventCreateEntry" })}
+            onBack={goBack}
             onClose={() => {
               resetWizard();
               returnToCreateOrigin();
@@ -1133,7 +1160,7 @@ export function MainNavigator() {
         {createBackground()}
         <FormSheetHost>
           <EventCreateOptionsScreen
-            onBack={() => setRoute({ name: "eventCreateAnimals" })}
+            onBack={goBack}
             onClose={() => {
               resetWizard();
               returnToCreateOrigin();
@@ -1152,7 +1179,7 @@ export function MainNavigator() {
         {createBackground()}
         <FormSheetHost>
           <EventCreateAnimalsScreen
-            onBack={() => setRoute({ name: "eventCreateDetails" })}
+            onBack={goBack}
             onClose={() => {
               resetWizard();
               returnToCreateOrigin();
@@ -1169,7 +1196,7 @@ export function MainNavigator() {
         <FormSheetHost>
           <EventCreateDetailsScreen
             onComparePlans={() => setVisualTrackingPlans(true)}
-            onBack={() => setRoute({ name: "eventCreateType" })}
+            onBack={goBack}
             onClose={() => {
               resetWizard();
               returnToCreateOrigin();
@@ -1185,10 +1212,7 @@ export function MainNavigator() {
         {createBackground()}
         <FormSheetHost>
           <EventCreateTypeScreen
-            onBack={() => env.INTELLIGENT_FEATURES_ENABLED
-              ? setRoute({ name: "eventCreateEntry" })
-              : returnToCreateOrigin()
-            }
+            onBack={goBack}
             onClose={() => {
               resetWizard();
               returnToCreateOrigin();
@@ -1221,7 +1245,7 @@ export function MainNavigator() {
       <EventDetailScreen
         eventId={route.eventId}
         initialFeedback={route.feedback}
-        onBack={() => setRoute({ name: "root" })}
+        onBack={goBack}
         onDeleted={() => setRoute({ name: "root" })}
         onEdit={(eventId) => setRoute({ name: "eventEditDetails", eventId })}
         onDuplicate={(sourceEventId) =>
@@ -1238,7 +1262,7 @@ export function MainNavigator() {
         objective={objective}
         animals={animals}
         initialActionsOpen={route.actionsOpen}
-        onBack={() => setRoute({ name: "root" })}
+        onBack={goBack}
         onEdit={() =>
           setRoute({
             name: "objectiveForm",
@@ -1261,7 +1285,7 @@ export function MainNavigator() {
     return (
       <NoteDetailScreen
         noteId={route.noteId}
-        onBack={() => setRoute({ name: "root" })}
+        onBack={goBack}
         onEdit={() =>
           setRoute({ name: "noteForm", mode: "edit", noteId: route.noteId })
         }
@@ -1272,7 +1296,7 @@ export function MainNavigator() {
     return (
       <DayAgendaScreen
         date={route.date}
-        onBack={() => setRoute({ name: "root" })}
+        onBack={goBack}
         onSelectTab={selectTab}
         onOpenEvent={(eventId) => setRoute({ name: "event", eventId })}
       />

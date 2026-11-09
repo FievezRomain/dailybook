@@ -36,20 +36,29 @@ export async function pickEventImageDocuments(): Promise<EventDocumentPickResult
     if (!permission.granted) throw new Error('Autorisez Vasco à accéder à vos photos pour joindre une image.');
     const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsMultipleSelection: true, quality: 1 });
     if (result.canceled) return { documents: [] };
-    const supported = result.assets.filter((asset) => asset.mimeType === 'image/jpeg' || asset.mimeType === 'image/png');
     return {
-      documents: supported.map((asset, index) => ({
-        name: asset.fileName ?? `document-medical-${Date.now()}-${index}.${asset.mimeType === 'image/png' ? 'png' : 'jpg'}`,
+      documents: result.assets.map((asset, index) => ({
+        name: asset.fileName ?? `document-medical-${Date.now()}-${index}.jpg`,
         localUri: asset.uri,
-        mimeType: asset.mimeType!,
+        mimeType: inferImageMimeType(asset.mimeType, asset.fileName),
         size: asset.fileSize,
       })),
-      warning: supported.length !== result.assets.length ? 'Seules les images JPEG et PNG sont acceptées.' : undefined,
     };
   } catch (error) {
     if (error instanceof Error) throw error;
     throw new Error('Impossible d’ouvrir la photothèque. Réessayez.');
   }
+}
+
+function inferImageMimeType(mimeType?: string | null, fileName?: string | null): string {
+  if (mimeType?.startsWith('image/')) return mimeType;
+  const extension = fileName?.split('.').at(-1)?.toLocaleLowerCase('en-US');
+  if (extension === 'heic') return 'image/heic';
+  if (extension === 'heif') return 'image/heif';
+  if (extension === 'avif') return 'image/avif';
+  if (extension === 'webp') return 'image/webp';
+  if (extension === 'png') return 'image/png';
+  return 'image/jpeg';
 }
 
 export function EventDocumentPicker({ documents, onChange, disabled = false }: EventDocumentPickerProps) {

@@ -2,13 +2,14 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Image } from 'react-native';
 
-export type ImageUploadKind = 'profile' | 'animal' | 'body' | 'wish';
+export type ImageUploadKind = 'profile' | 'animal' | 'body' | 'wish' | 'event';
 
 const POLICIES: Record<ImageUploadKind, { maxDimension: number; maxBytes: number }> = {
   profile: { maxDimension: 1200, maxBytes: 500 * 1024 },
   animal: { maxDimension: 1200, maxBytes: 500 * 1024 },
   body: { maxDimension: 1600, maxBytes: 1024 * 1024 },
   wish: { maxDimension: 1600, maxBytes: 750 * 1024 },
+  event: { maxDimension: 2000, maxBytes: 3 * 1024 * 1024 },
 };
 
 export interface PreparedImageUpload {

@@ -190,7 +190,8 @@ export const FileService = {
     const imageKinds: Partial<Record<RessourceType, ImageUploadKind>> = {
       user: 'profile', animal: 'animal', body: 'body', wish: 'wish',
     };
-    const imageKind = imageKinds[ressourceType];
+    const imageKind = imageKinds[ressourceType]
+      ?? (ressourceType === 'event' && contentType.startsWith('image/') ? 'event' : undefined);
     const prepared = imageKind
       ? await prepareImageUpload({ uri: fileUri }, imageKind)
       : { uri: fileUri, contentType, sizeBytes: sizeBytes ?? await getLocalFileSize(fileUri) };

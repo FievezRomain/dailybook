@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
 import { useNotificationsQuery } from "../../../hooks/queries/useNotificationsQuery";
 import { useObjectifsQuery } from "../../../hooks/queries/useObjectifsQuery";
@@ -52,6 +53,11 @@ import {
 import { isObjectiveExpired, isObjectiveInProgress } from "../objectiveUtils";
 
 type TrackingTab = "objectives" | "statistics";
+type TrackingStackParamList = {
+  overview: undefined;
+  statistic: { type: StatisticDetailType };
+};
+const TrackingStack = createNativeStackNavigator<TrackingStackParamList>();
 export interface TrackingScreenProps {
   material?: Material;
   canAccessStatistics: boolean;
@@ -93,8 +99,6 @@ export function TrackingScreen({
   const [statisticsPeriod, setStatisticsPeriod] =
     useState<StatisticsPeriod>("month");
   const [statisticsAnchor, setStatisticsAnchor] = useState(() => new Date());
-  const [selectedStatistic, setSelectedStatistic] =
-    useState<StatisticDetailType>();
   const [historyExpanded, setHistoryExpanded] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const animals = sortAnimalsForWorkspace(animalsQuery.data ?? []);
@@ -138,7 +142,6 @@ export function TrackingScreen({
     ? notificationsQuery.data
     : [];
   const selectTrackingTab = (tab: TrackingTab) => {
-    setSelectedStatistic(undefined);
     setActiveTab(tab);
   };
   const refresh = () =>
@@ -180,44 +183,18 @@ export function TrackingScreen({
     statisticsAnchor,
   );
 
-  if (selectedStatistic)
-    return (
-      <StatisticDetailScreen
-        type={selectedStatistic}
-        animalIds={selectedAnimalIds}
-        hasSharedAnimal={hasSharedStatisticsAnimal}
-        animalSelector={
-          <AnimalFilter
-            mode="multiple"
-            animals={presentAnimals}
-            historicalAnimals={historicalAnimals}
-            selectedAnimalIds={
-              statisticsAnimalSelection === "all"
-                ? []
-                : statisticsAnimalSelection
-            }
-            allSelected={statisticsAnimalSelection === "all"}
-            historyExpanded={historyExpanded}
-            onToggle={toggleStatisticAnimal}
-            onSelectAll={() => setStatisticsAnimalSelection("all")}
-            onToggleHistory={() => setHistoryExpanded((value) => !value)}
-          />
-        }
-        period={statisticsPeriod}
-        periodAnchor={statisticsAnchor}
-        periodLabel={statisticsRangeLabel}
-        periodNextDisabled={statisticsNextDisabled}
-        material={material}
-        onPeriodChange={changeStatisticsPeriod}
-        onPreviousPeriod={() => moveStatisticsPeriod(-1)}
-        onNextPeriod={() => moveStatisticsPeriod(1)}
-        onOpenEvent={onOpenEvent}
-        onBack={() => setSelectedStatistic(undefined)}
-      />
-    );
-
   return (
-    <>
+    <TrackingStack.Navigator
+      initialRouteName="overview"
+      screenOptions={{
+        headerShown: false,
+        animation: "slide_from_right",
+        gestureEnabled: true,
+      }}
+    >
+      <TrackingStack.Screen name="overview">
+        {({ navigation }) => (
+          <>
       <RootScreen
         header={
           <TopBar
@@ -310,7 +287,7 @@ export function TrackingScreen({
             onPeriodChange={changeStatisticsPeriod}
             onPreviousPeriod={() => moveStatisticsPeriod(-1)}
             onNextPeriod={() => moveStatisticsPeriod(1)}
-            onOpenDetail={setSelectedStatistic}
+            onOpenDetail={(type) => navigation.navigate("statistic", { type })}
           />
         ) : (
           <ObjectivesContent
@@ -331,7 +308,46 @@ export function TrackingScreen({
         onSelect={selectCreate}
         material={material}
       />
-    </>
+          </>
+        )}
+      </TrackingStack.Screen>
+      <TrackingStack.Screen name="statistic">
+        {({ navigation, route }) => (
+          <StatisticDetailScreen
+            type={route.params.type}
+            animalIds={selectedAnimalIds}
+            hasSharedAnimal={hasSharedStatisticsAnimal}
+            animalSelector={
+              <AnimalFilter
+                mode="multiple"
+                animals={presentAnimals}
+                historicalAnimals={historicalAnimals}
+                selectedAnimalIds={
+                  statisticsAnimalSelection === "all"
+                    ? []
+                    : statisticsAnimalSelection
+                }
+                allSelected={statisticsAnimalSelection === "all"}
+                historyExpanded={historyExpanded}
+                onToggle={toggleStatisticAnimal}
+                onSelectAll={() => setStatisticsAnimalSelection("all")}
+                onToggleHistory={() => setHistoryExpanded((value) => !value)}
+              />
+            }
+            period={statisticsPeriod}
+            periodAnchor={statisticsAnchor}
+            periodLabel={statisticsRangeLabel}
+            periodNextDisabled={statisticsNextDisabled}
+            material={material}
+            onPeriodChange={changeStatisticsPeriod}
+            onPreviousPeriod={() => moveStatisticsPeriod(-1)}
+            onNextPeriod={() => moveStatisticsPeriod(1)}
+            onOpenEvent={onOpenEvent}
+            onBack={() => navigation.goBack()}
+          />
+        )}
+      </TrackingStack.Screen>
+    </TrackingStack.Navigator>
   );
 }
 
