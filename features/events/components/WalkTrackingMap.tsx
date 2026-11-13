@@ -68,9 +68,9 @@ export function WalkTrackingMap({ points, plannedPoints = [] }: { points: WalkPo
         testID="walk-tracking-map"
       >
         {useIgnPlan ? <UrlTile urlTemplate={IGN_PLAN_TILE_URL} maximumZ={18} tileSize={256} /> : null}
-        {plannedCoordinates.length > 1 ? <Polyline coordinates={plannedCoordinates} strokeColor={colors.textSecondary} strokeWidth={4} lineDashPattern={[10, 7]} lineCap="round" lineJoin="round" /> : null}
+        {plannedCoordinates.length > 1 ? <Polyline coordinates={plannedCoordinates} strokeColor={colors.textSecondary} strokeWidth={3} lineDashPattern={[10, 7]} lineCap="round" lineJoin="round" /> : null}
         {coordinates.length > 1 ? <Marker coordinate={first} title="Départ de la balade" pinColor={colors.success} /> : null}
-        {coordinates.length > 1 ? <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={5} lineCap="round" lineJoin="round" /> : null}
+        {coordinates.length > 1 ? <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={4} lineCap="round" lineJoin="round" /> : null}
         {latest ? <Marker coordinate={latest} title="Dernière position enregistrée" pinColor={colors.primary} /> : null}
       </MapView>
     </View>

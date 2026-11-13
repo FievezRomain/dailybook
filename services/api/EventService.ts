@@ -1,6 +1,6 @@
 import httpClient from './httpClient';
 import { createCrudService } from './factory';
-import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type AgendaHighlight, type GenerateWalkRouteProposalsInput, type WalkPoint, type WalkRoutePlan, type WalkRouteProposal, type WalkSession } from '../../features/events/types';
+import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type AgendaHighlight, type CustomizeWalkRouteInput, type GenerateWalkRouteProposalsInput, type WalkPoint, type WalkRoutePlan, type WalkRouteProposal, type WalkSession } from '../../features/events/types';
 import { Event } from '../../models/Event';
 import { FileService, fileDownloadKey } from './FileService';
 
@@ -92,6 +92,13 @@ export async function generateWalkRouteProposals(
   input: GenerateWalkRouteProposalsInput,
 ): Promise<WalkRouteProposal[]> {
   return (await httpClient.post(`/events/${eventId}/walk-route-proposals`, input)).data;
+}
+
+export async function customizeWalkRoute(
+  eventId: number,
+  input: CustomizeWalkRouteInput,
+): Promise<WalkRouteProposal> {
+  return (await httpClient.post(`/events/${eventId}/walk-route-customization`, input)).data;
 }
 
 export async function getWalkRoutePlan(eventId: number): Promise<WalkRoutePlan> {

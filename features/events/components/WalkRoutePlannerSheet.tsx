@@ -7,7 +7,7 @@ import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { useWalkRoutePlanMutations } from '../../../hooks/queries/useEventsQuery';
 import { parseApiError } from '../../../utils/errorParser';
-import type { WalkRoutePlan, WalkRouteProposal } from '../types';
+import type { WalkRoutePlan, WalkRoutePoint, WalkRouteProposal } from '../types';
 import {
   DEFAULT_WALK_ROUTE_FILTERS,
   buildWalkRouteFilterPayload,
@@ -21,6 +21,12 @@ const ROUTE_TYPE_OPTIONS = [
   { value: 'one_way' as const, label: 'Aller simple' },
 ];
 const PROPOSALS_PER_PAGE = 3;
+type RouteEditorMode = 'via' | 'avoid';
+
+function representativeRoutePoints(points: WalkRoutePoint[]) {
+  if (points.length < 4) return points.slice(1, -1);
+  return [0.25, 0.5, 0.75].map((ratio) => points[Math.min(points.length - 2, Math.round((points.length - 1) * ratio))]);
+}
 
 function distanceLabel(meters: number) {
   return `${(meters / 1_000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} km`;
@@ -151,9 +157,27 @@ export function WalkRoutePlannerSheet({
   const [proposals, setProposals] = useState<WalkRouteProposal[]>([]);
   const [selectedProposalIndex, setSelectedProposalIndex] = useState(0);
   const [proposalPage, setProposalPage] = useState(0);
+  const [editorRoute, setEditorRoute] = useState<WalkRouteProposal>();
+  const [editorOriginal, setEditorOriginal] = useState<WalkRouteProposal>();
+  const [editorHistory, setEditorHistory] = useState<WalkRouteProposal[]>([]);
+  const [editorMode, setEditorMode] = useState<RouteEditorMode>('via');
+  const [editorPoint, setEditorPoint] = useState<WalkRoutePoint>();
   const [error, setError] = useState<string>();
   const locationRef = useRef<{ latitude: number; longitude: number } | undefined>(undefined);
   const generationRef = useRef(0);
+
+  const locateStart = useCallback(async () => {
+    const cached = locationRef.current;
+    if (cached) return cached;
+    const permission = await Location.requestForegroundPermissionsAsync();
+    if (permission.status !== Location.PermissionStatus.GRANTED) {
+      throw new Error('Autorisez la localisation pour préparer un itinéraire autour de votre position.');
+    }
+    const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+    const start = { latitude: location.coords.latitude, longitude: location.coords.longitude };
+    locationRef.current = start;
+    return start;
+  }, []);
 
   const generate = useCallback(async () => {
     const validationError = validateWalkRouteFilters(filters);
@@ -166,17 +190,7 @@ export function WalkRoutePlannerSheet({
     setError(undefined);
     setProposals([]);
     try {
-      let start = locationRef.current;
-      if (!start) {
-        const permission = await Location.requestForegroundPermissionsAsync();
-        if (permission.status !== Location.PermissionStatus.GRANTED) {
-          setError('Autorisez la localisation pour proposer des itinéraires autour de votre position.');
-          return;
-        }
-        const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-        start = { latitude: location.coords.latitude, longitude: location.coords.longitude };
-        locationRef.current = start;
-      }
+      const start = await locateStart();
       const routes = await proposeRoutes({
         start_latitude: start.latitude,
         start_longitude: start.longitude,
@@ -195,7 +209,81 @@ export function WalkRoutePlannerSheet({
     } catch (generationError) {
       if (generationRef.current === generation) setError(parseApiError(generationError).message);
     }
-  }, [avoidRoads, avoidWater, filters, preferScenic, proposeRoutes, routeType]);
+  }, [avoidRoads, avoidWater, filters, locateStart, preferScenic, proposeRoutes, routeType]);
+
+  const openEditor = (proposal: WalkRouteProposal) => {
+    setEditorRoute(proposal);
+    setEditorOriginal(proposal);
+    setEditorHistory([]);
+    setEditorMode('via');
+    setEditorPoint(undefined);
+    setError(undefined);
+  };
+
+  const createCustomRoute = async () => {
+    setError(undefined);
+    try {
+      const start = await locateStart();
+      const target = buildWalkRouteFilterPayload(filters).target_distance_meters;
+      openEditor({
+        provider: 'vasco-custom',
+        name: 'Mon tracé',
+        route_type: routeType,
+        avoid_roads: avoidRoads,
+        avoid_water: avoidWater,
+        prefer_scenic: preferScenic,
+        highlights: [],
+        points: [start, { ...start }],
+        distance_meters: 0,
+        duration_seconds: 0,
+        target_distance_meters: target,
+        attribution: 'Vasco · tracé personnalisé recalculé avec IGN — Géoplateforme',
+        official: false,
+      });
+    } catch (locationError) {
+      setError(locationError instanceof Error ? locationError.message : 'La position actuelle est indisponible.');
+    }
+  };
+
+  const recalculateEditorRoute = async () => {
+    if (!editorRoute || !editorPoint) return;
+    setError(undefined);
+    const isEmptyDraft = editorRoute.distance_meters === 0;
+    const start = editorRoute.points[0];
+    const controlPoints = isEmptyDraft
+      ? editorRoute.route_type === 'loop'
+        ? [start, editorPoint, start]
+        : [start, editorPoint]
+      : undefined;
+    try {
+      const customized = await mutations.customize.mutateAsync({
+        points: isEmptyDraft ? [] : editorRoute.points,
+        control_points: controlPoints,
+        ...(isEmptyDraft ? {} : editorMode === 'via' ? { via_point: editorPoint } : { avoid_point: editorPoint }),
+        route_type: editorRoute.route_type,
+        avoid_roads: editorRoute.avoid_roads,
+        avoid_water: editorRoute.avoid_water,
+        prefer_scenic: editorRoute.prefer_scenic,
+        target_distance_meters: editorRoute.target_distance_meters,
+        attribution: editorRoute.attribution,
+        license: editorRoute.license,
+        source_url: editorRoute.source_url,
+      });
+      setEditorHistory((history) => [...history, editorRoute]);
+      setEditorRoute(customized);
+      setEditorPoint(undefined);
+    } catch (customizationError) {
+      setError(parseApiError(customizationError).message);
+    }
+  };
+
+  const closeEditor = () => {
+    setEditorRoute(undefined);
+    setEditorOriginal(undefined);
+    setEditorHistory([]);
+    setEditorPoint(undefined);
+    setError(undefined);
+  };
 
   const choose = async (proposal: WalkRouteProposal) => {
     setError(undefined);
@@ -217,26 +305,73 @@ export function WalkRoutePlannerSheet({
 
   const selectedProposal = proposals[selectedProposalIndex];
   const showingResults = proposals.length > 0;
+  const showingEditor = Boolean(editorRoute);
   const proposalPageCount = Math.ceil(proposals.length / PROPOSALS_PER_PAGE);
   const proposalPageStart = proposalPage * PROPOSALS_PER_PAGE;
   const visibleProposals = proposals.slice(proposalPageStart, proposalPageStart + PROPOSALS_PER_PAGE);
 
   return <FormSheet
-    title={showingResults ? 'Choisir un itinéraire' : currentPlan ? 'Changer d’itinéraire' : 'Préparer la balade'}
-    onBack={showingResults ? returnToCriteria : onClose}
+    title={showingEditor ? editorOriginal?.distance_meters ? 'Modifier le tracé' : 'Créer mon tracé' : showingResults ? 'Choisir un itinéraire' : currentPlan ? 'Changer d’itinéraire' : 'Préparer la balade'}
+    onBack={showingEditor ? closeEditor : showingResults ? returnToCriteria : onClose}
     onClose={onClose}
-    footerLabel={showingResults ? 'Choisir cet itinéraire' : 'Voir les itinéraires'}
+    footerLabel={showingEditor ? 'Utiliser ce tracé' : showingResults ? 'Choisir cet itinéraire' : 'Voir les itinéraires'}
     onFooterPress={() => {
-      if (selectedProposal) void choose(selectedProposal);
+      if (editorRoute) void choose(editorRoute);
+      else if (selectedProposal) void choose(selectedProposal);
       else void generate();
     }}
-    footerDisabled={showingResults && !selectedProposal}
-    footerLoading={showingResults ? mutations.save.isPending : mutations.propose.isPending}
-    dirty={false}
+    footerDisabled={showingEditor ? !editorRoute?.distance_meters || mutations.customize.isPending : showingResults && !selectedProposal}
+    footerLoading={showingEditor ? mutations.customize.isPending || mutations.save.isPending : showingResults ? mutations.save.isPending : mutations.propose.isPending}
+    dirty={showingEditor}
+    confirmBackWhenDirty={showingEditor}
     testID="walk-route-planner"
   >
     {error ? <Banner tone="error" title="Calcul impossible" message={error} onDismiss={() => setError(undefined)} /> : null}
-    {showingResults ? <>
+    {showingEditor && editorRoute ? <>
+      <View style={{ gap: spacing.xs }}>
+        <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{editorRoute.distance_meters ? 'Ajustez le parcours' : 'Dessinez avec des points de passage'}</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>
+          {editorMode === 'via' ? 'Touchez la carte pour imposer un passage. IGN recalculera le tracé piéton.' : 'Touchez la portion à retirer. Vasco cherchera un détour praticable pour conserver le parcours.'}
+        </Text>
+      </View>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+        <Chip label="Passer par ici" selected={editorMode === 'via'} variant="tonal" size="medium" onPress={() => { setEditorMode('via'); setEditorPoint(undefined); }} />
+        <Chip label="Éviter un passage" selected={editorMode === 'avoid'} variant="tonal" size="medium" disabled={!editorRoute.distance_meters} onPress={() => { setEditorMode('avoid'); setEditorPoint(undefined); }} />
+      </View>
+      <WalkRouteMap points={editorRoute.points} highlights={editorRoute.highlights} planned onPress={setEditorPoint} editPoint={editorPoint} />
+      {editorRoute.distance_meters ? <View style={{ gap: spacing.xs }}>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{distanceLabel(editorRoute.distance_meters)} · {durationLabel(editorRoute.duration_seconds)}{editorRoute.road_percentage == null ? '' : ` · ${Math.round(editorRoute.road_percentage)} % de voies automobiles`}</Text>
+        {editorRoute.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Source : {editorRoute.attribution}{editorRoute.license ? ` · ${editorRoute.license}` : ''}</Text> : null}
+      </View> : null}
+      {editorMode === 'via' && editorRoute.highlights.length ? <View style={{ gap: spacing.sm }}>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Passages accessibles proposés</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+          {editorRoute.highlights.slice(0, 4).map((highlight) => <Chip key={`${highlight.name}-${highlight.latitude}-${highlight.longitude}`} label={highlight.name} selected={editorPoint?.latitude === highlight.latitude && editorPoint?.longitude === highlight.longitude} variant="tonal" size="small" onPress={() => setEditorPoint({ latitude: highlight.latitude, longitude: highlight.longitude })} />)}
+        </View>
+      </View> : null}
+      {editorMode === 'avoid' ? <View style={{ gap: spacing.sm }}>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Ou choisissez une portion sans utiliser la carte</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+          {representativeRoutePoints(editorRoute.points).map((point, index) => <Chip key={`${point.latitude}-${point.longitude}-${index}`} label={`Portion ${index + 1}`} selected={editorPoint?.latitude === point.latitude && editorPoint?.longitude === point.longitude} variant="tonal" size="small" onPress={() => setEditorPoint(point)} accessibilityLabel={`Éviter la portion ${index + 1} du parcours`} />)}
+        </View>
+      </View> : null}
+      <Button label={editorMode === 'avoid' ? 'Recalculer sans ce passage' : 'Recalculer par ce point'} icon="compass" variant="secondary" fullWidth disabled={!editorPoint} loading={mutations.customize.isPending} onPress={() => void recalculateEditorRoute()} />
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+        <Button label="Annuler la dernière modification" variant="ghost" size="small" disabled={!editorHistory.length} onPress={() => {
+          const previous = editorHistory.at(-1);
+          if (!previous) return;
+          setEditorRoute(previous);
+          setEditorHistory((history) => history.slice(0, -1));
+          setEditorPoint(undefined);
+        }} />
+        <Button label="Revenir au tracé initial" variant="ghost" size="small" disabled={!editorOriginal || editorRoute === editorOriginal} onPress={() => {
+          if (!editorOriginal) return;
+          setEditorRoute(editorOriginal);
+          setEditorHistory([]);
+          setEditorPoint(undefined);
+        }} />
+      </View>
+    </> : showingResults ? <>
       <View style={{ gap: spacing.xs }}>
         <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{proposals.length} parcours trouvés</Text>
         <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Touchez une carte pour la sélectionner. Le retour permet de modifier vos critères.</Text>
@@ -297,6 +432,9 @@ export function WalkRoutePlannerSheet({
           }}
         />
       </View> : null}
+      <Button label="Modifier le tracé sélectionné" icon="edit" variant="secondary" fullWidth disabled={!selectedProposal} onPress={() => {
+        if (selectedProposal) openEditor(selectedProposal);
+      }} />
     </> : <>
     <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Définissez la balade souhaitée. Vasco privilégiera les chemins et les parcours intéressants autour de votre position.</Text>
     <View style={{ gap: spacing.sm }}>
@@ -403,6 +541,7 @@ export function WalkRoutePlannerSheet({
         onChange={setPreferScenic}
       />
     </View>
+    <Button label="Créer mon propre tracé" icon="edit" variant="secondary" fullWidth onPress={() => void createCustomRoute()} />
     </>}
   </FormSheet>;
 }

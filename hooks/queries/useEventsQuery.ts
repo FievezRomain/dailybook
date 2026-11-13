@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import * as EventService from '../../services/api/EventService';
-import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type GenerateWalkRouteProposalsInput, type WalkRoutePlan, type WalkRouteProposal } from '../../features/events/types';
+import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type CustomizeWalkRouteInput, type GenerateWalkRouteProposalsInput, type WalkRoutePlan, type WalkRouteProposal } from '../../features/events/types';
 import { Event } from '../../models/Event';
 
 export const EVENTS_KEY = ['events'] as const;
@@ -151,6 +151,9 @@ export function useWalkRoutePlanMutations(eventId: number) {
     mutationFn: (input: GenerateWalkRouteProposalsInput) =>
       EventService.generateWalkRouteProposals(eventId, input),
   });
+  const customize = useMutation({
+    mutationFn: (input: CustomizeWalkRouteInput) => EventService.customizeWalkRoute(eventId, input),
+  });
   const save = useMutation({
     mutationFn: (plan: WalkRouteProposal) => EventService.saveWalkRoutePlan(eventId, plan),
     onSuccess: (plan: WalkRoutePlan) => queryClient.setQueryData(walkRoutePlanKey(eventId), plan),
@@ -159,5 +162,5 @@ export function useWalkRoutePlanMutations(eventId: number) {
     mutationFn: () => EventService.deleteWalkRoutePlan(eventId),
     onSuccess: () => queryClient.removeQueries({ queryKey: walkRoutePlanKey(eventId) }),
   });
-  return { propose, save, remove };
+  return { propose, customize, save, remove };
 }

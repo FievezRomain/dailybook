@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { useEventsQuery, useEventMutations, EVENTS_KEY } from '../useEventsQuery';
+import { useEventsQuery, useEventMutations, useWalkRoutePlanMutations, EVENTS_KEY } from '../useEventsQuery';
 import * as EventService from '../../../services/api/EventService';
 import { createQueryWrapper } from '../../../tests/utils/queryWrapper';
 import { createMockEvent, createMockBaladeEvent } from '../../../tests/factories/event.factory';
@@ -12,6 +12,7 @@ const mockedGetEvents = EventService.getEvents as jest.MockedFunction<typeof Eve
 const mockedCreateEvent = EventService.createEvent as jest.MockedFunction<typeof EventService.createEvent>;
 const mockedDeleteEvent = EventService.deleteEvent as jest.MockedFunction<typeof EventService.deleteEvent>;
 const mockedUpdateEvent = EventService.updateEvent as jest.MockedFunction<typeof EventService.updateEvent>;
+const mockedCustomizeWalkRoute = EventService.customizeWalkRoute as jest.MockedFunction<typeof EventService.customizeWalkRoute>;
 
 describe('useEventsQuery', () => {
   beforeEach(() => { jest.clearAllMocks(); });
@@ -122,5 +123,33 @@ describe('useEventMutations — remove', () => {
     });
 
     expect(mockedDeleteEvent).toHaveBeenCalledWith('1');
+  });
+});
+
+describe('useWalkRoutePlanMutations — customize', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  it('transmet au service le point de passage et le tracé courant', async () => {
+    const input = {
+      points: [
+        { latitude: 46.77, longitude: 2.72 },
+        { latitude: 46.78, longitude: 2.73 },
+      ],
+      via_point: { latitude: 46.775, longitude: 2.725 },
+      route_type: 'loop' as const,
+      avoid_roads: true,
+      avoid_water: false,
+      prefer_scenic: true,
+      target_distance_meters: 7400,
+    };
+    mockedCustomizeWalkRoute.mockResolvedValue({ id: 'custom-route' } as any);
+
+    const { result } = renderHook(() => useWalkRoutePlanMutations(12), { wrapper: createQueryWrapper() });
+
+    await act(async () => {
+      await result.current.customize.mutateAsync(input);
+    });
+
+    expect(mockedCustomizeWalkRoute).toHaveBeenCalledWith(12, input);
   });
 });

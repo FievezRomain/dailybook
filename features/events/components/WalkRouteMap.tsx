@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { Platform, Text, View } from 'react-native';
-import MapView, { Marker, Polyline, UrlTile } from 'react-native-maps';
+import MapView, { Marker, Polyline, UrlTile, type MapPressEvent } from 'react-native-maps';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import type { WalkMapCoordinate } from '../walkMapUtils';
@@ -14,7 +14,16 @@ export type WalkRouteMapHandle = {
   takeSnapshot: () => Promise<string | undefined>;
 };
 
-export const WalkRouteMap = forwardRef<WalkRouteMapHandle, { points: WalkMapCoordinate[]; highlights?: WalkRouteHighlight[]; onSnapshotReady?: () => void; planned?: boolean }>(function WalkRouteMap({ points, highlights = [], onSnapshotReady, planned = false }, ref) {
+type WalkRouteMapProps = {
+  points: WalkMapCoordinate[];
+  highlights?: WalkRouteHighlight[];
+  onSnapshotReady?: () => void;
+  onPress?: (point: WalkMapCoordinate) => void;
+  editPoint?: WalkMapCoordinate;
+  planned?: boolean;
+};
+
+export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(function WalkRouteMap({ points, highlights = [], onSnapshotReady, onPress, editPoint, planned = false }, ref) {
   const { colors, resolvedTheme } = useAppTheme();
   const mapRef = useRef<MapView>(null);
   const coordinates = useMemo(() => getWalkMapCoordinates(points), [points]);
@@ -51,6 +60,7 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, { points: WalkMapCoor
       pitchEnabled
       toolbarEnabled={false}
       loadingEnabled
+      onPress={onPress ? (event: MapPressEvent) => onPress(event.nativeEvent.coordinate) : undefined}
       onMapReady={Platform.OS === 'ios' ? onSnapshotReady : undefined}
       onMapLoaded={Platform.OS === 'android' ? onSnapshotReady : undefined}
       accessibilityLabel="Carte interactive du tracé GPS de la balade"
@@ -58,7 +68,7 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, { points: WalkMapCoor
     >
       {useIgnPlan ? <UrlTile urlTemplate={IGN_PLAN_TILE_URL} maximumZ={18} tileSize={256} /> : null}
       {coordinates.length > 1 ? <Marker coordinate={first} title="Départ de la balade" pinColor={colors.success} /> : null}
-      <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={5} lineDashPattern={planned ? [10, 7] : undefined} lineCap="round" lineJoin="round" />
+      <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={planned ? 3 : 4} lineDashPattern={planned ? [10, 7] : undefined} lineCap="round" lineJoin="round" tappable={Boolean(onPress)} />
       {highlights.map((highlight) => <Marker
         key={`${highlight.name}-${highlight.latitude}-${highlight.longitude}`}
         coordinate={{ latitude: highlight.latitude, longitude: highlight.longitude }}
@@ -66,6 +76,7 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, { points: WalkMapCoor
         description={highlight.category}
         pinColor={colors.warning}
       />)}
+      {editPoint ? <Marker coordinate={editPoint} title="Point de modification" pinColor={colors.warning} /> : null}
       <Marker coordinate={latest} title="Arrivée de la balade" pinColor={colors.primary} />
     </MapView> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.md }}>
       <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, textAlign: 'center' }}>Le tracé apparaîtra dès les premiers mètres.</Text>

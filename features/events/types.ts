@@ -90,6 +90,21 @@ export type GenerateWalkRouteProposalsInput = {
   prefer_scenic: boolean;
 };
 
+export type CustomizeWalkRouteInput = {
+  points: WalkRoutePoint[];
+  control_points?: WalkRoutePoint[];
+  via_point?: WalkRoutePoint;
+  avoid_point?: WalkRoutePoint;
+  route_type: WalkRouteProposal['route_type'];
+  avoid_roads: boolean;
+  avoid_water: boolean;
+  prefer_scenic: boolean;
+  target_distance_meters: number;
+  attribution?: string | null;
+  license?: string | null;
+  source_url?: string | null;
+};
+
 export type WalkRoutePlan = WalkRouteProposal & {
   id: number;
   event_id: number;
