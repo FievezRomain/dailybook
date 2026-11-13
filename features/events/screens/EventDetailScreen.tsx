@@ -188,8 +188,12 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
         {!premium ? <PremiumGate title="Balades GPS Premium" message="L’enregistrement du tracé GPS, des statistiques et de la carte à partager nécessite un abonnement Premium." onComparePlans={onComparePlans} testID="event-detail-gps-premium" />
           : <View style={{ gap: spacing.md }}>
             {walkRoutePlan.isPending ? <Skeleton type="card" density="comfortable" />
-              : walkRoutePlan.data ? <WalkRoutePlanCard plan={walkRoutePlan.data} onChange={() => setWalkRoutePlannerOpen(true)} onDelete={() => setWalkRouteDeleteOpen(true)} />
-                : <Card style={{ gap: spacing.sm }}>
+              : walkRoutePlan.data ? <WalkRoutePlanCard plan={walkRoutePlan.data} locked={walkSession.isPending || Boolean(walkSession.data)} onChange={() => setWalkRoutePlannerOpen(true)} onDelete={() => setWalkRouteDeleteOpen(true)} />
+                : walkSession.data ? <Card style={{ gap: spacing.sm }}>
+                  <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Aucun itinéraire préparé</Text>
+                  <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Le suivi GPS a déjà démarré : il n’est plus possible d’associer un nouvel itinéraire à cette balade.</Text>
+                </Card>
+                  : <Card style={{ gap: spacing.sm }}>
                   <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Préparer un itinéraire</Text>
                   <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Choisissez une distance et comparez des boucles piétonnes IGN avant le départ. Cette étape reste facultative.</Text>
                   <Button label="Proposer des itinéraires" icon="compass" variant="secondary" fullWidth onPress={() => setWalkRoutePlannerOpen(true)} testID="event-plan-gps-walk" />
@@ -225,7 +229,7 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
     <Dialog open={deleteOpen} type="destructive" title="Confirmer la suppression ?" description={deleteScope === 'series' ? 'Toute la série sera supprimée. Cette action est irréversible.' : deleteScope === 'following' ? 'Cette occurrence et toutes les suivantes seront supprimées. Cette action est irréversible.' : 'Seule cette occurrence sera supprimée. Cette action est irréversible.'} confirmLabel="Supprimer" onConfirm={remove} onClose={() => setDeleteOpen(false)} loading={mutations.remove.isPending} onError={() => setFeedback({ tone: 'error', title: 'Suppression impossible', message: 'La suppression a échoué. Réessayez.' })} />
     <Dialog open={walkDeleteOpen} type="destructive" title="Supprimer le tracé GPS ?" description="Le tracé et ses statistiques seront supprimés. La balade repassera à l’état À faire et un nouveau suivi pourra être lancé." confirmLabel="Supprimer le tracé" onConfirm={removeWalkTrace} onClose={() => setWalkDeleteOpen(false)} onError={() => setFeedback({ tone: 'error', title: 'Suppression impossible', message: 'Le tracé GPS n’a pas pu être supprimé. Réessayez.' })} testID="event-delete-gps-dialog" />
     <Dialog open={walkRouteDeleteOpen} type="destructive" title="Supprimer l’itinéraire préparé ?" description="Le parcours prévu sera supprimé, sans toucher à un éventuel tracé GPS déjà enregistré." confirmLabel="Supprimer l’itinéraire" onConfirm={removeWalkRoutePlan} onClose={() => setWalkRouteDeleteOpen(false)} loading={walkRouteMutations.remove.isPending} onError={() => setFeedback({ tone: 'error', title: 'Suppression impossible', message: 'L’itinéraire n’a pas pu être supprimé. Réessayez.' })} testID="event-delete-walk-route-dialog" />
-    {walkRoutePlannerOpen ? <WalkRoutePlannerSheet eventId={event.id} currentPlan={walkRoutePlan.data} onClose={() => setWalkRoutePlannerOpen(false)} /> : null}
+    {walkRoutePlannerOpen && !walkSession.isPending && !walkSession.data ? <WalkRoutePlannerSheet eventId={event.id} currentPlan={walkRoutePlan.data} onClose={() => setWalkRoutePlannerOpen(false)} /> : null}
     {quickEditOpen ? <EventQuickEditSheet event={event} onClose={() => setQuickEditOpen(false)} onSave={quickSave} /> : null}
     {documentViewer ? <MediaViewer open uri={documentViewer.uri} title={documentViewer.title} type={documentViewer.type} onClose={() => setDocumentViewer(undefined)} onDeleteRequest={() => { setDocumentToDelete(documentViewer.title); setDocumentViewer(undefined); }} testID="event-document-viewer" /> : null}
     <Dialog

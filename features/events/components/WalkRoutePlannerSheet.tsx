@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import * as Location from 'expo-location';
 import { Text, View } from 'react-native';
 import { Banner, Button, Card, FormSheet } from '../../../shared/components/ui';
@@ -9,6 +9,10 @@ import type { WalkRoutePlan, WalkRouteProposal } from '../types';
 import { WalkRouteMap } from './WalkRouteMap';
 
 const DISTANCE_OPTIONS = [2_000, 4_000, 6_000, 10_000] as const;
+const ROUTE_TYPE_OPTIONS = [
+  { value: 'loop' as const, label: 'Boucle' },
+  { value: 'one_way' as const, label: 'Aller simple' },
+];
 
 function distanceLabel(meters: number) {
   return `${(meters / 1_000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} km`;
@@ -25,20 +29,26 @@ export function WalkRoutePlanCard({
   plan,
   onChange,
   onDelete,
+  locked = false,
 }: {
   plan: WalkRoutePlan;
   onChange: () => void;
   onDelete: () => void;
+  locked?: boolean;
 }) {
   const { colors } = useAppTheme();
   return <Card style={{ gap: spacing.md }}>
     <View style={{ gap: spacing.xs }}>
       <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{plan.name}</Text>
-      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Itinéraire préparé · {distanceLabel(plan.distance_meters)} · {durationLabel(plan.duration_seconds)}</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{plan.route_type === 'loop' ? 'Boucle' : 'Aller simple'} préparé · {distanceLabel(plan.distance_meters)} · {durationLabel(plan.duration_seconds)}</Text>
     </View>
     <WalkRouteMap points={plan.points} planned />
-    <Button label="Changer d’itinéraire" icon="compass" variant="secondary" fullWidth onPress={onChange} />
-    <Button label="Supprimer l’itinéraire" icon="delete" variant="ghost" fullWidth onPress={onDelete} />
+    {locked
+      ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Cet itinéraire ne peut plus être modifié car le suivi GPS a déjà démarré.</Text>
+      : <>
+        <Button label="Changer d’itinéraire" icon="compass" variant="secondary" fullWidth onPress={onChange} />
+        <Button label="Supprimer l’itinéraire" icon="delete" variant="ghost" fullWidth onPress={onDelete} />
+      </>}
   </Card>;
 }
 
@@ -54,26 +64,38 @@ export function WalkRoutePlannerSheet({
   const { colors } = useAppTheme();
   const mutations = useWalkRoutePlanMutations(eventId);
   const [targetDistance, setTargetDistance] = useState(currentPlan?.target_distance_meters ?? 4_000);
+  const [routeType, setRouteType] = useState<'loop' | 'one_way'>(currentPlan?.route_type ?? 'loop');
   const [proposals, setProposals] = useState<WalkRouteProposal[]>([]);
   const [error, setError] = useState<string>();
+  const locationRef = useRef<{ latitude: number; longitude: number } | undefined>(undefined);
+  const generationRef = useRef(0);
 
-  const generate = async () => {
+  const generate = async (distance = targetDistance, type = routeType) => {
+    const generation = generationRef.current + 1;
+    generationRef.current = generation;
     setError(undefined);
+    setProposals([]);
     try {
-      const permission = await Location.requestForegroundPermissionsAsync();
-      if (permission.status !== Location.PermissionStatus.GRANTED) {
-        setError('Autorisez la localisation pour proposer des boucles autour de votre position.');
-        return;
+      let start = locationRef.current;
+      if (!start) {
+        const permission = await Location.requestForegroundPermissionsAsync();
+        if (permission.status !== Location.PermissionStatus.GRANTED) {
+          setError('Autorisez la localisation pour proposer des itinéraires autour de votre position.');
+          return;
+        }
+        const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+        start = { latitude: location.coords.latitude, longitude: location.coords.longitude };
+        locationRef.current = start;
       }
-      const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
       const routes = await mutations.propose.mutateAsync({
-        start_latitude: location.coords.latitude,
-        start_longitude: location.coords.longitude,
-        target_distance_meters: targetDistance,
+        start_latitude: start.latitude,
+        start_longitude: start.longitude,
+        target_distance_meters: distance,
+        route_type: type,
       });
-      setProposals(routes);
+      if (generationRef.current === generation) setProposals(routes);
     } catch {
-      setError('Aucun itinéraire n’a pu être calculé ici. Vérifiez la connexion ou essayez une autre distance.');
+      if (generationRef.current === generation) setError('Aucun itinéraire n’a pu être calculé ici. Vérifiez la connexion ou essayez une autre distance.');
     }
   };
 
@@ -99,9 +121,25 @@ export function WalkRoutePlannerSheet({
     testID="walk-route-planner"
   >
     <Card style={{ gap: spacing.sm }}>
-      <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Des boucles adaptées à la marche</Text>
-      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Vasco utilise les chemins piétons IGN autour de votre position. Vérifiez toujours l’accessibilité locale et les éventuelles restrictions.</Text>
+      <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Un itinéraire adapté à la marche</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Choisissez une boucle qui revient au départ ou un aller simple. Vasco utilise les chemins piétons IGN autour de votre position.</Text>
     </Card>
+    <View style={{ gap: spacing.sm }}>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Type de parcours</Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+        {ROUTE_TYPE_OPTIONS.map((option) => <Button
+          key={option.value}
+          label={option.label}
+          variant={routeType === option.value ? 'primary' : 'secondary'}
+          onPress={() => {
+            if (routeType === option.value) return;
+            setRouteType(option.value);
+            void generate(targetDistance, option.value);
+          }}
+          accessibilityLabel={'Choisir le type ' + option.label}
+        />)}
+      </View>
+    </View>
     <View style={{ gap: spacing.sm }}>
       <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Distance souhaitée</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
@@ -109,7 +147,11 @@ export function WalkRoutePlannerSheet({
           key={distance}
           label={distanceLabel(distance)}
           variant={targetDistance === distance ? 'primary' : 'secondary'}
-          onPress={() => { setTargetDistance(distance); setProposals([]); }}
+          onPress={() => {
+            if (targetDistance === distance) return;
+            setTargetDistance(distance);
+            void generate(distance, routeType);
+          }}
           accessibilityLabel={`Choisir une balade de ${distanceLabel(distance)}`}
         />)}
       </View>

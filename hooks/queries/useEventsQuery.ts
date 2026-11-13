@@ -148,7 +148,7 @@ export function useWalkRoutePlanQuery(eventId: number, enabled = true) {
 export function useWalkRoutePlanMutations(eventId: number) {
   const queryClient = useQueryClient();
   const propose = useMutation({
-    mutationFn: (input: { start_latitude: number; start_longitude: number; target_distance_meters: number }) =>
+    mutationFn: (input: { start_latitude: number; start_longitude: number; target_distance_meters: number; route_type: 'loop' | 'one_way' }) =>
       EventService.generateWalkRouteProposals(eventId, input),
   });
   const save = useMutation({
