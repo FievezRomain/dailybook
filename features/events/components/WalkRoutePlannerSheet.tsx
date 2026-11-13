@@ -109,7 +109,8 @@ export function WalkRoutePlanCard({
       <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{routeTypeLabel(plan.route_type)} préparé · {distanceLabel(plan.distance_meters)} · {durationLabel(plan.duration_seconds)}</Text>
       {preferenceLabel(plan) ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{preferenceLabel(plan)}</Text> : null}
       {plan.destination_label ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Arrivée : {plan.destination_label}</Text> : null}
-      {plan.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{plan.attribution}{plan.license ? ` · ${plan.license}` : ''}</Text> : null}
+      {plan.road_percentage != null ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{Math.round(plan.road_percentage)} % de voies automobiles</Text> : null}
+      {plan.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Source : {plan.attribution}{plan.license ? ` · ${plan.license}` : ''}</Text> : null}
     </View>
     <WalkRouteMap points={plan.points} highlights={plan.highlights} planned />
     <RouteHighlights highlights={plan.highlights} />
@@ -189,11 +190,7 @@ export function WalkRoutePlannerSheet({
         setProposals(routes);
         setSelectedProposalIndex(0);
         setProposalPage(0);
-        if (!routes.length) {
-          setError(avoidRoads
-            ? 'Aucun parcours avec assez peu de voies automobiles ne correspond à ces critères. Élargissez la distance ou désactivez « Privilégier les chemins ».'
-            : 'Aucun itinéraire ne correspond exactement à ces critères. Élargissez la distance ou la durée.');
-        }
+        if (!routes.length) setError('Aucun itinéraire ne correspond exactement à ces critères. Élargissez la distance ou la durée.');
       }
     } catch (generationError) {
       if (generationRef.current === generation) setError(parseApiError(generationError).message);
@@ -251,7 +248,7 @@ export function WalkRoutePlannerSheet({
           key={`${proposal.provider}-${proposal.name}-${index}`}
           onPress={() => setSelectedProposalIndex(index)}
           accessibilityRole="radio"
-          accessibilityLabel={`${proposal.name}, ${distanceLabel(proposal.distance_meters)}, ${durationLabel(proposal.duration_seconds)}`}
+          accessibilityLabel={`${proposal.name}, ${distanceLabel(proposal.distance_meters)}, ${durationLabel(proposal.duration_seconds)}${avoidRoads ? proposal.road_percentage == null ? ', part de voies automobiles non estimée' : `, ${Math.round(proposal.road_percentage)} pour cent de voies automobiles` : ''}`}
           accessibilityHint="Sélectionne cet itinéraire"
           style={{
             gap: spacing.md,
@@ -266,8 +263,9 @@ export function WalkRoutePlannerSheet({
             </View>
             <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{distanceLabel(proposal.distance_meters)} · environ {durationLabel(proposal.duration_seconds)}</Text>
             {preferenceLabel(proposal) ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{preferenceLabel(proposal)}</Text> : null}
+            {avoidRoads ? <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{proposal.road_percentage == null ? 'Part de voies automobiles non estimée' : `${Math.round(proposal.road_percentage)} % de voies automobiles`}</Text> : null}
             {proposal.destination_label ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Arrivée : {proposal.destination_label}</Text> : null}
-            {proposal.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{proposal.attribution}{proposal.license ? ` · ${proposal.license}` : ''}</Text> : null}
+            {proposal.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Source : {proposal.attribution}{proposal.license ? ` · ${proposal.license}` : ''}</Text> : null}
             {proposal.route_type === 'out_and_back' ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Solution de secours : aucune vraie boucle proche de cette distance n’a été trouvée. Ce parcours revient sur une partie du chemin.</Text> : null}
           </View>
           <WalkRouteMap points={proposal.points} highlights={proposal.highlights} planned />

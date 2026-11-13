@@ -62,6 +62,7 @@ export type WalkRouteProposal = {
   distance_meters: number;
   duration_seconds: number;
   target_distance_meters: number;
+  road_percentage?: number | null;
   attribution?: string | null;
   license?: string | null;
   source_url?: string | null;
