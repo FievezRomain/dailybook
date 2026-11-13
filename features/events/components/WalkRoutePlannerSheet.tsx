@@ -189,7 +189,11 @@ export function WalkRoutePlannerSheet({
         setProposals(routes);
         setSelectedProposalIndex(0);
         setProposalPage(0);
-        if (!routes.length) setError('Aucun itinéraire ne correspond exactement à ces critères. Élargissez la distance ou la durée.');
+        if (!routes.length) {
+          setError(avoidRoads
+            ? 'Aucun parcours avec assez peu de voies automobiles ne correspond à ces critères. Élargissez la distance ou désactivez « Privilégier les chemins ».'
+            : 'Aucun itinéraire ne correspond exactement à ces critères. Élargissez la distance ou la durée.');
+        }
       }
     } catch (generationError) {
       if (generationRef.current === generation) setError(parseApiError(generationError).message);
