@@ -120,6 +120,7 @@ export function WishFormSheetScreen({ mode, wish, onClose, onSaved }: WishFormSh
       onClose={onClose}
       dirty={dirty}
       confirmBackWhenDirty={step === 0}
+      scrollResetKey={step}
       footerLabel={footerLabel}
       onFooterPress={() => void continueWizard()}
       footerDisabled={pending}

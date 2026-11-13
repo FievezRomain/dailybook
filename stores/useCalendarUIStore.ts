@@ -5,11 +5,15 @@ type CalendarViewMode = 'month' | 'week' | 'day' | 'agenda';
 interface CalendarUIState {
   viewMode: CalendarViewMode;
   selectedDate: string | null;
-  activeAnimalFilters: string[];
+  searchQuery: string;
+  activeAnimalFilters: number[];
   activeEventTypeFilters: string[];
   setViewMode: (mode: CalendarViewMode) => void;
   setDate: (date: string | null) => void;
-  toggleAnimalFilter: (animalId: string) => void;
+  setSearchQuery: (searchQuery: string) => void;
+  setAnimalFilters: (activeAnimalFilters: number[]) => void;
+  setEventTypeFilters: (activeEventTypeFilters: string[]) => void;
+  toggleAnimalFilter: (animalId: number) => void;
   toggleEventTypeFilter: (eventType: string) => void;
   clearFilters: () => void;
 }
@@ -17,12 +21,19 @@ interface CalendarUIState {
 export const useCalendarUIStore = create<CalendarUIState>()((set) => ({
   viewMode: 'month',
   selectedDate: null,
+  searchQuery: '',
   activeAnimalFilters: [],
   activeEventTypeFilters: [],
 
   setViewMode: (viewMode) => set({ viewMode }),
 
   setDate: (selectedDate) => set({ selectedDate }),
+
+  setSearchQuery: (searchQuery) => set({ searchQuery }),
+
+  setAnimalFilters: (activeAnimalFilters) => set({ activeAnimalFilters }),
+
+  setEventTypeFilters: (activeEventTypeFilters) => set({ activeEventTypeFilters }),
 
   toggleAnimalFilter: (animalId) =>
     set((state) => ({

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type ElementRef, type ReactNode } from 'react';
 import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Platform, useWindowDimensions, View } from 'react-native';
 import { componentTokens } from '../../../../theme/componentTokens';
@@ -23,6 +23,7 @@ export interface FormSheetProps {
   footer?: ReactNode;
   dirty?: boolean;
   confirmBackWhenDirty?: boolean;
+  scrollResetKey?: string | number;
   material?: Material;
   testID?: string;
 }
@@ -38,7 +39,7 @@ export function FormSheet(props: FormSheetProps) {
 }
 
 function HostedFormSheet({ children, open: _open, register, ...configuration }: FormSheetProps & { register: (configuration: HostedConfiguration) => void }) {
-  useLayoutEffect(() => register(configuration), [configuration.title, configuration.onBack, configuration.onClose, configuration.footerLabel, configuration.onFooterPress, configuration.footerDisabled, configuration.footerLoading, configuration.footer, configuration.dirty, configuration.confirmBackWhenDirty, configuration.material, configuration.testID, register]);
+  useLayoutEffect(() => register(configuration), [configuration.title, configuration.onBack, configuration.onClose, configuration.footerLabel, configuration.onFooterPress, configuration.footerDisabled, configuration.footerLoading, configuration.footer, configuration.dirty, configuration.confirmBackWhenDirty, configuration.scrollResetKey, configuration.material, configuration.testID, register]);
   return <>{children}</>;
 }
 
@@ -75,21 +76,28 @@ function FormSheetModal({
   footer,
   dirty = false,
   confirmBackWhenDirty = false,
+  scrollResetKey,
   material = 'solid',
   testID,
 }: FormSheetProps) {
   const [sheetOpen, setSheetOpen] = useState(open);
   const [confirmClose, setConfirmClose] = useState(false);
+  const scrollRef = useRef<ElementRef<typeof BottomSheetScrollView>>(null);
   const { height: windowHeight } = useWindowDimensions();
 
   useEffect(() => setSheetOpen(open), [open]);
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => scrollRef.current?.scrollTo({ y: 0, animated: false }));
+    return () => cancelAnimationFrame(frame);
+  }, [open, scrollResetKey]);
   const handleDismiss = () => { if (footerLoading) return; setSheetOpen(false); if (dirty) setConfirmClose(true); else onClose(); };
   const renderedFooter = footer ?? (footerLabel && onFooterPress ? <View style={{ paddingHorizontal: spacing.md }}><Button label={footerLabel} onPress={onFooterPress} fullWidth size="large" disabled={footerDisabled} loading={footerLoading} /></View> : undefined);
 
   return <>
     <VascoBottomSheet open={sheetOpen} onClose={handleDismiss} title={title} material={material} formHandle scrollableContent dismissible={!footerLoading} height={Math.max(componentTokens.formSheet.minHeight, Math.min(componentTokens.formSheet.maxHeight, windowHeight * componentTokens.formSheet.heightRatio))} header={<TopBar title={title} context="detail" material={material} onBack={footerLoading ? () => undefined : confirmBackWhenDirty && dirty ? handleDismiss : onBack} />} footer={renderedFooter} contentContainerStyle={{ gap: 0, paddingHorizontal: 0, paddingTop: 0 }} testID={testID}>
       <FormSheetInputProvider>
-        <BottomSheetScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'} contentContainerStyle={{ flexGrow: 1, gap: spacing.md, paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>{children}</BottomSheetScrollView>
+        <BottomSheetScrollView ref={scrollRef} keyboardShouldPersistTaps="handled" keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'} automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'} contentContainerStyle={{ flexGrow: 1, gap: spacing.md, paddingHorizontal: spacing.md, paddingBottom: spacing.md }}>{children}</BottomSheetScrollView>
       </FormSheetInputProvider>
     </VascoBottomSheet>
     <Dialog open={confirmClose} type="destructive" title="Abandonner les modifications ?" description="Les informations non enregistrées seront perdues." cancelLabel="Continuer" confirmLabel="Abandonner" onClose={() => { setConfirmClose(false); setSheetOpen(true); }} onConfirm={() => { setConfirmClose(false); onClose(); }} testID={testID ? `${testID}-close-confirmation` : undefined} />

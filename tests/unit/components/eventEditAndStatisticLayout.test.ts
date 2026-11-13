@@ -14,7 +14,6 @@ describe('event edition and statistic detail regressions', () => {
       navigator.indexOf('if (route.name === "eventEditOptions")'),
       navigator.indexOf('if (route.name === "eventEditAnimals")'),
     );
-
     expect(editDetails).toContain('setRoute({ name: "eventEditAnimals", eventId: route.eventId })');
     expect(editDetails).not.toContain('eventEditOptions');
     expect(editOptions).toContain('setRoute({ name: "eventEditAnimals", eventId: route.eventId })');
@@ -26,5 +25,26 @@ describe('event edition and statistic detail regressions', () => {
     expect(detail.match(/<FullWidthAnimalSelector>/g)).toHaveLength(2);
     expect(detail).toContain('marginHorizontal: -componentTokens.screen.contentPaddingX');
     expect(detail).toContain('testID="statistic-animal-selector-full-width"');
+  });
+
+  it('restores statistic filters from memory without mounting another navigator', () => {
+    const tracking = read('features/objectifs/screens/TrackingScreen.tsx');
+
+    expect(tracking).toContain('useTrackingUIStore');
+    expect(tracking).toContain('state.selectedStatistic');
+    expect(tracking).toContain('onBack={() => setSelectedStatistic(undefined)}');
+    expect(tracking).not.toContain('createNativeStackNavigator');
+  });
+
+  it('keeps global routing local and restores list filters from stores', () => {
+    const navigator = read('app/navigation/MainNavigator.tsx');
+    const agenda = read('features/events/screens/AgendaScreen.tsx');
+
+    expect(navigator).toContain('const [route, setRoute] = useState<');
+    expect(navigator).not.toContain('createNativeStackNavigator');
+    expect(navigator).not.toContain('popToTop');
+    expect(agenda).toContain('state.searchQuery');
+    expect(agenda).toContain('state.activeEventTypeFilters');
+    expect(agenda).toContain('state.activeAnimalFilters');
   });
 });

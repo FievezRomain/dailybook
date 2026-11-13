@@ -5,6 +5,7 @@ import { useEventWizardStore } from './useEventWizardStore';
 import { useListExplorationStore } from './useListExplorationStore';
 import { useNotificationNavigationStore } from './useNotificationNavigationStore';
 import { useObjectiveWizardStore } from './useObjectiveWizardStore';
+import { useTrackingUIStore } from './useTrackingUIStore';
 
 export function clearAccountStores() {
   useAnimalWizardStore.getState().reset();
@@ -14,9 +15,20 @@ export function clearAccountStores() {
   useCalendarUIStore.setState({
     viewMode: 'month',
     selectedDate: null,
+    searchQuery: '',
     activeAnimalFilters: [],
     activeEventTypeFilters: [],
   });
   useListExplorationStore.setState({ entries: {} });
+  useTrackingUIStore.setState({
+    activeTab: 'objectives',
+    selectedAnimalId: undefined,
+    statisticsAnimalSelection: 'all',
+    objectiveList: 'active',
+    statisticsPeriod: 'month',
+    statisticsAnchor: new Date().toISOString(),
+    selectedStatistic: undefined,
+    historyExpanded: false,
+  });
   useNotificationNavigationStore.setState({ requestId: 0 });
 }

@@ -1,5 +1,6 @@
-import { buildStatisticsQuery, formatStatisticHistoryDate, formatStatisticsPeriodLabel, getActivityHeatmapData, getEventChartData, getEventCount, getEventHistory, getEventTotal, getExpenseCategoryData, getHistoryTrend, getLatestNumericHistory, getPhysicalChartData, groupExpenseEvents, groupStatisticEventsByDate, shiftStatisticsPeriodAnchor, statisticsPeriodOptions } from '../statisticsUtils';
+import { buildStatisticsQuery, formatStatisticHistoryDate, formatStatisticsPeriodLabel, getActivityHeatmapData, getEventChartData, getEventCount, getEventHistory, getEventTotal, getExpenseCategoryData, getExpenseGroupTotal, getHistoryTrend, getLatestNumericHistory, getPhysicalChartData, groupExpenseEvents, groupStatisticEventsByDate, shiftStatisticsPeriodAnchor, statisticsPeriodOptions } from '../statisticsUtils';
 import type { EventStatisticsData, PhysiqueStatisticsData } from '../../../models/Statistics';
+import { EXPENSE_CATEGORY_LIST } from '../../events/constants';
 
 describe('statisticsUtils', () => {
   const now = new Date(2026, 7, 10, 12);
@@ -79,12 +80,16 @@ describe('statisticsUtils', () => {
     expect(groupStatisticEventsByDate(data)[0]?.[0]).toBe('2026-08-08');
   });
 
-  it('builds activity heatmap values from dated occurrences, never distances', () => {
-    const data: EventStatisticsData = { statistic: [{ date: '2026-08-03', exact_value: 12 }, { date: '2026-08-03', exact_value: 8 }] };
+  it('uses a fixed five-star scale for activity heatmaps', () => {
+    const data: EventStatisticsData = { statistic: [{ events: [
+      { id: 1, nom: 'Balade courte', dateevent: '2026-08-03', animaux: [4], eventtype: 'balade', note: 1 },
+      { id: 2, nom: 'Balade parfaite', dateevent: '2026-08-04', animaux: [4], eventtype: 'balade', note: 5 },
+    ] }] };
     const heatmap = getActivityHeatmapData(data, 'month', { dateDebut: '2026-08-01', dateFin: '2026-08-31' });
     expect(heatmap).toHaveLength(31);
     expect(new Set(heatmap.map((cell) => cell.row))).toEqual(new Set(['Sem. 1', 'Sem. 2', 'Sem. 3', 'Sem. 4', 'Sem. 5', 'Sem. 6']));
-    expect(heatmap.find((cell) => cell.column === 'lundi' && cell.periodKey === '2026-08-03')?.value).toBe(2);
+    expect(heatmap.find((cell) => cell.periodKey === '2026-08-03')).toMatchObject({ value: 1, maxValue: 5, valueLabel: '1 étoile' });
+    expect(heatmap.find((cell) => cell.periodKey === '2026-08-04')).toMatchObject({ value: 5, maxValue: 5, valueLabel: '5 étoiles' });
     expect(heatmap.at(-1)?.periodKey).toBe('2026-08-31');
   });
 
@@ -101,7 +106,7 @@ describe('statisticsUtils', () => {
   it('uses months and years for annual heatmaps', () => {
     const data: EventStatisticsData = { statistic: [{ date: '2025-01-03' }, { date: '2025-01-09' }, { date: '2025-02-02' }] };
     const heatmap = getActivityHeatmapData(data, 'fiveYears', { dateDebut: '2025-01-01', dateFin: '2026-12-31' });
-    expect(heatmap.some((cell) => cell.row === '2025' && cell.column.startsWith('janv') && cell.value === 2)).toBe(true);
+    expect(heatmap.some((cell) => cell.row === '2025' && cell.column.startsWith('janv') && cell.value === 0 && cell.maxValue === 5)).toBe(true);
     expect(heatmap.some((cell) => cell.row === '2026')).toBe(true);
   });
 
@@ -116,6 +121,13 @@ describe('statisticsUtils', () => {
       { label: 'Concours', value: 30 },
       { label: 'Vétérinaire', value: 45 },
     ]);
+    expect(getExpenseGroupTotal(groupExpenseEvents(data)[0]?.[1] ?? [])).toBe(30);
+  });
+
+  it('offers event types as expense categories', () => {
+    expect(EXPENSE_CATEGORY_LIST.map((category) => category.id)).toEqual(expect.arrayContaining([
+      'soins', 'rdv', 'balade', 'entrainement', 'concours', 'autre',
+    ]));
   });
 
   it('merges expense groups regardless of case', () => {

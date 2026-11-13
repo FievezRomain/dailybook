@@ -249,6 +249,7 @@ export function GroupFormSheetScreen({
   return (
     <FormSheet
       title={animalOnly ? "Ajouter un animal" : mode === "edit" ? "Modifier le groupe" : "Créer un groupe"}
+      scrollResetKey={step}
       onBack={() =>
         animalOnly ? onClose() : step > 0 ? setStep((step - 1) as GroupWizardStep) : onClose()
       }

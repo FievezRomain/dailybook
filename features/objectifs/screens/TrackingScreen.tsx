@@ -4,6 +4,7 @@ import { useAnimalsQuery } from "../../../hooks/queries/useAnimalsQuery";
 import { useNotificationsQuery } from "../../../hooks/queries/useNotificationsQuery";
 import { useObjectifsQuery } from "../../../hooks/queries/useObjectifsQuery";
 import { useAuthStore } from "../../../stores/useAuthStore";
+import { useTrackingUIStore, type TrackingTab } from "../../../stores/useTrackingUIStore";
 import {
   AnimalScopeItem,
   AnimalSelectorItem,
@@ -41,7 +42,6 @@ import { tabs, type MainTabId } from "../../home/mainTabs";
 import {
   StatisticDetailScreen,
   StatisticsOverview,
-  type StatisticDetailType,
   type StatisticsPeriod,
 } from "../../statistics";
 import {
@@ -51,7 +51,6 @@ import {
 } from "../../statistics/statisticsUtils";
 import { isObjectiveExpired, isObjectiveInProgress } from "../objectiveUtils";
 
-type TrackingTab = "objectives" | "statistics";
 export interface TrackingScreenProps {
   material?: Material;
   canAccessStatistics: boolean;
@@ -82,20 +81,23 @@ export function TrackingScreen({
   const animalsQuery = useAnimalsQuery();
   const objectivesQuery = useObjectifsQuery();
   const notificationsQuery = useNotificationsQuery();
-  const [selectedAnimalId, setSelectedAnimalId] = useState<number>();
-  const [statisticsAnimalSelection, setStatisticsAnimalSelection] = useState<
-    "all" | number[]
-  >("all");
-  const [activeTab, setActiveTab] = useState<TrackingTab>("objectives");
-  const [objectiveList, setObjectiveList] = useState<"active" | "all">(
-    "active",
-  );
-  const [statisticsPeriod, setStatisticsPeriod] =
-    useState<StatisticsPeriod>("month");
-  const [statisticsAnchor, setStatisticsAnchor] = useState(() => new Date());
-  const [selectedStatistic, setSelectedStatistic] =
-    useState<StatisticDetailType>();
-  const [historyExpanded, setHistoryExpanded] = useState(false);
+  const selectedAnimalId = useTrackingUIStore((state) => state.selectedAnimalId);
+  const setSelectedAnimalId = useTrackingUIStore((state) => state.setSelectedAnimalId);
+  const statisticsAnimalSelection = useTrackingUIStore((state) => state.statisticsAnimalSelection);
+  const setStatisticsAnimalSelection = useTrackingUIStore((state) => state.setStatisticsAnimalSelection);
+  const activeTab = useTrackingUIStore((state) => state.activeTab);
+  const setActiveTab = useTrackingUIStore((state) => state.setActiveTab);
+  const objectiveList = useTrackingUIStore((state) => state.objectiveList);
+  const setObjectiveList = useTrackingUIStore((state) => state.setObjectiveList);
+  const statisticsPeriod = useTrackingUIStore((state) => state.statisticsPeriod);
+  const setStatisticsPeriod = useTrackingUIStore((state) => state.setStatisticsPeriod);
+  const statisticsAnchorValue = useTrackingUIStore((state) => state.statisticsAnchor);
+  const setStatisticsAnchor = useTrackingUIStore((state) => state.setStatisticsAnchor);
+  const selectedStatistic = useTrackingUIStore((state) => state.selectedStatistic);
+  const setSelectedStatistic = useTrackingUIStore((state) => state.setSelectedStatistic);
+  const historyExpanded = useTrackingUIStore((state) => state.historyExpanded);
+  const setHistoryExpanded = useTrackingUIStore((state) => state.setHistoryExpanded);
+  const statisticsAnchor = useMemo(() => new Date(statisticsAnchorValue), [statisticsAnchorValue]);
   const [createOpen, setCreateOpen] = useState(false);
   const animals = sortAnimalsForWorkspace(animalsQuery.data ?? []);
   const objectives = objectivesQuery.data ?? [];
@@ -165,11 +167,11 @@ export function TrackingScreen({
     );
   const changeStatisticsPeriod = (period: StatisticsPeriod) => {
     setStatisticsPeriod(period);
-    setStatisticsAnchor(new Date());
+    setStatisticsAnchor(new Date().toISOString());
   };
   const moveStatisticsPeriod = (direction: -1 | 1) =>
-    setStatisticsAnchor((current) =>
-      shiftStatisticsPeriodAnchor(statisticsPeriod, current, direction),
+    setStatisticsAnchor(
+      shiftStatisticsPeriodAnchor(statisticsPeriod, statisticsAnchor, direction).toISOString(),
     );
   const statisticsRangeLabel = formatStatisticsPeriodLabel(
     statisticsPeriod,

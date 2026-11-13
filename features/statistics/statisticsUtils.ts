@@ -158,19 +158,51 @@ export function groupExpenseEvents(data?: EventStatisticsData): Array<[string, E
   return chartOrder.flatMap((label) => groups[label] ? [[label, groups[label]] as [string, Event[]]] : []);
 }
 
+export function getExpenseGroupTotal(events: readonly Event[]): number {
+  return events.reduce((total, event) => total + Number(event.depense ?? 0), 0);
+}
+
 export function getActivityHeatmapData(data: EventStatisticsData | undefined, period: StatisticsPeriod, range?: Pick<StatisticsQueryPayload, 'dateDebut' | 'dateFin'>): HeatmapDatum[] {
-  const eventDates = (data?.statistic ?? []).flatMap((item) => item.events?.map((event) => event.dateevent.slice(0, 10)) ?? (item.date ? [item.date.slice(0, 10)] : []));
+  const events = getStatisticEvents(data);
+  const eventDates = events.length
+    ? events.map((event) => event.dateevent.slice(0, 10))
+    : (data?.statistic ?? []).flatMap((item) => item.date ? [item.date.slice(0, 10)] : []);
   const startValue = range?.dateDebut ?? eventDates.slice().sort()[0];
   const endValue = range?.dateFin ?? eventDates.slice().sort().at(-1);
   if (!startValue || !endValue) return [];
   const start = new Date(`${startValue}T12:00:00`);
   const end = new Date(`${endValue}T12:00:00`);
   const monthly = period === 'fiveYears';
-  const counts = new Map<string, number>();
-  for (const value of eventDates) {
-    const key = monthly ? value.slice(0, 7) : value;
-    counts.set(key, (counts.get(key) ?? 0) + 1);
+  const ratings = new Map<string, number[]>();
+  const addRating = (date: string, value: unknown) => {
+    const rating = Number(value);
+    if (!Number.isFinite(rating) || rating < 1 || rating > 5) return;
+    const key = monthly ? date.slice(0, 7) : date.slice(0, 10);
+    const current = ratings.get(key);
+    if (current) current.push(rating);
+    else ratings.set(key, [rating]);
+  };
+  if (events.length) {
+    for (const event of events) addRating(event.dateevent, 'note' in event ? event.note : undefined);
+  } else {
+    for (const item of data?.statistic ?? []) if (item.date) addRating(item.date, item.exact_value);
   }
+  const heatmapValue = (key: string) => {
+    const values = ratings.get(key) ?? [];
+    return values.length ? values.reduce((total, value) => total + value, 0) / values.length : 0;
+  };
+  const heatmapDatum = (row: string, column: string, key: string): HeatmapDatum => {
+    const value = heatmapValue(key);
+    const rounded = Math.round(value * 10) / 10;
+    return {
+      row,
+      column,
+      value,
+      periodKey: key,
+      maxValue: 5,
+      valueLabel: value ? `${new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 1 }).format(rounded)} étoile${rounded > 1 ? 's' : ''}` : 'Aucune note',
+    };
+  };
   if (monthly) {
     const rows: HeatmapDatum[] = [];
     for (let year = start.getFullYear(); year <= end.getFullYear(); year += 1) {
@@ -178,7 +210,7 @@ export function getActivityHeatmapData(data: EventStatisticsData | undefined, pe
         const point = new Date(year, month, 1, 12);
         if (point < new Date(start.getFullYear(), start.getMonth(), 1, 12) || point > new Date(end.getFullYear(), end.getMonth(), 1, 12)) continue;
         const key = `${year}-${String(month + 1).padStart(2, '0')}`;
-        rows.push({ row: String(year), column: new Intl.DateTimeFormat('fr-FR', { month: 'short' }).format(point).replace('.', ''), value: counts.get(key) ?? 0, periodKey: key });
+        rows.push(heatmapDatum(String(year), new Intl.DateTimeFormat('fr-FR', { month: 'short' }).format(point).replace('.', ''), key));
       }
     }
     return rows;
@@ -194,13 +226,15 @@ export function getActivityHeatmapData(data: EventStatisticsData | undefined, pe
     const column = period === 'month'
       ? weekdays[(cursor.getDay() + 6) % 7]
       : String(cursor.getDate());
-    rows.push({ row: monthRow, column, value: counts.get(key) ?? 0, periodKey: key });
+    rows.push(heatmapDatum(monthRow, column, key));
   }
   return rows;
 }
 
 export function getStatisticEvents(data?: EventStatisticsData) {
-  return (data?.statistic ?? []).flatMap((item) => item.events ?? []).sort((left, right) => right.dateevent.localeCompare(left.dateevent));
+  const unique = new Map<number, Event>();
+  for (const event of (data?.statistic ?? []).flatMap((item) => item.events ?? [])) unique.set(event.id, event);
+  return [...unique.values()].sort((left, right) => right.dateevent.localeCompare(left.dateevent));
 }
 
 export function groupStatisticEventsByDate(data?: EventStatisticsData): Array<[string, Event[]]> {

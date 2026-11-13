@@ -5,6 +5,7 @@ import { useCalendarUIStore } from '../../../stores/useCalendarUIStore';
 import { useEventWizardStore } from '../../../stores/useEventWizardStore';
 import { useListExplorationStore } from '../../../stores/useListExplorationStore';
 import { useObjectiveWizardStore } from '../../../stores/useObjectiveWizardStore';
+import { useTrackingUIStore } from '../../../stores/useTrackingUIStore';
 
 describe('clearAccountStores', () => {
   it('removes drafts, filters and navigation state owned by the previous account', () => {
@@ -12,8 +13,10 @@ describe('clearAccountStores', () => {
     useEventWizardStore.getState().setField('commentaire', 'Commentaire privé');
     useObjectiveWizardStore.getState().setField('title', 'Objectif privé');
     useRegistrationDraft.getState().setIdentity({ firstName: 'Ancien', email: 'ancien@example.test' });
-    useCalendarUIStore.getState().toggleAnimalFilter('42');
+    useCalendarUIStore.getState().toggleAnimalFilter(42);
     useListExplorationStore.getState().updateEntry('notes', { scrollOffset: 120, selectedId: '8' });
+    useTrackingUIStore.getState().setActiveTab('statistics');
+    useTrackingUIStore.getState().setSelectedStatistic('depenses');
 
     clearAccountStores();
 
@@ -23,5 +26,10 @@ describe('clearAccountStores', () => {
     expect(useRegistrationDraft.getState()).toMatchObject({ firstName: '', email: '', password: '', confirmation: '' });
     expect(useCalendarUIStore.getState().activeAnimalFilters).toEqual([]);
     expect(useListExplorationStore.getState().entries).toEqual({});
+    expect(useTrackingUIStore.getState()).toMatchObject({
+      activeTab: 'objectives',
+      statisticsAnimalSelection: 'all',
+      selectedStatistic: undefined,
+    });
   });
 });
