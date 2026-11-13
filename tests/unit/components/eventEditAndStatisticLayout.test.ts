@@ -10,9 +10,13 @@ describe('event edition and statistic detail regressions', () => {
       navigator.indexOf('if (route.name === "eventEditDetails")'),
       navigator.indexOf('if (route.name === "eventDuplicateOptions")'),
     );
+    const editOptions = navigator.slice(
+      navigator.indexOf('if (route.name === "eventEditOptions")'),
+      navigator.indexOf('if (route.name === "eventEditAnimals")'),
+    );
     expect(editDetails).toContain('setRoute({ name: "eventEditAnimals", eventId: route.eventId })');
     expect(editDetails).not.toContain('eventEditOptions');
-    expect(navigator).toContain('onBack={goBack}');
+    expect(editOptions).toContain('setRoute({ name: "eventEditAnimals", eventId: route.eventId })');
   });
 
   it('extends the statistic animal selector through the detail screen padding', () => {
@@ -23,23 +27,24 @@ describe('event edition and statistic detail regressions', () => {
     expect(detail).toContain('testID="statistic-animal-selector-full-width"');
   });
 
-  it('pushes statistic details on a native stack and uses a real back action', () => {
+  it('restores statistic filters from memory without mounting another navigator', () => {
     const tracking = read('features/objectifs/screens/TrackingScreen.tsx');
 
-    expect(tracking).toContain('createNativeStackNavigator<TrackingStackParamList>()');
-    expect(tracking).toContain('navigation.navigate("statistic", { type })');
-    expect(tracking).toContain('gestureEnabled: true');
-    expect(tracking).toContain('onBack={() => navigation.goBack()}');
-    expect(tracking).not.toContain('setSelectedStatistic(undefined)');
+    expect(tracking).toContain('useTrackingUIStore');
+    expect(tracking).toContain('state.selectedStatistic');
+    expect(tracking).toContain('onBack={() => setSelectedStatistic(undefined)}');
+    expect(tracking).not.toContain('createNativeStackNavigator');
   });
 
-  it('uses a native global stack so every back arrow restores the previous screen instance', () => {
+  it('keeps global routing local and restores list filters from stores', () => {
     const navigator = read('app/navigation/MainNavigator.tsx');
+    const agenda = read('features/events/screens/AgendaScreen.tsx');
 
-    expect(navigator).toContain('createNativeStackNavigator<MainStackParamList>()');
-    expect(navigator).toContain('navigation.push("Route", { route: nextRoute })');
-    expect(navigator).toContain('gestureEnabled: true');
-    expect(navigator).toContain('const setRoute = navigate');
-    expect(navigator).not.toContain('onBack={() => setRoute({ name: "root" })}');
+    expect(navigator).toContain('const [route, setRoute] = useState<');
+    expect(navigator).not.toContain('createNativeStackNavigator');
+    expect(navigator).not.toContain('popToTop');
+    expect(agenda).toContain('state.searchQuery');
+    expect(agenda).toContain('state.activeEventTypeFilters');
+    expect(agenda).toContain('state.activeAnimalFilters');
   });
 });

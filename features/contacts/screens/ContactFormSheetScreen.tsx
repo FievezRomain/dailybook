@@ -68,7 +68,7 @@ export function ContactFormSheetScreen({ mode, contact, onClose, onSaved }: Cont
   const footerLabel = step === 2 ? (mode === 'edit' ? 'Enregistrer les modifications' : 'Créer le contact') : 'Continuer';
 
   return (
-    <FormSheet title="Contacts" onBack={() => step > 0 ? setStep(step - 1) : onClose()} onClose={onClose} dirty={form.formState.isDirty} confirmBackWhenDirty={step === 0} footerLabel={footerLabel} onFooterPress={() => void continueWizard()} footerDisabled={pending} footerLoading={pending} testID="contact-form-sheet">
+    <FormSheet title="Contacts" onBack={() => step > 0 ? setStep(step - 1) : onClose()} onClose={onClose} dirty={form.formState.isDirty} confirmBackWhenDirty={step === 0} scrollResetKey={step} footerLabel={footerLabel} onFooterPress={() => void continueWizard()} footerDisabled={pending} footerLoading={pending} testID="contact-form-sheet">
       <LinearProgress current={step + 1} total={3} label={`Étape ${step + 1} sur 3`} />
       <View style={{ gap: spacing.xs, marginTop: spacing.md }}>
         <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: 35 }}>{step === 0 ? (mode === 'edit' ? 'Modifier le contact' : 'Nouveau contact') : step === 1 ? 'Coordonnées' : 'Vérification'}</Text>

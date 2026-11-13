@@ -4,13 +4,15 @@ import { RefreshControl, Text, View } from 'react-native';
 import { useGroupsQuery, useInvitationsQuery } from '../../../hooks/queries/useGroupsQuery';
 import { useNotificationsQuery } from '../../../hooks/queries/useNotificationsQuery';
 import { useAuthStore } from '../../../stores/useAuthStore';
-import { BottomBar, EmptyState, ErrorState, FloatingActionButton, GlobalCreateMenu, GroupCard, RootScreen, SearchField, Skeleton, TopBar, resolveAsyncState, type GlobalCreateTarget } from '../../../shared/components/ui';
+import { BottomBar, EmptyState, ErrorState, FloatingActionButton, GlobalCreateMenu, GroupCard, RootScreen, SearchField, Skeleton, TopBar, resolveAsyncState, useListExplorationState, type GlobalCreateTarget } from '../../../shared/components/ui';
 import type { Material } from '../../../theme/materials';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import { getInitials } from '../../home/homeUtils';
 import { tabs, type MainTabId } from '../../home/mainTabs';
 import { getGroupInitials, getGroupSummary, isGroupManager } from '../groupUtils';
+
+const initialGroupFilters = { search: '' };
 
 interface GroupsListScreenProps {
   material?: Material;
@@ -31,7 +33,9 @@ export function GroupsListScreen({ material = 'solid', onSelectTab, onOpenGroup,
   const invitationsQuery = useInvitationsQuery();
   const notificationsQuery = useNotificationsQuery();
   const [createOpen, setCreateOpen] = useState(false);
-  const [search, setSearch] = useState('');
+  const { filters, setFilters } = useListExplorationState('groups', initialGroupFilters);
+  const search = filters.search;
+  const setSearch = (value: string) => setFilters((current) => ({ ...current, search: value }));
   const groups = groupsQuery.data ?? [];
   const normalizedSearch = search.trim().toLocaleLowerCase('fr-FR');
   const visibleGroups = useMemo(() => groups.filter((group) => [group.name, group.informations].some((value) => value?.toLocaleLowerCase('fr-FR').includes(normalizedSearch))), [groups, normalizedSearch]);

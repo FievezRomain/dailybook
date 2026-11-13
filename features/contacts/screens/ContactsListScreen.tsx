@@ -4,7 +4,7 @@ import { RefreshControl, Text, View } from 'react-native';
 import { useContactsQuery } from '@hooks/queries/useContactsQuery';
 import { useNotificationsQuery } from '@hooks/queries/useNotificationsQuery';
 import { useAuthStore } from '@stores/useAuthStore';
-import { BottomBar, ContactCard, EmptyState, ErrorState, FloatingActionButton, GlobalCreateMenu, RootScreen, SearchField, Skeleton, TopBar, resolveAsyncState, type GlobalCreateTarget } from '@shared/components/ui';
+import { BottomBar, ContactCard, EmptyState, ErrorState, FloatingActionButton, GlobalCreateMenu, RootScreen, SearchField, Skeleton, TopBar, resolveAsyncState, useListExplorationState, type GlobalCreateTarget } from '@shared/components/ui';
 import type { Material } from '@theme/materials';
 import { spacing, typography } from '@theme/scales';
 import { useAppTheme } from '@theme/useAppTheme';
@@ -12,6 +12,8 @@ import { useAppTheme } from '@theme/useAppTheme';
 import { getInitials } from '../../home/homeUtils';
 import { tabs, type MainTabId } from '../../home/mainTabs';
 import { getContactDetails, normalizeContactSearch } from '../contactUtils';
+
+const initialContactFilters = { search: '' };
 
 interface ContactsListScreenProps {
   material?: Material;
@@ -29,7 +31,9 @@ export function ContactsListScreen({ material = 'solid', onSelectTab, onOpenCont
   const user = useAuthStore((state) => state.user);
   const contactsQuery = useContactsQuery();
   const notificationsQuery = useNotificationsQuery();
-  const [search, setSearch] = useState('');
+  const { filters, setFilters } = useListExplorationState('contacts', initialContactFilters);
+  const search = filters.search;
+  const setSearch = (value: string) => setFilters((current) => ({ ...current, search: value }));
   const [createOpen, setCreateOpen] = useState(false);
   const contacts = contactsQuery.data ?? [];
   const normalizedSearch = normalizeContactSearch(search);

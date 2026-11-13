@@ -18,6 +18,7 @@ import {
   TopBar,
   WishCard,
   resolveAsyncState,
+  useListExplorationState,
   type GlobalCreateTarget,
 } from "@shared/components/ui";
 import type { Material } from "@theme/materials";
@@ -37,6 +38,10 @@ const wishTabs = [
   { id: "planned", label: "À prévoir" },
   { id: "acquired", label: "Acquis" },
 ] as const;
+const initialWishFilters: { activeTab: WishListTab; search: string } = {
+  activeTab: "planned",
+  search: "",
+};
 
 interface WishesListScreenProps {
   material?: Material;
@@ -65,8 +70,10 @@ export function WishesListScreen({
   const user = useAuthStore((state) => state.user);
   const wishesQuery = useWishesQuery();
   const notificationsQuery = useNotificationsQuery();
-  const [activeTab, setActiveTab] = useState<WishListTab>("planned");
-  const [search, setSearch] = useState("");
+  const { filters, setFilters } = useListExplorationState('wishes', initialWishFilters);
+  const { activeTab, search } = filters;
+  const setActiveTab = (value: WishListTab) => setFilters((current) => ({ ...current, activeTab: value }));
+  const setSearch = (value: string) => setFilters((current) => ({ ...current, search: value }));
   const [createOpen, setCreateOpen] = useState(false);
   const wishes = wishesQuery.data ?? [];
   const visibleWishes = useMemo(

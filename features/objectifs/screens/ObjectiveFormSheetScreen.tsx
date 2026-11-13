@@ -128,7 +128,7 @@ export function ObjectiveFormSheetScreen({ mode, objective, animals, onClose, on
   };
   const footerLabel = step === 3 ? (mode === 'edit' ? 'Enregistrer les modifications' : 'Créer l’objectif') : 'Continuer';
 
-  return <><FormSheet title={mode === 'edit' ? 'Modifier l’objectif' : duplicate ? 'Dupliquer l’objectif' : 'Nouvel objectif'} onBack={() => step > 0 ? setStep(step - 1) : onClose()} onClose={onClose} dirty={dirty} confirmBackWhenDirty={step === 0} footerLabel={footerLabel} onFooterPress={() => void continueWizard()} footerDisabled={pending} footerLoading={pending} testID="objective-form-sheet">
+  return <><FormSheet title={mode === 'edit' ? 'Modifier l’objectif' : duplicate ? 'Dupliquer l’objectif' : 'Nouvel objectif'} onBack={() => step > 0 ? setStep(step - 1) : onClose()} onClose={onClose} dirty={dirty} confirmBackWhenDirty={step === 0} scrollResetKey={step} footerLabel={footerLabel} onFooterPress={() => void continueWizard()} footerDisabled={pending} footerLoading={pending} testID="objective-form-sheet">
     <LinearProgress current={step + 1} total={4} label={`Étape ${step + 1} sur 4`} />
     <View style={{ gap: spacing.xs, marginTop: spacing.md }}>
       <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.bold, fontSize: typography.sizes.xxl, lineHeight: typography.lineHeights.loose }}>{step === 0 ? 'Définir le cap' : step === 1 ? 'Choisir les animaux' : step === 2 ? 'Définir les étapes' : 'Vérification'}</Text>

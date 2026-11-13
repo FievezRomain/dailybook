@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { RefreshControl, Text, View } from 'react-native';
 import { useNotificationsQuery } from '../../../hooks/queries/useNotificationsQuery';
 import { useNotesQuery } from '../../../hooks/queries/useNotesQuery';
-import { BottomBar, EmptyState, ErrorState, FloatingActionButton, GlobalCreateMenu, RootScreen, SearchField, Skeleton, TopBar, resolveAsyncState, type GlobalCreateTarget } from '../../../shared/components/ui';
+import { BottomBar, EmptyState, ErrorState, FloatingActionButton, GlobalCreateMenu, RootScreen, SearchField, Skeleton, TopBar, resolveAsyncState, useListExplorationState, type GlobalCreateTarget } from '../../../shared/components/ui';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import type { Material } from '../../../theme/materials';
 import { spacing, typography } from '../../../theme/scales';
@@ -11,6 +11,8 @@ import { getInitials } from '../../home/homeUtils';
 import { tabs, type MainTabId } from '../../home/mainTabs';
 import { NoteCard } from '../components/NoteCard';
 import { filterNotes } from '../noteUtils';
+
+const initialNoteFilters = { query: '' };
 
 interface NotesListScreenProps {
   material?: Material;
@@ -28,7 +30,9 @@ export function NotesListScreen({ material = 'solid', onSelectTab, onOpenNote, o
   const user = useAuthStore((state) => state.user);
   const notesQuery = useNotesQuery();
   const notificationsQuery = useNotificationsQuery();
-  const [query, setQuery] = useState('');
+  const { filters, setFilters } = useListExplorationState('notes', initialNoteFilters);
+  const query = filters.query;
+  const setQuery = (value: string) => setFilters((current) => ({ ...current, query: value }));
   const [createOpen, setCreateOpen] = useState(false);
   const notes = notesQuery.data ?? [];
   const visibleNotes = useMemo(() => filterNotes(notes, query), [notes, query]);

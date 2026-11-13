@@ -82,17 +82,20 @@ export function AgendaScreen({
   const notificationsQuery = useNotificationsQuery();
   const storedDate = useCalendarUIStore((state) => state.selectedDate);
   const setStoredDate = useCalendarUIStore((state) => state.setDate);
+  const query = useCalendarUIStore((state) => state.searchQuery);
+  const setQuery = useCalendarUIStore((state) => state.setSearchQuery);
+  const selectedTypes = useCalendarUIStore((state) => state.activeEventTypeFilters);
+  const setSelectedTypes = useCalendarUIStore((state) => state.setEventTypeFilters);
+  const selectedAnimalIds = useCalendarUIStore((state) => state.activeAnimalFilters);
+  const setSelectedAnimalIds = useCalendarUIStore((state) => state.setAnimalFilters);
   const selectedDate = storedDate ?? dateKey(new Date());
   const [visibleMonth, setVisibleMonth] = useState(selectedDate);
   const highlightsQuery = useAgendaHighlightsQuery(
     Number(visibleMonth.slice(0, 4)),
   );
   const [createOpen, setCreateOpen] = useState(false);
-  const [query, setQuery] = useState("");
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [draftTypes, setDraftTypes] = useState<string[]>([]);
-  const [selectedAnimalIds, setSelectedAnimalIds] = useState<number[]>([]);
   const [draftAnimalIds, setDraftAnimalIds] = useState<number[]>([]);
   const [animalHistoryExpanded, setAnimalHistoryExpanded] = useState(false);
   const events = eventsQuery.data ?? [];
