@@ -1,6 +1,6 @@
 import httpClient from './httpClient';
 import { createCrudService } from './factory';
-import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type AgendaHighlight, type WalkPoint, type WalkRoutePlan, type WalkRouteProposal, type WalkSession } from '../../features/events/types';
+import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type AgendaHighlight, type GenerateWalkRouteProposalsInput, type WalkPoint, type WalkRoutePlan, type WalkRouteProposal, type WalkSession } from '../../features/events/types';
 import { Event } from '../../models/Event';
 import { FileService, fileDownloadKey } from './FileService';
 
@@ -89,7 +89,7 @@ export async function deleteWalkSession(eventId: number): Promise<void> {
 
 export async function generateWalkRouteProposals(
   eventId: number,
-  input: { start_latitude: number; start_longitude: number; target_distance_meters: number; route_type: 'loop' | 'one_way'; avoid_roads: boolean; avoid_water: boolean; prefer_scenic: boolean },
+  input: GenerateWalkRouteProposalsInput,
 ): Promise<WalkRouteProposal[]> {
   return (await httpClient.post(`/events/${eventId}/walk-route-proposals`, input)).data;
 }

@@ -62,6 +62,31 @@ export type WalkRouteProposal = {
   distance_meters: number;
   duration_seconds: number;
   target_distance_meters: number;
+  attribution?: string | null;
+  license?: string | null;
+  source_url?: string | null;
+  official?: boolean;
+};
+
+export type WalkRouteFilterMode = 'distance' | 'duration';
+export type WalkRouteSort = 'recommended' | 'distance' | 'duration' | 'less_roads' | 'highlights';
+export type WalkRouteSortOrder = 'asc' | 'desc';
+
+export type GenerateWalkRouteProposalsInput = {
+  start_latitude: number;
+  start_longitude: number;
+  target_distance_meters: number;
+  filter_mode: WalkRouteFilterMode;
+  min_distance_meters?: number;
+  max_distance_meters?: number;
+  min_duration_seconds?: number;
+  max_duration_seconds?: number;
+  sort_by: WalkRouteSort;
+  sort_order: WalkRouteSortOrder;
+  route_type: 'loop' | 'one_way';
+  avoid_roads: boolean;
+  avoid_water: boolean;
+  prefer_scenic: boolean;
 };
 
 export type WalkRoutePlan = WalkRouteProposal & {

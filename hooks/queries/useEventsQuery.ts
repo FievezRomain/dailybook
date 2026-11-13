@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import * as EventService from '../../services/api/EventService';
-import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type WalkRoutePlan, type WalkRouteProposal } from '../../features/events/types';
+import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type GenerateWalkRouteProposalsInput, type WalkRoutePlan, type WalkRouteProposal } from '../../features/events/types';
 import { Event } from '../../models/Event';
 
 export const EVENTS_KEY = ['events'] as const;
@@ -148,7 +148,7 @@ export function useWalkRoutePlanQuery(eventId: number, enabled = true) {
 export function useWalkRoutePlanMutations(eventId: number) {
   const queryClient = useQueryClient();
   const propose = useMutation({
-    mutationFn: (input: { start_latitude: number; start_longitude: number; target_distance_meters: number; route_type: 'loop' | 'one_way'; avoid_roads: boolean; avoid_water: boolean; prefer_scenic: boolean }) =>
+    mutationFn: (input: GenerateWalkRouteProposalsInput) =>
       EventService.generateWalkRouteProposals(eventId, input),
   });
   const save = useMutation({
