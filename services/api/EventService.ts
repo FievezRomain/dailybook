@@ -1,6 +1,6 @@
 import httpClient from './httpClient';
 import { createCrudService } from './factory';
-import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type AgendaHighlight, type WalkPoint, type WalkSession } from '../../features/events/types';
+import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type AgendaHighlight, type WalkPoint, type WalkRoutePlan, type WalkRouteProposal, type WalkSession } from '../../features/events/types';
 import { Event } from '../../models/Event';
 import { FileService, fileDownloadKey } from './FileService';
 
@@ -85,4 +85,23 @@ export async function finalizeWalkSession(sessionId: number, endedAt: string): P
 
 export async function deleteWalkSession(eventId: number): Promise<void> {
   await httpClient.delete(`/events/${eventId}/walk-session`);
+}
+
+export async function generateWalkRouteProposals(
+  eventId: number,
+  input: { start_latitude: number; start_longitude: number; target_distance_meters: number },
+): Promise<WalkRouteProposal[]> {
+  return (await httpClient.post(`/events/${eventId}/walk-route-proposals`, input)).data;
+}
+
+export async function getWalkRoutePlan(eventId: number): Promise<WalkRoutePlan> {
+  return (await httpClient.get(`/events/${eventId}/walk-route-plan`)).data;
+}
+
+export async function saveWalkRoutePlan(eventId: number, plan: WalkRouteProposal): Promise<WalkRoutePlan> {
+  return (await httpClient.put(`/events/${eventId}/walk-route-plan`, plan)).data;
+}
+
+export async function deleteWalkRoutePlan(eventId: number): Promise<void> {
+  await httpClient.delete(`/events/${eventId}/walk-route-plan`);
 }

@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import * as EventService from '../../services/api/EventService';
-import { CreateEventPayload, UpdateEventPayload, PatchEventPayload } from '../../features/events/types';
+import { CreateEventPayload, UpdateEventPayload, PatchEventPayload, type WalkRoutePlan, type WalkRouteProposal } from '../../features/events/types';
 import { Event } from '../../models/Event';
 
 export const EVENTS_KEY = ['events'] as const;
 export const walkSessionKey = (eventId: number) => [...EVENTS_KEY, eventId, 'walk-session'] as const;
+export const walkRoutePlanKey = (eventId: number) => [...EVENTS_KEY, eventId, 'walk-route-plan'] as const;
 
 export function useEventsQuery() {
   return useQuery({
@@ -133,4 +134,30 @@ export function useWalkSessionQuery(eventId: number, enabled = true) {
     enabled,
     retry: false,
   });
+}
+
+export function useWalkRoutePlanQuery(eventId: number, enabled = true) {
+  return useQuery({
+    queryKey: walkRoutePlanKey(eventId),
+    queryFn: () => EventService.getWalkRoutePlan(eventId),
+    enabled,
+    retry: false,
+  });
+}
+
+export function useWalkRoutePlanMutations(eventId: number) {
+  const queryClient = useQueryClient();
+  const propose = useMutation({
+    mutationFn: (input: { start_latitude: number; start_longitude: number; target_distance_meters: number }) =>
+      EventService.generateWalkRouteProposals(eventId, input),
+  });
+  const save = useMutation({
+    mutationFn: (plan: WalkRouteProposal) => EventService.saveWalkRoutePlan(eventId, plan),
+    onSuccess: (plan: WalkRoutePlan) => queryClient.setQueryData(walkRoutePlanKey(eventId), plan),
+  });
+  const remove = useMutation({
+    mutationFn: () => EventService.deleteWalkRoutePlan(eventId),
+    onSuccess: () => queryClient.removeQueries({ queryKey: walkRoutePlanKey(eventId) }),
+  });
+  return { propose, save, remove };
 }

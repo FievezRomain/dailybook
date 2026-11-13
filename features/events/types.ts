@@ -36,6 +36,29 @@ export type WalkSession = {
   average_speed_mps: number;
 };
 
+export type WalkRoutePoint = {
+  latitude: number;
+  longitude: number;
+};
+
+export type WalkRouteProposal = {
+  provider: string;
+  resource?: string;
+  name: string;
+  points: WalkRoutePoint[];
+  distance_meters: number;
+  duration_seconds: number;
+  target_distance_meters: number;
+};
+
+export type WalkRoutePlan = WalkRouteProposal & {
+  id: number;
+  event_id: number;
+  owner_id: number;
+  created_at?: string;
+  updated_at?: string;
+};
+
 /** Payload envoyé au backend pour créer un événement. */
 export type CreateEventPayload = {
   nom: string;

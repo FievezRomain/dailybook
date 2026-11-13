@@ -1,4 +1,5 @@
 import { getWalkFollowRegion, getWalkMapCoordinates, getWalkRouteRegion } from '../walkMapUtils';
+import { isIgnPlanAvailable } from '../walkMapTiles';
 import type { WalkPoint } from '../types';
 
 const point = (latitude: number, longitude: number): WalkPoint => ({
@@ -47,5 +48,13 @@ describe('walk map utilities', () => {
       latitudeDelta: 0.005,
       longitudeDelta: 0.005,
     });
+  });
+
+  it('uses the IGN outdoor base map inside metropolitan France', () => {
+    expect(isIgnPlanAvailable({ latitude: 48.8566, longitude: 2.3522 })).toBe(true);
+  });
+
+  it('falls back to the native map outside the IGN coverage used by the app', () => {
+    expect(isIgnPlanAvailable({ latitude: 45.5019, longitude: -73.5674 })).toBe(false);
   });
 });

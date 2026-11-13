@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Banner, Button, Card, DetailScreen, Dialog, Skeleton, TopBar } from '../../../shared/components/ui';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { useEventsQuery, walkSessionKey } from '../../../hooks/queries/useEventsQuery';
+import { useEventsQuery, useWalkRoutePlanQuery, walkSessionKey } from '../../../hooks/queries/useEventsQuery';
 import type { WalkSession } from '../types';
 import { finishWalk, getActiveWalk, isExpoGoWalkTracking, startOrResumeWalk, type ActiveWalk } from '../walkTrackingService';
 import { WalkTrackingMap } from '../components/WalkTrackingMap';
@@ -27,6 +27,7 @@ export function WalkTrackingScreen({ eventId, onBack, onFinished }: WalkTracking
   const { colors } = useAppTheme();
   const queryClient = useQueryClient();
   const eventsQuery = useEventsQuery();
+  const routePlan = useWalkRoutePlanQuery(eventId);
   const eventName = eventsQuery.data?.find((event) => event.id === eventId)?.nom || 'Ma balade';
   const [active, setActive] = useState<ActiveWalk>();
   const [error, setError] = useState<string>();
@@ -77,7 +78,7 @@ export function WalkTrackingScreen({ eventId, onBack, onFinished }: WalkTracking
           <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: 26, lineHeight: 32 }}>{eventName}</Text>
           <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>Le suivi continue lorsque l’écran est verrouillé. Vous pouvez revenir au détail sans l’interrompre.</Text>
         </Card>
-        <WalkTrackingMap points={active.points} />
+        <WalkTrackingMap points={active.points} plannedPoints={routePlan.data?.points} />
         <View style={{ flexDirection: 'row', gap: spacing.sm }}>
           <LiveMetric label="Durée" value={elapsedLabel(active.startedAt)} />
           <LiveMetric label="Points GPS" value={String(active.points.length)} />

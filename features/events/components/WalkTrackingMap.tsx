@@ -1,24 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Text, View } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
+import { Platform, Text, View } from 'react-native';
+import MapView, { Marker, Polyline, UrlTile } from 'react-native-maps';
 import { Button, Card } from '../../../shared/components/ui';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import type { WalkPoint } from '../types';
-import { getWalkFollowRegion, getWalkMapCoordinates } from '../walkMapUtils';
+import type { WalkPoint, WalkRoutePoint } from '../types';
+import { getWalkFollowRegion, getWalkMapCoordinates, getWalkRouteRegion } from '../walkMapUtils';
+import { IGN_PLAN_TILE_URL, isIgnPlanAvailable } from '../walkMapTiles';
 
 const MAP_HEIGHT = 320;
 const CAMERA_ANIMATION_DURATION = 400;
 
-export function WalkTrackingMap({ points }: { points: WalkPoint[] }) {
+export function WalkTrackingMap({ points, plannedPoints = [] }: { points: WalkPoint[]; plannedPoints?: WalkRoutePoint[] }) {
   const { colors, resolvedTheme } = useAppTheme();
   const mapRef = useRef<MapView>(null);
   const previousPointCount = useRef(points.length);
   const [following, setFollowing] = useState(true);
   const coordinates = useMemo(() => getWalkMapCoordinates(points), [points]);
+  const plannedCoordinates = useMemo(() => getWalkMapCoordinates(plannedPoints), [plannedPoints]);
   const first = coordinates[0];
   const latest = coordinates.at(-1);
-  const initialRegion = getWalkFollowRegion(latest);
+  const initialRegion = getWalkFollowRegion(latest) ?? getWalkRouteRegion(plannedCoordinates);
+  const useIgnPlan = isIgnPlanAvailable(latest ?? plannedCoordinates[0]);
 
   useEffect(() => {
     const receivedPoint = points.length !== previousPointCount.current;
@@ -35,7 +38,7 @@ export function WalkTrackingMap({ points }: { points: WalkPoint[] }) {
     mapRef.current?.animateToRegion(region, CAMERA_ANIMATION_DURATION);
   };
 
-  if (!initialRegion || !first || !latest) {
+  if (!initialRegion) {
     return <Card style={{ minHeight: MAP_HEIGHT, alignItems: 'center', justifyContent: 'center', gap: spacing.sm }} accessibilityLabel="Recherche de la position GPS">
       <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Localisation en cours…</Text>
       <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight, textAlign: 'center' }}>La carte apparaîtra dès la réception du premier point GPS.</Text>
@@ -48,6 +51,7 @@ export function WalkTrackingMap({ points }: { points: WalkPoint[] }) {
         ref={mapRef}
         style={{ flex: 1 }}
         initialRegion={initialRegion}
+        mapType={Platform.OS === 'android' && useIgnPlan ? 'none' : 'standard'}
         userInterfaceStyle={resolvedTheme}
         showsUserLocation
         showsMyLocationButton={false}
@@ -63,11 +67,14 @@ export function WalkTrackingMap({ points }: { points: WalkPoint[] }) {
         accessibilityLabel="Carte interactive de la balade avec le tracé déjà parcouru"
         testID="walk-tracking-map"
       >
+        {useIgnPlan ? <UrlTile urlTemplate={IGN_PLAN_TILE_URL} maximumZ={18} tileSize={256} /> : null}
+        {plannedCoordinates.length > 1 ? <Polyline coordinates={plannedCoordinates} strokeColor={colors.textSecondary} strokeWidth={4} lineDashPattern={[10, 7]} lineCap="round" lineJoin="round" /> : null}
         {coordinates.length > 1 ? <Marker coordinate={first} title="Départ de la balade" pinColor={colors.success} /> : null}
-        <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={5} lineCap="round" lineJoin="round" />
-        <Marker coordinate={latest} title="Dernière position enregistrée" pinColor={colors.primary} />
+        {coordinates.length > 1 ? <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={5} lineCap="round" lineJoin="round" /> : null}
+        {latest ? <Marker coordinate={latest} title="Dernière position enregistrée" pinColor={colors.primary} /> : null}
       </MapView>
     </View>
+    {useIgnPlan ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Fond cartographique © IGN — Géoplateforme</Text> : null}
     <Card style={{ gap: spacing.sm }}>
       <View style={{ gap: spacing.xs }}>
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{following ? 'Position suivie automatiquement' : 'Exploration libre de la carte'}</Text>

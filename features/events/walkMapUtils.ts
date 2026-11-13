@@ -1,6 +1,7 @@
-import type { WalkPoint } from './types';
-
-export type WalkMapCoordinate = Pick<WalkPoint, 'latitude' | 'longitude'>;
+export type WalkMapCoordinate = {
+  latitude: number;
+  longitude: number;
+};
 
 export type WalkMapRegion = WalkMapCoordinate & {
   latitudeDelta: number;
@@ -10,7 +11,7 @@ export type WalkMapRegion = WalkMapCoordinate & {
 const FOLLOW_REGION_DELTA = 0.005;
 const ROUTE_REGION_PADDING = 1.4;
 
-export function getWalkMapCoordinates(points: readonly WalkPoint[]): WalkMapCoordinate[] {
+export function getWalkMapCoordinates(points: readonly WalkMapCoordinate[]): WalkMapCoordinate[] {
   return points.map(({ latitude, longitude }) => ({ latitude, longitude }));
 }
 
