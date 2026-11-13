@@ -41,6 +41,18 @@ function routeTypeLabel(routeType: WalkRouteProposal['route_type']) {
   return 'Boucle';
 }
 
+function RouteHighlights({ highlights }: Pick<WalkRouteProposal, 'highlights'>) {
+  const { colors } = useAppTheme();
+  if (!highlights.length) return null;
+  return <View style={{ gap: spacing.xs }}>
+    <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>À découvrir sur le parcours</Text>
+    {highlights.map((highlight) => <Text
+      key={`${highlight.name}-${highlight.latitude}-${highlight.longitude}`}
+      style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}
+    >• {highlight.name} · {highlight.category}</Text>)}
+  </View>;
+}
+
 export function WalkRoutePlanCard({
   plan,
   onChange,
@@ -60,7 +72,8 @@ export function WalkRoutePlanCard({
       {preferenceLabel(plan) ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{preferenceLabel(plan)}</Text> : null}
       {plan.destination_label ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Arrivée : {plan.destination_label}</Text> : null}
     </View>
-    <WalkRouteMap points={plan.points} planned />
+    <WalkRouteMap points={plan.points} highlights={plan.highlights} planned />
+    <RouteHighlights highlights={plan.highlights} />
     {locked
       ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Cet itinéraire ne peut plus être modifié car le suivi GPS a déjà démarré.</Text>
       : <>
@@ -234,7 +247,8 @@ export function WalkRoutePlannerSheet({
         {proposal.destination_label ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Arrivée : {proposal.destination_label}</Text> : null}
         {proposal.route_type === 'out_and_back' ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Solution de secours : aucune vraie boucle proche de cette distance n’a été trouvée. Ce parcours revient sur une partie du chemin.</Text> : null}
       </View>
-      <WalkRouteMap points={proposal.points} planned />
+      <WalkRouteMap points={proposal.points} highlights={proposal.highlights} planned />
+      <RouteHighlights highlights={proposal.highlights} />
       <Button label="Choisir cet itinéraire" icon="circleCheck" fullWidth loading={mutations.save.isPending} disabled={mutations.save.isPending} onPress={() => void choose(proposal)} />
     </Card>)}
   </FormSheet>;

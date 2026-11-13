@@ -41,6 +41,13 @@ export type WalkRoutePoint = {
   longitude: number;
 };
 
+export type WalkRouteHighlight = {
+  name: string;
+  category: string;
+  latitude: number;
+  longitude: number;
+};
+
 export type WalkRouteProposal = {
   provider: string;
   resource?: string;
@@ -50,6 +57,7 @@ export type WalkRouteProposal = {
   avoid_water: boolean;
   prefer_scenic: boolean;
   destination_label?: string | null;
+  highlights: WalkRouteHighlight[];
   points: WalkRoutePoint[];
   distance_meters: number;
   duration_seconds: number;
