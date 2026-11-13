@@ -45,7 +45,11 @@ export type WalkRouteProposal = {
   provider: string;
   resource?: string;
   name: string;
-  route_type: 'loop' | 'one_way';
+  route_type: 'loop' | 'one_way' | 'out_and_back';
+  avoid_roads: boolean;
+  avoid_water: boolean;
+  prefer_scenic: boolean;
+  destination_label?: string | null;
   points: WalkRoutePoint[];
   distance_meters: number;
   duration_seconds: number;

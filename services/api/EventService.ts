@@ -89,7 +89,7 @@ export async function deleteWalkSession(eventId: number): Promise<void> {
 
 export async function generateWalkRouteProposals(
   eventId: number,
-  input: { start_latitude: number; start_longitude: number; target_distance_meters: number; route_type: 'loop' | 'one_way' },
+  input: { start_latitude: number; start_longitude: number; target_distance_meters: number; route_type: 'loop' | 'one_way'; avoid_roads: boolean; avoid_water: boolean; prefer_scenic: boolean },
 ): Promise<WalkRouteProposal[]> {
   return (await httpClient.post(`/events/${eventId}/walk-route-proposals`, input)).data;
 }
