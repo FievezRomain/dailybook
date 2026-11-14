@@ -85,6 +85,8 @@ Une création accepte jusqu’à cent points de contrôle, soit 98 étapes utili
 
 Les marqueurs d’une création définissent un couloir à respecter, pas de simples suggestions. Après le calcul, FastAPI vérifie que la géométrie IGN reste proche de ce couloir et qu’elle ne rallonge pas fortement le trajet demandé. Si IGN recale par exemple un passage de canal sur une route éloignée, Vasco conserve la géométrie manuelle des marqueurs, recalcule distance et durée et n’invente pas de pourcentage routier. Un avertissement persistant est affiché en tête de l’éditeur et nomme la portion concernée, par exemple « entre l’étape 7 et l’étape 8 » ; il reste visible si l’enregistrement échoue.
 
+Deux propositions qui empruntent le même couloir sont considérées comme un seul parcours même si IGN renvoie un nombre ou un placement de sommets différent. La similarité est mesurée sur les géométries nettoyées et rééchantillonnées. Lorsque les routes sont évitées, le pourcentage de voies automobiles est recalculé sur cette géométrie finale avant l’affichage et le classement ; les branches retirées ne peuvent donc plus modifier les détails d’un tracé qui n’est plus visible.
+
 ## 6. Animaux
 
 Le workspace conserve le sélecteur horizontal. À l’état initial, il montre uniquement les animaux présents, sans titres de groupe. `+ Voir plus`, placé à la fin, révèle ensuite les animaux sortis puis décédés ; `− Voir moins` masque de nouveau l’historique. Le cercle dégradé de sélection est espacé de la photo. Ce comportement est partagé par tous les écrans qui utilisent ce sélecteur.
