@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { Platform, Text, View } from 'react-native';
-import MapView, { Marker, Polyline, UrlTile, type MapPressEvent } from 'react-native-maps';
+import MapView, { Marker, Polyline, UrlTile, type MapPressEvent, type MarkerPressEvent } from 'react-native-maps';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import type { WalkMapCoordinate } from '../walkMapUtils';
@@ -20,10 +20,23 @@ type WalkRouteMapProps = {
   onSnapshotReady?: () => void;
   onPress?: (point: WalkMapCoordinate) => void;
   editPoint?: WalkMapCoordinate;
+  controlPoints?: WalkMapCoordinate[];
+  selectedControlPointIndex?: number;
+  onControlPointPress?: (index: number) => void;
   planned?: boolean;
 };
 
-export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(function WalkRouteMap({ points, highlights = [], onSnapshotReady, onPress, editPoint, planned = false }, ref) {
+export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(function WalkRouteMap({
+  points,
+  highlights = [],
+  onSnapshotReady,
+  onPress,
+  editPoint,
+  controlPoints = [],
+  selectedControlPointIndex,
+  onControlPointPress,
+  planned = false,
+}, ref) {
   const { colors, resolvedTheme } = useAppTheme();
   const mapRef = useRef<MapView>(null);
   const coordinates = useMemo(() => getWalkMapCoordinates(points), [points]);
@@ -75,6 +88,18 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(fu
         title={highlight.name}
         description={highlight.category}
         pinColor={colors.warning}
+      />)}
+      {controlPoints.map((point, index) => <Marker
+        key={`control-${index}-${point.latitude}-${point.longitude}`}
+        coordinate={point}
+        title={`Étape ${index + 1}`}
+        description="Touchez pour sélectionner ce marqueur"
+        pinColor={selectedControlPointIndex === index ? colors.error : colors.warning}
+        onPress={(event: MarkerPressEvent) => {
+          event.stopPropagation();
+          onControlPointPress?.(index);
+        }}
+        accessibilityLabel={`Étape ${index + 1}, toucher pour sélectionner`}
       />)}
       {editPoint ? <Marker coordinate={editPoint} title="Point de modification" pinColor={colors.warning} /> : null}
       <Marker coordinate={latest} title="Arrivée de la balade" pinColor={colors.primary} />

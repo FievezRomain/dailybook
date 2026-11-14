@@ -14,6 +14,7 @@ import {
   validateWalkRouteFilters,
   type WalkRouteFilterState,
 } from '../walkRouteFilters';
+import { buildDraftRoutePoints, removeDraftWaypoint } from '../walkRouteEditor';
 import { WalkRouteMap } from './WalkRouteMap';
 
 const ROUTE_TYPE_OPTIONS = [
@@ -21,7 +22,7 @@ const ROUTE_TYPE_OPTIONS = [
   { value: 'one_way' as const, label: 'Aller simple' },
 ];
 const PROPOSALS_PER_PAGE = 3;
-type RouteEditorMode = 'via' | 'avoid';
+type RouteEditorMode = 'idle' | 'via' | 'avoid';
 
 function representativeRoutePoints(points: WalkRoutePoint[]) {
   if (points.length < 4) return points.slice(1, -1);
@@ -160,8 +161,11 @@ export function WalkRoutePlannerSheet({
   const [editorRoute, setEditorRoute] = useState<WalkRouteProposal>();
   const [editorOriginal, setEditorOriginal] = useState<WalkRouteProposal>();
   const [editorHistory, setEditorHistory] = useState<WalkRouteProposal[]>([]);
-  const [editorMode, setEditorMode] = useState<RouteEditorMode>('via');
+  const [editorMode, setEditorMode] = useState<RouteEditorMode>('idle');
   const [editorPoint, setEditorPoint] = useState<WalkRoutePoint>();
+  const [draftWaypoints, setDraftWaypoints] = useState<WalkRoutePoint[]>([]);
+  const [selectedDraftPointIndex, setSelectedDraftPointIndex] = useState<number>();
+  const [editorFeedback, setEditorFeedback] = useState<string>();
   const [error, setError] = useState<string>();
   const locationRef = useRef<{ latitude: number; longitude: number } | undefined>(undefined);
   const generationRef = useRef(0);
@@ -215,8 +219,11 @@ export function WalkRoutePlannerSheet({
     setEditorRoute(proposal);
     setEditorOriginal(proposal);
     setEditorHistory([]);
-    setEditorMode('via');
+    setEditorMode('idle');
     setEditorPoint(undefined);
+    setDraftWaypoints([]);
+    setSelectedDraftPointIndex(undefined);
+    setEditorFeedback(undefined);
     setError(undefined);
   };
 
@@ -245,21 +252,15 @@ export function WalkRoutePlannerSheet({
     }
   };
 
-  const recalculateEditorRoute = async () => {
-    if (!editorRoute || !editorPoint) return;
+  const recalculateEditorRoute = async (point: WalkRoutePoint, mode: Exclude<RouteEditorMode, 'idle'>) => {
+    if (!editorRoute || editorRoute.distance_meters === 0 || mutations.customize.isPending) return;
     setError(undefined);
-    const isEmptyDraft = editorRoute.distance_meters === 0;
-    const start = editorRoute.points[0];
-    const controlPoints = isEmptyDraft
-      ? editorRoute.route_type === 'loop'
-        ? [start, editorPoint, start]
-        : [start, editorPoint]
-      : undefined;
+    setEditorFeedback(undefined);
+    setEditorPoint(point);
     try {
       const customized = await mutations.customize.mutateAsync({
-        points: isEmptyDraft ? [] : editorRoute.points,
-        control_points: controlPoints,
-        ...(isEmptyDraft ? {} : editorMode === 'via' ? { via_point: editorPoint } : { avoid_point: editorPoint }),
+        points: editorRoute.points,
+        ...(mode === 'via' ? { via_point: point } : { avoid_point: point }),
         route_type: editorRoute.route_type,
         avoid_roads: editorRoute.avoid_roads,
         avoid_water: editorRoute.avoid_water,
@@ -272,6 +273,39 @@ export function WalkRoutePlannerSheet({
       setEditorHistory((history) => [...history, editorRoute]);
       setEditorRoute(customized);
       setEditorPoint(undefined);
+      setEditorMode('idle');
+      setEditorFeedback(mode === 'via' ? 'Le passage a été ajouté au parcours.' : 'La portion a été remplacée par un détour.');
+    } catch (customizationError) {
+      setError(parseApiError(customizationError).message);
+    }
+  };
+
+  const calculateDraftRoute = async () => {
+    if (!editorRoute || editorRoute.distance_meters > 0 || !draftWaypoints.length) return;
+    setError(undefined);
+    setEditorFeedback(undefined);
+    const start = editorRoute.points[0];
+    const controlPoints = buildDraftRoutePoints(start, draftWaypoints, editorRoute.route_type);
+    try {
+      const customized = await mutations.customize.mutateAsync({
+        points: [],
+        control_points: controlPoints,
+        route_type: editorRoute.route_type,
+        avoid_roads: editorRoute.avoid_roads,
+        avoid_water: editorRoute.avoid_water,
+        prefer_scenic: editorRoute.prefer_scenic,
+        target_distance_meters: editorRoute.target_distance_meters,
+        attribution: editorRoute.attribution,
+        license: editorRoute.license,
+        source_url: editorRoute.source_url,
+      });
+      setEditorRoute(customized);
+      setEditorOriginal(customized);
+      setEditorHistory([]);
+      setDraftWaypoints([]);
+      setSelectedDraftPointIndex(undefined);
+      setEditorMode('idle');
+      setEditorFeedback('Le parcours piéton a été calculé à partir de vos étapes.');
     } catch (customizationError) {
       setError(parseApiError(customizationError).message);
     }
@@ -282,6 +316,9 @@ export function WalkRoutePlannerSheet({
     setEditorOriginal(undefined);
     setEditorHistory([]);
     setEditorPoint(undefined);
+    setDraftWaypoints([]);
+    setSelectedDraftPointIndex(undefined);
+    setEditorFeedback(undefined);
     setError(undefined);
   };
 
@@ -306,6 +343,10 @@ export function WalkRoutePlannerSheet({
   const selectedProposal = proposals[selectedProposalIndex];
   const showingResults = proposals.length > 0;
   const showingEditor = Boolean(editorRoute);
+  const creatingDraft = Boolean(editorRoute && editorRoute.distance_meters === 0);
+  const draftMapPoints = editorRoute && creatingDraft
+    ? buildDraftRoutePoints(editorRoute.points[0], draftWaypoints, editorRoute.route_type)
+    : editorRoute?.points ?? [];
   const proposalPageCount = Math.ceil(proposals.length / PROPOSALS_PER_PAGE);
   const proposalPageStart = proposalPage * PROPOSALS_PER_PAGE;
   const visibleProposals = proposals.slice(proposalPageStart, proposalPageStart + PROPOSALS_PER_PAGE);
@@ -314,13 +355,14 @@ export function WalkRoutePlannerSheet({
     title={showingEditor ? editorOriginal?.distance_meters ? 'Modifier le tracé' : 'Créer mon tracé' : showingResults ? 'Choisir un itinéraire' : currentPlan ? 'Changer d’itinéraire' : 'Préparer la balade'}
     onBack={showingEditor ? closeEditor : showingResults ? returnToCriteria : onClose}
     onClose={onClose}
-    footerLabel={showingEditor ? 'Utiliser ce tracé' : showingResults ? 'Choisir cet itinéraire' : 'Voir les itinéraires'}
+    footerLabel={creatingDraft ? 'Calculer mon itinéraire' : showingEditor ? 'Utiliser ce tracé' : showingResults ? 'Choisir cet itinéraire' : 'Voir les itinéraires'}
     onFooterPress={() => {
-      if (editorRoute) void choose(editorRoute);
+      if (creatingDraft) void calculateDraftRoute();
+      else if (editorRoute) void choose(editorRoute);
       else if (selectedProposal) void choose(selectedProposal);
       else void generate();
     }}
-    footerDisabled={showingEditor ? !editorRoute?.distance_meters || mutations.customize.isPending : showingResults && !selectedProposal}
+    footerDisabled={creatingDraft ? !draftWaypoints.length || mutations.customize.isPending : showingEditor ? !editorRoute?.distance_meters || mutations.customize.isPending : showingResults && !selectedProposal}
     footerLoading={showingEditor ? mutations.customize.isPending || mutations.save.isPending : showingResults ? mutations.save.isPending : mutations.propose.isPending}
     dirty={showingEditor}
     confirmBackWhenDirty={showingEditor}
@@ -329,33 +371,82 @@ export function WalkRoutePlannerSheet({
     {error ? <Banner tone="error" title="Calcul impossible" message={error} onDismiss={() => setError(undefined)} /> : null}
     {showingEditor && editorRoute ? <>
       <View style={{ gap: spacing.xs }}>
-        <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{editorRoute.distance_meters ? 'Ajustez le parcours' : 'Dessinez avec des points de passage'}</Text>
+        <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{creatingDraft ? 'Placez vos étapes' : 'Que voulez-vous modifier ?'}</Text>
         <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>
-          {editorMode === 'via' ? 'Touchez la carte pour imposer un passage. IGN recalculera le tracé piéton.' : 'Touchez la portion à retirer. Vasco cherchera un détour praticable pour conserver le parcours.'}
+          {creatingDraft
+            ? 'Touchez la carte pour ajouter autant d’étapes que nécessaire. Aucun calcul externe n’est lancé avant le bouton final.'
+            : editorMode === 'idle'
+              ? 'Choisissez une action, puis touchez la carte. Le parcours sera recalculé automatiquement.'
+              : editorMode === 'via'
+                ? 'Touchez l’endroit par lequel vous souhaitez passer.'
+                : 'Touchez la portion que vous souhaitez contourner.'}
         </Text>
       </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-        <Chip label="Passer par ici" selected={editorMode === 'via'} variant="tonal" size="medium" onPress={() => { setEditorMode('via'); setEditorPoint(undefined); }} />
-        <Chip label="Éviter un passage" selected={editorMode === 'avoid'} variant="tonal" size="medium" disabled={!editorRoute.distance_meters} onPress={() => { setEditorMode('avoid'); setEditorPoint(undefined); }} />
-      </View>
-      <WalkRouteMap points={editorRoute.points} highlights={editorRoute.highlights} planned onPress={setEditorPoint} editPoint={editorPoint} />
+      {!creatingDraft ? <View style={{ gap: spacing.sm }}>
+        <Button label="Ajouter un passage" variant={editorMode === 'via' ? 'primary' : 'secondary'} fullWidth onPress={() => { setEditorMode((mode) => mode === 'via' ? 'idle' : 'via'); setEditorPoint(undefined); setEditorFeedback(undefined); }} />
+        <Button label="Éviter une portion" variant={editorMode === 'avoid' ? 'primary' : 'secondary'} fullWidth onPress={() => { setEditorMode((mode) => mode === 'avoid' ? 'idle' : 'avoid'); setEditorPoint(undefined); setEditorFeedback(undefined); }} />
+      </View> : null}
+      <WalkRouteMap
+        points={creatingDraft ? draftMapPoints : editorRoute.points}
+        highlights={creatingDraft ? [] : editorRoute.highlights}
+        planned
+        onPress={creatingDraft
+          ? (point) => {
+            setDraftWaypoints((waypoints) => [...waypoints, point]);
+            setSelectedDraftPointIndex(draftWaypoints.length);
+            setEditorFeedback(undefined);
+          }
+          : editorMode === 'idle' || mutations.customize.isPending
+            ? undefined
+            : (point) => void recalculateEditorRoute(point, editorMode)}
+        editPoint={editorPoint}
+        controlPoints={creatingDraft ? draftWaypoints : []}
+        selectedControlPointIndex={selectedDraftPointIndex}
+        onControlPointPress={creatingDraft ? setSelectedDraftPointIndex : undefined}
+      />
+      {creatingDraft ? <View style={{ gap: spacing.sm }}>
+        <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>
+          {draftWaypoints.length ? `${draftWaypoints.length} étape${draftWaypoints.length > 1 ? 's' : ''} ajoutée${draftWaypoints.length > 1 ? 's' : ''}` : 'Ajoutez au moins une étape sur la carte.'}
+        </Text>
+        {draftWaypoints.length ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+          {draftWaypoints.map((point, index) => <Chip
+            key={`${point.latitude}-${point.longitude}-${index}`}
+            label={`Étape ${index + 1}`}
+            selected={selectedDraftPointIndex === index}
+            variant="tonal"
+            size="small"
+            onPress={() => setSelectedDraftPointIndex(index)}
+          />)}
+        </View> : null}
+        {selectedDraftPointIndex != null ? <Button
+          label={`Supprimer l’étape ${selectedDraftPointIndex + 1}`}
+          icon="delete"
+          variant="ghost"
+          fullWidth
+          onPress={() => {
+            setDraftWaypoints((waypoints) => removeDraftWaypoint(waypoints, selectedDraftPointIndex));
+            setSelectedDraftPointIndex(undefined);
+          }}
+        /> : null}
+      </View> : null}
       {editorRoute.distance_meters ? <View style={{ gap: spacing.xs }}>
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{distanceLabel(editorRoute.distance_meters)} · {durationLabel(editorRoute.duration_seconds)}{editorRoute.road_percentage == null ? '' : ` · ${Math.round(editorRoute.road_percentage)} % de voies automobiles`}</Text>
         {editorRoute.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Source : {editorRoute.attribution}{editorRoute.license ? ` · ${editorRoute.license}` : ''}</Text> : null}
       </View> : null}
       {editorMode === 'via' && editorRoute.highlights.length ? <View style={{ gap: spacing.sm }}>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Passages accessibles proposés</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Ou choisissez un lieu remarquable</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-          {editorRoute.highlights.slice(0, 4).map((highlight) => <Chip key={`${highlight.name}-${highlight.latitude}-${highlight.longitude}`} label={highlight.name} selected={editorPoint?.latitude === highlight.latitude && editorPoint?.longitude === highlight.longitude} variant="tonal" size="small" onPress={() => setEditorPoint({ latitude: highlight.latitude, longitude: highlight.longitude })} />)}
+          {editorRoute.highlights.slice(0, 4).map((highlight) => <Chip key={`${highlight.name}-${highlight.latitude}-${highlight.longitude}`} label={highlight.name} selected={false} variant="tonal" size="small" disabled={mutations.customize.isPending} onPress={() => void recalculateEditorRoute({ latitude: highlight.latitude, longitude: highlight.longitude }, 'via')} />)}
         </View>
       </View> : null}
       {editorMode === 'avoid' ? <View style={{ gap: spacing.sm }}>
         <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Ou choisissez une portion sans utiliser la carte</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-          {representativeRoutePoints(editorRoute.points).map((point, index) => <Chip key={`${point.latitude}-${point.longitude}-${index}`} label={`Portion ${index + 1}`} selected={editorPoint?.latitude === point.latitude && editorPoint?.longitude === point.longitude} variant="tonal" size="small" onPress={() => setEditorPoint(point)} accessibilityLabel={`Éviter la portion ${index + 1} du parcours`} />)}
+          {representativeRoutePoints(editorRoute.points).map((point, index) => <Chip key={`${point.latitude}-${point.longitude}-${index}`} label={`Portion ${index + 1}`} selected={false} variant="tonal" size="small" disabled={mutations.customize.isPending} onPress={() => void recalculateEditorRoute(point, 'avoid')} accessibilityLabel={`Éviter la portion ${index + 1} du parcours`} />)}
         </View>
       </View> : null}
-      <Button label={editorMode === 'avoid' ? 'Recalculer sans ce passage' : 'Recalculer par ce point'} icon="compass" variant="secondary" fullWidth disabled={!editorPoint} loading={mutations.customize.isPending} onPress={() => void recalculateEditorRoute()} />
+      {mutations.customize.isPending ? <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Recalcul du parcours en cours…</Text> : null}
+      {editorFeedback ? <Text accessibilityLiveRegion="polite" style={{ color: colors.success, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{editorFeedback}</Text> : null}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
         <Button label="Annuler la dernière modification" variant="ghost" size="small" disabled={!editorHistory.length} onPress={() => {
           const previous = editorHistory.at(-1);
@@ -363,12 +454,16 @@ export function WalkRoutePlannerSheet({
           setEditorRoute(previous);
           setEditorHistory((history) => history.slice(0, -1));
           setEditorPoint(undefined);
+          setEditorMode('idle');
+          setEditorFeedback('La dernière modification a été annulée.');
         }} />
         <Button label="Revenir au tracé initial" variant="ghost" size="small" disabled={!editorOriginal || editorRoute === editorOriginal} onPress={() => {
           if (!editorOriginal) return;
           setEditorRoute(editorOriginal);
           setEditorHistory([]);
           setEditorPoint(undefined);
+          setEditorMode('idle');
+          setEditorFeedback('Le tracé initial a été restauré.');
         }} />
       </View>
     </> : showingResults ? <>
