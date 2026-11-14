@@ -374,7 +374,9 @@ export function WalkRoutePlannerSheet({
         <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{creatingDraft ? 'Placez vos étapes' : 'Que voulez-vous modifier ?'}</Text>
         <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>
           {creatingDraft
-            ? 'Touchez la carte pour ajouter autant d’étapes que nécessaire. Aucun calcul externe n’est lancé avant le bouton final.'
+            ? editorRoute.route_type === 'loop'
+              ? 'Ajoutez les étapes de la boucle. Le retour au point de départ sera ajouté automatiquement : inutile de toucher de nouveau le départ.'
+              : 'Ajoutez les étapes dans l’ordre. Le dernier marqueur posé sera le point d’arrivée.'
             : editorMode === 'idle'
               ? 'Choisissez une action, puis touchez la carte. Le parcours sera recalculé automatiquement.'
               : editorMode === 'via'
@@ -382,6 +384,23 @@ export function WalkRoutePlannerSheet({
                 : 'Touchez la portion que vous souhaitez contourner.'}
         </Text>
       </View>
+      {creatingDraft ? <View style={{ gap: spacing.sm }}>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>Type de trajet</Text>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
+          {ROUTE_TYPE_OPTIONS.map((option) => <Chip
+            key={option.value}
+            label={option.label}
+            selected={editorRoute.route_type === option.value}
+            variant="tonal"
+            size="medium"
+            onPress={() => {
+              setEditorRoute((route) => route ? { ...route, route_type: option.value } : route);
+              setRouteType(option.value);
+              setSelectedDraftPointIndex(undefined);
+            }}
+          />)}
+        </View>
+      </View> : null}
       {!creatingDraft ? <View style={{ gap: spacing.sm }}>
         <Button label="Ajouter un passage" variant={editorMode === 'via' ? 'primary' : 'secondary'} fullWidth onPress={() => { setEditorMode((mode) => mode === 'via' ? 'idle' : 'via'); setEditorPoint(undefined); setEditorFeedback(undefined); }} />
         <Button label="Éviter une portion" variant={editorMode === 'avoid' ? 'primary' : 'secondary'} fullWidth onPress={() => { setEditorMode((mode) => mode === 'avoid' ? 'idle' : 'avoid'); setEditorPoint(undefined); setEditorFeedback(undefined); }} />
@@ -403,6 +422,9 @@ export function WalkRoutePlannerSheet({
         controlPoints={creatingDraft ? draftWaypoints : []}
         selectedControlPointIndex={selectedDraftPointIndex}
         onControlPointPress={creatingDraft ? setSelectedDraftPointIndex : undefined}
+        controlPointEndLabel={creatingDraft && editorRoute.route_type === 'one_way' && draftWaypoints.length ? 'Arrivée' : undefined}
+        showRouteLine={!creatingDraft}
+        showEndMarker={!creatingDraft}
       />
       {creatingDraft ? <View style={{ gap: spacing.sm }}>
         <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>
@@ -411,7 +433,7 @@ export function WalkRoutePlannerSheet({
         {draftWaypoints.length ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
           {draftWaypoints.map((point, index) => <Chip
             key={`${point.latitude}-${point.longitude}-${index}`}
-            label={`Étape ${index + 1}`}
+            label={editorRoute.route_type === 'one_way' && index === draftWaypoints.length - 1 ? 'Arrivée' : `Étape ${index + 1}`}
             selected={selectedDraftPointIndex === index}
             variant="tonal"
             size="small"
@@ -419,7 +441,7 @@ export function WalkRoutePlannerSheet({
           />)}
         </View> : null}
         {selectedDraftPointIndex != null ? <Button
-          label={`Supprimer l’étape ${selectedDraftPointIndex + 1}`}
+          label={editorRoute.route_type === 'one_way' && selectedDraftPointIndex === draftWaypoints.length - 1 ? 'Supprimer l’arrivée' : `Supprimer l’étape ${selectedDraftPointIndex + 1}`}
           icon="delete"
           variant="ghost"
           fullWidth

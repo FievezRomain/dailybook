@@ -23,6 +23,9 @@ type WalkRouteMapProps = {
   controlPoints?: WalkMapCoordinate[];
   selectedControlPointIndex?: number;
   onControlPointPress?: (index: number) => void;
+  controlPointEndLabel?: string;
+  showRouteLine?: boolean;
+  showEndMarker?: boolean;
   planned?: boolean;
 };
 
@@ -35,6 +38,9 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(fu
   controlPoints = [],
   selectedControlPointIndex,
   onControlPointPress,
+  controlPointEndLabel,
+  showRouteLine = true,
+  showEndMarker = true,
   planned = false,
 }, ref) {
   const { colors, resolvedTheme } = useAppTheme();
@@ -81,7 +87,7 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(fu
     >
       {useIgnPlan ? <UrlTile urlTemplate={IGN_PLAN_TILE_URL} maximumZ={18} tileSize={256} /> : null}
       {coordinates.length > 1 ? <Marker coordinate={first} title="Départ de la balade" pinColor={colors.success} /> : null}
-      <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={planned ? 3 : 4} lineDashPattern={planned ? [10, 7] : undefined} lineCap="round" lineJoin="round" tappable={Boolean(onPress)} />
+      {showRouteLine ? <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={planned ? 3 : 4} lineDashPattern={planned ? [10, 7] : undefined} lineCap="round" lineJoin="round" tappable={Boolean(onPress)} /> : null}
       {highlights.map((highlight) => <Marker
         key={`${highlight.name}-${highlight.latitude}-${highlight.longitude}`}
         coordinate={{ latitude: highlight.latitude, longitude: highlight.longitude }}
@@ -92,17 +98,17 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(fu
       {controlPoints.map((point, index) => <Marker
         key={`control-${index}-${point.latitude}-${point.longitude}`}
         coordinate={point}
-        title={`Étape ${index + 1}`}
+        title={controlPointEndLabel && index === controlPoints.length - 1 ? controlPointEndLabel : `Étape ${index + 1}`}
         description="Touchez pour sélectionner ce marqueur"
         pinColor={selectedControlPointIndex === index ? colors.error : colors.warning}
         onPress={(event: MarkerPressEvent) => {
           event.stopPropagation();
           onControlPointPress?.(index);
         }}
-        accessibilityLabel={`Étape ${index + 1}, toucher pour sélectionner`}
+        accessibilityLabel={`${controlPointEndLabel && index === controlPoints.length - 1 ? controlPointEndLabel : `Étape ${index + 1}`}, toucher pour sélectionner`}
       />)}
       {editPoint ? <Marker coordinate={editPoint} title="Point de modification" pinColor={colors.warning} /> : null}
-      <Marker coordinate={latest} title="Arrivée de la balade" pinColor={colors.primary} />
+      {showEndMarker ? <Marker coordinate={latest} title="Arrivée de la balade" pinColor={colors.primary} /> : null}
     </MapView> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.md }}>
       <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, textAlign: 'center' }}>Le tracé apparaîtra dès les premiers mètres.</Text>
     </View>}
