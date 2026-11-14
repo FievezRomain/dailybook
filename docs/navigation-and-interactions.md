@@ -81,6 +81,8 @@ Dans le brouillon personnalisé, aucun trait ne relie les marqueurs avant le cal
 
 L’entrée de cette Form Sheet remplace désormais l’enchaînement direct par critères : elle propose d’abord « Créer mon propre tracé » ou « Partir d’un parcours existant ». La création libre n’applique jamais les distances minimale et maximale ; sa distance est calculée depuis les marqueurs. La seconde entrée affiche en premier les parcours enregistrés par l’utilisateur lors de balades précédentes, tous réutilisables ou modifiables dans le même éditeur, puis les filtres réservés aux nouvelles propositions IGN et DATAtourisme.
 
+Une création accepte jusqu’à cent points de contrôle, soit 98 étapes utilisateur pour une boucle après ajout du départ et du retour automatiques, ou 99 pour un aller simple. L’interface empêche proprement tout ajout au-delà de cette borne ; FastAPI découpe ensuite le calcul en portions compatibles avec la limite IGN.
+
 ## 6. Animaux
 
 Le workspace conserve le sélecteur horizontal. À l’état initial, il montre uniquement les animaux présents, sans titres de groupe. `+ Voir plus`, placé à la fin, révèle ensuite les animaux sortis puis décédés ; `− Voir moins` masque de nouveau l’historique. Le cercle dégradé de sélection est espacé de la photo. Ce comportement est partagé par tous les écrans qui utilisent ce sélecteur.

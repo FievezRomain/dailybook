@@ -22,8 +22,13 @@ const ROUTE_TYPE_OPTIONS = [
   { value: 'one_way' as const, label: 'Aller simple' },
 ];
 const PROPOSALS_PER_PAGE = 3;
+const MAX_CUSTOM_ROUTE_CONTROL_POINTS = 100;
 type RouteEditorMode = 'idle' | 'via' | 'avoid';
 type PlannerMode = 'choice' | 'browse';
+
+function maxDraftWaypoints(routeType: WalkRouteProposal['route_type']) {
+  return MAX_CUSTOM_ROUTE_CONTROL_POINTS - (routeType === 'loop' ? 2 : 1);
+}
 
 function representativeRoutePoints(points: WalkRoutePoint[]) {
   if (points.length < 4) return points.slice(1, -1);
@@ -395,6 +400,7 @@ export function WalkRoutePlannerSheet({
             selected={editorRoute.route_type === option.value}
             variant="tonal"
             size="medium"
+            disabled={option.value === 'loop' && draftWaypoints.length > maxDraftWaypoints('loop')}
             onPress={() => {
               setEditorRoute((route) => route ? { ...route, route_type: option.value } : route);
               setRouteType(option.value);
@@ -413,8 +419,14 @@ export function WalkRoutePlannerSheet({
         planned
         onPress={creatingDraft
           ? (point) => {
+            const maximum = maxDraftWaypoints(editorRoute.route_type);
+            if (draftWaypoints.length >= maximum) {
+              setError(`Vous pouvez placer jusqu’à ${maximum} étapes pour ce type de trajet.`);
+              return;
+            }
             setDraftWaypoints((waypoints) => [...waypoints, point]);
             setSelectedDraftPointIndex(draftWaypoints.length);
+            setError(undefined);
             setEditorFeedback(undefined);
           }
           : editorMode === 'idle' || mutations.customize.isPending
@@ -450,6 +462,7 @@ export function WalkRoutePlannerSheet({
           onPress={() => {
             setDraftWaypoints((waypoints) => removeDraftWaypoint(waypoints, selectedDraftPointIndex));
             setSelectedDraftPointIndex(undefined);
+            setError(undefined);
           }}
         /> : null}
       </View> : null}
