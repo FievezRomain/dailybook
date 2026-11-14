@@ -251,7 +251,6 @@ export function WalkRoutePlannerSheet({
         distance_meters: 0,
         duration_seconds: 0,
         target_distance_meters: 1_000,
-        attribution: 'Vasco · tracé personnalisé recalculé avec IGN — Géoplateforme',
         official: false,
       });
     } catch (locationError) {
@@ -311,7 +310,9 @@ export function WalkRoutePlannerSheet({
       setDraftWaypoints([]);
       setSelectedDraftPointIndex(undefined);
       setEditorMode('idle');
-      setEditorFeedback('Le parcours piéton a été calculé à partir de vos étapes.');
+      setEditorFeedback(customized.attribution?.includes('respectant vos marqueurs')
+        ? 'Le calcul IGN s’éloignait de vos passages : Vasco a conservé le tracé placé sur la carte.'
+        : 'Le parcours piéton a été calculé à partir de vos étapes.');
     } catch (customizationError) {
       setError(parseApiError(customizationError).message);
     }

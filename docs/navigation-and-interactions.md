@@ -83,6 +83,8 @@ L’entrée de cette Form Sheet remplace désormais l’enchaînement direct par
 
 Une création accepte jusqu’à cent points de contrôle, soit 98 étapes utilisateur pour une boucle après ajout du départ et du retour automatiques, ou 99 pour un aller simple. L’interface empêche proprement tout ajout au-delà de cette borne ; FastAPI découpe ensuite le calcul en portions compatibles avec la limite IGN.
 
+Les marqueurs d’une création définissent un couloir à respecter, pas de simples suggestions. Après le calcul, FastAPI vérifie que la géométrie IGN reste proche de ce couloir et qu’elle ne rallonge pas fortement le trajet demandé. Si IGN recale par exemple un passage de canal sur une route éloignée, Vasco conserve la géométrie manuelle des marqueurs, recalcule distance et durée, n’invente pas de pourcentage routier et l’indique explicitement dans la source et le message de confirmation.
+
 ## 6. Animaux
 
 Le workspace conserve le sélecteur horizontal. À l’état initial, il montre uniquement les animaux présents, sans titres de groupe. `+ Voir plus`, placé à la fin, révèle ensuite les animaux sortis puis décédés ; `− Voir moins` masque de nouveau l’historique. Le cercle dégradé de sélection est espacé de la photo. Ce comportement est partagé par tous les écrans qui utilisent ce sélecteur.
