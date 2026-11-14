@@ -105,6 +105,10 @@ export async function getWalkRoutePlan(eventId: number): Promise<WalkRoutePlan> 
   return (await httpClient.get(`/events/${eventId}/walk-route-plan`)).data;
 }
 
+export async function getWalkRouteLibrary(eventId: number): Promise<WalkRouteProposal[]> {
+  return (await httpClient.get(`/events/${eventId}/walk-route-library`)).data;
+}
+
 export async function saveWalkRoutePlan(eventId: number, plan: WalkRouteProposal): Promise<WalkRoutePlan> {
   return (await httpClient.put(`/events/${eventId}/walk-route-plan`, plan)).data;
 }

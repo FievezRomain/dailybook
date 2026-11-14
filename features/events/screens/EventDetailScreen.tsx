@@ -195,8 +195,8 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
                 </Card>
                   : <Card style={{ gap: spacing.sm }}>
                   <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Préparer un itinéraire</Text>
-                  <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Choisissez une distance et comparez des boucles piétonnes IGN avant le départ. Cette étape reste facultative.</Text>
-                  <Button label="Proposer des itinéraires" icon="compass" variant="secondary" fullWidth onPress={() => setWalkRoutePlannerOpen(true)} testID="event-plan-gps-walk" />
+                  <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>Créez votre propre tracé ou choisissez un parcours enregistré, officiel ou calculé avant le départ. Cette étape reste facultative.</Text>
+                  <Button label="Préparer un itinéraire" icon="compass" variant="secondary" fullWidth onPress={() => setWalkRoutePlannerOpen(true)} testID="event-plan-gps-walk" />
                 </Card>}
             {walkSession.isPending ? <Skeleton type="card" density="comfortable" />
               : walkSession.data?.status === 'finalized' ? <View style={{ gap: spacing.sm }}><WalkRouteCard name={event.nom || 'Ma balade'} session={walkSession.data} /><Button label="Supprimer le tracé GPS" icon="delete" variant="destructive" fullWidth onPress={() => setWalkDeleteOpen(true)} testID="event-delete-gps-walk" /></View>

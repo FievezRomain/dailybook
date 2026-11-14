@@ -99,7 +99,7 @@ export type CustomizeWalkRouteInput = {
   avoid_roads: boolean;
   avoid_water: boolean;
   prefer_scenic: boolean;
-  target_distance_meters: number;
+  target_distance_meters?: number;
   attribution?: string | null;
   license?: string | null;
   source_url?: string | null;

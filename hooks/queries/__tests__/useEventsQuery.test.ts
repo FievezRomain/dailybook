@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 import { renderHook, waitFor, act } from '@testing-library/react';
-import { useEventsQuery, useEventMutations, useWalkRoutePlanMutations, EVENTS_KEY } from '../useEventsQuery';
+import { useEventsQuery, useEventMutations, useWalkRouteLibraryQuery, useWalkRoutePlanMutations, EVENTS_KEY } from '../useEventsQuery';
 import * as EventService from '../../../services/api/EventService';
 import { createQueryWrapper } from '../../../tests/utils/queryWrapper';
 import { createMockEvent, createMockBaladeEvent } from '../../../tests/factories/event.factory';
@@ -13,6 +13,7 @@ const mockedCreateEvent = EventService.createEvent as jest.MockedFunction<typeof
 const mockedDeleteEvent = EventService.deleteEvent as jest.MockedFunction<typeof EventService.deleteEvent>;
 const mockedUpdateEvent = EventService.updateEvent as jest.MockedFunction<typeof EventService.updateEvent>;
 const mockedCustomizeWalkRoute = EventService.customizeWalkRoute as jest.MockedFunction<typeof EventService.customizeWalkRoute>;
+const mockedGetWalkRouteLibrary = EventService.getWalkRouteLibrary as jest.MockedFunction<typeof EventService.getWalkRouteLibrary>;
 
 describe('useEventsQuery', () => {
   beforeEach(() => { jest.clearAllMocks(); });
@@ -151,5 +152,19 @@ describe('useWalkRoutePlanMutations — customize', () => {
     });
 
     expect(mockedCustomizeWalkRoute).toHaveBeenCalledWith(12, input);
+  });
+});
+
+describe('useWalkRouteLibraryQuery', () => {
+  beforeEach(() => { jest.clearAllMocks(); });
+
+  it('charge les parcours enregistrés pour la balade courante', async () => {
+    mockedGetWalkRouteLibrary.mockResolvedValue([{ name: 'Mon parcours · Canal' }] as any);
+
+    const { result } = renderHook(() => useWalkRouteLibraryQuery(12), { wrapper: createQueryWrapper() });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockedGetWalkRouteLibrary).toHaveBeenCalledWith(12);
+    expect(result.current.data?.[0].name).toBe('Mon parcours · Canal');
   });
 });

@@ -7,6 +7,7 @@ import { Event } from '../../models/Event';
 export const EVENTS_KEY = ['events'] as const;
 export const walkSessionKey = (eventId: number) => [...EVENTS_KEY, eventId, 'walk-session'] as const;
 export const walkRoutePlanKey = (eventId: number) => [...EVENTS_KEY, eventId, 'walk-route-plan'] as const;
+export const walkRouteLibraryKey = (eventId: number) => [...EVENTS_KEY, eventId, 'walk-route-library'] as const;
 
 export function useEventsQuery() {
   return useQuery({
@@ -145,6 +146,15 @@ export function useWalkRoutePlanQuery(eventId: number, enabled = true) {
   });
 }
 
+export function useWalkRouteLibraryQuery(eventId: number, enabled = true) {
+  return useQuery({
+    queryKey: walkRouteLibraryKey(eventId),
+    queryFn: () => EventService.getWalkRouteLibrary(eventId),
+    enabled,
+    retry: false,
+  });
+}
+
 export function useWalkRoutePlanMutations(eventId: number) {
   const queryClient = useQueryClient();
   const propose = useMutation({
@@ -156,7 +166,10 @@ export function useWalkRoutePlanMutations(eventId: number) {
   });
   const save = useMutation({
     mutationFn: (plan: WalkRouteProposal) => EventService.saveWalkRoutePlan(eventId, plan),
-    onSuccess: (plan: WalkRoutePlan) => queryClient.setQueryData(walkRoutePlanKey(eventId), plan),
+    onSuccess: (plan: WalkRoutePlan) => {
+      queryClient.setQueryData(walkRoutePlanKey(eventId), plan);
+      void queryClient.invalidateQueries({ queryKey: walkRouteLibraryKey(eventId) });
+    },
   });
   const remove = useMutation({
     mutationFn: () => EventService.deleteWalkRoutePlan(eventId),

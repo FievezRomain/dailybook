@@ -5,7 +5,7 @@ import { Banner, Button, Card, Chip, FormSheet, NumberStepper, Switch } from '..
 import { componentTokens } from '../../../theme/componentTokens';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
-import { useWalkRoutePlanMutations } from '../../../hooks/queries/useEventsQuery';
+import { useWalkRouteLibraryQuery, useWalkRoutePlanMutations } from '../../../hooks/queries/useEventsQuery';
 import { parseApiError } from '../../../utils/errorParser';
 import type { WalkRoutePlan, WalkRoutePoint, WalkRouteProposal } from '../types';
 import {
@@ -23,6 +23,7 @@ const ROUTE_TYPE_OPTIONS = [
 ];
 const PROPOSALS_PER_PAGE = 3;
 type RouteEditorMode = 'idle' | 'via' | 'avoid';
+type PlannerMode = 'choice' | 'browse';
 
 function representativeRoutePoints(points: WalkRoutePoint[]) {
   if (points.length < 4) return points.slice(1, -1);
@@ -141,6 +142,8 @@ export function WalkRoutePlannerSheet({
 }) {
   const { colors } = useAppTheme();
   const mutations = useWalkRoutePlanMutations(eventId);
+  const [plannerMode, setPlannerMode] = useState<PlannerMode>('choice');
+  const libraryQuery = useWalkRouteLibraryQuery(eventId, plannerMode === 'browse');
   const proposeRoutes = mutations.propose.mutateAsync;
   const [filters, setFilters] = useState<WalkRouteFilterState>(() => {
     const target = currentPlan?.target_distance_meters;
@@ -231,7 +234,6 @@ export function WalkRoutePlannerSheet({
     setError(undefined);
     try {
       const start = await locateStart();
-      const target = buildWalkRouteFilterPayload(filters).target_distance_meters;
       openEditor({
         provider: 'vasco-custom',
         name: 'Mon tracé',
@@ -243,7 +245,7 @@ export function WalkRoutePlannerSheet({
         points: [start, { ...start }],
         distance_meters: 0,
         duration_seconds: 0,
-        target_distance_meters: target,
+        target_distance_meters: 1_000,
         attribution: 'Vasco · tracé personnalisé recalculé avec IGN — Géoplateforme',
         official: false,
       });
@@ -294,7 +296,6 @@ export function WalkRoutePlannerSheet({
         avoid_roads: editorRoute.avoid_roads,
         avoid_water: editorRoute.avoid_water,
         prefer_scenic: editorRoute.prefer_scenic,
-        target_distance_meters: editorRoute.target_distance_meters,
         attribution: editorRoute.attribution,
         license: editorRoute.license,
         source_url: editorRoute.source_url,
@@ -343,6 +344,7 @@ export function WalkRoutePlannerSheet({
   const selectedProposal = proposals[selectedProposalIndex];
   const showingResults = proposals.length > 0;
   const showingEditor = Boolean(editorRoute);
+  const showingChoice = !showingEditor && !showingResults && plannerMode === 'choice';
   const creatingDraft = Boolean(editorRoute && editorRoute.distance_meters === 0);
   const draftMapPoints = editorRoute && creatingDraft
     ? buildDraftRoutePoints(editorRoute.points[0], draftWaypoints, editorRoute.route_type)
@@ -352,10 +354,10 @@ export function WalkRoutePlannerSheet({
   const visibleProposals = proposals.slice(proposalPageStart, proposalPageStart + PROPOSALS_PER_PAGE);
 
   return <FormSheet
-    title={showingEditor ? editorOriginal?.distance_meters ? 'Modifier le tracé' : 'Créer mon tracé' : showingResults ? 'Choisir un itinéraire' : currentPlan ? 'Changer d’itinéraire' : 'Préparer la balade'}
-    onBack={showingEditor ? closeEditor : showingResults ? returnToCriteria : onClose}
+    title={showingEditor ? editorOriginal?.distance_meters ? 'Modifier le tracé' : 'Créer mon tracé' : showingResults ? 'Choisir un itinéraire' : showingChoice ? 'Préparer la balade' : 'Parcours existants'}
+    onBack={showingEditor ? closeEditor : showingResults ? returnToCriteria : showingChoice ? onClose : () => setPlannerMode('choice')}
     onClose={onClose}
-    footerLabel={creatingDraft ? 'Calculer mon itinéraire' : showingEditor ? 'Utiliser ce tracé' : showingResults ? 'Choisir cet itinéraire' : 'Voir les itinéraires'}
+    footerLabel={showingChoice ? undefined : creatingDraft ? 'Calculer mon itinéraire' : showingEditor ? 'Utiliser ce tracé' : showingResults ? 'Choisir cet itinéraire' : 'Proposer d’autres parcours'}
     onFooterPress={() => {
       if (creatingDraft) void calculateDraftRoute();
       else if (editorRoute) void choose(editorRoute);
@@ -552,7 +554,49 @@ export function WalkRoutePlannerSheet({
       <Button label="Modifier le tracé sélectionné" icon="edit" variant="secondary" fullWidth disabled={!selectedProposal} onPress={() => {
         if (selectedProposal) openEditor(selectedProposal);
       }} />
+    </> : showingChoice ? <>
+    <View style={{ gap: spacing.xs }}>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>Comment voulez-vous préparer la balade ?</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Créez un trajet librement ou repartez d’un parcours existant, que vous pourrez toujours modifier avant de l’utiliser.</Text>
+    </View>
+    <Card style={{ gap: spacing.md }}>
+      <View style={{ gap: spacing.xs }}>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Créer mon propre tracé</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Placez librement vos étapes sur la carte. Les filtres de distance minimale et maximale ne s’appliquent pas : la distance sera calculée depuis vos marqueurs.</Text>
+      </View>
+      <Button label="Créer mon tracé" icon="edit" fullWidth onPress={() => void createCustomRoute()} />
+    </Card>
+    <Card style={{ gap: spacing.md }}>
+      <View style={{ gap: spacing.xs }}>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Partir d’un parcours existant</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Retrouvez vos parcours enregistrés, les circuits officiels DATAtourisme et les suggestions calculées avec IGN.</Text>
+      </View>
+      <Button label="Voir les parcours existants" icon="compass" variant="secondary" fullWidth onPress={() => setPlannerMode('browse')} />
+    </Card>
     </> : <>
+    <View style={{ gap: spacing.xs }}>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>Mes parcours enregistrés</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Réutilisez un parcours d’une balade précédente tel quel, ou ouvrez-le dans l’éditeur pour l’adapter.</Text>
+    </View>
+    {libraryQuery.isPending ? <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Chargement de vos parcours…</Text> : null}
+    {libraryQuery.isError ? <Banner tone="error" title="Parcours indisponibles" message="Vos parcours enregistrés n’ont pas pu être chargés. Vous pouvez quand même rechercher d’autres propositions." /> : null}
+    {!libraryQuery.isPending && !libraryQuery.isError && !libraryQuery.data?.length ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Aucun parcours précédent enregistré pour le moment.</Text> : null}
+    {libraryQuery.data?.map((route, index) => <Card key={`${route.provider}-${route.name}-${index}`} style={{ gap: spacing.md }}>
+      <View style={{ gap: spacing.xs }}>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{route.name}</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{routeTypeLabel(route.route_type)} · {distanceLabel(route.distance_meters)} · {durationLabel(route.duration_seconds)}</Text>
+        {route.road_percentage != null ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{Math.round(route.road_percentage)} % de voies automobiles</Text> : null}
+        {route.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Source : {route.attribution}</Text> : null}
+      </View>
+      <View style={{ gap: spacing.sm }}>
+        <Button label="Modifier ce parcours" icon="edit" variant="secondary" fullWidth onPress={() => openEditor(route)} />
+        <Button label="Utiliser ce parcours" fullWidth disabled={mutations.save.isPending} loading={mutations.save.isPending} onPress={() => void choose(route)} />
+      </View>
+    </Card>)}
+    <View style={{ gap: spacing.xs }}>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>Découvrir d’autres parcours</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Ces filtres s’appliquent uniquement aux nouvelles propositions IGN et DATAtourisme.</Text>
+    </View>
     <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Définissez la balade souhaitée. Vasco privilégiera les chemins et les parcours intéressants autour de votre position.</Text>
     <View style={{ gap: spacing.sm }}>
       <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Type de parcours</Text>
@@ -658,7 +702,6 @@ export function WalkRoutePlannerSheet({
         onChange={setPreferScenic}
       />
     </View>
-    <Button label="Créer mon propre tracé" icon="edit" variant="secondary" fullWidth onPress={() => void createCustomRoute()} />
     </>}
   </FormSheet>;
 }

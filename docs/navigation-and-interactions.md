@@ -79,6 +79,8 @@ Un compte Premium peut ensuite démarrer ou reprendre l’enregistrement, qui co
 
 Dans le brouillon personnalisé, aucun trait ne relie les marqueurs avant le calcul. Boucle et Aller simple restent visibles et modifiables : une boucle ajoute automatiquement le retour au départ, tandis que le dernier marqueur d’un aller simple est explicitement nommé « Arrivée ». Au-delà de la limite IGN de quinze points intermédiaires, le backend découpe le calcul sans perdre d’étape. Le point réellement recalé par IGN à la fin d’une portion devient le départ exact de la suivante ; la dernière portion d’une boucle vise de la même façon le départ recalé, puis les géométries et métriques sont fusionnées.
 
+L’entrée de cette Form Sheet remplace désormais l’enchaînement direct par critères : elle propose d’abord « Créer mon propre tracé » ou « Partir d’un parcours existant ». La création libre n’applique jamais les distances minimale et maximale ; sa distance est calculée depuis les marqueurs. La seconde entrée affiche en premier les parcours enregistrés par l’utilisateur lors de balades précédentes, tous réutilisables ou modifiables dans le même éditeur, puis les filtres réservés aux nouvelles propositions IGN et DATAtourisme.
+
 ## 6. Animaux
 
 Le workspace conserve le sélecteur horizontal. À l’état initial, il montre uniquement les animaux présents, sans titres de groupe. `+ Voir plus`, placé à la fin, révèle ensuite les animaux sortis puis décédés ; `− Voir moins` masque de nouveau l’historique. Le cercle dégradé de sélection est espacé de la photo. Ce comportement est partagé par tous les écrans qui utilisent ce sélecteur.
