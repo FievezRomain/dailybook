@@ -377,6 +377,13 @@ export function WalkRoutePlannerSheet({
     testID="walk-route-planner"
   >
     {error ? <Banner tone="error" title="Calcul impossible" message={error} onDismiss={() => setError(undefined)} /> : null}
+    {showingEditor && editorRoute?.manual_geometry_warning ? <Banner
+      tone="warning"
+      title="Passage conservé manuellement"
+      message={editorRoute.manual_geometry_warning}
+      blocking
+      testID="walk-route-manual-geometry-warning"
+    /> : null}
     {showingEditor && editorRoute ? <>
       <View style={{ gap: spacing.xs }}>
         <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{creatingDraft ? 'Placez vos étapes' : 'Que voulez-vous modifier ?'}</Text>

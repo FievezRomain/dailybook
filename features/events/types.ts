@@ -67,6 +67,9 @@ export type WalkRouteProposal = {
   license?: string | null;
   source_url?: string | null;
   official?: boolean;
+  manual_geometry?: boolean;
+  manual_geometry_segment_index?: number | null;
+  manual_geometry_warning?: string | null;
 };
 
 export type WalkRouteFilterMode = 'distance' | 'duration';
