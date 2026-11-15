@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, type ElementRef } from 'react';
 import { Image, Text, View } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
@@ -40,7 +40,7 @@ export function WalkRouteVisualization({ points }: { points: WalkPoint[] }) {
 
 export function WalkRouteCard({ name, session }: { name: string; session: WalkSession }) {
   const { colors } = useAppTheme();
-  const cardRef = useRef<View>(null);
+  const cardRef = useRef<ElementRef<typeof View>>(null);
   const mapRef = useRef<WalkRouteMapHandle>(null);
   const mapLoadedResolver = useRef<(() => void) | null>(null);
   const [sharing, setSharing] = useState(false);
