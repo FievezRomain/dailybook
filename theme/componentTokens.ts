@@ -57,6 +57,16 @@ export const componentTokens = {
     compactStateHeight: 180,
     skeletonHeight: { compact: 96, comfortable: 128 },
   },
+  vascor: {
+    markSize: { compact: 32, large: 72, hero: 112 },
+    gaugeWidth: { compact: 2.5, large: 4, hero: 6 },
+    markInset: { compact: 5, large: 9, hero: 12 },
+    heroProgressHeight: 8,
+    missionIconSize: 40,
+    rewardPillMinWidth: 64,
+    pulseScale: 1.22,
+    animation: { grow: 180, count: 700, settle: 260 },
+  },
   content: {
     cardWidth: 340,
     listItemHeight: 72,

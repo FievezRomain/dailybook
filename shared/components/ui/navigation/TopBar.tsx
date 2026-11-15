@@ -10,6 +10,7 @@ import { Icon } from '../icons';
 import { NavigationSurface } from './NavigationSurface';
 import { useAuthStore } from '../../../../stores/useAuthStore';
 import { FileService } from '../../../../services/api/FileService';
+import { VascorTopBarAction } from './VascorTopBarAction';
 
 export interface TopBarProps { title: string; context?: 'root' | 'detail'; material?: Material; scrolled?: boolean; onBack?: () => void; onNotifications?: () => void; unreadNotifications?: number; onAccount?: () => void; avatarInitials?: string; avatarImageUrl?: string | null; trailing?: ReactNode; style?: StyleProp<ViewStyle>; testID?: string }
 
@@ -42,6 +43,11 @@ export function TopBar({ title, context = 'root', material = 'solid', scrolled =
       )}
       {trailing ?? (
         <>
+          {onNotifications ? (
+            <VascorTopBarAction
+              testID={testID ? `${testID}-rewards` : 'top-bar-rewards'}
+            />
+          ) : null}
           {onNotifications ? (
             <Pressable accessibilityRole="button" accessibilityLabel={unreadNotifications > 0 ? `Notifications, ${unreadNotifications} non lues` : 'Notifications'} onPress={onNotifications} testID={testID ? `${testID}-notifications` : 'top-bar-notifications'} style={{ width: 36, height: 44, alignItems: 'center', justifyContent: 'center' }}>
               <Icon name={unreadNotifications > 0 ? "notificationsUnread" : "notifications"} size="md" />

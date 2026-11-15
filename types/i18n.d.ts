@@ -11,6 +11,7 @@ import type frObjectifs   from '../translation/fr/objectifs.json';
 import type frWishes      from '../translation/fr/wishes.json';
 import type frNotifications from '../translation/fr/notifications.json';
 import type frOnboarding  from '../translation/fr/onboarding.json';
+import type frRewards     from '../translation/fr/rewards.json';
 
 declare module 'i18next' {
   interface CustomTypeOptions {
@@ -28,6 +29,7 @@ declare module 'i18next' {
       wishes:        typeof frWishes;
       notifications: typeof frNotifications;
       onboarding:    typeof frOnboarding;
+      rewards:       typeof frRewards;
     };
   }
 }

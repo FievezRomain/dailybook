@@ -14,6 +14,8 @@ import { authService } from '../auth/FirebaseAuthService';
 // useAuthStore importé en lazy dans l'intercepteur 401 pour casser le cycle :
 // AuthService → httpClient → useAuthStore → AuthService
 import { env } from '../../config/env';
+import type { RewardGrant } from '../../models/Reward';
+import { useRewardStore } from '../../stores/useRewardStore';
 
 type AxiosModule = typeof axiosType & { default?: typeof axiosType };
 const axiosModule = require('axios') as AxiosModule;
@@ -44,6 +46,10 @@ httpClient.interceptors.response.use(
       typeof response.data === 'object' &&
       'success' in response.data
     ) {
+      const rewards = Array.isArray(response.data.rewards)
+        ? response.data.rewards as RewardGrant[]
+        : [];
+      if (rewards.length) useRewardStore.getState().recordGrants(rewards);
       return { ...response, data: response.data.data };
     }
     return response;
