@@ -16,6 +16,7 @@ import frWishes      from '../translation/fr/wishes.json';
 import frNotifications from '../translation/fr/notifications.json';
 import frOnboarding  from '../translation/fr/onboarding.json';
 import frRewards     from '../translation/fr/rewards.json';
+import frWalkGps     from '../translation/fr/walkGps.json';
 
 // ── English translations ─────────────────────────────────────────────────────
 import enCommon      from '../translation/en/common.json';
@@ -31,6 +32,7 @@ import enWishes      from '../translation/en/wishes.json';
 import enNotifications from '../translation/en/notifications.json';
 import enOnboarding  from '../translation/en/onboarding.json';
 import enRewards     from '../translation/en/rewards.json';
+import enWalkGps     from '../translation/en/walkGps.json';
 
 const deviceLocale = Localization.getLocales()[0]?.languageCode ?? 'fr';
 const supportedLocales = ['fr', 'en'];
@@ -47,6 +49,7 @@ i18n
       'common', 'auth', 'animals', 'events', 'notes',
       'statistics', 'contacts', 'groups', 'objectifs',
       'wishes', 'notifications', 'onboarding', 'rewards',
+      'walkGps',
     ],
     resources: {
       fr: {
@@ -63,6 +66,7 @@ i18n
         notifications: frNotifications,
         onboarding:    frOnboarding,
         rewards:       frRewards,
+        walkGps:       frWalkGps,
       },
       en: {
         common:        enCommon,
@@ -78,6 +82,7 @@ i18n
         notifications: enNotifications,
         onboarding:    enOnboarding,
         rewards:       enRewards,
+        walkGps:       enWalkGps,
       },
     },
     interpolation: { escapeValue: false },

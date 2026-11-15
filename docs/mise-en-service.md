@@ -20,7 +20,7 @@ EAS Update
 
 Le projet utilise :
 
-- Expo SDK 57 ;
+- Expo SDK 58 ;
 - `expo-updates` ;
 - uniquement les plateformes natives `ios` et `android` ;
 - les canaux `development`, `preview` et `production` ;
@@ -31,7 +31,7 @@ Une update n’est reçue que par un binaire utilisant le même canal et une run
 
 ## Prérequis
 
-- Node.js 20 LTS, comme dans la CI mobile ;
+- Node.js 22.13 ou plus récent, comme dans la CI mobile ;
 - npm ;
 - Android Studio/SDK pour Android local ;
 - macOS et Xcode pour un simulateur ou build iOS local ;
@@ -77,9 +77,17 @@ Pour un appareil physique, le téléphone et le poste doivent être sur le même
 ## Installation et lancement local
 
 ```bash
-npm ci --legacy-peer-deps
+npm ci
 npm run start
 ```
+
+Pour ouvrir l’application explicitement dans la version courante d’Expo Go :
+
+```bash
+npm run start:go
+```
+
+Expo Go permet de vérifier rapidement les écrans et la logique JavaScript compatibles avec son runtime. Il ne remplace pas une recette native complète.
 
 Commandes directes :
 
@@ -89,7 +97,7 @@ npm run ios
 npm run web
 ```
 
-L’application utilise des modules natifs tels que React Native Firebase et Google Sign-In. Pour une recette fonctionnelle complète, utiliser un **development build** plutôt qu’Expo Go :
+L’application utilise des modules natifs tels que React Native Firebase, la géolocalisation en arrière-plan et Google Sign-In. Ces fonctions ne sont pas toutes disponibles dans Expo Go. Pour une recette fonctionnelle complète, utiliser un **development build** :
 
 ```bash
 npx eas-cli@latest login

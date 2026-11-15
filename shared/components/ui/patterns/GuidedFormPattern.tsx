@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ElementRef, type ReactNode } from 'react';
 import { AccessibilityInfo, findNodeHandle, Text, View } from 'react-native';
 import { spacing, typography } from '../../../../theme/scales';
 import { useAppTheme } from '../../../../theme/useAppTheme';
@@ -29,7 +29,7 @@ export interface GuidedFormPatternProps {
 export function GuidedFormPattern({ header, currentStep, totalSteps, stepTitle, stepDescription, children, primaryLabel, onPrimary, onPrevious, onExitRequest, dirty = false, primaryDisabled = false, primaryLoading = false, onPrimaryError, keyboardVerticalOffset = 0, testID }: GuidedFormPatternProps) {
   const { colors } = useAppTheme();
   const progress = normalizeWizardStep(currentStep, totalSteps);
-  const titleRef = useRef<Text>(null);
+  const titleRef = useRef<ElementRef<typeof Text>>(null);
   const submittingRef = useRef(false);
   const [localLoading, setLocalLoading] = useState(false);
   const loading = primaryLoading || localLoading;

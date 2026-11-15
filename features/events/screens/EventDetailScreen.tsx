@@ -1,7 +1,9 @@
 import { useState, type ReactNode } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Share, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useAnimalsQuery } from '../../../hooks/queries/useAnimalsQuery';
-import { useEventMutations, useEventsQuery } from '../../../hooks/queries/useEventsQuery';
+import { useEventMutations, useEventsQuery, useWalkRoutePlanMutations, useWalkRoutePlanQuery, useWalkSessionQuery, walkSessionKey } from '../../../hooks/queries/useEventsQuery';
 import { ActionSheet, Avatar, Banner, Button, Card, DetailScreen, Dialog, EmptyState, FileItem, Icon, IconButton, MediaViewer, PremiumGate, Skeleton, TopBar, type OverlayActionItem } from '../../../shared/components/ui';
 import type { EventDocument } from '../../../models/EventDocument';
 import { deleteEventDocument, getEventDocumentUrl } from '../../../services/api/EventService';
@@ -19,6 +21,9 @@ import { pickEventImageDocuments, pickEventPdfDocuments } from '../components/Ev
 import { uploadPendingEventDocuments } from '../eventDocumentUpload';
 import { useAuthStore } from '../../../stores/useAuthStore';
 import { isPremiumSubscription } from '../../../shared/utils/subscriptionUtils';
+import { WalkRouteCard } from '../components/WalkRouteCard';
+import { WalkRoutePlanCard, WalkRoutePlannerSheet } from '../components/WalkRoutePlannerSheet';
+import { deleteWalkTracking } from '../walkTrackingService';
 
 type EventAction = 'edit' | 'duplicate' | 'share' | 'delete';
 type EventDeleteScope = 'occurrence' | 'following' | 'series';
@@ -37,19 +42,27 @@ const deleteScopes: readonly OverlayActionItem<EventDeleteScope>[] = [
 ];
 const actions: readonly OverlayActionItem<EventAction>[] = [{ id: 'edit', label: 'Modifier', description: 'Mettre à jour toutes les informations', icon: 'edit' }, { id: 'duplicate', label: 'Dupliquer', description: 'Créer une copie modifiable', icon: 'duplicate' }, { id: 'share', label: 'Partager', description: 'Envoyer avec les applications du téléphone', icon: 'share' }, { id: 'delete', label: 'Supprimer', description: 'Une confirmation sera demandée', icon: 'delete', tone: 'destructive' }];
 
-export interface EventDetailScreenProps { eventId: number; onBack: () => void; onDeleted: () => void; initialFeedback?: string; onEdit?: (id: number) => void; onDuplicate?: (id: number) => void; onShare?: (id: number) => void; onComparePlans?: () => void }
+export interface EventDetailScreenProps { eventId: number; onBack: () => void; onDeleted: () => void; initialFeedback?: string; onEdit?: (id: number) => void; onDuplicate?: (id: number) => void; onShare?: (id: number) => void; onComparePlans?: () => void; onStartWalk?: (id: number) => void }
 
-export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback, onEdit = () => undefined, onDuplicate = () => undefined, onShare = () => undefined, onComparePlans = () => undefined }: EventDetailScreenProps) {
+export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback, onEdit = () => undefined, onDuplicate = () => undefined, onShare = () => undefined, onComparePlans = () => undefined, onStartWalk = () => undefined }: EventDetailScreenProps) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation('walkGps');
+  const queryClient = useQueryClient();
   const premium = isPremiumSubscription(useAuthStore((state) => state.user?.subscription));
   const eventsQuery = useEventsQuery(); const animalsQuery = useAnimalsQuery(); const mutations = useEventMutations();
   const setFormData = useEventWizardStore((state) => state.setFormData); const resetWizard = useEventWizardStore((state) => state.reset);
   const event = (eventsQuery.data ?? []).find((item) => item.id === eventId);
+  const walkSession = useWalkSessionQuery(eventId, event?.eventtype === 'balade' && premium);
+  const walkRoutePlan = useWalkRoutePlanQuery(eventId, event?.eventtype === 'balade' && premium);
+  const walkRouteMutations = useWalkRoutePlanMutations(eventId);
   const [actionsOpen, setActionsOpen] = useState(false); const [deleteOpen, setDeleteOpen] = useState(false); const [scopeOpen, setScopeOpen] = useState(false); const [deleteScopeOpen, setDeleteScopeOpen] = useState(false); const [deleteScope, setDeleteScope] = useState<EventDeleteScope>('occurrence');
   const [quickEditOpen, setQuickEditOpen] = useState(false);
   const [documentUploading, setDocumentUploading] = useState<EventDocumentUploadKind>();
   const [documentViewer, setDocumentViewer] = useState<EventDocumentViewer>();
   const [documentToDelete, setDocumentToDelete] = useState<string>();
+  const [walkDeleteOpen, setWalkDeleteOpen] = useState(false);
+  const [walkRoutePlannerOpen, setWalkRoutePlannerOpen] = useState(false);
+  const [walkRouteDeleteOpen, setWalkRouteDeleteOpen] = useState(false);
   const [feedback, setFeedback] = useState<EventFeedback | undefined>(initialFeedback ? { tone: 'success', title: 'Événement mis à jour', message: initialFeedback } : undefined); const [shareError, setShareError] = useState(false);
   if (eventsQuery.isLoading || animalsQuery.isLoading) return <DetailScreen header={<TopBar title="Événement" context="detail" onBack={onBack} />}><Skeleton type="card" density="comfortable" /></DetailScreen>;
   if (!event) return <DetailScreen header={<TopBar title="Événement" context="detail" onBack={onBack} />}><EmptyState title="Événement introuvable" message="Il a peut-être été supprimé ou déplacé." actionLabel="Retour" onAction={onBack} /></DetailScreen>;
@@ -142,6 +155,24 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
       message: 'Le document a été retiré de l’événement et supprimé du stockage.',
     });
   };
+  const removeWalkTrace = async () => {
+    await deleteWalkTracking(event.id);
+    queryClient.removeQueries({ queryKey: walkSessionKey(event.id) });
+    await eventsQuery.refetch();
+    setFeedback({
+      tone: 'success',
+      title: t('detail.traceDeletedTitle'),
+      message: t('detail.traceDeletedMessage'),
+    });
+  };
+  const removeWalkRoutePlan = async () => {
+    await walkRouteMutations.remove.mutateAsync();
+    setFeedback({
+      tone: 'success',
+      title: t('detail.routeDeletedTitle'),
+      message: t('detail.routeDeletedMessage'),
+    });
+  };
 
   return <>
     <DetailScreen header={<TopBar title={event.nom || 'Événement'} context="detail" onBack={onBack} trailing={<IconButton icon="moreHorizontal" accessibilityLabel="Actions sur l’événement" onPress={() => setActionsOpen(true)} variant="ghost" />} />} contentContainerStyle={{ gap: spacing.md, paddingTop: spacing.md, paddingBottom: spacing.lg }} testID="event-detail">
@@ -154,6 +185,27 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
       </Card>
       {feedback ? <Banner tone={feedback.tone} title={feedback.title} message={feedback.message} onDismiss={() => setFeedback(undefined)} /> : null}
       {shareError ? <Banner tone="error" title="Partage impossible" message="Le menu de partage n’a pas pu être ouvert. Réessayez." onDismiss={() => setShareError(false)} /> : null}
+      {event.eventtype === 'balade' ? <>
+        <SectionTitle>{t('detail.sectionTitle')}</SectionTitle>
+        {!premium ? <PremiumGate title={t('detail.premiumTitle')} message={t('detail.premiumMessage')} onComparePlans={onComparePlans} testID="event-detail-gps-premium" />
+          : <View style={{ gap: spacing.md }}>
+            {walkRoutePlan.isPending ? <Skeleton type="card" density="comfortable" />
+              : walkRoutePlan.data ? <WalkRoutePlanCard plan={walkRoutePlan.data} locked={walkSession.isPending || Boolean(walkSession.data)} onChange={() => setWalkRoutePlannerOpen(true)} onDelete={() => setWalkRouteDeleteOpen(true)} />
+                : walkSession.data ? <Card style={{ gap: spacing.sm }}>
+                  <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('detail.noRouteTitle')}</Text>
+                  <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>{t('detail.noRouteAfterStart')}</Text>
+                </Card>
+                  : <Card style={{ gap: spacing.sm }}>
+                  <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('detail.prepareTitle')}</Text>
+                  <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>{t('detail.prepareMessage')}</Text>
+                  <Button label={t('detail.prepareButton')} icon="compass" fullWidth onPress={() => setWalkRoutePlannerOpen(true)} testID="event-plan-gps-walk" />
+                </Card>}
+            {walkSession.isPending ? <Skeleton type="card" density="comfortable" />
+              : walkSession.data?.status === 'finalized' ? <View style={{ gap: spacing.sm }}><WalkRouteCard name={event.nom || t('common.defaultWalkName')} session={walkSession.data} /><Button label={t('detail.deleteTraceButton')} icon="delete" variant="destructive" fullWidth onPress={() => setWalkDeleteOpen(true)} testID="event-delete-gps-walk" /></View>
+                : walkSession.data?.status === 'recording' ? <Card style={{ gap: spacing.sm }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('detail.recordingTitle')}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>{t('detail.recordingMessage')}</Text><Button label={t('detail.resumeButton')} icon="compass" fullWidth onPress={() => onStartWalk(event.id)} /><Button label={t('detail.deleteTraceButton')} icon="delete" variant="destructive" fullWidth onPress={() => setWalkDeleteOpen(true)} /></Card>
+                  : <Card style={{ gap: spacing.sm }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('detail.recordTitle')}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: 20 }}>{t('detail.recordMessage')}</Text><Button label={t('detail.startButton')} icon="compass" fullWidth onPress={() => onStartWalk(event.id)} testID="event-start-gps-walk" /></Card>}
+          </View>}
+      </> : null}
       <SectionTitle action={<IconButton icon="edit" accessibilityLabel="Modifier le suivi" onPress={() => setQuickEditOpen(true)} variant="ghost" />}>Suivi rapide</SectionTitle>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
         {quickItems.map((item, index) => <QuickInfoCard key={item.label} label={item.label} value={item.value} fullWidth={quickItems.length % 2 === 1 && index === quickItems.length - 1} />)}
@@ -177,6 +229,9 @@ export function EventDetailScreen({ eventId, onBack, onDeleted, initialFeedback,
     <ActionSheet open={scopeOpen} title="Que souhaitez-vous modifier ?" subtitle="Les informations de suivi déjà saisies seront préservées." items={editScopes} onSelect={(scope) => { setFormData({ updateScope: scope }); onEdit(event.id); }} onClose={() => setScopeOpen(false)} />
     <ActionSheet open={deleteScopeOpen} title="Que souhaitez-vous supprimer ?" subtitle="Choisissez la portée avant de confirmer la suppression." items={deleteScopes} onSelect={(scope) => { setDeleteScope(scope); setDeleteScopeOpen(false); setDeleteOpen(true); }} onClose={() => setDeleteScopeOpen(false)} />
     <Dialog open={deleteOpen} type="destructive" title="Confirmer la suppression ?" description={deleteScope === 'series' ? 'Toute la série sera supprimée. Cette action est irréversible.' : deleteScope === 'following' ? 'Cette occurrence et toutes les suivantes seront supprimées. Cette action est irréversible.' : 'Seule cette occurrence sera supprimée. Cette action est irréversible.'} confirmLabel="Supprimer" onConfirm={remove} onClose={() => setDeleteOpen(false)} loading={mutations.remove.isPending} onError={() => setFeedback({ tone: 'error', title: 'Suppression impossible', message: 'La suppression a échoué. Réessayez.' })} />
+    <Dialog open={walkDeleteOpen} type="destructive" title={t('detail.deleteTrace.title')} description={t('detail.deleteTrace.description')} confirmLabel={t('detail.deleteTrace.confirm')} onConfirm={removeWalkTrace} onClose={() => setWalkDeleteOpen(false)} onError={() => setFeedback({ tone: 'error', title: t('detail.deleteErrorTitle'), message: t('detail.deleteTrace.error') })} testID="event-delete-gps-dialog" />
+    <Dialog open={walkRouteDeleteOpen} type="destructive" title={t('detail.deleteRoute.title')} description={t('detail.deleteRoute.description')} confirmLabel={t('detail.deleteRoute.confirm')} onConfirm={removeWalkRoutePlan} onClose={() => setWalkRouteDeleteOpen(false)} loading={walkRouteMutations.remove.isPending} onError={() => setFeedback({ tone: 'error', title: t('detail.deleteErrorTitle'), message: t('detail.deleteRoute.error') })} testID="event-delete-walk-route-dialog" />
+    {walkRoutePlannerOpen && !walkSession.isPending && !walkSession.data ? <WalkRoutePlannerSheet eventId={event.id} currentPlan={walkRoutePlan.data} onClose={() => setWalkRoutePlannerOpen(false)} /> : null}
     {quickEditOpen ? <EventQuickEditSheet event={event} onClose={() => setQuickEditOpen(false)} onSave={quickSave} /> : null}
     {documentViewer ? <MediaViewer open uri={documentViewer.uri} title={documentViewer.title} type={documentViewer.type} onClose={() => setDocumentViewer(undefined)} onDeleteRequest={() => { setDocumentToDelete(documentViewer.title); setDocumentViewer(undefined); }} testID="event-document-viewer" /> : null}
     <Dialog

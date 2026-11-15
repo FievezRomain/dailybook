@@ -6,6 +6,8 @@ export { DayAgendaScreen } from './screens/DayAgendaScreen';
 export type { DayAgendaScreenProps } from './screens/DayAgendaScreen';
 export { EventDetailScreen } from './screens/EventDetailScreen';
 export type { EventDetailScreenProps } from './screens/EventDetailScreen';
+export { WalkTrackingScreen } from './screens/WalkTrackingScreen';
+export type { WalkTrackingScreenProps } from './screens/WalkTrackingScreen';
 export { EventCreateEntryScreen } from './screens/EventCreateEntryScreen';
 export type { EventCreateEntryScreenProps } from './screens/EventCreateEntryScreen';
 export { EventCreateTypeScreen, eventCreateTypes } from './screens/EventCreateTypeScreen';

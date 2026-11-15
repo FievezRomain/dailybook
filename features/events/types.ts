@@ -12,6 +12,110 @@ export type AgendaHighlight = {
   source_event_id?: number;
 };
 
+export type WalkPoint = {
+  latitude: number;
+  longitude: number;
+  recorded_at: string;
+  accuracy_m: number;
+  altitude_m?: number;
+  speed_mps?: number;
+};
+
+export type WalkSession = {
+  id: number;
+  event_id: number;
+  owner_id: number;
+  status: 'recording' | 'finalized';
+  started_at: string;
+  ended_at: string | null;
+  points: WalkPoint[];
+  last_sequence: number;
+  distance_meters: number;
+  duration_seconds: number;
+  moving_duration_seconds: number;
+  average_speed_mps: number;
+};
+
+export type WalkRoutePoint = {
+  latitude: number;
+  longitude: number;
+};
+
+export type WalkRouteHighlight = {
+  name: string;
+  category: string;
+  latitude: number;
+  longitude: number;
+};
+
+export type WalkRouteProposal = {
+  provider: string;
+  resource?: string;
+  name: string;
+  route_type: 'loop' | 'one_way' | 'out_and_back';
+  avoid_roads: boolean;
+  avoid_water: boolean;
+  prefer_scenic: boolean;
+  destination_label?: string | null;
+  highlights: WalkRouteHighlight[];
+  points: WalkRoutePoint[];
+  distance_meters: number;
+  duration_seconds: number;
+  target_distance_meters: number;
+  road_percentage?: number | null;
+  attribution?: string | null;
+  license?: string | null;
+  source_url?: string | null;
+  official?: boolean;
+  manual_geometry?: boolean;
+  manual_geometry_segment_index?: number | null;
+  manual_geometry_warning?: string | null;
+};
+
+export type WalkRouteFilterMode = 'distance' | 'duration';
+export type WalkRouteSort = 'recommended' | 'distance' | 'duration' | 'less_roads' | 'highlights';
+export type WalkRouteSortOrder = 'asc' | 'desc';
+
+export type GenerateWalkRouteProposalsInput = {
+  start_latitude: number;
+  start_longitude: number;
+  target_distance_meters: number;
+  filter_mode: WalkRouteFilterMode;
+  min_distance_meters?: number;
+  max_distance_meters?: number;
+  min_duration_seconds?: number;
+  max_duration_seconds?: number;
+  sort_by: WalkRouteSort;
+  sort_order: WalkRouteSortOrder;
+  route_type: 'loop' | 'one_way';
+  avoid_roads: boolean;
+  avoid_water: boolean;
+  prefer_scenic: boolean;
+};
+
+export type CustomizeWalkRouteInput = {
+  points: WalkRoutePoint[];
+  control_points?: WalkRoutePoint[];
+  via_point?: WalkRoutePoint;
+  avoid_point?: WalkRoutePoint;
+  route_type: WalkRouteProposal['route_type'];
+  avoid_roads: boolean;
+  avoid_water: boolean;
+  prefer_scenic: boolean;
+  target_distance_meters?: number;
+  attribution?: string | null;
+  license?: string | null;
+  source_url?: string | null;
+};
+
+export type WalkRoutePlan = WalkRouteProposal & {
+  id: number;
+  event_id: number;
+  owner_id: number;
+  created_at?: string;
+  updated_at?: string;
+};
+
 /** Payload envoyé au backend pour créer un événement. */
 export type CreateEventPayload = {
   nom: string;

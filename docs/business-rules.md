@@ -74,6 +74,161 @@ Ce document centralise les règles qui doivent rester identiques entre le backen
 - **En tant qu’auteur**, je souhaite enregistrer une dépense facultative sur tout type d’événement afin d’associer le coût à son contexte réel.
 - **En tant qu’auteur d’un événement Dépense**, je souhaite catégoriser ce montant afin de l’analyser dans les statistiques.
 - **En tant qu’auteur d’une balade, d’un entraînement ou d’un concours**, je souhaite attribuer une note entière facultative de 1 à 5 étoiles et pouvoir l’effacer afin d’évaluer l’activité sans valeur obligatoire.
+### Balades GPS
+
+Cette section centralise les règles fonctionnelles de la préparation d’un itinéraire, de l’enregistrement d’une balade et du partage de son tracé. Elle décrit uniquement les comportements attendus par l’utilisateur et les décisions produit partagées entre les plateformes.
+
+#### Périmètre et droits
+
+- La fonctionnalité concerne uniquement les événements de type **Balade**.
+- La préparation d’un itinéraire et l’enregistrement GPS sont des fonctionnalités **Premium**.
+- Un compte Gratuit voit les actions et leur verrou Premium avec une explication contextualisée ; elles ne sont ni masquées ni inactives sans explication.
+- La section **Balade GPS** du détail de l’événement est l’unique point d’entrée. Aucun réglage GPS n’apparaît dans le formulaire de création ou de modification de la balade.
+- Préparer un itinéraire est facultatif : une balade peut être enregistrée sans parcours prévu.
+- Une balade ne possède qu’un seul itinéraire préparé et un seul tracé GPS réalisé.
+- Une seule session GPS peut être active simultanément pour un même auteur.
+- Dès qu’un enregistrement GPS existe, en cours ou terminé, l’itinéraire préparé devient consultable uniquement : il ne peut plus être créé, remplacé, modifié ou supprimé.
+
+#### Entrée dans la préparation
+
+- La préparation propose immédiatement deux choix de même niveau : **Créer mon propre tracé** ou **Partir d’un parcours existant**.
+- Les kilomètres minimum et maximum ne s’appliquent pas à une création libre. Sa distance résulte des marqueurs placés par l’utilisateur.
+- Les filtres s’appliquent uniquement à la recherche de nouvelles propositions.
+- Fermer un éditeur contenant des modifications non enregistrées demande confirmation.
+- Revenir à une étape précédente conserve les choix déjà renseignés.
+
+#### Parcours existants et provenance
+
+- La liste peut réunir les parcours personnels enregistrés lors de balades précédentes, les circuits officiels disponibles et les itinéraires calculés pour la demande courante.
+- Les parcours personnels sont présentés avant la recherche de nouvelles propositions.
+- Chaque parcours existant peut être utilisé directement ou modifié dans le même éditeur.
+- Chaque proposition affiche clairement sa provenance.
+- Un circuit officiel DATAtourisme conserve le nom de son producteur et sa licence.
+- Un itinéraire calculé indique **IGN — Géoplateforme** comme source cartographique.
+- Un parcours personnel est identifié comme un parcours Vasco de l’utilisateur.
+
+#### Recherche de nouvelles propositions
+
+- L’utilisateur choisit une **Boucle** ou un **Aller simple**.
+- Un aller simple affiche clairement son lieu ou son adresse d’arrivée lorsqu’ils sont disponibles.
+- Il filtre par plage de **distance** ou de **durée**.
+- Il peut activer **Privilégier les chemins**, **Éviter les ponts** et **Rechercher les points remarquables**.
+- Aucun second réglage de tri ne fait doublon avec ces préférences : Vasco classe automatiquement les propositions selon les choix exprimés.
+- Jusqu’à six propositions peuvent être présentées, par pages de trois.
+- Une proposition est sélectionnable sur toute sa carte et un seul bouton principal confirme le choix.
+
+#### Préférence pour les chemins
+
+- **Privilégier les chemins** est une préférence forte, pas une exclusion absolue.
+- L’absence de parcours avec peu de routes ne produit pas artificiellement zéro résultat si des parcours praticables existent.
+- Lorsque cette préférence est active, chaque proposition affiche son pourcentage estimé de voies ouvertes aux véhicules.
+- Les propositions ayant le plus faible pourcentage sont affichées en premier.
+- Lorsque cette préférence est inactive, Vasco peut proposer aussi bien des chemins que des voies automobiles et équilibre les autres critères.
+- Les voies vertes, chemins de halage et sentiers sont favorisés uniquement lorsque la préférence pour les chemins est active.
+- Un pourcentage inconnu est présenté comme non estimé, jamais comme 0 %.
+
+#### Diversité et cohérence des propositions
+
+- Deux propositions qui suivent essentiellement le même parcours ne sont affichées qu’une seule fois, même si leur tracé source contient des points différents.
+- Les distances, durées, pourcentages routiers et lieux remarquables correspondent toujours au tracé effectivement affiché.
+- Les alternatives réellement différentes restent proposées.
+- Une boucle revient au point de départ et ne contient pas de demi-tour important présenté comme une variante utile.
+- Si aucune vraie boucle adaptée n’est disponible, un aller-retour peut être proposé, mais il est explicitement identifié comme solution de secours.
+- Lorsqu’un passage pertinent longe un canal, une variante dédiée peut être proposée et doit être nommée clairement.
+- L’indisponibilité d’une source de parcours ne bloque pas les résultats valides provenant des autres sources.
+- Si aucun parcours n’est disponible, l’utilisateur reçoit une explication utile et peut modifier ses critères.
+
+#### Lieux remarquables
+
+- La liste met en avant les éléments ayant un réel intérêt pendant la balade : moulins, lavoirs, écluses, patrimoine, beaux bâtiments, points de vue, ouvrages, canaux et sites naturels.
+- Aucun type particulier, comme les lavoirs, n’est prioritaire par principe ; la pertinence dépend du parcours.
+- Les lieux-dits génériques ne sont pas affichés comme des points remarquables.
+- Les noms de routes, rues, avenues, impasses et chemins ne sont pas transformés en lieux remarquables.
+- Un lieu absent des sources disponibles n’est jamais inventé.
+- Deux tracés identiques présentent les mêmes lieux remarquables.
+
+#### Création d’un tracé libre
+
+- Le point de départ initial correspond à la position actuelle de l’utilisateur.
+- L’utilisateur choisit entre **Boucle** et **Aller simple** tant que le nombre de marqueurs reste compatible.
+- Chaque toucher de la carte ajoute un marqueur sans calculer immédiatement le parcours.
+- Aucun trait ne relie les marqueurs avant le calcul final afin de ne pas suggérer un chemin qui n’existe pas encore.
+- Un marqueur peut être sélectionné depuis la carte ou la liste, puis supprimé explicitement.
+- Pour une boucle, le retour au départ est ajouté automatiquement : l’utilisateur ne touche pas une seconde fois le point de départ.
+- Pour un aller simple, le dernier marqueur est explicitement présenté comme **Arrivée**.
+- Le bouton final calcule le parcours à partir de tous les marqueurs en une seule action.
+- Une boucle accepte au maximum 98 étapes placées par l’utilisateur ; un aller simple en accepte 99.
+- L’interface empêche l’ajout d’un marqueur au-delà de la limite et l’explique.
+
+#### Respect des marqueurs
+
+- Les marqueurs définissent des passages à respecter, pas de simples suggestions.
+- Si le parcours proposé s’éloigne trop d’un passage demandé, Vasco conserve le tracé manuel sur la portion concernée.
+- Un avertissement persistant, placé avant la carte, nomme le segment concerné, par exemple « entre l’étape 7 et l’étape 8 ».
+- Cet avertissement reste visible si l’enregistrement de l’itinéraire échoue.
+- Aucun pourcentage de voies automobiles n’est affiché lorsque cette valeur ne peut pas être vérifiée sur le tracé manuel conservé.
+
+#### Modification d’un parcours
+
+- Tout parcours encore modifiable — personnel, officiel ou calculé — peut être ouvert dans le même éditeur.
+- L’éditeur propose deux intentions : **Ajouter un passage** et **Éviter une portion**.
+- L’utilisateur choisit l’intention, puis touche la carte ; le recalcul démarre automatiquement.
+- Les lieux remarquables et les portions représentatives proposent des actions équivalentes sans exiger un geste précis sur la carte.
+- Après le recalcul, l’éditeur revient dans un état neutre et confirme le résultat.
+- L’utilisateur peut annuler la dernière modification ou revenir au tracé initial.
+- Un parcours officiel modifié n’est plus présenté comme officiel, mais sa provenance d’origine reste visible avec l’indication qu’il a été personnalisé.
+- La distance, la durée, le pourcentage routier, les lieux remarquables et la provenance sont actualisés après chaque modification.
+
+#### Enregistrement et réutilisation d’un itinéraire
+
+- Confirmer une proposition l’associe à la balade courante.
+- Un itinéraire préparé peut être remplacé ou supprimé après confirmation tant que l’enregistrement GPS n’a pas commencé.
+- Les parcours enregistrés lors de balades précédentes restent disponibles dans la bibliothèque personnelle.
+- Réutiliser un parcours personnel crée une nouvelle association avec la balade courante sans modifier la balade d’origine.
+- Une erreur d’enregistrement conserve le tracé affiché, les modifications effectuées et les avertissements utiles afin de permettre une nouvelle tentative.
+
+#### Enregistrement de la balade
+
+- Le démarrage, la reprise et la fin de l’enregistrement GPS sont disponibles uniquement sur mobile.
+- L’enregistrement continue lorsque l’écran est verrouillé.
+- Les points sont conservés jusqu’à leur synchronisation afin de résister à une coupure réseau.
+- Une session interrompue peut être reprise.
+- La fin de l’enregistrement demande une confirmation explicite.
+- Pendant l’enregistrement, la carte distingue le parcours prévu, le départ, la dernière position et le chemin déjà parcouru.
+- La carte suit la position par défaut. Un déplacement ou un zoom manuel suspend ce suivi et une action visible permet de le reprendre.
+- Les points manifestement imprécis ou physiquement incohérents ne faussent pas les métriques finales.
+- Après synchronisation, le détail affiche le tracé réalisé, la distance, la durée et la vitesse moyenne.
+
+#### Consultation mobile et web
+
+- Mobile et web permettent de préparer, choisir, modifier, remplacer et supprimer l’itinéraire prévu tant que la balade n’a pas commencé.
+- Mobile et web permettent de consulter le tracé réellement effectué et ses métriques.
+- Le web ne permet jamais de démarrer, reprendre ou modifier l’enregistrement GPS réel.
+- Les actions cartographiques importantes possèdent une alternative accessible ne nécessitant pas un geste précis sur la carte.
+
+#### Partage et confidentialité
+
+- Le tracé réalisé peut être partagé sous la forme d’une carte Vasco.
+- L’option **Masquer le départ et l’arrivée** est activée par défaut.
+- Cette protection retire les 150 premiers et les 150 derniers mètres du visuel partagé uniquement.
+- Le tracé privé enregistré n’est jamais modifié par cette option.
+- L’utilisateur peut désactiver explicitement le masquage avant le partage.
+- Si le trajet est trop court pour conserver une portion après masquage, le tracé est entièrement masqué sur l’image partagée.
+
+#### Suppression du tracé réalisé
+
+- Seul l’auteur peut supprimer le tracé GPS réalisé.
+- La suppression demande une confirmation explicite.
+- Elle efface le tracé synchronisé et toute reprise de la session.
+- La balade repasse à l’état **À faire**.
+- Un nouvel enregistrement peut ensuite être démarré.
+
+#### États et erreurs
+
+- Un chargement ne remplace pas silencieusement les données déjà visibles.
+- Un échec de calcul ou d’enregistrement explique l’action qui n’a pas abouti et permet de réessayer.
+- Un brouillon ou un tracé modifié n’est pas perdu à cause d’une erreur distante.
+- Les actions verrouillées, les listes vides, les erreurs et les confirmations restent compréhensibles sans dépendre uniquement de la couleur.
 
 ### État, rappels et récurrence
 
