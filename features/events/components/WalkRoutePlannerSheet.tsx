@@ -592,7 +592,7 @@ export function WalkRoutePlannerSheet({
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Partir d’un parcours existant</Text>
         <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Retrouvez vos parcours enregistrés, les circuits officiels DATAtourisme et les suggestions calculées avec IGN.</Text>
       </View>
-      <Button label="Voir les parcours existants" icon="compass" variant="secondary" fullWidth onPress={() => setPlannerMode('browse')} />
+      <Button label="Voir les parcours existants" icon="compass" fullWidth onPress={() => setPlannerMode('browse')} />
     </Card>
     </> : <>
     <View style={{ gap: spacing.xs }}>
