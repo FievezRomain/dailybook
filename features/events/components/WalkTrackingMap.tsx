@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Text, View } from 'react-native';
 import MapView, { Marker, Polyline, UrlTile } from 'react-native-maps';
+import { useTranslation } from 'react-i18next';
 import { Button, Card } from '../../../shared/components/ui';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -13,6 +14,7 @@ const CAMERA_ANIMATION_DURATION = 400;
 
 export function WalkTrackingMap({ points, plannedPoints = [] }: { points: WalkPoint[]; plannedPoints?: WalkRoutePoint[] }) {
   const { colors, resolvedTheme } = useAppTheme();
+  const { t } = useTranslation('walkGps');
   const mapRef = useRef<MapView>(null);
   const previousPointCount = useRef(points.length);
   const [following, setFollowing] = useState(true);
@@ -39,9 +41,9 @@ export function WalkTrackingMap({ points, plannedPoints = [] }: { points: WalkPo
   };
 
   if (!initialRegion) {
-    return <Card style={{ minHeight: MAP_HEIGHT, alignItems: 'center', justifyContent: 'center', gap: spacing.sm }} accessibilityLabel="Recherche de la position GPS">
-      <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Localisation en cours…</Text>
-      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight, textAlign: 'center' }}>La carte apparaîtra dès la réception du premier point GPS.</Text>
+    return <Card style={{ minHeight: MAP_HEIGHT, alignItems: 'center', justifyContent: 'center', gap: spacing.sm }} accessibilityLabel={t('tracking.searchAccessibility')}>
+      <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('tracking.locating')}</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight, textAlign: 'center' }}>{t('tracking.mapPending')}</Text>
     </Card>;
   }
 
@@ -64,23 +66,23 @@ export function WalkTrackingMap({ points, plannedPoints = [] }: { points: WalkPo
         loadingEnabled
         toolbarEnabled={false}
         onTouchStart={() => setFollowing(false)}
-        accessibilityLabel="Carte interactive de la balade avec le tracé déjà parcouru"
+        accessibilityLabel={t('tracking.mapAccessibility')}
         testID="walk-tracking-map"
       >
         {useIgnPlan ? <UrlTile urlTemplate={IGN_PLAN_TILE_URL} maximumZ={18} tileSize={256} /> : null}
         {plannedCoordinates.length > 1 ? <Polyline coordinates={plannedCoordinates} strokeColor={colors.textSecondary} strokeWidth={3} lineDashPattern={[10, 7]} lineCap="round" lineJoin="round" /> : null}
-        {coordinates.length > 1 ? <Marker coordinate={first} title="Départ de la balade" pinColor={colors.success} /> : null}
+        {coordinates.length > 1 ? <Marker coordinate={first} title={t('map.start')} pinColor={colors.success} /> : null}
         {coordinates.length > 1 ? <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={4} lineCap="round" lineJoin="round" /> : null}
-        {latest ? <Marker coordinate={latest} title="Dernière position enregistrée" pinColor={colors.primary} /> : null}
+        {latest ? <Marker coordinate={latest} title={t('tracking.lastPosition')} pinColor={colors.primary} /> : null}
       </MapView>
     </View>
-    {useIgnPlan ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Fond cartographique © IGN — Géoplateforme</Text> : null}
+    {useIgnPlan ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{t('common.mapAttribution')}</Text> : null}
     <Card style={{ gap: spacing.sm }}>
       <View style={{ gap: spacing.xs }}>
-        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{following ? 'Position suivie automatiquement' : 'Exploration libre de la carte'}</Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Déplacez ou zoomez la carte pour consulter les chemins autour de vous. Le tracé GPS continue de s’enregistrer.</Text>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{following ? t('tracking.following') : t('tracking.exploring')}</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('tracking.mapHelp')}</Text>
       </View>
-      <Button label="Recentrer sur ma position" icon="compass" variant="secondary" fullWidth onPress={recenter} disabled={!latest} />
+      <Button label={t('tracking.recenter')} icon="compass" variant="secondary" fullWidth onPress={recenter} disabled={!latest} />
     </Card>
   </View>;
 }

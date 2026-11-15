@@ -15,6 +15,7 @@ import frObjectifs   from '../translation/fr/objectifs.json';
 import frWishes      from '../translation/fr/wishes.json';
 import frNotifications from '../translation/fr/notifications.json';
 import frOnboarding  from '../translation/fr/onboarding.json';
+import frWalkGps     from '../translation/fr/walkGps.json';
 
 // ── English translations ─────────────────────────────────────────────────────
 import enCommon      from '../translation/en/common.json';
@@ -29,6 +30,7 @@ import enObjectifs   from '../translation/en/objectifs.json';
 import enWishes      from '../translation/en/wishes.json';
 import enNotifications from '../translation/en/notifications.json';
 import enOnboarding  from '../translation/en/onboarding.json';
+import enWalkGps     from '../translation/en/walkGps.json';
 
 const deviceLocale = Localization.getLocales()[0]?.languageCode ?? 'fr';
 const supportedLocales = ['fr', 'en'];
@@ -45,6 +47,7 @@ i18n
       'common', 'auth', 'animals', 'events', 'notes',
       'statistics', 'contacts', 'groups', 'objectifs',
       'wishes', 'notifications', 'onboarding',
+      'walkGps',
     ],
     resources: {
       fr: {
@@ -60,6 +63,7 @@ i18n
         wishes:        frWishes,
         notifications: frNotifications,
         onboarding:    frOnboarding,
+        walkGps:       frWalkGps,
       },
       en: {
         common:        enCommon,
@@ -74,6 +78,7 @@ i18n
         wishes:        enWishes,
         notifications: enNotifications,
         onboarding:    enOnboarding,
+        walkGps:       enWalkGps,
       },
     },
     interpolation: { escapeValue: false },

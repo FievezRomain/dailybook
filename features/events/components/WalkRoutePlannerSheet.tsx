@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from 'react';
+import type { TFunction } from 'i18next';
 import * as Location from 'expo-location';
 import { Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Banner, Button, Card, Chip, FormSheet, NumberStepper, Switch } from '../../../shared/components/ui';
 import { componentTokens } from '../../../theme/componentTokens';
 import { radii, spacing, typography } from '../../../theme/scales';
@@ -17,10 +19,7 @@ import {
 import { buildDraftRoutePoints, removeDraftWaypoint } from '../walkRouteEditor';
 import { WalkRouteMap } from './WalkRouteMap';
 
-const ROUTE_TYPE_OPTIONS = [
-  { value: 'loop' as const, label: 'Boucle' },
-  { value: 'one_way' as const, label: 'Aller simple' },
-];
+const ROUTE_TYPES = ['loop', 'one_way'] as const;
 const PROPOSALS_PER_PAGE = 3;
 const MAX_CUSTOM_ROUTE_CONTROL_POINTS = 100;
 type RouteEditorMode = 'idle' | 'via' | 'avoid';
@@ -35,8 +34,8 @@ function representativeRoutePoints(points: WalkRoutePoint[]) {
   return [0.25, 0.5, 0.75].map((ratio) => points[Math.min(points.length - 2, Math.round((points.length - 1) * ratio))]);
 }
 
-function distanceLabel(meters: number) {
-  return `${(meters / 1_000).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} km`;
+function distanceLabel(meters: number, language: string) {
+  return `${(meters / 1_000).toLocaleString(language, { maximumFractionDigits: 1 })} km`;
 }
 
 function durationLabel(seconds: number) {
@@ -46,26 +45,27 @@ function durationLabel(seconds: number) {
   return hours ? `${hours} h ${String(remaining).padStart(2, '0')}` : `${minutes} min`;
 }
 
-function preferenceLabel(route: Pick<WalkRouteProposal, 'avoid_roads' | 'avoid_water' | 'prefer_scenic'>) {
+function preferenceLabel(route: Pick<WalkRouteProposal, 'avoid_roads' | 'avoid_water' | 'prefer_scenic'>, t: TFunction<'walkGps'>) {
   const preferences = [
-    route.avoid_roads ? 'chemins privilégiés' : undefined,
-    route.avoid_water ? 'ponts évités' : undefined,
-    route.prefer_scenic ? 'points remarquables recherchés' : undefined,
+    route.avoid_roads ? t('planner.preferences.paths') : undefined,
+    route.avoid_water ? t('planner.preferences.bridges') : undefined,
+    route.prefer_scenic ? t('planner.preferences.scenic') : undefined,
   ].filter(Boolean);
   return preferences.join(' · ');
 }
 
-function routeTypeLabel(routeType: WalkRouteProposal['route_type']) {
-  if (routeType === 'one_way') return 'Aller simple';
-  if (routeType === 'out_and_back') return 'Aller-retour';
-  return 'Boucle';
+function routeTypeLabel(routeType: WalkRouteProposal['route_type'], t: TFunction<'walkGps'>) {
+  if (routeType === 'one_way') return t('common.routeTypes.oneWay');
+  if (routeType === 'out_and_back') return t('common.routeTypes.outAndBack');
+  return t('common.routeTypes.loop');
 }
 
 function RouteHighlights({ highlights }: Pick<WalkRouteProposal, 'highlights'>) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation('walkGps');
   if (!highlights.length) return null;
   return <View style={{ gap: spacing.xs }}>
-    <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>À remarquer sur le parcours</Text>
+    <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{t('planner.highlightsTitle')}</Text>
     {highlights.map((highlight) => <Text
       key={`${highlight.name}-${highlight.latitude}-${highlight.longitude}`}
       style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}
@@ -116,22 +116,24 @@ export function WalkRoutePlanCard({
   locked?: boolean;
 }) {
   const { colors } = useAppTheme();
+  const { t, i18n } = useTranslation('walkGps');
+  const preferences = preferenceLabel(plan, t);
   return <Card style={{ gap: spacing.md }}>
     <View style={{ gap: spacing.xs }}>
       <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{plan.name}</Text>
-      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{routeTypeLabel(plan.route_type)} préparé · {distanceLabel(plan.distance_meters)} · {durationLabel(plan.duration_seconds)}</Text>
-      {preferenceLabel(plan) ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{preferenceLabel(plan)}</Text> : null}
-      {plan.destination_label ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Arrivée : {plan.destination_label}</Text> : null}
-      {plan.road_percentage != null ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{Math.round(plan.road_percentage)} % de voies automobiles</Text> : null}
-      {plan.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Source : {plan.attribution}{plan.license ? ` · ${plan.license}` : ''}</Text> : null}
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{t('planCard.prepared', { type: routeTypeLabel(plan.route_type, t), distance: distanceLabel(plan.distance_meters, i18n.language), duration: durationLabel(plan.duration_seconds) })}</Text>
+      {preferences ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{preferences}</Text> : null}
+      {plan.destination_label ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{t('common.destination', { destination: plan.destination_label })}</Text> : null}
+      {plan.road_percentage != null ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{t('common.roadPercentage', { percentage: Math.round(plan.road_percentage) })}</Text> : null}
+      {plan.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{t('common.source', { source: `${plan.attribution}${plan.license ? ` · ${plan.license}` : ''}` })}</Text> : null}
     </View>
     <WalkRouteMap points={plan.points} highlights={plan.highlights} planned />
     <RouteHighlights highlights={plan.highlights} />
     {locked
-      ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Cet itinéraire ne peut plus être modifié car le suivi GPS a déjà démarré.</Text>
+      ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('planCard.locked')}</Text>
       : <>
-        <Button label="Changer d’itinéraire" icon="compass" variant="secondary" fullWidth onPress={onChange} />
-        <Button label="Supprimer l’itinéraire" icon="delete" variant="ghost" fullWidth onPress={onDelete} />
+        <Button label={t('planCard.change')} icon="compass" variant="secondary" fullWidth onPress={onChange} />
+        <Button label={t('planCard.delete')} icon="delete" variant="ghost" fullWidth onPress={onDelete} />
       </>}
   </Card>;
 }
@@ -146,6 +148,11 @@ export function WalkRoutePlannerSheet({
   onClose: () => void;
 }) {
   const { colors } = useAppTheme();
+  const { t, i18n } = useTranslation('walkGps');
+  const routeTypeOptions = ROUTE_TYPES.map((value) => ({
+    value,
+    label: value === 'loop' ? t('common.routeTypes.loop') : t('common.routeTypes.oneWay'),
+  }));
   const mutations = useWalkRoutePlanMutations(eventId);
   const [plannerMode, setPlannerMode] = useState<PlannerMode>('choice');
   const libraryQuery = useWalkRouteLibraryQuery(eventId, plannerMode === 'browse');
@@ -183,18 +190,18 @@ export function WalkRoutePlannerSheet({
     if (cached) return cached;
     const permission = await Location.requestForegroundPermissionsAsync();
     if (permission.status !== Location.PermissionStatus.GRANTED) {
-      throw new Error('Autorisez la localisation pour préparer un itinéraire autour de votre position.');
+      throw new Error(t('planner.locationPermission'));
     }
     const location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
     const start = { latitude: location.coords.latitude, longitude: location.coords.longitude };
     locationRef.current = start;
     return start;
-  }, []);
+  }, [t]);
 
   const generate = useCallback(async () => {
     const validationError = validateWalkRouteFilters(filters);
     if (validationError) {
-      setError(validationError);
+      setError(t(`planner.validation.${validationError}`));
       return;
     }
     const generation = generationRef.current + 1;
@@ -216,12 +223,12 @@ export function WalkRoutePlannerSheet({
         setProposals(routes);
         setSelectedProposalIndex(0);
         setProposalPage(0);
-        if (!routes.length) setError('Aucun itinéraire ne correspond exactement à ces critères. Élargissez la distance ou la durée.');
+        if (!routes.length) setError(t('planner.noExactRoute'));
       }
     } catch (generationError) {
       if (generationRef.current === generation) setError(parseApiError(generationError).message);
     }
-  }, [avoidRoads, avoidWater, filters, locateStart, preferScenic, proposeRoutes, routeType]);
+  }, [avoidRoads, avoidWater, filters, locateStart, preferScenic, proposeRoutes, routeType, t]);
 
   const openEditor = (proposal: WalkRouteProposal) => {
     setEditorRoute(proposal);
@@ -241,7 +248,7 @@ export function WalkRoutePlannerSheet({
       const start = await locateStart();
       openEditor({
         provider: 'vasco-custom',
-        name: 'Mon tracé',
+        name: t('planner.customRouteName'),
         route_type: routeType,
         avoid_roads: avoidRoads,
         avoid_water: avoidWater,
@@ -254,7 +261,7 @@ export function WalkRoutePlannerSheet({
         official: false,
       });
     } catch (locationError) {
-      setError(locationError instanceof Error ? locationError.message : 'La position actuelle est indisponible.');
+      setError(locationError instanceof Error ? locationError.message : t('planner.locationUnavailable'));
     }
   };
 
@@ -280,7 +287,7 @@ export function WalkRoutePlannerSheet({
       setEditorRoute(customized);
       setEditorPoint(undefined);
       setEditorMode('idle');
-      setEditorFeedback(mode === 'via' ? 'Le passage a été ajouté au parcours.' : 'La portion a été remplacée par un détour.');
+      setEditorFeedback(mode === 'via' ? t('planner.editor.viaAdded') : t('planner.editor.sectionAvoided'));
     } catch (customizationError) {
       setError(parseApiError(customizationError).message);
     }
@@ -311,8 +318,8 @@ export function WalkRoutePlannerSheet({
       setSelectedDraftPointIndex(undefined);
       setEditorMode('idle');
       setEditorFeedback(customized.attribution?.includes('respectant vos marqueurs')
-        ? 'Le calcul IGN s’éloignait de vos passages : Vasco a conservé le tracé placé sur la carte.'
-        : 'Le parcours piéton a été calculé à partir de vos étapes.');
+        ? t('planner.editor.manualKept')
+        : t('planner.editor.calculated'));
     } catch (customizationError) {
       setError(parseApiError(customizationError).message);
     }
@@ -335,7 +342,7 @@ export function WalkRoutePlannerSheet({
       await mutations.save.mutateAsync(proposal);
       onClose();
     } catch {
-      setError('L’itinéraire n’a pas pu être enregistré. Réessayez.');
+      setError(t('planner.saveError'));
     }
   };
 
@@ -360,10 +367,10 @@ export function WalkRoutePlannerSheet({
   const visibleProposals = proposals.slice(proposalPageStart, proposalPageStart + PROPOSALS_PER_PAGE);
 
   return <FormSheet
-    title={showingEditor ? editorOriginal?.distance_meters ? 'Modifier le tracé' : 'Créer mon tracé' : showingResults ? 'Choisir un itinéraire' : showingChoice ? 'Préparer la balade' : 'Parcours existants'}
+    title={showingEditor ? editorOriginal?.distance_meters ? t('planner.titles.edit') : t('planner.titles.create') : showingResults ? t('planner.titles.choose') : showingChoice ? t('planner.titles.prepare') : t('planner.titles.existing')}
     onBack={showingEditor ? closeEditor : showingResults ? returnToCriteria : showingChoice ? onClose : () => setPlannerMode('choice')}
     onClose={onClose}
-    footerLabel={showingChoice ? undefined : creatingDraft ? 'Calculer mon itinéraire' : showingEditor ? 'Utiliser ce tracé' : showingResults ? 'Choisir cet itinéraire' : 'Proposer d’autres parcours'}
+    footerLabel={showingChoice ? undefined : creatingDraft ? t('planner.footer.calculate') : showingEditor ? t('planner.footer.use') : showingResults ? t('planner.footer.choose') : t('planner.footer.more')}
     onFooterPress={() => {
       if (creatingDraft) void calculateDraftRoute();
       else if (editorRoute) void choose(editorRoute);
@@ -376,33 +383,33 @@ export function WalkRoutePlannerSheet({
     confirmBackWhenDirty={showingEditor}
     testID="walk-route-planner"
   >
-    {error ? <Banner tone="error" title="Calcul impossible" message={error} onDismiss={() => setError(undefined)} /> : null}
+    {error ? <Banner tone="error" title={t('planner.calculationErrorTitle')} message={error} onDismiss={() => setError(undefined)} /> : null}
     {showingEditor && editorRoute?.manual_geometry_warning ? <Banner
       tone="warning"
-      title="Passage conservé manuellement"
+      title={t('planner.manualRouteTitle')}
       message={editorRoute.manual_geometry_warning}
       blocking
       testID="walk-route-manual-geometry-warning"
     /> : null}
     {showingEditor && editorRoute ? <>
       <View style={{ gap: spacing.xs }}>
-        <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{creatingDraft ? 'Placez vos étapes' : 'Que voulez-vous modifier ?'}</Text>
+        <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{creatingDraft ? t('planner.editor.placeSteps') : t('planner.editor.whatToEdit')}</Text>
         <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>
           {creatingDraft
             ? editorRoute.route_type === 'loop'
-              ? 'Ajoutez les étapes de la boucle. Le retour au point de départ sera ajouté automatiquement : inutile de toucher de nouveau le départ.'
-              : 'Ajoutez les étapes dans l’ordre. Le dernier marqueur posé sera le point d’arrivée.'
+              ? t('planner.editor.loopHelp')
+              : t('planner.editor.oneWayHelp')
             : editorMode === 'idle'
-              ? 'Choisissez une action, puis touchez la carte. Le parcours sera recalculé automatiquement.'
+              ? t('planner.editor.idleHelp')
               : editorMode === 'via'
-                ? 'Touchez l’endroit par lequel vous souhaitez passer.'
-                : 'Touchez la portion que vous souhaitez contourner.'}
+                ? t('planner.editor.viaHelp')
+                : t('planner.editor.avoidHelp')}
         </Text>
       </View>
       {creatingDraft ? <View style={{ gap: spacing.sm }}>
-        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>Type de trajet</Text>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{t('planner.editor.tripType')}</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-          {ROUTE_TYPE_OPTIONS.map((option) => <Chip
+          {routeTypeOptions.map((option) => <Chip
             key={option.value}
             label={option.label}
             selected={editorRoute.route_type === option.value}
@@ -418,8 +425,8 @@ export function WalkRoutePlannerSheet({
         </View>
       </View> : null}
       {!creatingDraft ? <View style={{ gap: spacing.sm }}>
-        <Button label="Ajouter un passage" variant={editorMode === 'via' ? 'primary' : 'secondary'} fullWidth onPress={() => { setEditorMode((mode) => mode === 'via' ? 'idle' : 'via'); setEditorPoint(undefined); setEditorFeedback(undefined); }} />
-        <Button label="Éviter une portion" variant={editorMode === 'avoid' ? 'primary' : 'secondary'} fullWidth onPress={() => { setEditorMode((mode) => mode === 'avoid' ? 'idle' : 'avoid'); setEditorPoint(undefined); setEditorFeedback(undefined); }} />
+        <Button label={t('planner.editor.addPassage')} variant={editorMode === 'via' ? 'primary' : 'secondary'} fullWidth onPress={() => { setEditorMode((mode) => mode === 'via' ? 'idle' : 'via'); setEditorPoint(undefined); setEditorFeedback(undefined); }} />
+        <Button label={t('planner.editor.avoidSection')} variant={editorMode === 'avoid' ? 'primary' : 'secondary'} fullWidth onPress={() => { setEditorMode((mode) => mode === 'avoid' ? 'idle' : 'avoid'); setEditorPoint(undefined); setEditorFeedback(undefined); }} />
       </View> : null}
       <WalkRouteMap
         points={creatingDraft ? draftMapPoints : editorRoute.points}
@@ -429,7 +436,7 @@ export function WalkRoutePlannerSheet({
           ? (point) => {
             const maximum = maxDraftWaypoints(editorRoute.route_type);
             if (draftWaypoints.length >= maximum) {
-              setError(`Vous pouvez placer jusqu’à ${maximum} étapes pour ce type de trajet.`);
+              setError(t('planner.editor.maximumSteps', { maximum }));
               return;
             }
             setDraftWaypoints((waypoints) => [...waypoints, point]);
@@ -444,18 +451,18 @@ export function WalkRoutePlannerSheet({
         controlPoints={creatingDraft ? draftWaypoints : []}
         selectedControlPointIndex={selectedDraftPointIndex}
         onControlPointPress={creatingDraft ? setSelectedDraftPointIndex : undefined}
-        controlPointEndLabel={creatingDraft && editorRoute.route_type === 'one_way' && draftWaypoints.length ? 'Arrivée' : undefined}
+        controlPointEndLabel={creatingDraft && editorRoute.route_type === 'one_way' && draftWaypoints.length ? t('planner.editor.arrival') : undefined}
         showRouteLine={!creatingDraft}
         showEndMarker={!creatingDraft}
       />
       {creatingDraft ? <View style={{ gap: spacing.sm }}>
         <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>
-          {draftWaypoints.length ? `${draftWaypoints.length} étape${draftWaypoints.length > 1 ? 's' : ''} ajoutée${draftWaypoints.length > 1 ? 's' : ''}` : 'Ajoutez au moins une étape sur la carte.'}
+          {draftWaypoints.length ? t('planner.editor.stepsAdded', { count: draftWaypoints.length }) : t('planner.editor.addOneStep')}
         </Text>
         {draftWaypoints.length ? <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
           {draftWaypoints.map((point, index) => <Chip
             key={`${point.latitude}-${point.longitude}-${index}`}
-            label={editorRoute.route_type === 'one_way' && index === draftWaypoints.length - 1 ? 'Arrivée' : `Étape ${index + 1}`}
+            label={editorRoute.route_type === 'one_way' && index === draftWaypoints.length - 1 ? t('planner.editor.arrival') : t('planner.editor.step', { number: index + 1 })}
             selected={selectedDraftPointIndex === index}
             variant="tonal"
             size="small"
@@ -463,7 +470,7 @@ export function WalkRoutePlannerSheet({
           />)}
         </View> : null}
         {selectedDraftPointIndex != null ? <Button
-          label={editorRoute.route_type === 'one_way' && selectedDraftPointIndex === draftWaypoints.length - 1 ? 'Supprimer l’arrivée' : `Supprimer l’étape ${selectedDraftPointIndex + 1}`}
+          label={editorRoute.route_type === 'one_way' && selectedDraftPointIndex === draftWaypoints.length - 1 ? t('planner.editor.deleteArrival') : t('planner.editor.deleteStep', { number: selectedDraftPointIndex + 1 })}
           icon="delete"
           variant="ghost"
           fullWidth
@@ -475,46 +482,46 @@ export function WalkRoutePlannerSheet({
         /> : null}
       </View> : null}
       {editorRoute.distance_meters ? <View style={{ gap: spacing.xs }}>
-        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{distanceLabel(editorRoute.distance_meters)} · {durationLabel(editorRoute.duration_seconds)}{editorRoute.road_percentage == null ? '' : ` · ${Math.round(editorRoute.road_percentage)} % de voies automobiles`}</Text>
-        {editorRoute.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Source : {editorRoute.attribution}{editorRoute.license ? ` · ${editorRoute.license}` : ''}</Text> : null}
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{distanceLabel(editorRoute.distance_meters, i18n.language)} · {durationLabel(editorRoute.duration_seconds)}{editorRoute.road_percentage == null ? '' : ` · ${t('common.roadPercentage', { percentage: Math.round(editorRoute.road_percentage) })}`}</Text>
+        {editorRoute.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{t('common.source', { source: `${editorRoute.attribution}${editorRoute.license ? ` · ${editorRoute.license}` : ''}` })}</Text> : null}
       </View> : null}
       {editorMode === 'via' && editorRoute.highlights.length ? <View style={{ gap: spacing.sm }}>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Ou choisissez un lieu remarquable</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{t('planner.editor.chooseHighlight')}</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
           {editorRoute.highlights.slice(0, 4).map((highlight) => <Chip key={`${highlight.name}-${highlight.latitude}-${highlight.longitude}`} label={highlight.name} selected={false} variant="tonal" size="small" disabled={mutations.customize.isPending} onPress={() => void recalculateEditorRoute({ latitude: highlight.latitude, longitude: highlight.longitude }, 'via')} />)}
         </View>
       </View> : null}
       {editorMode === 'avoid' ? <View style={{ gap: spacing.sm }}>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Ou choisissez une portion sans utiliser la carte</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{t('planner.editor.chooseSection')}</Text>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-          {representativeRoutePoints(editorRoute.points).map((point, index) => <Chip key={`${point.latitude}-${point.longitude}-${index}`} label={`Portion ${index + 1}`} selected={false} variant="tonal" size="small" disabled={mutations.customize.isPending} onPress={() => void recalculateEditorRoute(point, 'avoid')} accessibilityLabel={`Éviter la portion ${index + 1} du parcours`} />)}
+          {representativeRoutePoints(editorRoute.points).map((point, index) => <Chip key={`${point.latitude}-${point.longitude}-${index}`} label={t('planner.editor.section', { number: index + 1 })} selected={false} variant="tonal" size="small" disabled={mutations.customize.isPending} onPress={() => void recalculateEditorRoute(point, 'avoid')} accessibilityLabel={t('planner.editor.avoidSectionAccessibility', { number: index + 1 })} />)}
         </View>
       </View> : null}
-      {mutations.customize.isPending ? <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Recalcul du parcours en cours…</Text> : null}
+      {mutations.customize.isPending ? <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{t('planner.editor.recalculating')}</Text> : null}
       {editorFeedback ? <Text accessibilityLiveRegion="polite" style={{ color: colors.success, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{editorFeedback}</Text> : null}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-        <Button label="Annuler la dernière modification" variant="ghost" size="small" disabled={!editorHistory.length} onPress={() => {
+        <Button label={t('planner.editor.undo')} variant="ghost" size="small" disabled={!editorHistory.length} onPress={() => {
           const previous = editorHistory.at(-1);
           if (!previous) return;
           setEditorRoute(previous);
           setEditorHistory((history) => history.slice(0, -1));
           setEditorPoint(undefined);
           setEditorMode('idle');
-          setEditorFeedback('La dernière modification a été annulée.');
+          setEditorFeedback(t('planner.editor.undoDone'));
         }} />
-        <Button label="Revenir au tracé initial" variant="ghost" size="small" disabled={!editorOriginal || editorRoute === editorOriginal} onPress={() => {
+        <Button label={t('planner.editor.reset')} variant="ghost" size="small" disabled={!editorOriginal || editorRoute === editorOriginal} onPress={() => {
           if (!editorOriginal) return;
           setEditorRoute(editorOriginal);
           setEditorHistory([]);
           setEditorPoint(undefined);
           setEditorMode('idle');
-          setEditorFeedback('Le tracé initial a été restauré.');
+          setEditorFeedback(t('planner.editor.resetDone'));
         }} />
       </View>
     </> : showingResults ? <>
       <View style={{ gap: spacing.xs }}>
-        <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{proposals.length} parcours trouvés</Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Touchez une carte pour la sélectionner. Le retour permet de modifier vos critères.</Text>
+        <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{t('planner.results.found', { count: proposals.length })}</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('planner.results.help')}</Text>
       </View>
       {visibleProposals.map((proposal, pageIndex) => {
         const index = proposalPageStart + pageIndex;
@@ -523,8 +530,8 @@ export function WalkRoutePlannerSheet({
           key={`${proposal.provider}-${proposal.name}-${index}`}
           onPress={() => setSelectedProposalIndex(index)}
           accessibilityRole="radio"
-          accessibilityLabel={`${proposal.name}, ${distanceLabel(proposal.distance_meters)}, ${durationLabel(proposal.duration_seconds)}${avoidRoads ? proposal.road_percentage == null ? ', part de voies automobiles non estimée' : `, ${Math.round(proposal.road_percentage)} pour cent de voies automobiles` : ''}`}
-          accessibilityHint="Sélectionne cet itinéraire"
+          accessibilityLabel={`${proposal.name}, ${distanceLabel(proposal.distance_meters, i18n.language)}, ${durationLabel(proposal.duration_seconds)}${avoidRoads ? `, ${proposal.road_percentage == null ? t('common.roadPercentageUnknown') : t('common.roadPercentageSpoken', { percentage: Math.round(proposal.road_percentage) })}` : ''}`}
+          accessibilityHint={t('planner.results.selectHint', { name: proposal.name })}
           style={{
             gap: spacing.md,
             borderColor: selected ? colors.primary : colors.border,
@@ -534,14 +541,14 @@ export function WalkRoutePlannerSheet({
           <View style={{ gap: spacing.xs }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}>
               <Text style={{ flex: 1, color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{proposal.name}</Text>
-              {selected ? <Text style={{ color: colors.primary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.xs }}>Sélectionné</Text> : null}
+              {selected ? <Text style={{ color: colors.primary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.xs }}>{t('planner.results.selected')}</Text> : null}
             </View>
-            <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{distanceLabel(proposal.distance_meters)} · environ {durationLabel(proposal.duration_seconds)}</Text>
-            {preferenceLabel(proposal) ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{preferenceLabel(proposal)}</Text> : null}
-            {avoidRoads ? <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{proposal.road_percentage == null ? 'Part de voies automobiles non estimée' : `${Math.round(proposal.road_percentage)} % de voies automobiles`}</Text> : null}
-            {proposal.destination_label ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Arrivée : {proposal.destination_label}</Text> : null}
-            {proposal.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Source : {proposal.attribution}{proposal.license ? ` · ${proposal.license}` : ''}</Text> : null}
-            {proposal.route_type === 'out_and_back' ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Solution de secours : aucune vraie boucle proche de cette distance n’a été trouvée. Ce parcours revient sur une partie du chemin.</Text> : null}
+            <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{distanceLabel(proposal.distance_meters, i18n.language)} · {t('common.approximately', { duration: durationLabel(proposal.duration_seconds) })}</Text>
+            {preferenceLabel(proposal, t) ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{preferenceLabel(proposal, t)}</Text> : null}
+            {avoidRoads ? <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{proposal.road_percentage == null ? t('common.roadPercentageUnknown') : t('common.roadPercentage', { percentage: Math.round(proposal.road_percentage) })}</Text> : null}
+            {proposal.destination_label ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{t('common.destination', { destination: proposal.destination_label })}</Text> : null}
+            {proposal.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{t('common.source', { source: `${proposal.attribution}${proposal.license ? ` · ${proposal.license}` : ''}` })}</Text> : null}
+            {proposal.route_type === 'out_and_back' ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('planner.results.fallback')}</Text> : null}
           </View>
           <WalkRouteMap points={proposal.points} highlights={proposal.highlights} planned />
           <RouteHighlights highlights={proposal.highlights} />
@@ -549,7 +556,7 @@ export function WalkRoutePlannerSheet({
       })}
       {proposalPageCount > 1 ? <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: spacing.sm }}>
         <Button
-          label="Précédents"
+          label={t('planner.results.previous')}
           variant="secondary"
           size="small"
           disabled={proposalPage === 0}
@@ -559,9 +566,9 @@ export function WalkRoutePlannerSheet({
             setSelectedProposalIndex(page * PROPOSALS_PER_PAGE);
           }}
         />
-        <Text accessibilityLabel={`Page ${proposalPage + 1} sur ${proposalPageCount}`} style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{proposalPage + 1} / {proposalPageCount}</Text>
+        <Text accessibilityLabel={t('planner.results.page', { current: proposalPage + 1, total: proposalPageCount })} style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{proposalPage + 1} / {proposalPageCount}</Text>
         <Button
-          label="Suivants"
+          label={t('planner.results.next')}
           variant="secondary"
           size="small"
           disabled={proposalPage >= proposalPageCount - 1}
@@ -572,57 +579,57 @@ export function WalkRoutePlannerSheet({
           }}
         />
       </View> : null}
-      <Button label="Modifier le tracé sélectionné" icon="edit" variant="secondary" fullWidth disabled={!selectedProposal} onPress={() => {
+      <Button label={t('planner.results.editSelected')} icon="edit" variant="secondary" fullWidth disabled={!selectedProposal} onPress={() => {
         if (selectedProposal) openEditor(selectedProposal);
       }} />
     </> : showingChoice ? <>
     <View style={{ gap: spacing.xs }}>
-      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>Comment voulez-vous préparer la balade ?</Text>
-      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Créez un trajet librement ou repartez d’un parcours existant, que vous pourrez toujours modifier avant de l’utiliser.</Text>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{t('planner.choice.title')}</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('planner.choice.description')}</Text>
     </View>
     <Card style={{ gap: spacing.md }}>
       <View style={{ gap: spacing.xs }}>
-        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Créer mon propre tracé</Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Placez librement vos étapes sur la carte. Les filtres de distance minimale et maximale ne s’appliquent pas : la distance sera calculée depuis vos marqueurs.</Text>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('planner.choice.customTitle')}</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('planner.choice.customDescription')}</Text>
       </View>
-      <Button label="Créer mon tracé" icon="edit" fullWidth onPress={() => void createCustomRoute()} />
+      <Button label={t('planner.choice.customButton')} icon="edit" fullWidth onPress={() => void createCustomRoute()} />
     </Card>
     <Card style={{ gap: spacing.md }}>
       <View style={{ gap: spacing.xs }}>
-        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Partir d’un parcours existant</Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Retrouvez vos parcours enregistrés, les circuits officiels DATAtourisme et les suggestions calculées avec IGN.</Text>
+        <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('planner.choice.existingTitle')}</Text>
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('planner.choice.existingDescription')}</Text>
       </View>
-      <Button label="Voir les parcours existants" icon="compass" fullWidth onPress={() => setPlannerMode('browse')} />
+      <Button label={t('planner.choice.existingButton')} icon="compass" fullWidth onPress={() => setPlannerMode('browse')} />
     </Card>
     </> : <>
     <View style={{ gap: spacing.xs }}>
-      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>Mes parcours enregistrés</Text>
-      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Réutilisez un parcours d’une balade précédente tel quel, ou ouvrez-le dans l’éditeur pour l’adapter.</Text>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{t('planner.library.title')}</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('planner.library.description')}</Text>
     </View>
-    {libraryQuery.isPending ? <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Chargement de vos parcours…</Text> : null}
-    {libraryQuery.isError ? <Banner tone="error" title="Parcours indisponibles" message="Vos parcours enregistrés n’ont pas pu être chargés. Vous pouvez quand même rechercher d’autres propositions." /> : null}
-    {!libraryQuery.isPending && !libraryQuery.isError && !libraryQuery.data?.length ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>Aucun parcours précédent enregistré pour le moment.</Text> : null}
+    {libraryQuery.isPending ? <Text accessibilityLiveRegion="polite" style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{t('planner.library.loading')}</Text> : null}
+    {libraryQuery.isError ? <Banner tone="error" title={t('planner.library.errorTitle')} message={t('planner.library.errorMessage')} /> : null}
+    {!libraryQuery.isPending && !libraryQuery.isError && !libraryQuery.data?.length ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{t('planner.library.empty')}</Text> : null}
     {libraryQuery.data?.map((route, index) => <Card key={`${route.provider}-${route.name}-${index}`} style={{ gap: spacing.md }}>
       <View style={{ gap: spacing.xs }}>
         <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{route.name}</Text>
-        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{routeTypeLabel(route.route_type)} · {distanceLabel(route.distance_meters)} · {durationLabel(route.duration_seconds)}</Text>
-        {route.road_percentage != null ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{Math.round(route.road_percentage)} % de voies automobiles</Text> : null}
-        {route.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Source : {route.attribution}</Text> : null}
+        <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm }}>{routeTypeLabel(route.route_type, t)} · {distanceLabel(route.distance_meters, i18n.language)} · {durationLabel(route.duration_seconds)}</Text>
+        {route.road_percentage != null ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{t('common.roadPercentage', { percentage: Math.round(route.road_percentage) })}</Text> : null}
+        {route.attribution ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{t('common.source', { source: route.attribution })}</Text> : null}
       </View>
       <View style={{ gap: spacing.sm }}>
-        <Button label="Modifier ce parcours" icon="edit" variant="secondary" fullWidth onPress={() => openEditor(route)} />
-        <Button label="Utiliser ce parcours" fullWidth disabled={mutations.save.isPending} loading={mutations.save.isPending} onPress={() => void choose(route)} />
+        <Button label={t('planner.library.edit')} icon="edit" variant="secondary" fullWidth onPress={() => openEditor(route)} />
+        <Button label={t('planner.library.use')} fullWidth disabled={mutations.save.isPending} loading={mutations.save.isPending} onPress={() => void choose(route)} />
       </View>
     </Card>)}
     <View style={{ gap: spacing.xs }}>
-      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>Découvrir d’autres parcours</Text>
-      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Ces filtres s’appliquent uniquement aux nouvelles propositions IGN et DATAtourisme.</Text>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{t('planner.library.discoverTitle')}</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('planner.library.discoverDescription')}</Text>
     </View>
-    <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>Définissez la balade souhaitée. Vasco privilégiera les chemins et les parcours intéressants autour de votre position.</Text>
+    <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.sm, lineHeight: typography.lineHeights.tight }}>{t('planner.library.filtersDescription')}</Text>
     <View style={{ gap: spacing.sm }}>
-      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Type de parcours</Text>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('planner.filters.routeType')}</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
-        {ROUTE_TYPE_OPTIONS.map((option) => <Chip
+        {routeTypeOptions.map((option) => <Chip
           key={option.value}
           label={option.label}
           selected={routeType === option.value}
@@ -632,93 +639,93 @@ export function WalkRoutePlannerSheet({
             if (routeType === option.value) return;
             setRouteType(option.value);
           }}
-          accessibilityLabel={'Choisir le type ' + option.label}
+          accessibilityLabel={t('planner.filters.chooseType', { type: option.label })}
         />)}
       </View>
     </View>
     <View style={{ gap: spacing.sm }}>
-      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Durée de la balade</Text>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('planner.filters.walkDuration')}</Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
         <Chip
-          label="Distance"
+          label={t('common.distance')}
           selected={filters.mode === 'distance'}
           variant="tonal"
           size="medium"
           onPress={() => setFilters((value) => ({ ...value, mode: 'distance' }))}
-          accessibilityLabel="Filtrer les itinéraires par distance"
+          accessibilityLabel={t('planner.filters.distanceAccessibility')}
         />
         <Chip
-          label="Durée"
+          label={t('common.duration')}
           selected={filters.mode === 'duration'}
           variant="tonal"
           size="medium"
           onPress={() => setFilters((value) => ({ ...value, mode: 'duration' }))}
-          accessibilityLabel="Filtrer les itinéraires par durée"
+          accessibilityLabel={t('planner.filters.durationAccessibility')}
         />
       </View>
       <View style={{ gap: spacing.sm }}>
         {filters.mode === 'distance' ? <>
           <NumberStepper
-            label="Distance minimale"
+            label={t('planner.filters.minDistance')}
             value={filters.minDistanceMeters}
             min={1_000}
             max={30_000}
             step={500}
-            formatValue={distanceLabel}
-            errorMessage={filters.minDistanceMeters > filters.maxDistanceMeters ? 'Supérieure au maximum' : undefined}
+            formatValue={(value) => distanceLabel(value, i18n.language)}
+            errorMessage={filters.minDistanceMeters > filters.maxDistanceMeters ? t('planner.filters.aboveMaximum') : undefined}
             onChange={(value) => setFilters((current) => ({ ...current, minDistanceMeters: value }))}
           />
           <NumberStepper
-            label="Distance maximale"
+            label={t('planner.filters.maxDistance')}
             value={filters.maxDistanceMeters}
             min={1_000}
             max={30_000}
             step={500}
-            formatValue={distanceLabel}
-            errorMessage={filters.minDistanceMeters > filters.maxDistanceMeters ? 'Inférieure au minimum' : undefined}
+            formatValue={(value) => distanceLabel(value, i18n.language)}
+            errorMessage={filters.minDistanceMeters > filters.maxDistanceMeters ? t('planner.filters.belowMinimum') : undefined}
             onChange={(value) => setFilters((current) => ({ ...current, maxDistanceMeters: value }))}
           />
         </> : <>
           <NumberStepper
-            label="Durée minimale"
+            label={t('planner.filters.minDuration')}
             value={filters.minDurationSeconds}
             min={600}
             max={43_200}
             step={900}
             formatValue={durationLabel}
-            errorMessage={filters.minDurationSeconds > filters.maxDurationSeconds ? 'Supérieure au maximum' : undefined}
+            errorMessage={filters.minDurationSeconds > filters.maxDurationSeconds ? t('planner.filters.aboveMaximum') : undefined}
             onChange={(value) => setFilters((current) => ({ ...current, minDurationSeconds: value }))}
           />
           <NumberStepper
-            label="Durée maximale"
+            label={t('planner.filters.maxDuration')}
             value={filters.maxDurationSeconds}
             min={600}
             max={43_200}
             step={900}
             formatValue={durationLabel}
-            errorMessage={filters.minDurationSeconds > filters.maxDurationSeconds ? 'Inférieure au minimum' : undefined}
+            errorMessage={filters.minDurationSeconds > filters.maxDurationSeconds ? t('planner.filters.belowMinimum') : undefined}
             onChange={(value) => setFilters((current) => ({ ...current, maxDurationSeconds: value }))}
           />
         </>}
       </View>
     </View>
     <View style={{ gap: spacing.sm }}>
-      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>Ce qui compte pour vous</Text>
+      <Text accessibilityRole="header" style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.md }}>{t('planner.filters.priorities')}</Text>
       <PreferenceRow
-        title="Privilégier les chemins"
-        description="Évite les voies ouvertes aux voitures et favorise halages, sentiers et voies vertes."
+        title={t('planner.filters.preferPaths')}
+        description={t('planner.filters.preferPathsDescription')}
         value={avoidRoads}
         onChange={setAvoidRoads}
       />
       <PreferenceRow
-        title="Éviter les ponts"
-        description="Écarte les tronçons identifiés comme ponts lorsque le réseau le permet."
+        title={t('planner.filters.avoidBridges')}
+        description={t('planner.filters.avoidBridgesDescription')}
         value={avoidWater}
         onChange={setAvoidWater}
       />
       <PreferenceRow
-        title="Voir les points remarquables"
-        description="Recherche des moulins, écluses, beaux bâtiments, points de vue et sites naturels."
+        title={t('planner.filters.scenic')}
+        description={t('planner.filters.scenicDescription')}
         value={preferScenic}
         onChange={setPreferScenic}
       />

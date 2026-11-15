@@ -1,6 +1,7 @@
 import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react';
 import { Platform, Text, View } from 'react-native';
 import MapView, { Marker, Polyline, UrlTile, type MapPressEvent, type MarkerPressEvent } from 'react-native-maps';
+import { useTranslation } from 'react-i18next';
 import { radii, spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
 import type { WalkMapCoordinate } from '../walkMapUtils';
@@ -44,6 +45,7 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(fu
   planned = false,
 }, ref) {
   const { colors, resolvedTheme } = useAppTheme();
+  const { t } = useTranslation('walkGps');
   const mapRef = useRef<MapView>(null);
   const coordinates = useMemo(() => getWalkMapCoordinates(points), [points]);
   const region = useMemo(() => getWalkRouteRegion(coordinates), [coordinates]);
@@ -62,7 +64,7 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(fu
 
   return <View style={{ gap: spacing.xs }}>
     <View
-      accessibilityLabel="Carte interactive du tracé GPS de la balade"
+      accessibilityLabel={t('map.routeAccessibility', { count: coordinates.length })}
       style={{ height: WALK_ROUTE_MAP_HEIGHT, borderRadius: radii.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surfaceVariant }}
     >
       {region && first && latest ? <MapView
@@ -82,11 +84,11 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(fu
       onPress={onPress ? (event: MapPressEvent) => onPress(event.nativeEvent.coordinate) : undefined}
       onMapReady={Platform.OS === 'ios' ? onSnapshotReady : undefined}
       onMapLoaded={Platform.OS === 'android' ? onSnapshotReady : undefined}
-      accessibilityLabel="Carte interactive du tracé GPS de la balade"
+      accessibilityLabel={t('map.routeAccessibility', { count: coordinates.length })}
       testID="walk-route-map"
     >
       {useIgnPlan ? <UrlTile urlTemplate={IGN_PLAN_TILE_URL} maximumZ={18} tileSize={256} /> : null}
-      {coordinates.length > 1 ? <Marker coordinate={first} title="Départ de la balade" pinColor={colors.success} /> : null}
+      {coordinates.length > 1 ? <Marker coordinate={first} title={t('map.start')} pinColor={colors.success} /> : null}
       {showRouteLine ? <Polyline coordinates={coordinates} strokeColor={colors.primary} strokeWidth={planned ? 3 : 4} lineDashPattern={planned ? [10, 7] : undefined} lineCap="round" lineJoin="round" tappable={Boolean(onPress)} /> : null}
       {highlights.map((highlight) => <Marker
         key={`${highlight.name}-${highlight.latitude}-${highlight.longitude}`}
@@ -98,21 +100,21 @@ export const WalkRouteMap = forwardRef<WalkRouteMapHandle, WalkRouteMapProps>(fu
       {controlPoints.map((point, index) => <Marker
         key={`control-${index}-${point.latitude}-${point.longitude}`}
         coordinate={point}
-        title={controlPointEndLabel && index === controlPoints.length - 1 ? controlPointEndLabel : `Étape ${index + 1}`}
-        description="Touchez pour sélectionner ce marqueur"
+        title={controlPointEndLabel && index === controlPoints.length - 1 ? controlPointEndLabel : t('map.step', { number: index + 1 })}
+        description={t('map.selectMarker')}
         pinColor={selectedControlPointIndex === index ? colors.error : colors.warning}
         onPress={(event: MarkerPressEvent) => {
           event.stopPropagation();
           onControlPointPress?.(index);
         }}
-        accessibilityLabel={`${controlPointEndLabel && index === controlPoints.length - 1 ? controlPointEndLabel : `Étape ${index + 1}`}, toucher pour sélectionner`}
+        accessibilityLabel={`${controlPointEndLabel && index === controlPoints.length - 1 ? controlPointEndLabel : t('map.step', { number: index + 1 })}, ${t('map.selectMarker')}`}
       />)}
-      {editPoint ? <Marker coordinate={editPoint} title="Point de modification" pinColor={colors.warning} /> : null}
-      {showEndMarker ? <Marker coordinate={latest} title="Arrivée de la balade" pinColor={colors.primary} /> : null}
+      {editPoint ? <Marker coordinate={editPoint} title={t('map.editPoint')} pinColor={colors.warning} /> : null}
+      {showEndMarker ? <Marker coordinate={latest} title={t('map.end')} pinColor={colors.primary} /> : null}
     </MapView> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.md }}>
-      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, textAlign: 'center' }}>Le tracé apparaîtra dès les premiers mètres.</Text>
+      <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm, textAlign: 'center' }}>{t('map.empty')}</Text>
     </View>}
     </View>
-    {useIgnPlan ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Fond cartographique © IGN — Géoplateforme</Text> : null}
+    {useIgnPlan ? <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{t('common.mapAttribution')}</Text> : null}
   </View>;
 });

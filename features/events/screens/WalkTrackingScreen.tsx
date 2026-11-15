@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Text, View } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { Banner, Button, Card, DetailScreen, Dialog, Skeleton, TopBar } from '../../../shared/components/ui';
 import { spacing, typography } from '../../../theme/scales';
 import { useAppTheme } from '../../../theme/useAppTheme';
@@ -25,24 +26,31 @@ function elapsedLabel(startedAt?: string) {
 
 export function WalkTrackingScreen({ eventId, onBack, onFinished }: WalkTrackingScreenProps) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation('walkGps');
   const queryClient = useQueryClient();
   const eventsQuery = useEventsQuery();
   const routePlan = useWalkRoutePlanQuery(eventId);
-  const eventName = eventsQuery.data?.find((event) => event.id === eventId)?.nom || 'Ma balade';
+  const eventName = eventsQuery.data?.find((event) => event.id === eventId)?.nom || t('common.defaultWalkName');
   const [active, setActive] = useState<ActiveWalk>();
   const [error, setError] = useState<string>();
   const [stopOpen, setStopOpen] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const [, setTick] = useState(0);
   const started = useRef(false);
+  const trackingMessages = {
+    foregroundPermission: t('errors.foregroundPermission'),
+    backgroundPermission: t('errors.backgroundPermission'),
+    notificationTitle: t('tracking.notificationTitle'),
+    notificationBody: t('tracking.notificationBody'),
+  };
 
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    void startOrResumeWalk(eventId).then(setActive).catch((reason: unknown) => {
-      setError(reason instanceof Error ? reason.message : 'Le suivi GPS n’a pas pu démarrer.');
+    void startOrResumeWalk(eventId, trackingMessages).then(setActive).catch((reason: unknown) => {
+      setError(reason instanceof Error ? reason.message : t('tracking.startError'));
     });
-  }, [eventId]);
+  }, [eventId, t]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -56,38 +64,38 @@ export function WalkTrackingScreen({ eventId, onBack, onFinished }: WalkTracking
     setFinishing(true);
     setError(undefined);
     try {
-      const session = await finishWalk();
+      const session = await finishWalk(t('errors.noActiveWalk'));
       queryClient.setQueryData<WalkSession>(walkSessionKey(eventId), session);
       setStopOpen(false);
       onFinished();
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : 'La balade n’a pas pu être terminée.');
+      setError(reason instanceof Error ? reason.message : t('tracking.finishError'));
     } finally {
       setFinishing(false);
     }
   };
 
   return <>
-    <DetailScreen header={<TopBar title="Balade GPS" context="detail" onBack={onBack} />} contentContainerStyle={{ gap: spacing.md, paddingTop: spacing.md, paddingBottom: spacing.lg }} testID="walk-tracking-screen">
-      {isExpoGoWalkTracking ? <Banner tone="warning" title="Test limité dans Expo Go" message="Le tracé est enregistré tant que Vasco reste au premier plan. Pour tester le suivi écran verrouillé, utilisez un development build." /> : null}
-      {error ? <Banner tone="error" title="Suivi GPS indisponible" message={error} /> : null}
+    <DetailScreen header={<TopBar title={t('tracking.title')} context="detail" onBack={onBack} />} contentContainerStyle={{ gap: spacing.md, paddingTop: spacing.md, paddingBottom: spacing.lg }} testID="walk-tracking-screen">
+      {isExpoGoWalkTracking ? <Banner tone="warning" title={t('tracking.expoGoTitle')} message={t('tracking.expoGoMessage')} /> : null}
+      {error ? <Banner tone="error" title={t('tracking.unavailableTitle')} message={error} /> : null}
       {!active && !error ? <Skeleton type="card" density="comfortable" /> : null}
       {active ? <>
-        <Card style={{ gap: spacing.sm }} accessibilityLabel={`Balade ${eventName} en cours`}>
-          <Text style={{ color: colors.primary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>ENREGISTREMENT EN COURS</Text>
+        <Card style={{ gap: spacing.sm }} accessibilityLabel={t('tracking.cardAccessibility', { name: eventName })}>
+          <Text style={{ color: colors.primary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{t('tracking.recording')}</Text>
           <Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: 26, lineHeight: 32 }}>{eventName}</Text>
-          <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>Le suivi continue lorsque l’écran est verrouillé. Vous pouvez revenir au détail sans l’interrompre.</Text>
+          <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.control, lineHeight: 20 }}>{t('tracking.backgroundMessage')}</Text>
         </Card>
         <WalkTrackingMap points={active.points} plannedPoints={routePlan.data?.points} />
         <View style={{ flexDirection: 'row', gap: spacing.sm }}>
-          <LiveMetric label="Durée" value={elapsedLabel(active.startedAt)} />
-          <LiveMetric label="Points GPS" value={String(active.points.length)} />
+          <LiveMetric label={t('common.duration')} value={elapsedLabel(active.startedAt)} />
+          <LiveMetric label={t('common.gpsPoints')} value={String(active.points.length)} />
         </View>
-        <Button label="Terminer la balade" icon="circleCheck" fullWidth onPress={() => setStopOpen(true)} />
-        <Button label="Revenir au détail" variant="ghost" fullWidth onPress={onBack} />
+        <Button label={t('tracking.finishButton')} icon="circleCheck" fullWidth onPress={() => setStopOpen(true)} />
+        <Button label={t('tracking.backButton')} variant="ghost" fullWidth onPress={onBack} />
       </> : null}
     </DetailScreen>
-    <Dialog open={stopOpen} title="Terminer la balade ?" description="Le tracé sera synchronisé puis ajouté au détail de l’événement. Vous pourrez ensuite le partager." confirmLabel="Terminer et enregistrer" onConfirm={stop} onClose={() => setStopOpen(false)} loading={finishing} />
+    <Dialog open={stopOpen} title={t('tracking.finishDialogTitle')} description={t('tracking.finishDialogMessage')} confirmLabel={t('tracking.finishDialogConfirm')} onConfirm={stop} onClose={() => setStopOpen(false)} loading={finishing} />
   </>;
 }
 

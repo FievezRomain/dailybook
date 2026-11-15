@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, type ElementRef } from 'react';
 import { Image, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import * as Sharing from 'expo-sharing';
 import { captureRef } from 'react-native-view-shot';
 import Svg, { Circle, Polyline } from 'react-native-svg';
@@ -31,15 +32,17 @@ function geometry(points: WalkPoint[]) {
 
 export function WalkRouteVisualization({ points }: { points: WalkPoint[] }) {
   const { colors } = useAppTheme();
+  const { t } = useTranslation('walkGps');
   const line = useMemo(() => geometry(points), [points]);
   const pairs = line.split(' ');
-  return <View accessibilityRole="image" accessibilityLabel="Tracé GPS de la balade" style={{ height: WALK_ROUTE_MAP_HEIGHT, borderRadius: radii.lg, overflow: 'hidden', backgroundColor: colors.surfaceVariant }}>
-    {line ? <Svg width="100%" height="100%" viewBox="0 0 100 100"><Polyline points={line} fill="none" stroke={colors.primary} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" /><Circle cx={Number(pairs[0]?.split(',')[0])} cy={Number(pairs[0]?.split(',')[1])} r={2.5} fill={colors.primary} /><Circle cx={Number(pairs.at(-1)?.split(',')[0])} cy={Number(pairs.at(-1)?.split(',')[1])} r={3} fill={colors.primary} stroke={colors.surface} strokeWidth={1} /></Svg> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.md }}><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>Le tracé apparaîtra dès les premiers mètres.</Text></View>}
+  return <View accessibilityRole="image" accessibilityLabel={t('map.routeAccessibility', { count: points.length })} style={{ height: WALK_ROUTE_MAP_HEIGHT, borderRadius: radii.lg, overflow: 'hidden', backgroundColor: colors.surfaceVariant }}>
+    {line ? <Svg width="100%" height="100%" viewBox="0 0 100 100"><Polyline points={line} fill="none" stroke={colors.primary} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" /><Circle cx={Number(pairs[0]?.split(',')[0])} cy={Number(pairs[0]?.split(',')[1])} r={2.5} fill={colors.primary} /><Circle cx={Number(pairs.at(-1)?.split(',')[0])} cy={Number(pairs.at(-1)?.split(',')[1])} r={3} fill={colors.primary} stroke={colors.surface} strokeWidth={1} /></Svg> : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.md }}><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.sm }}>{t('map.empty')}</Text></View>}
   </View>;
 }
 
 export function WalkRouteCard({ name, session }: { name: string; session: WalkSession }) {
   const { colors } = useAppTheme();
+  const { t, i18n } = useTranslation('walkGps');
   const cardRef = useRef<ElementRef<typeof View>>(null);
   const mapRef = useRef<WalkRouteMapHandle>(null);
   const mapLoadedResolver = useRef<(() => void) | null>(null);
@@ -51,7 +54,7 @@ export function WalkRouteCard({ name, session }: { name: string; session: WalkSe
     () => hideShareEndpoints ? protectWalkRouteForShare(session.points) : session.points,
     [hideShareEndpoints, session.points],
   );
-  const distance = `${(session.distance_meters / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} km`;
+  const distance = `${(session.distance_meters / 1000).toLocaleString(i18n.language, { maximumFractionDigits: 2 })} km`;
   const onMapLoaded = () => {
     mapLoadedResolver.current?.();
     mapLoadedResolver.current = null;
@@ -83,7 +86,7 @@ export function WalkRouteCard({ name, session }: { name: string; session: WalkSe
       }
       await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
       const uri = await captureRef(cardRef, { format: 'png', quality: 1 });
-      await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: 'Partager ma balade Vasco' });
+      await Sharing.shareAsync(uri, { mimeType: 'image/png', dialogTitle: t('share.dialogTitle') });
     } finally {
       mapLoadedResolver.current = null;
       setShareMapUri(undefined);
@@ -92,9 +95,9 @@ export function WalkRouteCard({ name, session }: { name: string; session: WalkSe
     }
   };
   return <View style={{ gap: spacing.sm }}>
-    <View ref={cardRef} collapsable={false}><Card style={{ gap: spacing.md }}><View style={{ gap: spacing.xs }}><Text style={{ color: colors.primary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>MA BALADE VASCO</Text><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{name}</Text>{sharing && hideShareEndpoints && <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xs }}>Départ et arrivée masqués</Text>}</View>{shareMapUri ? <Image source={{ uri: shareMapUri }} accessibilityRole="image" accessibilityLabel="Carte du tracé GPS à partager" resizeMode="cover" style={{ height: WALK_ROUTE_MAP_HEIGHT, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border }} /> : shareMapFallback ? <WalkRouteVisualization points={sharedPoints} /> : <WalkRouteMap key={sharing ? 'share-map' : 'detail-map'} ref={mapRef} points={sharing ? sharedPoints : session.points} onSnapshotReady={sharing ? onMapLoaded : undefined} />}<View style={{ flexDirection: 'row', gap: spacing.sm }}><Metric label="Distance" value={distance} /><Metric label="Durée" value={duration(session.duration_seconds)} /><Metric label="Moyenne" value={`${(session.average_speed_mps * 3.6).toLocaleString('fr-FR', { maximumFractionDigits: 1 })} km/h`} /></View></Card></View>
-    <Card style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}><View style={{ flex: 1, gap: spacing.xs }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>Masquer le départ et l’arrivée</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>Retire {WALK_SHARE_PRIVACY_RADIUS_METERS} m de chaque côté uniquement sur l’image partagée.</Text></View><Switch value={hideShareEndpoints} onValueChange={setHideShareEndpoints} accessibilityLabel="Masquer le départ et l’arrivée sur l’image partagée" /></Card>
-    <Button label="Partager le tracé" icon="share" variant="secondary" fullWidth loading={sharing} onPress={() => void share()} />
+    <View ref={cardRef} collapsable={false}><Card style={{ gap: spacing.md }} accessibilityLabel={t('share.routeAccessibility', { name, distance, duration: duration(session.duration_seconds) })}><View style={{ gap: spacing.xs }}><Text style={{ color: colors.primary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{t('share.cardTitle')}</Text><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.lg }}>{name}</Text>{sharing && hideShareEndpoints && <Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.medium, fontSize: typography.sizes.xs }}>{t('share.endpointsHidden')}</Text>}</View>{shareMapUri ? <Image source={{ uri: shareMapUri }} accessibilityRole="image" accessibilityLabel={t('share.mapAccessibility', { name })} resizeMode="cover" style={{ height: WALK_ROUTE_MAP_HEIGHT, borderRadius: radii.lg, borderWidth: 1, borderColor: colors.border }} /> : shareMapFallback ? <WalkRouteVisualization points={sharedPoints} /> : <WalkRouteMap key={sharing ? 'share-map' : 'detail-map'} ref={mapRef} points={sharing ? sharedPoints : session.points} onSnapshotReady={sharing ? onMapLoaded : undefined} />}<View style={{ flexDirection: 'row', gap: spacing.sm }}><Metric label={t('common.distance')} value={distance} /><Metric label={t('common.duration')} value={duration(session.duration_seconds)} /><Metric label={t('common.average')} value={`${(session.average_speed_mps * 3.6).toLocaleString(i18n.language, { maximumFractionDigits: 1 })} km/h`} /></View></Card></View>
+    <Card style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.sm }}><View style={{ flex: 1, gap: spacing.xs }}><Text style={{ color: colors.textPrimary, fontFamily: typography.fonts.semiBold, fontSize: typography.sizes.sm }}>{t('share.hideEndpoints')}</Text><Text style={{ color: colors.textSecondary, fontFamily: typography.fonts.regular, fontSize: typography.sizes.xs }}>{t('share.hideEndpointsDescription', { radius: WALK_SHARE_PRIVACY_RADIUS_METERS })}</Text></View><Switch value={hideShareEndpoints} onValueChange={setHideShareEndpoints} accessibilityLabel={t('share.hideEndpointsAccessibility')} /></Card>
+    <Button label={t('share.button')} icon="share" variant="secondary" fullWidth loading={sharing} onPress={() => void share()} />
   </View>;
 }
 

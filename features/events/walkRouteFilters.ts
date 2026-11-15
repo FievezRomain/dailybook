@@ -25,12 +25,14 @@ export const DEFAULT_WALK_ROUTE_FILTERS: WalkRouteFilterState = {
   sortOrder: 'asc',
 };
 
-export function validateWalkRouteFilters(filters: WalkRouteFilterState): string | undefined {
+export type WalkRouteFilterValidationError = 'distance' | 'duration';
+
+export function validateWalkRouteFilters(filters: WalkRouteFilterState): WalkRouteFilterValidationError | undefined {
   if (filters.mode === 'distance' && filters.minDistanceMeters > filters.maxDistanceMeters) {
-    return 'La distance minimale doit être inférieure ou égale à la distance maximale.';
+    return 'distance';
   }
   if (filters.mode === 'duration' && filters.minDurationSeconds > filters.maxDurationSeconds) {
-    return 'La durée minimale doit être inférieure ou égale à la durée maximale.';
+    return 'duration';
   }
   return undefined;
 }

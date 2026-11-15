@@ -32,7 +32,7 @@ describe('walk route filters', () => {
       ...DEFAULT_WALK_ROUTE_FILTERS,
       minDistanceMeters: 6_000,
       maxDistanceMeters: 4_000,
-    })).toContain('distance minimale');
+    })).toBe('distance');
     expect(walkRouteSortHasOrder('recommended')).toBe(false);
     expect(walkRouteSortHasOrder('less_roads')).toBe(true);
   });

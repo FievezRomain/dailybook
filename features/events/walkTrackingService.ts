@@ -3,6 +3,7 @@ import Constants, { AppOwnership } from 'expo-constants';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import type { LocationObject } from 'expo-location';
+import frWalkGps from '../../translation/fr/walkGps.json';
 import * as EventService from '../../services/api/EventService';
 import type { WalkPoint, WalkSession } from './types';
 
@@ -13,6 +14,20 @@ const UPLOAD_CHUNK_SIZE = 100;
 export const isExpoGoWalkTracking = Constants.appOwnership === AppOwnership.Expo;
 
 let foregroundLocationSubscription: Location.LocationSubscription | undefined;
+
+export type WalkTrackingMessages = {
+  foregroundPermission: string;
+  backgroundPermission: string;
+  notificationTitle: string;
+  notificationBody: string;
+};
+
+const DEFAULT_TRACKING_MESSAGES: WalkTrackingMessages = {
+  foregroundPermission: frWalkGps.errors.foregroundPermission,
+  backgroundPermission: frWalkGps.errors.backgroundPermission,
+  notificationTitle: frWalkGps.tracking.notificationTitle,
+  notificationBody: frWalkGps.tracking.notificationBody,
+};
 
 export type ActiveWalk = {
   eventId: number;
@@ -55,15 +70,15 @@ TaskManager.defineTask(WALK_LOCATION_TASK, async ({ data, error }) => {
   await appendLocations((data as { locations: LocationObject[] }).locations ?? []);
 });
 
-async function requestLocationPermissions() {
+async function requestLocationPermissions(messages: WalkTrackingMessages) {
   const foreground = await Location.requestForegroundPermissionsAsync();
-  if (foreground.status !== 'granted') throw new Error('Autorisez la localisation pour enregistrer la balade.');
+  if (foreground.status !== 'granted') throw new Error(messages.foregroundPermission);
   if (isExpoGoWalkTracking) return;
   const background = await Location.requestBackgroundPermissionsAsync();
-  if (background.status !== 'granted') throw new Error('Autorisez la localisation permanente pour poursuivre le suivi écran verrouillé.');
+  if (background.status !== 'granted') throw new Error(messages.backgroundPermission);
 }
 
-async function startNativeUpdates() {
+async function startNativeUpdates(messages: WalkTrackingMessages) {
   if (isExpoGoWalkTracking) {
     if (foregroundLocationSubscription) return;
     foregroundLocationSubscription = await Location.watchPositionAsync({
@@ -82,8 +97,8 @@ async function startNativeUpdates() {
     pausesUpdatesAutomatically: false,
     showsBackgroundLocationIndicator: true,
     foregroundService: {
-      notificationTitle: 'Balade Vasco en cours',
-      notificationBody: 'Le tracé GPS continue d’être enregistré.',
+      notificationTitle: messages.notificationTitle,
+      notificationBody: messages.notificationBody,
       notificationColor: '#496A5B',
     },
   });
@@ -97,20 +112,20 @@ async function stopNativeUpdates() {
   }
 }
 
-export async function startOrResumeWalk(eventId: number): Promise<ActiveWalk> {
+export async function startOrResumeWalk(eventId: number, messages = DEFAULT_TRACKING_MESSAGES): Promise<ActiveWalk> {
   const local = await readActiveWalk();
   if (local?.eventId === eventId) {
-    await startNativeUpdates();
+    await startNativeUpdates(messages);
     return local;
   }
-  await requestLocationPermissions();
+  await requestLocationPermissions(messages);
   const startedAt = new Date().toISOString();
   const session = await EventService.startWalkSession(eventId, startedAt);
   const active: ActiveWalk = { eventId, sessionId: session.id, startedAt, sequence: 0, uploadedCount: 0, points: [] };
   await writeActiveWalk(active);
   const initial = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.BestForNavigation });
   await appendLocations([initial]);
-  await startNativeUpdates();
+  await startNativeUpdates(messages);
   return (await readActiveWalk()) ?? active;
 }
 
@@ -132,10 +147,10 @@ export async function flushWalkPoints(): Promise<ActiveWalk | undefined> {
   return active;
 }
 
-export async function finishWalk(): Promise<WalkSession> {
+export async function finishWalk(noActiveWalkMessage = frWalkGps.errors.noActiveWalk): Promise<WalkSession> {
   await stopNativeUpdates();
   const active = await flushWalkPoints();
-  if (!active) throw new Error('Aucune balade GPS en cours.');
+  if (!active) throw new Error(noActiveWalkMessage);
   const session = await EventService.finalizeWalkSession(active.sessionId, new Date().toISOString());
   await AsyncStorage.removeItem(ACTIVE_WALK_KEY);
   return session;
