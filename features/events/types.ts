@@ -79,7 +79,6 @@ export type WalkRouteSortOrder = 'asc' | 'desc';
 export type GenerateWalkRouteProposalsInput = {
   start_latitude: number;
   start_longitude: number;
-  target_distance_meters: number;
   filter_mode: WalkRouteFilterMode;
   min_distance_meters?: number;
   max_distance_meters?: number;

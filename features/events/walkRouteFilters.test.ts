@@ -6,23 +6,21 @@ import {
 } from './walkRouteFilters';
 
 describe('walk route filters', () => {
-  it('keeps target_distance_meters while sending a distance range', () => {
+  it('sends only the selected distance range', () => {
     expect(buildWalkRouteFilterPayload(DEFAULT_WALK_ROUTE_FILTERS)).toMatchObject({
-      target_distance_meters: 4_000,
       filter_mode: 'distance',
       min_distance_meters: 3_000,
       max_distance_meters: 5_000,
     });
   });
 
-  it('converts a duration range to a walking-distance compatibility target', () => {
+  it('sends only the selected duration range', () => {
     const payload = buildWalkRouteFilterPayload({
       ...DEFAULT_WALK_ROUTE_FILTERS,
       mode: 'duration',
       minDurationSeconds: 1_800,
       maxDurationSeconds: 3_600,
     });
-    expect(payload.target_distance_meters).toBe(3_240);
     expect(payload.min_distance_meters).toBeUndefined();
     expect(payload.min_duration_seconds).toBe(1_800);
   });
