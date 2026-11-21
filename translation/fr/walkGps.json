@@ -14,6 +14,7 @@
     "roadPercentageSpoken": "{{percentage}} pour cent de voies automobiles",
     "roadPercentageUnknown": "Taux de route non disponible",
     "destination": "Arrivée : {{destination}}",
+    "start": "Départ : {{start}}",
     "source": "Source : {{source}}",
     "approximately": "environ {{duration}}",
     "mapAttribution": "Fond cartographique © IGN — GéoPlateforme"
@@ -64,20 +65,43 @@
       "create": "Créer mon tracé",
       "choose": "Choisir un itinéraire",
       "prepare": "Préparer la balade",
-      "existing": "Parcours existants"
+      "existing": "Parcours existants",
+      "changeStart": "Changer le départ"
     },
     "footer": {
       "calculate": "Calculer mon itinéraire",
       "use": "Utiliser ce tracé",
       "choose": "Choisir cet itinéraire",
-      "more": "Proposer d’autres parcours"
+      "more": "Proposer d’autres parcours",
+      "continue": "Continuer"
     },
+    "progress": "Étape {{current}} sur {{total}}",
     "calculationErrorTitle": "Calcul impossible",
     "manualRouteTitle": "Passage conservé manuellement",
     "locationPermission": "Autorisez la localisation pour préparer un itinéraire autour de votre position.",
     "locationUnavailable": "La position actuelle est indisponible.",
     "noExactRoute": "Aucun itinéraire ne correspond exactement à ces critères. Élargissez la distance ou la durée.",
     "customRouteName": "Mon tracé",
+    "start": {
+      "title": "Choisir le départ",
+      "editorTitle": "Choisissez le nouveau départ",
+      "editorDescription": "Le parcours sera recalculé depuis ce point après validation.",
+      "description": "Ce départ sera appliqué automatiquement à la création et à la recherche de parcours.",
+      "selectionAccessibility": "Choix du point de départ",
+      "current": "Ma position",
+      "currentOptionDescription": "Utiliser la position GPS actuelle de l’appareil.",
+      "currentHelper": "Vasco demandera votre position uniquement lorsque vous continuerez.",
+      "address": "Une autre adresse",
+      "addressOptionDescription": "Saisir une adresse ou un lieu différent.",
+      "addressLabel": "Adresse de départ",
+      "addressPlaceholder": "Ex. 12 rue de la Mairie, Bourges",
+      "addressHelper": "Aucune recherche n’est lancée pendant la saisie.",
+      "addressRequired": "Indiquez une adresse de départ suffisamment précise.",
+      "addressNotFound": "Cette adresse n’a pas pu être localisée. Complétez-la avec la ville ou le code postal.",
+      "confirmedTitle": "Départ confirmé",
+      "ready": "{{location}}",
+      "change": "Modifier le départ"
+    },
     "saveError": "L’itinéraire n’a pas pu être enregistré. Réessayez.",
     "validation": {
       "distance": "La distance minimale doit être inférieure ou égale à la distance maximale.",
@@ -99,6 +123,9 @@
       "tripType": "Type de trajet",
       "addPassage": "Ajouter un passage",
       "avoidSection": "Éviter une portion",
+      "changeStart": "Changer le point de départ",
+      "applyStart": "Recalculer depuis ce départ",
+      "startChanged": "Le parcours a été recalculé depuis le nouveau départ.",
       "maximumSteps": "Vous pouvez placer jusqu’à {{maximum}} étapes pour ce type de trajet.",
       "arrival": "Arrivée",
       "stepsAdded_one": "{{count}} étape ajoutée",
@@ -134,14 +161,15 @@
       "editSelected": "Modifier le tracé sélectionné"
     },
     "choice": {
-      "title": "Comment souhaitez-vous préparer la balade ?",
-      "description": "Vous pouvez dessiner un nouveau parcours sans contrainte de distance, ou partir d’un tracé existant et le modifier.",
+      "title": "Choisir comment préparer le parcours",
+      "description": "Les deux options ci-dessous utiliseront automatiquement le départ confirmé à l’étape 1.",
+      "selectionAccessibility": "Choix du mode de préparation du parcours",
       "customTitle": "Créer mon propre tracé",
       "customDescription": "Placez vos étapes librement sur la carte. Les filtres de distance et de durée ne s’appliquent pas.",
-      "customButton": "Créer mon tracé",
+      "customAction": "Créer depuis ce départ",
       "existingTitle": "Partir d’un tracé existant",
       "existingDescription": "Retrouvez les propositions IGN, DataTourisme et vos parcours enregistrés. Vous pourrez filtrer puis modifier le tracé choisi.",
-      "existingButton": "Voir les parcours existants"
+      "existingAction": "Chercher depuis ce départ"
     },
     "library": {
       "title": "Choisir un parcours existant",

@@ -149,7 +149,12 @@ Cette section centralise les règles fonctionnelles de la préparation d’un it
 
 #### Création d’un tracé libre
 
-- Le point de départ initial correspond à la position actuelle de l’utilisateur.
+- Le point de départ initial correspond à la position actuelle de l’utilisateur, mais il peut être remplacé par une adresse avant de créer ou rechercher un parcours.
+- Une adresse de départ n’est envoyée au service public IGN — Géoplateforme et géocodée qu’à sa validation ou au lancement du calcul, jamais à chaque caractère saisi.
+- La préparation respecte le formulaire guidé standard : étape 1 pour le départ, étape 2 pour le mode de préparation, progression linéaire, un seul CTA principal dans le footer et retour conservant les valeurs.
+- Le départ doit être confirmé avant d’accéder au choix entre création libre et parcours existant ; l’interface indique explicitement que ces actions utiliseront ce point.
+- Le point de départ choisi reste visible et est conservé avec l’itinéraire préparé.
+- Changer le départ d’un parcours existant déclenche un recalcul piéton depuis cette nouvelle origine ; le parcours obtenu devient un tracé personnalisé.
 - L’utilisateur choisit entre **Boucle** et **Aller simple** tant que le nombre de marqueurs reste compatible.
 - Chaque toucher de la carte ajoute un marqueur sans calculer immédiatement le parcours.
 - Aucun trait ne relie les marqueurs avant le calcul final afin de ne pas suggérer un chemin qui n’existe pas encore.

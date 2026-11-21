@@ -56,6 +56,7 @@ export type WalkRouteProposal = {
   avoid_roads: boolean;
   avoid_water: boolean;
   prefer_scenic: boolean;
+  start_label?: string | null;
   destination_label?: string | null;
   highlights: WalkRouteHighlight[];
   points: WalkRoutePoint[];
@@ -79,6 +80,7 @@ export type WalkRouteSortOrder = 'asc' | 'desc';
 export type GenerateWalkRouteProposalsInput = {
   start_latitude: number;
   start_longitude: number;
+  start_label?: string;
   filter_mode: WalkRouteFilterMode;
   min_distance_meters?: number;
   max_distance_meters?: number;
@@ -95,6 +97,8 @@ export type GenerateWalkRouteProposalsInput = {
 export type CustomizeWalkRouteInput = {
   points: WalkRoutePoint[];
   control_points?: WalkRoutePoint[];
+  start_point?: WalkRoutePoint;
+  start_label?: string;
   via_point?: WalkRoutePoint;
   avoid_point?: WalkRoutePoint;
   route_type: WalkRouteProposal['route_type'];
